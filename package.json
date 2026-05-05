@@ -1,0 +1,30 @@
+{
+  "name": "spir-medical-website",
+  "version": "1.0.0",
+  "description": "الموقع الرسمي لسباير ميديكال — منصة طبية رقمية متكاملة في العراق",
+  "private": true,
+  "scripts": {
+    "dev": "npx serve . -p 3000",
+    "build": "echo 'Static site, no build needed' && exit 0",
+    "start": "npx serve . -p 3000",
+    "validate": "npx html-validate index.html"
+  },
+  "keywords": [
+    "medical",
+    "healthcare",
+    "iraq",
+    "telemedicine",
+    "spir-medical",
+    "سباير-ميديكال"
+  ],
+  "author": "Spir Medical Team",
+  "license": "UNLICENSED",
+  "homepage": "https://spirmedical.iq",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YOUR-USERNAME/spir-medical.git"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
