@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#00C896">
+<meta name="description" content="Spir Medical - تطبيق عراقي للخدمات الصحية المنزلية">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<title>Spir Medical | سبير الطبية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="app">
+<div class="toast" id="toast"></div>
+<!-- ══════════ HOME ══════════ -->
+<div class="screen active" id="scr-home">
+  <div class="top-bar">
+    <div class="top-row">
+      <div class="avatar">ح</div>
+      <div class="greeting"><div class="s" id="greet"></div><div class="n">حسين</div></div>
+      <div class="gold-badge" onclick="go('loyalty')">⭐ ذهبي</div>
+      <div class="notif-btn" onclick="go('notifications')">🔔<div class="notif-dot"></div></div>
+    </div>
+    <div class="loc" onclick="toast('📍 تحديد الموقع...')">📍 يوصل إلى: <b>النجف، الكرامة</b> ▼</div>
+  </div>
+
+  <div class="search-bar" onclick="go('search')">🔍 <span>ابحث عن دواء، طبيب، فحص...</span> <span style="background:var(--soft);padding:4px 6px;border-radius:8px;font-size:14px">🎙️</span></div>
+
+  <div class="stories">
+    <div class="story" onclick="toast('💡 اشرب 8 أكواب ماء يومياً')"><div class="story-ring" style="background:linear-gradient(135deg,#00C896,rgba(0,200,150,.4))"><div class="story-inner"><div class="story-icon" style="background:#E6FAF4">💡</div></div></div><div class="story-label">نصيحة</div></div>
+    <div class="story" onclick="toast('📊 93% من مستخدمينا راضون')"><div class="story-ring" style="background:linear-gradient(135deg,#4D8AFF,rgba(77,138,255,.4))"><div class="story-inner"><div class="story-icon" style="background:#E3EDFF">📊</div></div></div><div class="story-label">إحصائية</div></div>
+    <div class="story" onclick="toast('❓ هل تعلم أن فحص الدم يكشف 80% من الأمراض؟')"><div class="story-ring" style="background:linear-gradient(135deg,#FF6B6B,rgba(255,107,107,.4))"><div class="story-inner"><div class="story-icon" style="background:#FFE8E8">❓</div></div></div><div class="story-label">سؤال طبيب</div></div>
+    <div class="story" onclick="go('payment')"><div class="story-ring" style="background:linear-gradient(135deg,#FFB800,rgba(255,184,0,.4))"><div class="story-inner"><div class="story-icon" style="background:#FFF4D6">🎁</div></div></div><div class="story-label">عرض</div></div>
+    <div class="story" onclick="toast('⭐ أحمد: سبير غيّر حياتي الصحية')"><div class="story-ring" style="background:linear-gradient(135deg,#AA66FF,rgba(170,102,255,.4))"><div class="story-inner"><div class="story-icon" style="background:#F0E5FF">⭐</div></div></div><div class="story-label">قصة نجاح</div></div>
+  </div>
+
+  <div class="banner" onclick="go('payment')"><h3>خصم 20% على أول طلب</h3><p>استخدم الكود SPIR20</p><div class="banner-cta">استخدم الآن ←</div></div>
+  <div class="dots"><div class="dot a"></div><div class="dot"></div><div class="dot"></div></div>
+
+  <div style="padding:16px 16px 4px"><div class="section-t" style="padding:0">خدماتنا</div></div>
+  <div class="sgrid stagger">
+    <div class="svc" onclick="go('booking')"><div class="svc-icon" style="background:#FFE8E8">🩸<div class="svc-badge" style="background:var(--r)">TOP</div></div><div class="svc-label">سحب دم</div></div>
+    <div class="svc" onclick="go('consultation')"><div class="svc-icon" style="background:#E3EDFF">👨‍⚕️</div><div class="svc-label">استشارة</div></div>
+    <div class="svc" onclick="go('pharmacy')"><div class="svc-icon" style="background:var(--soft)">💊</div><div class="svc-label">صيدلية</div></div>
+    <div class="svc" onclick="go('ai')"><div class="svc-icon" style="background:#EEEDFE">🤖</div><div class="svc-label">فحص AI</div></div>
+    <div class="svc" onclick="go('hospitals')"><div class="svc-icon" style="background:#E6F1FB">🏥</div><div class="svc-label">مستشفيات</div></div>
+    <div class="svc" onclick="go('clinics')"><div class="svc-icon" style="background:#FFF0DC">🩺</div><div class="svc-label">عيادات</div></div>
+    <div class="svc" onclick="go('lab-results')"><div class="svc-icon" style="background:#FBEAF0">🧪</div><div class="svc-label">تحاليلي</div></div>
+    <div class="svc" onclick="go('prescriptions')"><div class="svc-icon" style="background:#F0E5FF">📋</div><div class="svc-label">وصفاتي</div></div>
+  </div>
+
+  <div style="padding:16px 16px 4px"><div class="section-t" style="padding:0">المزيد</div></div>
+  <div class="sgrid">
+    <div class="svc" onclick="go('spir-plus')"><div class="svc-icon" style="background:#FFF4D6">💎<div class="svc-badge" style="background:var(--gld)">VIP</div></div><div class="svc-label">Spir Plus</div></div>
+    <div class="svc" onclick="go('insurance')"><div class="svc-icon" style="background:#E3EDFF">🛡️</div><div class="svc-label">حماية سبير</div></div>
+    <div class="svc" onclick="go('family')"><div class="svc-icon" style="background:var(--soft)">👨‍👩‍👧‍👦</div><div class="svc-label">العائلة</div></div>
+    <div class="svc" onclick="go('referral')"><div class="svc-icon" style="background:#FFE8E8">🎁</div><div class="svc-label">الإحالة</div></div>
+    <div class="svc" onclick="go('recurring')"><div class="svc-icon" style="background:#F0E5FF">🔁</div><div class="svc-label">حجز متكرر</div></div>
+    <div class="svc" onclick="go('badges')"><div class="svc-icon" style="background:#FFF0DC">🏅</div><div class="svc-label">شارات</div></div>
+    <div class="svc" onclick="go('loyalty')"><div class="svc-icon" style="background:#FFF4D6">⭐</div><div class="svc-label">النقاط</div></div>
+    <div class="svc" onclick="go('settings')"><div class="svc-icon" style="background:#F1F3FB">⚙️</div><div class="svc-label">إعدادات</div></div>
+  </div>
+
+  <div style="padding:16px 16px 4px"><div class="section-t" style="padding:0">🔄 كرر طلبك السابق</div></div>
+  <div class="card" style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="go('booking')">
+    <div style="width:42px;height:42px;background:#FFE8E8;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px">🩸</div>
+    <div style="flex:1"><div style="font-size:13px;font-weight:700">سحب دم — فحص شامل</div><div style="font-size:11px;color:var(--lt)">SPR-2026-001234</div></div>
+    <div style="background:var(--soft);padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;color:var(--g)">كرر</div>
+  </div>
+
+  <div style="margin:0 16px 16px;background:linear-gradient(135deg,#E3EDFF,var(--soft));border-radius:18px;padding:16px;display:flex;gap:10px">
+    <div style="flex:1"><div style="background:var(--bl);color:var(--w);font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;display:inline-block">💡 نصيحة اليوم</div><div style="font-size:14px;font-weight:700;margin-top:5px">افحص ضغطك مرتين بالشهر</div><div style="font-size:11px;color:var(--sub);margin-top:3px">الضغط المرتفع لا يظهر بأعراض في البداية</div></div>
+    <div style="font-size:42px;opacity:.15">🛡️</div>
+  </div>
+
+  <div class="fcart" onclick="go('payment')"><div style="background:rgba(255,255,255,.25);width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px">3</div><span style="flex:1;font-size:14px;font-weight:700">عرض السلة</span><div style="background:var(--w);padding:4px 10px;border-radius:10px;font-size:13px;font-weight:700;color:var(--g)">75,000 د.ع</div></div>
+</div>
+
+<!-- ══════════ HOSPITALS ══════════ -->
+<div class="screen" id="scr-hospitals">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">المستشفيات والمراكز الصحية</div></div>
+  <div style="padding:10px 16px"><div style="background:var(--bg);border-radius:14px;padding:10px 12px;font-size:13px;color:var(--lt)">🔍 ابحث عن مستشفى...</div></div>
+  <div class="filters"><div class="fil ac">الكل</div><div class="fil">النجف</div><div class="fil">كربلاء</div><div class="fil">بغداد</div><div class="fil">البصرة</div><div class="fil">أربيل</div></div>
+  <div style="padding:2px 16px;font-size:12px;color:var(--sub);margin-bottom:6px">14 مستشفى/مركز</div>
+  <div class="stagger">
+    <div class="hosp-card"><div style="display:flex;gap:10px;margin-bottom:6px"><div style="width:48px;height:48px;background:rgba(156,39,176,.1);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🏥</div><div style="flex:1"><div style="font-size:14px;font-weight:700">مستشفى الصدر التعليمي ✅</div><div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px"><span class="pill" style="background:rgba(156,39,176,.1);color:#9C27B0">تعليمي</span><span class="pill" style="background:var(--soft);color:var(--g)">24h</span><span class="pill" style="background:#FFE8E8;color:var(--r)">طوارئ</span></div><div style="font-size:11px;color:var(--sub);margin-top:3px">📍 شارع المدينة المنورة، النجف ⭐ 4.2 · 500 سرير</div></div></div><div class="specs"><span class="spec">باطنية</span><span class="spec">جراحة</span><span class="spec">عظام</span><span class="spec">أعصاب</span><span class="spec">قلب</span></div><div class="facs"><div class="fac">🫀</div><div class="fac">🧪</div><div class="fac">💊</div><div class="fac">📷</div><div class="fac">🔬</div><div class="fac">🚑</div></div><div class="hosp-acts"><button class="hosp-btn" style="background:var(--r);color:var(--w)" onclick="toast('📞 اتصال طوارئ: +9647801000002')">🚨 طوارئ</button><button class="hosp-btn" style="background:var(--g);color:var(--w)" onclick="toast('📞 اتصال: +9647801000001')">📞 اتصال</button><button class="hosp-btn" style="background:var(--bg);color:var(--txt)" onclick="toast('📍 فتح خرائط جوجل...')">📍 اتجاهات</button></div></div>
+    <div class="hosp-card"><div style="display:flex;gap:10px;margin-bottom:6px"><div style="width:48px;height:48px;background:var(--soft);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🏥</div><div style="flex:1"><div style="font-size:14px;font-weight:700">مستشفى الحكيم العام ✅</div><div style="display:flex;gap:4px;margin-top:3px"><span class="pill" style="background:var(--soft);color:var(--g)">أهلي</span><span class="pill" style="background:var(--soft);color:var(--g)">24h</span></div><div style="font-size:11px;color:var(--sub);margin-top:3px">📍 شارع الصدر، النجف ⭐ 4.6 · 150 سرير</div></div></div><div class="specs"><span class="spec">باطنية</span><span class="spec">جراحة</span><span class="spec">قلب</span><span class="spec">أطفال</span></div><div class="hosp-acts"><button class="hosp-btn" style="background:var(--g);color:var(--w)" onclick="toast('📞 +9647801000005')">📞 اتصال</button><button class="hosp-btn" style="background:var(--bg);color:var(--txt)">📍 اتجاهات</button></div></div>
+    <div class="hosp-card"><div style="display:flex;gap:10px;margin-bottom:6px"><div style="width:48px;height:48px;background:rgba(156,39,176,.1);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🏥</div><div style="flex:1"><div style="font-size:14px;font-weight:700">مدينة الطب — بغداد ✅</div><div style="display:flex;gap:4px;margin-top:3px"><span class="pill" style="background:rgba(156,39,176,.1);color:#9C27B0">تعليمي</span><span class="pill" style="background:#FFE8E8;color:var(--r)">طوارئ</span></div><div style="font-size:11px;color:var(--sub);margin-top:3px">📍 باب المعظم، بغداد ⭐ 4.4 · 2000 سرير</div></div></div><div class="specs"><span class="spec">باطنية</span><span class="spec">جراحة</span><span class="spec">قلب</span><span class="spec">أعصاب</span><span class="spec">أورام</span></div><div class="hosp-acts"><button class="hosp-btn" style="background:var(--r);color:var(--w)" onclick="toast('🚨 طوارئ مدينة الطب')">🚨 طوارئ</button><button class="hosp-btn" style="background:var(--g);color:var(--w)">📞 اتصال</button><button class="hosp-btn" style="background:var(--bg);color:var(--txt)">📍</button></div></div>
+    <div class="hosp-card"><div style="display:flex;gap:10px"><div style="width:48px;height:48px;background:#FFE8E8;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🚨</div><div style="flex:1"><div style="font-size:14px;font-weight:700">مركز طوارئ النجف</div><div style="display:flex;gap:4px;margin-top:3px"><span class="pill" style="background:#FFE8E8;color:var(--r)">طوارئ</span><span class="pill" style="background:var(--soft);color:var(--g)">24h</span></div><div style="font-size:11px;color:var(--sub);margin-top:3px">📍 شارع الإمام علي ⭐ 4.3</div></div></div><div class="hosp-acts" style="margin-top:10px"><button class="hosp-btn" style="background:var(--r);color:var(--w);flex:2" onclick="toast('🚨 +9647801100002')">🚨 اتصال طوارئ</button><button class="hosp-btn" style="background:var(--bg);color:var(--txt)">📍</button></div></div>
+  </div>
+</div>
+
+<!-- ══════════ AI SYMPTOM ══════════ -->
+<div class="screen" id="scr-ai" class="screen flex" style="padding-bottom:70px">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><span style="font-size:20px">🤖</span><div class="t">مساعد سبير الذكي</div></div>
+  <div style="margin:6px 16px;background:#FFF4D6;padding:8px 10px;border-radius:10px;font-size:10px;color:#BA7517">ℹ️ هذا مساعد ذكي وليس بديلاً عن الطبيب</div>
+  <div style="padding:16px;flex:1" id="aiChat">
+    <div class="ai-msg bot">مرحباً! أنا مساعد سبير الذكي 🤖<br><br>صف لي أعراضك وسأساعدك في تحديد الفحص المناسب.<br><br>مثال: "عندي صداع وحرارة من 3 أيام"</div>
+  </div>
+  <div class="ai-input"><input type="text" id="aiInp" placeholder="صف أعراضك هنا..." onkeydown="if(event.key==='Enter')sendAI()"><button class="ai-send" onclick="sendAI()">↗</button></div>
+</div>
+
+<!-- ══════════ PAYMENT ══════════ -->
+<div class="screen" id="scr-payment">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">الدفع</div></div>
+  <div class="section-t">ملخص الطلب</div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0"><span>سحب دم — فحص شامل</span><span>35,000 د.ع</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0"><span>رسوم الزيارة</span><span>8,000 د.ع</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0;color:var(--g)"><span>خصم (SPIR20)</span><span>- 8,600 د.ع</span></div>
+    <div style="border-top:.5px solid var(--bdr);margin:8px 0"></div>
+    <div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700"><span>المجموع</span><span>34,400 د.ع</span></div>
+  </div>
+  <div class="section-t">طريقة الدفع</div>
+  <div class="pm sel" onclick="selPM(this)"><div class="ico">📱</div><div class="info"><div class="n">زين كاش</div><div class="d">ادفع بمحفظة زين كاش</div></div><div class="tag">الأكثر</div><div class="radio"></div></div>
+  <div class="pm" onclick="selPM(this)"><div class="ico">💳</div><div class="info"><div class="n">ماستركارد / فيزا</div><div class="d">بطاقة ائتمان</div></div><div class="radio"></div></div>
+  <div class="pm" onclick="selPM(this)"><div class="ico">👛</div><div class="info"><div class="n">محفظة سبير</div><div class="d">الرصيد: 125,000 د.ع</div></div><div class="radio"></div></div>
+  <div class="pm" onclick="selPM(this)"><div class="ico">💵</div><div class="info"><div class="n">نقداً عند الاستلام</div><div class="d">ادفع للفني مباشرة</div></div><div class="radio"></div></div>
+  <button class="btn btn-g" onclick="toast('✅ تم الدفع بنجاح!')">🔒 ادفع 34,400 د.ع</button>
+  <div style="text-align:center;font-size:11px;color:var(--lt);padding:8px 0">🔒 دفع آمن ومشفّر</div>
+</div>
+
+<!-- ══════════ INSURANCE ══════════ -->
+<div class="screen" id="scr-insurance">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">حماية سبير</div></div>
+  <div style="margin:16px;background:linear-gradient(135deg,#1959A5,#4D8AFF);border-radius:22px;padding:24px;color:var(--w);text-align:center"><div style="width:64px;height:64px;background:rgba(255,255,255,.2);border-radius:20px;display:inline-flex;align-items:center;justify-content:center;font-size:30px">🛡️</div><div style="font-size:26px;font-weight:800;margin-top:12px">حماية سبير</div><div style="font-size:13px;opacity:.85">تأمين صحي مصغر بأسعار تناسب الجميع</div></div>
+  <div class="card" style="border-radius:20px;padding:18px">
+    <div style="display:flex;gap:10px"><div style="width:44px;height:44px;background:rgba(25,89,165,.1);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px">🛡️</div><div><div style="font-size:16px;font-weight:700">حماية سبير الأساسية</div><div style="font-size:11px;color:var(--sub)">حماية أساسية للفحوصات</div></div></div>
+    <div style="margin-top:12px"><div style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px"><span style="color:var(--g)">✓</span> فحصان مجانيان شهرياً</div><div style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px"><span style="color:var(--g)">✓</span> استشارة طوارئ مجانية</div><div style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px"><span style="color:var(--g)">✓</span> خصم 25% على كل شيء</div></div>
+    <div style="display:flex;align-items:center;margin-top:14px"><div><span style="font-size:22px;font-weight:800;color:#1959A5">10,000</span> <span style="font-size:12px;color:var(--sub)">د.ع/شهر</span></div><button style="margin-right:auto;background:#1959A5;color:var(--w);border:none;padding:10px 22px;border-radius:12px;font-family:'Cairo';font-size:13px;font-weight:700;cursor:pointer" onclick="toast('✅ تم الاشتراك!')">اشترك</button></div>
+  </div>
+  <div class="card" style="border:2px solid #1959A5;border-radius:20px;padding:18px">
+    <div style="background:rgba(25,89,165,.1);color:#1959A5;font-size:10px;font-weight:700;padding:3px 10px;border-radius:8px;display:inline-block;margin-bottom:8px">⭐ الأكثر توفيراً</div>
+    <div style="display:flex;gap:10px"><div style="width:44px;height:44px;background:rgba(25,89,165,.1);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px">👨‍👩‍👧‍👦</div><div><div style="font-size:16px;font-weight:700">درع سبير العائلي</div><div style="font-size:11px;color:var(--sub)">حماية شاملة لكل العائلة</div></div></div>
+    <div style="margin-top:12px"><div style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px"><span style="color:var(--g)">✓</span> 5 فحوصات مجانية شهرياً</div><div style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px"><span style="color:var(--g)">✓</span> 3 استشارات مجانية</div><div style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px"><span style="color:var(--g)">✓</span> خصم 40% على كل شيء</div><div style="display:flex;align-items:center;gap:6px;padding:4px 0;font-size:13px"><span style="color:var(--g)">✓</span> توصيل أدوية مجاني</div></div>
+    <div style="display:flex;align-items:center;margin-top:14px"><div><span style="font-size:22px;font-weight:800;color:#1959A5">25,000</span> <span style="font-size:12px;color:var(--sub)">د.ع/شهر</span></div><button style="margin-right:auto;background:#1959A5;color:var(--w);border:none;padding:10px 22px;border-radius:12px;font-family:'Cairo';font-size:13px;font-weight:700;cursor:pointer" onclick="toast('✅ تم الاشتراك!')">اشترك</button></div>
+  </div>
+</div>
+
+<!-- ══════════ BADGES ══════════ -->
+<div class="screen" id="scr-badges">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">الشارات والإنجازات</div></div>
+  <div style="margin:16px;background:linear-gradient(135deg,#FFD66B,#FFB800);border-radius:20px;padding:18px;display:flex;align-items:center;gap:14px;color:var(--w);box-shadow:0 8px 20px rgba(255,184,0,.3)"><div style="width:52px;height:52px;background:rgba(255,255,255,.25);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px">🏆</div><div style="flex:1"><div style="font-size:26px;font-weight:800">5/15</div><div style="font-size:12px;opacity:.9">شارة مكتسبة</div><div style="background:rgba(255,255,255,.25);height:6px;border-radius:4px;margin-top:8px;overflow:hidden"><div style="background:var(--w);height:100%;width:33%;border-radius:4px"></div></div></div></div>
+  <div style="padding:0 16px;display:flex;align-items:center;gap:6px;margin-bottom:8px"><div style="width:8px;height:8px;background:#D85A30;border-radius:50%"></div><span style="font-size:14px;font-weight:700;color:#D85A30">إنجازات</span></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px;margin-bottom:16px"><div class="bdg earned" onclick="toast('🩸 بداية رحلتك — أكملت أول فحص +100 نقطة')"><div style="font-size:30px">🩸</div><div style="font-size:10px;font-weight:700;color:#D85A30;margin-top:4px">بداية رحلتك</div><div style="color:var(--g);font-size:12px">✓</div></div><div class="bdg earned" onclick="toast('💪 مهتم بصحتك — 5 فحوصات +250 نقطة')"><div style="font-size:30px">💪</div><div style="font-size:10px;font-weight:700;color:#D85A30;margin-top:4px">مهتم بصحتك</div><div style="color:var(--g);font-size:12px">✓</div></div><div class="bdg locked"><div style="font-size:30px">🏅</div><div style="font-size:10px;font-weight:700;margin-top:4px">محارب صحي</div><div style="font-size:12px">🔒</div></div></div>
+  <div style="padding:0 16px;display:flex;align-items:center;gap:6px;margin-bottom:8px"><div style="width:8px;height:8px;background:var(--bl);border-radius:50%"></div><span style="font-size:14px;font-weight:700;color:var(--bl)">اجتماعي</span></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px;margin-bottom:16px"><div class="bdg earned"><div style="font-size:30px">⭐</div><div style="font-size:10px;font-weight:700;color:#1959A5;margin-top:4px">صوتك مسموع</div><div style="color:var(--g);font-size:12px">✓</div></div><div class="bdg earned"><div style="font-size:30px">🤝</div><div style="font-size:10px;font-weight:700;color:#1959A5;margin-top:4px">سفير سبير</div><div style="color:var(--g);font-size:12px">✓</div></div><div class="bdg locked"><div style="font-size:30px">🌟</div><div style="font-size:10px;font-weight:700;margin-top:4px">نجم الإحالات</div><div style="font-size:12px">🔒</div></div></div>
+  <div style="padding:0 16px;display:flex;align-items:center;gap:6px;margin-bottom:8px"><div style="width:8px;height:8px;background:var(--gld);border-radius:50%"></div><span style="font-size:14px;font-weight:700;color:#BA7517">ولاء</span></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px;margin-bottom:16px"><div class="bdg earned"><div style="font-size:30px">💎</div><div style="font-size:10px;font-weight:700;color:#BA7517;margin-top:4px">عضو مميز</div><div style="color:var(--g);font-size:12px">✓</div></div><div class="bdg locked"><div style="font-size:30px">👑</div><div style="font-size:10px;font-weight:700;margin-top:4px">عضو VIP</div><div style="font-size:12px">🔒</div></div><div class="bdg locked"><div style="font-size:30px">🔥</div><div style="font-size:10px;font-weight:700;margin-top:4px">منتظم</div><div style="font-size:12px">🔒</div></div></div>
+</div>
+
+<!-- ══════════ LOYALTY ══════════ -->
+<div class="screen" id="scr-loyalty">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">النقاط والمكافآت</div></div>
+  <div style="margin:16px;background:linear-gradient(135deg,#FFD66B,#FFB800);border-radius:22px;padding:22px;color:var(--w);box-shadow:0 10px 24px rgba(255,184,0,.3)"><div style="background:rgba(255,255,255,.25);padding:4px 10px;border-radius:14px;display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700">💎 مستوى ذهبي</div><div style="font-size:42px;font-weight:800;margin-top:14px;line-height:1">7,250</div><div style="font-size:13px;opacity:.9">نقطة سبير</div><div style="background:rgba(255,255,255,.2);height:7px;border-radius:5px;margin-top:14px;overflow:hidden"><div style="background:var(--w);height:100%;width:48%;border-radius:5px"></div></div><div style="font-size:11px;opacity:.9;margin-top:6px">7,750 نقطة للمستوى البلاتيني</div></div>
+  <div class="section-t">كيف تكسب النقاط؟</div>
+  <div class="card"><div style="display:flex;align-items:center;gap:10px;padding:5px 0"><div style="width:34px;height:34px;background:var(--soft);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px">🛒</div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--g)">5 نقاط</div><div style="font-size:11px;color:var(--sub)">لكل 1,000 د.ع</div></div></div><div style="border-top:.5px solid #F0F2F8;margin:6px 0"></div><div style="display:flex;align-items:center;gap:10px;padding:5px 0"><div style="width:34px;height:34px;background:var(--soft);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px">🎂</div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--g)">500 نقطة</div><div style="font-size:11px;color:var(--sub)">هدية عيد ميلادك</div></div></div><div style="border-top:.5px solid #F0F2F8;margin:6px 0"></div><div style="display:flex;align-items:center;gap:10px;padding:5px 0"><div style="width:34px;height:34px;background:var(--soft);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px">🤝</div><div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--g)">500 نقطة</div><div style="font-size:11px;color:var(--sub)">لكل صديق ينضم بدعوتك</div></div></div></div>
+  <div class="section-t">سجل النقاط</div>
+  <div class="card" style="display:flex;align-items:center;gap:10px"><div style="width:34px;height:34px;background:var(--soft);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px">➕</div><div style="flex:1"><div style="font-size:13px;font-weight:700">طلب فحص دم</div><div style="font-size:11px;color:var(--lt)">قبل ساعتين</div></div><div style="font-size:16px;font-weight:700;color:var(--g)">+125</div></div>
+  <div class="card" style="display:flex;align-items:center;gap:10px"><div style="width:34px;height:34px;background:var(--soft);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px">🤝</div><div style="flex:1"><div style="font-size:13px;font-weight:700">دعوة صديق — أحمد</div><div style="font-size:11px;color:var(--lt)">أمس</div></div><div style="font-size:16px;font-weight:700;color:var(--g)">+500</div></div>
+</div>
+
+<!-- ══════════ NOTIFICATIONS ══════════ -->
+<div class="screen" id="scr-notifications">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">الإشعارات</div><span style="font-size:12px;color:var(--g);font-weight:700;cursor:pointer" onclick="toast('✅ تم تحديد الكل كمقروء')">قراءة الكل</span></div>
+  <div class="notif-item unread"><div style="width:42px;height:42px;background:var(--soft);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📦</div><div style="flex:1"><div style="font-size:13px;font-weight:700">تم تأكيد طلبك</div><div style="font-size:11px;color:var(--sub)">طلب فحص دم SPR-001245 تم قبوله</div><div style="font-size:10px;color:var(--lt);margin-top:3px">قبل 5 دقائق</div></div><div style="width:8px;height:8px;background:var(--g);border-radius:50%;margin-top:6px;flex-shrink:0"></div></div>
+  <div class="notif-item unread"><div style="width:42px;height:42px;background:#E3EDFF;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">💬</div><div style="flex:1"><div style="font-size:13px;font-weight:700">رسالة من د. أحمد</div><div style="font-size:11px;color:var(--sub)">وصلت للحي. أين البيت؟</div><div style="font-size:10px;color:var(--lt);margin-top:3px">قبل 12 دقيقة</div></div><div style="width:8px;height:8px;background:var(--g);border-radius:50%;margin-top:6px;flex-shrink:0"></div></div>
+  <div class="notif-item"><div style="width:42px;height:42px;background:#FFF4D6;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🏷️</div><div style="flex:1"><div style="font-size:13px;font-weight:700">عرض حصري!</div><div style="font-size:11px;color:var(--sub)">خصم 30% على فحوصات العائلة — FAMILY30</div><div style="font-size:10px;color:var(--lt);margin-top:3px">قبل ساعة</div></div></div>
+  <div class="notif-item"><div style="width:42px;height:42px;background:var(--soft);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🧪</div><div style="flex:1"><div style="font-size:13px;font-weight:700">نتائجك جاهزة</div><div style="font-size:11px;color:var(--sub)">نتائج فحص CBC جاهزة — اضغط لعرض PDF</div><div style="font-size:10px;color:var(--lt);margin-top:3px">أمس</div></div></div>
+  <div class="notif-item"><div style="width:42px;height:42px;background:#EEEDFE;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🏅</div><div style="flex:1"><div style="font-size:13px;font-weight:700">حصلت على شارة!</div><div style="font-size:11px;color:var(--sub)">شارة "مهتم بصحتك" + 250 نقطة</div><div style="font-size:10px;color:var(--lt);margin-top:3px">قبل يومين</div></div></div>
+  <div class="notif-item"><div style="width:42px;height:42px;background:#FFF0DC;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">⏰</div><div style="flex:1"><div style="font-size:13px;font-weight:700">تذكير فحص</div><div style="font-size:11px;color:var(--sub)">فحص سكر صائم غداً 9 صباحاً</div><div style="font-size:10px;color:var(--lt);margin-top:3px">قبل 3 أيام</div></div></div>
+</div>
+
+<!-- ══════════ SETTINGS ══════════ -->
+<div class="screen" id="scr-settings">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">الإعدادات</div></div>
+  <div style="padding:14px 16px 6px;font-size:14px;font-weight:700;color:var(--g)">🌐 اللغة</div>
+  <div class="card" style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="toast('اختيار اللغة: العربية / English / کوردی')"><span style="font-size:26px">🇮🇶</span><div style="flex:1"><div style="font-size:15px;font-weight:700">العربية</div><div style="font-size:11px;color:var(--lt)">اضغط لتغيير اللغة</div></div><span style="color:var(--lt)">◂</span></div>
+  <div style="padding:10px 16px 6px;font-size:14px;font-weight:700;color:var(--g)">🔔 الإشعارات</div>
+  <div style="background:var(--w);border-radius:16px;margin:0 16px 16px;overflow:hidden">
+    <div class="sw-item"><span class="ic">🔔</span><div class="lb"><div class="t">كل الإشعارات</div></div><div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
+    <div class="sw-item"><span class="ic">📦</span><div class="lb"><div class="t">تحديثات الطلبات</div></div><div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
+    <div class="sw-item"><span class="ic">💬</span><div class="lb"><div class="t">رسائل المحادثة</div></div><div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
+    <div class="sw-item"><span class="ic">🏷️</span><div class="lb"><div class="t">العروض</div></div><div class="toggle off" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
+  </div>
+  <div style="padding:0 16px 6px;font-size:14px;font-weight:700;color:var(--g)">🎨 المظهر</div>
+  <div style="display:flex;gap:8px;padding:0 16px;margin-bottom:16px">
+    <div onclick="this.style.border='2px solid var(--g)';this.style.background='var(--soft)'" style="flex:1;padding:14px;border-radius:14px;text-align:center;background:var(--soft);border:2px solid var(--g);cursor:pointer"><div style="font-size:22px">☀️</div><div style="font-size:12px;font-weight:700;color:var(--g);margin-top:4px">فاتح</div></div>
+    <div onclick="toast('الوضع الداكن قريباً')" style="flex:1;padding:14px;border-radius:14px;text-align:center;background:var(--bg);border:.5px solid var(--bdr);cursor:pointer"><div style="font-size:22px">🌙</div><div style="font-size:12px;font-weight:600;color:var(--sub);margin-top:4px">داكن</div></div>
+    <div style="flex:1;padding:14px;border-radius:14px;text-align:center;background:var(--bg);border:.5px solid var(--bdr);cursor:pointer"><div style="font-size:22px">🔄</div><div style="font-size:12px;font-weight:600;color:var(--sub);margin-top:4px">تلقائي</div></div>
+  </div>
+  <div style="padding:0 16px 6px;font-size:14px;font-weight:700;color:var(--g)">👤 الحساب</div>
+  <div style="background:var(--w);border-radius:16px;margin:0 16px;overflow:hidden">
+    <div class="sw-item" style="cursor:pointer" onclick="toast('⚠️ هل أنت متأكد من حذف الحساب؟')"><span class="ic">🗑️</span><div class="lb"><div class="t" style="color:var(--r)">حذف الحساب</div></div></div>
+    <div class="sw-item" style="cursor:pointer;border:none" onclick="toast('تم تسجيل الخروج')"><span class="ic">🚪</span><div class="lb"><div class="t">تسجيل الخروج</div></div></div>
+  </div>
+  <div style="text-align:center;padding:20px;font-size:11px;color:var(--lt)">Spir Medical v3.1<br>صنع بـ ❤️ في العراق</div>
+</div>
+
+<!-- ══════════ BOOKING (Blood Test) ══════════ -->
+<div class="screen" id="scr-booking">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">حجز فحص دم</div></div>
+  <div style="padding:14px 16px;background:linear-gradient(135deg,var(--soft),#fff)"><div style="font-size:18px;font-weight:700">12 فحص متاح</div><div style="font-size:12px;color:var(--sub)">اختر فحوصاتك واحجز فني سحب الدم لبيتك</div></div>
+  <div class="filters"><div class="fil ac">الكل</div><div class="fil">دم</div><div class="fil">سكر</div><div class="fil">كلى</div><div class="fil">كبد</div><div class="fil">غدة</div></div>
+  <div class="card" style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="addToCart(this,'فحص دم شامل CBC',15000)"><div style="width:42px;height:42px;background:#FFE8E8;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">🩸</div><div style="flex:1"><div style="font-size:13px;font-weight:700">فحص دم شامل CBC</div><div style="font-size:11px;color:var(--sub)">عد كريات الدم الحمراء والبيضاء</div></div><div style="font-size:14px;font-weight:700;color:var(--g)">15,000</div></div>
+  <div class="card" style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="addToCart(this,'سكر صائم',10000)"><div style="width:42px;height:42px;background:#FFF4D6;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">🍬</div><div style="flex:1"><div style="font-size:13px;font-weight:700">سكر صائم FBS</div><div style="font-size:11px;color:var(--sub)">يحتاج صيام 8 ساعات</div></div><div style="font-size:14px;font-weight:700;color:var(--g)">10,000</div></div>
+  <div class="card" style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="addToCart(this,'سكر تراكمي HbA1c',25000)"><div style="width:42px;height:42px;background:#FFF4D6;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">📊</div><div style="flex:1"><div style="font-size:13px;font-weight:700">سكر تراكمي HbA1c</div><div style="font-size:11px;color:var(--sub)">معدل السكر آخر 3 أشهر</div></div><div style="font-size:14px;font-weight:700;color:var(--g)">25,000</div></div>
+  <div class="card" style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="addToCart(this,'وظائف كلى',20000)"><div style="width:42px;height:42px;background:#E3EDFF;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">💧</div><div style="flex:1"><div style="font-size:13px;font-weight:700">وظائف الكلى</div><div style="font-size:11px;color:var(--sub)">يوريا + كرياتنين</div></div><div style="font-size:14px;font-weight:700;color:var(--g)">20,000</div></div>
+  <div class="card" style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="addToCart(this,'وظائف كبد',22000)"><div style="width:42px;height:42px;background:#FFF0DC;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">🫁</div><div style="flex:1"><div style="font-size:13px;font-weight:700">وظائف الكبد</div><div style="font-size:11px;color:var(--sub)">SGOT + SGPT + ALP</div></div><div style="font-size:14px;font-weight:700;color:var(--g)">22,000</div></div>
+  <div class="card" style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="addToCart(this,'فحص دهون',18000)"><div style="width:42px;height:42px;background:#EEEDFE;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">🧬</div><div style="flex:1"><div style="font-size:13px;font-weight:700">فحص دهون شامل</div><div style="font-size:11px;color:var(--sub)">كوليسترول + ترايغليسرايد</div></div><div style="font-size:14px;font-weight:700;color:var(--g)">18,000</div></div>
+  <div class="card" style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="addToCart(this,'فيتامين D',30000)"><div style="width:42px;height:42px;background:#FFF4D6;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">☀️</div><div style="flex:1"><div style="font-size:13px;font-weight:700">فيتامين D</div><div style="font-size:11px;color:var(--sub)">25-Hydroxy Vitamin D</div></div><div style="font-size:14px;font-weight:700;color:var(--g)">30,000</div></div>
+  <div class="card" style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="addToCart(this,'وظائف غدة درقية',35000)"><div style="width:42px;height:42px;background:#FBEAF0;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">🔬</div><div style="flex:1"><div style="font-size:13px;font-weight:700">وظائف الغدة الدرقية</div><div style="font-size:11px;color:var(--sub)">TSH + T3 + T4</div></div><div style="font-size:14px;font-weight:700;color:var(--g)">35,000</div></div>
+  <div style="height:80px"></div>
+  <div style="position:fixed;bottom:64px;left:50%;transform:translateX(-50%);width:100%;max-width:480px;padding:8px 16px;background:var(--w);border-top:.5px solid var(--bdr);z-index:40"><button class="btn btn-g" style="margin:0;width:100%" onclick="go('tracking')">📍 احجز فحص الآن (3 منتقاة)</button></div>
+</div>
+
+<!-- ══════════ CONSULTATION ══════════ -->
+<div class="screen" id="scr-consultation">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">استشارة طبية</div></div>
+  <div style="padding:14px 16px;background:linear-gradient(135deg,#E3EDFF,#fff)"><div style="font-size:18px;font-weight:700">اختر التخصص</div><div style="font-size:12px;color:var(--sub)">أطباء متخصصون يصلون لبيتك أو عبر فيديو</div></div>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 16px" class="stagger">
+    <div class="card" style="margin:0;text-align:center;cursor:pointer" onclick="toast('👨‍⚕️ باطنية - 30 طبيب متاح')"><div style="font-size:36px">👨‍⚕️</div><div style="font-size:13px;font-weight:700;margin-top:6px">باطنية</div><div style="font-size:10px;color:var(--sub)">من 25,000 د.ع</div></div>
+    <div class="card" style="margin:0;text-align:center;cursor:pointer" onclick="toast('👶 أطفال - 18 طبيب متاح')"><div style="font-size:36px">👶</div><div style="font-size:13px;font-weight:700;margin-top:6px">أطفال</div><div style="font-size:10px;color:var(--sub)">من 30,000 د.ع</div></div>
+    <div class="card" style="margin:0;text-align:center;cursor:pointer" onclick="toast('👩‍⚕️ نسائية - 12 طبيبة')"><div style="font-size:36px">👩‍⚕️</div><div style="font-size:13px;font-weight:700;margin-top:6px">نسائية</div><div style="font-size:10px;color:var(--sub)">من 35,000 د.ع</div></div>
+    <div class="card" style="margin:0;text-align:center;cursor:pointer" onclick="toast('🦴 عظام - 15 طبيب')"><div style="font-size:36px">🦴</div><div style="font-size:13px;font-weight:700;margin-top:6px">عظام</div><div style="font-size:10px;color:var(--sub)">من 35,000 د.ع</div></div>
+    <div class="card" style="margin:0;text-align:center;cursor:pointer" onclick="toast('❤️ قلب - 10 أطباء')"><div style="font-size:36px">❤️</div><div style="font-size:13px;font-weight:700;margin-top:6px">قلب</div><div style="font-size:10px;color:var(--sub)">من 50,000 د.ع</div></div>
+    <div class="card" style="margin:0;text-align:center;cursor:pointer" onclick="toast('🧠 أعصاب - 8 أطباء')"><div style="font-size:36px">🧠</div><div style="font-size:13px;font-weight:700;margin-top:6px">أعصاب</div><div style="font-size:10px;color:var(--sub)">من 45,000 د.ع</div></div>
+    <div class="card" style="margin:0;text-align:center;cursor:pointer" onclick="toast('👁️ عيون - 14 طبيب')"><div style="font-size:36px">👁️</div><div style="font-size:13px;font-weight:700;margin-top:6px">عيون</div><div style="font-size:10px;color:var(--sub)">من 30,000 د.ع</div></div>
+    <div class="card" style="margin:0;text-align:center;cursor:pointer" onclick="toast('🦷 أسنان - 22 طبيب')"><div style="font-size:36px">🦷</div><div style="font-size:13px;font-weight:700;margin-top:6px">أسنان</div><div style="font-size:10px;color:var(--sub)">من 25,000 د.ع</div></div>
+  </div>
+  <div class="section-t" style="margin-top:20px">طريقة الاستشارة</div>
+  <div class="pm" onclick="selPM(this)"><div class="ico">🏠</div><div class="info"><div class="n">استشارة منزلية</div><div class="d">الطبيب يأتي إليك</div></div><div class="tag">+8,000 د.ع</div><div class="radio"></div></div>
+  <div class="pm sel" onclick="selPM(this)"><div class="ico">📹</div><div class="info"><div class="n">استشارة فيديو</div><div class="d">عبر التطبيق - فوري</div></div><div class="tag">مجاني</div><div class="radio"></div></div>
+  <div class="pm" onclick="selPM(this)"><div class="ico">💬</div><div class="info"><div class="n">استشارة محادثة</div><div class="d">دردشة نصية مع الطبيب</div></div><div class="tag">-30%</div><div class="radio"></div></div>
+  <div style="height:20px"></div>
+</div>
+
+<!-- ══════════ PHARMACY (Map-First) ══════════ -->
+<div class="screen" id="scr-pharmacy">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">الصيدليات</div></div>
+  <div style="padding:10px 16px"><div style="background:var(--bg);border-radius:14px;padding:10px 12px;font-size:13px;color:var(--lt);display:flex;align-items:center;gap:8px">🔍 ابحث عن دواء...</div></div>
+  <div style="position:relative;margin:0 16px 12px;border-radius:18px;overflow:hidden;height:200px;background:linear-gradient(135deg,#E8EFEF,#D4DBDC)"><svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%"><rect width="400" height="200" fill="#E8EFEF"/><line x1="0" y1="60" x2="400" y2="60" stroke="#fff" stroke-width="3"/><line x1="0" y1="130" x2="400" y2="130" stroke="#fff" stroke-width="3"/><line x1="100" y1="0" x2="100" y2="200" stroke="#fff" stroke-width="3"/><line x1="280" y1="0" x2="280" y2="200" stroke="#fff" stroke-width="3"/><circle cx="80" cy="40" r="14" fill="#00C896"/><text x="80" y="44" fill="#fff" font-size="9" font-weight="700" text-anchor="middle">5K</text><circle cx="240" cy="90" r="14" fill="#00C896"/><text x="240" y="94" fill="#fff" font-size="9" font-weight="700" text-anchor="middle">4K</text><circle cx="180" cy="160" r="14" fill="#FF6B6B"/><text x="180" y="164" fill="#fff" font-size="9" font-weight="700" text-anchor="middle">✕</text><circle cx="340" cy="50" r="14" fill="#00C896"/><text x="340" y="54" fill="#fff" font-size="9" font-weight="700" text-anchor="middle">6K</text><circle cx="320" cy="140" r="8" fill="#4D8AFF" stroke="#fff" stroke-width="2"/></svg><div style="position:absolute;top:8px;right:8px;background:var(--w);padding:4px 8px;border-radius:8px;font-size:10px;font-weight:700;color:var(--g)">📍 4 صيدليات قريبة</div></div>
+  <div class="section-t">صيدليات قريبة منك</div>
+  <div class="card" style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="toast('📞 صيدلية الشفاء')"><div style="width:42px;height:42px;background:var(--soft);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">💊</div><div style="flex:1"><div style="font-size:13px;font-weight:700">صيدلية الشفاء <span style="background:var(--soft);color:var(--g);padding:1px 6px;border-radius:6px;font-size:9px">⭐ 4.8</span></div><div style="font-size:11px;color:var(--sub)">📍 600 متر · 15 دقيقة سيراً</div></div><div><div style="font-size:14px;font-weight:700;color:var(--g)">5,000 د.ع</div><div style="font-size:9px;color:var(--lt);text-align:left">⏱ يفتح الآن</div></div></div>
+  <div class="card" style="display:flex;align-items:center;gap:10px;cursor:pointer"><div style="width:42px;height:42px;background:var(--soft);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">💊</div><div style="flex:1"><div style="font-size:13px;font-weight:700">صيدلية النور <span style="background:var(--soft);color:var(--g);padding:1px 6px;border-radius:6px;font-size:9px">⭐ 4.6</span></div><div style="font-size:11px;color:var(--sub)">📍 1.2 كم · يوصل لك</div></div><div><div style="font-size:14px;font-weight:700;color:var(--g)">4,500 د.ع</div><div style="font-size:9px;color:var(--lt);text-align:left">🏍️ توصيل مجاني</div></div></div>
+  <div class="card" style="display:flex;align-items:center;gap:10px;opacity:.5"><div style="width:42px;height:42px;background:#FFE8E8;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">💊</div><div style="flex:1"><div style="font-size:13px;font-weight:700">صيدلية الكرامة</div><div style="font-size:11px;color:var(--r)">✕ غير متوفر حالياً</div></div></div>
+  <div class="card" style="display:flex;align-items:center;gap:10px;cursor:pointer"><div style="width:42px;height:42px;background:var(--soft);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">💊</div><div style="flex:1"><div style="font-size:13px;font-weight:700">صيدلية الحياة <span style="background:var(--soft);color:var(--g);padding:1px 6px;border-radius:6px;font-size:9px">⭐ 4.4</span></div><div style="font-size:11px;color:var(--sub)">📍 2 كم · يوصل لك</div></div><div><div style="font-size:14px;font-weight:700;color:var(--g)">6,000 د.ع</div><div style="font-size:9px;color:var(--lt);text-align:left">🏍️ 5,000 توصيل</div></div></div>
+</div>
+
+<!-- ══════════ SEARCH ══════════ -->
+<div class="screen" id="scr-search">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">البحث</div></div>
+  <div style="padding:14px 16px"><input type="text" placeholder="🔍 ابحث عن دواء، طبيب، فحص..." style="width:100%;padding:14px;border-radius:14px;border:.5px solid var(--bdr);font-family:'Cairo';font-size:14px;background:var(--w);outline:none"></div>
+  <div class="section-t">عمليات البحث الشائعة</div>
+  <div style="padding:0 16px;display:flex;gap:8px;flex-wrap:wrap">
+    <div class="fil" onclick="toast('بحث: فحص دم شامل')">فحص دم شامل</div>
+    <div class="fil" onclick="toast('بحث: د. أحمد علي')">د. أحمد علي</div>
+    <div class="fil" onclick="toast('بحث: بانادول')">بانادول</div>
+    <div class="fil" onclick="toast('بحث: فيتامين D')">فيتامين D</div>
+    <div class="fil" onclick="toast('بحث: استشارة أطفال')">استشارة أطفال</div>
+    <div class="fil" onclick="toast('بحث: فحص سكر')">فحص سكر</div>
+  </div>
+  <div class="section-t" style="margin-top:20px">تصفح حسب الفئة</div>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 16px">
+    <div class="card" style="margin:0;text-align:center;cursor:pointer" onclick="go('booking')"><div style="font-size:36px">🩸</div><div style="font-size:13px;font-weight:700;margin-top:6px">فحوصات</div><div style="font-size:10px;color:var(--sub)">12 فحص</div></div>
+    <div class="card" style="margin:0;text-align:center;cursor:pointer" onclick="go('pharmacy')"><div style="font-size:36px">💊</div><div style="font-size:13px;font-weight:700;margin-top:6px">أدوية</div><div style="font-size:10px;color:var(--sub)">+150 دواء</div></div>
+    <div class="card" style="margin:0;text-align:center;cursor:pointer" onclick="go('consultation')"><div style="font-size:36px">👨‍⚕️</div><div style="font-size:13px;font-weight:700;margin-top:6px">أطباء</div><div style="font-size:10px;color:var(--sub)">+80 طبيب</div></div>
+    <div class="card" style="margin:0;text-align:center;cursor:pointer" onclick="go('hospitals')"><div style="font-size:36px">🏥</div><div style="font-size:13px;font-weight:700;margin-top:6px">مستشفيات</div><div style="font-size:10px;color:var(--sub)">14 مستشفى</div></div>
+  </div>
+</div>
+
+<!-- ══════════ TRACKING + DUAL OTP ══════════ -->
+<div class="screen" id="scr-tracking">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t" style="line-height:1.2">تتبع طلبك<div style="font-size:10px;color:var(--lt);font-weight:500">SPR-2026-001245</div></div><div class="pill" style="background:#FFF4D6;color:#BA7517">🟡 في الطريق</div></div>
+  <div style="position:relative;height:200px;background:#E8EFEF;overflow:hidden"><svg viewBox="0 0 400 200" preserveAspectRatio="none" style="width:100%;height:100%"><rect width="400" height="200" fill="#E8EFEF"/><rect x="0" y="60" width="400" height="14" fill="#D4DBDC"/><rect x="0" y="130" width="400" height="14" fill="#D4DBDC"/><rect x="80" y="0" width="14" height="200" fill="#D4DBDC"/><rect x="260" y="0" width="14" height="200" fill="#D4DBDC"/><path d="M 50 170 L 100 130 L 180 90 L 300 60" stroke="#00C896" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="50" cy="170" r="9" fill="#4D8AFF" stroke="#fff" stroke-width="3"/><text x="100" y="80" font-size="22">🚗</text><circle cx="300" cy="60" r="9" fill="var(--r)" stroke="#fff" stroke-width="3"/></svg><div style="position:absolute;bottom:10px;right:10px;background:var(--w);padding:8px 12px;border-radius:12px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(0,0,0,.1)"><div style="width:32px;height:32px;background:linear-gradient(135deg,var(--g),var(--gd));border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--w);font-weight:700">أ</div><div><div style="font-size:11px;font-weight:700">د. أحمد علي</div><div style="font-size:10px;color:var(--g);font-weight:600">🚗 12 دقيقة</div></div></div></div>
+  <div style="margin:14px 14px 10px;background:linear-gradient(135deg,var(--g),var(--gd));border-radius:14px;padding:14px;color:var(--w)"><div style="font-size:11px;font-weight:700;margin-bottom:8px">✅ رمز البدء — أعطه للفني عند الوصول</div><div style="display:flex;gap:8px;justify-content:center"><div style="background:rgba(255,255,255,.95);color:var(--g);padding:10px 0;border-radius:9px;width:38px;text-align:center;font-size:22px;font-weight:800">7</div><div style="background:rgba(255,255,255,.95);color:var(--g);padding:10px 0;border-radius:9px;width:38px;text-align:center;font-size:22px;font-weight:800">3</div><div style="background:rgba(255,255,255,.95);color:var(--g);padding:10px 0;border-radius:9px;width:38px;text-align:center;font-size:22px;font-weight:800">9</div><div style="background:rgba(255,255,255,.95);color:var(--g);padding:10px 0;border-radius:9px;width:38px;text-align:center;font-size:22px;font-weight:800">2</div></div></div>
+  <div style="border:1.5px dashed var(--r);border-radius:14px;padding:14px;margin:0 14px 14px"><div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--r);margin-bottom:8px">⚠️ رمز الإنهاء — لا تعطه إلا بعد الانتهاء!</div><div style="display:flex;gap:8px;justify-content:center"><div style="background:#FFE8E8;color:var(--r);padding:10px 0;border-radius:9px;width:38px;text-align:center;font-size:22px;font-weight:800">5</div><div style="background:#FFE8E8;color:var(--r);padding:10px 0;border-radius:9px;width:38px;text-align:center;font-size:22px;font-weight:800">8</div><div style="background:#FFE8E8;color:var(--r);padding:10px 0;border-radius:9px;width:38px;text-align:center;font-size:22px;font-weight:800">1</div><div style="background:#FFE8E8;color:var(--r);padding:10px 0;border-radius:9px;width:38px;text-align:center;font-size:22px;font-weight:800">4</div></div></div>
+  <div class="section-t">مراحل الطلب</div>
+  <div style="padding:0 16px 14px;position:relative">
+    <div style="position:absolute;right:23px;top:8px;bottom:8px;width:2px;background:var(--bdr)"></div>
+    <div style="position:relative;padding-right:36px;padding-bottom:16px"><div style="position:absolute;right:14px;top:1px;width:18px;height:18px;border-radius:50%;background:var(--g);color:var(--w);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">✓</div><div style="font-size:13px;font-weight:600">تم تأكيد الطلب</div><div style="font-size:10px;color:var(--lt)">9:14 ص</div></div>
+    <div style="position:relative;padding-right:36px;padding-bottom:16px"><div style="position:absolute;right:14px;top:1px;width:18px;height:18px;border-radius:50%;background:var(--g);color:var(--w);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">✓</div><div style="font-size:13px;font-weight:600">قبول من د. أحمد</div><div style="font-size:10px;color:var(--lt)">9:21 ص</div></div>
+    <div style="position:relative;padding-right:36px;padding-bottom:16px"><div style="position:absolute;right:11px;top:-2px;width:24px;height:24px;border-radius:50%;background:var(--gld);border:3px solid #FFF4D6"></div><div style="font-size:13px;font-weight:700;color:#BA7517">في الطريق إليك 🚗</div></div>
+    <div style="position:relative;padding-right:36px;padding-bottom:16px"><div style="position:absolute;right:14px;top:1px;width:18px;height:18px;border-radius:50%;background:var(--bdr)"></div><div style="font-size:13px;color:var(--lt)">وصول الفني (OTP 7392)</div></div>
+    <div style="position:relative;padding-right:36px"><div style="position:absolute;right:14px;top:1px;width:18px;height:18px;border-radius:50%;background:var(--bdr)"></div><div style="font-size:13px;color:var(--lt)">إنهاء الخدمة (OTP 5814)</div></div>
+  </div>
+  <div style="display:flex;gap:8px;padding:0 16px"><button class="btn btn-o" style="margin:0;flex:1" onclick="go('chat')">💬 محادثة</button><button class="btn btn-g" style="margin:0;flex:1" onclick="toast('📞 اتصال بالفني')">📞 اتصال</button></div>
+</div>
+
+<!-- ══════════ REVIEW ══════════ -->
+<div class="screen" id="scr-review">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">تقييم الخدمة</div></div>
+  <div style="text-align:center;padding:24px 14px 14px"><div style="width:80px;height:80px;background:linear-gradient(135deg,var(--g),var(--gd));border-radius:24px;display:inline-flex;align-items:center;justify-content:center;font-size:36px">👨‍⚕️</div><div style="font-size:17px;font-weight:700;margin-top:12px">د. أحمد علي</div><div style="font-size:12px;color:var(--sub)">سحب دم — فحص شامل</div></div>
+  <div style="text-align:center;font-size:14px;font-weight:700;margin-bottom:8px">كيف كانت تجربتك؟</div>
+  <div style="display:flex;justify-content:center;gap:8px;font-size:42px;margin-bottom:6px" id="stars">
+    <span style="cursor:pointer;color:var(--gld)" onclick="rateIt(1)">★</span>
+    <span style="cursor:pointer;color:var(--gld)" onclick="rateIt(2)">★</span>
+    <span style="cursor:pointer;color:var(--gld)" onclick="rateIt(3)">★</span>
+    <span style="cursor:pointer;color:var(--gld)" onclick="rateIt(4)">★</span>
+    <span style="cursor:pointer;color:var(--bdr)" onclick="rateIt(5)">★</span>
+  </div>
+  <div style="text-align:center;font-size:16px;font-weight:700;color:#BA7517;margin-bottom:14px" id="rateLabel">😊 جيد</div>
+  <div class="section-t">تقييم تفصيلي</div>
+  <div class="card" style="display:flex;align-items:center;gap:8px;padding:10px 14px"><span>⏰</span><span style="flex:1;font-size:12px;font-weight:600">الالتزام بالموعد</span><span style="color:var(--gld);font-size:16px">★★★★</span><span style="color:var(--bdr);font-size:16px">★</span></div>
+  <div class="card" style="display:flex;align-items:center;gap:8px;padding:10px 14px"><span>✅</span><span style="flex:1;font-size:12px;font-weight:600">المهنية</span><span style="color:var(--gld);font-size:16px">★★★★★</span></div>
+  <div class="card" style="display:flex;align-items:center;gap:8px;padding:10px 14px"><span>🧴</span><span style="flex:1;font-size:12px;font-weight:600">النظافة</span><span style="color:var(--gld);font-size:16px">★★★★★</span></div>
+  <div class="section-t">أضف تعليقاً (اختياري)</div>
+  <textarea placeholder="شاركنا رأيك عن الخدمة..." style="margin:0 16px 12px;width:calc(100% - 32px);padding:12px;border-radius:12px;border:.5px solid var(--bdr);font-family:'Cairo';font-size:13px;background:var(--w);outline:none;resize:vertical;min-height:60px"></textarea>
+  <div class="section-t">هل توصي بهذا المقدم؟</div>
+  <div style="display:flex;gap:10px;padding:0 16px;margin-bottom:12px">
+    <div style="flex:1;padding:12px;border-radius:12px;text-align:center;font-size:13px;font-weight:700;background:var(--soft);border:1.5px solid var(--g);color:var(--g);cursor:pointer">👍 نعم، أوصي</div>
+    <div style="flex:1;padding:12px;border-radius:12px;text-align:center;font-size:13px;font-weight:700;background:var(--bg);border:.5px solid var(--bdr);color:var(--sub);cursor:pointer">👎 لا</div>
+  </div>
+  <button class="btn btn-g" onclick="toast('✅ شكراً! +50 نقطة مكافأة')">📤 إرسال التقييم</button>
+  <div style="text-align:center;font-size:11px;color:var(--g);font-weight:600;padding:8px 0">ستحصل على 50 نقطة مكافأة ⭐</div>
+</div>
+
+<!-- ══════════ LAB RESULTS ══════════ -->
+<div class="screen" id="scr-lab-results">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">سجل التحاليل الطبية</div></div>
+  <div class="filters"><div class="fil ac">الكل</div><div class="fil">دم</div><div class="fil">بول</div><div class="fil">أشعة</div><div class="fil">رنين</div><div class="fil">سونار</div></div>
+  <div style="padding:2px 16px;font-size:12px;color:var(--sub);margin-bottom:6px">6 نتائج</div>
+  <div class="card">
+    <div style="display:flex;gap:10px"><div style="width:44px;height:44px;background:#FFE8E8;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px">🩸</div><div style="flex:1"><div style="display:flex;justify-content:space-between"><div style="font-size:14px;font-weight:700">فحص دم شامل CBC</div><span class="pill" style="background:#FFE8E8;color:var(--r)">⚠️ غير طبيعي</span></div><div style="font-size:11px;color:var(--sub);margin-top:3px">📅 28/4/2026 · 📍 مختبر الشفاء</div></div></div>
+    <div style="margin-top:10px;background:var(--bg);border-radius:8px;padding:10px;font-size:11px;color:var(--sub)">📝 نقص خفيف في الحديد. ينصح بمكملات الحديد مع فيتامين C</div>
+    <div style="display:flex;gap:6px;margin-top:10px"><button style="flex:1;padding:6px;border-radius:8px;font-size:11px;font-weight:700;border:none;background:var(--g);color:var(--w);font-family:'Cairo';cursor:pointer" onclick="toast('📄 فتح PDF...')">📄 PDF</button><button style="flex:1;padding:6px;border-radius:8px;font-size:11px;font-weight:700;border:.5px solid var(--bdr);background:var(--bg);color:var(--txt);font-family:'Cairo';cursor:pointer">📤 مشاركة</button></div>
+  </div>
+  <div class="card"><div style="display:flex;gap:10px"><div style="width:44px;height:44px;background:var(--soft);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px">🧪</div><div style="flex:1"><div style="font-size:14px;font-weight:700">فحص سكر صائم</div><div style="font-size:11px;color:var(--sub);margin-top:3px">📅 15/3/2026 · ✓ طبيعي</div></div></div><button style="margin-top:10px;width:100%;padding:6px;border-radius:8px;font-size:11px;font-weight:700;border:none;background:var(--g);color:var(--w);font-family:'Cairo';cursor:pointer">📄 عرض PDF</button></div>
+  <div class="card"><div style="display:flex;gap:10px"><div style="width:44px;height:44px;background:#E3EDFF;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px">📷</div><div style="flex:1"><div style="font-size:14px;font-weight:700">أشعة سينية - الصدر</div><div style="font-size:11px;color:var(--sub);margin-top:3px">📅 1/2/2026 · ✓ طبيعي</div></div></div><button style="margin-top:10px;width:100%;padding:6px;border-radius:8px;font-size:11px;font-weight:700;border:none;background:var(--g);color:var(--w);font-family:'Cairo';cursor:pointer">📄 عرض PDF</button></div>
+  <div class="card"><div style="display:flex;gap:10px"><div style="width:44px;height:44px;background:#FFF4D6;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px">📊</div><div style="flex:1"><div style="font-size:14px;font-weight:700">سكر تراكمي HbA1c</div><div style="font-size:11px;color:var(--sub);margin-top:3px">📅 10/1/2026 · ⚠️ مرتفع قليلاً</div></div></div></div>
+</div>
+
+<!-- ══════════ PRESCRIPTIONS ══════════ -->
+<div class="screen" id="scr-prescriptions">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">الوصفات الطبية</div></div>
+  <div class="card" style="margin-top:14px">
+    <div style="display:flex;align-items:flex-start;gap:10px"><div style="width:44px;height:44px;background:linear-gradient(135deg,var(--g),var(--gd));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px">📋</div><div style="flex:1"><div style="font-size:14px;font-weight:700">التهاب الحلق الحاد</div><div style="font-size:11px;color:var(--lt)">28/4/2026 — د. أحمد علي</div></div><div class="pill" style="background:var(--soft);color:var(--g)">صادرة</div></div>
+    <div style="margin-top:10px;background:var(--bg);border-radius:10px;padding:10px">
+      <div style="display:flex;gap:8px;align-items:flex-start;padding:5px 0"><div style="width:22px;height:22px;border-radius:50%;background:var(--soft);color:var(--g);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">1</div><div><div style="font-size:13px;font-weight:700">أموكسيسيلين 500 ملغ</div><div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px"><span style="font-size:10px;padding:2px 6px;border-radius:6px;background:var(--w);border:.5px solid var(--bdr);color:var(--sub)">💊 كبسولة</span><span style="font-size:10px;padding:2px 6px;border-radius:6px;background:var(--w);border:.5px solid var(--bdr);color:var(--sub)">⏰ 3× يومياً</span><span style="font-size:10px;padding:2px 6px;border-radius:6px;background:var(--w);border:.5px solid var(--bdr);color:var(--sub)">📅 7 أيام</span></div><div style="font-size:10px;color:var(--sub);margin-top:2px">📝 بعد الأكل</div></div></div>
+      <div style="border-top:.5px solid var(--bdr);margin:6px 0"></div>
+      <div style="display:flex;gap:8px;align-items:flex-start;padding:5px 0"><div style="width:22px;height:22px;border-radius:50%;background:var(--soft);color:var(--g);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">2</div><div><div style="font-size:13px;font-weight:700">بانادول 500 ملغ</div><div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px"><span style="font-size:10px;padding:2px 6px;border-radius:6px;background:var(--w);border:.5px solid var(--bdr);color:var(--sub)">💊 قرص</span><span style="font-size:10px;padding:2px 6px;border-radius:6px;background:var(--w);border:.5px solid var(--bdr);color:var(--sub)">⏰ عند الحاجة</span></div></div></div>
+      <div style="border-top:.5px solid var(--bdr);margin:6px 0"></div>
+      <div style="display:flex;gap:8px;align-items:flex-start;padding:5px 0"><div style="width:22px;height:22px;border-radius:50%;background:var(--soft);color:var(--g);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">3</div><div><div style="font-size:13px;font-weight:700">ستربسلز حبوب مص</div><div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px"><span style="font-size:10px;padding:2px 6px;border-radius:6px;background:var(--w);border:.5px solid var(--bdr);color:var(--sub)">💊 حبة</span><span style="font-size:10px;padding:2px 6px;border-radius:6px;background:var(--w);border:.5px solid var(--bdr);color:var(--sub)">⏰ 4× يومياً</span></div></div></div>
+    </div>
+    <div style="margin-top:8px;background:#FFF4D6;padding:8px 10px;border-radius:8px;font-size:11px;color:#BA7517">ℹ️ أكثر من شرب السوائل الدافئة والراحة</div>
+    <button style="width:100%;margin-top:10px;padding:12px;background:var(--g);color:var(--w);border:none;border-radius:12px;font-family:'Cairo';font-size:13px;font-weight:700;cursor:pointer" onclick="go('pharmacy')">💊 اطلب الأدوية من الصيدلية</button>
+  </div>
+  <div class="card"><div style="display:flex;align-items:flex-start;gap:10px"><div style="width:44px;height:44px;background:linear-gradient(135deg,var(--g),var(--gd));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;opacity:.5">📋</div><div style="flex:1"><div style="font-size:14px;font-weight:700">فحص دوري</div><div style="font-size:11px;color:var(--lt)">15/3/2026</div></div><div class="pill" style="background:#E3EDFF;color:#1959A5">تم صرفها</div></div></div>
+  <div class="card"><div style="display:flex;align-items:flex-start;gap:10px"><div style="width:44px;height:44px;background:linear-gradient(135deg,var(--g),var(--gd));border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;opacity:.3">📋</div><div style="flex:1"><div style="font-size:14px;font-weight:700">حساسية موسمية</div><div style="font-size:11px;color:var(--lt)">1/1/2026</div></div><div class="pill" style="background:#FFE8E8;color:var(--r)">منتهية</div></div><div style="margin-top:8px;background:#FFE8E8;padding:6px 8px;border-radius:8px;font-size:10px;color:#993C1D">⚠️ هذه الوصفة منتهية الصلاحية</div></div>
+</div>
+
+<!-- ══════════ CHAT ══════════ -->
+<div class="screen" id="scr-chat" class="screen flex" style="padding-bottom:70px">
+  <div class="hdr"><button class="back" onclick="go('tracking')">→</button><div style="width:36px;height:36px;background:linear-gradient(135deg,var(--g),var(--gd));border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--w);font-size:14px;font-weight:700">أ</div><div class="t" style="line-height:1.2">د. أحمد علي<div style="font-size:10px;color:var(--g);font-weight:500">🟢 متصل الآن</div></div><div style="font-size:20px;cursor:pointer" onclick="toast('📞 اتصال')">📞</div></div>
+  <div style="padding:14px 16px;flex:1">
+    <div style="text-align:center;margin-bottom:12px"><span style="background:var(--bg);padding:4px 10px;border-radius:10px;font-size:10px;color:var(--lt)">اليوم</span></div>
+    <div class="ai-msg bot">مرحباً حسين، أنا في الطريق إليك. سأصل خلال 15 دقيقة تقريباً</div>
+    <div class="ai-msg usr">أهلاً دكتور، شكراً. ممكن تأخذ الشارع الفرعي لأن الرئيسي مزدحم</div>
+    <div class="ai-msg bot">تمام، شكراً للتنبيه. سأسلك الطريق الفرعي.</div>
+    <div class="ai-msg usr">هل أحتاج أكون صائم للفحص؟</div>
+    <div class="ai-msg bot">نعم، يفضل الصيام 8 ساعات قبل فحص السكر. لكن فحص CBC لا يحتاج صيام.</div>
+    <div class="ai-msg bot">وصلت للحي. أيمن الشارع أو أيسره؟</div>
+    <div class="ai-msg usr">أيمن الشارع، البيت الثالث بعد الجامع</div>
+    <div style="display:flex;gap:4px;justify-content:flex-start;margin-top:-4px;font-size:10px;color:var(--lt)"><span>10:32 ص</span><span style="color:var(--g)">✓✓</span></div>
+  </div>
+  <div class="ai-input"><div style="width:36px;height:36px;background:var(--bg);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer">📎</div><input type="text" placeholder="اكتب رسالة..."><button class="ai-send">↗</button></div>
+</div>
+
+<!-- ══════════ SPIR PLUS ══════════ -->
+<div class="screen" id="scr-spir-plus" style="background:#0F1729;color:var(--w)">
+  <div class="hdr" style="background:#0F1729;border-color:#1F2A40"><button class="back" style="background:#1F2A40;color:var(--w)" onclick="go('home')">→</button><div class="t" style="color:var(--w)">Spir Plus</div></div>
+  <div style="text-align:center;padding:30px 20px"><div style="width:96px;height:96px;background:linear-gradient(135deg,#FFD66B,#FFB800);border-radius:28px;display:inline-flex;align-items:center;justify-content:center;font-size:46px;box-shadow:0 12px 30px rgba(255,184,0,.4)">💎</div><div style="background:linear-gradient(135deg,#FFD66B,#FFB800);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:36px;font-weight:800;margin-top:14px">Spir Plus</div><div style="color:rgba(255,255,255,.7);font-size:14px">تجربة طبية بمستوى آخر</div></div>
+  <div style="color:var(--w);font-size:17px;font-weight:700;padding:0 20px;margin-bottom:14px">ماذا ستحصل؟</div>
+  <div style="display:flex;align-items:flex-start;gap:12px;padding:8px 20px;margin-bottom:8px"><div style="width:42px;height:42px;background:rgba(255,184,0,.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📋</div><div><div style="color:var(--w);font-size:14px;font-weight:700">استشارتان مجانيتان شهرياً</div><div style="color:rgba(255,255,255,.6);font-size:12px">طبيب عام لأي حالة</div></div></div>
+  <div style="display:flex;align-items:flex-start;gap:12px;padding:8px 20px;margin-bottom:8px"><div style="width:42px;height:42px;background:rgba(255,184,0,.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">💰</div><div><div style="color:var(--w);font-size:14px;font-weight:700">خصم 15% على الفحوصات</div><div style="color:rgba(255,255,255,.6);font-size:12px">كل فحوصات الدم والمختبر</div></div></div>
+  <div style="display:flex;align-items:flex-start;gap:12px;padding:8px 20px;margin-bottom:8px"><div style="width:42px;height:42px;background:rgba(255,184,0,.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🚚</div><div><div style="color:var(--w);font-size:14px;font-weight:700">توصيل أدوية مجاني</div><div style="color:rgba(255,255,255,.6);font-size:12px">لا رسوم توصيل</div></div></div>
+  <div style="display:flex;align-items:flex-start;gap:12px;padding:8px 20px;margin-bottom:8px"><div style="width:42px;height:42px;background:rgba(255,184,0,.2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">⚡</div><div><div style="color:var(--w);font-size:14px;font-weight:700">أولوية في الحجز</div><div style="color:rgba(255,255,255,.6);font-size:12px">أسرع مع أفضل الأطباء</div></div></div>
+  <div style="background:rgba(255,255,255,.08);border:1.5px solid #FFB800;border-radius:22px;padding:24px;margin:16px;text-align:center"><div style="color:rgba(255,255,255,.6);font-size:12px">اشتراك شهري</div><div style="margin-top:8px"><span style="color:var(--w);font-size:48px;font-weight:800;line-height:1">5,000</span> <span style="color:var(--w);font-size:18px;font-weight:700">د.ع</span></div><div style="color:rgba(255,255,255,.5);font-size:10px;margin-top:4px">يمكنك الإلغاء في أي وقت</div><div style="background:linear-gradient(135deg,#FFD66B,#FFB800);border-radius:14px;padding:14px;margin-top:14px;text-align:center;font-size:15px;font-weight:700;color:#1A2238;box-shadow:0 6px 18px rgba(255,184,0,.4);cursor:pointer" onclick="toast('✅ مرحباً بك في Spir Plus!')">اشترك الآن 💎</div></div>
+</div>
+
+<!-- ══════════ FAMILY ══════════ -->
+<div class="screen" id="scr-family">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">أفراد العائلة</div></div>
+  <div style="margin:14px;background:linear-gradient(135deg,#E3EDFF,var(--soft));border-radius:18px;padding:16px;text-align:center"><div style="font-size:36px;margin-bottom:6px">👨‍👩‍👧‍👦</div><div style="font-size:15px;font-weight:700">احجز خدمات لأفراد عائلتك</div><div style="font-size:12px;color:var(--sub);margin-top:4px">سجّل أفراد عائلتك مرة واحدة لتسهيل الحجز لاحقاً</div></div>
+  <div class="card" style="display:flex;align-items:center;gap:12px;cursor:pointer"><div style="width:48px;height:48px;background:linear-gradient(135deg,var(--g),var(--gd));border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--w);font-weight:700;font-size:18px">ف</div><div style="flex:1"><div style="font-size:14px;font-weight:700">فاطمة (الزوجة)</div><div style="font-size:11px;color:var(--sub)">35 سنة · فصيلة دم: O+</div></div><div style="font-size:18px;color:var(--lt)">◂</div></div>
+  <div class="card" style="display:flex;align-items:center;gap:12px;cursor:pointer"><div style="width:48px;height:48px;background:linear-gradient(135deg,var(--bl),#1959A5);border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--w);font-weight:700;font-size:18px">ع</div><div style="flex:1"><div style="font-size:14px;font-weight:700">علي (الابن)</div><div style="font-size:11px;color:var(--sub)">8 سنوات · فصيلة دم: O+</div></div><div style="font-size:18px;color:var(--lt)">◂</div></div>
+  <div class="card" style="display:flex;align-items:center;gap:12px;cursor:pointer"><div style="width:48px;height:48px;background:linear-gradient(135deg,#FF6B9D,var(--r));border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--w);font-weight:700;font-size:18px">س</div><div style="flex:1"><div style="font-size:14px;font-weight:700">سارة (الابنة)</div><div style="font-size:11px;color:var(--sub)">5 سنوات · فصيلة دم: A+</div></div><div style="font-size:18px;color:var(--lt)">◂</div></div>
+  <div class="card" style="display:flex;align-items:center;gap:12px;cursor:pointer"><div style="width:48px;height:48px;background:linear-gradient(135deg,#9C27B0,#673AB7);border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--w);font-weight:700;font-size:18px">أ</div><div style="flex:1"><div style="font-size:14px;font-weight:700">أم حسين (الأم)</div><div style="font-size:11px;color:var(--sub)">62 سنة · فصيلة دم: B+</div></div><div style="font-size:18px;color:var(--lt)">◂</div></div>
+  <button class="btn btn-o" style="margin-top:8px" onclick="toast('➕ إضافة فرد جديد')">➕ إضافة فرد عائلة</button>
+</div>
+
+<!-- ══════════ REFERRAL ══════════ -->
+<div class="screen" id="scr-referral">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">برنامج الإحالة</div></div>
+  <div style="margin:16px;background:linear-gradient(135deg,var(--g),var(--gd));border-radius:24px;padding:30px 20px;color:var(--w);text-align:center"><div style="font-size:60px">🎁</div><div style="font-size:22px;font-weight:800;margin-top:8px">ادعُ أصدقاءك</div><div style="font-size:13px;opacity:.9;margin-top:4px">احصل على 500 نقطة لكل صديق ينضم</div></div>
+  <div class="section-t">كود الإحالة الخاص بك</div>
+  <div class="card" style="text-align:center;padding:20px"><div style="font-size:28px;font-weight:800;letter-spacing:2px;color:var(--g);font-family:monospace">HUSSEIN500</div><button class="btn btn-o" style="margin:10px 0 0;width:100%" onclick="toast('📋 تم نسخ الكود')">📋 نسخ الكود</button></div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px;margin-bottom:14px">
+    <button class="btn" style="margin:0;flex-direction:column;padding:14px 6px;background:#E3EDFF;color:#1959A5" onclick="toast('📤 مشاركة عبر WhatsApp')"><div style="font-size:24px">💬</div><div style="font-size:10px">واتساب</div></button>
+    <button class="btn" style="margin:0;flex-direction:column;padding:14px 6px;background:#FFE0F0;color:#9C27B0" onclick="toast('📤 مشاركة عبر Telegram')"><div style="font-size:24px">✈️</div><div style="font-size:10px">تليغرام</div></button>
+    <button class="btn" style="margin:0;flex-direction:column;padding:14px 6px;background:var(--soft);color:var(--g)" onclick="toast('📤 مشاركة عبر SMS')"><div style="font-size:24px">📱</div><div style="font-size:10px">رسالة</div></button>
+  </div>
+  <div class="section-t">إحصائياتك</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 16px;margin-bottom:14px">
+    <div class="card" style="margin:0;text-align:center"><div style="font-size:24px;font-weight:800;color:var(--g)">3</div><div style="font-size:10px;color:var(--sub);margin-top:2px">دعوات مرسلة</div></div>
+    <div class="card" style="margin:0;text-align:center"><div style="font-size:24px;font-weight:800;color:var(--bl)">1</div><div style="font-size:10px;color:var(--sub);margin-top:2px">انضموا فعلاً</div></div>
+    <div class="card" style="margin:0;text-align:center"><div style="font-size:24px;font-weight:800;color:var(--gld)">500</div><div style="font-size:10px;color:var(--sub);margin-top:2px">نقاط مكتسبة</div></div>
+  </div>
+  <div class="section-t">كيف يعمل؟</div>
+  <div class="card"><div style="display:flex;gap:10px;align-items:flex-start;padding:6px 0"><div style="width:28px;height:28px;background:var(--soft);color:var(--g);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">1</div><div><div style="font-size:13px;font-weight:700">شارك الكود</div><div style="font-size:11px;color:var(--sub)">أرسل كودك لأصدقائك</div></div></div><div style="display:flex;gap:10px;align-items:flex-start;padding:6px 0"><div style="width:28px;height:28px;background:var(--soft);color:var(--g);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">2</div><div><div style="font-size:13px;font-weight:700">يستخدم الكود</div><div style="font-size:11px;color:var(--sub)">صديقك يحصل على خصم 20% على أول طلب</div></div></div><div style="display:flex;gap:10px;align-items:flex-start;padding:6px 0"><div style="width:28px;height:28px;background:var(--soft);color:var(--g);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0">3</div><div><div style="font-size:13px;font-weight:700">احصل على نقاط</div><div style="font-size:11px;color:var(--sub)">+500 نقطة لكل صديق</div></div></div></div>
+</div>
+
+<!-- ══════════ CLINICS ══════════ -->
+<div class="screen" id="scr-clinics">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">حجز عيادة</div></div>
+  <div class="filters"><div class="fil ac">الكل</div><div class="fil">باطنية</div><div class="fil">نسائية</div><div class="fil">أطفال</div><div class="fil">عظام</div><div class="fil">أسنان</div></div>
+  <div class="card"><div style="display:flex;gap:10px"><div style="width:50px;height:50px;background:linear-gradient(135deg,var(--g),var(--gd));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🏥</div><div style="flex:1"><div style="font-size:14px;font-weight:700">عيادة الرحمة التخصصية</div><div style="display:flex;align-items:center;gap:6px;margin-top:3px"><span class="pill" style="background:var(--soft);color:var(--g)">باطنية</span><span style="font-size:11px;color:var(--gld)">⭐ 4.7 (48)</span></div><div style="font-size:11px;color:var(--sub);margin-top:3px">📍 شارع الصدر، النجف</div></div></div><div style="display:flex;align-items:center;margin-top:10px"><span style="font-size:16px;font-weight:800;color:var(--g)">20,000 د.ع</span><button class="btn btn-g" style="margin:0 0 0 auto;width:auto;padding:8px 18px" onclick="toast('📅 احجز موعد')">📅 احجز</button></div></div>
+  <div class="card"><div style="display:flex;gap:10px"><div style="width:50px;height:50px;background:linear-gradient(135deg,var(--g),var(--gd));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🏥</div><div style="flex:1"><div style="font-size:14px;font-weight:700">مركز الشفاء الطبي</div><div style="display:flex;align-items:center;gap:6px;margin-top:3px"><span class="pill" style="background:var(--soft);color:var(--g)">عام</span><span style="font-size:11px;color:var(--gld)">⭐ 4.5 (32)</span></div><div style="font-size:11px;color:var(--sub);margin-top:3px">📍 حي الأمير، النجف</div></div></div><div style="display:flex;align-items:center;margin-top:10px"><span style="font-size:16px;font-weight:800;color:var(--g)">15,000 د.ع</span><button class="btn btn-g" style="margin:0 0 0 auto;width:auto;padding:8px 18px">📅 احجز</button></div></div>
+  <div class="card"><div style="display:flex;gap:10px"><div style="width:50px;height:50px;background:linear-gradient(135deg,#FF6B9D,var(--r));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🏥</div><div style="flex:1"><div style="font-size:14px;font-weight:700">عيادة الزهراء للنساء</div><div style="display:flex;align-items:center;gap:6px;margin-top:3px"><span class="pill" style="background:#FBEAF0;color:#D4537E">نسائية</span><span style="font-size:11px;color:var(--gld)">⭐ 4.8 (65)</span></div><div style="font-size:11px;color:var(--sub);margin-top:3px">📍 شارع الكوفة، النجف</div></div></div><div style="display:flex;align-items:center;margin-top:10px"><span style="font-size:16px;font-weight:800;color:var(--g)">25,000 د.ع</span><button class="btn btn-g" style="margin:0 0 0 auto;width:auto;padding:8px 18px">📅 احجز</button></div></div>
+  <div class="card"><div style="display:flex;gap:10px"><div style="width:50px;height:50px;background:linear-gradient(135deg,#FFD66B,var(--gld));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🏥</div><div style="flex:1"><div style="font-size:14px;font-weight:700">مركز ابن سينا للأطفال</div><div style="display:flex;align-items:center;gap:6px;margin-top:3px"><span class="pill" style="background:#FFF4D6;color:#BA7517">أطفال</span><span style="font-size:11px;color:var(--gld)">⭐ 4.6 (42)</span></div><div style="font-size:11px;color:var(--sub);margin-top:3px">📍 حي السعد، كربلاء</div></div></div><div style="display:flex;align-items:center;margin-top:10px"><span style="font-size:16px;font-weight:800;color:var(--g)">20,000 د.ع</span><button class="btn btn-g" style="margin:0 0 0 auto;width:auto;padding:8px 18px">📅 احجز</button></div></div>
+</div>
+
+<!-- ══════════ RECURRING ══════════ -->
+<div class="screen" id="scr-recurring">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">الحجز المتكرر</div></div>
+  <div style="margin:14px;background:linear-gradient(135deg,#E3EDFF,var(--soft));border-radius:18px;padding:18px;text-align:center"><div style="font-size:42px;margin-bottom:6px">🔁</div><div style="font-size:16px;font-weight:700">حجز تلقائي لفحوصاتك الدورية</div><div style="font-size:12px;color:var(--sub);margin-top:4px">اختر الفحص والتكرار ونحن نتولى الباقي</div></div>
+  <div class="card" style="display:flex;align-items:center;gap:12px"><div style="width:48px;height:48px;background:var(--soft);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px">🩸</div><div style="flex:1"><div style="font-size:13px;font-weight:700">فحص سكر صائم</div><div style="font-size:11px;color:var(--sub)">شهرياً · القادم: 15/5/2026</div><div style="font-size:10px;color:var(--lt)">أُكمل 3 مرات</div></div><div class="pill" style="background:var(--soft);color:var(--g)">✓ نشط</div></div>
+  <div class="card" style="display:flex;align-items:center;gap:12px"><div style="width:48px;height:48px;background:var(--soft);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px">🧪</div><div style="flex:1"><div style="font-size:13px;font-weight:700">فحص دم شامل CBC</div><div style="font-size:11px;color:var(--sub)">كل 3 أشهر · القادم: 1/7/2026</div><div style="font-size:10px;color:var(--lt)">أُكمل 1 مرة</div></div><div class="pill" style="background:var(--soft);color:var(--g)">✓ نشط</div></div>
+  <div class="card" style="display:flex;align-items:center;gap:12px;opacity:.5"><div style="width:48px;height:48px;background:var(--bg);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px">💊</div><div style="flex:1"><div style="font-size:13px;font-weight:700">فيتامين D</div><div style="font-size:11px;color:var(--sub)">كل 3 أشهر</div></div><div class="pill" style="background:var(--bg);color:var(--lt)">⏸ متوقف</div></div>
+  <button class="btn btn-g" onclick="toast('➕ إنشاء حجز متكرر جديد')">➕ حجز متكرر جديد</button>
+</div>
+
+<!-- ══════════ ORDERS ══════════ -->
+<div class="screen" id="scr-orders">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">طلباتي</div></div>
+  <div class="filters"><div class="fil ac">الكل</div><div class="fil">جارية</div><div class="fil">مكتملة</div><div class="fil">ملغاة</div></div>
+  <div class="card" style="cursor:pointer" onclick="go('tracking')"><div style="display:flex;align-items:center;gap:10px"><div style="width:42px;height:42px;background:#FFE8E8;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">🩸</div><div style="flex:1"><div style="font-size:13px;font-weight:700">سحب دم — فحص شامل</div><div style="font-size:11px;color:var(--lt)">SPR-2026-001245</div></div><div class="pill" style="background:#FFF4D6;color:#BA7517">🟡 جاري</div></div><div style="margin-top:10px;display:flex;justify-content:space-between;font-size:11px;color:var(--sub)"><span>📅 اليوم 9:00 ص</span><span style="font-weight:700;color:var(--g)">34,400 د.ع</span></div></div>
+  <div class="card" style="cursor:pointer"><div style="display:flex;align-items:center;gap:10px"><div style="width:42px;height:42px;background:#E3EDFF;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">👨‍⚕️</div><div style="flex:1"><div style="font-size:13px;font-weight:700">استشارة د. سارة حسن</div><div style="font-size:11px;color:var(--lt)">SPR-2026-001234</div></div><div class="pill" style="background:var(--soft);color:var(--g)">✅ مكتمل</div></div><div style="margin-top:10px;display:flex;justify-content:space-between;font-size:11px;color:var(--sub)"><span>📅 28/4/2026</span><span style="font-weight:700;color:var(--g)">35,000 د.ع</span></div></div>
+  <div class="card" style="cursor:pointer"><div style="display:flex;align-items:center;gap:10px"><div style="width:42px;height:42px;background:var(--soft);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px">💊</div><div style="flex:1"><div style="font-size:13px;font-weight:700">طلب أدوية - 3 أصناف</div><div style="font-size:11px;color:var(--lt)">SPR-2026-001220</div></div><div class="pill" style="background:var(--soft);color:var(--g)">✅ مكتمل</div></div><div style="margin-top:10px;display:flex;justify-content:space-between;font-size:11px;color:var(--sub)"><span>📅 25/4/2026</span><span style="font-weight:700;color:var(--g)">28,500 د.ع</span></div></div>
+  <div class="card" style="cursor:pointer;opacity:.7"><div style="display:flex;align-items:center;gap:10px"><div style="width:42px;height:42px;background:#FFE8E8;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;opacity:.5">🩸</div><div style="flex:1"><div style="font-size:13px;font-weight:700">فحص سكر صائم</div><div style="font-size:11px;color:var(--lt)">SPR-2026-001210</div></div><div class="pill" style="background:#FFE8E8;color:var(--r)">✕ ملغي</div></div><div style="margin-top:10px;display:flex;justify-content:space-between;font-size:11px;color:var(--sub)"><span>📅 20/4/2026</span><span style="font-weight:700">10,000 د.ع</span></div></div>
+</div>
+
+<!-- ══════════ FAVORITES ══════════ -->
+<div class="screen" id="scr-favorites">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">المفضلة</div></div>
+  <div class="filters"><div class="fil ac">الكل</div><div class="fil">أطباء</div><div class="fil">صيدليات</div><div class="fil">فحوصات</div></div>
+  <div class="card"><div style="display:flex;align-items:center;gap:12px"><div style="width:48px;height:48px;background:linear-gradient(135deg,var(--g),var(--gd));border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--w);font-weight:700;font-size:18px">أ</div><div style="flex:1"><div style="font-size:13px;font-weight:700">د. أحمد علي</div><div style="font-size:11px;color:var(--sub)">باطنية · ⭐ 4.9 (120)</div></div><div style="font-size:20px;color:var(--r);cursor:pointer">❤️</div></div></div>
+  <div class="card"><div style="display:flex;align-items:center;gap:12px"><div style="width:48px;height:48px;background:var(--soft);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px">💊</div><div style="flex:1"><div style="font-size:13px;font-weight:700">صيدلية الشفاء</div><div style="font-size:11px;color:var(--sub)">📍 600 متر · ⭐ 4.8</div></div><div style="font-size:20px;color:var(--r);cursor:pointer">❤️</div></div></div>
+  <div class="card"><div style="display:flex;align-items:center;gap:12px"><div style="width:48px;height:48px;background:#FFE8E8;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px">🩸</div><div style="flex:1"><div style="font-size:13px;font-weight:700">فحص دم شامل CBC</div><div style="font-size:11px;color:var(--sub)">15,000 د.ع · فحص شائع</div></div><div style="font-size:20px;color:var(--r);cursor:pointer">❤️</div></div></div>
+  <div class="card"><div style="display:flex;align-items:center;gap:12px"><div style="width:48px;height:48px;background:linear-gradient(135deg,#FF6B9D,var(--r));border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--w);font-weight:700;font-size:18px">س</div><div style="flex:1"><div style="font-size:13px;font-weight:700">د. سارة حسن</div><div style="font-size:11px;color:var(--sub)">نسائية · ⭐ 4.7 (89)</div></div><div style="font-size:20px;color:var(--r);cursor:pointer">❤️</div></div></div>
+</div>
+
+<!-- ══════════ PROFILE ══════════ -->
+<div class="screen" id="scr-profile">
+  <div class="hdr"><button class="back" onclick="go('home')">→</button><div class="t">حسابي</div></div>
+  <div style="text-align:center;padding:24px 16px 14px"><div style="width:88px;height:88px;background:linear-gradient(135deg,var(--g),var(--gd));border-radius:26px;display:inline-flex;align-items:center;justify-content:center;color:var(--w);font-weight:800;font-size:34px">ح</div><div style="font-size:19px;font-weight:700;margin-top:10px">حسين أحمد</div><div style="font-size:12px;color:var(--sub)">+964 780 123 4567</div><div style="background:#FFF4D6;display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:14px;font-size:11px;font-weight:700;color:#BA7517;margin-top:8px">⭐ مستوى ذهبي · 7,250 نقطة</div></div>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:0 16px;margin-bottom:14px">
+    <div class="card" style="margin:0;text-align:center;cursor:pointer" onclick="go('orders')"><div style="font-size:22px">📋</div><div style="font-size:11px;font-weight:700;margin-top:4px">طلباتي</div><div style="font-size:9px;color:var(--lt)">12 طلب</div></div>
+    <div class="card" style="margin:0;text-align:center;cursor:pointer" onclick="go('lab-results')"><div style="font-size:22px">🧪</div><div style="font-size:11px;font-weight:700;margin-top:4px">تحاليلي</div><div style="font-size:9px;color:var(--lt)">6 نتائج</div></div>
+    <div class="card" style="margin:0;text-align:center;cursor:pointer" onclick="go('prescriptions')"><div style="font-size:22px">💊</div><div style="font-size:11px;font-weight:700;margin-top:4px">وصفاتي</div><div style="font-size:9px;color:var(--lt)">3 وصفات</div></div>
+  </div>
+
+  <div class="section-t">حسابي وعائلتي</div>
+  <div style="background:var(--w);border-radius:16px;margin:0 16px 14px;overflow:hidden">
+    <div class="sw-item" onclick="go('family')" style="cursor:pointer"><span class="ic">👨‍👩‍👧‍👦</span><div class="lb"><div class="t">أفراد العائلة</div><div class="d">4 أفراد مسجلين</div></div><span style="color:var(--lt)">◂</span></div>
+    <div class="sw-item" onclick="go('referral')" style="cursor:pointer"><span class="ic">🎁</span><div class="lb"><div class="t">برنامج الإحالة</div><div class="d">500 نقطة لكل صديق</div></div><span style="color:var(--lt)">◂</span></div>
+    <div class="sw-item" onclick="go('loyalty')" style="cursor:pointer"><span class="ic">⭐</span><div class="lb"><div class="t">النقاط والمكافآت</div><div class="d">7,250 نقطة</div></div><span style="color:var(--lt)">◂</span></div>
+    <div class="sw-item" onclick="go('badges')" style="cursor:pointer;border:none"><span class="ic">🏅</span><div class="lb"><div class="t">الشارات</div><div class="d">5 من 15</div></div><span style="color:var(--lt)">◂</span></div>
+  </div>
+
+  <div class="section-t">العضوية والاشتراكات</div>
+  <div style="background:var(--w);border-radius:16px;margin:0 16px 14px;overflow:hidden">
+    <div class="sw-item" onclick="go('spir-plus')" style="cursor:pointer"><span class="ic">💎</span><div class="lb"><div class="t">Spir Plus</div><div class="d">اشتراك مميز</div></div><span style="color:var(--lt)">◂</span></div>
+    <div class="sw-item" onclick="go('insurance')" style="cursor:pointer"><span class="ic">🛡️</span><div class="lb"><div class="t">حماية سبير</div><div class="d">تأمين صحي مصغر</div></div><span style="color:var(--lt)">◂</span></div>
+    <div class="sw-item" onclick="go('recurring')" style="cursor:pointer;border:none"><span class="ic">🔁</span><div class="lb"><div class="t">الحجز المتكرر</div><div class="d">2 حجوزات نشطة</div></div><span style="color:var(--lt)">◂</span></div>
+  </div>
+
+  <div class="section-t">الإعدادات والمساعدة</div>
+  <div style="background:var(--w);border-radius:16px;margin:0 16px 14px;overflow:hidden">
+    <div class="sw-item" onclick="go('settings')" style="cursor:pointer"><span class="ic">⚙️</span><div class="lb"><div class="t">الإعدادات</div></div><span style="color:var(--lt)">◂</span></div>
+    <div class="sw-item" onclick="toast('📞 +964 780 000 0000')" style="cursor:pointer"><span class="ic">💬</span><div class="lb"><div class="t">المساعدة والدعم</div><div class="d">على مدار الساعة</div></div><span style="color:var(--lt)">◂</span></div>
+    <div class="sw-item" onclick="toast('ℹ️ Spir Medical v3.1')" style="cursor:pointer;border:none"><span class="ic">ℹ️</span><div class="lb"><div class="t">حول التطبيق</div></div><span style="color:var(--lt)">◂</span></div>
+  </div>
+
+  <button class="btn btn-o" style="color:var(--r);border-color:var(--r);background:#FFE8E8;margin-bottom:30px" onclick="toast('تم تسجيل الخروج')">🚪 تسجيل الخروج</button>
+</div>
+
+<!-- ══════════ LOGIN ══════════ -->
+<div class="screen" id="scr-login">
+  <div style="text-align:center;padding:60px 20px 30px"><div style="width:110px;height:110px;background:linear-gradient(135deg,var(--g),var(--gd));border-radius:32px;display:inline-flex;align-items:center;justify-content:center;font-size:54px;box-shadow:0 12px 32px rgba(0,200,150,.35)">🏥</div><div style="font-size:28px;font-weight:800;margin-top:14px">Spir Medical</div><div style="font-size:14px;color:var(--sub);margin-top:4px">سبير الطبية</div><div style="font-size:13px;color:var(--lt);margin-top:14px;line-height:1.6;padding:0 20px">تطبيق عراقي شامل للخدمات الصحية المنزلية</div></div>
+  <div style="padding:0 20px"><div style="font-size:13px;font-weight:600;color:var(--sub);margin-bottom:6px">رقم الهاتف</div><div style="background:var(--w);border:.5px solid var(--bdr);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:8px"><span style="font-size:18px">🇮🇶</span><span style="font-size:13px;font-weight:700;color:var(--sub)">+964</span><div style="width:1px;height:20px;background:var(--bdr)"></div><input type="tel" placeholder="780 123 4567" style="flex:1;border:none;background:none;font-family:'Cairo';font-size:14px;outline:none;color:var(--txt)"></div></div>
+  <button class="btn btn-g" style="margin-top:20px" onclick="go('home')">📨 إرسال رمز التحقق</button>
+  <div style="text-align:center;margin:20px 16px;display:flex;align-items:center;gap:10px"><div style="flex:1;height:.5px;background:var(--bdr)"></div><span style="font-size:11px;color:var(--lt)">أو سجل بـ</span><div style="flex:1;height:.5px;background:var(--bdr)"></div></div>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:0 16px"><button class="btn btn-o" style="margin:0;padding:12px"><span>🌐</span> Google</button><button class="btn btn-o" style="margin:0;padding:12px"><span>📘</span> Facebook</button></div>
+  <div style="text-align:center;font-size:11px;color:var(--lt);padding:30px 30px;line-height:1.7">بالتسجيل أنت توافق على<br><b style="color:var(--g)">شروط الخدمة</b> و <b style="color:var(--g)">سياسة الخصوصية</b></div>
+</div>
+
+
+<!-- ══════════ BOTTOM NAVIGATION ══════════ -->
+<nav class="bnav" id="bnav">
+  <div class="ni ac" data-tab="home" onclick="switchTab('home')">
+    <div class="ic">🏠</div><div class="lb">الرئيسية</div>
+  </div>
+  <div class="ni" data-tab="orders" onclick="switchTab('orders')">
+    <div class="ic">📋</div><div class="lb">طلباتي</div>
+    <div class="badge" style="display:none">0</div>
+  </div>
+  <div class="ni" data-tab="favorites" onclick="switchTab('favorites')">
+    <div class="ic">❤️</div><div class="lb">المفضلة</div>
+  </div>
+  <div class="ni" data-tab="profile" onclick="switchTab('profile')">
+    <div class="ic">👤</div><div class="lb">حسابي</div>
+  </div>
+</nav>
+
+</div>
+<!-- /.app -->
+
+<!-- Scripts -->
+<script src="/js/state.js"></script>
+<script src="/js/supabase.js"></script>
+<script src="/js/router.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
