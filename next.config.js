@@ -1,11 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'standalone',
-  // Server Actions مفعّلة افتراضياً في Next 14.2+
-  serverActions: {
-    allowedOrigins: ['localhost:3000', 'spirmedical.iq', 'app.spirmedical.iq'],
-    bodySizeLimit: '2mb',
+  // ملاحظة: لا نستخدم `output: 'standalone'` على Vercel — Vercel يُعالج هذا تلقائياً
+  // standalone يُستخدم فقط للـ Docker/self-hosted
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['localhost:3000', 'spirmedical.iq', 'app.spirmedical.iq'],
+      bodySizeLimit: '2mb',
+    },
   },
   async headers() {
     return [
@@ -30,13 +32,8 @@ const nextConfig = {
   images: {
     remotePatterns: [{ protocol: 'https', hostname: '**.supabase.co' }],
   },
-  // تحسينات الأداء
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
-  },
-  // logging
-  logging: {
-    fetches: { fullUrl: process.env.NODE_ENV !== 'production' },
   },
 };
 
