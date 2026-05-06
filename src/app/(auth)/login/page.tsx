@@ -1,19 +1,17 @@
-// تعطيل pre-rendering — هذه الصفحة تستخدم searchParams
+// تعطيل pre-rendering — searchParams
 export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
 import { z } from 'zod';
-import { sendOtp } from './actions';
 
 const searchParamsSchema = z.object({
   error: z.string().max(500).optional(),
-  redirect: z.string().max(500).optional(),
 });
 
 export default function LoginPage({
   searchParams,
 }: {
-  searchParams: { error?: string; redirect?: string };
+  searchParams: { error?: string };
 }) {
   const params = searchParamsSchema.safeParse(searchParams);
   const error = params.success ? params.data.error : undefined;
@@ -24,7 +22,6 @@ export default function LoginPage({
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -right-40 -top-40 h-80 w-80 rounded-full bg-emerald/8 blur-3xl" />
         <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-amber/8 blur-3xl" />
-        <div className="absolute right-1/4 top-1/2 h-64 w-64 rounded-full bg-emerald-soft/30 blur-3xl" />
       </div>
 
       {/* رابط العودة */}
@@ -36,7 +33,6 @@ export default function LoginPage({
         <span className="hidden sm:inline">للرئيسية</span>
       </Link>
 
-      {/* الحاوية الرئيسية - mobile-first */}
       <div className="relative flex min-h-screen items-center justify-center px-5 py-12">
         <div className="mx-auto w-full max-w-md">
           {/* الشعار */}
@@ -59,13 +55,13 @@ export default function LoginPage({
           <div className="rounded-3xl border border-white/50 bg-white/95 p-7 shadow-2xl shadow-ink/10 backdrop-blur-xl">
             {/* العنوان */}
             <div className="mb-6 text-center">
-              <h2 className="text-3xl font-extrabold tracking-tight text-ink">
-                مرحباً بك
+              <h2 className="text-2xl font-extrabold tracking-tight text-ink">
+                كيف تود الدخول؟
               </h2>
               <p className="mt-2 text-sm leading-relaxed text-ink-3">
-                أدخل رقم هاتفك لنُرسل لك
+                اختر نوع حسابك للحصول على التجربة المناسبة.
                 <br />
-                رمز التحقق برسالة نصية
+                يمكنك تغيير ذلك لاحقاً.
               </p>
             </div>
 
@@ -82,84 +78,97 @@ export default function LoginPage({
               </div>
             )}
 
-            {/* النموذج */}
-            <form action={sendOtp} className="flex flex-col gap-5">
-              <div className="flex flex-col gap-2">
-                <label
-                  htmlFor="phone"
-                  className="text-sm font-bold text-ink-2"
-                >
-                  رقم الهاتف
-                </label>
+            {/* بطاقات اختيار الدور */}
+            <div className="flex flex-col gap-3">
+              {/* ضيف */}
+              <Link
+                href="/?guest=1"
+                className="group flex items-center gap-4 rounded-2xl border-2 border-ink/10 bg-paper-3 p-4 transition-all hover:border-emerald/30 hover:bg-paper-2 active:scale-[0.98]"
+              >
+                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-paper-2 text-2xl">
+                  👁
+                </div>
+                <div className="flex-1 text-right">
+                  <div className="text-base font-extrabold text-ink">ضيف</div>
+                  <div className="text-xs text-ink-3">للتصفح فقط دون تسجيل</div>
+                </div>
+                <span className="text-2xl text-ink-4 transition-transform group-hover:translate-x-1">
+                  ‹
+                </span>
+              </Link>
 
-                {/* حقل بـ flag prefix */}
-                <div className="group flex overflow-hidden rounded-2xl border-2 border-ink/10 bg-paper-3 transition-all duration-200 focus-within:border-emerald focus-within:ring-4 focus-within:ring-emerald/10">
-                  <div className="flex shrink-0 items-center gap-2 border-l border-ink/10 bg-paper-2/60 px-4">
-                    <span className="text-2xl leading-none">🇮🇶</span>
-                    <span
-                      dir="ltr"
-                      className="font-mono text-sm font-bold text-ink-2"
-                    >
-                      +964
+              {/* مراجع / مريض - الافتراضي */}
+              <Link
+                href="/login/phone?role=patient"
+                className="group flex items-center gap-4 rounded-2xl border-2 border-emerald bg-emerald-soft/40 p-4 ring-2 ring-emerald/20 transition-all hover:bg-emerald-soft/60 active:scale-[0.98]"
+              >
+                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-emerald text-2xl text-paper-3">
+                  ⊕
+                </div>
+                <div className="flex-1 text-right">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base font-extrabold text-emerald-deep">
+                      مراجع / مريض
+                    </span>
+                    <span className="rounded-full bg-emerald px-2 py-0.5 text-[10px] font-bold text-paper-3">
+                      الأكثر استخداماً
                     </span>
                   </div>
-                  <input
-                    id="phone"
-                    type="tel"
-                    name="phone"
-                    placeholder="7XX XXX XXXX"
-                    dir="ltr"
-                    required
-                    autoComplete="tel"
-                    autoFocus
-                    pattern="0?7[0-9]{9}"
-                    className="flex-1 bg-transparent px-4 py-4 text-left text-base font-medium text-ink outline-none placeholder:text-ink-4"
-                  />
+                  <div className="text-xs text-emerald-deep/70">
+                    حجز الخدمات وإدارة العائلة
+                  </div>
                 </div>
-
-                <p className="px-1 text-xs text-ink-3">
-                  مثال: ٠٧٧١٢٣٤٥٦٧٨ أو ٧٧١٢٣٤٥٦٧٨
-                </p>
-              </div>
-
-              {/* زر الإرسال */}
-              <button
-                type="submit"
-                className="group relative mt-1 overflow-hidden rounded-2xl bg-emerald px-6 py-4 text-base font-bold text-paper-3 shadow-lg shadow-emerald/30 transition-all duration-200 hover:bg-emerald-deep hover:shadow-xl hover:shadow-emerald/40 active:scale-[0.98]"
-              >
-                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-                <span className="relative z-10 flex items-center justify-center gap-2">
-                  <span>إرسال رمز التحقق</span>
-                  <span className="transition-transform group-hover:-translate-x-1">
-                    ←
-                  </span>
+                <span className="text-2xl text-emerald transition-transform group-hover:translate-x-1">
+                  ‹
                 </span>
-              </button>
-            </form>
+              </Link>
 
-            {/* الفاصل */}
-            <div className="my-6 flex items-center gap-3">
-              <div className="h-px flex-1 bg-ink/10" />
-              <span className="text-xs font-bold text-ink-4">المساعدة</span>
-              <div className="h-px flex-1 bg-ink/10" />
+              {/* أخصائي */}
+              <Link
+                href="/login/phone?role=specialist"
+                className="group flex items-center gap-4 rounded-2xl border-2 border-ink/10 bg-paper-3 p-4 transition-all hover:border-amber/40 hover:bg-paper-2 active:scale-[0.98]"
+              >
+                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-amber-soft text-2xl">
+                  ⌬
+                </div>
+                <div className="flex-1 text-right">
+                  <div className="text-base font-extrabold text-ink">أخصائي</div>
+                  <div className="text-xs text-ink-3">
+                    تقديم خدمات طبية للمراجعين
+                  </div>
+                </div>
+                <span className="text-2xl text-ink-4 transition-transform group-hover:translate-x-1">
+                  ‹
+                </span>
+              </Link>
             </div>
 
-            {/* رابط مساعدة */}
-            <div className="text-center text-xs leading-relaxed text-ink-3">
-              <p>
-                واجهت مشكلة؟{' '}
-                <a
-                  href="mailto:support@spirmedical.iq"
-                  className="font-bold text-emerald underline decoration-2 underline-offset-2"
-                >
-                  راسلنا
-                </a>
-              </p>
+            {/* زر الإجراء الرئيسي */}
+            <Link
+              href="/login/phone?role=patient"
+              className="group mt-5 block overflow-hidden rounded-2xl bg-emerald px-6 py-4 text-center text-base font-bold text-paper-3 shadow-lg shadow-emerald/30 transition-all hover:bg-emerald-deep hover:shadow-xl hover:shadow-emerald/40 active:scale-[0.98]"
+            >
+              <span className="flex items-center justify-center gap-2">
+                <span>المتابعة كمراجع</span>
+                <span className="transition-transform group-hover:-translate-x-1">
+                  ←
+                </span>
+              </span>
+            </Link>
+
+            {/* نسيت الرمز */}
+            <div className="mt-5 text-center">
+              <Link
+                href="/forgot"
+                className="text-xs font-bold text-ink-3 underline decoration-dotted underline-offset-4 hover:text-emerald"
+              >
+                نسيت الرمز؟
+              </Link>
             </div>
 
             {/* الموافقة */}
             <p className="mt-4 text-center text-[11px] leading-relaxed text-ink-4">
-              بتسجيل دخولك، أنت توافق على{' '}
+              بدخولك، أنت توافق على{' '}
               <Link
                 href="#"
                 className="font-bold text-emerald underline decoration-2 underline-offset-2"
@@ -176,7 +185,7 @@ export default function LoginPage({
             </p>
           </div>
 
-          {/* مزايا الأمان */}
+          {/* مزايا */}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-ink-3">
             <span className="flex items-center gap-1.5">
               <span className="text-base">🔒</span>
