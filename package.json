@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@fontsource/fraunces": "^5.2.9",
+    "@fontsource/jetbrains-mono": "^5.2.8",
     "@fontsource/tajawal": "^5.2.7",
     "@hookform/resolvers": "^3.9.0",
     "@supabase/ssr": "^0.10.2",
