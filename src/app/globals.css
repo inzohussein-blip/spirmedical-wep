@@ -2,17 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   Spir Medical · Design Tokens (مطابق لكتاب التصميم الأصلي)
+   ============================================================ */
+:root {
+  --ink: #0F1A1C;
+  --ink-2: #3A4848;
+  --ink-3: #6E7878;
+  --ink-4: #A4ACAA;
+  --paper: #F4EFE2;
+  --paper-2: #EDE6D3;
+  --paper-3: #FAF6EB;
+  --line: rgba(15, 26, 28, 0.10);
+  --line-2: rgba(15, 26, 28, 0.18);
+  --emerald: #0E5C4D;
+  --emerald-deep: #073B30;
+  --emerald-soft: #D9E5DF;
+  --amber: #B8540C;
+  --amber-soft: #F0DBC2;
+  --rose: #A82E3D;
+  --rose-soft: #F0D7D8;
+  --white: #FFFFFF;
+}
+
+/* ============================================================
+   Base typography
+   ============================================================ */
 @layer base {
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
-    font-family: 'Tajawal', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-feature-settings: 'kern', 'liga';
+    font-family: 'Tajawal', 'Fraunces', system-ui, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    font-weight: 400;
+    font-feature-settings: 'ss01' on, 'ss02' on, 'kern', 'liga';
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(184, 84, 12, 0.04) 0%, transparent 40%),
+      radial-gradient(circle at 88% 92%, rgba(14, 92, 77, 0.04) 0%, transparent 45%);
+    background-attachment: fixed;
+    min-height: 100vh;
   }
 
-  /* تحسين عرض النص العربي */
   [lang='ar'],
   [dir='rtl'] {
     font-feature-settings: 'kern', 'liga', 'calt';
@@ -20,14 +55,502 @@
   }
 }
 
+/* ============================================================
+   Phone frame & screen (مطابق للـ playbook)
+   ============================================================ */
+.phone {
+  background: #0F1A1C;
+  border-radius: 42px;
+  padding: 8px;
+  position: relative;
+  box-shadow:
+    0 30px 60px -25px rgba(14, 26, 28, 0.4),
+    0 1px 0 rgba(255, 255, 255, 0.1) inset;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.phone-screen {
+  background: var(--white);
+  border-radius: 34px;
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 9 / 19.5;
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+}
+
+.phone-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 22px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  position: relative;
+  z-index: 5;
+}
+
+.phone-status::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 6px;
+  transform: translateX(-50%);
+  width: 88px;
+  height: 24px;
+  background: #0F1A1C;
+  border-radius: 14px;
+}
+
+.phone-home-bar {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--ink);
+  opacity: 0.5;
+}
+
+.phone-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding-top: 10px;
+}
+
+/* ============================================================
+   Auth screen (login, phone, otp, forgot)
+   ============================================================ */
+.scr-auth {
+  padding: 40px 24px 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper-3);
+}
+
+.scr-auth-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: var(--emerald);
+  color: var(--paper-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 36px;
+  font-weight: 500;
+  margin-bottom: 30px;
+}
+
+.scr-auth h2 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.scr-auth p {
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+/* Role selection cards */
+.role-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.role-card {
+  border: 1.5px solid var(--line-2);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--white);
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  width: 100%;
+  text-align: right;
+}
+
+.role-card:hover {
+  border-color: var(--emerald);
+  transform: translateY(-1px);
+}
+
+.role-card.selected {
+  border-color: var(--emerald);
+  background: var(--emerald-soft);
+}
+
+.role-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--emerald);
+  flex-shrink: 0;
+}
+
+.role-card.selected .role-icon {
+  background: var(--emerald);
+  color: var(--paper-3);
+}
+
+.role-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.role-title {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 2px;
+  color: var(--ink);
+}
+
+.role-desc {
+  font-size: 10px;
+  color: var(--ink-3);
+  line-height: 1.4;
+}
+
+.role-arrow {
+  color: var(--ink-3);
+  font-size: 14px;
+}
+
+.role-card.selected .role-arrow {
+  color: var(--emerald);
+}
+
+/* CTA button */
+.cta-btn {
+  margin-top: auto;
+  padding: 14px;
+  background: var(--emerald);
+  color: var(--paper-3);
+  border-radius: 12px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  border: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: block;
+  font-family: inherit;
+  width: 100%;
+}
+
+.cta-btn:hover {
+  background: var(--emerald-deep);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px -8px rgba(14, 92, 77, 0.4);
+}
+
+.cta-btn:active {
+  transform: translateY(0);
+}
+
+/* Form fields (phone input, OTP) */
+.field-label {
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--ink);
+  display: block;
+}
+
+.phone-input-wrap {
+  display: flex;
+  background: var(--paper);
+  border: 1.5px solid var(--line-2);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 6px;
+  transition: border-color 0.2s ease;
+}
+
+.phone-input-wrap:focus-within {
+  border-color: var(--emerald);
+}
+
+.phone-prefix {
+  background: var(--paper-2);
+  padding: 11px 12px;
+  border-left: 1px solid var(--line);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.phone-input-wrap input {
+  flex: 1;
+  padding: 11px 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  outline: none;
+  direction: ltr;
+  text-align: left;
+}
+
+.phone-input-wrap input::placeholder {
+  color: var(--ink-4);
+}
+
+.field-hint {
+  font-size: 10px;
+  color: var(--ink-3);
+  margin-top: 2px;
+}
+
+/* Role badge */
+.role-badge {
+  background: var(--emerald-soft);
+  color: var(--emerald-deep);
+  padding: 5px 12px;
+  border-radius: 100px;
+  font-size: 10px;
+  font-weight: 700;
+  width: fit-content;
+  margin-bottom: 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.role-badge.specialist {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+/* OTP screen */
+.otp-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--emerald-soft);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 16px;
+}
+
+.otp-icon.amber {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.scr-auth h2.center {
+  text-align: center;
+}
+
+.scr-auth p.center {
+  text-align: center;
+}
+
+.masked-phone {
+  display: inline-block;
+  background: var(--paper-2);
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-top: 6px;
+  direction: ltr;
+}
+
+.otp-input {
+  background: var(--paper);
+  border: 2px solid var(--emerald);
+  border-radius: 14px;
+  padding: 18px;
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0.5em;
+  color: var(--ink);
+  margin: 14px 0;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.otp-input:focus {
+  border-color: var(--emerald-deep);
+  background: var(--white);
+}
+
+/* Helper links */
+.helper-link {
+  text-align: center;
+  font-size: 11px;
+  color: var(--ink-3);
+  margin-top: 14px;
+}
+
+.helper-link strong,
+.helper-link a {
+  color: var(--emerald);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.helper-link a:hover {
+  text-decoration: underline;
+}
+
+.expiry-note {
+  text-align: center;
+  font-size: 9px;
+  color: var(--ink-4);
+  margin-top: 8px;
+}
+
+/* Error alert */
+.error-alert {
+  background: var(--rose-soft);
+  border: 1px solid var(--rose);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--rose);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.error-alert::before {
+  content: '!';
+  width: 16px;
+  height: 16px;
+  background: var(--rose);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 800;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ============================================================
+   Auth page wrapper (mobile-first centering)
+   ============================================================ */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--paper-2);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-page::before {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(14, 92, 77, 0.05) 0%, transparent 70%);
+  top: -200px;
+  right: -200px;
+  pointer-events: none;
+}
+
+.auth-page::after {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(184, 84, 12, 0.05) 0%, transparent 70%);
+  bottom: -200px;
+  left: -200px;
+  pointer-events: none;
+}
+
+.auth-page > * {
+  position: relative;
+  z-index: 1;
+}
+
+.back-link {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  padding: 8px 16px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-2);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.back-link:hover {
+  background: var(--white);
+}
+
+/* ============================================================
+   Utility helpers
+   ============================================================ */
 @layer utilities {
   .font-serif-italic {
     font-family: 'Fraunces', serif;
     font-style: italic;
   }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
 }
 
-/* تقليل الحركة لمن يفضّل ذلك (إعدادات النظام) */
+/* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,
