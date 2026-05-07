@@ -5506,3 +5506,141 @@ body:has(.app-screen) {
     transform: none;
   }
 }
+
+
+/* ============================================================
+   Featured Service (طبيب العائلة المخصص)
+   ============================================================ */
+.service-cell.featured {
+  grid-column: span 2;
+  background: var(--ink);
+  color: var(--paper-3);
+  border-color: var(--ink);
+  min-height: 120px;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+}
+
+.service-cell.featured::before {
+  background: rgba(14, 92, 77, 0.45);
+  width: 180px;
+  height: 180px;
+  top: -80px;
+  inset-inline-start: -50px;
+  opacity: 1;
+}
+
+.service-cell.featured::after {
+  background: rgba(184, 84, 12, 0.25);
+  width: 120px;
+  height: 120px;
+  bottom: -60px;
+  inset-inline-end: -40px;
+  opacity: 1;
+}
+
+.service-cell.featured .service-icon {
+  background: var(--amber);
+  box-shadow:
+    0 10px 28px -6px rgba(184, 84, 12, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  width: 60px;
+  height: 60px;
+  font-size: 28px;
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+
+.service-cell.featured .featured-info {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.service-cell.featured .featured-meta {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 4px;
+}
+
+.service-cell.featured .service-name {
+  color: var(--paper-3);
+  font-size: 15px;
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+.service-cell.featured .service-sub {
+  color: rgba(244, 239, 226, 0.7);
+  font-size: 10px;
+  margin-top: 0;
+}
+
+.service-cell.featured .service-sub::before {
+  background: var(--amber);
+}
+
+.service-cell.featured .service-arrow {
+  background: var(--amber);
+  color: var(--paper-3);
+  border: none;
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+  position: static;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px -2px rgba(184, 84, 12, 0.5);
+}
+
+/* Featured locked variant (للضيف) */
+.service-cell.featured.locked {
+  background: var(--ink);
+  opacity: 0.85;
+}
+
+.service-cell.featured.locked::before {
+  background: rgba(110, 120, 120, 0.35);
+}
+
+.service-cell.featured.locked::after {
+  background: rgba(110, 120, 120, 0.2);
+}
+
+.service-cell.featured.locked .service-icon {
+  background: rgba(244, 239, 226, 0.15);
+  border: 1px dashed rgba(244, 239, 226, 0.3);
+  color: var(--paper-3);
+  box-shadow: none;
+}
+
+.service-cell.featured.locked .featured-meta {
+  color: var(--amber-soft);
+}
+
+.service-cell.featured.locked .service-arrow {
+  background: var(--amber-soft);
+  color: var(--ink);
+  box-shadow: none;
+}
+
+/* ============================================================
+   Story Add (دائرة + للإضافة)
+   ============================================================ */
+.story.story-add .story-circle {
+  background: var(--paper);
+  padding: 0;
+  border: 1.5px dashed var(--ink-4);
+}
+
+.story.story-add .story-inner {
+  background: var(--paper-3);
+  font-size: 18px;
+  border: none;
+  color: var(--ink-3);
+}
