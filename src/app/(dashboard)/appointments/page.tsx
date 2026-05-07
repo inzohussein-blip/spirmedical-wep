@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { formatDateTime } from '@/lib/utils';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AppointmentsPage() {
   const supabase = createClient();
   const {

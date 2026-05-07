@@ -4,6 +4,8 @@ import { Input } from '@/components/ui/Input';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { createAppointment } from './actions';
 
+export const dynamic = 'force-dynamic';
+
 const SERVICES = [
   'سحب دم منزلي',
   'فحوصات مختبرية',

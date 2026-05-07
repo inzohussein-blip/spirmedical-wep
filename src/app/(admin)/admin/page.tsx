@@ -3,6 +3,8 @@ import { Card } from '@/components/ui/Card';
 import { formatDateTime } from '@/lib/utils';
 import { logAuditEvent } from '@/lib/audit';
 
+export const dynamic = 'force-dynamic';
+
 interface AppointmentWithUser {
   id: string;
   service_type: string;

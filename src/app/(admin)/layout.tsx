@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import { signOut } from '../(auth)/login/actions';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminLayout({
   children,
 }: {
