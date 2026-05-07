@@ -8,6 +8,8 @@ const searchParamsSchema = z.object({
   error: z.string().max(500).optional(),
 });
 
+const TEST_MODE = process.env.ENABLE_TEST_MODE === 'true';
+
 export default function LoginPage({
   searchParams,
 }: {
@@ -28,6 +30,53 @@ export default function LoginPage({
         <h1 className="auth-brand">Spir Medical</h1>
         <div className="auth-brand-sub">سباير ميديكال</div>
       </div>
+
+      {/* 🧪 شارة وضع التجربة */}
+      {TEST_MODE && (
+        <div
+          style={{
+            background: 'var(--amber-soft)',
+            border: '1.5px dashed var(--amber)',
+            borderRadius: '14px',
+            padding: '14px 16px',
+            marginBottom: '20px',
+            fontSize: '12px',
+            lineHeight: 1.6,
+          }}
+        >
+          <div
+            style={{
+              fontWeight: 800,
+              color: 'var(--amber)',
+              marginBottom: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            🧪 وضع التجربة مُفعّل
+          </div>
+          <div style={{ color: 'var(--ink-2)', marginBottom: '6px' }}>
+            استخدم أحد هذه الحسابات للاختبار:
+          </div>
+          <div
+            style={{
+              fontFamily: 'monospace',
+              fontSize: '11px',
+              color: 'var(--ink)',
+              background: 'rgba(255,255,255,0.5)',
+              padding: '8px 10px',
+              borderRadius: '8px',
+              direction: 'ltr',
+              textAlign: 'left',
+            }}
+          >
+            <div>مراجع:   7712345678 → 123456</div>
+            <div>أخصائي:  7811111111 → 111111</div>
+            <div>أدمن:    7900000000 → 000000</div>
+          </div>
+        </div>
+      )}
 
       <div className="auth-title-section">
         <h2 className="auth-title">كيف تود الدخول؟</h2>
