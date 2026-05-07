@@ -5716,193 +5716,56 @@ select.auth-input {
 
 
 /* ============================================================
-   📱➡🖥 Adaptive Phone Frame
-   - على الموبايل: شاشة كاملة
-   - على الديسكتوب: محاكي هاتف في المنتصف
+   تخطيط بسيط - الموبايل والديسكتوب بدون frame
    ============================================================ */
 
-/* Desktop Frame Wrapper - يظهر فقط على الشاشات الكبيرة */
+/* الموبايل أولاً (الافتراضي) - شاشة كاملة */
+.app-screen {
+  background: var(--paper);
+  margin: 0 auto;
+}
+
+/* Bottom Nav - ثابت أسفل، ضمن العرض الأقصى */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  background: var(--white);
+  border-top: 1px solid var(--line);
+  z-index: 50;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Floating chat - متطابق مع الـ nav */
+.floating-chat-btn {
+  position: fixed;
+  bottom: 88px;
+  left: calc(50% - 240px + 16px);
+  z-index: 49;
+}
+
+/* على الموبايل (< 480px) - الـ floating button في الزاوية */
+@media (max-width: 479px) {
+  .floating-chat-btn {
+    left: 16px;
+  }
+}
+
+
+/* خلفية لطيفة على الديسكتوب - بيج فاتحة كما تريد */
 @media (min-width: 768px) {
-  /* خلفية الديسكتوب */
   body:has(.app-screen) {
-    background: linear-gradient(
-      135deg,
-      var(--ink) 0%,
-      #1a2a2c 50%,
-      var(--emerald-deep) 100%
-    );
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px 0;
-  }
-
-  /* Desktop Phone Frame */
-  .app-screen {
-    width: 420px;
-    max-width: 420px;
-    min-height: 90vh;
-    max-height: 880px;
-    border-radius: 48px;
-    box-shadow:
-      0 0 0 12px #1a1a1a,
-      0 0 0 14px #2a2a2a,
-      0 32px 80px -12px rgba(0, 0, 0, 0.6),
-      0 0 120px rgba(14, 92, 77, 0.3);
-    overflow: hidden;
-    position: relative;
-    margin: 0;
-    padding: 16px 16px 0;
-  }
-
-  /* Notch (تلميح بصري لكاميرا الهاتف) */
-  .app-screen::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120px;
-    height: 26px;
-    background: #1a1a1a;
-    border-bottom-left-radius: 16px;
-    border-bottom-right-radius: 16px;
-    z-index: 100;
-    pointer-events: none;
-  }
-
-  /* Status bar فاتحة */
-  .app-screen::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 26px;
     background: var(--paper);
-    z-index: 99;
-    pointer-events: none;
-  }
-
-  /* تعديل header ليكون أسفل status bar */
-  .app-header {
-    margin-top: 26px !important;
-  }
-
-  /* Bottom Nav داخل الإطار */
-  .bottom-nav {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    max-width: 100%;
-    transform: none;
-    border-bottom-left-radius: 36px;
-    border-bottom-right-radius: 36px;
-    overflow: hidden;
-  }
-
-  /* Floating chat button داخل الإطار */
-  .floating-chat-btn {
-    position: absolute;
-    bottom: 100px;
-    left: 16px;
-  }
-
-  /* Modals تظل full-screen */
-  .upgrade-modal-overlay,
-  .cookie-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-  }
-
-  /* تحسين scroll داخل الإطار */
-  .app-screen {
-    overflow-y: auto;
-    overflow-x: hidden;
-    scrollbar-width: thin;
-  }
-
-  .app-screen::-webkit-scrollbar {
-    width: 4px;
-  }
-
-  .app-screen::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .app-screen::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-  }
-
-  /* Hint text حول الإطار (اختياري) */
-  body:has(.app-screen)::before {
-    content: '📱 معاينة على شكل هاتف · افتح من هاتفك للتجربة الكاملة';
-    position: fixed;
-    top: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.8);
-    padding: 8px 20px;
-    border-radius: 100px;
-    font-size: 12px;
-    font-weight: 600;
-    backdrop-filter: blur(12px);
-    z-index: 50;
-    pointer-events: none;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
-}
-
-/* شاشات أكبر - أضف زخارف خلفية */
-@media (min-width: 1200px) {
-  body:has(.app-screen)::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(circle at 20% 30%, rgba(14, 92, 77, 0.15) 0%, transparent 40%),
-      radial-gradient(circle at 80% 70%, rgba(184, 84, 12, 0.1) 0%, transparent 40%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .app-screen {
-    z-index: 1;
-  }
-}
-
-/* الموبايل - shaft عادي بدون frame */
-@media (max-width: 767px) {
-  .app-screen {
-    width: 100%;
-    max-width: 100%;
-    border-radius: 0;
-    box-shadow: none;
     min-height: 100vh;
   }
 
-  .app-screen::before,
-  .app-screen::after {
-    display: none;
-  }
-
-  .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    border-radius: 0;
-  }
-
-  .floating-chat-btn {
-    position: fixed;
-    bottom: 88px;
-    left: 16px;
+  /* خط فاصل ناعم على جانبي التطبيق */
+  .app-screen {
+    box-shadow:
+      -1px 0 0 rgba(0, 0, 0, 0.04),
+      1px 0 0 rgba(0, 0, 0, 0.04);
   }
 }
