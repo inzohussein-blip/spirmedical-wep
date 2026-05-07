@@ -22,7 +22,7 @@ export default function HomePage() {
             <Link href="/login" className="landing-nav-link">
               تسجيل دخول
             </Link>
-            <Link href="/login" className="landing-nav-cta">
+            <Link href="/gate" className="landing-nav-cta">
               ادخل التطبيق ←
             </Link>
           </div>
@@ -50,7 +50,7 @@ export default function HomePage() {
                 واحد.
               </p>
               <div className="landing-hero-ctas">
-                <Link href="/login" className="landing-cta-primary">
+                <Link href="/gate" className="landing-cta-primary">
                   ابدأ الآن ←
                 </Link>
                 <Link href="/guest" className="landing-cta-secondary">
@@ -241,7 +241,7 @@ export default function HomePage() {
                 مجاناً تماماً للتسجيل · بدون التزامات · ادخل عبر هاتفك في ٣٠ ثانية
               </p>
               <div className="landing-cta-buttons">
-                <Link href="/login" className="landing-cta-primary big">
+                <Link href="/gate" className="landing-cta-primary big">
                   ابدأ الآن ←
                 </Link>
                 <Link href="/guest" className="landing-cta-secondary on-dark">
