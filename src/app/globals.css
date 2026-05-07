@@ -3880,86 +3880,6 @@ select.auth-input {
 }
 
 
-/* ============================================================
-   Guest Mode Components
-   ============================================================ */
-
-/* Guest Banner - شريط علوي */
-.guest-banner {
-  background: linear-gradient(90deg, var(--amber-soft) 0%, var(--emerald-soft) 100%);
-  border-bottom: 1px solid var(--line);
-  padding: 10px 16px;
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  backdrop-filter: blur(8px);
-}
-
-.guest-banner-content {
-  max-width: 600px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.guest-banner-icon {
-  font-size: 18px;
-  flex-shrink: 0;
-}
-
-.guest-banner-text {
-  flex: 1;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-}
-
-.guest-banner-cta {
-  background: var(--emerald);
-  color: var(--paper-3);
-  padding: 6px 14px;
-  border-radius: 100px;
-  font-size: 12px;
-  font-weight: 700;
-  text-decoration: none;
-  white-space: nowrap;
-  flex-shrink: 0;
-  transition: all 0.2s ease;
-}
-
-.guest-banner-cta:hover {
-  background: var(--emerald-deep);
-  transform: translateY(-1px);
-}
-
-.guest-banner-close {
-  background: transparent;
-  border: 0;
-  color: var(--ink-3);
-  font-size: 22px;
-  cursor: pointer;
-  padding: 4px 8px;
-  line-height: 1;
-  border-radius: 6px;
-  transition: all 0.15s ease;
-  flex-shrink: 0;
-}
-
-.guest-banner-close:hover {
-  background: rgba(0, 0, 0, 0.05);
-  color: var(--ink);
-}
-
-@media (max-width: 480px) {
-  .guest-banner-text {
-    font-size: 11px;
-  }
-  .guest-banner-cta {
-    font-size: 11px;
-    padding: 5px 10px;
-  }
-}
 
 /* RestrictedAction - أزرار مقفلة */
 .restricted-prompt,
@@ -4073,106 +3993,6 @@ select.auth-input {
   color: var(--ink);
 }
 
-/* ============================================================
-   App Layout (Bottom Navigation)
-   ============================================================ */
-.app-layout {
-  min-height: 100vh;
-  padding-bottom: 80px; /* مساحة للـ bottom nav */
-  background: var(--paper);
-}
-
-.app-content {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 0 16px;
-}
-
-/* Bottom Navigation */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--white);
-  border-top: 1px solid var(--line);
-  padding: 8px 8px 16px;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  z-index: 40;
-  box-shadow: 0 -4px 16px -4px rgba(0, 0, 0, 0.08);
-  /* iOS safe area */
-  padding-bottom: max(16px, env(safe-area-inset-bottom));
-}
-
-.bottom-nav-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 8px;
-  background: transparent;
-  border: 0;
-  color: var(--ink-3);
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  border-radius: 12px;
-  transition: all 0.15s ease;
-  position: relative;
-}
-
-.bottom-nav-item:hover {
-  background: var(--paper-3);
-  color: var(--ink);
-}
-
-.bottom-nav-item.active {
-  color: var(--emerald);
-}
-
-.bottom-nav-item.active::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 24px;
-  height: 3px;
-  background: var(--emerald);
-  border-radius: 0 0 4px 4px;
-}
-
-.bottom-nav-icon {
-  font-size: 22px;
-  line-height: 1;
-}
-
-.bottom-nav-label {
-  font-size: 10px;
-  font-weight: 700;
-}
-
-.bottom-nav-badge {
-  position: absolute;
-  top: 4px;
-  right: calc(50% - 18px);
-  background: var(--rose);
-  color: var(--paper-3);
-  font-size: 9px;
-  font-weight: 800;
-  min-width: 16px;
-  height: 16px;
-  border-radius: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 4px;
-}
 
 /* ============================================================
    Home Page Components (الواجهة الرئيسية)
@@ -4689,42 +4509,6 @@ select.auth-input {
 }
 
 
-/* ============================================================
-   📱 App Layout (Guest/User App) - matches playbook design
-   - بدون phone-frame
-   - الموبايل والديسكتوب: نفس التصميم في المنتصف
-   ============================================================ */
-
-.app-screen {
-  background: var(--white);
-  max-width: 420px;
-  margin: 0 auto;
-  min-height: 100vh;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  font-size: 12px;
-  overflow-x: hidden;
-}
-
-/* خلفية الديسكتوب: بيج فاتحة */
-@media (min-width: 768px) {
-  body:has(.app-screen) {
-    background: var(--paper);
-    min-height: 100vh;
-  }
-  .app-screen {
-    box-shadow:
-      -1px 0 0 rgba(0, 0, 0, 0.04),
-      1px 0 0 rgba(0, 0, 0, 0.04);
-  }
-}
-
-.scr-content {
-  flex: 1;
-  padding-top: 10px;
-  padding-bottom: 100px; /* مساحة للـ bottom-nav */
-}
 
 /* ============================================================
    Greeting Header
@@ -5280,54 +5064,6 @@ select.auth-input {
 }
 
 /* ============================================================
-   Bottom Nav
-   ============================================================ */
-.phone-bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 420px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  padding: 12px 8px 22px;
-  border-top: 1px solid var(--line);
-  background: var(--paper-3);
-  z-index: 50;
-  padding-bottom: max(22px, env(safe-area-inset-bottom));
-}
-
-.nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  font-size: 9px;
-  color: var(--ink-3);
-  font-weight: 500;
-  text-decoration: none;
-  cursor: pointer;
-  background: transparent;
-  border: 0;
-  font-family: inherit;
-  padding: 0;
-}
-
-.nav-item.active {
-  color: var(--emerald);
-}
-
-.nav-item .ic {
-  width: 22px;
-  height: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-}
-
-/* ============================================================
    Empty states (للصفحات الفرعية)
    ============================================================ */
 .scr-empty {
@@ -5651,4 +5387,122 @@ select.auth-input {
   margin-top: 6px;
   text-decoration: underline;
   font-family: inherit;
+}
+
+
+/* ============================================================
+   📱 App Layout - Mobile-first like real phone app
+   - Container: max 420px (phone width)
+   - Bottom Nav: داخل التطبيق دائماً
+   - بدون إطارات (frames) - تصميم نقي
+   ============================================================ */
+
+/* ============================================================
+   1. خلفية الجسم (body)
+   ============================================================ */
+body:has(.app-screen) {
+  background: var(--paper);
+  margin: 0;
+  padding: 0;
+}
+
+/* ============================================================
+   2. App Screen - الحاوية الرئيسية للتطبيق
+   ============================================================ */
+.app-screen {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  min-height: 100vh;
+  margin: 0 auto;
+  background: var(--white);
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  overflow-x: hidden;
+}
+
+/* خلفية ديسكتوب: ظلال جانبية بسيطة */
+@media (min-width: 768px) {
+  .app-screen {
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.04),
+      0 4px 20px -8px rgba(0, 0, 0, 0.08);
+  }
+}
+
+/* ============================================================
+   3. Scrollable content area
+   ============================================================ */
+.scr-content {
+  flex: 1;
+  padding-top: 10px;
+  padding-bottom: 90px; /* مساحة لـ bottom-nav */
+  overflow-y: visible;
+}
+
+/* ============================================================
+   4. Phone Bottom Nav - مثبت داخل التطبيق
+   ============================================================ */
+.phone-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 420px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 12px 8px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  background: var(--paper-3);
+  border-top: 1px solid var(--line);
+  z-index: 50;
+  box-sizing: border-box;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  color: var(--ink-3);
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  font-family: inherit;
+  padding: 4px 0;
+  transition: color 0.15s ease;
+}
+
+.nav-item:hover {
+  color: var(--ink-2);
+}
+
+.nav-item.active {
+  color: var(--emerald);
+}
+
+.nav-item .ic {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+/* ============================================================
+   5. Mobile - Bottom Nav يلتصق بأسفل الشاشة
+   ============================================================ */
+@media (max-width: 419px) {
+  .phone-bottom-nav {
+    max-width: 100%;
+    left: 0;
+    right: 0;
+    transform: none;
+  }
 }
