@@ -17,64 +17,69 @@ export default function LoginPage({
   const error = params.success ? params.data.error : undefined;
 
   return (
-    <main className="auth-page">
-      <Link href="/" className="back-link">
+    <main className="auth-screen">
+      <Link href="/" className="auth-back">
         <span>←</span>
         <span>للرئيسية</span>
       </Link>
 
-      <div className="phone">
-        <div className="phone-screen">
-          <div className="scr-auth">
-            <div className="scr-auth-logo">س</div>
-            <h2>كيف تود الدخول؟</h2>
-            <p>اختر نوع حسابك للحصول على التجربة المناسبة. يمكنك تغيير ذلك لاحقاً.</p>
+      <div className="auth-header">
+        <div className="auth-logo">س</div>
+        <h1 className="auth-brand">Spir Medical</h1>
+        <div className="auth-brand-sub">سباير ميديكال</div>
+      </div>
 
-            {error && (
-              <div className="error-alert">
-                <span>{error}</span>
-              </div>
-            )}
+      <div className="auth-title-section">
+        <h2 className="auth-title">كيف تود الدخول؟</h2>
+        <p className="auth-subtitle">
+          اختر نوع حسابك للحصول على التجربة المناسبة.
+          <br />
+          يمكنك تغيير ذلك لاحقاً.
+        </p>
+      </div>
 
-            <div className="role-cards">
-              <Link href="/guest" className="role-card">
-                <div className="role-icon">👁</div>
-                <div className="role-info">
-                  <div className="role-title">ضيف</div>
-                  <div className="role-desc">للتصفح فقط دون تسجيل</div>
-                </div>
-                <div className="role-arrow">‹</div>
-              </Link>
-
-              <Link href="/login/phone?role=patient" className="role-card selected">
-                <div className="role-icon">⊕</div>
-                <div className="role-info">
-                  <div className="role-title">مراجع / مريض</div>
-                  <div className="role-desc">حجز الخدمات وإدارة العائلة</div>
-                </div>
-                <div className="role-arrow">‹</div>
-              </Link>
-
-              <Link href="/login/phone?role=specialist" className="role-card">
-                <div className="role-icon">⌬</div>
-                <div className="role-info">
-                  <div className="role-title">أخصائي</div>
-                  <div className="role-desc">تقديم خدمات طبية للمراجعين</div>
-                </div>
-                <div className="role-arrow">‹</div>
-              </Link>
-            </div>
-
-            <Link href="/login/phone?role=patient" className="cta-btn">
-              المتابعة كمراجع
-            </Link>
-
-            <div className="helper-link">
-              <Link href="/forgot">نسيت الرمز؟</Link>
-            </div>
-          </div>
-          <div className="phone-home-bar"></div>
+      {error && (
+        <div className="auth-error">
+          <div className="auth-error-icon">!</div>
+          <span>{error}</span>
         </div>
+      )}
+
+      <div className="auth-role-cards">
+        <Link href="/guest" className="auth-role-card">
+          <div className="auth-role-icon">👁</div>
+          <div className="auth-role-info">
+            <div className="auth-role-title">ضيف</div>
+            <div className="auth-role-desc">للتصفح فقط دون تسجيل</div>
+          </div>
+          <div className="auth-role-arrow">‹</div>
+        </Link>
+
+        <Link href="/login/phone?role=patient" className="auth-role-card selected">
+          <div className="auth-role-icon">⊕</div>
+          <div className="auth-role-info">
+            <div className="auth-role-title">مراجع / مريض</div>
+            <div className="auth-role-desc">حجز الخدمات وإدارة العائلة</div>
+          </div>
+          <div className="auth-role-arrow">‹</div>
+        </Link>
+
+        <Link href="/login/phone?role=specialist" className="auth-role-card">
+          <div className="auth-role-icon">⌬</div>
+          <div className="auth-role-info">
+            <div className="auth-role-title">أخصائي</div>
+            <div className="auth-role-desc">تقديم خدمات طبية للمراجعين</div>
+          </div>
+          <div className="auth-role-arrow">‹</div>
+        </Link>
+      </div>
+
+      <Link href="/login/phone?role=patient" className="auth-cta">
+        المتابعة كمراجع ←
+      </Link>
+
+      <div className="auth-helper">
+        <Link href="/forgot">نسيت الرمز؟</Link>
       </div>
     </main>
   );
