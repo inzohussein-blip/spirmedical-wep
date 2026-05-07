@@ -281,12 +281,12 @@ export default function HomePage() {
               </ul>
             </div>
             <div className="landing-footer-col">
-              <h4>الشركة</h4>
+              <h4>قانوني</h4>
               <ul>
-                <li>عن سباير</li>
-                <li>الأخصائيون</li>
-                <li>الشركاء</li>
-                <li>المدوّنة</li>
+                <li><Link href="/legal/terms" style={{ color: 'inherit', textDecoration: 'none' }}>الشروط والأحكام</Link></li>
+                <li><Link href="/legal/privacy" style={{ color: 'inherit', textDecoration: 'none' }}>سياسة الخصوصية</Link></li>
+                <li>سياسة الكوكيز</li>
+                <li>إخلاء المسؤولية الطبية</li>
               </ul>
             </div>
             <div className="landing-footer-col">
@@ -294,7 +294,7 @@ export default function HomePage() {
               <ul>
                 <li>info@spirmedical.iq</li>
                 <li>الدعم الفني</li>
-                <li>الشروط والخصوصية</li>
+                <li>+٩٦٤ ٧٧٠ ١٢٣ ٤٥٦٧</li>
               </ul>
             </div>
           </div>
