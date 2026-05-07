@@ -6,181 +6,141 @@ import { LockedAction } from '@/components/app/LockedAction';
 import { BottomNav } from '@/components/app/BottomNav';
 
 const STORIES = [
-  { id: 1, title: 'لقاحات الأطفال', icon: '💉', color: '#0E5C4D' },
-  { id: 2, title: 'فحص دوري', icon: '🩺', color: '#B8540C' },
-  { id: 3, title: 'أدوية الضغط', icon: '💊', color: '#A82E3D' },
-  { id: 4, title: 'أطباء بغداد', icon: '👨‍⚕️', color: '#0E5C4D' },
-  { id: 5, title: 'خصومات اليوم', icon: '🎁', color: '#B8540C' },
+  { id: 1, title: 'لقاحات', icon: '💉' },
+  { id: 2, title: 'فحص دوري', icon: '🩺' },
+  { id: 3, title: 'أدوية الضغط', icon: '💊' },
+  { id: 4, title: 'أطباء بغداد', icon: '👨‍⚕️' },
+  { id: 5, title: 'خصومات', icon: '🎁' },
 ];
 
-const SERVICES = [
-  { id: 'blood', icon: '🩸', title: 'سحب دم', desc: 'حجز موعد للسحب المنزلي', locked: false },
-  { id: 'tests', icon: '🧪', title: 'تحاليل', desc: '+٢٠٠ فحص متاح', locked: false },
-  { id: 'hospitals', icon: '🏥', title: 'مستشفيات', desc: '+٤٠ مستشفى', locked: false },
-  { id: 'pharmacy', icon: '💊', title: 'صيدلية', desc: 'إرشاد عن الأدوية', locked: false },
-  { id: 'consult', icon: '📞', title: 'استشارة', desc: 'تواصل مع طبيب', locked: false },
-  { id: 'cosmetic', icon: '💄', title: 'كوزمتك طبي', desc: 'منتجات معتمدة', locked: false },
-  { id: 'clinics', icon: '🏨', title: 'عيادات', desc: 'حجز مواعيد', locked: false },
-  { id: 'nursing', icon: '👩‍⚕️', title: 'تمريض وتداوي', desc: 'عناية منزلية', locked: false },
-  { id: 'family', icon: '👨‍👩‍👧', title: 'العائلة', desc: 'إدارة حسابات الأقارب', locked: true },
-  { id: 'records', icon: '📋', title: 'سجلك الطبي', desc: 'تاريخك الصحي', locked: true },
-  { id: 'reminders', icon: '⏰', title: 'تنبيهات الأدوية', desc: 'مواعيد ذكية', locked: true },
-  { id: 'family_doc', icon: '🩺', title: 'طبيب العائلة', desc: 'طبيبك الخاص', locked: true },
-];
+type Variant = 'default' | 'amber' | 'rose' | 'locked';
 
-const ADS = [
-  { id: 1, title: 'خصم ٢٠٪ على الفحوصات الشاملة', subtitle: 'هذا الأسبوع · مختبرات الكندي', color: '#0E5C4D', image: '🏥' },
-  { id: 2, title: 'استشارة طبية مجانية', subtitle: 'لأول حجز · +٢٠ تخصص', color: '#B8540C', image: '👨‍⚕️' },
-];
+interface Service {
+  id: string;
+  icon: string;
+  title: string;
+  desc: string;
+  variant: Variant;
+  href?: string;
+}
 
-type Service = (typeof SERVICES)[number];
+const SERVICES: Service[] = [
+  { id: 'hospitals', icon: '🏥', title: 'المستشفيات', desc: 'دليل ومعلومات', variant: 'default', href: '/guest/services/hospitals' },
+  { id: 'pharmacy', icon: '💊', title: 'الصيدليات', desc: 'مواقع وأدوية', variant: 'default', href: '/guest/services/pharmacy' },
+  { id: 'tests', icon: '🧪', title: 'تحاليل مختبرية', desc: 'يتطلب التسجيل', variant: 'locked' },
+  { id: 'nursing', icon: '💉', title: 'تمريض وتداوي', desc: 'يتطلب التسجيل', variant: 'locked' },
+  { id: 'consult', icon: '💬', title: 'استشارة طبية', desc: 'يتطلب التسجيل', variant: 'locked' },
+  { id: 'sos', icon: '🚨', title: 'طوارئ SOS', desc: 'متاح للجميع', variant: 'rose', href: '/guest/sos' },
+];
 
 export default function GuestHomePage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
     <main className="app-screen">
-      <header className="app-header">
-        <div className="app-header-row">
-          <div className="app-greeting">
-            <div className="app-avatar guest" aria-hidden="true">👁</div>
-            <div>
-              <div className="app-greeting-label">مرحباً بك زائراً</div>
-              <div className="app-greeting-name">تصفّح بحرّية</div>
-            </div>
+      <div className="scr-content">
+
+        {/* Greeting */}
+        <div className="scr-greet">
+          <div>
+            <div className="scr-h1">مرحباً، ضيف</div>
+            <div className="scr-loc">📍 تصفح فقط · سجّل لرفع طلب</div>
           </div>
-          <LockedAction
-            isLocked={true}
-            message="سجّل الآن لتلقي التنبيهات الطبية"
-            ariaLabel="التنبيهات"
-            className="app-icon-btn"
-          >
-            <span aria-hidden="true">🔔</span>
-          </LockedAction>
+          <div className="scr-avatar guest" aria-hidden="true">ض</div>
         </div>
 
-        <div className="app-location">
-          <span aria-hidden="true">📍</span>
-          <span>بغداد - تحديد الموقع غير متاح للضيف</span>
-        </div>
+        {/* Banner تشجيع التسجيل */}
+        <Link href="/register" className="scr-guest-banner">
+          <div className="scr-guest-banner-icon" aria-hidden="true">⚡</div>
+          <div className="scr-guest-banner-content">
+            <div className="scr-guest-banner-title">سجّل وافتح كل الميزات</div>
+            <div className="scr-guest-banner-sub">حفظ السجلات، حجز الفحوصات، استشارات</div>
+          </div>
+          <div className="scr-guest-banner-cta">سجّل ‹</div>
+        </Link>
 
-        <div className="app-search">
-          <span className="app-search-icon" aria-hidden="true">🔍</span>
+        {/* Search */}
+        <div className="scr-search" style={{ marginTop: 14 }}>
+          <div className="scr-search-icon" aria-hidden="true">⌕</div>
           <input
             type="search"
-            placeholder="ابحث عن خدمة، طبيب، فحص..."
+            placeholder="ابحث عن صيدلية أو مستشفى..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="app-search-input"
-            aria-label="البحث في الخدمات"
+            aria-label="البحث"
           />
-          <button className="app-search-filter" aria-label="فلتر البحث" type="button">⚙</button>
         </div>
-      </header>
 
-      <section aria-label="القصص الطبية">
-        <h2 className="sr-only">قصص اليوم</h2>
-        <div className="app-stories">
+        {/* Stories */}
+        <div className="scr-stories" aria-label="القصص الطبية">
           {STORIES.map((story) => (
-            <button
-              key={story.id}
-              className="app-story"
-              style={{ ['--story-color' as string]: story.color } as React.CSSProperties}
-              type="button"
-              aria-label={`قصة: ${story.title}`}
-            >
-              <div className="app-story-circle">
-                <span aria-hidden="true">{story.icon}</span>
+            <button key={story.id} className="story" type="button" aria-label={`قصة: ${story.title}`}>
+              <div className="story-circle">
+                <div className="story-inner">{story.icon}</div>
               </div>
-              <span className="app-story-label">{story.title}</span>
+              <div className="story-label">{story.title}</div>
             </button>
           ))}
         </div>
-      </section>
 
-      <section aria-label="عروض اليوم">
-        <h2 className="app-section-title">
-          <span>عروض اليوم</span>
-          <button className="app-section-link" type="button">الكل ←</button>
-        </h2>
-        <div className="app-ads">
-          {ADS.map((ad) => (
-            <div
-              key={ad.id}
-              className="app-ad-card"
-              style={{ ['--ad-color' as string]: ad.color } as React.CSSProperties}
-            >
-              <div className="app-ad-content">
-                <h3>{ad.title}</h3>
-                <p>{ad.subtitle}</p>
-                <LockedAction
-                  isLocked={true}
-                  message="سجّل الآن للاستفادة من العروض"
-                  className="app-ad-cta"
-                >
-                  استفد الآن
-                </LockedAction>
-              </div>
-              <div className="app-ad-image" aria-hidden="true">{ad.image}</div>
-            </div>
-          ))}
+        {/* Section: تصفّح بدون تسجيل */}
+        <div className="scr-section-head" style={{ marginTop: 6 }}>
+          <div className="scr-section-title">تصفّح بدون تسجيل</div>
+          <div className="scr-section-link">٦ خدمات</div>
         </div>
-      </section>
 
-      <section aria-label="الخدمات الطبية">
-        <h2 className="app-section-title"><span>خدماتنا</span></h2>
-        <div className="app-services-grid">
+        <div className="services-grid">
           {SERVICES.map((service) => (
             <ServiceCard key={service.id} service={service} />
           ))}
         </div>
-      </section>
 
-      <div className="app-sos-section">
-        <button className="app-sos-btn" type="button" aria-label="طوارئ - اتصال فوري">
-          <span className="app-sos-icon" aria-hidden="true">🚨</span>
-          <div>
-            <div className="app-sos-title">طوارئ SOS</div>
-            <div className="app-sos-subtitle">الإسعاف ١٢٢ · متاح ٢٤/٧</div>
-          </div>
-        </button>
+        <div style={{
+          padding: '14px 18px 8px',
+          fontSize: 10,
+          color: 'var(--ink-3)',
+          textAlign: 'center',
+          lineHeight: 1.6,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          justifyContent: 'center'
+        }}>
+          <span style={{ opacity: 0.5 }} aria-hidden="true">🔒</span>
+          <span>الخدمات المقفلة تتطلب التسجيل كمراجع</span>
+        </div>
       </div>
 
-      <div className="app-bottom-spacer" />
-      <BottomNav isGuest={true} hasActiveChat={false} />
+      <BottomNav isGuest={true} />
     </main>
   );
 }
 
 function ServiceCard({ service }: { service: Service }) {
-  if (service.locked) {
+  const className = `service-cell ${service.variant !== 'default' ? service.variant : ''}`;
+  const arrow = service.variant === 'locked' ? '🔒' : '‹';
+
+  if (service.variant === 'locked') {
     return (
       <LockedAction
         isLocked={true}
-        message={`سجّل الآن للوصول لـ"${service.title}"`}
-        className="app-service-card locked"
+        message={`${service.title} - ${service.desc}`}
+        className={className}
       >
-        <div className="app-service-icon" aria-hidden="true">{service.icon}</div>
-        <div className="app-service-info">
-          <h3 className="app-service-title">{service.title}</h3>
-          <p className="app-service-desc">{service.desc}</p>
-        </div>
+        <div className="service-arrow" aria-hidden="true">{arrow}</div>
+        <div className="service-icon" aria-hidden="true">{service.icon}</div>
+        <div className="service-name">{service.title}</div>
+        <div className="service-sub">{service.desc}</div>
       </LockedAction>
     );
   }
 
   return (
-    <Link
-      href={`/guest/services/${service.id}`}
-      className="app-service-card"
-      aria-label={`${service.title}: ${service.desc}`}
-    >
-      <div className="app-service-icon" aria-hidden="true">{service.icon}</div>
-      <div className="app-service-info">
-        <h3 className="app-service-title">{service.title}</h3>
-        <p className="app-service-desc">{service.desc}</p>
-      </div>
-      <span className="app-service-arrow" aria-hidden="true">‹</span>
+    <Link href={service.href || '#'} className={className}>
+      <div className="service-arrow" aria-hidden="true">{arrow}</div>
+      <div className="service-icon" aria-hidden="true">{service.icon}</div>
+      <div className="service-name">{service.title}</div>
+      <div className="service-sub">{service.desc}</div>
     </Link>
   );
 }
