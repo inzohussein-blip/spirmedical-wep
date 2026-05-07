@@ -1,14 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+
   // ملاحظة: لا نستخدم `output: 'standalone'` على Vercel — Vercel يُعالج هذا تلقائياً
-  // standalone يُستخدم فقط للـ Docker/self-hosted
+
   experimental: {
     serverActions: {
       allowedOrigins: ['localhost:3000', 'spirmedical.iq', 'app.spirmedical.iq'],
       bodySizeLimit: '2mb',
     },
   },
+
   async headers() {
     return [
       {
@@ -29,11 +31,32 @@ const nextConfig = {
       },
     ];
   },
+
   images: {
     remotePatterns: [{ protocol: 'https', hostname: '**.supabase.co' }],
   },
+
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
+    removeConsole:
+      process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
+  },
+
+  // احتياطات Node 24 - منع تحذيرات الـ deprecation
+  webpack: (config, { isServer }) => {
+    // معالجة punycode المهجور في Node 24
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        punycode: false,
+      };
+    }
+    return config;
+  },
+
+  // تحذيرات قابلة للتجاهل في Node 24
+  onDemandEntries: {
+    maxInactiveAge: 25 * 1000,
+    pagesBufferLength: 2,
   },
 };
 
