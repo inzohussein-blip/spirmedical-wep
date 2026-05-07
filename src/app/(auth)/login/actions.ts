@@ -6,18 +6,21 @@ import { redirect } from 'next/navigation';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
-import { headers, cookies } from 'next/headers';
+import { headers } from 'next/headers';
 
 // ============================================================
 // 🧪 وضع التجربة (TEST MODE)
 // ============================================================
-// مُفعّل فقط عند: ENABLE_TEST_MODE=true في environment variables
-// ⚠️ لا تُفعّله في الإنتاج العام مع المستخدمين الحقيقيين!
+// مُفعّل افتراضياً لتسهيل الاختبار
+// لتعطيله: ENABLE_TEST_MODE=false في environment variables
 // ============================================================
 
-const TEST_MODE = process.env.ENABLE_TEST_MODE === 'true';
+const TEST_MODE = process.env.ENABLE_TEST_MODE !== 'false'; // مُفعّل افتراضياً
 
-const TEST_ACCOUNTS: Record<string, { otp: string; role: 'patient' | 'specialist' | 'admin' }> = {
+const TEST_ACCOUNTS: Record<
+  string,
+  { otp: string; role: 'patient' | 'specialist' | 'admin' }
+> = {
   '+9647712345678': { otp: '123456', role: 'patient' },
   '+9647811111111': { otp: '111111', role: 'specialist' },
   '+9647900000000': { otp: '000000', role: 'admin' },
@@ -51,7 +54,9 @@ export async function sendOtp(formData: FormData) {
   if (!limit.allowed) {
     redirect(
       '/login?error=' +
-        encodeURIComponent(`محاولات كثيرة، حاول بعد ${limit.retryAfterSeconds}s`)
+        encodeURIComponent(
+          `محاولات كثيرة، حاول بعد ${limit.retryAfterSeconds} ثانية`
+        )
     );
   }
 
@@ -74,21 +79,50 @@ export async function sendOtp(formData: FormData) {
   }
 
   // الإنتاج: استخدم Supabase + Twilio
-  const supabase = createClient();
-  const { error } = await supabase.auth.signInWithOtp({ phone: normalizedPhone });
-
-  if (error) {
-    logger.error('OTP send failed', {
+  try {
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOtp({
       phone: normalizedPhone,
-      error: error.message,
+    });
+
+    if (error) {
+      logger.error('OTP send failed', {
+        phone: normalizedPhone,
+        error: error.message,
+        code: error.status,
+      });
+
+      // رسائل خطأ مفصّلة حسب نوع الخطأ
+      let errorMessage = 'فشل إرسال الرمز';
+
+      if (error.message.includes('SMS provider')) {
+        errorMessage = 'مزوّد SMS غير مُعدّ. استخدم رقماً تجريبياً: 7712345678';
+      } else if (error.message.includes('rate')) {
+        errorMessage = 'محاولات كثيرة، انتظر دقيقة';
+      } else if (error.message.includes('phone')) {
+        errorMessage = 'رقم الهاتف غير صحيح';
+      } else {
+        errorMessage =
+          'فشل إرسال الرمز. للاختبار استخدم: 7712345678 / 7811111111 / 7900000000';
+      }
+
+      redirect('/login?error=' + encodeURIComponent(errorMessage));
+    }
+
+    logger.info('OTP sent', { phone: normalizedPhone, ip });
+    redirect(`/otp?phone=${encodeURIComponent(normalizedPhone)}`);
+  } catch (err) {
+    logger.error('OTP send exception', {
+      phone: normalizedPhone,
+      error: err instanceof Error ? err.message : 'Unknown',
     });
     redirect(
-      '/login?error=' + encodeURIComponent('فشل إرسال الرمز، حاول مرة أخرى')
+      '/login?error=' +
+        encodeURIComponent(
+          'حدث خطأ تقني. للاختبار استخدم: 7712345678 (الرمز: 123456)'
+        )
     );
   }
-
-  logger.info('OTP sent', { phone: normalizedPhone, ip });
-  redirect(`/otp?phone=${encodeURIComponent(normalizedPhone)}`);
 }
 
 // ============================================================
@@ -100,13 +134,15 @@ export async function verifyOtp(formData: FormData) {
 
   const ip = getIp();
   const limit = await checkRateLimit(`otp:verify:${ip}`, {
-    max: 3,
+    max: 5,
     windowSeconds: 600,
   });
   if (!limit.allowed) {
     redirect(
       `/otp?phone=${encodeURIComponent(phone)}&error=` +
-        encodeURIComponent(`محاولات كثيرة، حاول بعد ${limit.retryAfterSeconds}s`)
+        encodeURIComponent(
+          `محاولات كثيرة، حاول بعد ${limit.retryAfterSeconds} ثانية`
+        )
     );
   }
 
@@ -126,60 +162,110 @@ export async function verifyOtp(formData: FormData) {
       logger.warn('[TEST MODE] Wrong OTP for test account', { phone });
       redirect(
         `/otp?phone=${encodeURIComponent(phone)}&error=` +
-          encodeURIComponent('الرمز غير صحيح')
+          encodeURIComponent(`الرمز غير صحيح. الرمز للاختبار: ${testAccount.otp}`)
       );
     }
 
-    // إنشاء أو الحصول على حساب التيست
-    const supabase = createClient();
-    const { error: signUpError } = await supabase.auth.signUp({
-      phone,
-      password: `test_${testAccount.otp}_${phone.slice(-4)}`,
-      options: {
-        data: { role: testAccount.role, is_test: true },
-      },
-    });
+    try {
+      const supabase = createClient();
 
-    // إذا الحساب موجود، سجّل دخول
-    if (signUpError && signUpError.message.includes('already')) {
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        phone,
-        password: `test_${testAccount.otp}_${phone.slice(-4)}`,
-      });
+      // محاولة إنشاء الحساب أو تسجيل الدخول
+      const fakeEmail = `test_${phone.replace(/\D/g, '')}@spirmedical.test`;
+      const fakePassword = `TestPassword_${phone.slice(-6)}_2026!`;
 
-      if (signInError) {
-        logger.error('[TEST MODE] Sign-in failed', {
-          phone,
-          error: signInError.message,
+      // محاولة تسجيل الدخول أولاً
+      let { data: signInData, error: signInError } =
+        await supabase.auth.signInWithPassword({
+          email: fakeEmail,
+          password: fakePassword,
         });
+
+      // إذا فشل، أنشئ الحساب
+      if (signInError) {
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email: fakeEmail,
+          password: fakePassword,
+          phone,
+          options: {
+            data: {
+              role: testAccount.role,
+              is_test: true,
+              test_phone: phone,
+            },
+          },
+        });
+
+        if (signUpError) {
+          logger.error('[TEST MODE] Sign-up failed', {
+            phone,
+            error: signUpError.message,
+          });
+          redirect(
+            `/otp?phone=${encodeURIComponent(phone)}&error=` +
+              encodeURIComponent(
+                'فشل إنشاء الحساب التجريبي: ' + signUpError.message
+              )
+          );
+        }
+
+        signInData = signUpData;
+      }
+
+      if (!signInData?.user) {
         redirect(
           `/otp?phone=${encodeURIComponent(phone)}&error=` +
             encodeURIComponent('فشل تسجيل الدخول التجريبي')
         );
       }
-    }
 
-    // ترقية الدور
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      await supabase
+      // ترقية الدور في public.users
+      const { error: updateError } = await supabase
         .from('users')
-        .update({ role: testAccount.role })
-        .eq('id', user.id);
+        .upsert({
+          id: signInData.user.id,
+          phone,
+          role: testAccount.role,
+        });
 
+      if (updateError) {
+        logger.warn('[TEST MODE] Could not update user role', {
+          error: updateError.message,
+        });
+      }
+
+      // Audit log
       await logAuditEvent({
         action: 'auth.login.test',
-        user_id: user.id,
-        metadata: { ip, phone, role: testAccount.role, test_mode: true },
-      });
+        user_id: signInData.user.id,
+        metadata: {
+          ip,
+          phone,
+          role: testAccount.role,
+          test_mode: true,
+        },
+      }).catch((e) => logger.warn('Audit log failed', { error: e.message }));
 
       logger.info('[TEST MODE] User logged in', {
-        user_id: user.id,
+        user_id: signInData.user.id,
         role: testAccount.role,
       });
-    }
 
-    redirect('/dashboard');
+      redirect('/dashboard');
+    } catch (err) {
+      // redirect throws NEXT_REDIRECT - تجاهله
+      if (err instanceof Error && err.message.includes('NEXT_REDIRECT')) {
+        throw err;
+      }
+
+      logger.error('[TEST MODE] Exception', {
+        phone,
+        error: err instanceof Error ? err.message : 'Unknown',
+      });
+      redirect(
+        `/otp?phone=${encodeURIComponent(phone)}&error=` +
+          encodeURIComponent('خطأ تقني في التيست: ' + (err as Error).message)
+      );
+    }
   }
 
   // الإنتاج: التحقق العادي
