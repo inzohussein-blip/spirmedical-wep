@@ -37,7 +37,7 @@ export default function LoginPage({
             )}
 
             <div className="role-cards">
-              <Link href="/?guest=1" className="role-card">
+              <Link href="/guest" className="role-card">
                 <div className="role-icon">👁</div>
                 <div className="role-info">
                   <div className="role-title">ضيف</div>
