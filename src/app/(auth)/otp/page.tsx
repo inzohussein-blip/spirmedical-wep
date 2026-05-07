@@ -26,65 +26,65 @@ export default function OtpPage({
       : phone;
 
   return (
-    <main className="auth-page">
-      <Link href="/login/phone" className="back-link">
+    <main className="auth-screen">
+      <Link href="/login/phone" className="auth-back">
         <span>←</span>
         <span>تغيير الرقم</span>
       </Link>
 
-      <div className="phone">
-        <div className="phone-screen">
-          <div className="scr-auth">
-            <div className="scr-auth-logo">س</div>
-
-            <div className="otp-icon">💬</div>
-
-            <h2 className="center">تحقّق من رقمك</h2>
-            <p className="center">
-              أرسلنا رمزاً مكوّناً من ٦ أرقام إلى<br />
-              <span className="masked-phone">{maskedPhone}</span>
-            </p>
-
-            {error && (
-              <div className="error-alert">
-                <span>{error}</span>
-              </div>
-            )}
-
-            <form action={verifyOtp} style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-              <input type="hidden" name="phone" value={phone} />
-
-              <label htmlFor="token" className="field-label" style={{ position: 'absolute', left: '-9999px' }}>
-                رمز التحقق
-              </label>
-              <input
-                id="token"
-                type="text"
-                name="token"
-                className="otp-input"
-                placeholder="000000"
-                inputMode="numeric"
-                maxLength={6}
-                minLength={6}
-                pattern="\d{6}"
-                required
-                autoComplete="one-time-code"
-                autoFocus
-              />
-
-              <button type="submit" className="cta-btn">
-                تحقّق وادخل
-              </button>
-            </form>
-
-            <div className="helper-link">
-              لم يصلك الرمز؟ <Link href="/login/phone">إعادة الإرسال</Link>
-            </div>
-            <div className="expiry-note">⏱ ينتهي خلال ٥ دقائق</div>
-          </div>
-          <div className="phone-home-bar"></div>
-        </div>
+      <div className="auth-header">
+        <div className="auth-logo">س</div>
+        <h1 className="auth-brand">Spir Medical</h1>
+        <div className="auth-brand-sub">سباير ميديكال</div>
       </div>
+
+      <div className="auth-status-icon">💬</div>
+
+      <div className="auth-title-section">
+        <h2 className="auth-title">تحقّق من رقمك</h2>
+        <p className="auth-subtitle">
+          أرسلنا رمزاً مكوّناً من ٦ أرقام إلى
+        </p>
+        <span className="auth-masked-phone">{maskedPhone}</span>
+      </div>
+
+      {error && (
+        <div className="auth-error">
+          <div className="auth-error-icon">!</div>
+          <span>{error}</span>
+        </div>
+      )}
+
+      <form action={verifyOtp} className="auth-form">
+        <input type="hidden" name="phone" value={phone} />
+
+        <label htmlFor="token" className="auth-field-label" style={{ position: 'absolute', left: '-9999px' }}>
+          رمز التحقق
+        </label>
+        <input
+          id="token"
+          type="text"
+          name="token"
+          className="auth-otp-input"
+          placeholder="000000"
+          inputMode="numeric"
+          maxLength={6}
+          minLength={6}
+          pattern="\d{6}"
+          required
+          autoComplete="one-time-code"
+          autoFocus
+        />
+
+        <button type="submit" className="auth-cta">
+          تحقّق وادخل ←
+        </button>
+      </form>
+
+      <div className="auth-helper">
+        لم يصلك الرمز؟ <Link href="/login/phone">إعادة الإرسال</Link>
+      </div>
+      <div className="auth-expiry">⏱ ينتهي خلال ٥ دقائق</div>
     </main>
   );
 }
