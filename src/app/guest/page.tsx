@@ -10,189 +10,156 @@ export const metadata = {
 
 export default function GuestPage() {
   return (
-    <main className="full-screen-page">
-      <div className="phone">
-        <div className="phone-screen">
-          {/* Phone status bar */}
-          <div className="phone-status">
-            <span>9:41</span>
-            <span>📶 🔋</span>
+    <main className="app-screen">
+      {/* App header */}
+      <header className="app-header">
+        <div className="app-header-left">
+          <div className="app-greeting">مرحباً بك زائراً 👋</div>
+          <h1 className="app-brand">سباير ميديكال</h1>
+          <div className="app-location">
+            <span>📍</span>
+            <span>العراق · جميع المحافظات</span>
           </div>
+        </div>
+        <Link href="/login" className="app-avatar-link" aria-label="تسجيل الدخول">
+          <div className="app-avatar-guest">ز</div>
+        </Link>
+      </header>
 
-          {/* Greeting */}
-          <div className="scr-greet">
-            <div>
-              <div className="scr-h1">مرحباً بك زائراً 👋</div>
-              <div className="scr-h2">سباير ميديكال</div>
-              <div className="scr-loc">
-                <span>📍</span>
-                <span>العراق · جميع المحافظات</span>
-              </div>
-            </div>
-            <div className="scr-avatar">ز</div>
-          </div>
-
-          {/* Search bar */}
-          <div className="scr-search">
-            <div className="scr-search-icon">🔍</div>
-            <span>ابحث عن خدمة طبية…</span>
-          </div>
-
-          {/* Guest banner - أعلى شيء يدعو للتسجيل */}
-          <div className="scr-guest-banner" style={{ marginTop: '14px' }}>
-            <div className="scr-guest-banner-content">
-              <div className="scr-guest-banner-tag">⚡ وضع الضيف</div>
-              <div className="scr-guest-banner-title">سجّل لتفتح كل المزايا</div>
-              <div className="scr-guest-banner-desc">
-                احجز · تابع طلباتك · سجّل طبي · والمزيد
-              </div>
-            </div>
-            <Link href="/login" className="scr-guest-banner-btn">
-              التسجيل ←
-            </Link>
-          </div>
-
-          {/* Stories */}
-          <div className="scr-stories">
-            <div className="story">
-              <div className="story-circle">
-                <div className="story-inner">💉</div>
-              </div>
-              <div className="story-label">لقاحات</div>
-            </div>
-            <div className="story">
-              <div className="story-circle">
-                <div className="story-inner">🩺</div>
-              </div>
-              <div className="story-label">فحص</div>
-            </div>
-            <div className="story">
-              <div className="story-circle">
-                <div className="story-inner">💊</div>
-              </div>
-              <div className="story-label">أدوية</div>
-            </div>
-            <div className="story">
-              <div className="story-circle">
-                <div className="story-inner">👨‍⚕️</div>
-              </div>
-              <div className="story-label">أطباء</div>
-            </div>
-            <div className="story">
-              <div className="story-circle">
-                <div className="story-inner">🏥</div>
-              </div>
-              <div className="story-label">مستشفى</div>
-            </div>
-          </div>
-
-          {/* Services section */}
-          <div className="scr-section-title">
-            <h3>الخدمات</h3>
-            <span style={{ fontSize: '9px', color: 'var(--ink-3)' }}>
-              🔒 محتاج تسجيل للحجز
-            </span>
-          </div>
-
-          <div className="scr-services">
-            {/* خدمات متاحة للتصفح */}
-            <div className="service-cell">
-              <div className="service-icon">🩸</div>
-              <div className="service-arrow">›</div>
-              <div className="service-name">سحب دم منزلي</div>
-              <div className="service-sub">من 25,000 د.ع</div>
-            </div>
-
-            <div className="service-cell amber">
-              <div className="service-icon">🧪</div>
-              <div className="service-arrow">›</div>
-              <div className="service-name">فحوصات مختبرية</div>
-              <div className="service-sub">+200 فحص</div>
-            </div>
-
-            <div className="service-cell">
-              <div className="service-icon">📞</div>
-              <div className="service-arrow">›</div>
-              <div className="service-name">استشارة طبيب</div>
-              <div className="service-sub">+20 تخصص</div>
-            </div>
-
-            <div className="service-cell rose">
-              <div className="service-icon">💊</div>
-              <div className="service-arrow">›</div>
-              <div className="service-name">صيدلية وأدوية</div>
-              <div className="service-sub">توصيل سريع</div>
-            </div>
-
-            {/* خدمات مقفلة - تحتاج تسجيل */}
-            <div className="service-cell locked">
-              <div className="service-icon">🚨</div>
-              <div className="service-arrow">🔒</div>
-              <div className="service-name">طوارئ SOS</div>
-              <div className="service-sub">للمسجّلين فقط</div>
-            </div>
-
-            <div className="service-cell locked">
-              <div className="service-icon">📋</div>
-              <div className="service-arrow">🔒</div>
-              <div className="service-name">السجل الطبي</div>
-              <div className="service-sub">للمسجّلين فقط</div>
-            </div>
-
-            <div className="service-cell locked">
-              <div className="service-icon">⏰</div>
-              <div className="service-arrow">🔒</div>
-              <div className="service-name">تذكير الأدوية</div>
-              <div className="service-sub">للمسجّلين فقط</div>
-            </div>
-
-            <div className="service-cell locked">
-              <div className="service-icon">👨‍👩‍👧</div>
-              <div className="service-arrow">🔒</div>
-              <div className="service-name">إدارة العائلة</div>
-              <div className="service-sub">للمسجّلين فقط</div>
-            </div>
-          </div>
-
-          {/* Bottom CTA */}
-          <div style={{ padding: '0 18px 20px' }}>
-            <Link
-              href="/login"
-              className="cta-btn"
-              style={{ marginTop: '8px', display: 'block' }}
-            >
-              إنشاء حساب — مجاناً ←
-            </Link>
-            <div
-              style={{
-                textAlign: 'center',
-                fontSize: '10px',
-                color: 'var(--ink-3)',
-                marginTop: '10px',
-              }}
-            >
-              <Link
-                href="/"
-                style={{
-                  color: 'var(--ink-3)',
-                  textDecoration: 'none',
-                  fontWeight: 600,
-                }}
-              >
-                ← العودة للرئيسية
-              </Link>
-            </div>
-          </div>
-
-          <div className="phone-home-bar"></div>
+      {/* Search */}
+      <div className="app-search-wrap">
+        <div className="app-search">
+          <div className="app-search-icon">🔍</div>
+          <span className="app-search-text">ابحث عن خدمة طبية…</span>
         </div>
       </div>
 
-      {/* Back link */}
-      <Link href="/login" className="back-link">
-        <span>←</span>
-        <span>تغيير الدخول</span>
-      </Link>
+      {/* Guest mode banner */}
+      <div className="app-banner-wrap">
+        <div className="app-banner">
+          <div className="app-banner-content">
+            <div className="app-banner-tag">⚡ وضع الضيف</div>
+            <h2 className="app-banner-title">سجّل لتفتح كل المزايا</h2>
+            <p className="app-banner-desc">احجز · تابع طلباتك · سجّل طبي</p>
+          </div>
+          <Link href="/login" className="app-banner-btn">
+            تسجيل
+          </Link>
+        </div>
+      </div>
+
+      {/* Stories */}
+      <div className="app-stories-wrap">
+        <div className="app-stories">
+          <div className="app-story">
+            <div className="app-story-circle">
+              <div className="app-story-inner">💉</div>
+            </div>
+            <div className="app-story-label">لقاحات</div>
+          </div>
+          <div className="app-story">
+            <div className="app-story-circle">
+              <div className="app-story-inner">🩺</div>
+            </div>
+            <div className="app-story-label">فحص</div>
+          </div>
+          <div className="app-story">
+            <div className="app-story-circle">
+              <div className="app-story-inner">💊</div>
+            </div>
+            <div className="app-story-label">أدوية</div>
+          </div>
+          <div className="app-story">
+            <div className="app-story-circle">
+              <div className="app-story-inner">👨‍⚕️</div>
+            </div>
+            <div className="app-story-label">أطباء</div>
+          </div>
+          <div className="app-story">
+            <div className="app-story-circle">
+              <div className="app-story-inner">🏥</div>
+            </div>
+            <div className="app-story-label">مستشفى</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Section title */}
+      <div className="app-section-title">
+        <h3>الخدمات</h3>
+        <span className="app-section-hint">🔒 محتاج تسجيل للحجز</span>
+      </div>
+
+      {/* Services grid */}
+      <div className="app-services">
+        {/* Available services */}
+        <div className="app-service">
+          <div className="app-service-icon">🩸</div>
+          <div className="app-service-arrow">›</div>
+          <div className="app-service-name">سحب دم منزلي</div>
+          <div className="app-service-sub">من 25,000 د.ع</div>
+        </div>
+
+        <div className="app-service amber">
+          <div className="app-service-icon">🧪</div>
+          <div className="app-service-arrow">›</div>
+          <div className="app-service-name">فحوصات مختبرية</div>
+          <div className="app-service-sub">+200 فحص</div>
+        </div>
+
+        <div className="app-service">
+          <div className="app-service-icon">📞</div>
+          <div className="app-service-arrow">›</div>
+          <div className="app-service-name">استشارة طبيب</div>
+          <div className="app-service-sub">+20 تخصص</div>
+        </div>
+
+        <div className="app-service rose">
+          <div className="app-service-icon">💊</div>
+          <div className="app-service-arrow">›</div>
+          <div className="app-service-name">صيدلية وأدوية</div>
+          <div className="app-service-sub">توصيل سريع</div>
+        </div>
+
+        {/* Locked services */}
+        <div className="app-service locked">
+          <div className="app-service-icon">🚨</div>
+          <div className="app-service-arrow">🔒</div>
+          <div className="app-service-name">طوارئ SOS</div>
+          <div className="app-service-sub">للمسجّلين فقط</div>
+        </div>
+
+        <div className="app-service locked">
+          <div className="app-service-icon">📋</div>
+          <div className="app-service-arrow">🔒</div>
+          <div className="app-service-name">السجل الطبي</div>
+          <div className="app-service-sub">للمسجّلين فقط</div>
+        </div>
+
+        <div className="app-service locked">
+          <div className="app-service-icon">⏰</div>
+          <div className="app-service-arrow">🔒</div>
+          <div className="app-service-name">تذكير الأدوية</div>
+          <div className="app-service-sub">للمسجّلين فقط</div>
+        </div>
+
+        <div className="app-service locked">
+          <div className="app-service-icon">👨‍👩‍👧</div>
+          <div className="app-service-arrow">🔒</div>
+          <div className="app-service-name">إدارة العائلة</div>
+          <div className="app-service-sub">للمسجّلين فقط</div>
+        </div>
+      </div>
+
+      {/* Bottom action */}
+      <div className="app-bottom">
+        <Link href="/login" className="app-cta-primary">
+          إنشاء حساب — مجاناً ←
+        </Link>
+        <Link href="/" className="app-cta-secondary">
+          ← العودة للرئيسية
+        </Link>
+      </div>
     </main>
   );
 }
