@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from 'next';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { CookieConsent } from '@/components/legal/CookieConsent';
 
-// خطوط محلياً عبر @fontsource (لا حاجة لاتصال شبكة في الـ build)
+// خطوط محلياً
 import '@fontsource/tajawal/300.css';
 import '@fontsource/tajawal/400.css';
 import '@fontsource/tajawal/500.css';
@@ -49,20 +50,18 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <body className="min-h-screen bg-paper text-ink antialiased">
-        {children}
+        {/* Skip to content link - وصول لوحة المفاتيح */}
+        <a href="#main-content" className="skip-link">
+          الانتقال للمحتوى الرئيسي
+        </a>
 
-        {/*
-          Vercel Web Analytics - تتبّع الزوار
-          - يعمل فقط في الإنتاج (لا في dev)
-          - يحترم الخصوصية (لا cookies، لا تتبّع شخصي)
-        */}
+        <div id="main-content">{children}</div>
+
+        {/* Cookie consent banner */}
+        <CookieConsent />
+
+        {/* Analytics & Speed Insights */}
         <Analytics />
-
-        {/*
-          Vercel Speed Insights - قياس Core Web Vitals
-          - LCP, FID, CLS, INP
-          - مفيد لمعرفة سرعة التطبيق على الموبايل في العراق
-        */}
         <SpeedInsights />
       </body>
     </html>
