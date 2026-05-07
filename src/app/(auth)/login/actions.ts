@@ -7,7 +7,23 @@ import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
 import { headers } from 'next/headers';
+import { timingSafeEqual } from 'crypto';
 import type { User } from '@supabase/supabase-js';
+
+// ============================================================
+// مقارنة آمنة ضد timing attacks
+// ============================================================
+function safeCompare(a: string, b: string): boolean {
+  // إذا الأطوال مختلفة، أرجع false لكن استمر بالمقارنة لمنع timing attack
+  if (a.length !== b.length) {
+    // مقارنة وهمية بنفس الطول لمنع كشف الفرق
+    const dummy = Buffer.alloc(Math.max(a.length, b.length));
+    timingSafeEqual(dummy, dummy);
+    return false;
+  }
+
+  return timingSafeEqual(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8'));
+}
 
 // ============================================================
 // 🧪 وضع التجربة (TEST MODE)
@@ -202,7 +218,8 @@ async function handleTestLogin(
 ): Promise<void> {
   const testAccount = TEST_ACCOUNTS[phone];
 
-  if (token !== testAccount.otp) {
+  // مقارنة آمنة ضد timing attacks
+  if (!safeCompare(token, testAccount.otp)) {
     logger.warn('[TEST MODE] Wrong OTP for test account', { phone });
     redirect(
       `/otp?phone=${encodeURIComponent(phone)}&error=` +
