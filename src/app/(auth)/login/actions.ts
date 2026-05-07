@@ -6,7 +6,26 @@ import { redirect } from 'next/navigation';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
-import { headers } from 'next/headers';
+import { headers, cookies } from 'next/headers';
+
+// ============================================================
+// 🧪 وضع التجربة (TEST MODE)
+// ============================================================
+// مُفعّل فقط عند: ENABLE_TEST_MODE=true في environment variables
+// ⚠️ لا تُفعّله في الإنتاج العام مع المستخدمين الحقيقيين!
+// ============================================================
+
+const TEST_MODE = process.env.ENABLE_TEST_MODE === 'true';
+
+const TEST_ACCOUNTS: Record<string, { otp: string; role: 'patient' | 'specialist' | 'admin' }> = {
+  '+9647712345678': { otp: '123456', role: 'patient' },
+  '+9647811111111': { otp: '111111', role: 'specialist' },
+  '+9647900000000': { otp: '000000', role: 'admin' },
+};
+
+function isTestPhone(phone: string): boolean {
+  return TEST_MODE && phone in TEST_ACCOUNTS;
+}
 
 function getIp(): string {
   const h = headers();
@@ -17,6 +36,9 @@ function getIp(): string {
   );
 }
 
+// ============================================================
+// إرسال OTP
+// ============================================================
 export async function sendOtp(formData: FormData) {
   const phone = formData.get('phone') as string;
 
@@ -42,8 +64,17 @@ export async function sendOtp(formData: FormData) {
   }
 
   const normalizedPhone = normalizePhone(phone);
-  const supabase = createClient();
 
+  // 🧪 TEST MODE: تجاوز SMS للأرقام التجريبية
+  if (isTestPhone(normalizedPhone)) {
+    logger.info('[TEST MODE] Bypassing SMS for test account', {
+      phone: normalizedPhone,
+    });
+    redirect(`/otp?phone=${encodeURIComponent(normalizedPhone)}`);
+  }
+
+  // الإنتاج: استخدم Supabase + Twilio
+  const supabase = createClient();
   const { error } = await supabase.auth.signInWithOtp({ phone: normalizedPhone });
 
   if (error) {
@@ -60,6 +91,9 @@ export async function sendOtp(formData: FormData) {
   redirect(`/otp?phone=${encodeURIComponent(normalizedPhone)}`);
 }
 
+// ============================================================
+// التحقق من OTP
+// ============================================================
 export async function verifyOtp(formData: FormData) {
   const phone = formData.get('phone') as string;
   const token = formData.get('token') as string;
@@ -84,6 +118,71 @@ export async function verifyOtp(formData: FormData) {
     );
   }
 
+  // 🧪 TEST MODE: تسجيل دخول مباشر للأرقام التجريبية
+  if (isTestPhone(phone)) {
+    const testAccount = TEST_ACCOUNTS[phone];
+
+    if (token !== testAccount.otp) {
+      logger.warn('[TEST MODE] Wrong OTP for test account', { phone });
+      redirect(
+        `/otp?phone=${encodeURIComponent(phone)}&error=` +
+          encodeURIComponent('الرمز غير صحيح')
+      );
+    }
+
+    // إنشاء أو الحصول على حساب التيست
+    const supabase = createClient();
+    const { error: signUpError } = await supabase.auth.signUp({
+      phone,
+      password: `test_${testAccount.otp}_${phone.slice(-4)}`,
+      options: {
+        data: { role: testAccount.role, is_test: true },
+      },
+    });
+
+    // إذا الحساب موجود، سجّل دخول
+    if (signUpError && signUpError.message.includes('already')) {
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        phone,
+        password: `test_${testAccount.otp}_${phone.slice(-4)}`,
+      });
+
+      if (signInError) {
+        logger.error('[TEST MODE] Sign-in failed', {
+          phone,
+          error: signInError.message,
+        });
+        redirect(
+          `/otp?phone=${encodeURIComponent(phone)}&error=` +
+            encodeURIComponent('فشل تسجيل الدخول التجريبي')
+        );
+      }
+    }
+
+    // ترقية الدور
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase
+        .from('users')
+        .update({ role: testAccount.role })
+        .eq('id', user.id);
+
+      await logAuditEvent({
+        action: 'auth.login.test',
+        user_id: user.id,
+        metadata: { ip, phone, role: testAccount.role, test_mode: true },
+      });
+
+      logger.info('[TEST MODE] User logged in', {
+        user_id: user.id,
+        role: testAccount.role,
+      });
+    }
+
+    redirect('/dashboard');
+  }
+
+  // الإنتاج: التحقق العادي
   const supabase = createClient();
   const { data, error } = await supabase.auth.verifyOtp({
     phone,
@@ -99,7 +198,6 @@ export async function verifyOtp(formData: FormData) {
     );
   }
 
-  // Audit: تسجيل دخول ناجح
   await logAuditEvent({
     action: 'auth.login',
     user_id: data.user.id,
@@ -110,6 +208,9 @@ export async function verifyOtp(formData: FormData) {
   redirect('/dashboard');
 }
 
+// ============================================================
+// تسجيل الخروج
+// ============================================================
 export async function signOut() {
   const supabase = createClient();
   const {
