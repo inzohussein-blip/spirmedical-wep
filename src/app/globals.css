@@ -4690,264 +4690,381 @@ select.auth-input {
 
 
 /* ============================================================
-   App Screen - Guest Mode
+   📱 App Layout (Guest/User App) - matches playbook design
+   - بدون phone-frame
+   - الموبايل والديسكتوب: نفس التصميم في المنتصف
    ============================================================ */
+
 .app-screen {
-  min-height: 100vh;
-  background: var(--paper);
-  padding: 16px 16px 0;
-  max-width: 480px;
+  background: var(--white);
+  max-width: 420px;
   margin: 0 auto;
+  min-height: 100vh;
   position: relative;
-  padding-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  overflow-x: hidden;
+}
+
+/* خلفية الديسكتوب: بيج فاتحة */
+@media (min-width: 768px) {
+  body:has(.app-screen) {
+    background: var(--paper);
+    min-height: 100vh;
+  }
+  .app-screen {
+    box-shadow:
+      -1px 0 0 rgba(0, 0, 0, 0.04),
+      1px 0 0 rgba(0, 0, 0, 0.04);
+  }
+}
+
+.scr-content {
+  flex: 1;
+  padding-top: 10px;
+  padding-bottom: 100px; /* مساحة للـ bottom-nav */
 }
 
 /* ============================================================
-   App Header
+   Greeting Header
    ============================================================ */
-.app-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: var(--paper);
-  padding: 16px 0 12px;
-  margin: -16px -16px 16px;
-  padding-left: 16px;
-  padding-right: 16px;
-}
-
-.app-header-row {
+.scr-greet {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  align-items: center;
+  padding: 14px 18px 6px;
 }
 
-.app-greeting {
+.scr-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--emerald-soft);
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--emerald-deep);
 }
 
-.app-avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
+.scr-avatar.guest {
+  background: var(--paper);
+  color: var(--ink-3);
+}
+
+.scr-h1 {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.scr-h2 {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin-top: 2px;
+}
+
+.scr-loc {
+  font-size: 10px;
+  color: var(--ink-3);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+/* ============================================================
+   Guest Banner (التشجيع للتسجيل)
+   ============================================================ */
+.scr-guest-banner {
+  margin: 14px 18px 0;
+  padding: 12px;
+  background: var(--amber-soft);
+  border: 1px dashed var(--amber);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.scr-guest-banner-icon {
+  font-size: 18px;
+}
+
+.scr-guest-banner-content {
+  flex: 1;
+}
+
+.scr-guest-banner-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--amber);
+  margin-bottom: 2px;
+}
+
+.scr-guest-banner-sub {
+  font-size: 9px;
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+
+.scr-guest-banner-cta {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--amber);
+}
+
+/* ============================================================
+   Search Bar
+   ============================================================ */
+.scr-search {
+  margin: 14px 18px 0;
+  padding: 13px 16px;
+  background: var(--paper-3);
+  border-radius: 14px;
+  font-size: 11px;
+  color: var(--ink-3);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--line);
+  position: relative;
+  width: calc(100% - 36px);
+  box-sizing: border-box;
+}
+
+.scr-search input {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  font-size: 11px;
+  color: var(--ink);
+  font-family: inherit;
+  outline: 0;
+}
+
+.scr-search input::placeholder {
+  color: var(--ink-3);
+}
+
+.scr-search-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
   background: var(--emerald);
   color: var(--paper-3);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
-  font-weight: 700;
+  font-size: 11px;
   flex-shrink: 0;
 }
 
-.app-avatar.guest {
-  background: var(--ink);
-  color: var(--paper-3);
-}
-
-.app-avatar.large {
-  width: 64px;
-  height: 64px;
-  font-size: 32px;
-}
-
-.app-greeting-label {
-  font-size: 12px;
-  color: var(--ink-3);
-  font-weight: 500;
-}
-
-.app-greeting-name {
-  font-size: 15px;
-  color: var(--ink);
-  font-weight: 800;
-  letter-spacing: -0.01em;
-}
-
-.app-icon-btn {
-  position: relative;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+.scr-search-shortcut {
+  margin-inline-start: auto;
+  font-size: 9px;
+  color: var(--ink-4);
+  padding: 3px 7px;
   background: var(--white);
   border: 1px solid var(--line);
-  font-size: 18px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s ease;
-}
-
-.app-icon-btn:hover {
-  border-color: var(--emerald);
-  transform: scale(1.05);
-}
-
-.app-icon-btn:focus-visible {
-  outline: 2px solid var(--emerald);
-  outline-offset: 2px;
-}
-
-.app-badge {
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  background: var(--rose);
-  color: var(--paper-3);
-  font-size: 10px;
-  font-weight: 700;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--paper);
-}
-
-/* Location */
-.app-location {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--ink-3);
-  margin-bottom: 12px;
-  padding: 0 4px;
-}
-
-/* Search */
-.app-search {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--white);
-  border: 1.5px solid var(--line);
-  border-radius: 14px;
-  padding: 4px 4px 4px 12px;
-  transition: all 0.2s ease;
-}
-
-.app-search:focus-within {
-  border-color: var(--emerald);
-  box-shadow: 0 0 0 3px var(--emerald-soft);
-}
-
-.app-search-icon {
-  font-size: 16px;
-  color: var(--ink-3);
-  flex-shrink: 0;
-}
-
-.app-search-input {
-  flex: 1;
-  background: transparent;
-  border: 0;
-  font-family: inherit;
-  font-size: 14px;
-  color: var(--ink);
-  padding: 10px 0;
-  outline: 0;
-}
-
-.app-search-input::placeholder {
-  color: var(--ink-3);
-}
-
-.app-search-filter {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: var(--paper-3);
-  border: 0;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 /* ============================================================
    Stories
    ============================================================ */
-.app-stories {
+.scr-stories {
   display: flex;
-  gap: 12px;
+  gap: 10px;
+  padding: 16px 18px 10px;
   overflow-x: auto;
-  padding: 8px 0 16px;
-  -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
 
-.app-stories::-webkit-scrollbar {
+.scr-stories::-webkit-scrollbar {
   display: none;
 }
 
-.app-story {
+.story {
+  width: 58px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   background: transparent;
   border: 0;
   cursor: pointer;
-  flex-shrink: 0;
-  width: 70px;
   font-family: inherit;
 }
 
-.app-story-circle {
-  width: 64px;
-  height: 64px;
+.story-circle {
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--story-color) 0%, var(--paper-3) 100%);
+  background: linear-gradient(135deg, var(--emerald) 0%, var(--amber) 100%);
+  padding: 2.5px;
+}
+
+.story-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--paper-3);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
-  border: 2px solid var(--paper-3);
-  box-shadow: 0 0 0 2px var(--story-color);
-  transition: all 0.2s ease;
+  font-size: 20px;
+  border: 2px solid var(--white);
 }
 
-.app-story:hover .app-story-circle {
-  transform: scale(1.05);
-}
-
-.app-story-label {
-  font-size: 11px;
+.story-label {
+  font-size: 8px;
+  color: var(--ink-3);
   font-weight: 600;
-  color: var(--ink-2);
   text-align: center;
-  line-height: 1.3;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 100%;
+  width: 100%;
 }
 
 /* ============================================================
-   Section title
+   Banner / Promo card
    ============================================================ */
-.app-section-title {
+.scr-banner {
+  margin: 6px 18px 16px;
+  padding: 16px;
+  background: var(--ink);
+  color: var(--paper-3);
+  border-radius: 16px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin: 16px 0 12px;
-  font-size: 16px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 20px -8px rgba(14, 26, 28, 0.3);
+}
+
+.scr-banner::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: -30px;
+  top: -50px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(14, 92, 77, 0.5);
+}
+
+.scr-banner::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: -20px;
+  bottom: -40px;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: rgba(184, 84, 12, 0.25);
+}
+
+.scr-banner-content {
+  z-index: 1;
+  position: relative;
+}
+
+.scr-banner-tag {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--amber-soft);
+  font-weight: 700;
+  margin-bottom: 5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.scr-banner-tag::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--amber);
+}
+
+.scr-banner-title {
+  font-size: 14px;
   font-weight: 800;
-  color: var(--ink);
+  margin-bottom: 4px;
   letter-spacing: -0.01em;
 }
 
-.app-section-link {
-  font-size: 12px;
+.scr-banner-sub {
+  font-size: 10px;
+  opacity: 0.7;
+  line-height: 1.4;
+}
+
+.scr-banner-cta {
+  background: var(--amber);
+  color: var(--paper-3);
+  font-size: 10px;
   font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 100px;
+  white-space: nowrap;
+  z-index: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ============================================================
+   Section headers
+   ============================================================ */
+.scr-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 18px;
+  margin-bottom: 12px;
+  margin-top: 6px;
+}
+
+.scr-section-title {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scr-section-title::before {
+  content: "";
+  width: 3px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--emerald);
+}
+
+.scr-section-link {
+  font-size: 10px;
   color: var(--emerald);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 3px;
   background: transparent;
   border: 0;
   cursor: pointer;
@@ -4955,327 +5072,425 @@ select.auth-input {
 }
 
 /* ============================================================
-   Ads
+   Services grid (2 columns)
    ============================================================ */
-.app-ads {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  padding-bottom: 8px;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  margin-bottom: 8px;
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 11px;
+  padding: 0 18px;
 }
 
-.app-ads::-webkit-scrollbar {
-  display: none;
-}
-
-.app-ad-card {
-  flex: 0 0 280px;
-  background: var(--ad-color);
-  border-radius: 16px;
+.service-cell {
+  background: var(--paper-3);
+  border: 1px solid var(--line);
+  border-radius: 18px;
   padding: 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--paper-3);
   position: relative;
   overflow: hidden;
-}
-
-.app-ad-content {
-  flex: 1;
+  min-height: 140px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-}
-
-.app-ad-content h3 {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 800;
-  line-height: 1.3;
-}
-
-.app-ad-content p {
-  margin: 0;
-  font-size: 11px;
-  opacity: 0.9;
-  font-weight: 500;
-}
-
-.app-ad-cta {
-  margin-top: 6px;
-  background: rgba(255, 255, 255, 0.2);
-  color: var(--paper-3);
-  padding: 6px 12px;
-  border-radius: 100px;
-  border: 0;
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-  align-self: flex-start;
-  font-family: inherit;
-}
-
-.app-ad-image {
-  font-size: 48px;
-  opacity: 0.8;
-  flex-shrink: 0;
-}
-
-/* ============================================================
-   Services Grid
-   ============================================================ */
-.app-services-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.app-service-card {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 16px;
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  cursor: pointer;
   text-decoration: none;
   color: inherit;
-  transition: all 0.2s ease;
-  position: relative;
-  text-align: right;
-  font-family: inherit;
-}
-
-.app-service-card:hover {
-  border-color: var(--emerald);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px -8px rgba(14, 92, 77, 0.15);
-}
-
-.app-service-card.locked {
-  opacity: 0.6;
-  background: var(--paper-3);
-}
-
-.app-service-card.locked::after {
-  content: '🔒';
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  font-size: 14px;
-}
-
-.app-service-icon {
-  font-size: 32px;
-  width: 48px;
-  height: 48px;
-  background: var(--emerald-soft);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.app-service-info {
-  flex: 1;
-}
-
-.app-service-title {
-  margin: 0 0 2px;
-  font-size: 14px;
-  font-weight: 800;
-  color: var(--ink);
-}
-
-.app-service-desc {
-  margin: 0;
-  font-size: 11px;
-  color: var(--ink-3);
-  line-height: 1.4;
-}
-
-.app-service-arrow {
-  position: absolute;
-  bottom: 12px;
-  left: 12px;
-  font-size: 16px;
-  color: var(--ink-3);
-}
-
-/* ============================================================
-   SOS Button (متاح للضيف)
-   ============================================================ */
-.app-sos-section {
-  margin: 16px 0 24px;
-}
-
-.app-sos-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px;
-  background: var(--rose);
-  color: var(--paper-3);
-  border: 0;
-  border-radius: 16px;
   cursor: pointer;
   font-family: inherit;
   text-align: right;
-  box-shadow: 0 4px 16px -4px rgba(168, 46, 61, 0.4);
-  transition: all 0.2s ease;
 }
 
-.app-sos-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px -4px rgba(168, 46, 61, 0.5);
-}
-
-.app-sos-icon {
-  font-size: 32px;
-  flex-shrink: 0;
-}
-
-.app-sos-title {
-  font-size: 16px;
-  font-weight: 800;
-}
-
-.app-sos-subtitle {
-  font-size: 12px;
-  opacity: 0.9;
-  font-weight: 500;
-}
-
-/* ============================================================
-   Bottom Nav
-   ============================================================ */
-.app-bottom-spacer {
-  height: 80px;
-}
-
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 480px;
-  background: var(--white);
-  border-top: 1px solid var(--line);
-  z-index: 50;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-.bottom-nav-inner {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  padding: 8px 4px 4px;
-}
-
-.bottom-nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 8px;
-  text-decoration: none;
-  color: var(--ink-3);
-  border-radius: 10px;
-  transition: all 0.15s ease;
-}
-
-.bottom-nav-item:hover {
-  color: var(--ink-2);
-}
-
-.bottom-nav-item.active {
-  color: var(--emerald);
-}
-
-.bottom-nav-icon {
-  font-size: 22px;
-}
-
-.bottom-nav-label {
-  font-size: 10px;
-  font-weight: 700;
-}
-
-/* Floating chat button */
-.floating-chat-btn {
-  position: fixed;
-  bottom: 88px;
-  left: 16px;
-  width: 56px;
-  height: 56px;
+.service-cell::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  inset-inline-start: -40px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
+  background: var(--emerald-soft);
+  opacity: 0.55;
+  z-index: 0;
+}
+
+.service-cell::after {
+  content: "";
+  position: absolute;
+  bottom: -25px;
+  inset-inline-end: -25px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: var(--emerald-soft);
+  opacity: 0.18;
+  z-index: 0;
+}
+
+.service-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
   background: var(--emerald);
   color: var(--paper-3);
   display: flex;
   align-items: center;
   justify-content: center;
-  text-decoration: none;
-  box-shadow: 0 8px 24px -8px rgba(14, 92, 77, 0.5);
-  z-index: 49;
-  transition: all 0.2s ease;
+  font-size: 26px;
+  position: relative;
+  z-index: 1;
+  box-shadow:
+    0 8px 20px -4px rgba(14, 92, 77, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  margin-bottom: auto;
 }
 
-.floating-chat-btn:hover {
-  transform: scale(1.1);
-}
-
-.floating-chat-icon {
-  font-size: 24px;
-}
-
-.floating-chat-badge {
+.service-icon::after {
+  content: "";
   position: absolute;
-  top: 4px;
-  left: 4px;
-  background: var(--rose);
-  color: var(--paper-3);
-  font-size: 10px;
-  font-weight: 700;
-  width: 18px;
-  height: 18px;
+  inset: 3px;
+  border-radius: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+}
+
+.service-name {
+  font-size: 13px;
+  font-weight: 800;
+  margin-top: 10px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  position: relative;
+  z-index: 1;
+  color: var(--ink);
+}
+
+.service-sub {
+  font-size: 9.5px;
+  color: var(--ink-2);
+  margin-top: 4px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  position: relative;
+  z-index: 1;
+  line-height: 1.3;
+}
+
+.service-sub::before {
+  content: "";
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
+  background: var(--emerald);
+  flex-shrink: 0;
+}
+
+.service-arrow {
+  position: absolute;
+  top: 14px;
+  inset-inline-end: 14px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 1px solid var(--line);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--white);
+  font-size: 12px;
+  color: var(--emerald);
+  font-weight: 700;
+  z-index: 2;
+  box-shadow: 0 2px 6px -2px rgba(15, 26, 28, 0.08);
 }
 
-/* Guest Banner */
-.guest-banner {
+/* Amber variant */
+.service-cell.amber::before {
+  background: var(--amber-soft);
+}
+.service-cell.amber::after {
+  background: var(--amber-soft);
+}
+.service-cell.amber .service-icon {
+  background: var(--amber);
+  box-shadow:
+    0 8px 20px -4px rgba(184, 84, 12, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+.service-cell.amber .service-arrow {
+  color: var(--amber);
+}
+.service-cell.amber .service-sub::before {
+  background: var(--amber);
+}
+
+/* Rose variant */
+.service-cell.rose::before {
+  background: var(--rose-soft);
+}
+.service-cell.rose::after {
+  background: var(--rose-soft);
+}
+.service-cell.rose .service-icon {
+  background: var(--rose);
+  box-shadow:
+    0 8px 20px -4px rgba(168, 46, 61, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+.service-cell.rose .service-arrow {
+  color: var(--rose);
+}
+.service-cell.rose .service-sub::before {
+  background: var(--rose);
+}
+
+/* Locked variant */
+.service-cell.locked {
+  background: var(--paper-2);
+}
+.service-cell.locked::before {
+  background: var(--paper);
+  opacity: 0.7;
+}
+.service-cell.locked::after {
+  display: none;
+}
+.service-cell.locked .service-icon {
+  background: var(--paper);
+  color: var(--ink-3);
+  border: 1px dashed var(--line-2);
+  box-shadow: none;
+  opacity: 0.7;
+}
+.service-cell.locked .service-icon::after {
+  display: none;
+}
+.service-cell.locked .service-name {
+  color: var(--ink-2);
+}
+.service-cell.locked .service-sub {
+  color: var(--amber);
+}
+.service-cell.locked .service-sub::before {
+  background: var(--amber);
+}
+.service-cell.locked .service-arrow {
+  color: var(--amber);
+  background: var(--amber-soft);
+  border-color: var(--amber-soft);
+}
+
+/* ============================================================
+   Bottom Nav
+   ============================================================ */
+.phone-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 420px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 12px 8px 22px;
+  border-top: 1px solid var(--line);
+  background: var(--paper-3);
+  z-index: 50;
+  padding-bottom: max(22px, env(safe-area-inset-bottom));
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  color: var(--ink-3);
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  font-family: inherit;
+  padding: 0;
+}
+
+.nav-item.active {
+  color: var(--emerald);
+}
+
+.nav-item .ic {
+  width: 22px;
+  height: 22px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: var(--ink);
+  justify-content: center;
+  font-size: 18px;
+}
+
+/* ============================================================
+   Empty states (للصفحات الفرعية)
+   ============================================================ */
+.scr-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 60px 24px 40px;
+  gap: 12px;
+}
+
+.scr-empty-icon {
+  font-size: 56px;
+  opacity: 0.5;
+  margin-bottom: 8px;
+}
+
+.scr-empty-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.scr-empty-desc {
+  font-size: 12px;
+  color: var(--ink-3);
+  line-height: 1.7;
+  margin: 0 0 16px;
+  max-width: 240px;
+}
+
+.scr-empty-cta {
+  background: var(--emerald);
   color: var(--paper-3);
+  padding: 12px 22px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.scr-empty-cta:hover {
+  background: var(--emerald-deep);
+}
+
+.scr-empty-link {
+  color: var(--ink-3);
   font-size: 11px;
-  font-weight: 600;
+  text-decoration: underline;
+  margin-top: 4px;
 }
 
-.guest-banner-icon {
-  font-size: 14px;
+/* ============================================================
+   Page header (للصفحات الفرعية - back button)
+   ============================================================ */
+.scr-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 8px;
 }
 
-.guest-banner-text {
+.scr-back-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--paper-3);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.scr-page-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.scr-page-spacer {
+  width: 32px;
+}
+
+/* ============================================================
+   Tabs (للمفضلة)
+   ============================================================ */
+.scr-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 6px 18px 12px;
+  scrollbar-width: none;
+}
+
+.scr-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.scr-tab {
+  padding: 6px 14px;
+  background: var(--paper-3);
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-2);
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+}
+
+.scr-tab.active {
+  background: var(--emerald);
+  color: var(--paper-3);
+  border-color: var(--emerald);
+}
+
+/* ============================================================
+   Account list
+   ============================================================ */
+.scr-account-card {
+  margin: 14px 18px 0;
+  padding: 16px;
+  background: var(--paper-3);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.scr-account-info {
   flex: 1;
 }
 
-.guest-banner-cta {
-  background: var(--paper-3);
+.scr-account-info h2 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 800;
   color: var(--ink);
-  padding: 4px 10px;
+}
+
+.scr-account-info p {
+  margin: 0;
+  font-size: 10px;
+  color: var(--ink-3);
+}
+
+.scr-account-cta {
+  background: var(--emerald);
+  color: var(--paper-3);
+  padding: 7px 14px;
   border-radius: 100px;
   font-size: 10px;
   font-weight: 800;
@@ -5283,41 +5498,68 @@ select.auth-input {
   white-space: nowrap;
 }
 
-.guest-banner-close {
-  background: transparent;
-  border: 0;
-  color: var(--paper-3);
+.scr-account-list {
+  margin: 16px 18px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.scr-account-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  font-family: inherit;
+}
+
+.scr-account-row.locked {
+  opacity: 0.7;
+  background: var(--paper-2);
+}
+
+.scr-account-icon {
   font-size: 18px;
-  cursor: pointer;
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
+  background: var(--emerald-soft);
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: inherit;
-  opacity: 0.7;
+  flex-shrink: 0;
 }
 
-.guest-banner-close:hover {
-  opacity: 1;
+.scr-account-text {
+  flex: 1;
+}
+
+.scr-account-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.scr-account-desc {
+  font-size: 9.5px;
+  color: var(--ink-3);
+  margin-top: 2px;
+}
+
+.scr-account-arrow,
+.scr-account-lock {
+  font-size: 14px;
+  color: var(--ink-3);
 }
 
 /* ============================================================
-   Locked Action
+   Modal للترقية (locked actions)
    ============================================================ */
-.locked-action {
-  position: relative;
-  cursor: pointer;
-  font-family: inherit;
-}
-
-.locked-action-icon {
-  font-size: 12px;
-  margin-right: 4px;
-  opacity: 0.7;
-}
-
-/* Upgrade Modal */
 .upgrade-modal-overlay {
   position: fixed;
   inset: 0;
@@ -5327,83 +5569,49 @@ select.auth-input {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  z-index: 1000;
-  animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  z-index: 9999;
 }
 
 .upgrade-modal {
   background: var(--white);
-  border-radius: 24px;
-  padding: 32px 24px;
-  max-width: 360px;
+  border-radius: 20px;
+  padding: 28px 22px;
+  max-width: 340px;
   width: 100%;
-  position: relative;
   text-align: center;
-  animation: slideUp 0.3s ease;
-}
-
-@keyframes slideUp {
-  from { transform: translateY(40px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  position: relative;
 }
 
 .upgrade-modal-close {
   position: absolute;
-  top: 12px;
-  left: 12px;
-  width: 32px;
-  height: 32px;
+  top: 10px;
+  left: 10px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: var(--paper-3);
   border: 0;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .upgrade-modal-icon {
-  font-size: 56px;
-  margin-bottom: 8px;
+  font-size: 44px;
+  margin-bottom: 6px;
 }
 
 .upgrade-modal-title {
-  font-size: 22px;
+  font-size: 17px;
   font-weight: 800;
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   color: var(--ink);
 }
 
 .upgrade-modal-text {
-  font-size: 14px;
+  font-size: 12px;
   color: var(--ink-2);
-  margin: 0 0 20px;
+  margin: 0 0 18px;
   line-height: 1.6;
-}
-
-.upgrade-modal-benefits {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background: var(--emerald-soft);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 20px;
-}
-
-.upgrade-benefit {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--emerald-deep);
 }
 
 .upgrade-modal-actions {
@@ -5415,24 +5623,19 @@ select.auth-input {
 .upgrade-modal-cta {
   background: var(--emerald);
   color: var(--paper-3);
-  padding: 14px;
-  border-radius: 12px;
-  font-size: 15px;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 13px;
   font-weight: 800;
   text-decoration: none;
-  transition: all 0.2s ease;
-}
-
-.upgrade-modal-cta:hover {
-  background: var(--emerald-deep);
 }
 
 .upgrade-modal-secondary {
   background: var(--paper-3);
   color: var(--ink);
-  padding: 14px;
-  border-radius: 12px;
-  font-size: 13px;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 11px;
   font-weight: 700;
   text-decoration: none;
 }
@@ -5441,331 +5644,11 @@ select.auth-input {
   background: transparent;
   color: var(--ink-3);
   border: 0;
-  padding: 12px;
-  font-size: 12px;
+  padding: 10px;
+  font-size: 11px;
   font-weight: 600;
   cursor: pointer;
-  margin-top: 8px;
+  margin-top: 6px;
   text-decoration: underline;
   font-family: inherit;
-}
-
-/* ============================================================
-   Page Header (sub pages)
-   ============================================================ */
-.app-page-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 0 16px;
-  margin-bottom: 8px;
-}
-
-.app-back-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--white);
-  border: 1px solid var(--line);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  color: var(--ink);
-  text-decoration: none;
-  font-weight: 700;
-}
-
-.app-page-title {
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--ink);
-  margin: 0;
-}
-
-/* ============================================================
-   Tabs
-   ============================================================ */
-.app-tabs {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding: 4px 0 16px;
-  scrollbar-width: none;
-}
-
-.app-tabs::-webkit-scrollbar {
-  display: none;
-}
-
-.app-tab {
-  padding: 8px 16px;
-  background: var(--white);
-  border: 1.5px solid var(--line);
-  border-radius: 100px;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--ink-2);
-  cursor: pointer;
-  white-space: nowrap;
-  font-family: inherit;
-  transition: all 0.15s ease;
-}
-
-.app-tab:hover {
-  border-color: var(--emerald);
-}
-
-.app-tab.active {
-  background: var(--emerald);
-  color: var(--paper-3);
-  border-color: var(--emerald);
-}
-
-/* ============================================================
-   Empty State
-   ============================================================ */
-.app-empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 60px 20px;
-  gap: 12px;
-}
-
-.app-empty-icon {
-  font-size: 64px;
-  opacity: 0.5;
-  margin-bottom: 8px;
-}
-
-.app-empty-title {
-  font-size: 20px;
-  font-weight: 800;
-  color: var(--ink);
-  margin: 0;
-}
-
-.app-empty-desc {
-  font-size: 14px;
-  color: var(--ink-3);
-  line-height: 1.7;
-  margin: 0 0 16px;
-  max-width: 280px;
-}
-
-.app-empty-cta {
-  background: var(--emerald);
-  color: var(--paper-3);
-  padding: 14px 24px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 800;
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-
-.app-empty-cta:hover {
-  background: var(--emerald-deep);
-  transform: translateY(-2px);
-}
-
-.app-empty-link {
-  color: var(--ink-3);
-  font-size: 13px;
-  text-decoration: underline;
-  margin-top: 8px;
-}
-
-/* ============================================================
-   Account Page
-   ============================================================ */
-.app-guest-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 16px;
-  margin-bottom: 16px;
-}
-
-.app-guest-info {
-  flex: 1;
-}
-
-.app-guest-info h2 {
-  margin: 0 0 4px;
-  font-size: 17px;
-  font-weight: 800;
-  color: var(--ink);
-}
-
-.app-guest-info p {
-  margin: 0;
-  font-size: 12px;
-  color: var(--ink-3);
-}
-
-.app-guest-card-cta {
-  background: var(--emerald);
-  color: var(--paper-3);
-  padding: 8px 16px;
-  border-radius: 100px;
-  font-size: 12px;
-  font-weight: 800;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.app-account-sections {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 24px;
-}
-
-.app-account-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px;
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  text-decoration: none;
-  color: inherit;
-  cursor: pointer;
-  font-family: inherit;
-  text-align: right;
-  width: 100%;
-  transition: all 0.15s ease;
-}
-
-.app-account-row:hover {
-  border-color: var(--emerald);
-}
-
-.app-account-row.locked {
-  opacity: 0.7;
-  background: var(--paper-3);
-}
-
-.app-account-icon {
-  font-size: 22px;
-  width: 40px;
-  height: 40px;
-  background: var(--emerald-soft);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.app-account-text {
-  flex: 1;
-}
-
-.app-account-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--ink);
-}
-
-.app-account-desc {
-  font-size: 11px;
-  color: var(--ink-3);
-  margin-top: 2px;
-}
-
-.app-account-arrow,
-.app-account-lock {
-  font-size: 16px;
-  color: var(--ink-3);
-}
-
-.app-legal-links {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 12px;
-  color: var(--ink-3);
-  margin: 16px 0;
-}
-
-.app-legal-links a {
-  color: var(--ink-3);
-  text-decoration: underline;
-}
-
-.app-switch-account {
-  text-align: center;
-  margin-bottom: 16px;
-}
-
-.app-switch-link {
-  color: var(--emerald);
-  font-size: 13px;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-
-/* ============================================================
-   تخطيط بسيط - الموبايل والديسكتوب بدون frame
-   ============================================================ */
-
-/* الموبايل أولاً (الافتراضي) - شاشة كاملة */
-.app-screen {
-  background: var(--paper);
-  margin: 0 auto;
-}
-
-/* Bottom Nav - ثابت أسفل، ضمن العرض الأقصى */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 480px;
-  background: var(--white);
-  border-top: 1px solid var(--line);
-  z-index: 50;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-/* Floating chat - متطابق مع الـ nav */
-.floating-chat-btn {
-  position: fixed;
-  bottom: 88px;
-  left: calc(50% - 240px + 16px);
-  z-index: 49;
-}
-
-/* على الموبايل (< 480px) - الـ floating button في الزاوية */
-@media (max-width: 479px) {
-  .floating-chat-btn {
-    left: 16px;
-  }
-}
-
-
-/* خلفية لطيفة على الديسكتوب - بيج فاتحة كما تريد */
-@media (min-width: 768px) {
-  body:has(.app-screen) {
-    background: var(--paper);
-    min-height: 100vh;
-  }
-
-  /* خط فاصل ناعم على جانبي التطبيق */
-  .app-screen {
-    box-shadow:
-      -1px 0 0 rgba(0, 0, 0, 0.04),
-      1px 0 0 rgba(0, 0, 0, 0.04);
-  }
 }
