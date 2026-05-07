@@ -1,28 +1,85 @@
-// تعطيل pre-rendering — searchParams
-export const dynamic = 'force-dynamic';
+'use client';
 
 import Link from 'next/link';
-import { z } from 'zod';
+import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { loginSchema } from '@/lib/validations/auth-forms';
 
-const searchParamsSchema = z.object({
-  error: z.string().max(500).optional(),
-});
+type Role = 'guest' | 'patient' | 'specialist';
 
-const TEST_MODE = process.env.ENABLE_TEST_MODE !== 'false'; // مُفعّل افتراضياً
+const roleHints: Record<Role, { icon: string; label: string; hint: string }> = {
+  guest: {
+    icon: '👁',
+    label: 'وضع الضيف',
+    hint: 'تصفح بدون تسجيل · بعض الميزات مقفلة',
+  },
+  patient: {
+    icon: '⊕',
+    label: 'تسجيل دخول كمراجع',
+    hint: 'الوصول لجميع الخدمات الطبية',
+  },
+  specialist: {
+    icon: '⌬',
+    label: 'تسجيل دخول كأخصائي',
+    hint: 'لوحة تقديم الخدمات الطبية',
+  },
+};
 
-export default function LoginPage({
-  searchParams,
-}: {
-  searchParams: { error?: string };
-}) {
-  const params = searchParamsSchema.safeParse(searchParams);
-  const error = params.success ? params.data.error : undefined;
+export default function LoginPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const role: Role = (searchParams.get('role') as Role) || 'patient';
+
+  const [accountNumber, setAccountNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState<{
+    accountNumber?: string;
+    password?: string;
+    submit?: string;
+  }>({});
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({});
+    setSubmitting(true);
+
+    // Validate
+    const result = loginSchema.safeParse({ accountNumber, password });
+
+    if (!result.success) {
+      const fieldErrors: typeof errors = {};
+      result.error.errors.forEach((err) => {
+        const field = err.path[0] as keyof typeof errors;
+        if (!fieldErrors[field]) {
+          fieldErrors[field] = err.message;
+        }
+      });
+      setErrors(fieldErrors);
+      setSubmitting(false);
+      return;
+    }
+
+    // Mock API call - في الإنتاج، استبدل بـ Server Action حقيقي
+    try {
+      // محاكاة استجابة API
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
+      // النجاح: انتقل للـ dashboard
+      router.push('/dashboard');
+    } catch (err) {
+      setErrors({ submit: 'فشل تسجيل الدخول. حاول مرة أخرى.' });
+      setSubmitting(false);
+    }
+  };
+
+  const roleInfo = roleHints[role];
 
   return (
     <main className="auth-screen">
-      <Link href="/" className="auth-back">
+      <Link href="/gate" className="auth-back">
         <span>←</span>
-        <span>للرئيسية</span>
+        <span>العودة</span>
       </Link>
 
       <div className="auth-header">
@@ -31,104 +88,111 @@ export default function LoginPage({
         <div className="auth-brand-sub">سباير ميديكال</div>
       </div>
 
-      {/* 🧪 شارة وضع التجربة */}
-      {TEST_MODE && (
-        <div
-          style={{
-            background: 'var(--amber-soft)',
-            border: '1.5px dashed var(--amber)',
-            borderRadius: '14px',
-            padding: '14px 16px',
-            marginBottom: '20px',
-            fontSize: '12px',
-            lineHeight: 1.6,
-          }}
-        >
-          <div
-            style={{
-              fontWeight: 800,
-              color: 'var(--amber)',
-              marginBottom: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-            }}
-          >
-            🧪 وضع التجربة مُفعّل
-          </div>
-          <div style={{ color: 'var(--ink-2)', marginBottom: '6px' }}>
-            استخدم أحد هذه الحسابات للاختبار:
-          </div>
-          <div
-            style={{
-              fontFamily: 'monospace',
-              fontSize: '11px',
-              color: 'var(--ink)',
-              background: 'rgba(255,255,255,0.5)',
-              padding: '8px 10px',
-              borderRadius: '8px',
-              direction: 'ltr',
-              textAlign: 'left',
-            }}
-          >
-            <div>مراجع:   7712345678 → 123456</div>
-            <div>أخصائي:  7811111111 → 111111</div>
-            <div>أدمن:    7900000000 → 000000</div>
-          </div>
-        </div>
-      )}
+      {/* Role hint badge */}
+      <div className={`auth-role-badge ${role === 'specialist' ? 'specialist' : ''}`}>
+        <span aria-hidden="true">{roleInfo.icon}</span>
+        <span>{roleInfo.label}</span>
+      </div>
 
       <div className="auth-title-section">
-        <h2 className="auth-title">كيف تود الدخول؟</h2>
-        <p className="auth-subtitle">
-          اختر نوع حسابك للحصول على التجربة المناسبة.
-          <br />
-          يمكنك تغيير ذلك لاحقاً.
-        </p>
+        <h2 className="auth-title">تسجيل الدخول</h2>
+        <p className="auth-subtitle">{roleInfo.hint}</p>
       </div>
 
-      {error && (
-        <div className="auth-error">
-          <div className="auth-error-icon">!</div>
-          <span>{error}</span>
+      {/* Role selector tabs */}
+      <div className="role-tabs" role="tablist" aria-label="نوع الحساب">
+        {(['patient', 'specialist'] as Role[]).map((r) => (
+          <button
+            key={r}
+            role="tab"
+            aria-selected={role === r}
+            onClick={() => router.push(`/login?role=${r}`)}
+            className={`role-tab ${role === r ? 'active' : ''}`}
+            type="button"
+          >
+            <span aria-hidden="true">{roleHints[r].icon}</span>
+            <span>{r === 'patient' ? 'مراجع' : 'أخصائي'}</span>
+          </button>
+        ))}
+      </div>
+
+      <form onSubmit={handleSubmit} className="auth-form" noValidate>
+        {/* Submit error */}
+        {errors.submit && (
+          <div className="auth-error" role="alert">
+            <div className="auth-error-icon">!</div>
+            <span>{errors.submit}</span>
+          </div>
+        )}
+
+        {/* Account Number Field */}
+        <div className="auth-field">
+          <label htmlFor="account-number" className="auth-field-label">
+            رقم الحساب
+            <span className="auth-required" aria-label="إلزامي">*</span>
+          </label>
+          <input
+            id="account-number"
+            type="text"
+            inputMode="numeric"
+            value={accountNumber}
+            onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, ''))}
+            placeholder="مثال: 123456789"
+            autoComplete="username"
+            autoFocus
+            required
+            maxLength={12}
+            className={`auth-input ${errors.accountNumber ? 'error' : ''}`}
+            aria-invalid={!!errors.accountNumber}
+            aria-describedby={errors.accountNumber ? 'account-error' : undefined}
+            disabled={submitting}
+          />
+          {errors.accountNumber && (
+            <span id="account-error" className="auth-field-error" role="alert">
+              {errors.accountNumber}
+            </span>
+          )}
         </div>
-      )}
 
-      <div className="auth-role-cards">
-        <Link href="/guest" className="auth-role-card">
-          <div className="auth-role-icon">👁</div>
-          <div className="auth-role-info">
-            <div className="auth-role-title">ضيف</div>
-            <div className="auth-role-desc">للتصفح فقط دون تسجيل</div>
-          </div>
-          <div className="auth-role-arrow">‹</div>
-        </Link>
+        {/* Password Field */}
+        <div className="auth-field">
+          <label htmlFor="password" className="auth-field-label">
+            الرمز السري
+            <span className="auth-required" aria-label="إلزامي">*</span>
+          </label>
+          <input
+            id="password"
+            type="password"
+            inputMode="numeric"
+            value={password}
+            onChange={(e) => setPassword(e.target.value.replace(/\D/g, ''))}
+            placeholder="6 أرقام"
+            autoComplete="current-password"
+            required
+            maxLength={6}
+            className={`auth-input ${errors.password ? 'error' : ''}`}
+            aria-invalid={!!errors.password}
+            aria-describedby={errors.password ? 'password-error' : undefined}
+            disabled={submitting}
+          />
+          {errors.password && (
+            <span id="password-error" className="auth-field-error" role="alert">
+              {errors.password}
+            </span>
+          )}
+        </div>
 
-        <Link href="/login/phone?role=patient" className="auth-role-card selected">
-          <div className="auth-role-icon">⊕</div>
-          <div className="auth-role-info">
-            <div className="auth-role-title">مراجع / مريض</div>
-            <div className="auth-role-desc">حجز الخدمات وإدارة العائلة</div>
-          </div>
-          <div className="auth-role-arrow">‹</div>
-        </Link>
-
-        <Link href="/login/phone?role=specialist" className="auth-role-card">
-          <div className="auth-role-icon">⌬</div>
-          <div className="auth-role-info">
-            <div className="auth-role-title">أخصائي</div>
-            <div className="auth-role-desc">تقديم خدمات طبية للمراجعين</div>
-          </div>
-          <div className="auth-role-arrow">‹</div>
-        </Link>
-      </div>
-
-      <Link href="/login/phone?role=patient" className="auth-cta">
-        المتابعة كمراجع ←
-      </Link>
+        <button type="submit" className="auth-cta" disabled={submitting}>
+          {submitting ? 'جاري الدخول...' : 'تسجيل الدخول ←'}
+        </button>
+      </form>
 
       <div className="auth-helper">
         <Link href="/forgot">نسيت الرمز؟</Link>
+      </div>
+
+      <div className="auth-helper" style={{ marginTop: '8px' }}>
+        ليس لديك حساب؟ <Link href="/register">إنشاء حساب جديد</Link>
       </div>
     </main>
   );
