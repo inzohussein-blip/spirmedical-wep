@@ -8,7 +8,7 @@ const searchParamsSchema = z.object({
   error: z.string().max(500).optional(),
 });
 
-const TEST_MODE = process.env.ENABLE_TEST_MODE === 'true';
+const TEST_MODE = process.env.ENABLE_TEST_MODE !== 'false'; // مُفعّل افتراضياً
 
 export default function LoginPage({
   searchParams,
