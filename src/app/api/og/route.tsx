@@ -1,6 +1,9 @@
 import { ImageResponse } from 'next/og';
 
-export const runtime = 'edge';
+// Node.js runtime - يدعم static generation
+// لا حاجة لـ 'edge' runtime
+export const dynamic = 'force-static';
+export const revalidate = 86400; // إعادة توليد كل 24 ساعة
 
 export async function GET() {
   return new ImageResponse(
@@ -18,7 +21,7 @@ export async function GET() {
           position: 'relative',
         }}
       >
-        {/* Decorative background elements */}
+        {/* Decorative orbs */}
         <div
           style={{
             position: 'absolute',
@@ -44,7 +47,7 @@ export async function GET() {
           }}
         />
 
-        {/* Logo */}
+        {/* Top: Logo + Brand */}
         <div
           style={{
             display: 'flex',
@@ -100,7 +103,7 @@ export async function GET() {
           </div>
         </div>
 
-        {/* Tagline */}
+        {/* Tagline (centered vertically) */}
         <div
           style={{
             display: 'flex',
@@ -117,6 +120,7 @@ export async function GET() {
               letterSpacing: '-0.03em',
               lineHeight: 1.1,
               maxWidth: '900px',
+              display: 'flex',
             }}
           >
             الرعاية الصحية، بين يديك
@@ -127,6 +131,7 @@ export async function GET() {
               color: 'rgba(244, 239, 226, 0.8)',
               fontWeight: 500,
               maxWidth: '900px',
+              display: 'flex',
             }}
           >
             ١٤ خدمة طبية في تطبيق واحد · ١٨ محافظة · ٢٤/٧
@@ -145,7 +150,6 @@ export async function GET() {
             background: 'rgba(244, 239, 226, 0.1)',
             padding: '16px 24px',
             borderRadius: '100px',
-            backdropFilter: 'blur(10px)',
           }}
         >
           <div
@@ -172,6 +176,10 @@ export async function GET() {
     {
       width: 1200,
       height: 630,
+      headers: {
+        'Cache-Control': 'public, immutable, no-transform, max-age=31536000',
+        'Content-Type': 'image/png',
+      },
     }
   );
 }
