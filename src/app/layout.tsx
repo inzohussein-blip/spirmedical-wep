@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/api/og',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Spir Medical · الرعاية الصحية، بين يديك',
@@ -77,7 +77,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'سباير ميديكال · Spir Medical',
     description: 'الرعاية الصحية بين يديك · منصة طبية رقمية في العراق',
-    images: ['/api/og'],
+    images: ['/og-image.png'],
   },
   robots: {
     index: true,
