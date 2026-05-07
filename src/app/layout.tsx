@@ -22,24 +22,91 @@ import '@fontsource/jetbrains-mono/700.css';
 
 import './globals.css';
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spirmedical-wep.vercel.app';
+
 export const metadata: Metadata = {
-  title: 'سباير ميديكال · Spir Medical',
-  description: 'منصة طبية رقمية متكاملة في العراق',
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
-  ),
-  openGraph: {
-    title: 'Spir Medical · سباير ميديكال',
-    description: 'الرعاية الصحية بين يديك',
-    type: 'website',
-    locale: 'ar_IQ',
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: 'سباير ميديكال · Spir Medical — منصة طبية رقمية في العراق',
+    template: '%s · Spir Medical',
   },
+  description:
+    'منصة طبية رقمية متكاملة في العراق · ١٤ خدمة طبية · حجز سهل · توصيل سريع · أمان كامل',
+  keywords: [
+    'سباير ميديكال',
+    'Spir Medical',
+    'طب العراق',
+    'سحب دم منزلي',
+    'استشارة طبية',
+    'صيدلية',
+    'حجز طبيب',
+  ],
+  authors: [{ name: 'Spir Medical Team' }],
+  creator: 'Spir Medical',
+  publisher: 'Spir Medical',
+  formatDetection: {
+    telephone: false,
+    address: false,
+    email: false,
+  },
+  alternates: {
+    canonical: SITE_URL,
+    languages: {
+      'ar-IQ': SITE_URL,
+    },
+  },
+  openGraph: {
+    title: 'سباير ميديكال · Spir Medical',
+    description: 'الرعاية الصحية بين يديك · ١٤ خدمة طبية في تطبيق واحد',
+    url: SITE_URL,
+    siteName: 'Spir Medical · سباير ميديكال',
+    locale: 'ar_IQ',
+    type: 'website',
+    images: [
+      {
+        url: '/api/og',
+        width: 1200,
+        height: 630,
+        alt: 'Spir Medical · الرعاية الصحية، بين يديك',
+        type: 'image/png',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'سباير ميديكال · Spir Medical',
+    description: 'الرعاية الصحية بين يديك · منصة طبية رقمية في العراق',
+    images: ['/api/og'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: '/apple-icon.png',
+  },
+  manifest: '/manifest.json',
 };
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#0E5C4D',
+  maximumScale: 5,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#0E5C4D' },
+    { media: '(prefers-color-scheme: dark)', color: '#073B30' },
+  ],
 };
 
 export default function RootLayout({
@@ -50,17 +117,17 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <body className="min-h-screen bg-paper text-ink antialiased">
-        {/* Skip to content link - وصول لوحة المفاتيح */}
+        {/* Skip to content */}
         <a href="#main-content" className="skip-link">
           الانتقال للمحتوى الرئيسي
         </a>
 
         <div id="main-content">{children}</div>
 
-        {/* Cookie consent banner */}
+        {/* Cookie consent */}
         <CookieConsent />
 
-        {/* Analytics & Speed Insights */}
+        {/* Analytics */}
         <Analytics />
         <SpeedInsights />
       </body>
