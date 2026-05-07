@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from 'next';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 // خطوط محلياً عبر @fontsource (لا حاجة لاتصال شبكة في الـ build)
 import '@fontsource/tajawal/300.css';
@@ -48,6 +50,20 @@ export default function RootLayout({
     <html lang="ar" dir="rtl">
       <body className="min-h-screen bg-paper text-ink antialiased">
         {children}
+
+        {/*
+          Vercel Web Analytics - تتبّع الزوار
+          - يعمل فقط في الإنتاج (لا في dev)
+          - يحترم الخصوصية (لا cookies، لا تتبّع شخصي)
+        */}
+        <Analytics />
+
+        {/*
+          Vercel Speed Insights - قياس Core Web Vitals
+          - LCP, FID, CLS, INP
+          - مفيد لمعرفة سرعة التطبيق على الموبايل في العراق
+        */}
+        <SpeedInsights />
       </body>
     </html>
   );
