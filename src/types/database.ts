@@ -4,6 +4,8 @@
  * مولّد يدوياً ليطابق output `supabase gen types typescript`.
  * لتوليده تلقائياً من Supabase الفعلي:
  *   npx supabase gen types typescript --project-id ioulxemokusfeykjcaxg > src/types/database.ts
+ *
+ * ✨ مُحدّث ليتضمّن أعمدة V1: service_id, estimated_price, duration_minutes, otp_channel, إلخ.
  */
 
 export type Json =
@@ -62,6 +64,17 @@ export type Database = {
           status: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
           created_at: string;
           updated_at: string;
+          // ✨ أعمدة جديدة (V1):
+          service_id: string | null;
+          estimated_price: number | null;
+          final_price: number | null;
+          duration_minutes: number | null;
+          otp_channel: 'whatsapp' | 'telegram' | 'sms' | null;
+          confirmed_at: string | null;
+          completed_at: string | null;
+          cancelled_at: string | null;
+          cancellation_reason: string | null;
+          specialist_id: string | null;
         };
         Insert: {
           id?: string;
@@ -74,6 +87,17 @@ export type Database = {
           status?: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
           created_at?: string;
           updated_at?: string;
+          // ✨ أعمدة جديدة (V1):
+          service_id?: string | null;
+          estimated_price?: number | null;
+          final_price?: number | null;
+          duration_minutes?: number | null;
+          otp_channel?: 'whatsapp' | 'telegram' | 'sms' | null;
+          confirmed_at?: string | null;
+          completed_at?: string | null;
+          cancelled_at?: string | null;
+          cancellation_reason?: string | null;
+          specialist_id?: string | null;
         };
         Update: {
           id?: string;
@@ -86,6 +110,17 @@ export type Database = {
           status?: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
           created_at?: string;
           updated_at?: string;
+          // ✨ أعمدة جديدة (V1):
+          service_id?: string | null;
+          estimated_price?: number | null;
+          final_price?: number | null;
+          duration_minutes?: number | null;
+          otp_channel?: 'whatsapp' | 'telegram' | 'sms' | null;
+          confirmed_at?: string | null;
+          completed_at?: string | null;
+          cancelled_at?: string | null;
+          cancellation_reason?: string | null;
+          specialist_id?: string | null;
         };
         Relationships: [
           {
@@ -144,6 +179,71 @@ export type Database = {
           },
         ];
       };
+      // ✨ جدول جديد: ربط Telegram
+      user_telegram_links: {
+        Row: {
+          id: string;
+          user_id: string;
+          telegram_chat_id: number;
+          telegram_username: string | null;
+          linked_at: string;
+          is_active: boolean;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          telegram_chat_id: number;
+          telegram_username?: string | null;
+          linked_at?: string;
+          is_active?: boolean;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          telegram_chat_id?: number;
+          telegram_username?: string | null;
+          linked_at?: string;
+          is_active?: boolean;
+        };
+        Relationships: [];
+      };
+      // ✨ جدول جديد: محاولات OTP
+      otp_attempts: {
+        Row: {
+          id: string;
+          phone: string;
+          channel: 'whatsapp' | 'telegram' | 'sms';
+          code_hash: string;
+          purpose: 'register' | 'login' | 'appointment' | 'password-reset';
+          attempts: number;
+          verified: boolean;
+          expires_at: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          phone: string;
+          channel: 'whatsapp' | 'telegram' | 'sms';
+          code_hash: string;
+          purpose: 'register' | 'login' | 'appointment' | 'password-reset';
+          attempts?: number;
+          verified?: boolean;
+          expires_at: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          phone?: string;
+          channel?: 'whatsapp' | 'telegram' | 'sms';
+          code_hash?: string;
+          purpose?: 'register' | 'login' | 'appointment' | 'password-reset';
+          attempts?: number;
+          verified?: boolean;
+          expires_at?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       appointments_with_users: {
@@ -169,9 +269,36 @@ export type Database = {
         };
         Relationships: [];
       };
+      // ✨ View جديد: حجوزات اليوم
+      today_appointments: {
+        Row: {
+          id: string | null;
+          user_id: string | null;
+          specialist_id: string | null;
+          service_type: string | null;
+          scheduled_at: string | null;
+          address: string | null;
+          estimated_price: number | null;
+          duration_minutes: number | null;
+          status:
+            | 'pending'
+            | 'confirmed'
+            | 'in_progress'
+            | 'completed'
+            | 'cancelled'
+            | null;
+          otp_channel: 'whatsapp' | 'telegram' | 'sms' | null;
+          minutes_until: number | null;
+          urgency: 'past' | 'imminent' | 'soon' | 'later' | null;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
-      [_ in never]: never;
+      cleanup_expired_otps: {
+        Args: Record<string, never>;
+        Returns: void;
+      };
     };
     Enums: {
       appointment_status:
@@ -226,3 +353,7 @@ export type Appointment = Database['public']['Tables']['appointments']['Row'];
 export type AppointmentInsert = Database['public']['Tables']['appointments']['Insert'];
 export type AppointmentUpdate = Database['public']['Tables']['appointments']['Update'];
 export type AuditLog = Database['public']['Tables']['audit_logs']['Row'];
+// ✨ exports جديدة:
+export type OtpChannel = 'whatsapp' | 'telegram' | 'sms';
+export type TelegramLink = Database['public']['Tables']['user_telegram_links']['Row'];
+export type OtpAttempt = Database['public']['Tables']['otp_attempts']['Row'];
