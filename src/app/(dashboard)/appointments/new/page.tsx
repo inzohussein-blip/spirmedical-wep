@@ -1,113 +1,112 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
-import { createAppointment } from './actions';
+import AppointmentWizard from '@/components/appointments/AppointmentWizard';
+import { createAppointmentV2 } from './actions';
 
-export const dynamic = 'force-dynamic';
+export default function NewAppointmentPage() {
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
 
-const SERVICES = [
-  'سحب دم منزلي',
-  'فحوصات مختبرية',
-  'استشارة طبية',
-  'تمريض منزلي',
-  'صيدلية / توصيل أدوية',
-  'حجز موعد مستشفى',
-  'طبيب أسرة',
-];
+  async function handleSubmit(data: any) {
+    if (!data.service || !data.slot) {
+      setError('بيانات ناقصة');
+      return;
+    }
 
-export default function NewAppointmentPage({
-  searchParams,
-}: {
-  searchParams: { error?: string };
-}) {
-  // الحد الأدنى للتاريخ: غداً
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const minDate = tomorrow.toISOString().slice(0, 16);
+    const result = await createAppointmentV2({
+      service_id: data.service.id,
+      service_name: data.service.nameAr,
+      scheduled_at: data.slot.id, // ISO date
+      address: data.service.needsAddress ? data.address : undefined,
+      notes: data.notes || undefined,
+      estimated_price: data.service.basePrice,
+      duration: data.service.duration,
+      needs_address: data.service.needsAddress,
+      otp_channel: 'whatsapp', // أو 'telegram' حسب اختيار المستخدم
+      otp_verified: true, // تم التحقق في الخطوة ٤
+    });
+
+    if (result.success) {
+      // عرض success animation ثم redirect
+      router.push(`/appointments?new=${result.appointmentId}`);
+    } else {
+      setError(result.error || 'حدث خطأ');
+    }
+  }
 
   return (
-    <div className="mx-auto max-w-2xl">
-      <Link href="/appointments" className="mb-6 inline-block text-sm text-ink-3 hover:text-ink">
-        ← العودة للحجوزات
-      </Link>
+    <div style={{ minHeight: '100vh', background: 'var(--paper, #F4EFE2)', paddingBottom: '40px' }}>
+      {/* Header */}
+      <div style={{
+        background: 'var(--white, #FFFFFF)',
+        borderBottom: '1px solid var(--line, rgba(15, 26, 28, 0.08))',
+        padding: '16px 20px',
+        position: 'sticky',
+        top: 0,
+        zIndex: 10,
+      }}>
+        <div style={{
+          maxWidth: '720px',
+          margin: '0 auto',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
+          <Link href="/appointments" style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            background: 'var(--paper-2, #EDE6D3)',
+            border: '1px solid var(--line, rgba(15, 26, 28, 0.08))',
+            borderRadius: '100px',
+            padding: '7px 14px',
+            fontSize: '13px',
+            color: 'var(--ink-2, #1F2A2C)',
+            textDecoration: 'none',
+            fontWeight: 600,
+          }}>
+            <span>←</span><span>العودة</span>
+          </Link>
+          <h1 style={{ fontSize: '17px', fontWeight: 800, margin: 0 }}>
+            حجز جديد
+          </h1>
+          <div style={{ width: '70px' }} />
+        </div>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>حجز جديد</CardTitle>
-          <CardDescription>املأ التفاصيل لحجز خدمتك</CardDescription>
-        </CardHeader>
-
-        <form action={createAppointment} className="flex flex-col gap-5">
-          <div className="flex flex-col gap-2">
-            <label htmlFor="service_type" className="text-sm font-bold">
-              نوع الخدمة
-            </label>
-            <select
-              id="service_type"
-              name="service_type"
-              required
-              className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-base outline-none focus:border-emerald focus:ring-2 focus:ring-emerald/20"
-            >
-              <option value="">اختر خدمة...</option>
-              {SERVICES.map((service) => (
-                <option key={service} value={service}>
-                  {service}
-                </option>
-              ))}
-            </select>
+      {/* Error banner */}
+      {error && (
+        <div style={{
+          maxWidth: '720px',
+          margin: '16px auto 0',
+          padding: '0 20px',
+        }}>
+          <div style={{
+            background: 'var(--rose-soft, #F0D7D8)',
+            color: 'var(--rose, #A82E3D)',
+            padding: '12px 16px',
+            borderRadius: '12px',
+            fontSize: '13px',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}>
+            <span>⚠️</span><span>{error}</span>
           </div>
+        </div>
+      )}
 
-          <Input
-            label="موعد الحجز"
-            type="datetime-local"
-            name="scheduled_at"
-            min={minDate}
-            required
-          />
-
-          <Input
-            label="العنوان"
-            type="text"
-            name="address"
-            placeholder="بغداد - حي الجامعة - شارع 123"
-            required
-            minLength={10}
-            hint="أدخل عنواناً تفصيلياً ليتمكن مزوّد الخدمة من الوصول"
-          />
-
-          <div className="flex flex-col gap-2">
-            <label htmlFor="notes" className="text-sm font-bold">
-              ملاحظات (اختياري)
-            </label>
-            <textarea
-              id="notes"
-              name="notes"
-              rows={3}
-              maxLength={1000}
-              placeholder="أي تفاصيل إضافية..."
-              className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-base outline-none focus:border-emerald focus:ring-2 focus:ring-emerald/20"
-            />
-          </div>
-
-          {searchParams.error && (
-            <div className="rounded-xl bg-rose-soft px-4 py-3 text-sm font-bold text-rose">
-              {searchParams.error}
-            </div>
-          )}
-
-          <div className="flex gap-3">
-            <Button type="submit" size="lg">
-              تأكيد الحجز ←
-            </Button>
-            <Link href="/appointments">
-              <Button type="button" variant="ghost" size="lg">
-                إلغاء
-              </Button>
-            </Link>
-          </div>
-        </form>
-      </Card>
+      {/* Wizard */}
+      <div style={{ padding: '20px' }}>
+        <AppointmentWizard
+          userPhone="" // مر userPhone من الـ session
+          onSubmit={handleSubmit}
+        />
+      </div>
     </div>
   );
 }
