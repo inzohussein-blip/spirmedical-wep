@@ -4,26 +4,84 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 type ConsentState = {
-  necessary: boolean; // دائماً true
+  necessary: boolean;
   analytics: boolean;
   marketing: boolean;
   timestamp: number;
 };
 
 const CONSENT_KEY = 'spir_cookie_consent_v1';
+// مدة صلاحية الموافقة: سنة كاملة
+const CONSENT_DURATION = 365 * 24 * 60 * 60 * 1000;
+
+/**
+ * فحص الموافقة الموجودة من مصادر متعدّدة
+ * - localStorage (الأساسي)
+ * - cookie (احتياطي)
+ */
+function hasValidConsent(): boolean {
+  if (typeof window === 'undefined') return true; // SSR: لا تُظهر
+
+  try {
+    // ١. فحص localStorage
+    const stored = localStorage.getItem(CONSENT_KEY);
+    if (stored) {
+      const consent: ConsentState = JSON.parse(stored);
+      const age = Date.now() - consent.timestamp;
+      if (age < CONSENT_DURATION) {
+        return true; // موافقة صالحة
+      }
+    }
+  } catch (e) {
+    // localStorage غير متاح (private mode أو blocked)
+  }
+
+  try {
+    // ٢. احتياطي: فحص الـ cookie
+    const cookieMatch = document.cookie.match(
+      new RegExp(`(^|;)\\s*${CONSENT_KEY}=([^;]+)`)
+    );
+    if (cookieMatch) {
+      return true;
+    }
+  } catch (e) {}
+
+  return false;
+}
+
+/**
+ * حفظ الموافقة في مكانين: localStorage + cookie
+ */
+function saveConsentEverywhere(consent: ConsentState) {
+  // ١. حفظ في localStorage
+  try {
+    localStorage.setItem(CONSENT_KEY, JSON.stringify(consent));
+  } catch (e) {
+    console.warn('localStorage not available');
+  }
+
+  // ٢. حفظ في cookie (احتياطي - يعمل حتى لو localStorage مغلق)
+  try {
+    const expires = new Date(Date.now() + CONSENT_DURATION);
+    document.cookie = `${CONSENT_KEY}=1; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+  } catch (e) {
+    console.warn('cookies not available');
+  }
+}
 
 export function CookieConsent() {
   const [show, setShow] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [analytics, setAnalytics] = useState(true);
   const [marketing, setMarketing] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
+  // فحص الموافقة بعد mount (لتجنب hydration issues)
   useEffect(() => {
-    // فحص الموافقة الموجودة
-    const stored = localStorage.getItem(CONSENT_KEY);
-    if (!stored) {
-      // عرض الـ banner بعد ثانية واحدة (UX أفضل)
-      const timer = setTimeout(() => setShow(true), 1000);
+    setMounted(true);
+    if (!hasValidConsent()) {
+      // عرض الـ banner بعد ١.٥ ثانية (UX أفضل)
+      const timer = setTimeout(() => setShow(true), 1500);
       return () => clearTimeout(timer);
     }
   }, []);
@@ -35,49 +93,37 @@ export function CookieConsent() {
       marketing: state.marketing ?? marketing,
       timestamp: Date.now(),
     };
-    localStorage.setItem(CONSENT_KEY, JSON.stringify(consent));
+
+    saveConsentEverywhere(consent);
     setShow(false);
 
     // إرسال event للتطبيق ليُحدّث Analytics
-    window.dispatchEvent(
-      new CustomEvent('consent-updated', { detail: consent })
-    );
+    try {
+      window.dispatchEvent(
+        new CustomEvent('consent-updated', { detail: consent })
+      );
+    } catch (e) {}
   };
 
-  const acceptAll = () => {
-    saveConsent({ analytics: true, marketing: true });
-  };
+  const acceptAll = () => saveConsent({ analytics: true, marketing: true });
+  const acceptNecessary = () => saveConsent({ analytics: false, marketing: false });
+  const acceptCustom = () => saveConsent({ analytics, marketing });
 
-  const acceptNecessary = () => {
-    saveConsent({ analytics: false, marketing: false });
-  };
-
-  const acceptCustom = () => {
-    saveConsent({ analytics, marketing });
-  };
-
-  // لإغلاق الـ banner عند الضغط على Escape
+  // إغلاق بـ Escape (يحفظ الضرورية فقط)
   useEffect(() => {
     if (!show) return;
-
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        // قبول الضرورية فقط عند Escape
-        const consent: ConsentState = {
-          necessary: true,
-          analytics: false,
-          marketing: false,
-          timestamp: Date.now(),
-        };
-        localStorage.setItem(CONSENT_KEY, JSON.stringify(consent));
-        setShow(false);
+        acceptNecessary();
       }
     };
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show]);
 
-  if (!show) return null;
+  // لا تعرض شيئاً قبل mount (يحل hydration mismatch)
+  if (!mounted || !show) return null;
 
   return (
     <div
@@ -95,7 +141,7 @@ export function CookieConsent() {
         </h2>
 
         <p id="cookie-desc" className="cookie-desc">
-          نستخدم الكوكيز لتحسين تجربتك وتحليل استخدام الموقع. الكوكيز الضرورية 
+          نستخدم الكوكيز لتحسين تجربتك وتحليل استخدام الموقع. الكوكيز الضرورية
           فقط مُفعّلة بشكل افتراضي. يمكنك تغيير اختيارك في أي وقت من{' '}
           <Link href="/legal/privacy" className="cookie-link">
             سياسة الخصوصية
@@ -103,7 +149,7 @@ export function CookieConsent() {
         </p>
 
         {showDetails && (
-          <div className="cookie-options" role="group" aria-label="Cookie preferences">
+          <div className="cookie-options" role="group" aria-label="تفضيلات الكوكيز">
             <label className="cookie-option disabled">
               <input
                 type="checkbox"
