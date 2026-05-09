@@ -283,10 +283,10 @@ export default function HomePage() {
             <div className="landing-footer-col">
               <h4>قانوني</h4>
               <ul>
-                <li><Link href="/legal/terms" style={{ color: 'inherit', textDecoration: 'none' }}>الشروط والأحكام</Link></li>
-                <li><Link href="/legal/privacy" style={{ color: 'inherit', textDecoration: 'none' }}>سياسة الخصوصية</Link></li>
-                <li>سياسة الكوكيز</li>
-                <li>إخلاء المسؤولية الطبية</li>
+                <li><Link href="/legal/terms">الشروط والأحكام</Link></li>
+                <li><Link href="/legal/privacy">سياسة الخصوصية</Link></li>
+                <li><Link href="/legal/cookies">سياسة الكوكيز</Link></li>
+                <li><Link href="/legal/disclaimer">إخلاء المسؤولية الطبية</Link></li>
               </ul>
             </div>
             <div className="landing-footer-col">
