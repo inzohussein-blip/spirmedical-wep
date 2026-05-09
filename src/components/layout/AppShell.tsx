@@ -27,7 +27,6 @@ interface NavItem {
  * - عرض ثابت 480px على كل الشاشات (شكل تطبيق هاتف)
  * - بدون إطار خارجي
  * - Header sticky + Bottom Nav + Footer
- * - Dark Mode toggle
  * - دعم RTL كامل
  * - A11y compliant
  *
@@ -43,16 +42,6 @@ export function AppShell({
 }: AppShellProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
-
-  // تحميل Theme من localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem('spir_theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const initial = (saved as 'light' | 'dark') || (prefersDark ? 'dark' : 'light');
-    setTheme(initial);
-    document.documentElement.setAttribute('data-theme', initial);
-  }, []);
 
   // إغلاق المنيو عند تغيير المسار
   useEffect(() => {
@@ -67,13 +56,6 @@ export function AppShell({
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, []);
-
-  function toggleTheme() {
-    const next = theme === 'light' ? 'dark' : 'light';
-    setTheme(next);
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('spir_theme', next);
-  }
 
   // ٤ نوافذ أساسية (مطابقة لمواصفاتك)
   const navItems: NavItem[] = isGuest
@@ -130,16 +112,6 @@ export function AppShell({
             </Link>
 
             <div className="app-header-actions">
-              <button
-                type="button"
-                className="app-icon-btn"
-                onClick={toggleTheme}
-                aria-label={theme === 'light' ? 'تفعيل الوضع الداكن' : 'تفعيل الوضع الفاتح'}
-                title={theme === 'light' ? 'الوضع الداكن' : 'الوضع الفاتح'}
-              >
-                <span aria-hidden="true">{theme === 'light' ? '🌙' : '☀'}</span>
-              </button>
-
               <button
                 type="button"
                 className="app-menu-toggle"
