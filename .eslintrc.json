@@ -1,10 +1,7 @@
 {
-  "extends": ["next/core-web-vitals", "plugin:security/recommended-legacy"],
-  "plugins": ["security"],
+  "extends": ["next/core-web-vitals"],
   "rules": {
     "@next/next/no-img-element": "off",
-    "security/detect-object-injection": "off",
-    "security/detect-non-literal-fs-filename": "off",
     "no-console": ["warn", { "allow": ["warn", "error", "debug"] }]
   },
   "ignorePatterns": [
