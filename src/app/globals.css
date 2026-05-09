@@ -5,15 +5,15 @@
 /* ═══════════════════════════════════════════════════════════════════
    Spir Medical · سباير ميديكال
    مطابق 100% لـ spir-medical-screens-V3.html
+   ⚠️ Light Mode فقط — لا يوجد Dark Mode
    3 Layouts:
    • Landing (/) → web عريض (1280px)
    • Auth (gate/login/register/otp) → phone shape (480px)
    • App (guest/dashboard) → phone shape (480px) + AppShell
    ═══════════════════════════════════════════════════════════════════ */
 
-/* ─── 1. DESIGN TOKENS - V3 EXACT ─── */
-:root,
-[data-theme='light'] {
+/* ─── 1. DESIGN TOKENS — V3 EXACT (Light only) ─── */
+:root {
   --emerald: #0E5C4D;
   --emerald-deep: #073B30;
   --emerald-soft: #D9E5DF;
@@ -39,56 +39,14 @@
   --viewport-bg: #E8E0CE;
 }
 
-[data-theme='dark'] {
-  --emerald: #1B7A65;
-  --emerald-deep: #0E5C4D;
-  --emerald-soft: rgba(27,122,101,0.18);
-  --amber: #D9690F;
-  --amber-soft: rgba(217,105,15,0.18);
-  --rose: #C73950;
-  --rose-soft: rgba(199,57,80,0.18);
-  --paper: #0A0F10;
-  --paper-2: #131A1C;
-  --paper-3: #1A2326;
-  --white: #1F2A2C;
-  --ink: #F4EFE2;
-  --ink-2: #D4D4C8;
-  --ink-3: #9A9A8E;
-  --ink-4: #6E6E62;
-  --line: rgba(244,239,226,0.08);
-  --line-2: rgba(244,239,226,0.18);
-  --header-bg: rgba(10,15,16,0.95);
-  --viewport-bg: #050708;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --emerald: #1B7A65;
-    --emerald-deep: #0E5C4D;
-    --emerald-soft: rgba(27,122,101,0.18);
-    --amber: #D9690F;
-    --amber-soft: rgba(217,105,15,0.18);
-    --rose: #C73950;
-    --rose-soft: rgba(199,57,80,0.18);
-    --paper: #0A0F10;
-    --paper-2: #131A1C;
-    --paper-3: #1A2326;
-    --white: #1F2A2C;
-    --ink: #F4EFE2;
-    --ink-2: #D4D4C8;
-    --ink-3: #9A9A8E;
-    --ink-4: #6E6E62;
-    --line: rgba(244,239,226,0.08);
-    --line-2: rgba(244,239,226,0.18);
-    --header-bg: rgba(10,15,16,0.95);
-    --viewport-bg: #050708;
-  }
-}
-
-/* ─── 2. BASE - V3 EXACT ─── */
+/* ─── 2. BASE — V3 EXACT ─── */
 @layer base {
   *, *::before, *::after { box-sizing: border-box; }
-  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; color-scheme: light dark; }
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    color-scheme: light;
+  }
 
   body {
     margin: 0;
@@ -99,7 +57,6 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     min-height: 100vh;
-    transition: background-color 0.3s, color 0.3s;
   }
   [lang='ar'], [dir='rtl'] { font-feature-settings: 'kern', 'liga', 'calt'; }
   ::selection { background: var(--emerald); color: var(--paper-3); }
@@ -213,7 +170,7 @@
 }
 .landing-hero-text { position: relative; z-index: 2; }
 
-/* eyebrow — V3 EXACT (uppercase + letter-spacing 0.2em) */
+/* eyebrow — V3 EXACT */
 .landing-eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
   font-size: 11px;
@@ -345,7 +302,7 @@
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Section heads — V3 h2 EXACT 44px */
+/* Section heads — V3 EXACT */
 .landing-section-head {
   text-align: center;
   margin-bottom: 40px;
@@ -533,7 +490,7 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   LAYOUT 2: AUTH SCREENS — مطابق mock-* في V3
+   LAYOUT 2: AUTH SCREENS
    ═══════════════════════════════════════════════════════════════════ */
 
 .auth-screen {
@@ -548,7 +505,6 @@
 }
 @media (min-width: 768px) { .auth-screen { padding: 60px 18px; } }
 
-/* mock-back V3 */
 .auth-back {
   display: inline-flex; align-items: center; gap: 5px;
   background: var(--white); border: 1px solid var(--line);
@@ -559,10 +515,8 @@
 }
 .auth-back:hover { background: var(--paper-2); }
 
-/* mock-header V3 */
 .auth-header { text-align: center; margin: 18px 0 14px; }
 
-/* mock-logo V3 EXACT */
 .auth-logo {
   width: 60px; height: 60px;
   background: var(--emerald); color: var(--paper-3);
@@ -573,7 +527,6 @@
   box-shadow: 0 8px 20px -4px rgba(14,92,77,0.4);
 }
 
-/* mock-brand-name V3 EXACT */
 .auth-brand {
   font-size: 18px; font-weight: 800;
   font-family: 'Inter', sans-serif;
@@ -584,7 +537,6 @@
   font-size: 11px; color: var(--ink-3); margin-top: 2px;
 }
 
-/* mock-role-badge V3 EXACT */
 .auth-role-badge {
   display: inline-flex; align-items: center; gap: 6px;
   background: var(--emerald-soft); color: var(--emerald-deep);
@@ -594,7 +546,6 @@
 }
 .auth-role-badge.specialist { background: var(--amber-soft); color: var(--amber); }
 
-/* mock-title-section V3 */
 .auth-title-section { text-align: center; margin: 10px 0 18px; }
 .auth-title {
   font-size: 24px; font-weight: 900;
@@ -605,7 +556,6 @@
   margin-top: 6px; line-height: 1.6;
 }
 
-/* mock-tabs V3 EXACT */
 .role-tabs {
   display: flex; gap: 4px;
   background: var(--paper-2);
@@ -626,7 +576,6 @@
   box-shadow: var(--shadow-sm); font-weight: 700;
 }
 
-/* mock-field V3 */
 .auth-form { display: flex; flex-direction: column; gap: 12px; }
 .auth-field { margin-bottom: 0; }
 .auth-field-section {
@@ -641,7 +590,6 @@
   font-size: 11px; color: var(--ink-3); margin-bottom: 8px;
 }
 
-/* mock-field-label V3 EXACT */
 .auth-field-label {
   font-size: 12px; font-weight: 700;
   margin-bottom: 6px;
@@ -650,7 +598,6 @@
 }
 .auth-required { color: var(--rose); font-weight: 900; }
 
-/* mock-input V3 EXACT */
 .auth-input, .mock-input {
   width: 100%;
   background: var(--white);
@@ -672,7 +619,6 @@
   display: flex; justify-content: space-between; align-items: center; width: 100%;
 }
 
-/* mock-otp-input V3 EXACT */
 .auth-otp-input {
   width: 100%;
   background: var(--white);
@@ -692,7 +638,6 @@
 .auth-field-hint { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
 .auth-field-error { font-size: 12px; color: var(--rose); font-weight: 700; margin-top: 4px; }
 
-/* mock-phone-wrap V3 EXACT */
 .auth-phone-wrap { display: flex; gap: 6px; }
 .auth-phone-prefix {
   background: var(--paper-2); border: 1px solid var(--line);
@@ -711,7 +656,6 @@
 }
 .auth-phone-wrap input:focus { border-color: var(--emerald); }
 
-/* mock-masked-phone V3 EXACT */
 .auth-masked-phone {
   display: inline-block;
   background: var(--paper-2);
@@ -722,7 +666,6 @@
   margin-top: 6px; color: var(--ink);
 }
 
-/* mock-cta V3 EXACT */
 .auth-cta {
   background: var(--emerald); color: var(--paper-3);
   padding: 14px;
@@ -753,7 +696,6 @@
   font-weight: 900; font-size: 12px; flex-shrink: 0;
 }
 
-/* mock-helper V3 */
 .auth-helper {
   text-align: center;
   font-size: 12px; color: var(--ink-3);
@@ -766,7 +708,6 @@
   margin-top: 8px; font-family: 'JetBrains Mono', monospace;
 }
 
-/* mock-status-icon V3 EXACT */
 .auth-status-icon {
   width: 64px; height: 64px;
   background: var(--emerald-soft); color: var(--emerald);
@@ -956,7 +897,7 @@
 .app-bottom-icon { font-size: 20px; line-height: 1; }
 .app-bottom-label { font-size: 10px; line-height: 1; font-weight: 700; }
 
-/* App Screens — V3 scr-content EXACT */
+/* App Screens */
 .app-screen { background: var(--paper); min-height: 100%; }
 .scr-content {
   padding: 18px 20px;
