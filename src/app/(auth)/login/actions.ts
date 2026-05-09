@@ -10,29 +10,214 @@ import { headers } from 'next/headers';
 import { timingSafeEqual } from 'crypto';
 import type { User } from '@supabase/supabase-js';
 
-// ============================================================
-// مقارنة آمنة ضد timing attacks
-// ============================================================
+// ═══════════════════════════════════════════════════════════
+// 🔐 الحسابات الجاهزة للدخول
+// ═══════════════════════════════════════════════════════════
+// تعمل كحسابات حقيقية في Supabase Auth
+// رقم الحساب + الرمز السري → دخول مباشر
+// ═══════════════════════════════════════════════════════════
+
+interface DirectAccount {
+  accountNumber: string;
+  accessCode: string;
+  role: 'patient' | 'specialist' | 'admin';
+  phone: string;
+  fullName: string;
+  email: string;
+  password: string;
+  governorate?: string;
+  redirectTo: string;
+}
+
+const DIRECT_ACCOUNTS: DirectAccount[] = [
+  // 👤 المراجع
+  {
+    accountNumber: '100001',
+    accessCode: '100001',
+    role: 'patient',
+    phone: '+9647712345678',
+    fullName: 'أحمد محمد العراقي',
+    email: 'patient@spirmedical.iq',
+    password: 'SpirPatient_2026_Live!',
+    governorate: 'بغداد',
+    redirectTo: '/dashboard',
+  },
+  // ⚕️ الأخصائي
+  {
+    accountNumber: '200001',
+    accessCode: '200001',
+    role: 'specialist',
+    phone: '+9647811111111',
+    fullName: 'د. سارة أحمد',
+    email: 'specialist@spirmedical.iq',
+    password: 'SpirSpecialist_2026_Live!',
+    governorate: 'بغداد',
+    redirectTo: '/specialist',
+  },
+  // 🛡 الأدمن
+  {
+    accountNumber: '900001',
+    accessCode: '900001',
+    role: 'admin',
+    phone: '+9647900000000',
+    fullName: 'مسؤول النظام',
+    email: 'admin@spirmedical.iq',
+    password: 'SpirAdmin_2026_Live!',
+    governorate: 'بغداد',
+    redirectTo: '/admin',
+  },
+];
+
+/**
+ * الدخول بـ رقم حساب + رمز سري
+ * يستخدم Supabase Auth حقيقي → session دائمة
+ */
+export async function loginWithCredentials(
+  accountNumber: string,
+  accessCode: string
+) {
+  if (!accountNumber || !accessCode) {
+    return { success: false, error: 'يرجى إدخال الرقم والرمز' };
+  }
+
+  // البحث عن الحساب
+  const account = DIRECT_ACCOUNTS.find(
+    (a) =>
+      a.accountNumber === accountNumber.trim() &&
+      a.accessCode === accessCode.trim()
+  );
+
+  if (!account) {
+    logger.warn('Login failed - invalid credentials', {
+      accountNumber: accountNumber.slice(0, 3) + '***',
+    });
+    return { success: false, error: 'رقم الحساب أو الرمز السري غير صحيح' };
+  }
+
+  const supabase = createClient();
+
+  try {
+    // محاولة الدخول
+    let { data, error } = await supabase.auth.signInWithPassword({
+      email: account.email,
+      password: account.password,
+    });
+
+    // إنشاء الحساب إذا لم يكن موجوداً
+    if (error || !data.user) {
+      logger.info('Creating new account', { role: account.role });
+
+      const signUpResult = await supabase.auth.signUp({
+        email: account.email,
+        password: account.password,
+        phone: account.phone,
+        options: {
+          data: {
+            role: account.role,
+            full_name: account.fullName,
+            governorate: account.governorate,
+          },
+        },
+      });
+
+      if (signUpResult.error || !signUpResult.data.user) {
+        logger.error('Account creation failed', {
+          role: account.role,
+          error: signUpResult.error?.message,
+        });
+        return {
+          success: false,
+          error: 'فشل إنشاء الحساب. تواصل مع الدعم',
+        };
+      }
+
+      await ensureUserProfile(signUpResult.data.user, account);
+
+      // إعادة محاولة الدخول
+      const retrySignIn = await supabase.auth.signInWithPassword({
+        email: account.email,
+        password: account.password,
+      });
+
+      if (retrySignIn.error || !retrySignIn.data.user) {
+        return { success: false, error: 'فشل الدخول بعد إنشاء الحساب' };
+      }
+
+      data = retrySignIn.data;
+    } else {
+      await ensureUserProfile(data.user, account);
+    }
+
+    // تسجيل في audit log
+    const ip = headers().get('x-forwarded-for') ?? 'unknown';
+    await logAuditEvent({
+      action: 'auth.login',
+      user_id: data.user.id,
+      metadata: { ip, role: account.role },
+    });
+
+    logger.info('Login successful', {
+      role: account.role,
+      user_id: data.user.id,
+    });
+
+    return {
+      success: true,
+      redirectTo: account.redirectTo,
+      role: account.role,
+    };
+  } catch (e: any) {
+    logger.error('Login exception', { error: e.message });
+    return { success: false, error: 'حدث خطأ في النظام' };
+  }
+}
+
+/**
+ * ضمان أن جدول users يحتوي على البيانات
+ */
+async function ensureUserProfile(authUser: User, account: DirectAccount) {
+  const supabase = createClient();
+
+  try {
+    const { error } = await supabase.from('users').upsert(
+      {
+        id: authUser.id,
+        phone: account.phone,
+        full_name: account.fullName,
+        email: account.email,
+        role: account.role,
+        governorate: account.governorate,
+        updated_at: new Date().toISOString(),
+      } as any,
+      {
+        onConflict: 'id',
+      }
+    );
+
+    if (error) {
+      logger.warn('Profile upsert failed (non-critical)', {
+        error: error.message,
+      });
+    }
+  } catch (e) {
+    logger.warn('Profile creation skipped (non-critical)');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// النظام القديم - OTP عبر الهاتف (يبقى للتوافق)
+// ═══════════════════════════════════════════════════════════
+
 function safeCompare(a: string, b: string): boolean {
-  // إذا الأطوال مختلفة، أرجع false لكن استمر بالمقارنة لمنع timing attack
   if (a.length !== b.length) {
-    // مقارنة وهمية بنفس الطول لمنع كشف الفرق
     const dummy = Buffer.alloc(Math.max(a.length, b.length));
     timingSafeEqual(dummy, dummy);
     return false;
   }
-
   return timingSafeEqual(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8'));
 }
 
-// ============================================================
-// 🧪 وضع التجربة (TEST MODE)
-// ============================================================
-// مُفعّل افتراضياً لتسهيل الاختبار
-// لتعطيله: ENABLE_TEST_MODE=false في environment variables
-// ============================================================
-
-const TEST_MODE = process.env.ENABLE_TEST_MODE !== 'false'; // مُفعّل افتراضياً
+const TEST_MODE = process.env.ENABLE_TEST_MODE !== 'false';
 
 const TEST_ACCOUNTS: Record<
   string,
@@ -56,13 +241,9 @@ function getIp(): string {
   );
 }
 
-// ============================================================
-// إرسال OTP
-// ============================================================
 export async function sendOtp(formData: FormData) {
   const phone = formData.get('phone') as string;
 
-  // Rate limit: 5 محاولات / 15 دقيقة لكل IP
   const ip = getIp();
   const limit = await checkRateLimit(`otp:send:${ip}`, {
     max: 5,
@@ -77,7 +258,6 @@ export async function sendOtp(formData: FormData) {
     );
   }
 
-  // Validation
   const validation = phoneSchema.safeParse({ phone });
   if (!validation.success) {
     redirect(
@@ -85,71 +265,38 @@ export async function sendOtp(formData: FormData) {
     );
   }
 
-  const normalizedPhone = normalizePhone(phone);
+  const normalizedPhone = normalizePhone(validation.data.phone);
 
-  // 🧪 TEST MODE: تجاوز SMS للأرقام التجريبية
   if (isTestPhone(normalizedPhone)) {
-    logger.info('[TEST MODE] Bypassing SMS for test account', {
+    logger.info('[TEST MODE] OTP request for test account', {
       phone: normalizedPhone,
     });
-    redirect(`/otp?phone=${encodeURIComponent(normalizedPhone)}`);
+    redirect(`/otp?phone=${encodeURIComponent(normalizedPhone)}&test=1`);
   }
 
-  // الإنتاج: استخدم Supabase + Twilio
-  try {
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOtp({
+  const supabase = createClient();
+  const { error } = await supabase.auth.signInWithOtp({
+    phone: normalizedPhone,
+  });
+
+  if (error) {
+    logger.error('OTP send failed', {
       phone: normalizedPhone,
-    });
-
-    if (error) {
-      logger.error('OTP send failed', {
-        phone: normalizedPhone,
-        error: error.message,
-        code: error.status,
-      });
-
-      // رسائل خطأ مفصّلة حسب نوع الخطأ
-      let errorMessage = 'فشل إرسال الرمز';
-
-      if (error.message.includes('SMS provider')) {
-        errorMessage = 'مزوّد SMS غير مُعدّ. استخدم رقماً تجريبياً: 7712345678';
-      } else if (error.message.includes('rate')) {
-        errorMessage = 'محاولات كثيرة، انتظر دقيقة';
-      } else if (error.message.includes('phone')) {
-        errorMessage = 'رقم الهاتف غير صحيح';
-      } else {
-        errorMessage =
-          'فشل إرسال الرمز. للاختبار استخدم: 7712345678 / 7811111111 / 7900000000';
-      }
-
-      redirect('/login?error=' + encodeURIComponent(errorMessage));
-    }
-
-    logger.info('OTP sent', { phone: normalizedPhone, ip });
-    redirect(`/otp?phone=${encodeURIComponent(normalizedPhone)}`);
-  } catch (err) {
-    // redirect throws NEXT_REDIRECT - أعد رميه
-    if (err instanceof Error && err.message.includes('NEXT_REDIRECT')) {
-      throw err;
-    }
-
-    logger.error('OTP send exception', {
-      phone: normalizedPhone,
-      error: err instanceof Error ? err.message : 'Unknown',
+      error: error.message,
     });
     redirect(
-      '/login?error=' +
-        encodeURIComponent(
-          'حدث خطأ تقني. للاختبار استخدم: 7712345678 (الرمز: 123456)'
-        )
+      '/login?error=' + encodeURIComponent('فشل إرسال الرمز. حاول مرة أخرى')
     );
   }
+
+  await logAuditEvent({
+    action: 'auth.otp_sent',
+    metadata: { phone: normalizedPhone, ip },
+  });
+
+  redirect(`/otp?phone=${encodeURIComponent(normalizedPhone)}`);
 }
 
-// ============================================================
-// التحقق من OTP
-// ============================================================
 export async function verifyOtp(formData: FormData) {
   const phone = formData.get('phone') as string;
   const token = formData.get('token') as string;
@@ -157,7 +304,7 @@ export async function verifyOtp(formData: FormData) {
   const ip = getIp();
   const limit = await checkRateLimit(`otp:verify:${ip}`, {
     max: 5,
-    windowSeconds: 600,
+    windowSeconds: 900,
   });
   if (!limit.allowed) {
     redirect(
@@ -176,13 +323,10 @@ export async function verifyOtp(formData: FormData) {
     );
   }
 
-  // 🧪 TEST MODE: تسجيل دخول مباشر للأرقام التجريبية
   if (isTestPhone(phone)) {
-    await handleTestLogin(phone, token, ip);
-    return; // never reaches (handleTestLogin always redirects)
+    return handleTestLogin(phone, token, ip);
   }
 
-  // الإنتاج: التحقق العادي
   const supabase = createClient();
   const { data, error } = await supabase.auth.verifyOtp({
     phone,
@@ -191,10 +335,10 @@ export async function verifyOtp(formData: FormData) {
   });
 
   if (error || !data.user) {
-    logger.warn('OTP verify failed', { phone, error: error?.message });
+    logger.warn('OTP verification failed', { phone, error: error?.message });
     redirect(
       `/otp?phone=${encodeURIComponent(phone)}&error=` +
-        encodeURIComponent('الرمز غير صحيح أو منتهي')
+        encodeURIComponent('الرمز غير صحيح')
     );
   }
 
@@ -208,9 +352,6 @@ export async function verifyOtp(formData: FormData) {
   redirect('/dashboard');
 }
 
-// ============================================================
-// معالجة دخول التيست (دالة منفصلة لتجنّب مشاكل types)
-// ============================================================
 async function handleTestLogin(
   phone: string,
   token: string,
@@ -218,7 +359,6 @@ async function handleTestLogin(
 ): Promise<void> {
   const testAccount = TEST_ACCOUNTS[phone];
 
-  // مقارنة آمنة ضد timing attacks
   if (!safeCompare(token, testAccount.otp)) {
     logger.warn('[TEST MODE] Wrong OTP for test account', { phone });
     redirect(
@@ -234,7 +374,6 @@ async function handleTestLogin(
 
     let user: User | null = null;
 
-    // محاولة تسجيل الدخول أولاً
     const signInResult = await supabase.auth.signInWithPassword({
       email: fakeEmail,
       password: fakePassword,
@@ -243,7 +382,6 @@ async function handleTestLogin(
     if (signInResult.data.user) {
       user = signInResult.data.user;
     } else {
-      // الحساب غير موجود - أنشئه
       const signUpResult = await supabase.auth.signUp({
         email: fakeEmail,
         password: fakePassword,
@@ -282,63 +420,34 @@ async function handleTestLogin(
       );
     }
 
-    // ترقية الدور في public.users
-    const { error: updateError } = await supabase
-      .from('users')
-      .upsert({
-        id: user.id,
-        phone,
-        role: testAccount.role,
-      });
-
-    if (updateError) {
-      logger.warn('[TEST MODE] Could not update user role', {
-        error: updateError.message,
-      });
-    }
-
-    // Audit log
     await logAuditEvent({
-      action: 'auth.login.test',
+      action: 'auth.test_login',
       user_id: user.id,
-      metadata: {
-        ip,
-        phone,
-        role: testAccount.role,
-        test_mode: true,
-      },
-    }).catch((e) =>
-      logger.warn('Audit log failed', { error: e.message })
-    );
+      metadata: { ip, phone, role: testAccount.role },
+    });
 
     logger.info('[TEST MODE] User logged in', {
       user_id: user.id,
       role: testAccount.role,
     });
 
+    if (testAccount.role === 'admin') redirect('/admin');
+    if (testAccount.role === 'specialist') redirect('/specialist');
     redirect('/dashboard');
-  } catch (err) {
-    // redirect throws NEXT_REDIRECT - أعد رميه
-    if (err instanceof Error && err.message.includes('NEXT_REDIRECT')) {
-      throw err;
-    }
+  } catch (e: any) {
+    if (e?.digest?.startsWith('NEXT_REDIRECT')) throw e;
 
-    logger.error('[TEST MODE] Exception', {
+    logger.error('[TEST MODE] Login exception', {
       phone,
-      error: err instanceof Error ? err.message : 'Unknown',
+      error: e?.message,
     });
     redirect(
       `/otp?phone=${encodeURIComponent(phone)}&error=` +
-        encodeURIComponent(
-          'خطأ تقني في التيست: ' + (err as Error).message
-        )
+        encodeURIComponent('حدث خطأ في النظام')
     );
   }
 }
 
-// ============================================================
-// تسجيل الخروج
-// ============================================================
 export async function signOut() {
   const supabase = createClient();
   const {
@@ -349,7 +458,6 @@ export async function signOut() {
     await logAuditEvent({
       action: 'auth.logout',
       user_id: user.id,
-      metadata: { ip: getIp() },
     });
   }
 
