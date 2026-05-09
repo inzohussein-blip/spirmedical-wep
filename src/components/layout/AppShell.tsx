@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 interface AppShellProps {
   children: React.ReactNode;
   userName?: string;
-  userRole?: 'patient' | 'specialist' | 'admin' | 'guest';
+  userRole?: 'patient' | 'specialist' | 'guest';
   signOutAction?: () => Promise<void>;
   isGuest?: boolean;
 }
@@ -21,15 +21,18 @@ interface NavItem {
 }
 
 /**
- * AppShell - حاوية ويب آب موحّدة (بدون phone frame)
+ * AppShell - تطبيق ويب بعرض هاتف ثابت (480px)
  *
  * المميزات:
- * - Header sticky responsive
- * - Bottom navigation (موبايل فقط)
- * - Footer دائم
- * - Dark mode toggle
+ * - عرض ثابت 480px على كل الشاشات (شكل تطبيق هاتف)
+ * - بدون إطار خارجي
+ * - Header sticky + Bottom Nav + Footer
+ * - Dark Mode toggle
  * - دعم RTL كامل
  * - A11y compliant
+ *
+ * ⚠️ ملاحظة: لا يحتوي على روابط /admin
+ *    لأن لوحة الإدارة (CRM) منفصلة تماماً.
  */
 export function AppShell({
   children,
@@ -72,197 +75,164 @@ export function AppShell({
     localStorage.setItem('spir_theme', next);
   }
 
+  // ٤ نوافذ أساسية (مطابقة لمواصفاتك)
   const navItems: NavItem[] = isGuest
     ? [
         { id: 'home', href: '/guest', label: 'الرئيسية', icon: '⌂', ariaLabel: 'الصفحة الرئيسية' },
-        { id: 'orders', href: '/guest/orders', label: 'الطلبات', icon: '▤', ariaLabel: 'طلباتي' },
+        { id: 'orders', href: '/guest/orders', label: 'الطلبات', icon: '▤', ariaLabel: 'الطلبات' },
         { id: 'favorites', href: '/guest/favorites', label: 'المفضلة', icon: '♡', ariaLabel: 'المفضلة' },
         { id: 'account', href: '/guest/account', label: 'حسابي', icon: '◔', ariaLabel: 'حسابي' },
       ]
+    : userRole === 'specialist'
+    ? [
+        { id: 'home', href: '/specialist', label: 'الرئيسية', icon: '⌂', ariaLabel: 'الصفحة الرئيسية' },
+        { id: 'orders', href: '/specialist/orders', label: 'الطلبات', icon: '▤', ariaLabel: 'الطلبات' },
+        { id: 'chats', href: '/specialist/chats', label: 'المحادثات', icon: '✉', ariaLabel: 'المحادثات' },
+        { id: 'account', href: '/specialist/account', label: 'حسابي', icon: '◔', ariaLabel: 'حسابي' },
+      ]
     : [
-        { id: 'home', href: '/dashboard', label: 'الرئيسية', icon: '⌂', ariaLabel: 'لوحة التحكم' },
-        { id: 'appointments', href: '/appointments', label: 'الحجوزات', icon: '📋', ariaLabel: 'حجوزاتي' },
-        { id: 'new', href: '/appointments/new', label: 'حجز جديد', icon: '+', ariaLabel: 'حجز جديد' },
-        { id: 'account', href: '/profile', label: 'حسابي', icon: '◔', ariaLabel: 'الملف الشخصي' },
+        { id: 'home', href: '/dashboard', label: 'الرئيسية', icon: '⌂', ariaLabel: 'الصفحة الرئيسية' },
+        { id: 'orders', href: '/appointments', label: 'الطلبات', icon: '▤', ariaLabel: 'طلباتي' },
+        { id: 'favorites', href: '/favorites', label: 'المفضلة', icon: '♡', ariaLabel: 'المفضلة' },
+        { id: 'account', href: '/account', label: 'حسابي', icon: '◔', ariaLabel: 'حسابي' },
       ];
 
   function isActive(href: string): boolean {
-    if (href === '/guest' || href === '/dashboard') return pathname === href;
+    if (href === '/guest' || href === '/dashboard' || href === '/specialist') {
+      return pathname === href;
+    }
     return pathname.startsWith(href);
   }
 
+  const homeHref = isGuest ? '/guest' : userRole === 'specialist' ? '/specialist' : '/dashboard';
+
   return (
-    <div className="app-shell">
-      {/* Skip to content */}
+    <div className="app-viewport">
       <a href="#main-content" className="skip-link">
         الانتقال للمحتوى الرئيسي
       </a>
 
-      {/* === HEADER === */}
-      <header className="app-header" role="banner">
-        <div className="app-header-content">
-          <Link
-            href={isGuest ? '/guest' : '/dashboard'}
-            className="app-logo"
-            aria-label="Spir Medical - الصفحة الرئيسية"
-          >
-            <div className="app-logo-mark" aria-hidden="true">س</div>
-            <div className="app-logo-text">
-              <div className="app-logo-name">Spir Medical</div>
-              <div className="app-logo-sub">سباير ميديكال</div>
-            </div>
-          </Link>
-
-          <nav className="app-nav-desktop" role="navigation" aria-label="القائمة الرئيسية">
-            {navItems.map((item) => (
-              <Link
-                key={item.id}
-                href={item.href}
-                className={`app-nav-link ${isActive(item.href) ? 'active' : ''}`}
-                aria-current={isActive(item.href) ? 'page' : undefined}
-              >
-                <span aria-hidden="true">{item.icon}</span>
-                <span>{item.label}</span>
-              </Link>
-            ))}
-            {userRole === 'admin' && (
-              <Link
-                href="/admin"
-                className={`app-nav-link admin ${pathname.startsWith('/admin') ? 'active' : ''}`}
-                aria-current={pathname.startsWith('/admin') ? 'page' : undefined}
-              >
-                <span aria-hidden="true">🛡</span>
-                <span>الإدارة</span>
-              </Link>
-            )}
-          </nav>
-
-          <div className="app-header-actions">
-            {/* Dark mode toggle */}
-            <button
-              type="button"
-              className="app-icon-btn"
-              onClick={toggleTheme}
-              aria-label={theme === 'light' ? 'تفعيل الوضع الداكن' : 'تفعيل الوضع الفاتح'}
-              title={theme === 'light' ? 'الوضع الداكن' : 'الوضع الفاتح'}
+      {/* الإطار الفعلي للتطبيق - بعرض هاتف */}
+      <div className="app-shell">
+        {/* === HEADER === */}
+        <header className="app-header" role="banner">
+          <div className="app-header-content">
+            <Link
+              href={homeHref}
+              className="app-logo"
+              aria-label="Spir Medical - الصفحة الرئيسية"
             >
-              <span aria-hidden="true">{theme === 'light' ? '🌙' : '☀'}</span>
-            </button>
-
-            {userName && (
-              <span className="app-username" aria-label={`المستخدم: ${userName}`}>
-                {userName}
-              </span>
-            )}
-
-            {!isGuest && signOutAction && (
-              <form action={signOutAction}>
-                <button type="submit" className="app-btn-secondary" aria-label="تسجيل الخروج">
-                  خروج
-                </button>
-              </form>
-            )}
-
-            {isGuest && (
-              <Link href="/login" className="app-btn-primary">
-                دخول
-              </Link>
-            )}
-
-            <button
-              type="button"
-              className="app-menu-toggle"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-expanded={mobileMenuOpen}
-              aria-controls="mobile-menu"
-              aria-label={mobileMenuOpen ? 'إغلاق القائمة' : 'فتح القائمة'}
-            >
-              <span aria-hidden="true">{mobileMenuOpen ? '✕' : '☰'}</span>
-            </button>
-          </div>
-        </div>
-
-        {mobileMenuOpen && (
-          <nav
-            id="mobile-menu"
-            className="app-mobile-menu"
-            role="navigation"
-            aria-label="قائمة الموبايل"
-          >
-            {navItems.map((item) => (
-              <Link
-                key={item.id}
-                href={item.href}
-                className={`app-mobile-link ${isActive(item.href) ? 'active' : ''}`}
-                aria-current={isActive(item.href) ? 'page' : undefined}
-              >
-                <span aria-hidden="true">{item.icon}</span>
-                <span>{item.label}</span>
-              </Link>
-            ))}
-            {userRole === 'admin' && (
-              <Link
-                href="/admin"
-                className={`app-mobile-link admin ${pathname.startsWith('/admin') ? 'active' : ''}`}
-              >
-                <span aria-hidden="true">🛡</span>
-                <span>لوحة الإدارة</span>
-              </Link>
-            )}
-          </nav>
-        )}
-      </header>
-
-      {/* === MAIN === */}
-      <main id="main-content" className="app-main" role="main">
-        {children}
-      </main>
-
-      {/* === BOTTOM NAV (Mobile) === */}
-      <nav
-        className="app-bottom-nav"
-        role="navigation"
-        aria-label="التنقّل السفلي"
-      >
-        {navItems.map((item) => (
-          <Link
-            key={item.id}
-            href={item.href}
-            className={`app-bottom-item ${isActive(item.href) ? 'active' : ''}`}
-            aria-current={isActive(item.href) ? 'page' : undefined}
-            aria-label={item.ariaLabel}
-          >
-            <span className="app-bottom-icon" aria-hidden="true">{item.icon}</span>
-            <span className="app-bottom-label">{item.label}</span>
-          </Link>
-        ))}
-      </nav>
-
-      {/* === FOOTER === */}
-      <footer className="app-footer" role="contentinfo">
-        <div className="app-footer-content">
-          <div className="app-footer-section">
-            <div className="app-footer-brand">
-              <div className="app-footer-logo" aria-hidden="true">س</div>
-              <div>
-                <div className="app-footer-name">Spir Medical</div>
-                <div className="app-footer-tagline">صحة العراق، رقمياً</div>
+              <div className="app-logo-mark" aria-hidden="true">س</div>
+              <div className="app-logo-text">
+                <div className="app-logo-name">Spir Medical</div>
+                <div className="app-logo-sub">سباير ميديكال</div>
               </div>
+            </Link>
+
+            <div className="app-header-actions">
+              <button
+                type="button"
+                className="app-icon-btn"
+                onClick={toggleTheme}
+                aria-label={theme === 'light' ? 'تفعيل الوضع الداكن' : 'تفعيل الوضع الفاتح'}
+                title={theme === 'light' ? 'الوضع الداكن' : 'الوضع الفاتح'}
+              >
+                <span aria-hidden="true">{theme === 'light' ? '🌙' : '☀'}</span>
+              </button>
+
+              <button
+                type="button"
+                className="app-menu-toggle"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-expanded={mobileMenuOpen}
+                aria-controls="app-drawer"
+                aria-label={mobileMenuOpen ? 'إغلاق القائمة' : 'فتح القائمة'}
+              >
+                <span aria-hidden="true">{mobileMenuOpen ? '✕' : '☰'}</span>
+              </button>
             </div>
           </div>
 
-          <nav className="app-footer-nav" aria-label="روابط قانونية">
-            <Link href="/legal/terms">الشروط والأحكام</Link>
-            <Link href="/legal/privacy">سياسة الخصوصية</Link>
-            <Link href="/guest/sos" className="emergency">🚨 طوارئ</Link>
-          </nav>
+          {/* القائمة المنسدلة */}
+          {mobileMenuOpen && (
+            <nav
+              id="app-drawer"
+              className="app-drawer"
+              role="navigation"
+              aria-label="القائمة الرئيسية"
+            >
+              {userName && (
+                <div className="app-drawer-user">
+                  <div className="app-drawer-avatar" aria-hidden="true">
+                    {userName.charAt(0)}
+                  </div>
+                  <div>
+                    <div className="app-drawer-name">{userName}</div>
+                    <div className="app-drawer-role">
+                      {userRole === 'specialist' ? 'أخصائي' : userRole === 'patient' ? 'مراجع' : 'ضيف'}
+                    </div>
+                  </div>
+                </div>
+              )}
 
-          <div className="app-footer-bottom">
-            <span>© ٢٠٢٦ Spir Medical · جميع الحقوق محفوظة</span>
-            <span className="app-footer-iraq">صنع في العراق 🇮🇶</span>
-          </div>
-        </div>
-      </footer>
+              {navItems.map((item) => (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  className={`app-drawer-link ${isActive(item.href) ? 'active' : ''}`}
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                >
+                  <span className="app-drawer-icon" aria-hidden="true">{item.icon}</span>
+                  <span>{item.label}</span>
+                </Link>
+              ))}
+
+              <div className="app-drawer-divider" />
+
+              {!isGuest && signOutAction && (
+                <form action={signOutAction}>
+                  <button type="submit" className="app-drawer-link signout">
+                    <span aria-hidden="true">⎋</span>
+                    <span>تسجيل الخروج</span>
+                  </button>
+                </form>
+              )}
+
+              {isGuest && (
+                <Link href="/login" className="app-drawer-link primary">
+                  <span aria-hidden="true">⊕</span>
+                  <span>تسجيل الدخول</span>
+                </Link>
+              )}
+            </nav>
+          )}
+        </header>
+
+        {/* === MAIN === */}
+        <main id="main-content" className="app-main" role="main">
+          {children}
+        </main>
+
+        {/* === BOTTOM NAV === */}
+        <nav
+          className="app-bottom-nav"
+          role="navigation"
+          aria-label="التنقّل الرئيسي"
+        >
+          {navItems.map((item) => (
+            <Link
+              key={item.id}
+              href={item.href}
+              className={`app-bottom-item ${isActive(item.href) ? 'active' : ''}`}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+              aria-label={item.ariaLabel}
+            >
+              <span className="app-bottom-icon" aria-hidden="true">{item.icon}</span>
+              <span className="app-bottom-label">{item.label}</span>
+            </Link>
+          ))}
+        </nav>
+      </div>
     </div>
   );
 }

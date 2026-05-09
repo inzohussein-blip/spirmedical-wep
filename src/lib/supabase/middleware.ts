@@ -4,19 +4,15 @@ import type { Database } from '@/types/database';
 
 /**
  * يُحدّث الـ session في كل طلب — مهم للـ App Router مع Supabase Auth.
- * يُستدعى من middleware.ts الجذر.
  *
- * ⚠️ إذا كانت متغيرات البيئة مفقودة، يمرّر الطلب بدون معالجة (fail-open).
- *    هذا أفضل من 500 INTERNAL_SERVER_ERROR على Vercel.
+ * ⚠️ ملاحظة: لوحة الإدارة (CRM) مشروع منفصل وليس جزءاً من هذا التطبيق.
+ *    لذلك /admin غير مذكور هنا.
  */
 export async function updateSession(request: NextRequest) {
-  // التحقق من وجود متغيرات البيئة قبل أي شيء آخر
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
-    // متغيرات البيئة غير معرّفة — مرّر الطلب بدون معالجة
-    // هذا يمنع الـ MIDDLEWARE_INVOCATION_FAILED على Vercel
     console.error(
       '[middleware] Supabase environment variables not configured. ' +
         'Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Vercel.'
@@ -50,7 +46,13 @@ export async function updateSession(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     // حماية المسارات: إعادة توجيه غير المُصادَقين
-    const protectedPaths = ['/dashboard', '/appointments', '/admin'];
+    const protectedPaths = [
+      '/dashboard',
+      '/appointments',
+      '/specialist',
+      '/account',
+      '/favorites',
+    ];
     const isProtected = protectedPaths.some((path) =>
       request.nextUrl.pathname.startsWith(path)
     );
@@ -62,8 +64,8 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    // حماية مسارات الإدارة: فقط للأدمن
-    if (user && request.nextUrl.pathname.startsWith('/admin')) {
+    // حماية واجهة الأخصائي
+    if (user && request.nextUrl.pathname.startsWith('/specialist')) {
       try {
         const { data: profile } = await supabase
           .from('users')
@@ -71,23 +73,40 @@ export async function updateSession(request: NextRequest) {
           .eq('id', user.id)
           .single();
 
-        if (profile?.role !== 'admin') {
+        if (profile?.role !== 'specialist') {
           const url = request.nextUrl.clone();
           url.pathname = '/dashboard';
           return NextResponse.redirect(url);
         }
       } catch (err) {
-        // فشل في القراءة → إعادة توجيه آمنة
-        console.error('[middleware] Failed to check admin role:', err);
+        console.error('[middleware] Failed to check specialist role:', err);
         const url = request.nextUrl.clone();
         url.pathname = '/dashboard';
         return NextResponse.redirect(url);
       }
     }
 
+    // إذا الأخصائي حاول الدخول لـ /dashboard → وجّهه لـ /specialist
+    if (user && request.nextUrl.pathname.startsWith('/dashboard')) {
+      try {
+        const { data: profile } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+
+        if (profile?.role === 'specialist') {
+          const url = request.nextUrl.clone();
+          url.pathname = '/specialist';
+          return NextResponse.redirect(url);
+        }
+      } catch (err) {
+        // تجاهل
+      }
+    }
+
     return supabaseResponse;
   } catch (err) {
-    // أي خطأ غير متوقّع — مرّر الطلب بدلاً من 500
     console.error('[middleware] Unexpected error:', err);
     return NextResponse.next({ request });
   }

@@ -7,152 +7,15 @@ import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
 import { headers } from 'next/headers';
-import { timingSafeEqual } from 'crypto';
-import type { User } from '@supabase/supabase-js';
 
 // ═══════════════════════════════════════════════════════════
-// 🔐 الحسابات الجاهزة
+// 🔐 نظام تسجيل الدخول
 // ═══════════════════════════════════════════════════════════
-// الحسابات تم إنشاؤها مسبقاً في Supabase عبر SQL.
-// هذا الملف فقط يستدعيها للدخول.
+// - تسجيل الدخول عبر OTP (رقم الهاتف + رمز)
+// - بدون حسابات اختبار
+// - بدون نظام رقم/رمز ثابت
+// - الحسابات الوحيدة هي حسابات حقيقية في Supabase Auth
 // ═══════════════════════════════════════════════════════════
-
-interface DirectAccount {
-  accountNumber: string;
-  accessCode: string;
-  email: string;
-  password: string;
-  redirectTo: string;
-  role: 'patient' | 'specialist' | 'admin';
-}
-
-const DIRECT_ACCOUNTS: DirectAccount[] = [
-  {
-    accountNumber: '100001',
-    accessCode: '100001',
-    email: 'patient@spirmedical.iq',
-    password: 'SpirPatient_2026_Live!',
-    redirectTo: '/dashboard',
-    role: 'patient',
-  },
-  {
-    accountNumber: '200001',
-    accessCode: '200001',
-    email: 'specialist@spirmedical.iq',
-    password: 'SpirSpecialist_2026_Live!',
-    redirectTo: '/specialist',
-    role: 'specialist',
-  },
-  {
-    accountNumber: '900001',
-    accessCode: '900001',
-    email: 'admin@spirmedical.iq',
-    password: 'SpirAdmin_2026_Live!',
-    redirectTo: '/admin',
-    role: 'admin',
-  },
-];
-
-/**
- * الدخول بـ رقم حساب + رمز سري
- * بسيط جداً: ابحث عن الحساب → سجّل دخول → انتقل
- */
-export async function loginWithCredentials(
-  accountNumber: string,
-  accessCode: string
-) {
-  if (!accountNumber || !accessCode) {
-    return { success: false, error: 'يرجى إدخال الرقم والرمز' };
-  }
-
-  // البحث عن الحساب
-  const account = DIRECT_ACCOUNTS.find(
-    (a) =>
-      a.accountNumber === accountNumber.trim() &&
-      a.accessCode === accessCode.trim()
-  );
-
-  if (!account) {
-    logger.warn('Login failed - invalid credentials', {
-      accountNumber: accountNumber.slice(0, 3) + '***',
-    });
-    return { success: false, error: 'رقم الحساب أو الرمز السري غير صحيح' };
-  }
-
-  const supabase = createClient();
-
-  try {
-    // تسجيل الدخول مباشرة (الحساب موجود في Supabase)
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: account.email,
-      password: account.password,
-    });
-
-    if (error || !data.user) {
-      logger.error('Login failed', {
-        role: account.role,
-        error: error?.message,
-      });
-      return {
-        success: false,
-        error: 'فشل تسجيل الدخول. تأكّد من تشغيل SQL أولاً',
-      };
-    }
-
-    // تسجيل في audit log
-    const ip = headers().get('x-forwarded-for') ?? 'unknown';
-    await logAuditEvent({
-      action: 'auth.login',
-      user_id: data.user.id,
-      metadata: { ip, role: account.role },
-    });
-
-    logger.info('Login successful', {
-      role: account.role,
-      user_id: data.user.id,
-    });
-
-    return {
-      success: true,
-      redirectTo: account.redirectTo,
-      role: account.role,
-    };
-  } catch (e: any) {
-    logger.error('Login exception', { error: e.message });
-    return {
-      success: false,
-      error: 'حدث خطأ في النظام. حاول مرة أخرى',
-    };
-  }
-}
-
-// ═══════════════════════════════════════════════════════════
-// النظام القديم - OTP (للتوافق - يبقى يعمل)
-// ═══════════════════════════════════════════════════════════
-
-function safeCompare(a: string, b: string): boolean {
-  if (a.length !== b.length) {
-    const dummy = Buffer.alloc(Math.max(a.length, b.length));
-    timingSafeEqual(dummy, dummy);
-    return false;
-  }
-  return timingSafeEqual(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8'));
-}
-
-const TEST_MODE = process.env.ENABLE_TEST_MODE !== 'false';
-
-const TEST_ACCOUNTS: Record<
-  string,
-  { otp: string; role: 'patient' | 'specialist' | 'admin' }
-> = {
-  '+9647712345678': { otp: '123456', role: 'patient' },
-  '+9647811111111': { otp: '111111', role: 'specialist' },
-  '+9647900000000': { otp: '000000', role: 'admin' },
-};
-
-function isTestPhone(phone: string): boolean {
-  return TEST_MODE && phone in TEST_ACCOUNTS;
-}
 
 function getIp(): string {
   const h = headers();
@@ -163,6 +26,9 @@ function getIp(): string {
   );
 }
 
+/**
+ * إرسال رمز OTP لرقم هاتف
+ */
 export async function sendOtp(formData: FormData) {
   const phone = formData.get('phone') as string;
 
@@ -171,6 +37,7 @@ export async function sendOtp(formData: FormData) {
     max: 5,
     windowSeconds: 900,
   });
+
   if (!limit.allowed) {
     redirect(
       '/login?error=' +
@@ -189,25 +56,32 @@ export async function sendOtp(formData: FormData) {
 
   const normalizedPhone = normalizePhone(validation.data.phone);
 
-  if (isTestPhone(normalizedPhone)) {
-    redirect(`/otp?phone=${encodeURIComponent(normalizedPhone)}&test=1`);
-  }
-
   const supabase = createClient();
   const { error } = await supabase.auth.signInWithOtp({
     phone: normalizedPhone,
   });
 
   if (error) {
-    logger.error('OTP send failed', { phone: normalizedPhone });
+    logger.error('OTP send failed', {
+      phone: normalizedPhone,
+      error: error.message,
+    });
     redirect(
       '/login?error=' + encodeURIComponent('فشل إرسال الرمز. حاول مرة أخرى')
     );
   }
 
+  await logAuditEvent({
+    action: 'auth.otp_sent',
+    metadata: { phone: normalizedPhone, ip },
+  });
+
   redirect(`/otp?phone=${encodeURIComponent(normalizedPhone)}`);
 }
 
+/**
+ * التحقّق من رمز OTP وتسجيل الدخول
+ */
 export async function verifyOtp(formData: FormData) {
   const phone = formData.get('phone') as string;
   const token = formData.get('token') as string;
@@ -217,10 +91,13 @@ export async function verifyOtp(formData: FormData) {
     max: 5,
     windowSeconds: 900,
   });
+
   if (!limit.allowed) {
     redirect(
       `/otp?phone=${encodeURIComponent(phone)}&error=` +
-        encodeURIComponent(`محاولات كثيرة، حاول بعد ${limit.retryAfterSeconds} ثانية`)
+        encodeURIComponent(
+          `محاولات كثيرة، حاول بعد ${limit.retryAfterSeconds} ثانية`
+        )
     );
   }
 
@@ -240,6 +117,10 @@ export async function verifyOtp(formData: FormData) {
   });
 
   if (error || !data.user) {
+    logger.warn('OTP verification failed', {
+      phone,
+      error: error?.message,
+    });
     redirect(
       `/otp?phone=${encodeURIComponent(phone)}&error=` +
         encodeURIComponent('الرمز غير صحيح')
@@ -252,9 +133,23 @@ export async function verifyOtp(formData: FormData) {
     metadata: { ip, phone },
   });
 
+  // التوجيه حسب الدور
+  const { data: profile } = await supabase
+    .from('users')
+    .select('role')
+    .eq('id', data.user.id)
+    .single();
+
+  if (profile?.role === 'specialist') {
+    redirect('/specialist');
+  }
+
   redirect('/dashboard');
 }
 
+/**
+ * تسجيل الخروج
+ */
 export async function signOut() {
   const supabase = createClient();
   const {

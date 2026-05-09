@@ -3,13 +3,14 @@
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════════
-   Spir Medical · Design Tokens
-   Light + Dark Mode
+   Spir Medical · سباير ميديكال
+   Web App بعرض هاتف ثابت
+   مطابق لنظام تصميم V3
    ═══════════════════════════════════════════════════════════ */
 
 :root,
 [data-theme='light'] {
-  /* Brand colors */
+  /* Brand colors - مطابقة لـ V3 */
   --emerald: #0E5C4D;
   --emerald-deep: #073B30;
   --emerald-soft: #D9E5DF;
@@ -26,26 +27,28 @@
 
   /* Text - Light */
   --ink: #0F1A1C;
-  --ink-2: #3A4848;
+  --ink-2: #1F2A2C;
   --ink-3: #6E7878;
   --ink-4: #A4ACAA;
 
-  /* Lines - Light */
-  --line: rgba(15, 26, 28, 0.10);
+  /* Lines */
+  --line: rgba(15, 26, 28, 0.08);
   --line-2: rgba(15, 26, 28, 0.18);
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 12px 32px -8px rgba(0, 0, 0, 0.15);
   --shadow-xl: 0 24px 60px -12px rgba(0, 0, 0, 0.3);
 
   /* Header backdrop */
   --header-bg: rgba(244, 239, 226, 0.95);
+
+  /* Viewport background (خلف التطبيق على الديسكتوب) */
+  --viewport-bg: #E8E0CE;
 }
 
 [data-theme='dark'] {
-  /* Brand colors - تبقى كما هي مع تعديل */
   --emerald: #1B7A65;
   --emerald-deep: #0E5C4D;
   --emerald-soft: rgba(27, 122, 101, 0.15);
@@ -54,33 +57,29 @@
   --rose: #C73950;
   --rose-soft: rgba(199, 57, 80, 0.15);
 
-  /* Surfaces - Dark */
   --paper: #0A0F10;
   --paper-2: #131A1C;
   --paper-3: #1A2326;
   --white: #1F2A2C;
 
-  /* Text - Dark (مقلوبة) */
   --ink: #F4EFE2;
   --ink-2: #D4D4C8;
   --ink-3: #9A9A8E;
   --ink-4: #6E6E62;
 
-  /* Lines - Dark */
-  --line: rgba(244, 239, 226, 0.10);
+  --line: rgba(244, 239, 226, 0.08);
   --line-2: rgba(244, 239, 226, 0.18);
 
-  /* Shadows - أقوى للمظلم */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 12px 32px -8px rgba(0, 0, 0, 0.5);
   --shadow-xl: 0 24px 60px -12px rgba(0, 0, 0, 0.7);
 
-  /* Header backdrop */
   --header-bg: rgba(10, 15, 16, 0.95);
+  --viewport-bg: #050708;
 }
 
-/* Auto dark mode إذا لم يُحدّد */
+/* Auto dark mode */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
     --emerald: #1B7A65;
@@ -98,18 +97,19 @@
     --ink-2: #D4D4C8;
     --ink-3: #9A9A8E;
     --ink-4: #6E6E62;
-    --line: rgba(244, 239, 226, 0.10);
+    --line: rgba(244, 239, 226, 0.08);
     --line-2: rgba(244, 239, 226, 0.18);
     --header-bg: rgba(10, 15, 16, 0.95);
+    --viewport-bg: #050708;
   }
 }
 
 /* ═══════════════════════════════════════════════════════════
-   Base Typography
+   Base
    ═══════════════════════════════════════════════════════════ */
 
 @layer base {
-  * { box-sizing: border-box; }
+  *, *::before, *::after { box-sizing: border-box; }
 
   html {
     scroll-behavior: smooth;
@@ -118,19 +118,18 @@
   }
 
   body {
+    margin: 0;
     font-family: 'Tajawal', 'Fraunces', system-ui, sans-serif;
-    background: var(--paper);
+    background: var(--viewport-bg);
     color: var(--ink);
     line-height: 1.6;
-    font-weight: 400;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     min-height: 100vh;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  [lang='ar'],
-  [dir='rtl'] {
+  [lang='ar'], [dir='rtl'] {
     font-feature-settings: 'kern', 'liga', 'calt';
   }
 
@@ -139,6 +138,11 @@
     color: var(--paper-3);
   }
 }
+
+/* Helper classes */
+.serif { font-family: 'Fraunces', serif; font-style: italic; }
+.mono { font-family: 'JetBrains Mono', monospace; }
+.latin { font-family: 'Inter', sans-serif; }
 
 /* ═══════════════════════════════════════════════════════════
    Skip Link (a11y)
@@ -165,18 +169,43 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   AppShell Layout
+   App Viewport (الخلفية على الديسكتوب)
+   ═══════════════════════════════════════════════════════════ */
+
+.app-viewport {
+  min-height: 100vh;
+  background: var(--viewport-bg);
+  display: flex;
+  justify-content: center;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   App Shell - الإطار الفعلي للتطبيق
+   عرض ثابت 480px على كل الشاشات
    ═══════════════════════════════════════════════════════════ */
 
 .app-shell {
+  width: 100%;
+  max-width: 480px;
   min-height: 100vh;
+  background: var(--paper);
   display: flex;
   flex-direction: column;
-  background: var(--paper);
-  color: var(--ink);
+  position: relative;
+  box-shadow: var(--shadow-lg);
 }
 
-/* ─── HEADER ─── */
+/* على الموبايل: ملء الشاشة بدون shadow */
+@media (max-width: 480px) {
+  .app-shell {
+    box-shadow: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Header
+   ═══════════════════════════════════════════════════════════ */
+
 .app-header {
   position: sticky;
   top: 0;
@@ -188,13 +217,11 @@
 }
 
 .app-header-content {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 12px 20px;
+  padding: 12px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
 }
 
 .app-logo {
@@ -208,77 +235,33 @@
 }
 
 .app-logo-mark {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   background: var(--emerald);
   color: var(--paper-3);
-  border-radius: 11px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 900;
   flex-shrink: 0;
   box-shadow: 0 4px 12px -2px rgba(14, 92, 77, 0.3);
 }
 
 .app-logo-name {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
   line-height: 1.1;
   color: var(--ink);
 }
 
 .app-logo-sub {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--ink-3);
   margin-top: 2px;
 }
 
-/* Desktop Nav */
-.app-nav-desktop {
-  display: none;
-  gap: 4px;
-  align-items: center;
-}
-
-@media (min-width: 768px) {
-  .app-nav-desktop { display: flex; }
-}
-
-.app-nav-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border-radius: 10px;
-  color: var(--ink-2);
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 700;
-  transition: all 0.15s;
-}
-
-.app-nav-link:hover {
-  background: var(--paper-2);
-  color: var(--ink);
-}
-
-.app-nav-link.active {
-  background: var(--emerald);
-  color: var(--paper-3);
-}
-
-.app-nav-link.admin {
-  color: var(--amber);
-}
-
-.app-nav-link.admin.active {
-  background: var(--amber);
-  color: var(--paper-3);
-}
-
-/* User Section */
 .app-header-actions {
   display: flex;
   align-items: center;
@@ -286,20 +269,9 @@
   flex-shrink: 0;
 }
 
-.app-username {
-  display: none;
-  font-size: 13px;
-  color: var(--ink-3);
-  font-weight: 600;
-}
-
-@media (min-width: 768px) {
-  .app-username { display: inline-block; }
-}
-
 .app-icon-btn {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -307,7 +279,7 @@
   border: 1px solid var(--line);
   border-radius: 10px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 15px;
   color: var(--ink);
   transition: all 0.15s;
 }
@@ -317,65 +289,35 @@
   transform: translateY(-1px);
 }
 
-.app-btn-primary,
-.app-btn-secondary {
-  padding: 8px 16px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.15s;
-  border: 1px solid transparent;
-  white-space: nowrap;
-}
-
-.app-btn-primary {
-  background: var(--emerald);
-  color: var(--paper-3);
-  border-color: var(--emerald);
-}
-
-.app-btn-primary:hover {
-  background: var(--emerald-deep);
-  transform: translateY(-1px);
-}
-
-.app-btn-secondary {
-  background: transparent;
-  color: var(--ink);
-  border-color: var(--line);
-}
-
-.app-btn-secondary:hover {
-  background: var(--paper-2);
-}
-
 .app-menu-toggle {
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
   border-radius: 10px;
   background: var(--paper-2);
   border: 1px solid var(--line);
   cursor: pointer;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--ink);
+  transition: all 0.15s;
 }
 
-@media (min-width: 768px) {
-  .app-menu-toggle { display: none; }
+.app-menu-toggle:hover {
+  background: var(--paper-3);
 }
 
-/* Mobile Menu */
-.app-mobile-menu {
+/* ═══════════════════════════════════════════════════════════
+   Drawer
+   ═══════════════════════════════════════════════════════════ */
+
+.app-drawer {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 12px 20px 16px;
+  padding: 12px 16px 16px;
   border-top: 1px solid var(--line);
   background: var(--paper);
   animation: slideDown 0.2s ease;
@@ -386,52 +328,113 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-@media (min-width: 768px) {
-  .app-mobile-menu { display: none; }
+.app-drawer-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: var(--paper-2);
+  border-radius: 12px;
+  margin-bottom: 8px;
 }
 
-.app-mobile-link {
+.app-drawer-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--emerald);
+  color: var(--paper-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.app-drawer-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.app-drawer-role {
+  font-size: 11px;
+  color: var(--ink-3);
+  margin-top: 2px;
+}
+
+.app-drawer-link {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 14px;
+  padding: 10px 12px;
   border-radius: 10px;
   color: var(--ink-2);
   text-decoration: none;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   transition: all 0.15s;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: right;
+  width: 100%;
 }
 
-.app-mobile-link:hover {
+.app-drawer-link:hover {
   background: var(--paper-2);
 }
 
-.app-mobile-link.active {
+.app-drawer-link.active {
   background: var(--emerald);
   color: var(--paper-3);
 }
 
-.app-mobile-link.admin.active {
-  background: var(--amber);
+.app-drawer-link.primary {
+  background: var(--emerald);
+  color: var(--paper-3);
+  justify-content: center;
 }
 
-/* ─── MAIN ─── */
+.app-drawer-link.signout {
+  color: var(--rose);
+}
+
+.app-drawer-link.signout:hover {
+  background: var(--rose-soft);
+}
+
+.app-drawer-icon {
+  font-size: 16px;
+  width: 24px;
+  text-align: center;
+}
+
+.app-drawer-divider {
+  height: 1px;
+  background: var(--line);
+  margin: 8px 0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Main
+   ═══════════════════════════════════════════════════════════ */
+
 .app-main {
   flex: 1;
-  padding-bottom: 80px;
+  padding-bottom: 76px;
+  background: var(--paper);
 }
 
-@media (min-width: 768px) {
-  .app-main { padding-bottom: 0; }
-}
+/* ═══════════════════════════════════════════════════════════
+   Bottom Nav
+   ═══════════════════════════════════════════════════════════ */
 
-/* ─── BOTTOM NAV ─── */
 .app-bottom-nav {
-  position: fixed;
+  position: sticky;
   bottom: 0;
-  left: 0;
-  right: 0;
   z-index: 40;
   background: var(--paper-3);
   border-top: 1px solid var(--line);
@@ -439,11 +442,8 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 4px;
+  margin-top: -76px;
   backdrop-filter: blur(12px);
-}
-
-@media (min-width: 768px) {
-  .app-bottom-nav { display: none; }
 }
 
 .app-bottom-item {
@@ -451,14 +451,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 3px;
   padding: 8px 4px;
   border-radius: 10px;
   color: var(--ink-3);
   text-decoration: none;
   font-size: 10px;
   font-weight: 600;
-  min-height: 48px;
+  min-height: 52px;
   transition: all 0.15s;
 }
 
@@ -468,7 +468,7 @@
 }
 
 .app-bottom-icon {
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1;
 }
 
@@ -477,126 +477,32 @@
   line-height: 1;
 }
 
-/* ─── FOOTER ─── */
-.app-footer {
-  background: var(--ink);
-  color: var(--paper-3);
-  padding: 32px 20px;
-  margin-bottom: 64px;
-}
+/* ═══════════════════════════════════════════════════════════
+   A11y
+   ═══════════════════════════════════════════════════════════ */
 
-@media (min-width: 768px) {
-  .app-footer { margin-bottom: 0; }
-}
-
-.app-footer-content {
-  max-width: 1280px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.app-footer-section {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.app-footer-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.app-footer-logo {
-  width: 44px;
-  height: 44px;
-  background: var(--emerald);
-  color: var(--paper-3);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  font-weight: 900;
-}
-
-.app-footer-name {
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--paper-3);
-}
-
-.app-footer-tagline {
-  font-size: 11px;
-  opacity: 0.7;
-}
-
-.app-footer-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  font-size: 13px;
-}
-
-.app-footer-nav a {
-  color: var(--paper-3);
-  text-decoration: none;
-  opacity: 0.7;
-  transition: opacity 0.15s;
-}
-
-.app-footer-nav a:hover {
-  opacity: 1;
-}
-
-.app-footer-nav .emergency {
-  color: var(--rose-soft);
-  font-weight: 700;
-  opacity: 1;
-}
-
-.app-footer-bottom {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 8px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(244, 239, 226, 0.1);
-  font-size: 11px;
-  opacity: 0.6;
-}
-
-.app-footer-iraq {
-  font-weight: 700;
-}
-
-/* ─── A11Y: Focus visible ─── */
 *:focus-visible {
   outline: 2px solid var(--emerald);
   outline-offset: 2px;
   border-radius: 6px;
 }
 
-/* ─── Reduce motion ─── */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
 
-/* ─── Print ─── */
 @media print {
   .app-header,
   .app-bottom-nav,
-  .app-footer,
-  .app-menu-toggle,
   .skip-link {
     display: none !important;
+  }
+  .app-shell {
+    max-width: 100%;
+    box-shadow: none;
   }
 }

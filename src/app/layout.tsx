@@ -3,7 +3,7 @@ import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { CookieConsent } from '@/components/legal/CookieConsent';
 
-// خطوط محلياً
+// خطوط
 import '@fontsource/tajawal/300.css';
 import '@fontsource/tajawal/400.css';
 import '@fontsource/tajawal/500.css';
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     template: '%s · Spir Medical',
   },
   description:
-    'منصة طبية رقمية متكاملة في العراق · ١٤ خدمة طبية · حجز سهل · توصيل سريع · أمان كامل',
+    'منصة طبية رقمية متكاملة في العراق · حجز سهل · توصيل سريع · أمان كامل',
   keywords: [
     'سباير ميديكال',
     'Spir Medical',
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'سباير ميديكال · Spir Medical',
-    description: 'الرعاية الصحية بين يديك · ١٤ خدمة طبية في تطبيق واحد',
+    description: 'الرعاية الصحية بين يديك',
     url: SITE_URL,
     siteName: 'Spir Medical · سباير ميديكال',
     locale: 'ar_IQ',
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Spir Medical · الرعاية الصحية، بين يديك',
+        alt: 'Spir Medical',
         type: 'image/png',
       },
     ],
@@ -115,19 +115,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl">
-      <body className="min-h-screen bg-paper text-ink antialiased">
-        {/* Skip to content */}
-        <a href="#main-content" className="skip-link">
-          الانتقال للمحتوى الرئيسي
-        </a>
-
-        <div id="main-content">{children}</div>
-
-        {/* Cookie consent */}
+    <html lang="ar-IQ" dir="rtl">
+      <body>
+        {children}
         <CookieConsent />
-
-        {/* Analytics */}
         <Analytics />
         <SpeedInsights />
       </body>

@@ -25,10 +25,17 @@ export default async function DashboardLayout({
     .eq('id', user.id)
     .single();
 
+  // إذا الدور admin → الوصول إلى /admin مرفوض في wep app
+  // (لوحة الإدارة منفصلة في CRM)
+  // الـ admin يستخدم patient interface عند دخوله wep app
+  const role = (profile?.role === 'specialist' ? 'specialist' : 'patient') as
+    | 'patient'
+    | 'specialist';
+
   return (
     <AppShell
       userName={profile?.full_name ?? 'مستخدم'}
-      userRole={profile?.role ?? 'patient'}
+      userRole={role}
       signOutAction={signOut}
       isGuest={false}
     >
