@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { loginSchema } from '@/lib/validations/auth-forms';
+import { loginWithCredentials } from './actions';
 
 type Role = 'guest' | 'patient' | 'specialist';
 
@@ -44,7 +45,6 @@ export default function LoginPage() {
     setErrors({});
     setSubmitting(true);
 
-    // Validate
     const result = loginSchema.safeParse({ accountNumber, password });
 
     if (!result.success) {
@@ -60,13 +60,18 @@ export default function LoginPage() {
       return;
     }
 
-    // Mock API call - في الإنتاج، استبدل بـ Server Action حقيقي
     try {
-      // محاكاة استجابة API
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      const loginResult = await loginWithCredentials(accountNumber, password);
 
-      // النجاح: انتقل للـ dashboard
-      router.push('/dashboard');
+      if (loginResult.success && loginResult.redirectTo) {
+        router.push(loginResult.redirectTo);
+        router.refresh();
+      } else {
+        setErrors({
+          submit: loginResult.error || 'الرقم أو الرمز خاطئ',
+        });
+        setSubmitting(false);
+      }
     } catch (err) {
       setErrors({ submit: 'فشل تسجيل الدخول. حاول مرة أخرى.' });
       setSubmitting(false);
@@ -88,7 +93,6 @@ export default function LoginPage() {
         <div className="auth-brand-sub">سباير ميديكال</div>
       </div>
 
-      {/* Role hint badge */}
       <div className={`auth-role-badge ${role === 'specialist' ? 'specialist' : ''}`}>
         <span aria-hidden="true">{roleInfo.icon}</span>
         <span>{roleInfo.label}</span>
@@ -99,7 +103,6 @@ export default function LoginPage() {
         <p className="auth-subtitle">{roleInfo.hint}</p>
       </div>
 
-      {/* Role selector tabs */}
       <div className="role-tabs" role="tablist" aria-label="نوع الحساب">
         {(['patient', 'specialist'] as Role[]).map((r) => (
           <button
@@ -117,7 +120,6 @@ export default function LoginPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="auth-form" noValidate>
-        {/* Submit error */}
         {errors.submit && (
           <div className="auth-error" role="alert">
             <div className="auth-error-icon">!</div>
@@ -125,7 +127,6 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* Account Number Field */}
         <div className="auth-field">
           <label htmlFor="account-number" className="auth-field-label">
             رقم الحساب
@@ -137,7 +138,7 @@ export default function LoginPage() {
             inputMode="numeric"
             value={accountNumber}
             onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, ''))}
-            placeholder="مثال: 123456789"
+            placeholder="مثال: 100001"
             autoComplete="username"
             autoFocus
             required
@@ -154,7 +155,6 @@ export default function LoginPage() {
           )}
         </div>
 
-        {/* Password Field */}
         <div className="auth-field">
           <label htmlFor="password" className="auth-field-label">
             الرمز السري
