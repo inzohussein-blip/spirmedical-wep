@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { cancelAppointment } from '../actions/cancel-action';
+import { cancelAppointment } from '@/app/(dashboard)/appointments/[id]/actions';
 
 interface Props {
   appointmentId: string;
