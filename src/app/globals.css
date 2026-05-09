@@ -469,14 +469,50 @@
   font-size: 13px; font-weight: 800; color: var(--emerald);
   margin: 0 0 14px; letter-spacing: 0.04em;
 }
+.landing-footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.landing-footer-col li {
+  font-size: 13px;
+  color: rgba(244,239,226,0.7);
+  padding: 6px 0;
+  transition: color 0.15s;
+}
+.landing-footer-col li:hover { color: var(--paper-3); }
 .landing-footer-col a {
   display: block; font-size: 13px;
   color: rgba(244,239,226,0.7);
   padding: 6px 0; transition: color 0.15s;
 }
 .landing-footer-col a:hover { color: var(--paper-3); }
+.landing-footer-col li a {
+  padding: 0;
+  display: inline;
+}
 .landing-footer-logo {
   display: flex; align-items: center; gap: 14px; margin-bottom: 14px;
+}
+.landing-footer-logo > div {
+  display: flex;
+  flex-direction: column;
+}
+.landing-footer-logo strong {
+  font-size: 16px;
+  font-weight: 800;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: var(--paper-3);
+}
+.landing-footer-logo span {
+  font-size: 11px;
+  color: rgba(244,239,226,0.6);
+  margin-top: 2px;
 }
 .landing-footer-tagline {
   font-size: 14px; color: rgba(244,239,226,0.6);
@@ -750,6 +786,52 @@
   font-size: 11px; color: var(--ink-3); line-height: 1.5;
 }
 .gate-option-arrow { color: var(--ink-3); font-size: 18px; font-weight: 700; }
+
+/* Gate divider (separates main options from guest) */
+.gate-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0 10px;
+  text-align: center;
+}
+.gate-divider::before,
+.gate-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.gate-divider span {
+  font-size: 12px;
+  color: var(--ink-3);
+  font-weight: 600;
+}
+
+/* Gate guest link (subtle, secondary CTA) */
+.gate-guest-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px;
+  background: transparent;
+  border: 1px dashed var(--line-2);
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-2);
+  transition: all 0.15s;
+  text-align: center;
+}
+.gate-guest-link:hover {
+  background: var(--paper-2);
+  border-color: var(--ink-3);
+  border-style: solid;
+}
+.gate-guest-link span:first-child {
+  font-size: 18px;
+}
 
 /* Role cards */
 .auth-role-cards { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
