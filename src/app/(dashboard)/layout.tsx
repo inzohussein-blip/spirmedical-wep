@@ -32,20 +32,7 @@ export default async function DashboardLayout({
       signOutAction={signOut}
       isGuest={false}
     >
-      <div className="container">
-        {children}
-      </div>
-
-      <style>{`
-        .container {
-          max-width: 1280px;
-          margin: 0 auto;
-          padding: 20px;
-        }
-        @media (max-width: 767px) {
-          .container { padding: 16px; }
-        }
-      `}</style>
+      {children}
     </AppShell>
   );
 }
