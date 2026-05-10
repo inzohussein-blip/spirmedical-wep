@@ -1,0 +1,67 @@
+-- ════════════════════════════════════════════════════════════════════
+-- Migration: rate_limit_buckets
+-- Created: 2026-05-10
+-- Purpose: Rate limiting persistent عبر serverless instances
+-- (بديل لـ Upstash Redis)
+-- ════════════════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS public.rate_limit_buckets (
+  id BIGSERIAL PRIMARY KEY,
+  bucket_key TEXT NOT NULL,
+  count INTEGER NOT NULL DEFAULT 1,
+  window_start TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  reset_at TIMESTAMPTZ NOT NULL,
+  UNIQUE(bucket_key, window_start)
+);
+
+CREATE INDEX IF NOT EXISTS idx_rate_limit_bucket
+  ON public.rate_limit_buckets(bucket_key, reset_at);
+
+CREATE INDEX IF NOT EXISTS idx_rate_limit_reset
+  ON public.rate_limit_buckets(reset_at);
+
+ALTER TABLE public.rate_limit_buckets ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "service_role_only"
+  ON public.rate_limit_buckets
+  FOR ALL
+  TO service_role
+  USING (true)
+  WITH CHECK (true);
+
+-- دالة atomic لزيادة العدّاد
+CREATE OR REPLACE FUNCTION public.increment_rate_limit(
+  p_bucket_key TEXT,
+  p_max INTEGER,
+  p_window_seconds INTEGER
+)
+RETURNS TABLE(allowed BOOLEAN, remaining INTEGER, retry_after_seconds INTEGER)
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  v_now TIMESTAMPTZ := NOW();
+  v_window_start TIMESTAMPTZ := DATE_TRUNC('second', v_now);
+  v_reset_at TIMESTAMPTZ := v_now + (p_window_seconds || ' seconds')::INTERVAL;
+  v_count INTEGER;
+BEGIN
+  -- نظّف القديم
+  DELETE FROM public.rate_limit_buckets
+  WHERE reset_at < v_now;
+
+  -- upsert
+  INSERT INTO public.rate_limit_buckets(bucket_key, count, window_start, reset_at)
+  VALUES (p_bucket_key, 1, v_window_start, v_reset_at)
+  ON CONFLICT (bucket_key, window_start)
+  DO UPDATE SET count = rate_limit_buckets.count + 1
+  RETURNING count INTO v_count;
+
+  RETURN QUERY SELECT
+    (v_count <= p_max),
+    GREATEST(0, p_max - v_count),
+    CASE WHEN v_count > p_max THEN p_window_seconds ELSE 0 END;
+END;
+$$;
+
+COMMENT ON TABLE public.rate_limit_buckets IS
+  'Rate limit counters. Use increment_rate_limit() function instead of direct access.';
