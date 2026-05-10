@@ -16,11 +16,7 @@ import {
 import { normalizePhone } from '@/lib/validations/auth';
 
 // ═══════════════════════════════════════════════════════════
-// 📝 إنشاء حساب جديد - يدعم 3 أوضاع OTP
-// ═══════════════════════════════════════════════════════════
-// - 'disabled': إنشاء + دخول مباشر
-// - 'optional': المستخدم يختار (action: 'otp' أو 'skip')
-// - 'required': إنشاء ثم OTP إجباري
+// 📝 إنشاء حساب - يدعم 3 أوضاع OTP
 // ═══════════════════════════════════════════════════════════
 
 function getIp(): string {
@@ -44,6 +40,15 @@ function phoneToEmail(phone: string): string {
   return `${phone.replace(/\D/g, '')}@phone.spirmedical.local`;
 }
 
+function isNextRedirect(err: unknown): boolean {
+  return (
+    err instanceof Error &&
+    'digest' in err &&
+    typeof (err as { digest?: string }).digest === 'string' &&
+    (err as { digest: string }).digest.includes('NEXT_REDIRECT')
+  );
+}
+
 // ─────────────────────────────────────────────────────────
 // إنشاء حساب مراجع
 // ─────────────────────────────────────────────────────────
@@ -56,7 +61,6 @@ export async function registerPatient(formData: FormData) {
     password: formData.get('password') as string,
     acceptTerms: formData.get('acceptTerms') === 'on',
   };
-  // المستخدم اختار طريقة الدخول صراحةً (في optional mode)
   const action = (formData.get('action') as string) || 'auto';
 
   const ip = getIp();
@@ -85,15 +89,29 @@ export async function registerPatient(formData: FormData) {
   const { fullName, phone } = validation.data;
   const normalizedPhone = normalizePhone(phone);
 
-  await createAccount({
-    phone: normalizedPhone,
-    fullName,
-    role: 'patient',
-    ip,
-  });
+  try {
+    await createOrGetAccount({
+      phone: normalizedPhone,
+      fullName,
+      role: 'patient',
+      ip,
+    });
 
-  // التوجيه حسب الوضع
-  await routeAfterRegister(normalizedPhone, 'patient', action);
+    await routeAfterRegister(normalizedPhone, 'patient', action);
+  } catch (err) {
+    if (isNextRedirect(err)) throw err;
+
+    logger.error('registerPatient failed', {
+      phone: normalizedPhone,
+      error: err instanceof Error ? err.message : String(err),
+    });
+    redirect(
+      '/register/patient?error=' +
+        encodeURIComponent(
+          `فشل إنشاء الحساب: ${err instanceof Error ? err.message : 'خطأ غير معروف'}`
+        )
+    );
+  }
 }
 
 // ─────────────────────────────────────────────────────────
@@ -139,14 +157,29 @@ export async function registerSpecialist(formData: FormData) {
   const { fullName, phone } = validation.data;
   const normalizedPhone = normalizePhone(phone);
 
-  await createAccount({
-    phone: normalizedPhone,
-    fullName,
-    role: 'specialist',
-    ip,
-  });
+  try {
+    await createOrGetAccount({
+      phone: normalizedPhone,
+      fullName,
+      role: 'specialist',
+      ip,
+    });
 
-  await routeAfterRegister(normalizedPhone, 'specialist', action);
+    await routeAfterRegister(normalizedPhone, 'specialist', action);
+  } catch (err) {
+    if (isNextRedirect(err)) throw err;
+
+    logger.error('registerSpecialist failed', {
+      phone: normalizedPhone,
+      error: err instanceof Error ? err.message : String(err),
+    });
+    redirect(
+      '/register/specialist?error=' +
+        encodeURIComponent(
+          `فشل إنشاء الحساب: ${err instanceof Error ? err.message : 'خطأ غير معروف'}`
+        )
+    );
+  }
 }
 
 // ─────────────────────────────────────────────────────────
@@ -159,39 +192,39 @@ async function routeAfterRegister(
   action: string
 ): Promise<never> {
   const mode = getOtpMode();
-
-  // disabled: دخول مباشر دائماً
-  // optional: حسب اختيار المستخدم
-  // required: OTP إجباري دائماً
-
   const shouldUseOtp =
     mode === 'required' || (mode === 'optional' && action === 'otp');
 
   if (!shouldUseOtp) {
-    // تخطي OTP - دخول مباشر
-    // (في وضع required، shouldUseOtp = true دائماً)
-    await signInDirectly(phone);
+    await signInDirectly(phone, role);
     redirect(role === 'specialist' ? '/specialist' : '/dashboard');
   }
 
-  // إرسال OTP
   const supabase = createClient();
   await supabase.auth.signInWithOtp({ phone });
   redirect(`/otp?phone=${encodeURIComponent(phone)}`);
 }
 
 // ─────────────────────────────────────────────────────────
-// Helpers
+// إنشاء أو الحصول على الحساب (مُصلح)
 // ─────────────────────────────────────────────────────────
+// ✅ لا يستخدم phone في createUser (Phone provider قد لا يكون مفعّلاً)
+// ✅ يستخدم email-only approach
+// ✅ يكتب في public.users يدوياً
+// ✅ idempotent (آمن للتشغيل عدة مرات)
 
-async function createAccount(opts: {
+async function createOrGetAccount(opts: {
   phone: string;
   fullName: string;
   role: 'patient' | 'specialist';
   ip: string;
-}) {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+}): Promise<string> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !serviceKey) {
+    throw new Error('إعداد الخادم ناقص (SUPABASE keys مفقودة)');
+  }
 
   const admin = createSbClient(supabaseUrl, serviceKey, {
     auth: { autoRefreshToken: false, persistSession: false },
@@ -200,52 +233,74 @@ async function createAccount(opts: {
   const password = derivePassword(opts.phone);
   const email = phoneToEmail(opts.phone);
 
-  // ابحث إن كان موجوداً
-  const { data: existingAuth } = await admin.auth.admin.listUsers();
-  const existing = existingAuth.users.find(
-    (u) => u.email === email || u.phone === opts.phone
-  );
+  // 1. ابحث في public.users بالرقم
+  const { data: existingProfile } = await admin
+    .from('users')
+    .select('id')
+    .eq('phone', opts.phone)
+    .maybeSingle();
 
-  let userId: string;
+  let userId = existingProfile?.id;
 
-  if (existing) {
-    userId = existing.id;
-  } else {
-    const { data: newUser, error: createErr } =
-      await admin.auth.admin.createUser({
-        email,
-        password,
-        email_confirm: true,
-        phone: opts.phone,
-        phone_confirm: true,
-        user_metadata: {
+  // 2. إذا غير موجود، ابحث في auth.users أو أنشئ
+  if (!userId) {
+    const { data: existingAuth } = await admin.auth.admin.listUsers();
+    const authUser = existingAuth?.users?.find((u) => u.email === email);
+
+    if (authUser) {
+      userId = authUser.id;
+    } else {
+      // أنشئ جديد - بدون phone في الـ payload
+      const { data: newUser, error: createErr } =
+        await admin.auth.admin.createUser({
+          email,
+          password,
+          email_confirm: true,
+          user_metadata: {
+            phone: opts.phone,
+            full_name: opts.fullName,
+            created_via: canSkipOtp() ? 'no_otp' : 'otp',
+          },
+        });
+
+      if (createErr || !newUser?.user) {
+        const errMsg = createErr?.message ?? 'createUser returned no user';
+        logger.error('createUser failed', {
           phone: opts.phone,
-          full_name: opts.fullName,
-          created_via: canSkipOtp() ? 'no_otp' : 'otp',
-        },
-      });
+          error: errMsg,
+        });
+        throw new Error(errMsg);
+      }
 
-    if (createErr || !newUser?.user) {
-      logger.error('Failed to create user', {
-        phone: opts.phone,
-        error: createErr?.message,
-      });
-      redirect(
-        `/register/${opts.role}?error=` +
-          encodeURIComponent('فشل إنشاء الحساب. حاول مرة أخرى')
-      );
+      userId = newUser.user.id;
     }
-
-    userId = newUser.user.id;
   }
 
-  // upsert في public.users
-  await admin.from('users').upsert({
-    id: userId,
-    phone: opts.phone,
-    full_name: opts.fullName,
-    role: opts.role,
-  });
+  // 3. upsert في public.users (يدوياً)
+  const { error: profileErr } = await admin.from('users').upsert(
+    {
+      id: userId,
+      phone: opts.phone,
+      full_name: opts.fullName,
+      role: opts.role,
+    },
+    { onConflict: 'id' }
+  );
+
+  if (profileErr) {
+    logger.error('users upsert failed', {
+      phone: opts.phone,
+      error: profileErr.message,
+    });
+    // إذا كان الخطأ unique constraint على phone، اكتب رسالة واضحة
+    if (profileErr.message?.includes('users_phone_key')) {
+      throw new Error('هذا الرقم مسجّل بالفعل');
+    }
+    throw new Error(profileErr.message);
+  }
+
+  // 4. حدّث password (يضمن sync مع ENCRYPTION_KEY الحالي)
+  await admin.auth.admin.updateUserById(userId, { password });
 
   await logAuditEvent({
     action: 'auth.account_created',
@@ -257,9 +312,18 @@ async function createAccount(opts: {
       method: canSkipOtp() ? 'no_otp' : 'otp',
     },
   });
+
+  return userId;
 }
 
-async function signInDirectly(phone: string): Promise<void> {
+// ─────────────────────────────────────────────────────────
+// تسجيل دخول مباشر
+// ─────────────────────────────────────────────────────────
+
+async function signInDirectly(
+  phone: string,
+  _role: 'patient' | 'specialist'
+): Promise<void> {
   const supabase = createClient();
   const password = derivePassword(phone);
   const email = phoneToEmail(phone);
@@ -271,6 +335,6 @@ async function signInDirectly(phone: string): Promise<void> {
 
   if (error) {
     logger.error('Direct signin failed', { phone, error: error.message });
-    redirect('/login?error=' + encodeURIComponent('فشل تسجيل الدخول'));
+    throw new Error(`فشل تسجيل الدخول: ${error.message}`);
   }
 }
