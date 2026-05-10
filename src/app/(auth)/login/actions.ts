@@ -9,16 +9,10 @@ import { createClient as createSbClient } from '@supabase/supabase-js';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
-import { getOtpMode, isOtpRequired, canSkipOtp } from '@/lib/flags';
+import { getOtpMode, canSkipOtp } from '@/lib/flags';
 
 // ═══════════════════════════════════════════════════════════
 // 🔐 نظام تسجيل الدخول مع 3 أوضاع OTP
-// ═══════════════════════════════════════════════════════════
-// - 'disabled': دخول مباشر دائماً
-// - 'optional': المستخدم يختار (زر OTP أو زر تخطي)
-// - 'required': OTP إجباري
-//
-// التبديل: NEXT_PUBLIC_OTP_MODE في Vercel
 // ═══════════════════════════════════════════════════════════
 
 function getIp(): string {
@@ -42,13 +36,24 @@ function phoneToEmail(phone: string): string {
   return `${phone.replace(/\D/g, '')}@phone.spirmedical.local`;
 }
 
+/**
+ * NEXT_REDIRECT helper - يميز redirects (المتوقعة) عن الأخطاء الحقيقية
+ */
+function isNextRedirect(err: unknown): boolean {
+  return (
+    err instanceof Error &&
+    'digest' in err &&
+    typeof (err as { digest?: string }).digest === 'string' &&
+    (err as { digest: string }).digest.includes('NEXT_REDIRECT')
+  );
+}
+
 // ─────────────────────────────────────────────────────────
-// إرسال OTP (وضع required أو اختيار المستخدم في optional)
+// إرسال OTP أو دخول مباشر (حسب action)
 // ─────────────────────────────────────────────────────────
 
 export async function sendOtp(formData: FormData) {
   const phone = formData.get('phone') as string;
-  // المستخدم اختار طريقة الدخول صراحةً (في optional mode)
   const action = (formData.get('action') as string) || 'auto';
 
   const ip = getIp();
@@ -76,17 +81,10 @@ export async function sendOtp(formData: FormData) {
   const normalizedPhone = normalizePhone(validation.data.phone);
   const mode = getOtpMode();
 
-  // ─── منطق التوجيه حسب الوضع ───
-  // disabled: دخول مباشر دائماً
-  // optional: حسب اختيار المستخدم (action: 'otp' أو 'skip')
-  // required: OTP إجباري دائماً
-
   const shouldUseOtp =
     mode === 'required' || (mode === 'optional' && action === 'otp');
 
   if (!shouldUseOtp) {
-    // تخطي OTP - دخول مباشر
-    // (في وضع required، shouldUseOtp = true دائماً، فلن نصل هنا)
     return await loginWithoutOtp(normalizedPhone, ip);
   }
 
@@ -116,11 +114,10 @@ export async function sendOtp(formData: FormData) {
 }
 
 // ─────────────────────────────────────────────────────────
-// تخطي OTP (في optional أو disabled mode)
+// تخطي OTP
 // ─────────────────────────────────────────────────────────
 
 export async function skipOtp(formData: FormData) {
-  // في وضع required، لا يُسمح بالتخطي
   if (!canSkipOtp()) {
     redirect('/login?error=' + encodeURIComponent('OTP مطلوب'));
   }
@@ -154,12 +151,27 @@ export async function skipOtp(formData: FormData) {
 }
 
 // ─────────────────────────────────────────────────────────
-// دخول مباشر بدون OTP
+// دخول مباشر بدون OTP (مُصلح)
 // ─────────────────────────────────────────────────────────
+// ✅ لا يستخدم phone في createUser (لأن Phone provider قد لا يكون مفعّلاً)
+// ✅ يستخدم email-only approach
+// ✅ معالجة أخطاء واضحة ومُفصَّلة
+// ✅ يكتب في public.users يدوياً (لا يعتمد على trigger)
 
 async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  // التحقق من توفر env vars
+  if (!supabaseUrl || !serviceKey) {
+    logger.error('Missing Supabase env vars', {
+      hasUrl: !!supabaseUrl,
+      hasKey: !!serviceKey,
+    });
+    redirect(
+      '/login?error=' + encodeURIComponent('إعداد الخادم ناقص')
+    );
+  }
 
   const admin = createSbClient(supabaseUrl, serviceKey, {
     auth: { autoRefreshToken: false, persistSession: false },
@@ -169,82 +181,122 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
   const email = phoneToEmail(phone);
 
   try {
-    // 1. حاول إنشاء المستخدم (سيفشل إن كان موجوداً - نتجاهل الخطأ)
-    await admin.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-      phone,
-      phone_confirm: true,
-      user_metadata: { phone, created_via: 'no_otp_flow' },
-    });
+    // 1. ابحث عن المستخدم في public.users بالرقم (الأسرع)
+    const { data: existingProfile } = await admin
+      .from('users')
+      .select('id, role')
+      .eq('phone', phone)
+      .maybeSingle();
 
-    // 2. سجّل دخول بكلمة السر
+    let userId = existingProfile?.id;
+
+    // 2. إذا غير موجود في public.users، تحقق من Auth أو أنشئ
+    if (!userId) {
+      // ابحث في auth.users
+      const { data: existingAuth } = await admin.auth.admin.listUsers();
+      const authUser = existingAuth?.users?.find((u) => u.email === email);
+
+      if (authUser) {
+        userId = authUser.id;
+      } else {
+        // أنشئ مستخدم جديد - بدون phone (لأن provider قد لا يكون مفعّلاً)
+        const { data: newUser, error: createErr } =
+          await admin.auth.admin.createUser({
+            email,
+            password,
+            email_confirm: true,
+            user_metadata: { phone, created_via: 'no_otp' },
+          });
+
+        if (createErr || !newUser?.user) {
+          logger.error('createUser failed', {
+            phone,
+            error: createErr?.message,
+            code: createErr?.status,
+          });
+          redirect(
+            '/login?error=' +
+              encodeURIComponent(
+                `فشل إنشاء الحساب: ${createErr?.message ?? 'خطأ غير معروف'}`
+              )
+          );
+        }
+
+        userId = newUser.user.id;
+      }
+
+      // أنشئ صف في public.users (يدوياً - لا نعتمد على trigger)
+      const { error: profileErr } = await admin.from('users').upsert(
+        {
+          id: userId,
+          phone,
+          full_name: 'مستخدم جديد',
+          role: 'patient',
+        },
+        { onConflict: 'id' }
+      );
+
+      if (profileErr) {
+        logger.error('Profile upsert failed', {
+          phone,
+          error: profileErr.message,
+        });
+        // نُكمل رغم الخطأ - signInWithPassword يجب أن يعمل
+      }
+    }
+
+    // 3. حدّث password (في حال تغيّر ENCRYPTION_KEY)
+    await admin.auth.admin.updateUserById(userId!, { password });
+
+    // 4. سجّل دخول
     const supabase = createClient();
-    const { data, error: signInErr } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { data: signInData, error: signInErr } =
+      await supabase.auth.signInWithPassword({ email, password });
 
-    if (signInErr || !data.user) {
-      logger.error('No-OTP signin failed', {
+    if (signInErr || !signInData?.user) {
+      logger.error('signInWithPassword failed', {
         phone,
         error: signInErr?.message,
       });
       redirect(
         '/login?error=' +
-          encodeURIComponent('فشل تسجيل الدخول. حاول مرة أخرى')
+          encodeURIComponent(
+            `فشل تسجيل الدخول: ${signInErr?.message ?? 'خطأ غير معروف'}`
+          )
       );
     }
 
-    // 3. تأكد من وجود سجل في public.users
-    const { data: existingProfile } = await admin
-      .from('users')
-      .select('id, role')
-      .eq('id', data.user.id)
-      .maybeSingle();
-
-    if (!existingProfile) {
-      await admin.from('users').insert({
-        id: data.user.id,
-        phone,
-        full_name: 'مستخدم جديد',
-      });
-    }
-
+    // 5. Audit log
     await logAuditEvent({
       action: 'auth.login',
-      user_id: data.user.id,
+      user_id: signInData.user.id,
       metadata: { ip, phone, method: 'no_otp' },
     });
 
-    // 4. التوجيه حسب الدور
-    if (existingProfile?.role === 'specialist') {
+    // 6. التوجيه حسب الدور
+    const role = existingProfile?.role || 'patient';
+    if (role === 'specialist') {
       redirect('/specialist');
     }
     redirect('/dashboard');
   } catch (err) {
-    if (
-      err instanceof Error &&
-      'digest' in err &&
-      typeof err.digest === 'string' &&
-      err.digest.includes('NEXT_REDIRECT')
-    ) {
-      throw err;
-    }
+    if (isNextRedirect(err)) throw err;
 
-    logger.error('No-OTP login failed', {
+    logger.error('No-OTP flow failed', {
       phone,
-      error: String(err),
+      error: err instanceof Error ? err.message : String(err),
     });
     redirect(
-      '/login?error=' + encodeURIComponent('فشل تسجيل الدخول. حاول مرة أخرى')
+      '/login?error=' +
+        encodeURIComponent(
+          `خطأ: ${err instanceof Error ? err.message : 'غير معروف'}`
+        )
     );
   }
 }
 
 // ─────────────────────────────────────────────────────────
-// التحقق من OTP (للوضعين required و optional إذا اختار OTP)
+// التحقق من OTP
 // ─────────────────────────────────────────────────────────
 
 export async function verifyOtp(formData: FormData) {
@@ -298,7 +350,6 @@ export async function verifyOtp(formData: FormData) {
     metadata: { ip, phone, method: 'otp' },
   });
 
-  // التوجيه حسب الدور
   const { data: profile } = await supabase
     .from('users')
     .select('role')
@@ -313,7 +364,7 @@ export async function verifyOtp(formData: FormData) {
 }
 
 // ─────────────────────────────────────────────────────────
-// إعادة إرسال OTP (alias للتوافق مع otp/page.tsx)
+// إعادة إرسال OTP
 // ─────────────────────────────────────────────────────────
 
 export async function resendOtp(formData: FormData) {
