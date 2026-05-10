@@ -1467,6 +1467,31 @@
   flex-shrink: 0;
 }
 
+/* aliases (للتوافق) */
+.scr-account-text { flex: 1; }
+.scr-account-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.scr-account-desc {
+  font-size: 10px;
+  color: var(--ink-3);
+}
+.app-logo-text {
+  display: flex;
+  flex-direction: column;
+}
+.service-card {
+  /* alias for service-cell */
+  position: relative;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+}
+
 /* Stats Grid (للـ Patient Dashboard) */
 .scr-stats-grid {
   display: grid;
@@ -1849,6 +1874,190 @@
   border-color: rgba(168,46,61,0.2);
 }
 .legal-callout.warning strong { color: var(--rose); }
+
+/* Legal Highlight (info box داخل المحتوى) */
+.legal-highlight {
+  background: var(--emerald-soft);
+  border-right: 4px solid var(--emerald);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin: 16px 0;
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.7;
+}
+.legal-highlight strong {
+  display: block;
+  color: var(--emerald-deep);
+  font-weight: 800;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+/* Legal Warning (تحذير أحمر) */
+.legal-warning {
+  background: var(--rose-soft);
+  border-right: 4px solid var(--rose);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin: 16px 0;
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.7;
+}
+.legal-warning strong {
+  display: block;
+  color: var(--rose);
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+/* Legal Inline Link (داخل النص) */
+.legal-inline-link {
+  color: var(--emerald);
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--emerald-soft);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+.legal-inline-link:hover { text-decoration-color: var(--emerald); }
+
+/* Legal Table (لجداول مثل أنواع الكوكيز) */
+.legal-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 16px 0;
+  font-size: 13px;
+  background: var(--paper-3);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.legal-table thead th {
+  background: var(--emerald-soft);
+  color: var(--emerald-deep);
+  font-weight: 800;
+  padding: 12px 14px;
+  text-align: right;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+.legal-table tbody td {
+  padding: 12px 14px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+.legal-table tbody tr:hover td { background: var(--paper-2); }
+
+/* Rights Grid (شبكة حقوق المستخدم في GDPR) */
+.legal-rights-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin: 16px 0;
+}
+@media (max-width: 768px) {
+  .legal-rights-grid { grid-template-columns: 1fr; }
+}
+.legal-right {
+  background: var(--paper-3);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+  transition: all 0.15s;
+}
+.legal-right:hover {
+  border-color: var(--emerald);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+.legal-right strong {
+  display: block;
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.legal-right p {
+  font-size: 12px;
+  color: var(--ink-3);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Legal Actions (مجموعة أزرار في نهاية الصفحة) */
+.legal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 24px 0 8px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+/* Legal Link Button (زر بشكل CTA داخل النص القانوني) */
+.legal-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: var(--emerald);
+  color: var(--paper-3);
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 800;
+  transition: all 0.15s;
+  box-shadow: 0 4px 12px -2px rgba(14,92,77,0.3);
+}
+.legal-link-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px -2px rgba(14,92,77,0.4);
+}
+.legal-link-btn.outline {
+  background: var(--white);
+  color: var(--ink);
+  border: 1px solid var(--line-2);
+  box-shadow: none;
+}
+.legal-link-btn.outline:hover {
+  background: var(--paper-2);
+  border-color: var(--ink-3);
+}
+
+/* Legal Contact Card (بطاقة معلومات تواصل) */
+.legal-contact-card {
+  background: linear-gradient(135deg, var(--emerald-soft) 0%, var(--paper-3) 100%);
+  border: 1px solid var(--emerald-soft);
+  border-radius: 14px;
+  padding: 18px;
+  margin: 20px 0;
+}
+.legal-contact-card h3,
+.legal-contact-card strong {
+  color: var(--emerald-deep);
+  font-weight: 800;
+}
+.legal-contact-card p {
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.7;
+}
+
+/* Legal Footer (أسفل الصفحة القانونية) */
+.legal-footer {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink-3);
+  line-height: 1.7;
+}
+.legal-footer p { margin-bottom: 8px; }
 
 
 /* ═══════════════════════════════════════════════════════════════════
