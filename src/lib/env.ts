@@ -1,0 +1,80 @@
+/**
+ * Environment Validation
+ *
+ * يتحقق من المتغيرات البيئية عند بدء التطبيق ويُفشل بسرعة
+ * (fail-fast) إذا كانت قيمة مفقودة أو غير صحيحة.
+ *
+ * الاستخدام:
+ *   import { env } from '@/lib/env';
+ *   const url = env.NEXT_PUBLIC_SUPABASE_URL;  // type-safe!
+ */
+
+import { z } from 'zod';
+
+const envSchema = z.object({
+  // Supabase
+  NEXT_PUBLIC_SUPABASE_URL: z.string().url('NEXT_PUBLIC_SUPABASE_URL يجب أن يكون URL صالحاً'),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(20, 'NEXT_PUBLIC_SUPABASE_ANON_KEY قصير جداً'),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(20, 'SUPABASE_SERVICE_ROLE_KEY قصير جداً').optional(),
+
+  // التشفير - 32 bytes hex
+  ENCRYPTION_KEY: z
+    .string()
+    .regex(/^[a-f0-9]{64}$/i, 'ENCRYPTION_KEY يجب أن يكون 64 hex character (32 bytes)'),
+
+  // الموقع
+  NEXT_PUBLIC_SITE_URL: z.string().url().default('https://spirmedical-wep.vercel.app'),
+
+  // البيئة
+  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+
+  // Logging level (اختياري)
+  LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).optional(),
+
+  // Feature flags (اختياري - لتبديل ميزات على الـ Vercel)
+  NEXT_PUBLIC_ENABLE_SPECIALIST_CHAT: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((v) => v === 'true'),
+  NEXT_PUBLIC_ENABLE_FAMILY_ACCOUNTS: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((v) => v === 'true'),
+  NEXT_PUBLIC_ENABLE_SUBSCRIPTIONS: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((v) => v === 'true'),
+
+  // Sentry (اختياري - يُفعّل عند توفر DSN)
+  NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
+  SENTRY_AUTH_TOKEN: z.string().optional(),
+
+  // Upstash Redis للـ rate limiting في الإنتاج (اختياري)
+  UPSTASH_REDIS_REST_URL: z.string().url().optional(),
+  UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
+});
+
+function parseEnv() {
+  const parsed = envSchema.safeParse(process.env);
+
+  if (!parsed.success) {
+    const errors = parsed.error.flatten().fieldErrors;
+    const errorMessages = Object.entries(errors)
+      .map(([key, msgs]) => `  ${key}: ${msgs?.join(', ')}`)
+      .join('\n');
+
+    // eslint-disable-next-line no-console
+    console.error(`\n❌ Invalid environment variables:\n${errorMessages}\n`);
+
+    // فقط في build/start - لا نُسقط بطلبات الـ runtime
+    if (typeof window === 'undefined') {
+      throw new Error('Invalid environment variables');
+    }
+  }
+
+  return parsed.success ? parsed.data : ({} as z.infer<typeof envSchema>);
+}
+
+export const env = parseEnv();
+
+export type Env = z.infer<typeof envSchema>;
