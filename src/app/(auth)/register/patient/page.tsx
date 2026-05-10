@@ -1,74 +1,36 @@
-'use client';
+// تعطيل pre-rendering — searchParams
+export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import {
-  patientRegisterSchema,
-  genderLabels,
-  type PatientRegisterInput,
-} from '@/lib/validations/auth-forms';
+import { z } from 'zod';
+import { genderLabels } from '@/lib/validations/auth-forms';
+import { registerPatient } from '../actions';
 
-export default function PatientRegisterPage() {
-  const router = useRouter();
+const searchParamsSchema = z.object({
+  error: z.string().max(500).optional(),
+});
 
-  const [formData, setFormData] = useState({
-    fullName: '',
-    gender: '' as PatientRegisterInput['gender'] | '',
-    phone: '',
-    password: '',
-    acceptTerms: false,
-  });
+export const metadata = {
+  title: 'تسجيل مراجع · سباير ميديكال',
+};
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [submitting, setSubmitting] = useState(false);
+export default function PatientRegisterPage({
+  searchParams,
+}: {
+  searchParams: { error?: string };
+}) {
+  const params = searchParamsSchema.safeParse(searchParams);
+  const error = params.success ? params.data.error : undefined;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrors({});
-    setSubmitting(true);
+  // ⭐ OTP Mode (3 أوضاع)
+  const otpMode = (process.env.NEXT_PUBLIC_OTP_MODE ?? 'disabled') as
+    | 'disabled'
+    | 'optional'
+    | 'required';
 
-    const result = patientRegisterSchema.safeParse(formData);
-
-    if (!result.success) {
-      const fieldErrors: Record<string, string> = {};
-      result.error.errors.forEach((err) => {
-        const field = err.path[0] as string;
-        if (!fieldErrors[field]) {
-          fieldErrors[field] = err.message;
-        }
-      });
-      setErrors(fieldErrors);
-      setSubmitting(false);
-      return;
-    }
-
-    try {
-      // Mock API call - استبدل بـ Server Action حقيقي
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // الانتقال لصفحة OTP للتحقق من الهاتف
-      router.push(`/otp?phone=${encodeURIComponent(result.data.phone)}`);
-    } catch (err) {
-      setErrors({ submit: 'فشل إنشاء الحساب. حاول مرة أخرى.' });
-      setSubmitting(false);
-    }
-  };
-
-  const updateField = <K extends keyof typeof formData>(
-    field: K,
-    value: typeof formData[K]
-  ) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    // مسح الخطأ عند التعديل
-    if (errors[field as string]) {
-      setErrors((prev) => {
-        const next = { ...prev };
-        delete next[field as string];
-        return next;
-      });
-    }
-  };
+  const isOtpRequired = otpMode === 'required';
+  const isOtpOptional = otpMode === 'optional';
+  const isOtpDisabled = otpMode === 'disabled';
 
   return (
     <main className="auth-screen">
@@ -95,14 +57,14 @@ export default function PatientRegisterPage() {
         </p>
       </div>
 
-      {errors.submit && (
+      {error && (
         <div className="auth-error" role="alert">
           <div className="auth-error-icon">!</div>
-          <span>{errors.submit}</span>
+          <span>{error}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="auth-form" noValidate>
+      <form action={registerPatient} className="auth-form">
         {/* الاسم الكامل */}
         <div className="auth-field">
           <label htmlFor="fullName" className="auth-field-label">
@@ -111,23 +73,15 @@ export default function PatientRegisterPage() {
           </label>
           <input
             id="fullName"
+            name="fullName"
             type="text"
-            value={formData.fullName}
-            onChange={(e) => updateField('fullName', e.target.value)}
             placeholder="مثال: أحمد محمد علي"
             autoComplete="name"
             required
+            minLength={3}
             maxLength={50}
-            className={`auth-input ${errors.fullName ? 'error' : ''}`}
-            aria-invalid={!!errors.fullName}
-            aria-describedby={errors.fullName ? 'fullName-error' : undefined}
-            disabled={submitting}
+            className="auth-input"
           />
-          {errors.fullName && (
-            <span id="fullName-error" className="auth-field-error" role="alert">
-              {errors.fullName}
-            </span>
-          )}
         </div>
 
         {/* الجنس */}
@@ -136,32 +90,14 @@ export default function PatientRegisterPage() {
             الجنس
             <span className="auth-required">*</span>
           </label>
-          <div
-            className="radio-group"
-            role="radiogroup"
-            aria-required="true"
-            aria-invalid={!!errors.gender}
-            aria-describedby={errors.gender ? 'gender-error' : undefined}
-          >
+          <div className="radio-group" role="radiogroup" aria-required="true">
             {(['male', 'female', 'other'] as const).map((g) => (
-              <label key={g} className={`radio-option ${formData.gender === g ? 'selected' : ''}`}>
-                <input
-                  type="radio"
-                  name="gender"
-                  value={g}
-                  checked={formData.gender === g}
-                  onChange={() => updateField('gender', g)}
-                  disabled={submitting}
-                />
+              <label key={g} className="radio-option">
+                <input type="radio" name="gender" value={g} required />
                 <span>{genderLabels[g]}</span>
               </label>
             ))}
           </div>
-          {errors.gender && (
-            <span id="gender-error" className="auth-field-error" role="alert">
-              {errors.gender}
-            </span>
-          )}
         </div>
 
         {/* رقم الهاتف */}
@@ -170,34 +106,28 @@ export default function PatientRegisterPage() {
             رقم الهاتف
             <span className="auth-required">*</span>
           </label>
-          <div className={`auth-phone-wrap ${errors.phone ? 'error' : ''}`}>
+          <div className="auth-phone-wrap">
             <div className="auth-phone-prefix">
               <span aria-hidden="true">🇮🇶</span>
               <span>+964</span>
             </div>
             <input
               id="phone"
+              name="phone"
               type="tel"
               inputMode="numeric"
-              value={formData.phone}
-              onChange={(e) => updateField('phone', e.target.value.replace(/\D/g, ''))}
               placeholder="7XX XXX XXXX"
               autoComplete="tel"
               required
+              pattern="0?7[0-9]{9}"
               maxLength={11}
-              aria-invalid={!!errors.phone}
-              aria-describedby={errors.phone ? 'phone-error' : 'phone-hint'}
-              disabled={submitting}
             />
           </div>
-          <div id="phone-hint" className="auth-field-hint">
-            مثال: 07712345678 - سنرسل لك رمز تحقق برسالة نصية
+          <div className="auth-field-hint">
+            {isOtpRequired
+              ? 'مثال: 07712345678 - سنرسل لك رمز تحقق'
+              : 'مثال: 07712345678'}
           </div>
-          {errors.phone && (
-            <span id="phone-error" className="auth-field-error" role="alert">
-              {errors.phone}
-            </span>
-          )}
         </div>
 
         {/* رمز الدخول */}
@@ -208,61 +138,99 @@ export default function PatientRegisterPage() {
           </label>
           <input
             id="password"
+            name="password"
             type="password"
             inputMode="numeric"
-            value={formData.password}
-            onChange={(e) => updateField('password', e.target.value.replace(/\D/g, ''))}
             placeholder="6 أرقام"
             autoComplete="new-password"
             required
+            pattern="\d{6}"
             maxLength={6}
-            className={`auth-input ${errors.password ? 'error' : ''}`}
-            aria-invalid={!!errors.password}
-            aria-describedby={errors.password ? 'password-error' : 'password-hint'}
-            disabled={submitting}
+            minLength={6}
+            className="auth-input"
           />
-          <div id="password-hint" className="auth-field-hint">
+          <div className="auth-field-hint">
             استخدم 6 أرقام تتذكّرها · لا تشاركها مع أحد
           </div>
-          {errors.password && (
-            <span id="password-error" className="auth-field-error" role="alert">
-              {errors.password}
-            </span>
-          )}
         </div>
 
         {/* الموافقة على الشروط */}
         <div className="auth-field">
           <label className="checkbox-option">
-            <input
-              type="checkbox"
-              checked={formData.acceptTerms}
-              onChange={(e) => updateField('acceptTerms', e.target.checked)}
-              disabled={submitting}
-              aria-invalid={!!errors.acceptTerms}
-            />
+            <input type="checkbox" name="acceptTerms" required />
             <span className="checkbox-text">
               أوافق على{' '}
-              <Link href="/legal/terms" target="_blank" className="auth-inline-link">
+              <Link
+                href="/legal/terms"
+                target="_blank"
+                className="auth-inline-link"
+              >
                 الشروط والأحكام
               </Link>
               {' '}و{' '}
-              <Link href="/legal/privacy" target="_blank" className="auth-inline-link">
+              <Link
+                href="/legal/privacy"
+                target="_blank"
+                className="auth-inline-link"
+              >
                 سياسة الخصوصية
               </Link>
             </span>
           </label>
-          {errors.acceptTerms && (
-            <span className="auth-field-error" role="alert">
-              {errors.acceptTerms}
-            </span>
-          )}
         </div>
 
-        <button type="submit" className="auth-cta" disabled={submitting}>
-          {submitting ? 'جاري إنشاء الحساب...' : 'إنشاء الحساب ←'}
-        </button>
+        {/* ─── الأزرار حسب OTP Mode ─── */}
+
+        {isOtpRequired && (
+          <>
+            <input type="hidden" name="action" value="otp" />
+            <button type="submit" className="auth-cta">
+              إنشاء الحساب وإرسال رمز ←
+            </button>
+          </>
+        )}
+
+        {isOtpDisabled && (
+          <>
+            <input type="hidden" name="action" value="skip" />
+            <button type="submit" className="auth-cta">
+              إنشاء الحساب والدخول ←
+            </button>
+          </>
+        )}
+
+        {isOtpOptional && (
+          <div className="auth-cta-group">
+            <button
+              type="submit"
+              className="auth-cta auth-cta-primary"
+              name="action"
+              value="otp"
+            >
+              <span aria-hidden="true">🔐</span>
+              <span>إنشاء + رمز تحقق</span>
+            </button>
+            <button
+              type="submit"
+              className="auth-cta auth-cta-secondary"
+              name="action"
+              value="skip"
+            >
+              <span aria-hidden="true">⚡</span>
+              <span>إنشاء سريع (بدون رمز)</span>
+            </button>
+          </div>
+        )}
       </form>
+
+      {/* ملاحظة عن وضع OTP */}
+      {(isOtpDisabled || isOtpOptional) && (
+        <div className="auth-footer-note">
+          ℹ️ الدخول السريع متاح للتجربة الأولى.
+          <br />
+          سيُفعَّل التحقق بـ OTP قريباً لمزيد من الأمان.
+        </div>
+      )}
 
       <div className="auth-helper">
         لديك حساب؟ <Link href="/login">تسجيل الدخول</Link>
