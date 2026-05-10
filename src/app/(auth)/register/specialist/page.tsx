@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 import {
   specialistRegisterSchema,
   specializationLabels,
@@ -10,6 +9,7 @@ import {
   fileValidation,
   type SpecialistRegisterInput,
 } from '@/lib/validations/auth-forms';
+import { registerSpecialist } from '../actions';
 
 type FormState = {
   fullName: string;
@@ -25,7 +25,15 @@ type FormState = {
 };
 
 export default function SpecialistRegisterPage() {
-  const router = useRouter();
+  // OTP Mode (3 أوضاع)
+  const otpMode = (process.env.NEXT_PUBLIC_OTP_MODE ?? 'disabled') as
+    | 'disabled'
+    | 'optional'
+    | 'required';
+
+  const isOtpRequired = otpMode === 'required';
+  const isOtpOptional = otpMode === 'optional';
+  const isOtpDisabled = otpMode === 'disabled';
 
   const [formData, setFormData] = useState<FormState>({
     fullName: '',
@@ -41,68 +49,75 @@ export default function SpecialistRegisterPage() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [submitting, setSubmitting] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // التحقق من النموذج محلياً قبل الإرسال
+  function validate(): boolean {
     setErrors({});
-    setSubmitting(true);
 
-    // التحقق من الملفات (للإنشاء الأول، الكل مطلوب رغم أنه opt)
-    const fileErrors: Record<string, string> = {};
+    const result = specialistRegisterSchema.safeParse(formData);
+    const fieldErrors: Record<string, string> = {};
 
+    if (!result.success) {
+      result.error.errors.forEach((err) => {
+        const field = err.path[0] as string;
+        if (!fieldErrors[field]) fieldErrors[field] = err.message;
+      });
+    }
+
+    // التحقق من الملفات (للتسجيل الأول، الكل مطلوب)
     if (!formData.idDocument) {
-      fileErrors.idDocument = 'إثبات الشخصية مطلوب عند التسجيل الأول';
+      fieldErrors.idDocument = 'إثبات الشخصية مطلوب';
     } else {
       const v = fileValidation.validate(formData.idDocument);
-      if (!v.valid) fileErrors.idDocument = v.error!;
+      if (!v.valid) fieldErrors.idDocument = v.error!;
     }
 
     if (!formData.certificateDocument) {
-      fileErrors.certificateDocument = 'شهادة الاختصاص مطلوبة عند التسجيل الأول';
+      fieldErrors.certificateDocument = 'شهادة الاختصاص مطلوبة';
     } else {
       const v = fileValidation.validate(formData.certificateDocument);
-      if (!v.valid) fileErrors.certificateDocument = v.error!;
+      if (!v.valid) fieldErrors.certificateDocument = v.error!;
     }
 
     if (!formData.profilePhoto) {
-      fileErrors.profilePhoto = 'الصورة الشخصية مطلوبة عند التسجيل الأول';
+      fieldErrors.profilePhoto = 'الصورة الشخصية مطلوبة';
     } else {
       const v = fileValidation.validate(formData.profilePhoto);
-      if (!v.valid) fileErrors.profilePhoto = v.error!;
+      if (!v.valid) fieldErrors.profilePhoto = v.error!;
     }
 
-    if (Object.keys(fileErrors).length > 0) {
-      setErrors(fileErrors);
-      setSubmitting(false);
-      return;
-    }
-
-    // التحقق من باقي الحقول
-    const result = specialistRegisterSchema.safeParse(formData);
-
-    if (!result.success) {
-      const fieldErrors: Record<string, string> = {};
-      result.error.errors.forEach((err) => {
-        const field = err.path[0] as string;
-        if (!fieldErrors[field]) {
-          fieldErrors[field] = err.message;
-        }
-      });
+    if (Object.keys(fieldErrors).length > 0) {
       setErrors(fieldErrors);
-      setSubmitting(false);
-      return;
+      return false;
     }
 
-    try {
-      // Mock API - استبدل بـ FormData حقيقي للـ Server Action
-      await new Promise((resolve) => setTimeout(resolve, 1200));
-      router.push(`/otp?phone=${encodeURIComponent(result.data.phone)}`);
-    } catch (err) {
-      setErrors({ submit: 'فشل إنشاء الحساب. حاول مرة أخرى.' });
-      setSubmitting(false);
+    return true;
+  }
+
+  // إرسال للـ Server Action
+  function handleSubmit(action: 'otp' | 'skip') {
+    if (!validate()) return;
+
+    const fd = new FormData();
+    fd.set('fullName', formData.fullName);
+    fd.set('gender', formData.gender);
+    fd.set('phone', formData.phone);
+    fd.set('password', formData.password);
+    fd.set('specialization', formData.specialization);
+    if (formData.specializationDetails) {
+      fd.set('specializationDetails', formData.specializationDetails);
     }
-  };
+    if (formData.acceptTerms) fd.set('acceptTerms', 'on');
+    fd.set('action', action);
+
+    // ملاحظة: الملفات لا تُرسل لـ Supabase Storage حالياً
+    // (مرحلة لاحقة - الملفات تُحفظ مؤقتاً ثم تُرفع بعد التحقق من البريد)
+
+    startTransition(() => {
+      registerSpecialist(fd);
+    });
+  }
 
   const updateField = <K extends keyof FormState>(
     field: K,
@@ -152,7 +167,16 @@ export default function SpecialistRegisterPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="auth-form" noValidate encType="multipart/form-data">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          // الافتراضي: دخول سريع (إلا في وضع required)
+          handleSubmit(isOtpRequired ? 'otp' : 'skip');
+        }}
+        className="auth-form"
+        noValidate
+        encType="multipart/form-data"
+      >
         {/* الاسم الكامل */}
         <div className="auth-field">
           <label htmlFor="fullName" className="auth-field-label">
@@ -170,10 +194,43 @@ export default function SpecialistRegisterPage() {
             maxLength={50}
             className={`auth-input ${errors.fullName ? 'error' : ''}`}
             aria-invalid={!!errors.fullName}
-            disabled={submitting}
+            disabled={isPending}
           />
           {errors.fullName && (
-            <span className="auth-field-error" role="alert">{errors.fullName}</span>
+            <span className="auth-field-error" role="alert">
+              {errors.fullName}
+            </span>
+          )}
+        </div>
+
+        {/* الجنس */}
+        <div className="auth-field">
+          <label className="auth-field-label">
+            الجنس
+            <span className="auth-required">*</span>
+          </label>
+          <div className="radio-group" role="radiogroup">
+            {(['male', 'female', 'other'] as const).map((g) => (
+              <label
+                key={g}
+                className={`radio-option ${formData.gender === g ? 'selected' : ''}`}
+              >
+                <input
+                  type="radio"
+                  name="gender"
+                  value={g}
+                  checked={formData.gender === g}
+                  onChange={() => updateField('gender', g)}
+                  disabled={isPending}
+                />
+                <span>{genderLabels[g]}</span>
+              </label>
+            ))}
+          </div>
+          {errors.gender && (
+            <span className="auth-field-error" role="alert">
+              {errors.gender}
+            </span>
           )}
         </div>
 
@@ -193,17 +250,21 @@ export default function SpecialistRegisterPage() {
               type="tel"
               inputMode="numeric"
               value={formData.phone}
-              onChange={(e) => updateField('phone', e.target.value.replace(/\D/g, ''))}
+              onChange={(e) =>
+                updateField('phone', e.target.value.replace(/\D/g, ''))
+              }
               placeholder="7XX XXX XXXX"
               autoComplete="tel"
               required
               maxLength={11}
-              aria-invalid={!!errors.phone}
-              disabled={submitting}
+              disabled={isPending}
             />
           </div>
+          <div className="auth-field-hint">مثال: 07712345678</div>
           {errors.phone && (
-            <span className="auth-field-error" role="alert">{errors.phone}</span>
+            <span className="auth-field-error" role="alert">
+              {errors.phone}
+            </span>
           )}
         </div>
 
@@ -218,43 +279,23 @@ export default function SpecialistRegisterPage() {
             type="password"
             inputMode="numeric"
             value={formData.password}
-            onChange={(e) => updateField('password', e.target.value.replace(/\D/g, ''))}
+            onChange={(e) =>
+              updateField('password', e.target.value.replace(/\D/g, ''))
+            }
             placeholder="6 أرقام"
             autoComplete="new-password"
             required
             maxLength={6}
             className={`auth-input ${errors.password ? 'error' : ''}`}
-            aria-invalid={!!errors.password}
-            disabled={submitting}
+            disabled={isPending}
           />
-          {errors.password && (
-            <span className="auth-field-error" role="alert">{errors.password}</span>
-          )}
-        </div>
-
-        {/* الجنس */}
-        <div className="auth-field">
-          <label className="auth-field-label">
-            الجنس
-            <span className="auth-required">*</span>
-          </label>
-          <div className="radio-group" role="radiogroup">
-            {(['male', 'female', 'other'] as const).map((g) => (
-              <label key={g} className={`radio-option ${formData.gender === g ? 'selected' : ''}`}>
-                <input
-                  type="radio"
-                  name="gender"
-                  value={g}
-                  checked={formData.gender === g}
-                  onChange={() => updateField('gender', g)}
-                  disabled={submitting}
-                />
-                <span>{genderLabels[g]}</span>
-              </label>
-            ))}
+          <div className="auth-field-hint">
+            6 أرقام تتذكّرها · لا تشاركها مع أحد
           </div>
-          {errors.gender && (
-            <span className="auth-field-error" role="alert">{errors.gender}</span>
+          {errors.password && (
+            <span className="auth-field-error" role="alert">
+              {errors.password}
+            </span>
           )}
         </div>
 
@@ -268,83 +309,84 @@ export default function SpecialistRegisterPage() {
             id="specialization"
             value={formData.specialization}
             onChange={(e) =>
-              updateField('specialization', e.target.value as SpecialistRegisterInput['specialization'])
+              updateField(
+                'specialization',
+                e.target.value as SpecialistRegisterInput['specialization']
+              )
             }
             required
             className={`auth-input ${errors.specialization ? 'error' : ''}`}
-            aria-invalid={!!errors.specialization}
-            disabled={submitting}
+            disabled={isPending}
           >
-            <option value="">— اختر اختصاصك —</option>
-            {Object.entries(specializationLabels).map(([key, label]) => (
+            <option value="">اختر الاختصاص</option>
+            {(Object.keys(specializationLabels) as Array<
+              keyof typeof specializationLabels
+            >).map((key) => (
               <option key={key} value={key}>
-                {label}
+                {specializationLabels[key]}
               </option>
             ))}
           </select>
           {errors.specialization && (
-            <span className="auth-field-error" role="alert">{errors.specialization}</span>
+            <span className="auth-field-error" role="alert">
+              {errors.specialization}
+            </span>
           )}
         </div>
 
-        {/* تفصيلات الاختصاص (يظهر فقط لـ "other") */}
+        {/* تفاصيل اختصاص أخرى (شرطي) */}
         {showOtherDetails && (
           <div className="auth-field">
-            <label htmlFor="specializationDetails" className="auth-field-label">
-              تفصيلات الاختصاص
+            <label
+              htmlFor="specializationDetails"
+              className="auth-field-label"
+            >
+              اكتب اختصاصك
               <span className="auth-required">*</span>
             </label>
             <input
               id="specializationDetails"
               type="text"
               value={formData.specializationDetails}
-              onChange={(e) => updateField('specializationDetails', e.target.value)}
-              placeholder="مثال: أخصائي تخدير"
-              required
+              onChange={(e) =>
+                updateField('specializationDetails', e.target.value)
+              }
+              placeholder="مثال: طب الأسرة"
               maxLength={100}
               className={`auth-input ${errors.specializationDetails ? 'error' : ''}`}
-              aria-invalid={!!errors.specializationDetails}
-              disabled={submitting}
+              disabled={isPending}
             />
             {errors.specializationDetails && (
-              <span className="auth-field-error" role="alert">{errors.specializationDetails}</span>
+              <span className="auth-field-error" role="alert">
+                {errors.specializationDetails}
+              </span>
             )}
           </div>
         )}
 
-        {/* قسم رفع الملفات */}
-        <div className="auth-field-section">
-          <h3 className="auth-section-title">المستندات المطلوبة</h3>
-          <p className="auth-section-hint">
-            ✓ مطلوبة عند التسجيل الأول · JPG / PNG / PDF · الحد الأقصى 5 MB لكل ملف
-          </p>
-        </div>
-
-        {/* إثبات الشخصية */}
+        {/* ملفات الإثبات */}
         <FileUploadField
           id="idDocument"
           label="إثبات الشخصية"
-          hint="هوية الأحوال المدنية أو جواز السفر"
+          hint="هوية الأحوال أو جواز السفر (PDF أو صورة)"
           file={formData.idDocument}
           onChange={(f) => updateField('idDocument', f)}
           error={errors.idDocument}
-          disabled={submitting}
+          disabled={isPending}
           icon="🪪"
         />
 
-        {/* شهادة الاختصاص */}
         <FileUploadField
           id="certificateDocument"
           label="شهادة الاختصاص"
-          hint="شهادة من نقابة الأطباء أو ما يعادلها"
+          hint="شهادة الطب أو شهادة الاختصاص الطبي"
           file={formData.certificateDocument}
           onChange={(f) => updateField('certificateDocument', f)}
           error={errors.certificateDocument}
-          disabled={submitting}
+          disabled={isPending}
           icon="📜"
         />
 
-        {/* الصورة الشخصية */}
         <FileUploadField
           id="profilePhoto"
           label="الصورة الشخصية"
@@ -352,7 +394,7 @@ export default function SpecialistRegisterPage() {
           file={formData.profilePhoto}
           onChange={(f) => updateField('profilePhoto', f)}
           error={errors.profilePhoto}
-          disabled={submitting}
+          disabled={isPending}
           icon="📷"
           accept="image/*"
         />
@@ -364,29 +406,79 @@ export default function SpecialistRegisterPage() {
               type="checkbox"
               checked={formData.acceptTerms}
               onChange={(e) => updateField('acceptTerms', e.target.checked)}
-              disabled={submitting}
+              disabled={isPending}
             />
             <span className="checkbox-text">
               أوافق على{' '}
-              <Link href="/legal/terms" target="_blank" className="auth-inline-link">
+              <Link
+                href="/legal/terms"
+                target="_blank"
+                className="auth-inline-link"
+              >
                 الشروط والأحكام
               </Link>
               {' '}و{' '}
-              <Link href="/legal/privacy" target="_blank" className="auth-inline-link">
+              <Link
+                href="/legal/privacy"
+                target="_blank"
+                className="auth-inline-link"
+              >
                 سياسة الخصوصية
               </Link>
               {' '}وأقرّ بصحة المعلومات المُقدّمة
             </span>
           </label>
           {errors.acceptTerms && (
-            <span className="auth-field-error" role="alert">{errors.acceptTerms}</span>
+            <span className="auth-field-error" role="alert">
+              {errors.acceptTerms}
+            </span>
           )}
         </div>
 
-        <button type="submit" className="auth-cta" disabled={submitting}>
-          {submitting ? 'جاري إنشاء الحساب...' : 'إنشاء حساب أخصائي ←'}
-        </button>
+        {/* ─── الأزرار حسب OTP Mode ─── */}
+
+        {isOtpRequired && (
+          <button type="submit" className="auth-cta" disabled={isPending}>
+            {isPending ? 'جاري الإرسال...' : 'إنشاء حساب وإرسال رمز ←'}
+          </button>
+        )}
+
+        {isOtpDisabled && (
+          <button type="submit" className="auth-cta" disabled={isPending}>
+            {isPending ? 'جاري إنشاء الحساب...' : 'إنشاء حساب أخصائي ←'}
+          </button>
+        )}
+
+        {isOtpOptional && (
+          <div className="auth-cta-group">
+            <button
+              type="button"
+              onClick={() => handleSubmit('otp')}
+              className="auth-cta auth-cta-primary"
+              disabled={isPending}
+            >
+              <span aria-hidden="true">🔐</span>
+              <span>{isPending ? 'جاري الإرسال...' : 'إنشاء + رمز تحقق'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSubmit('skip')}
+              className="auth-cta auth-cta-secondary"
+              disabled={isPending}
+            >
+              <span aria-hidden="true">⚡</span>
+              <span>{isPending ? 'جاري الإنشاء...' : 'إنشاء سريع (بدون رمز)'}</span>
+            </button>
+          </div>
+        )}
       </form>
+
+      {/* ملاحظة عن الملفات */}
+      <div className="auth-footer-note">
+        ℹ️ سيتم رفع ملفات الإثبات بعد إنشاء الحساب.
+        <br />
+        حسابك سيظهر للمراجعين بعد المراجعة (24-48 ساعة).
+      </div>
 
       <div className="auth-helper">
         لديك حساب؟ <Link href="/login?role=specialist">تسجيل الدخول</Link>
@@ -426,7 +518,10 @@ function FileUploadField({
         <span className="auth-required">*</span>
       </label>
 
-      <label htmlFor={id} className={`file-upload ${error ? 'error' : ''} ${file ? 'has-file' : ''}`}>
+      <label
+        htmlFor={id}
+        className={`file-upload ${error ? 'error' : ''} ${file ? 'has-file' : ''}`}
+      >
         <input
           id={id}
           type="file"
@@ -443,10 +538,13 @@ function FileUploadField({
           </div>
           {file ? (
             <div className="file-upload-meta">
-              {(file.size / 1024 / 1024).toFixed(2)} MB · {file.type.split('/')[1]?.toUpperCase()}
+              {(file.size / 1024 / 1024).toFixed(2)} MB ·{' '}
+              {file.type.split('/')[1]?.toUpperCase()}
             </div>
           ) : (
-            <div className="file-upload-meta" id={`${id}-hint`}>{hint}</div>
+            <div className="file-upload-meta" id={`${id}-hint`}>
+              {hint}
+            </div>
           )}
         </div>
         {file && (
@@ -466,7 +564,9 @@ function FileUploadField({
       </label>
 
       {error && (
-        <span id={`${id}-error`} className="auth-field-error" role="alert">{error}</span>
+        <span id={`${id}-error`} className="auth-field-error" role="alert">
+          {error}
+        </span>
       )}
     </div>
   );
