@@ -1,7 +1,12 @@
 -- ════════════════════════════════════════════════════════════════════
+-- 📁 ملف 2 من 3 — Idempotency Keys
+-- ════════════════════════════════════════════════════════════════════
 -- Migration: idempotency_keys
 -- Created: 2026-05-10
--- Purpose: حماية من double-submit للعمليات الحساسة (الحجوزات، الدفع)
+-- Purpose: حماية من double-submit للعمليات الحساسة
+--          (مثل ضغط زر "حجز" مرتين بسرعة)
+--
+-- يُستخدمه: src/lib/idempotency.ts
 -- ════════════════════════════════════════════════════════════════════
 
 CREATE TABLE IF NOT EXISTS public.idempotency_keys (
@@ -18,6 +23,8 @@ CREATE INDEX IF NOT EXISTS idx_idempotency_expires
 -- RLS — فقط service role يصل
 ALTER TABLE public.idempotency_keys ENABLE ROW LEVEL SECURITY;
 
+-- احذف policy القديم إن وُجد ثم أنشئه
+DROP POLICY IF EXISTS "service_role_full_access" ON public.idempotency_keys;
 CREATE POLICY "service_role_full_access"
   ON public.idempotency_keys
   FOR ALL
@@ -25,6 +32,14 @@ CREATE POLICY "service_role_full_access"
   USING (true)
   WITH CHECK (true);
 
--- التنظيف التلقائي (ينفّذه pg_cron إذا متوفر)
+-- توثيق
 COMMENT ON TABLE public.idempotency_keys IS
   'Idempotency keys for double-submit protection. Expires after 24 hours.';
+
+-- ════════════════════════════════════════════════════════════════════
+-- ✅ انتهى الملف 2
+-- ════════════════════════════════════════════════════════════════════
+-- تحقق من إنشاء الجدول:
+--   SELECT * FROM public.idempotency_keys LIMIT 1;
+-- ثم نفّذ الملف 3 (rate_limit_buckets)
+-- ════════════════════════════════════════════════════════════════════
