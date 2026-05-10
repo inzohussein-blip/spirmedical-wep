@@ -4,25 +4,21 @@
  * يُتيح تفعيل/تعطيل ميزات بدون redeploy عبر تعديل env vars في Vercel.
  *
  * الاستخدام:
- *   import { isEnabled } from '@/lib/flags';
- *   if (isEnabled('specialist_chat')) { ... }
+ *   import { isEnabled, getOtpMode } from '@/lib/flags';
  *
- * للترقية لاحقاً:
- *   - Vercel Edge Config (للتحديث الفوري بدون redeploy)
- *   - GrowthBook / LaunchDarkly (للـ user-targeted flags)
- *   - PostHog Flags (للـ A/B testing)
+ *   if (getOtpMode() === 'required') { ... }
  */
 
-import { env } from './env';
+import { env, getOtpMode, type OtpMode } from './env';
 
 export type FeatureFlag =
-  | 'specialist_chat'      // محادثات المختص (لم تُطبَّق بعد)
-  | 'family_accounts'      // إدارة العائلة
-  | 'subscriptions'        // باقات العضوية
-  | 'medical_record'       // السجل الطبي
-  | 'sos_active'           // طوارئ SOS مفعّلة
-  | 'pharmacy_delivery'    // توصيل الصيدلية
-  | 'video_consultations'; // استشارات بالفيديو
+  | 'specialist_chat'
+  | 'family_accounts'
+  | 'subscriptions'
+  | 'medical_record'
+  | 'sos_active'
+  | 'pharmacy_delivery'
+  | 'video_consultations';
 
 const FLAGS: Record<FeatureFlag, boolean> = {
   specialist_chat: env.NEXT_PUBLIC_ENABLE_SPECIALIST_CHAT,
@@ -30,7 +26,7 @@ const FLAGS: Record<FeatureFlag, boolean> = {
   subscriptions: env.NEXT_PUBLIC_ENABLE_SUBSCRIPTIONS,
 
   // ميزات ممكّنة افتراضياً
-  medical_record: false,    // قريباً
+  medical_record: false,
   sos_active: true,
   pharmacy_delivery: true,
   video_consultations: true,
@@ -51,12 +47,43 @@ export function getAllFlags(): Record<FeatureFlag, boolean> {
 }
 
 /**
- * Helper لاستخدام في React Server Components
- *
- * @example
- *   const showChat = await checkFlag('specialist_chat');
- *   if (!showChat) return null;
+ * Helper async للـ Server Components
  */
 export async function checkFlag(flag: FeatureFlag): Promise<boolean> {
   return isEnabled(flag);
+}
+
+// ─────────────────────────────────────────────────────────
+// OTP Mode helpers
+// ─────────────────────────────────────────────────────────
+
+export { getOtpMode };
+export type { OtpMode };
+
+/**
+ * هل OTP إجباري؟ (المستخدم لا يمكنه التخطي)
+ */
+export function isOtpRequired(): boolean {
+  return getOtpMode() === 'required';
+}
+
+/**
+ * هل OTP اختياري؟ (يمكن للمستخدم التخطي)
+ */
+export function isOtpOptional(): boolean {
+  return getOtpMode() === 'optional';
+}
+
+/**
+ * هل OTP معطّل تماماً؟ (لا يظهر إطلاقاً)
+ */
+export function isOtpDisabled(): boolean {
+  return getOtpMode() === 'disabled';
+}
+
+/**
+ * هل يمكن التخطي؟ (في وضع disabled أو optional)
+ */
+export function canSkipOtp(): boolean {
+  return !isOtpRequired();
 }
