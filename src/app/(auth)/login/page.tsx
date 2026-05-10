@@ -50,6 +50,16 @@ export default function LoginPage() {
 
   const roleInfo = roleHints[role];
 
+  // ⭐ OTP Mode (3 أوضاع): 'disabled' | 'optional' | 'required'
+  const otpMode = (process.env.NEXT_PUBLIC_OTP_MODE ?? 'disabled') as
+    | 'disabled'
+    | 'optional'
+    | 'required';
+
+  const isOtpRequired = otpMode === 'required';
+  const isOtpOptional = otpMode === 'optional';
+  const isOtpDisabled = otpMode === 'disabled';
+
   return (
     <main className="auth-screen">
       <Link href="/gate" className="auth-back">
@@ -138,14 +148,55 @@ export default function LoginPage() {
           )}
         </div>
 
-        <button type="submit" className="auth-cta">
-          إرسال رمز التحقق ←
-        </button>
+        {/* ─── الأزرار حسب OTP Mode ─── */}
+
+        {isOtpRequired && (
+          <>
+            <input type="hidden" name="action" value="otp" />
+            <button type="submit" className="auth-cta">
+              إرسال رمز التحقق ←
+            </button>
+          </>
+        )}
+
+        {isOtpDisabled && (
+          <>
+            <input type="hidden" name="action" value="skip" />
+            <button type="submit" className="auth-cta">
+              تسجيل الدخول ←
+            </button>
+          </>
+        )}
+
+        {isOtpOptional && (
+          <div className="auth-cta-group">
+            <button
+              type="submit"
+              className="auth-cta auth-cta-primary"
+              name="action"
+              value="otp"
+            >
+              <span aria-hidden="true">🔐</span>
+              <span>إرسال رمز تحقق</span>
+            </button>
+            <button
+              type="submit"
+              className="auth-cta auth-cta-secondary"
+              name="action"
+              value="skip"
+            >
+              <span aria-hidden="true">⚡</span>
+              <span>دخول سريع (بدون رمز)</span>
+            </button>
+          </div>
+        )}
       </form>
 
       <div className="auth-helper">
         <p style={{ fontSize: 12, color: 'var(--ink-3)', textAlign: 'center', marginTop: 16 }}>
-          سيُرسل لك رمز ٦ أرقام للتحقق
+          {isOtpRequired && 'سيُرسل لك رمز ٦ أرقام للتحقق'}
+          {isOtpOptional && 'اختر الطريقة المناسبة لك'}
+          {isOtpDisabled && 'تسجيل دخول مباشر · لا حاجة لرمز تحقق حالياً'}
         </p>
       </div>
 
