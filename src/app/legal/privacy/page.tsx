@@ -196,7 +196,7 @@ export default function PrivacyPage() {
 
             <p>
               يمكنك إدارة تفضيلات الكوكيز في أي وقت من{' '}
-              <Link href="/settings/privacy" className="legal-inline-link">
+              <Link href="/account/settings" className="legal-inline-link">
                 إعدادات الخصوصية
               </Link>.
             </p>
