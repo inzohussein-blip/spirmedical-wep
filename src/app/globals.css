@@ -2119,3 +2119,74 @@
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 .animate-spin { animation: spin 1s linear infinite; }
 @keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+/* ════════════════════════════════════════════════════════════════════
+   📁 إضافات CSS لزرَي الدخول (OTP Optional Mode)
+   ════════════════════════════════════════════════════════════════════
+   أضف هذا في نهاية src/app/globals.css
+   ════════════════════════════════════════════════════════════════════ */
+
+
+/* ─────────────────────────────────────────────────────────
+   AUTH CTA GROUP (مجموعة زرَين عمودية)
+   ───────────────────────────────────────────────────────── */
+
+.auth-cta-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+/* ─────────────────────────────────────────────────────────
+   AUTH CTA Primary (الزر الرئيسي - OTP)
+   ───────────────────────────────────────────────────────── */
+
+.auth-cta-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  /* يأخذ ستايل auth-cta الافتراضي */
+}
+
+/* ─────────────────────────────────────────────────────────
+   AUTH CTA Secondary (الزر الثانوي - تخطي)
+   ───────────────────────────────────────────────────────── */
+
+.auth-cta-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  background: var(--white) !important;
+  color: var(--ink) !important;
+  border: 2px solid var(--line-2) !important;
+  box-shadow: none !important;
+  transition: all 0.15s;
+}
+.auth-cta-secondary:hover {
+  background: var(--paper-2) !important;
+  border-color: var(--ink-3) !important;
+  transform: translateY(-1px);
+}
+
+/* ─────────────────────────────────────────────────────────
+   AUTH FOOTER NOTE (ملاحظة في الأسفل)
+   ───────────────────────────────────────────────────────── */
+
+.auth-footer-note {
+  margin-top: 24px;
+  padding: 12px 14px;
+  background: var(--paper-3);
+  border-radius: 12px;
+  font-size: 11px;
+  color: var(--ink-3);
+  line-height: 1.7;
+  text-align: center;
+  border: 1px dashed var(--line-2);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   انتهى
+   ════════════════════════════════════════════════════════════════════ */
