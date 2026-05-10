@@ -1,0 +1,76 @@
+name: 🐛 Bug Report
+description: الإبلاغ عن مشكلة
+title: '[Bug]: '
+labels: ['bug', 'triage']
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        شكراً للإبلاغ عن المشكلة! املأ النموذج بدقة لتساعدنا في إصلاحها بسرعة.
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: شدّة المشكلة
+      options:
+        - 'Critical — التطبيق لا يعمل'
+        - 'High — ميزة رئيسية مكسورة'
+        - 'Medium — ميزة لا تعمل بشكل صحيح'
+        - 'Low — مشكلة بصرية أو تحسين'
+    validations:
+      required: true
+
+  - type: dropdown
+    id: page
+    attributes:
+      label: الصفحة
+      options:
+        - الصفحة الرئيسية (/)
+        - بوابة الدخول (/gate)
+        - تسجيل دخول/إنشاء حساب
+        - واجهة الضيف
+        - واجهة المراجع (Dashboard)
+        - واجهة المختص
+        - الصفحات القانونية
+        - أخرى
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: وصف المشكلة
+      placeholder: ما الذي حدث؟
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: خطوات الاستنساخ
+      placeholder: |
+        1. اذهب إلى ...
+        2. اضغط على ...
+        3. شاهد الخطأ
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: السلوك المتوقع
+      placeholder: ما الذي كان يجب أن يحدث؟
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: المتصفح والجهاز
+      placeholder: 'Chrome 120 على iPhone 14'
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: لقطات شاشة (اختياري)
