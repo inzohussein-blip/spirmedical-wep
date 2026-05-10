@@ -31,7 +31,15 @@ const envSchema = z.object({
   // Logging level (اختياري)
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).optional(),
 
-  // Feature flags (اختياري - لتبديل ميزات على الـ Vercel)
+  // ⭐ OTP Mode (3 أوضاع)
+  // - 'disabled': لا OTP إطلاقاً، دخول مباشر (الوضع الحالي - بدون Meta WhatsApp)
+  // - 'optional': المستخدم يختار - زر OTP + زر تخطي
+  // - 'required': OTP إجباري (للإنتاج بعد تفعيل Meta WhatsApp)
+  NEXT_PUBLIC_OTP_MODE: z
+    .enum(['disabled', 'optional', 'required'])
+    .default('disabled'),
+
+  // Feature flags (اختياري)
   NEXT_PUBLIC_ENABLE_SPECIALIST_CHAT: z
     .enum(['true', 'false'])
     .default('false')
@@ -45,11 +53,11 @@ const envSchema = z.object({
     .default('false')
     .transform((v) => v === 'true'),
 
-  // Sentry (اختياري - يُفعّل عند توفر DSN)
+  // Sentry (اختياري)
   NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
   SENTRY_AUTH_TOKEN: z.string().optional(),
 
-  // Upstash Redis للـ rate limiting في الإنتاج (اختياري)
+  // Upstash Redis (اختياري)
   UPSTASH_REDIS_REST_URL: z.string().url().optional(),
   UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
 });
@@ -66,7 +74,6 @@ function parseEnv() {
     // eslint-disable-next-line no-console
     console.error(`\n❌ Invalid environment variables:\n${errorMessages}\n`);
 
-    // فقط في build/start - لا نُسقط بطلبات الـ runtime
     if (typeof window === 'undefined') {
       throw new Error('Invalid environment variables');
     }
@@ -78,3 +85,12 @@ function parseEnv() {
 export const env = parseEnv();
 
 export type Env = z.infer<typeof envSchema>;
+
+/**
+ * Helper: ما هو وضع OTP الحالي؟
+ */
+export type OtpMode = 'disabled' | 'optional' | 'required';
+
+export function getOtpMode(): OtpMode {
+  return env.NEXT_PUBLIC_OTP_MODE ?? 'disabled';
+}
