@@ -25,6 +25,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/admin44/audit-log', icon: '📜', label: 'سجل العمليات' },
   { href: '/admin44/admins', icon: '👥', label: 'إدارة المديرين', permission: 'admins.manage' },
   { href: '/admin44/settings', icon: '⚙️', label: 'الإعدادات', permission: 'settings.edit' },
+  { href: '/admin44/settings/theme', icon: '🎨', label: 'تخصيص الألوان', permission: 'settings.edit' },
 ];
 
 interface Props {
