@@ -1025,6 +1025,54 @@ export type Database = {
         };
         Relationships: [];
       };
+      stories: {
+        Row: {
+          id: string;
+          title: string;
+          icon: string;
+          description: string | null;
+          href: string;
+          color_theme: 'emerald' | 'amber' | 'rose' | 'paper' | 'ink';
+          sort_order: number;
+          is_active: boolean;
+          starts_at: string | null;
+          ends_at: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          icon: string;
+          description?: string | null;
+          href?: string;
+          color_theme?: 'emerald' | 'amber' | 'rose' | 'paper' | 'ink';
+          sort_order?: number;
+          is_active?: boolean;
+          starts_at?: string | null;
+          ends_at?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          icon?: string;
+          description?: string | null;
+          href?: string;
+          color_theme?: 'emerald' | 'amber' | 'rose' | 'paper' | 'ink';
+          sort_order?: number;
+          is_active?: boolean;
+          starts_at?: string | null;
+          ends_at?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       appointments_with_users: {
