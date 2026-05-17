@@ -61,6 +61,7 @@ export default async function SettingsPage() {
       <div style={{ background: '#fff', borderRadius: 14, padding: 20, marginBottom: 16 }}>
         <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}>🔗 روابط الإدارة</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10 }}>
+          <SettingsLink href="/admin44/settings/theme" icon="🎨" title="تخصيص الألوان" desc="غيّر ألوان المنصة كاملة" />
           <SettingsLink href="/admin44/admins" icon="👥" title="إدارة المديرين" desc="إضافة وتعيين الأدوار" />
           <SettingsLink href="/admin44/audit-log" icon="📜" title="سجل العمليات" desc="مراجعة كل النشاط الإداري" />
           <SettingsLink href="/admin44/coupons" icon="🎁" title="الكوبونات" desc="إنشاء وإدارة الخصومات" />
