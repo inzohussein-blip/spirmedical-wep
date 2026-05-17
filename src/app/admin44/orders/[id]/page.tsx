@@ -4,6 +4,9 @@ import { notFound } from 'next/navigation';
 import { SPECIALIST_META, type SpecialistType } from '@/lib/specialist-types';
 import { decrypt } from '@/lib/encryption';
 import OrderAdminActions from './OrderAdminActions';
+import { FreeMedicalMapWrapper } from '@/components/ui/FreeMedicalMapWrapper';
+import { getOrderLocation, getAssignedSpecialistLocation } from './actions';
+import type { MapMarker } from '@/types/location';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,7 +25,13 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
 
   if (!order) notFound();
 
-  const [{ data: patient }, { data: specialist }, { data: availableSpecialists }] = await Promise.all([
+  const [
+    { data: patient },
+    { data: specialist },
+    { data: availableSpecialists },
+    orderLocation,
+    specialistLocation,
+  ] = await Promise.all([
     supabase.from('users').select('id, full_name, phone, governorate, email').eq('id', order.user_id).single(),
     order.assigned_specialist_id
       ? supabase.from('users').select('id, full_name, phone, specialist_type').eq('id', order.assigned_specialist_id).single()
@@ -33,7 +42,37 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
       .eq('approval_status', 'approved')
       .eq('is_suspended', false)
       .eq('specialist_type', (order as any).required_specialist_type ?? 'doctor'),
+    getOrderLocation(params.id),
+    getAssignedSpecialistLocation(params.id),
   ]);
+
+  // بناء markers للخريطة
+  const mapMarkers: MapMarker[] = [];
+
+  if (orderLocation) {
+    mapMarkers.push({
+      id: `patient-${orderLocation.appointment_id}`,
+      lat: orderLocation.lat,
+      lng: orderLocation.lng,
+      title: 'موقع المريض',
+      subtitle: orderLocation.address,
+      variant: 'patient',
+      popup: orderLocation.accuracy_m
+        ? `دقة الإحداثيات: ±${orderLocation.accuracy_m}م`
+        : undefined,
+    });
+  }
+
+  if (specialistLocation) {
+    mapMarkers.push({
+      id: `specialist-${order.assigned_specialist_id}`,
+      lat: specialistLocation.lat,
+      lng: specialistLocation.lng,
+      title: specialistLocation.full_name,
+      subtitle: specialistLocation.work_address ?? 'موقع العمل',
+      variant: 'specialist',
+    });
+  }
 
   let notesText: string | null = null;
   if (order.notes_encrypted) {
@@ -84,6 +123,38 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
               <div style={{ marginTop: 14, padding: 12, background: 'var(--paper-3)', borderRadius: 10 }}>
                 <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--ink-3)', marginBottom: 4 }}>ملاحظات المريض</div>
                 <p style={{ fontSize: 13, margin: 0 }}>{notesText}</p>
+              </div>
+            )}
+          </div>
+
+          {/* 🗺️ Map */}
+          <div style={{ background: '#fff', borderRadius: 14, padding: 18, marginBottom: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+              <h2 style={{ fontSize: 14, fontWeight: 800, margin: 0 }}>🗺️ الموقع على الخريطة</h2>
+              {mapMarkers.length > 1 && (
+                <span style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>
+                  {mapMarkers.length} مواقع
+                </span>
+              )}
+            </div>
+            <FreeMedicalMapWrapper
+              markers={mapMarkers}
+              height={340}
+              zoom={14}
+              showDirections={true}
+              showCoords={true}
+            />
+            {!orderLocation && (
+              <div style={{
+                marginTop: 10,
+                padding: '8px 12px',
+                background: 'var(--amber-soft, #F0DBC2)',
+                color: 'var(--amber, #B8540C)',
+                borderRadius: 8,
+                fontSize: 11,
+                fontWeight: 700,
+              }}>
+                ℹ️ المريض لم يلتقط موقعه عند إنشاء الطلب. يمكن العمل بالعنوان النصي فقط.
               </div>
             )}
           </div>
