@@ -293,7 +293,7 @@ async function sendOtpViaTelegram(
 ): Promise<{ success: boolean; messageId?: string; error?: string }> {
   // TODO: تكامل مع Telegram bot الموجود
   // يحتاج user_telegram_links لربط الرقم بالحساب
-  console.log(`[Telegram] Would send OTP ${otp} to ${phone}`);
+  console.warn(`[Telegram] Would send OTP ${otp} to ${phone}`);
   return { success: false, error: 'Telegram OTP غير مفعّل بعد' };
 }
 
@@ -302,6 +302,6 @@ async function sendOtpViaSms(
   otp: string
 ): Promise<{ success: boolean; messageId?: string; error?: string }> {
   // TODO: تكامل مع مزود SMS عراقي (Asiacell/Zain/etc)
-  console.log(`[SMS] Would send OTP ${otp} to ${phone}`);
+  console.warn(`[SMS] Would send OTP ${otp} to ${phone}`);
   return { success: false, error: 'SMS غير مفعّل بعد' };
 }
