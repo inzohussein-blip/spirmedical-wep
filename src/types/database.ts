@@ -983,6 +983,48 @@ export type Database = {
         };
         Relationships: [];
       };
+      app_theme_settings: {
+        Row: {
+          id: string;
+          primary_color: string;
+          primary_dark: string;
+          primary_soft: string;
+          accent_color: string;
+          danger_color: string;
+          theme_name: string;
+          is_active: boolean;
+          updated_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          primary_color?: string;
+          primary_dark?: string;
+          primary_soft?: string;
+          accent_color?: string;
+          danger_color?: string;
+          theme_name?: string;
+          is_active?: boolean;
+          updated_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          primary_color?: string;
+          primary_dark?: string;
+          primary_soft?: string;
+          accent_color?: string;
+          danger_color?: string;
+          theme_name?: string;
+          is_active?: boolean;
+          updated_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       appointments_with_users: {
