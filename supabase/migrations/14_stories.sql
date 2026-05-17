@@ -3,10 +3,16 @@
 -- ════════════════════════════════════════════════════════════════════
 -- نظام قصص ترويجية (مثل Instagram Stories) قابل للإدارة من admin44
 -- تظهر في dashboard المستخدم كصف من الـ circles
+--
+-- 🔧 ملاحظة: يبدأ بـ DROP TABLE IF EXISTS للتعامل مع
+-- جدول stories قديم قد يكون موجوداً
 -- ════════════════════════════════════════════════════════════════════
 
+-- ─── 0. حذف الجدول القديم إن وُجد (آمن إذا لا يوجد) ───
+DROP TABLE IF EXISTS public.stories CASCADE;
+
 -- ─── 1. الجدول ───
-CREATE TABLE IF NOT EXISTS public.stories (
+CREATE TABLE public.stories (
   id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 
   -- المحتوى
@@ -41,11 +47,11 @@ CREATE TABLE IF NOT EXISTS public.stories (
 );
 
 -- ─── 2. Indexes ───
-CREATE INDEX IF NOT EXISTS idx_stories_active_order
+CREATE INDEX idx_stories_active_order
   ON public.stories(is_active, sort_order)
   WHERE is_active = true;
 
-CREATE INDEX IF NOT EXISTS idx_stories_schedule
+CREATE INDEX idx_stories_schedule
   ON public.stories(starts_at, ends_at)
   WHERE is_active = true;
 
@@ -67,15 +73,12 @@ CREATE TRIGGER trg_stories_updated_at
   EXECUTE FUNCTION public.update_stories_updated_at();
 
 -- ─── 4. Seed: قصص افتراضية (5 قصص) ───
-INSERT INTO public.stories (title, icon, href, color_theme, sort_order)
-SELECT * FROM (VALUES
+INSERT INTO public.stories (title, icon, href, color_theme, sort_order) VALUES
   ('لقاحات', '💉', '/tools/vaccinations', 'rose', 1),
   ('صحتك', '🩺', '/account/health', 'emerald', 2),
   ('دواء', '💊', '/account/prescriptions', 'amber', 3),
   ('تغذية', '🍎', '/tools/risk-calculator', 'rose', 4),
-  ('إسعافات', '🚑', '/tools/first-aid', 'amber', 5)
-) AS v(title, icon, href, color_theme, sort_order)
-WHERE NOT EXISTS (SELECT 1 FROM public.stories);
+  ('إسعافات', '🚑', '/tools/first-aid', 'amber', 5);
 
 -- ─── 5. RLS Policies ───
 ALTER TABLE public.stories ENABLE ROW LEVEL SECURITY;
