@@ -50,6 +50,10 @@ export type Database = {
           preferred_otp_channel: 'whatsapp' | 'telegram' | 'sms';
           created_at: string;
           updated_at: string;
+          // ✨ GPS Work Location (V25):
+          work_lat: number | null;
+          work_lng: number | null;
+          work_address: string | null;
         };
         Insert: {
           id?: string;
@@ -81,6 +85,10 @@ export type Database = {
           preferred_otp_channel?: 'whatsapp' | 'telegram' | 'sms';
           created_at?: string;
           updated_at?: string;
+          // ✨ GPS Work Location (V25):
+          work_lat?: number | null;
+          work_lng?: number | null;
+          work_address?: string | null;
         };
         Update: {
           id?: string;
@@ -112,6 +120,10 @@ export type Database = {
           preferred_otp_channel?: 'whatsapp' | 'telegram' | 'sms';
           created_at?: string;
           updated_at?: string;
+          // ✨ GPS Work Location (V25):
+          work_lat?: number | null;
+          work_lng?: number | null;
+          work_address?: string | null;
         };
         Relationships: [];
       };
@@ -147,6 +159,11 @@ export type Database = {
           nursing_actions: Json | null;
           prescription_data: Json | null;
           session_plan: Json | null;
+          // ✨ GPS Locations (V25):
+          location_lat: number | null;
+          location_lng: number | null;
+          location_accuracy_m: number | null;
+          location_captured_at: string | null;
         };
         Insert: {
           id?: string;
@@ -179,6 +196,11 @@ export type Database = {
           nursing_actions?: Json | null;
           prescription_data?: Json | null;
           session_plan?: Json | null;
+          // ✨ GPS Locations (V25):
+          location_lat?: number | null;
+          location_lng?: number | null;
+          location_accuracy_m?: number | null;
+          location_captured_at?: string | null;
         };
         Update: {
           id?: string;
@@ -211,6 +233,11 @@ export type Database = {
           nursing_actions?: Json | null;
           prescription_data?: Json | null;
           session_plan?: Json | null;
+          // ✨ GPS Locations (V25):
+          location_lat?: number | null;
+          location_lng?: number | null;
+          location_accuracy_m?: number | null;
+          location_captured_at?: string | null;
         };
         Relationships: [
           {
