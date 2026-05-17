@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import DashboardSearch from './search-client';
 import DashboardPills from './pills-client';
+import StoriesRow from '@/components/dashboard/StoriesRow';
 
 export const dynamic = 'force-dynamic';
 
@@ -11,15 +12,8 @@ export const metadata = {
 };
 
 // ============================================================
-// Stories - بدون خانة "إضافة" (محصورة في الشركات)
+// Stories - مُدارة الآن من admin44/stories (V25)
 // ============================================================
-const STORIES = [
-  { id: 'vaccines', icon: '💉', label: 'لقاحات' },
-  { id: 'health', icon: '🩺', label: 'صحتك' },
-  { id: 'meds', icon: '💊', label: 'دواء' },
-  { id: 'nutrition', icon: '🍎', label: 'تغذية' },
-  { id: 'firstaid', icon: '🚑', label: 'إسعافات' },
-];
 
 const PROMO_CARDS = [
 {
@@ -156,22 +150,8 @@ export default async function DashboardPage() {
         {/* Quick Action Pills */}
         <DashboardPills />
 
-        {/* Stories */}
-        <div className="scr-stories" aria-label="القصص الطبية">
-          {STORIES.map((story) => (
-            <button
-              key={story.id}
-              type="button"
-              className="story"
-              aria-label={`قصة: ${story.label}`}
-            >
-              <div className="story-circle">
-                <div className="story-inner">{story.icon}</div>
-              </div>
-              <div className="story-label">{story.label}</div>
-            </button>
-          ))}
-        </div>
+        {/* Stories - من admin44/stories */}
+        <StoriesRow />
 
         {/* البطاقات الإعلانية */}
         <div className="scr-promo-cards">
