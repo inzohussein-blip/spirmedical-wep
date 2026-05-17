@@ -639,7 +639,8 @@ export default function BloodDrawFlow({
           display: flex;
           flex-direction: column;
           gap: 14px;
-          padding-bottom: 160px;
+          padding-bottom: 130px;
+          position: relative;
         }
 
         /* ─── HERO ─── */
@@ -1215,30 +1216,28 @@ export default function BloodDrawFlow({
           font-weight: 700;
         }
 
-        /* ─── STICKY FOOTER ─── */
+        /* ─── STICKY FOOTER (داخل حدود التطبيق 480px) ─── */
         .bd-sticky-footer {
           position: fixed;
-          bottom: 76px; /* فوق الـ bottom-nav (76px) */
-          left: 50%;
-          transform: translateX(-50%);
+          bottom: 64px; /* فوق الـ bottom-nav مباشرة */
+          left: 0;
+          right: 0;
+          margin: 0 auto;
           width: 100%;
           max-width: 480px;
           background: var(--white, #FFFFFF);
-          border-top: 1px solid var(--line, rgba(15, 26, 28, 0.08));
-          border-left: 1px solid var(--line, rgba(15, 26, 28, 0.08));
-          border-right: 1px solid var(--line, rgba(15, 26, 28, 0.08));
-          padding: 10px 16px;
+          padding: 10px 14px 12px;
           z-index: 35;
-          box-shadow: 0 -8px 24px -10px rgba(0, 0, 0, 0.12);
-          transition: padding 0.2s ease;
           box-sizing: border-box;
+          border-top: 1px solid var(--line, rgba(15, 26, 28, 0.08));
+          transition: all 0.2s ease;
         }
-        /* الحالة المضغوطة: ملتصق بالأسفل تماماً + داخل حدود التطبيق */
+        /* الحالة المضغوطة: شريط نحيف ملتصق بالأسفل */
         .bd-sticky-footer-compact {
-          padding: 6px 16px;
-          bottom: 76px;
-          background: var(--white, #FFFFFF);
-          box-shadow: 0 -4px 12px -6px rgba(0, 0, 0, 0.08);
+          padding: 6px 14px 8px;
+          background: var(--paper-2, #F4EFE2);
+          border-top: 1px solid var(--line, rgba(15, 26, 28, 0.06));
+          box-shadow: none;
         }
         .bd-price-card {
           background: var(--paper-3, #FAF6EB);
@@ -1287,20 +1286,26 @@ export default function BloodDrawFlow({
           cursor: pointer;
           transition: all 0.2s;
           box-shadow: 0 6px 16px -4px rgba(14, 92, 77, 0.4);
+          box-sizing: border-box;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
         }
         .bd-submit-btn:hover:not(:disabled) {
           background: var(--emerald-deep, #073B30);
           transform: translateY(-1px);
         }
         .bd-submit-btn:disabled {
-          opacity: 0.55;
-          cursor: not-allowed;
-          box-shadow: none;
-          padding: 7px;
+          background: transparent;
+          color: var(--ink-3, #6E7878);
+          padding: 4px;
           font-size: 11px;
-          font-weight: 700;
-          background: var(--ink-3, #6E7878);
-          border-radius: 9px;
+          font-weight: 600;
+          border-radius: 0;
+          box-shadow: none;
+          cursor: not-allowed;
+          opacity: 0.7;
         }
         .bd-trust-row {
           text-align: center;
