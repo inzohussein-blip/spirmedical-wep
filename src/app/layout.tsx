@@ -4,6 +4,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { CookieConsent } from '@/components/legal/CookieConsent';
 import StructuredData from '@/components/seo/StructuredData';
 import PWAManager from '@/components/ui/PWAManager';
+import { ThemeProvider } from '@/components/theme/ThemeProvider';
 
 // خطوط — Tajawal فقط (وحّدنا الخط في V15)
 // JetBrains-Mono للأرقام والوقت فقط
@@ -217,7 +218,9 @@ export default function RootLayout({
         <StructuredData />
       </head>
       <body>
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
         <CookieConsent />
         <PWAManager />
         <Analytics />
