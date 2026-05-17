@@ -1225,17 +1225,20 @@ export default function BloodDrawFlow({
           max-width: 480px;
           background: var(--white, #FFFFFF);
           border-top: 1px solid var(--line, rgba(15, 26, 28, 0.08));
-          padding: 12px 16px;
+          border-left: 1px solid var(--line, rgba(15, 26, 28, 0.08));
+          border-right: 1px solid var(--line, rgba(15, 26, 28, 0.08));
+          padding: 10px 16px;
           z-index: 35;
           box-shadow: 0 -8px 24px -10px rgba(0, 0, 0, 0.12);
           transition: padding 0.2s ease;
+          box-sizing: border-box;
         }
-        /* الحالة المضغوطة: عند تعطيل الزر، لا يحجب المحتوى */
+        /* الحالة المضغوطة: ملتصق بالأسفل تماماً + داخل حدود التطبيق */
         .bd-sticky-footer-compact {
-          padding: 8px 16px;
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px);
+          padding: 6px 16px;
+          bottom: 76px;
+          background: var(--white, #FFFFFF);
+          box-shadow: 0 -4px 12px -6px rgba(0, 0, 0, 0.08);
         }
         .bd-price-card {
           background: var(--paper-3, #FAF6EB);
@@ -1293,10 +1296,11 @@ export default function BloodDrawFlow({
           opacity: 0.55;
           cursor: not-allowed;
           box-shadow: none;
-          padding: 9px;
-          font-size: 12px;
+          padding: 7px;
+          font-size: 11px;
           font-weight: 700;
           background: var(--ink-3, #6E7878);
+          border-radius: 9px;
         }
         .bd-trust-row {
           text-align: center;
