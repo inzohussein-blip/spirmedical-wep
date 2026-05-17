@@ -77,7 +77,7 @@ export async function POST(request: Request) {
       // ملاحظة: الرسائل الواردة (value.messages) تُتجاهل حالياً
       // ستُعالج عند إضافة البوت في مرحلة مستقبلية
       if (value.messages?.length) {
-        console.log(
+        console.warn(
           `[Webhook] Received ${value.messages.length} message(s) - bot not enabled yet`
         );
       }
