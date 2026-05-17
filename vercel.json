@@ -118,7 +118,7 @@
   "crons": [
     {
       "path": "/api/notifications/process",
-      "schedule": "* * * * *"
+      "schedule": "0 9 * * *"
     }
   ]
 }
