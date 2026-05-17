@@ -19,6 +19,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/admin44/patients', icon: '👤', label: 'المرضى (CRM)', permission: 'patients.view' },
   { href: '/admin44/orders', icon: '📋', label: 'الطلبات', permission: 'orders.view' },
   { href: '/admin44/notifications', icon: '💬', label: 'الإشعارات' },
+  { href: '/admin44/stories', icon: '📸', label: 'القصص الترويجية' },
   { href: '/admin44/reports', icon: '📈', label: 'التقارير', permission: 'reports.view' },
   { href: '/admin44/campaigns', icon: '📧', label: 'الحملات', permission: 'campaigns.manage' },
   { href: '/admin44/coupons', icon: '🎁', label: 'الكوبونات', permission: 'coupons.manage' },
