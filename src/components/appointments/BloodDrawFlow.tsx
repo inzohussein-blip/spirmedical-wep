@@ -585,8 +585,8 @@ export default function BloodDrawFlow({
       )}
 
       {/* ═══ Sticky Footer للسعر والإرسال ═══ */}
-      <div className="bd-sticky-footer">
-        {selectedTests.length > 0 && (
+      <div className={`bd-sticky-footer ${!canSubmit ? 'bd-sticky-footer-compact' : ''}`}>
+        {selectedTests.length > 0 && canSubmit && (
           <div className="bd-price-card">
             <div className="bd-price-line">
               <span>التحاليل ({selectedTests.length})</span>
@@ -624,12 +624,14 @@ export default function BloodDrawFlow({
           )}
         </button>
 
-        <div className="bd-trust-row">
-          <Lock size={12} strokeWidth={2.2} aria-hidden />
-          <span>معلوماتك مشفّرة · صناعة عراقية ·</span>
-          <Star size={12} strokeWidth={2.4} fill="currentColor" aria-hidden />
-          <span>معتمد طبياً</span>
-        </div>
+        {canSubmit && (
+          <div className="bd-trust-row">
+            <Lock size={12} strokeWidth={2.2} aria-hidden />
+            <span>معلوماتك مشفّرة · صناعة عراقية ·</span>
+            <Star size={12} strokeWidth={2.4} fill="currentColor" aria-hidden />
+            <span>معتمد طبياً</span>
+          </div>
+        )}
       </div>
 
       <style jsx>{`
@@ -637,7 +639,7 @@ export default function BloodDrawFlow({
           display: flex;
           flex-direction: column;
           gap: 14px;
-          padding-bottom: 260px;
+          padding-bottom: 160px;
         }
 
         /* ─── HERO ─── */
@@ -1226,6 +1228,14 @@ export default function BloodDrawFlow({
           padding: 12px 16px;
           z-index: 35;
           box-shadow: 0 -8px 24px -10px rgba(0, 0, 0, 0.12);
+          transition: padding 0.2s ease;
+        }
+        /* الحالة المضغوطة: عند تعطيل الزر، لا يحجب المحتوى */
+        .bd-sticky-footer-compact {
+          padding: 8px 16px;
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
         }
         .bd-price-card {
           background: var(--paper-3, #FAF6EB);
@@ -1280,9 +1290,13 @@ export default function BloodDrawFlow({
           transform: translateY(-1px);
         }
         .bd-submit-btn:disabled {
-          opacity: 0.45;
+          opacity: 0.55;
           cursor: not-allowed;
           box-shadow: none;
+          padding: 9px;
+          font-size: 12px;
+          font-weight: 700;
+          background: var(--ink-3, #6E7878);
         }
         .bd-trust-row {
           text-align: center;
