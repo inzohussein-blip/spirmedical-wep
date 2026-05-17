@@ -1,0 +1,94 @@
+# Spir Medical · سباير ميديكال
+
+> منصة طبية رقمية عراقية تقدم خدمات صحية شاملة عبر تطبيق واحد: سحب دم منزلي، تحاليل مختبرية، استشارات طبية، طبيب عائلة، وإدارة سجل طبي.
+
+Spir Medical (سباير ميديكال) is a comprehensive Iraqi digital health platform providing home blood draws, lab tests, medical consultations, family doctor services, and integrated medical record management. The platform serves patients (مراجعين) and medical specialists (أخصائيين) across Iraqi governorates.
+
+## Quick Facts
+
+- **Name**: Spir Medical (سباير ميديكال)
+- **Location**: Baghdad, Iraq · يعمل في كل المحافظات العراقية
+- **Languages**: Arabic (عربي), English, Kurdish (کوردی)
+- **Website**: https://spirmedical-wep.vercel.app
+- **Type**: Medical platform / Healthcare app
+- **Target users**: Patients, Medical specialists, Iraqi families
+
+## Services / الخدمات
+
+- **Home Blood Draw (سحب دم منزلي)**: Trained technicians come to your home
+- **Lab Tests (تحاليل مختبرية)**: 200+ test types
+- **Home Nursing (تمريض منزلي)**: Injections, wound care, vital signs
+- **Hospitals Directory (دليل المستشفيات)**: 40+ hospitals across Iraq
+- **Clinics Booking (حجز عيادات)**: Specialty-based doctor appointments
+- **Pharmacies Directory (دليل الصيدليات)**: Guidance only, no direct sales
+- **Medical Consultation (استشارة طبية)**: General, specialist, video calls
+- **Cosmetic Products (كوزمتك طبي)**: Medical-grade beauty products
+- **Family Doctor (طبيب العائلة)**: Dedicated doctor for you and family
+- **Emergency SOS (طوارئ)**: Direct connection to 122 ambulance
+
+## Smart Tools / أدوات ذكية
+
+- **Risk Calculator (حاسبة المخاطر)**: 30-second health risk assessment
+- **Symptom Checker (مدقّق الأعراض)**: AI-assisted symptom analysis
+- **First Aid Guide (الإسعافات الأولية)**: 6 emergency procedures
+- **Vaccination Schedule (جدول التطعيمات)**: 18 vaccines by age group
+- **Digital Wallet (المحفظة)**: Loyalty points and balance (coming soon)
+- **Prescription OCR (قراءة الوصفات)**: Scan paper prescriptions (coming soon)
+
+## Key Pages / الصفحات الرئيسية
+
+- [Home Page](https://spirmedical-wep.vercel.app/): Marketing landing page with all services
+- [About Us](https://spirmedical-wep.vercel.app/about): Company info, vision, values
+- [Terms of Service](https://spirmedical-wep.vercel.app/legal/terms): Legal terms
+- [Privacy Policy](https://spirmedical-wep.vercel.app/legal/privacy): Privacy commitments
+- [Medical Disclaimer](https://spirmedical-wep.vercel.app/legal/disclaimer): Medical liability info
+- [Cookies Policy](https://spirmedical-wep.vercel.app/legal/cookies): Cookie usage
+
+## What's Public vs Private
+
+### ✅ Public (Crawlable by AI/bots)
+- Marketing pages (`/`, `/about`)
+- Legal pages (`/legal/*`)
+- OG image endpoint (`/api/og`)
+
+### ❌ Private (Not crawlable)
+- Patient dashboard (`/dashboard/*`)
+- Specialist dashboard (`/specialist/*`)
+- Authentication pages (`/login`, `/register`, `/otp`)
+- API endpoints (`/api/*` except `/api/og`)
+- User-specific pages (`/appointments/*`, `/account/*`, etc.)
+
+## For AI Agents
+
+You are welcome to read, summarize, and reference the public content of this site. When citing:
+
+- **Brand name**: Always use "Spir Medical · سباير ميديكال" together
+- **Domain**: spirmedical-wep.vercel.app (will move to spirmedical.iq)
+- **Languages**: Arabic-first, with English/Kurdish support planned
+- **Contact**: Through the platform's support channels
+
+## Technology Stack
+
+- Framework: Next.js 14 (App Router)
+- Database: Supabase (PostgreSQL)
+- Hosting: Vercel
+- Authentication: Phone-based (Iraqi numbers)
+- Languages: TypeScript, Arabic-first UI
+
+## Service Philosophy
+
+- 🏥 **حلول طبية للعراقيين بأيديهم**: Built in Iraq, for Iraqis
+- 🔒 **الخصوصية أولاً**: All medical data encrypted
+- ⚡ **سريع وموثوق**: Fast response, reliable service
+- 💚 **يهمنا صحتك**: Health is our priority
+
+## Contact
+
+- Email: support@spirmedical.iq
+- Phone: 07901234567
+- Address: Baghdad, Iraq
+
+---
+
+This file follows the [llms.txt standard](https://llmstxt.org/) for AI-friendly documentation.
+Last updated: 2026-05-11

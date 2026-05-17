@@ -1,0 +1,78 @@
+{
+  "common": {
+    "appName": "Spir Medical",
+    "appNameEn": "Spir Medical",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "search": "Search",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "appointments": "Appointments",
+    "profile": "Profile",
+    "logout": "Logout",
+    "login": "Login",
+    "admin": "Admin"
+  },
+  "auth": {
+    "loginTitle": "Sign In",
+    "loginSubtitle": "Enter your phone number to receive a verification code",
+    "phoneLabel": "Phone Number",
+    "phonePlaceholder": "07XX XXX XXXX",
+    "sendOtp": "Send Code",
+    "otpTitle": "Verify Your Phone",
+    "otpSubtitle": "Enter the 6-digit code sent to you",
+    "otpLabel": "Verification Code",
+    "otpPlaceholder": "000000",
+    "verify": "Verify",
+    "resend": "Resend",
+    "logoutSuccess": "Logged out successfully",
+    "errorPhoneInvalid": "Invalid phone number",
+    "errorOtpInvalid": "Invalid code",
+    "errorGeneric": "An error occurred, please try again"
+  },
+  "appointments": {
+    "title": "Appointments",
+    "newAppointment": "New Appointment",
+    "noAppointments": "No appointments yet",
+    "serviceType": "Service Type",
+    "scheduledAt": "Scheduled Time",
+    "address": "Address",
+    "notes": "Notes",
+    "status": "Status",
+    "statusPending": "Pending",
+    "statusConfirmed": "Confirmed",
+    "statusInProgress": "In Progress",
+    "statusCompleted": "Completed",
+    "statusCancelled": "Cancelled",
+    "createSuccess": "Appointment created successfully",
+    "updateSuccess": "Appointment updated",
+    "deleteSuccess": "Appointment deleted",
+    "deleteConfirm": "Are you sure you want to delete this appointment?"
+  },
+  "dashboard": {
+    "welcome": "Welcome",
+    "totalAppointments": "Total Appointments",
+    "upcomingAppointments": "Upcoming Appointments",
+    "completedAppointments": "Completed Appointments",
+    "viewAll": "View All"
+  },
+  "errors": {
+    "notFound": "Page not found",
+    "serverError": "Server error",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Forbidden",
+    "validation": "Invalid data"
+  }
+}

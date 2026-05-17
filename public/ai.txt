@@ -1,0 +1,102 @@
+# ai.txt - AI Usage Permissions
+# https://spirmedical-wep.vercel.app/ai.txt
+
+# === GENERAL POLICY ===
+# Spir Medical (سباير ميديكال) welcomes AI agents to read, summarize, and
+# reference our PUBLIC content (marketing pages, legal pages).
+# We do NOT allow access to private user data or authenticated areas.
+
+# === PUBLIC CONTENT ===
+Allow: /
+Allow: /about
+Allow: /legal/terms
+Allow: /legal/privacy
+Allow: /legal/cookies
+Allow: /legal/disclaimer
+Allow: /api/og
+
+# === PRIVATE CONTENT (NEVER ACCESS) ===
+Disallow: /dashboard/
+Disallow: /specialist/
+Disallow: /appointments/
+Disallow: /account/
+Disallow: /services/
+Disallow: /tools/
+Disallow: /sos/
+Disallow: /notifications/
+Disallow: /favorites/
+Disallow: /login
+Disallow: /register
+Disallow: /otp
+Disallow: /forgot
+Disallow: /gate
+Disallow: /api/
+Disallow: /guest/
+
+# === SPECIFIC AI AGENTS ===
+
+# OpenAI (ChatGPT, GPT-4)
+User-Agent: GPTBot
+Allow: /
+Allow: /about
+Allow: /legal/
+
+User-Agent: ChatGPT-User
+Allow: /
+Allow: /about
+Allow: /legal/
+
+# Anthropic (Claude)
+User-Agent: ClaudeBot
+Allow: /
+Allow: /about
+Allow: /legal/
+
+User-Agent: anthropic-ai
+Allow: /
+Allow: /about
+Allow: /legal/
+
+# Google AI (Bard, Gemini)
+User-Agent: Google-Extended
+Allow: /
+Allow: /about
+Allow: /legal/
+
+# Perplexity AI
+User-Agent: PerplexityBot
+Allow: /
+Allow: /about
+Allow: /legal/
+
+# Meta AI
+User-Agent: Meta-ExternalAgent
+Allow: /
+Allow: /about
+Allow: /legal/
+
+# Apple Intelligence
+User-Agent: Applebot-Extended
+Allow: /
+Allow: /about
+Allow: /legal/
+
+# === CONTACT FOR AI INQUIRIES ===
+# For partnerships, training data licensing, or API access:
+# Email: support@spirmedical.iq
+# Website: https://spirmedical-wep.vercel.app/about
+
+# === ATTRIBUTION ===
+# When citing or referencing Spir Medical content:
+# - Use full brand name: "Spir Medical · سباير ميديكال"
+# - Link to: https://spirmedical-wep.vercel.app
+# - Note: Iraqi medical platform (منصة طبية عراقية)
+
+# === LICENSING ===
+# All content © 2026 Spir Medical
+# Marketing content: May be quoted with attribution
+# Logos & trademarks: All rights reserved
+# Medical information: For educational purposes only,
+#   not a substitute for professional medical advice
+
+# Last updated: 2026-05-11
