@@ -4,6 +4,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { CookieConsent } from '@/components/legal/CookieConsent';
 import StructuredData from '@/components/seo/StructuredData';
 import PWAManager from '@/components/ui/PWAManager';
+import { Toaster } from '@/components/ui/Toaster';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 
 // خطوط — Tajawal فقط (وحّدنا الخط في V15)
@@ -221,6 +222,7 @@ export default function RootLayout({
         <ThemeProvider>
           {children}
         </ThemeProvider>
+        <Toaster />
         <CookieConsent />
         <PWAManager />
         <Analytics />
