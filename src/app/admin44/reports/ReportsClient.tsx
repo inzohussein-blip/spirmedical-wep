@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { exportPatientsCSV, exportSpecialistsCSV, exportOrdersCSV } from './actions';
+import { toast } from '@/components/ui/Toaster';
 
 interface Props {
   fromDate: string;
@@ -30,8 +31,9 @@ export default function ReportsClient({ fromDate, toDate }: Props) {
       if (result.ok) {
         downloadCSV(result.csv, result.filename);
         setShowMenu(false);
+        toast.success('تم تصدير قائمة المرضى');
       } else {
-        alert('فشل التصدير: ' + result.error);
+        toast.error(`فشل التصدير: ${result.error}`);
       }
     });
   }
@@ -42,8 +44,9 @@ export default function ReportsClient({ fromDate, toDate }: Props) {
       if (result.ok) {
         downloadCSV(result.csv, result.filename);
         setShowMenu(false);
+        toast.success('تم تصدير قائمة الأخصائيين');
       } else {
-        alert('فشل التصدير: ' + result.error);
+        toast.error(`فشل التصدير: ${result.error}`);
       }
     });
   }
@@ -54,8 +57,9 @@ export default function ReportsClient({ fromDate, toDate }: Props) {
       if (result.ok) {
         downloadCSV(result.csv, result.filename);
         setShowMenu(false);
+        toast.success('تم تصدير قائمة الطلبات');
       } else {
-        alert('فشل التصدير: ' + result.error);
+        toast.error(`فشل التصدير: ${result.error}`);
       }
     });
   }
