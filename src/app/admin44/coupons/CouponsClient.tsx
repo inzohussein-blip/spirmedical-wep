@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { createCoupon, toggleCouponActive, deleteCoupon } from './actions';
-import { EmptyState } from '@/components/ui';
+import { EmptyState, useConfirm } from '@/components/ui';
 
 interface Coupon {
   id: string;
@@ -23,6 +23,7 @@ interface Props {
 }
 
 export default function CouponsClient({ coupons }: Props) {
+  const { confirm, ConfirmDialog } = useConfirm();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState('');
@@ -58,8 +59,14 @@ export default function CouponsClient({ coupons }: Props) {
     });
   }
 
-  function handleDelete(couponId: string, code: string) {
-    if (!confirm(`حذف الكوبون "${code}" نهائياً؟`)) return;
+  async function handleDelete(couponId: string, code: string) {
+    const ok = await confirm({
+      title: 'حذف الكوبون',
+      message: 'سيتم حذف الكوبون نهائياً.',
+      variant: 'danger',
+      confirmText: 'احذف',
+    });
+    if (!ok) return;
     startTransition(async () => {
       await deleteCoupon(couponId);
       router.refresh();
@@ -219,6 +226,7 @@ export default function CouponsClient({ coupons }: Props) {
           </table>
         </div>
       )}
+      <ConfirmDialog />
     </>
   );
 }
