@@ -63,6 +63,13 @@ const SECTION_SETTINGS = [
     href: '/account/settings',
   },
   {
+    id: 'locations',
+    icon: '📍',
+    title: 'مواقعي المحفوظة',
+    desc: 'البيت · العمل · مواقع متكررة',
+    href: '/account/locations',
+  },
+  {
     id: 'language',
     icon: '🌐',
     title: 'اللغة',
