@@ -21,7 +21,7 @@
 }
 
 .leaflet-popup-content {
-  margin: 10px 14px !important;
+  margin: 12px 14px !important;
   font-family: 'Tajawal', system-ui, sans-serif !important;
   line-height: 1.5 !important;
 }
@@ -495,7 +495,7 @@
   padding: 80px 0 60px;
   position: relative; overflow: hidden;
 }
-@media (max-width: 768px) { .landing-hero { padding: 50px 0 40px; } }
+@media (max-width: 768px) { .landing-hero { padding: 48px 0 40px; } }
 
 .landing-hero-bg {
   position: absolute; inset: 0;
@@ -508,7 +508,7 @@
 .landing-hero-grid {
   display: grid;
   grid-template-columns: 1.1fr 1fr;
-  gap: 60px;
+  gap: 64px;
   align-items: center;
   position: relative; z-index: 1;
 }
@@ -527,7 +527,7 @@
   font-weight: 700;
   margin-bottom: 16px;
   background: var(--emerald-soft);
-  padding: 6px 14px;
+  padding: 8px 14px;
   border-radius: 100px;
 }
 .landing-eyebrow .dot {
@@ -568,7 +568,7 @@
 
 .landing-cta-primary {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 14px 28px;
+  padding: 16px 28px;
   background: var(--btn-primary-bg); color: var(--paper-3);
   border-radius: 100px;
   font-size: 15px; font-weight: 800; text-align: center;
@@ -583,7 +583,7 @@
 
 .landing-cta-secondary {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 14px 28px;
+  padding: 16px 28px;
   background: var(--white); color: var(--ink);
   border: 1px solid var(--line-2);
   border-radius: 100px;
@@ -609,7 +609,7 @@
   margin-top: 28px;
 }
 .landing-trust-item {
-  display: inline-flex; align-items: center; gap: 6px;
+  display: inline-flex; align-items: center; gap: 8px;
   background: var(--white); border: 1px solid var(--line);
   padding: 8px 14px; border-radius: 100px;
   font-size: 12px; font-weight: 600; color: var(--ink-2);
@@ -629,9 +629,9 @@
   position: absolute;
   background: var(--white); border: 1px solid var(--line);
   border-radius: 18px;
-  padding: 18px 22px;
+  padding: 20px 22px;
   box-shadow: var(--shadow-lg);
-  display: flex; align-items: center; gap: 14px;
+  display: flex; align-items: center; gap: 16px;
   width: 280px;
   animation: float 6s ease-in-out infinite;
 }
@@ -673,7 +673,7 @@
 
 /* Features (info-card style) */
 .landing-features { padding: 80px 0; background: var(--paper-3); }
-@media (max-width: 768px) { .landing-features { padding: 50px 0; } }
+@media (max-width: 768px) { .landing-features { padding: 48px 0; } }
 
 .landing-features-grid {
   display: grid;
@@ -695,7 +695,7 @@
   box-shadow: var(--shadow-md);
   border-color: var(--line-2);
 }
-.landing-feature-icon { font-size: 32px; margin-bottom: 14px; }
+.landing-feature-icon { font-size: 32px; margin-bottom: 16px; }
 .landing-feature h3 {
   font-size: 16px; font-weight: 800; margin: 0 0 8px; color: var(--ink);
 }
@@ -704,7 +704,7 @@
 }
 
 /* Services Section */
-.landing-services-section { padding: 60px 0; }
+.landing-services-section { padding: 64px 0; }
 @media (max-width: 768px) { .landing-services-section { padding: 40px 0; } }
 
 .landing-services-grid {
@@ -732,7 +732,7 @@
   width: 52px; height: 52px;
   border-radius: 14px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 26px; margin-bottom: 14px;
+  font-size: 26px; margin-bottom: 16px;
 }
 .landing-service-icon.emerald { background: var(--emerald-soft); }
 .landing-service-icon.amber { background: var(--amber-soft); }
@@ -746,7 +746,7 @@
 }
 
 /* How (steps) */
-.landing-how { padding: 60px 0; background: var(--paper-3); }
+.landing-how { padding: 64px 0; background: var(--paper-3); }
 @media (max-width: 768px) { .landing-how { padding: 40px 0; } }
 .landing-steps {
   display: grid; grid-template-columns: repeat(3, 1fr);
@@ -778,7 +778,7 @@
   border-top: 1px solid var(--line);
 }
 @media (max-width: 768px) {
-  .landing-coverage-map { padding: 50px 0; }
+  .landing-coverage-map { padding: 48px 0; }
 }
 
 .landing-coverage-grid {
@@ -798,7 +798,7 @@
 .landing-coverage-map-wrap {
   background: #fff;
   border-radius: 20px;
-  padding: 14px;
+  padding: 16px;
   border: 1px solid var(--line);
   box-shadow: 0 4px 16px -6px rgba(15, 26, 28, 0.08);
 }
@@ -819,7 +819,7 @@
   font-weight: 800;
   color: var(--ink);
   margin: 0 0 16px;
-  padding-bottom: 14px;
+  padding-bottom: 16px;
   border-bottom: 1px solid var(--line);
 }
 
@@ -829,7 +829,7 @@
   margin: 0 0 16px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   max-height: 280px;
   overflow-y: auto;
 }
@@ -838,7 +838,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 12px;
+  padding: 12px 12px;
   background: var(--paper-3);
   border-radius: 10px;
   transition: all 0.15s;
@@ -902,7 +902,7 @@
   color: var(--ink);
   border-top: 1px solid var(--line);
 }
-@media (max-width: 768px) { .landing-cta-section { padding: 50px 0; } }
+@media (max-width: 768px) { .landing-cta-section { padding: 48px 0; } }
 .landing-cta-bg {
   position: absolute; inset: 0;
   background: radial-gradient(circle at 50% 50%, rgba(14,92,77,0.08) 0%, transparent 70%);
@@ -933,7 +933,7 @@
   padding: 80px 0 40px;
   border-top: 1px solid var(--line);
 }
-@media (max-width: 768px) { .landing-footer { padding: 50px 0 30px; } }
+@media (max-width: 768px) { .landing-footer { padding: 48px 0 30px; } }
 
 .landing-footer-grid {
   display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
@@ -959,14 +959,14 @@
 .landing-footer-col li {
   font-size: 13px;
   color: var(--ink-2);
-  padding: 6px 0;
+  padding: 8px 0;
   transition: color 0.15s;
 }
 .landing-footer-col li:hover { color: var(--emerald); }
 .landing-footer-col a {
   display: block; font-size: 13px;
   color: var(--ink-2);
-  padding: 6px 0; transition: color 0.15s;
+  padding: 8px 0; transition: color 0.15s;
 }
 .landing-footer-col a:hover { color: var(--emerald); }
 .landing-footer-col li a {
@@ -974,7 +974,7 @@
   display: inline;
 }
 .landing-footer-logo {
-  display: flex; align-items: center; gap: 14px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 16px; margin-bottom: 16px;
 }
 .landing-footer-logo > div {
   display: flex;
@@ -1054,11 +1054,11 @@
   border-radius: 100px;
   padding: 8px 14px;
   font-size: 12px; color: var(--ink-2); font-weight: 600;
-  margin-bottom: 18px; width: fit-content;
+  margin-bottom: 20px; width: fit-content;
 }
 .auth-back:hover { background: var(--paper-2); }
 
-.auth-header { text-align: center; margin: 18px 0 14px; }
+.auth-header { text-align: center; margin: 20px 0 14px; }
 
 .auth-logo {
   width: 60px; height: 60px;
@@ -1066,7 +1066,7 @@
   border-radius: 16px;
   display: inline-flex; align-items: center; justify-content: center;
   font-size: 30px; font-weight: 900;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   box-shadow: 0 8px 20px -4px rgba(14,92,77,0.4);
 }
 
@@ -1081,32 +1081,32 @@
 }
 
 .auth-role-badge {
-  display: inline-flex; align-items: center; gap: 6px;
+  display: inline-flex; align-items: center; gap: 8px;
   background: var(--emerald-soft); color: var(--emerald-deep);
-  padding: 6px 14px; border-radius: 100px;
+  padding: 8px 14px; border-radius: 100px;
   font-size: 11px; font-weight: 800;
   margin: 0 auto 12px; width: fit-content;
 }
 .auth-role-badge.specialist { background: var(--amber-soft); color: var(--amber); }
 
-.auth-title-section { text-align: center; margin: 10px 0 18px; }
+.auth-title-section { text-align: center; margin: 12px 0 18px; }
 .auth-title {
   font-size: 24px; font-weight: 900;
   margin: 0; color: var(--ink); letter-spacing: -0.01em;
 }
 .auth-subtitle {
   font-size: 13px; color: var(--ink-3);
-  margin-top: 6px; line-height: 1.6;
+  margin-top: 8px; line-height: 1.6;
 }
 
 .role-tabs {
   display: flex; gap: 4px;
   background: var(--paper-2);
   border-radius: 12px; padding: 4px;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 .role-tab {
-  flex: 1; padding: 10px;
+  flex: 1; padding: 12px;
   border-radius: 8px;
   font-size: 12px; font-weight: 600;
   text-align: center; color: var(--ink-3);
@@ -1122,12 +1122,12 @@
 .auth-form { display: flex; flex-direction: column; gap: 12px; }
 .auth-field { margin-bottom: 0; }
 .auth-field-section {
-  padding: 14px; background: var(--paper-2);
+  padding: 16px; background: var(--paper-2);
   border-radius: 14px; margin-bottom: 8px;
 }
 .auth-section-title {
   font-size: 13px; font-weight: 800;
-  color: var(--ink); margin-bottom: 6px;
+  color: var(--ink); margin-bottom: 8px;
 }
 .auth-section-hint {
   font-size: 11px; color: var(--ink-3); margin-bottom: 8px;
@@ -1135,7 +1135,7 @@
 
 .auth-field-label {
   font-size: 12px; font-weight: 700;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   display: flex; justify-content: space-between; align-items: center;
   color: var(--ink-2);
 }
@@ -1167,21 +1167,21 @@
   background: var(--white);
   border: 2px solid var(--line);
   border-radius: 14px;
-  padding: 18px;
+  padding: 20px;
   font-size: 26px;
   letter-spacing: 0.5em;
   text-align: center;
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
   color: var(--ink);
-  margin-bottom: 14px; outline: none;
+  margin-bottom: 16px; outline: none;
 }
 .auth-otp-input:focus { border-color: var(--emerald); }
 
 .auth-field-hint { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
 .auth-field-error { font-size: 12px; color: var(--rose); font-weight: 700; margin-top: 4px; }
 
-.auth-phone-wrap { display: flex; gap: 6px; }
+.auth-phone-wrap { display: flex; gap: 8px; }
 .auth-phone-prefix {
   background: var(--paper-2); border: 1px solid var(--line);
   padding: 12px; border-radius: 10px;
@@ -1206,15 +1206,15 @@
   padding: 5px 12px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px; font-weight: 700;
-  margin-top: 6px; color: var(--ink);
+  margin-top: 8px; color: var(--ink);
 }
 
 .auth-cta {
   background: var(--btn-primary-bg); color: var(--btn-primary-fg);
-  padding: 14px;
+  padding: 16px;
   border-radius: 12px;
   font-size: 14px; font-weight: 800;
-  text-align: center; margin-top: 6px;
+  text-align: center; margin-top: 8px;
   box-shadow: 0 6px 14px -4px rgba(14,92,77,0.4);
   border: 0; cursor: pointer; transition: all 0.15s;
   width: 100%;
@@ -1227,7 +1227,7 @@
 .auth-cta:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .auth-error {
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center; gap: 12px;
   padding: 12px 14px;
   background: var(--rose-soft); color: var(--rose);
   border-radius: 12px;
@@ -1262,9 +1262,9 @@
 }
 
 /* Gate options */
-.gate-options { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+.gate-options { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
 .gate-option {
-  display: flex; align-items: center; gap: 14px;
+  display: flex; align-items: center; gap: 16px;
   padding: 16px; background: var(--white);
   border: 1px solid var(--line); border-radius: 14px;
   transition: all 0.2s; text-align: right;
@@ -1300,7 +1300,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 18px 0 10px;
+  margin: 20px 0 10px;
   text-align: center;
 }
 .gate-divider::before,
@@ -1321,8 +1321,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 14px;
+  gap: 12px;
+  padding: 16px;
   background: transparent;
   border: 1px dashed var(--line-2);
   border-radius: 14px;
@@ -1342,9 +1342,9 @@
 }
 
 /* Role cards */
-.auth-role-cards { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+.auth-role-cards { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
 .auth-role-card {
-  display: flex; align-items: center; gap: 14px;
+  display: flex; align-items: center; gap: 16px;
   padding: 16px; background: var(--white);
   border: 1px solid var(--line); border-radius: 14px;
   cursor: pointer; transition: all 0.15s; text-align: right;
@@ -1421,7 +1421,7 @@
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
 }
 .app-logo {
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center; gap: 12px;
   color: var(--ink); flex-shrink: 0; border-radius: 8px;
 }
 .app-logo-mark {
@@ -1463,7 +1463,7 @@
   to { opacity: 1; transform: translateY(0); }
 }
 .app-drawer-user {
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center; gap: 12px;
   padding: 12px; background: var(--paper-2);
   border-radius: 12px; margin-bottom: 8px;
 }
@@ -1477,7 +1477,7 @@
 .app-drawer-role { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
 .app-drawer-link {
   display: flex; align-items: center; gap: 12px;
-  padding: 10px 12px; border-radius: 10px;
+  padding: 12px 12px; border-radius: 10px;
   color: var(--ink-2); font-size: 13px; font-weight: 700;
   border: 0; background: transparent; cursor: pointer;
   text-align: right; width: 100%; transition: all 0.15s;
@@ -1516,7 +1516,7 @@
 /* App Screens */
 .app-screen { background: var(--paper); min-height: 100%; }
 .scr-content {
-  padding: 18px 20px;
+  padding: 20px 20px;
   background: var(--paper);
   min-height: 600px;
 }
@@ -1545,7 +1545,7 @@
   background: var(--white); border: 1px solid var(--line);
   border-radius: 14px;
   padding: 12px 16px;
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center; gap: 12px;
   margin-bottom: 12px;
 }
 .scr-search-icon {
@@ -1613,8 +1613,8 @@
   margin: 0 0 14px;
   background: var(--ink); color: var(--paper-3);
   border-radius: 14px;
-  padding: 14px;
-  display: flex; align-items: center; gap: 10px;
+  padding: 16px;
+  display: flex; align-items: center; gap: 12px;
   position: relative; overflow: hidden;
 }
 .scr-banner::before {
@@ -1636,7 +1636,7 @@
 }
 .scr-banner-cta {
   font-size: 10px; font-weight: 800;
-  background: var(--amber); padding: 6px 10px;
+  background: var(--amber); padding: 8px 10px;
   border-radius: 8px;
   position: relative; z-index: 1;
   color: var(--paper-3); white-space: nowrap;
@@ -1648,7 +1648,7 @@
 }
 .scr-section-title {
   font-size: 11px; font-weight: 800;
-  display: flex; align-items: center; gap: 6px;
+  display: flex; align-items: center; gap: 8px;
   color: var(--ink);
 }
 .scr-section-title::before {
@@ -1669,7 +1669,7 @@
   position: relative;
   background: var(--white); border: 1px solid var(--line);
   border-radius: 14px;
-  padding: 14px;
+  padding: 16px;
   cursor: pointer; transition: all 0.15s;
   text-align: right; display: block; color: var(--ink);
   min-height: 100px;
@@ -1704,7 +1704,7 @@
 
 .service-icon {
   font-size: 36px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   display: block;
   line-height: 1;
 }
@@ -1735,7 +1735,7 @@
   font-size: 10px; color: var(--ink-3); line-height: 1.4;
 }
 .service-meta {
-  display: flex; gap: 6px; margin-top: 6px;
+  display: flex; gap: 8px; margin-top: 8px;
   font-size: 9px; color: var(--ink-3);
 }
 .service-arrow {
@@ -1753,7 +1753,7 @@
   font-size: 8px; font-weight: 800;
 }
 
-.service-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.service-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
 .service-info { flex: 1; }
 .service-duration, .service-price { font-size: 10px; color: var(--ink-3); }
 .service-radio {
@@ -1810,7 +1810,7 @@
 }
 .scr-empty-icon {
   font-size: 48px;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   opacity: 0.6;
 }
 .scr-empty-title {
@@ -1829,14 +1829,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   padding: 12px 24px;
   background: var(--btn-primary-bg);
   color: var(--btn-primary-fg);
   border-radius: 100px;
   font-size: 13px;
   font-weight: 800;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   transition: all 0.15s;
   box-shadow: 0 6px 14px -4px rgba(14,92,77,0.4);
 }
@@ -1849,7 +1849,7 @@
   font-size: 11px;
   color: var(--ink-3);
   font-weight: 700;
-  margin-top: 6px;
+  margin-top: 8px;
 }
 .scr-empty-link:hover { color: var(--emerald); }
 
@@ -1860,7 +1860,7 @@
   background: var(--paper-2);
   border-radius: 12px;
   padding: 4px;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -1891,7 +1891,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px;
+  padding: 16px;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -1926,13 +1926,13 @@
 .scr-account-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 .scr-account-row {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px;
+  padding: 16px;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -1998,8 +1998,8 @@
 .scr-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-  margin-bottom: 14px;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 .scr-stat {
   background: var(--white);
@@ -2028,7 +2028,7 @@
 /* Appointment Card (للـ Patient/Specialist) */
 .appt-card {
   display: block;
-  padding: 14px;
+  padding: 16px;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -2045,8 +2045,8 @@
 .appt-card-head {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 .appt-card-icon {
   width: 38px;
@@ -2082,7 +2082,7 @@
 }
 .appt-card-meta {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   font-size: 10px;
   color: var(--ink-3);
   padding-top: 8px;
@@ -2099,12 +2099,12 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 .scr-quick-action {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 12px;
   background: var(--white);
   border: 1px solid var(--line);
@@ -2267,7 +2267,7 @@
   color: var(--emerald);
   font-weight: 700;
   background: var(--emerald-soft);
-  padding: 6px 14px;
+  padding: 8px 14px;
   border-radius: 100px;
   margin-bottom: 16px;
 }
@@ -2289,7 +2289,7 @@
 }
 
 .legal-content section {
-  margin-bottom: 36px;
+  margin-bottom: 40px;
   scroll-margin-top: 24px;
 }
 .legal-content h2 {
@@ -2343,7 +2343,7 @@
 
 .legal-content blockquote {
   margin: 16px 0;
-  padding: 14px 18px;
+  padding: 16px 18px;
   background: var(--emerald-soft);
   border-right: 4px solid var(--emerald);
   border-radius: 8px;
@@ -2392,7 +2392,7 @@
   display: block;
   color: var(--emerald-deep);
   font-weight: 800;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   font-size: 14px;
 }
 
@@ -2411,7 +2411,7 @@
   display: block;
   color: var(--rose);
   font-weight: 800;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 /* Legal Inline Link (داخل النص) */
@@ -2468,7 +2468,7 @@
   background: var(--paper-3);
   border: 1px solid var(--line);
   border-radius: 12px;
-  padding: 14px;
+  padding: 16px;
   transition: all 0.15s;
 }
 .legal-right:hover {
@@ -2494,7 +2494,7 @@
 .legal-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
   margin: 24px 0 8px;
   padding-top: 20px;
   border-top: 1px solid var(--line);
@@ -2505,8 +2505,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 10px 18px;
+  gap: 8px;
+  padding: 12px 18px;
   background: var(--btn-primary-bg);
   color: var(--paper-3);
   border-radius: 100px;
@@ -2535,7 +2535,7 @@
   background: linear-gradient(135deg, var(--emerald-soft) 0%, var(--paper-3) 100%);
   border: 1px solid var(--emerald-soft);
   border-radius: 14px;
-  padding: 18px;
+  padding: 20px;
   margin: 20px 0;
 }
 .legal-contact-card h3,
@@ -2561,7 +2561,6 @@
 }
 .legal-footer p { margin-bottom: 8px; }
 
-
 /* ═══════════════════════════════════════════════════════════════════
    COOKIE BANNER + UTILITIES
    ═══════════════════════════════════════════════════════════════════ */
@@ -2582,20 +2581,20 @@
 .cookie-desc { font-size: 11px; color: var(--ink-3); line-height: 1.6; margin-bottom: 12px; }
 .cookie-options {
   display: flex; flex-direction: column; gap: 8px;
-  margin-bottom: 12px; padding: 10px;
+  margin-bottom: 12px; padding: 12px;
   background: var(--paper-2); border-radius: 10px;
 }
 .cookie-option { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-2); }
 .cookie-required { font-size: 10px; color: var(--ink-3); margin-right: auto; }
 .cookie-actions { display: flex; gap: 8px; }
 .cookie-btn {
-  flex: 1; padding: 10px; border: 0;
+  flex: 1; padding: 12px; border: 0;
   border-radius: 10px;
   font-size: 12px; font-weight: 800; cursor: pointer;
 }
 .cookie-btn.primary { background: var(--btn-primary-bg); color: var(--paper-3); }
 .cookie-btn.secondary { background: var(--paper-2); color: var(--ink); }
-.cookie-legal { font-size: 10px; color: var(--ink-3); text-align: center; margin-top: 10px; }
+.cookie-legal { font-size: 10px; color: var(--ink-3); text-align: center; margin-top: 12px; }
 .cookie-link { color: var(--emerald); font-weight: 700; }
 
 /* A11y */
@@ -2627,7 +2626,6 @@
    أضف هذا في نهاية src/app/globals.css
    ════════════════════════════════════════════════════════════════════ */
 
-
 /* ─────────────────────────────────────────────────────────
    AUTH CTA GROUP (مجموعة زرَين عمودية)
    ───────────────────────────────────────────────────────── */
@@ -2635,7 +2633,7 @@
 .auth-cta-group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   width: 100%;
 }
 
@@ -2647,7 +2645,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
   /* يأخذ ستايل auth-cta الافتراضي */
 }
 
@@ -2659,7 +2657,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
 
   background: var(--white) !important;
   color: var(--ink) !important;
@@ -2697,7 +2695,6 @@
    ════════════════════════════════════════════════════════════════════
    أضف هذا في نهاية src/app/globals.css
    ════════════════════════════════════════════════════════════════════ */
-
 
 /* ─────────────────────────────────────────────────────────
    1. زر الإشعارات + Avatar Link
@@ -2748,7 +2745,6 @@
   transform: scale(1.05);
 }
 
-
 /* ─────────────────────────────────────────────────────────
    2. البطاقات الإعلانية
    ───────────────────────────────────────────────────────── */
@@ -2771,7 +2767,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 18px;
+  padding: 20px;
   background: linear-gradient(135deg, var(--emerald-soft) 0%, #C0DD97 100%);
   color: var(--emerald-deep);
   border-radius: 18px;
@@ -2798,7 +2794,7 @@
   border-radius: 100px;
   font-size: 10px;
   font-weight: 800;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 .scr-promo-title {
   font-size: 16px;
@@ -2817,7 +2813,6 @@
   flex-shrink: 0;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    3. Service Cards (محسَّنة)
    ───────────────────────────────────────────────────────── */
@@ -2825,7 +2820,7 @@
 .services-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 12px;
 }
 
 .service-card {
@@ -2910,8 +2905,8 @@
   color: var(--ink);
   display: flex !important;
   align-items: center;
-  gap: 14px;
-  padding: 18px;
+  gap: 16px;
+  padding: 20px;
   border-radius: 16px;
   min-height: auto;
 }
@@ -2957,7 +2952,7 @@
   display: flex !important;
   align-items: center;
   gap: 12px;
-  padding: 14px;
+  padding: 16px;
   border-radius: 16px;
 }
 .service-emergency .service-icon {
@@ -2985,7 +2980,6 @@
   flex-shrink: 0;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    4. Account Profile Card
    ───────────────────────────────────────────────────────── */
@@ -3002,7 +2996,7 @@
 .account-profile-top {
   display: flex;
   align-items: flex-start;
-  gap: 14px;
+  gap: 16px;
   margin-bottom: 16px;
 }
 
@@ -3055,7 +3049,7 @@
   justify-content: center;
   gap: 8px;
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: var(--white);
@@ -3068,7 +3062,6 @@
 .account-edit-btn:hover {
   background: rgba(255, 255, 255, 0.25);
 }
-
 
 /* ─────────────────────────────────────────────────────────
    5. Account Stats (الإحصاءات)
@@ -3085,7 +3078,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 14px 8px;
+  padding: 16px 8px;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -3117,7 +3110,6 @@
   font-weight: 600;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    6. Account Sections (روابط الأقسام)
    ───────────────────────────────────────────────────────── */
@@ -3125,14 +3117,14 @@
 .account-sections {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .account-section-link {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px;
+  padding: 16px;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -3181,7 +3173,6 @@
   flex-shrink: 0;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    7. Account Logout + Switch
    ───────────────────────────────────────────────────────── */
@@ -3193,7 +3184,7 @@
   justify-content: center;
   gap: 8px;
   width: 100%;
-  padding: 14px;
+  padding: 16px;
   border-radius: 12px;
   font-size: 14px;
   font-weight: 700;
@@ -3223,7 +3214,6 @@
   border-color: var(--rose);
 }
 
-
 /* ─────────────────────────────────────────────────────────
    8. Account Footer
    ───────────────────────────────────────────────────────── */
@@ -3241,14 +3231,13 @@
   margin-bottom: 4px;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    9. Tabs (Favorites)
    ───────────────────────────────────────────────────────── */
 
 .scr-tabs {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   margin-bottom: 16px;
   padding: 4px;
   background: var(--paper-2);
@@ -3278,7 +3267,6 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-
 /* ─────────────────────────────────────────────────────────
    10. Suggestions (Favorites)
    ───────────────────────────────────────────────────────── */
@@ -3293,7 +3281,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px;
+  padding: 16px;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -3341,7 +3329,6 @@
   flex-shrink: 0;
 }
 
-
 /* ════════════════════════════════════════════════════════════════════
    انتهى - 10 أقسام جديدة
    ════════════════════════════════════════════════════════════════════ */
@@ -3350,7 +3337,6 @@
    ════════════════════════════════════════════════════════════════════
    أضف هذا في نهاية src/app/globals.css
    ════════════════════════════════════════════════════════════════════ */
-
 
 /* ─────────────────────────────────────────────────────────
    1. HEADER v2 - متراص ومدمج
@@ -3361,7 +3347,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   padding: 0;
 }
 
@@ -3369,7 +3355,7 @@
 .scr-header-user {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   text-decoration: none;
   color: var(--ink);
   transition: opacity 0.15s;
@@ -3423,7 +3409,7 @@
 /* اليسار: الأزرار */
 .scr-header-actions {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -3431,7 +3417,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 10px;
+  padding: 8px 10px;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 100px;
@@ -3484,14 +3470,13 @@
   border: 2px solid var(--white);
 }
 
-
 /* ─────────────────────────────────────────────────────────
    2. Quick Action Pills (جديد)
    ───────────────────────────────────────────────────────── */
 
 .scr-pills {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -3507,7 +3492,7 @@
 .scr-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   padding: 8px 14px;
   background: var(--white);
   border: 1px solid var(--line);
@@ -3551,7 +3536,6 @@
 .scr-pill-icon { font-size: 14px; }
 .scr-pill-label { font-size: 11px; font-weight: 700; }
 
-
 /* ════════════════════════════════════════════════════════════════════
    انتهى
    ════════════════════════════════════════════════════════════════════ */
@@ -3560,7 +3544,6 @@
    ════════════════════════════════════════════════════════════════════
    أضف في نهاية src/app/globals.css
    ════════════════════════════════════════════════════════════════════ */
-
 
 /* ─────────────────────────────────────────────────────────
    1. Page Subtitle (تحت العنوان)
@@ -3573,7 +3556,6 @@
   text-align: center;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    2. Info Banner
    ───────────────────────────────────────────────────────── */
@@ -3581,7 +3563,7 @@
 .scr-info-banner {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px;
   padding: 12px 14px;
   background: var(--paper-3);
   border: 1px solid var(--line);
@@ -3592,14 +3574,13 @@
   margin-bottom: 12px;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    3. Filter Pills (المدن، الاختصاصات)
    ───────────────────────────────────────────────────────── */
 
 .scr-filter-pills {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -3613,7 +3594,7 @@
 
 .scr-filter-pill {
   flex-shrink: 0;
-  padding: 6px 12px;
+  padding: 8px 12px;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 100px;
@@ -3636,7 +3617,6 @@
   border-color: var(--emerald);
 }
 
-
 /* ─────────────────────────────────────────────────────────
    4. Filter Tabs (segmented control)
    ───────────────────────────────────────────────────────── */
@@ -3652,7 +3632,7 @@
 
 .scr-filter-tab {
   flex: 1;
-  padding: 6px 10px;
+  padding: 8px 10px;
   background: transparent;
   border: none;
   border-radius: 100px;
@@ -3674,7 +3654,6 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-
 /* ─────────────────────────────────────────────────────────
    5. List Item (المستشفيات، الصيدليات، إلخ)
    ───────────────────────────────────────────────────────── */
@@ -3688,7 +3667,7 @@
 .scr-list-item {
   display: flex;
   gap: 12px;
-  padding: 14px;
+  padding: 16px;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -3737,7 +3716,7 @@
   margin-bottom: 3px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .scr-list-item-subtitle {
@@ -3763,16 +3742,15 @@
   display: flex;
   gap: 4px;
   flex-wrap: wrap;
-  margin: 6px 0;
+  margin: 8px 0;
 }
 
 .scr-list-item-actions {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   margin-top: 8px;
   flex-wrap: wrap;
 }
-
 
 /* ─────────────────────────────────────────────────────────
    6. Tags
@@ -3814,7 +3792,6 @@
   color: var(--white);
 }
 
-
 /* ─────────────────────────────────────────────────────────
    7. Action Button (in list items)
    ───────────────────────────────────────────────────────── */
@@ -3823,7 +3800,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 10px;
+  padding: 8px 10px;
   background: var(--paper-3);
   border: 1px solid var(--line);
   border-radius: 100px;
@@ -3853,7 +3830,6 @@
   color: var(--white);
 }
 
-
 /* ─────────────────────────────────────────────────────────
    8. Products Grid (Cosmetic)
    ───────────────────────────────────────────────────────── */
@@ -3861,7 +3837,7 @@
 .scr-products-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 12px;
 }
 
 .scr-product-card {
@@ -3921,14 +3897,14 @@
 .scr-product-store {
   font-size: 9px;
   color: var(--ink-3);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .scr-product-bottom {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
+  gap: 8px;
 }
 
 .scr-product-price {
@@ -3964,7 +3940,6 @@
   cursor: not-allowed;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    9. SOS Page
    ───────────────────────────────────────────────────────── */
@@ -3973,7 +3948,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px;
+  padding: 16px;
   background: #FBE8EA;
   border: 1px solid #F0D7D8;
   border-radius: 14px;
@@ -4052,7 +4027,6 @@
   letter-spacing: 2px;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    10. Emergency Numbers
    ───────────────────────────────────────────────────────── */
@@ -4060,7 +4034,7 @@
 .scr-emergency-numbers {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .scr-emergency-card {
@@ -4112,7 +4086,6 @@
   letter-spacing: 1px;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    11. FAQ Items
    ───────────────────────────────────────────────────────── */
@@ -4133,7 +4106,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px;
+  padding: 16px;
   cursor: pointer;
   font-size: 13px;
   font-weight: 700;
@@ -4164,7 +4137,6 @@
   color: var(--ink-2);
   line-height: 1.7;
 }
-
 
 /* ─────────────────────────────────────────────────────────
    12. Toggle Switch (Notifications)
@@ -4217,7 +4189,6 @@
   transform: translateX(18px);
 }
 
-
 /* ─────────────────────────────────────────────────────────
    13. Notification Dot Inline
    ───────────────────────────────────────────────────────── */
@@ -4230,7 +4201,6 @@
   border-radius: 50%;
 }
 
-
 /* ════════════════════════════════════════════════════════════════════
    انتهى - 13 قسم CSS جديد
    ════════════════════════════════════════════════════════════════════ */
@@ -4239,7 +4209,6 @@
    ════════════════════════════════════════════════════════════════════
    أضف في نهاية src/app/globals.css
    ════════════════════════════════════════════════════════════════════ */
-
 
 /* ─────────────────────────────────────────────────────────
    1. STICKY NAV + DESKTOP LINKS + MOBILE MENU
@@ -4300,7 +4269,7 @@ html {
 .landing-lang-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   padding: 8px 12px;
   background: transparent;
   border: 1px solid var(--line);
@@ -4323,7 +4292,7 @@ html {
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 12px;
-  padding: 6px;
+  padding: 8px;
   box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.15);
   opacity: 0;
   visibility: hidden;
@@ -4460,7 +4429,7 @@ html {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px 16px;
+  padding: 16px 16px;
   background: transparent;
   border-radius: 12px;
   font-size: 14px;
@@ -4498,7 +4467,7 @@ html {
 
 .landing-mobile-langs-buttons {
   display: flex;
-  gap: 6px;
+  gap: 8px;
 }
 
 .landing-mobile-langs-buttons button {
@@ -4507,7 +4476,7 @@ html {
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  padding: 10px;
+  padding: 12px;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 10px;
@@ -4522,7 +4491,6 @@ html {
   color: var(--white);
   border-color: var(--emerald);
 }
-
 
 /* ─────────────────────────────────────────────────────────
    2. HERO - Phone Mockup matching the actual App
@@ -4711,7 +4679,7 @@ html {
 .landing-phone-promo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 12px;
   background: linear-gradient(135deg, #D9E5DF 0%, #C0DD97 100%);
   border: 1px solid rgba(7, 59, 48, 0.08);
@@ -4750,7 +4718,7 @@ html {
 .landing-phone-featured {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 12px;
   background: var(--white);
   border: 1px solid var(--line);
@@ -4796,7 +4764,7 @@ html {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 12px;
+  padding: 12px 12px;
   background: var(--white);
   border-radius: 12px;
   box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.15);
@@ -4854,14 +4822,13 @@ html {
   }
 }
 
-
 /* ─────────────────────────────────────────────────────────
    3. APP STORE BADGES
    ───────────────────────────────────────────────────────── */
 
 .landing-app-badges {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   margin-top: 24px;
   flex-wrap: wrap;
 }
@@ -4870,7 +4837,7 @@ html {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px;
+  padding: 12px 16px;
   background: var(--ink);
   color: var(--paper);
   border: none;
@@ -4918,13 +4885,12 @@ html {
   border-radius: 100px;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    4. STATS SECTION (إحصاءات)
    ───────────────────────────────────────────────────────── */
 
 .landing-stats {
-  padding: 60px 0;
+  padding: 64px 0;
   background: linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%);
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
@@ -4991,13 +4957,12 @@ html {
   color: var(--ink-3);
 }
 
-
 /* ─────────────────────────────────────────────────────────
    5. TESTIMONIALS (شهادات المستخدمين)
    ───────────────────────────────────────────────────────── */
 
 .landing-testimonials {
-  padding: 60px 0;
+  padding: 64px 0;
   background: var(--paper);
 }
 
@@ -5081,13 +5046,12 @@ html {
   color: var(--ink-3);
 }
 
-
 /* ─────────────────────────────────────────────────────────
    6. TRUST BADGES (الأمان والثقة)
    ───────────────────────────────────────────────────────── */
 
 .landing-trust-section {
-  padding: 60px 0;
+  padding: 64px 0;
   background: var(--paper-2);
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
@@ -5136,13 +5100,12 @@ html {
   margin: 0;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    7. DOCTORS SECTION (للأطباء والأخصائيين)
    ───────────────────────────────────────────────────────── */
 
 .landing-doctors {
-  padding: 60px 0;
+  padding: 64px 0;
 }
 
 .landing-doctors-card {
@@ -5291,7 +5254,6 @@ html {
   opacity: 0.9;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    8. CITIES MAP (المحافظات النشطة)
    ───────────────────────────────────────────────────────── */
@@ -5342,7 +5304,7 @@ html {
   font-size: 15px;
   font-weight: 800;
   color: var(--ink);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .landing-city-stats {
@@ -5375,13 +5337,12 @@ html {
   line-height: 1.7;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    9. FAQ (الأسئلة الشائعة)
    ───────────────────────────────────────────────────────── */
 
 .landing-faq {
-  padding: 60px 0;
+  padding: 64px 0;
   background: var(--paper-2);
 }
 
@@ -5455,7 +5416,6 @@ html {
   color: var(--ink-2);
   margin: 0;
 }
-
 
 /* ─────────────────────────────────────────────────────────
    10. BLOG (المدوّنة)
@@ -5558,7 +5518,6 @@ html {
   color: var(--emerald);
 }
 
-
 /* ─────────────────────────────────────────────────────────
    11. UTILITY: Hide on Mobile/Desktop
    ───────────────────────────────────────────────────────── */
@@ -5568,7 +5527,6 @@ html {
     display: none;
   }
 }
-
 
 /* ════════════════════════════════════════════════════════════════════
    انتهى - 11 تحسين CSS
@@ -5585,7 +5543,6 @@ html {
    ════════════════════════════════════════════════════════════════════
    أضف في نهاية src/app/globals.css
    ════════════════════════════════════════════════════════════════════ */
-
 
 /* ─────────────────────────────────────────────────────────
    1. إصلاح H1 - حجم Responsive ذكي
@@ -5613,7 +5570,6 @@ html {
   letter-spacing: -0.02em !important;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    2. إصلاح Hero Grid - تناسق أفضل
    ───────────────────────────────────────────────────────── */
@@ -5627,7 +5583,7 @@ html {
 .landing-hero-grid {
   display: grid !important;
   grid-template-columns: 1fr !important;
-  gap: 60px !important;
+  gap: 64px !important;
   align-items: center !important;
 }
 
@@ -5649,7 +5605,6 @@ html {
     max-width: none;
   }
 }
-
 
 /* ─────────────────────────────────────────────────────────
    3. إصلاح Hero Visual - حاوية الـ phone
@@ -5673,7 +5628,6 @@ html {
     padding: 20px;
   }
 }
-
 
 /* ─────────────────────────────────────────────────────────
    4. إصلاح Phone Mockup - حجم أفضل
@@ -5704,7 +5658,6 @@ html {
   padding: 40px 16px 16px;
   min-height: 500px;
 }
-
 
 /* ─────────────────────────────────────────────────────────
    5. إصلاح Floating Cards - RTL صحيح
@@ -5760,7 +5713,6 @@ html {
   }
 }
 
-
 /* ─────────────────────────────────────────────────────────
    6. إصلاح App Store Badges - direction LTR للإنجليزية
    ───────────────────────────────────────────────────────── */
@@ -5777,8 +5729,8 @@ html {
   direction: ltr;
   display: inline-flex !important;
   align-items: center;
-  gap: 10px;
-  padding: 10px 18px;
+  gap: 12px;
+  padding: 12px 18px;
   background: var(--ink);
   color: var(--paper);
   border: none;
@@ -5841,7 +5793,6 @@ html {
   white-space: nowrap;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    7. تحسين CTAs الـ Hero - تناسق أفضل
    ───────────────────────────────────────────────────────── */
@@ -5866,7 +5817,6 @@ html {
   }
 }
 
-
 /* ─────────────────────────────────────────────────────────
    8. تحسين landing-lede (النص الوصفي)
    ───────────────────────────────────────────────────────── */
@@ -5879,7 +5829,6 @@ html {
   margin-bottom: 8px !important;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    9. تحسين Eyebrow Badge
    ───────────────────────────────────────────────────────── */
@@ -5888,7 +5837,7 @@ html {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 14px;
+  padding: 8px 14px;
   background: var(--paper-3);
   border: 1px solid var(--line);
   border-radius: 100px;
@@ -5898,7 +5847,6 @@ html {
   margin-bottom: 16px;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    10. تحسين Phone elements (داخل الشاشة)
    ───────────────────────────────────────────────────────── */
@@ -5906,8 +5854,8 @@ html {
 .landing-phone-header {
   display: flex !important;
   align-items: center !important;
-  gap: 10px !important;
-  padding: 6px 0 !important;
+  gap: 12px !important;
+  padding: 8px 0 !important;
   margin-bottom: 12px;
 }
 
@@ -5920,27 +5868,27 @@ html {
   display: flex !important;
   align-items: center !important;
   gap: 8px;
-  padding: 10px 14px !important;
+  padding: 12px 14px !important;
   background: var(--white) !important;
   border: 1px solid var(--line);
   border-radius: 100px;
   font-size: 12px;
   color: var(--ink-3);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .landing-phone-pills {
   display: flex !important;
-  gap: 6px !important;
+  gap: 8px !important;
   overflow: hidden;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .landing-phone-grid {
   display: grid !important;
   grid-template-columns: repeat(3, 1fr) !important;
   gap: 8px !important;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .landing-phone-card {
@@ -5948,8 +5896,8 @@ html {
   flex-direction: column;
   align-items: center !important;
   justify-content: center;
-  gap: 6px;
-  padding: 14px 8px !important;
+  gap: 8px;
+  padding: 16px 8px !important;
   min-height: 70px;
 }
 
@@ -5963,7 +5911,6 @@ html {
   border-radius: 12px;
 }
 
-
 /* ════════════════════════════════════════════════════════════════════
    انتهى - 10 إصلاحات للـ Hero
    ════════════════════════════════════════════════════════════════════ */
@@ -5972,7 +5919,6 @@ html {
    ════════════════════════════════════════════════════════════════════
    أضف في نهاية src/app/globals.css
    ════════════════════════════════════════════════════════════════════ */
-
 
 /* ─────────────────────────────────────────────────────────
    1. Avatar - متغيرات الأخصائي
@@ -5988,7 +5934,6 @@ html {
   font-size: 28px !important;
   background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-deep) 100%);
 }
-
 
 /* ─────────────────────────────────────────────────────────
    2. Earnings Card (بطاقة الإيرادات)
@@ -6036,7 +5981,7 @@ html {
   letter-spacing: -1px;
   display: flex;
   align-items: baseline;
-  gap: 6px;
+  gap: 8px;
 }
 
 .spec-earnings-currency {
@@ -6048,7 +5993,7 @@ html {
 .spec-earnings-meta {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   padding-top: 12px;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -6061,7 +6006,6 @@ html {
   opacity: 0.9;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    3. Quick Actions Grid
    ───────────────────────────────────────────────────────── */
@@ -6069,14 +6013,14 @@ html {
 .spec-quick-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 8px;
 }
 
 .spec-quick-card {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 12px;
   background: var(--white);
   border: 1px solid var(--line);
@@ -6147,7 +6091,6 @@ html {
   flex-shrink: 0;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    4. Insights Grid
    ───────────────────────────────────────────────────────── */
@@ -6155,13 +6098,13 @@ html {
 .spec-insights-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 12px;
 }
 
 .spec-insight-card {
   display: flex;
-  gap: 10px;
-  padding: 14px;
+  gap: 12px;
+  padding: 16px;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -6197,7 +6140,6 @@ html {
   font-size: 10px;
   color: var(--ink-3);
 }
-
 
 /* ─────────────────────────────────────────────────────────
    5. Order Details - Status Banner + Steps
@@ -6238,7 +6180,6 @@ html {
   font-family: 'JetBrains Mono', monospace;
 }
 
-
 /* Progress Steps */
 .spec-order-steps {
   display: flex;
@@ -6251,7 +6192,7 @@ html {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   opacity: 0.4;
   transition: opacity 0.3s;
   flex-shrink: 0;
@@ -6305,7 +6246,6 @@ html {
   background: var(--btn-primary-bg);
 }
 
-
 /* ─────────────────────────────────────────────────────────
    6. Order Service Card
    ───────────────────────────────────────────────────────── */
@@ -6313,7 +6253,7 @@ html {
 .spec-order-service {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   padding: 16px;
   background: var(--white);
   border: 1px solid var(--line);
@@ -6344,7 +6284,6 @@ html {
   color: var(--ink-2);
 }
 
-
 /* ─────────────────────────────────────────────────────────
    7. Order Actions
    ───────────────────────────────────────────────────────── */
@@ -6360,7 +6299,7 @@ html {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px;
+  padding: 16px;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -6406,14 +6345,13 @@ html {
   border-color: #F0DBA5;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    8. Order list - actions hints
    ───────────────────────────────────────────────────────── */
 
 .appt-card-actions {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   margin-top: 8px;
   padding-top: 8px;
   border-top: 1px dashed var(--line);
@@ -6453,7 +6391,6 @@ html {
   padding: 0 5px;
   border-radius: 100px;
 }
-
 
 /* ─────────────────────────────────────────────────────────
    9. Schedule - Day rows
@@ -6524,12 +6461,12 @@ html {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   justify-content: flex-end;
 }
 
 .spec-time-input {
-  padding: 6px 10px;
+  padding: 8px 10px;
   background: var(--paper-3);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -6545,7 +6482,6 @@ html {
   color: var(--ink-3);
   font-style: italic;
 }
-
 
 /* ─────────────────────────────────────────────────────────
    10. Stats - Hero
@@ -6565,7 +6501,7 @@ html {
   font-size: 11px;
   opacity: 0.85;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .spec-stats-hero-amount {
@@ -6586,7 +6522,6 @@ html {
   font-size: 11px;
   opacity: 0.85;
 }
-
 
 /* Stat Row */
 .spec-stat-row {
@@ -6642,7 +6577,6 @@ html {
   flex-shrink: 0;
 }
 
-
 /* Rating Card */
 .spec-rating-card {
   background: var(--white);
@@ -6689,7 +6623,7 @@ html {
 .spec-rating-bar-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .spec-rating-bar-label {
@@ -6720,7 +6654,6 @@ html {
   min-width: 32px;
   text-align: end;
 }
-
 
 /* ─────────────────────────────────────────────────────────
    11. Account - Profile customization
@@ -6764,7 +6697,6 @@ html {
   font-weight: 800;
   flex-shrink: 0;
 }
-
 
 /* ─────────────────────────────────────────────────────────
    12. Chat (for future use)
@@ -6811,7 +6743,6 @@ html {
   flex-shrink: 0;
 }
 
-
 /* ════════════════════════════════════════════════════════════════════
    انتهى - 12 قسم CSS للأخصائي
    ════════════════════════════════════════════════════════════════════ */
@@ -6820,7 +6751,6 @@ html {
    ════════════════════════════════════════════════════════════════════
    نظام محادثات شبيه بـ ManyChat
    ════════════════════════════════════════════════════════════════════ */
-
 
 /* ─────────────────────────────────────────────────────────
    INBOX - Header Badge + Stats Bar
@@ -6848,7 +6778,7 @@ html {
 .inbox-stats-bar {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
+  gap: 8px;
   padding: 12px;
   background: var(--paper-2);
   border-radius: 12px;
@@ -6878,7 +6808,6 @@ html {
   font-weight: 600;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    INBOX - Search Bar
    ───────────────────────────────────────────────────────── */
@@ -6886,7 +6815,7 @@ html {
 .inbox-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .inbox-search {
@@ -6932,14 +6861,13 @@ html {
   font-family: inherit;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    INBOX - Filter Tabs
    ───────────────────────────────────────────────────────── */
 
 .inbox-filters {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   overflow-x: auto;
   padding-bottom: 4px;
   scrollbar-width: none;
@@ -6950,7 +6878,7 @@ html {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 12px;
+  padding: 8px 12px;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 100px;
@@ -6983,7 +6911,6 @@ html {
   background: var(--paper-3);
   color: var(--ink-2);
 }
-
 
 /* ─────────────────────────────────────────────────────────
    INBOX - Chat Items (ManyChat style)
@@ -7142,7 +7069,7 @@ html {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  margin-top: 6px;
+  margin-top: 8px;
 }
 .inbox-tag {
   display: inline-flex;
@@ -7192,7 +7119,6 @@ html {
   margin: 0;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    CHAT WINDOW
    ───────────────────────────────────────────────────────── */
@@ -7225,7 +7151,7 @@ html {
 .chat-header {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 12px 16px;
   background: var(--white);
   border-bottom: 1px solid var(--line);
@@ -7411,7 +7337,7 @@ html {
 }
 
 .chat-msg-bubble {
-  padding: 10px 14px;
+  padding: 12px 14px;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 16px 16px 16px 4px;
@@ -7462,7 +7388,6 @@ html {
   font-weight: 800;
 }
 .chat-msg-read.read { color: #97C459; }
-
 
 /* Quick Replies Dropdown */
 .chat-quick-replies {
@@ -7531,7 +7456,7 @@ html {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   padding: 12px 6px;
   background: var(--paper-2);
   border: 1px solid var(--line);
@@ -7552,13 +7477,12 @@ html {
   font-size: 20px;
 }
 
-
 /* Input Bar */
 .chat-input-bar {
   display: flex;
   align-items: flex-end;
-  gap: 6px;
-  padding: 10px 12px;
+  gap: 8px;
+  padding: 12px 12px;
   background: var(--white);
   border-top: 1px solid var(--line);
   flex-shrink: 0;
@@ -7566,7 +7490,7 @@ html {
 
 .chat-input {
   flex: 1;
-  padding: 10px 14px;
+  padding: 12px 14px;
   background: var(--paper-2);
   border: 1px solid var(--line);
   border-radius: 20px;
@@ -7608,7 +7532,6 @@ html {
   color: var(--ink-3);
   cursor: not-allowed;
 }
-
 
 /* ─────────────────────────────────────────────────────────
    PATIENT PANEL (Side panel - tablet/desktop)
@@ -7662,7 +7585,7 @@ html {
 .chat-patient-section {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .chat-patient-section-title {
@@ -7688,8 +7611,8 @@ html {
 .chat-patient-tag {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
+  gap: 8px;
+  padding: 8px 10px;
   border-radius: 8px;
   font-size: 11px;
   font-weight: 700;
@@ -7706,7 +7629,7 @@ html {
 .chat-patient-stat-row {
   display: flex;
   justify-content: space-between;
-  padding: 6px 0;
+  padding: 8px 0;
   font-size: 12px;
   color: var(--ink-2);
 }
@@ -7714,7 +7637,7 @@ html {
 .chat-patient-actions {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   margin-top: 8px;
 }
 
@@ -7722,8 +7645,8 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 10px;
+  gap: 8px;
+  padding: 12px;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 10px;
@@ -7738,7 +7661,6 @@ html {
   color: var(--white);
   border-color: var(--emerald);
 }
-
 
 /* ─────────────────────────────────────────────────────────
    TEMPLATES PAGE
@@ -7755,14 +7677,14 @@ html {
 .template-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .template-card {
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 14px;
-  padding: 14px;
+  padding: 16px;
 }
 
 .template-head {
@@ -7841,7 +7763,6 @@ html {
   color: var(--white);
 }
 
-
 /* ════════════════════════════════════════════════════════════════════
    انتهى - نظام Inbox الكامل
    ════════════════════════════════════════════════════════════════════ */
@@ -7850,7 +7771,6 @@ html {
    ════════════════════════════════════════════════════════════════════
    نظام السلة الكامل
    ════════════════════════════════════════════════════════════════════ */
-
 
 /* ─────────────────────────────────────────────────────────
    1. Checkout - Service Card
@@ -7913,7 +7833,6 @@ html {
   display: block;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    2. Promo Code
    ───────────────────────────────────────────────────────── */
@@ -7954,7 +7873,6 @@ html {
   cursor: not-allowed;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    3. Payment Methods
    ───────────────────────────────────────────────────────── */
@@ -7969,7 +7887,7 @@ html {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px;
+  padding: 16px;
   background: var(--white);
   border: 2px solid var(--line);
   border-radius: 14px;
@@ -8022,7 +7940,7 @@ html {
   margin-bottom: 2px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .checkout-payment-soon {
@@ -8058,7 +7976,6 @@ html {
   opacity: 1;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    4. Summary
    ───────────────────────────────────────────────────────── */
@@ -8073,7 +7990,7 @@ html {
 .checkout-summary-row {
   display: flex;
   justify-content: space-between;
-  padding: 6px 0;
+  padding: 8px 0;
   font-size: 13px;
   color: var(--ink-2);
 }
@@ -8100,7 +8017,6 @@ html {
   font-size: 12px;
   opacity: 0.85;
 }
-
 
 /* ─────────────────────────────────────────────────────────
    5. Terms + Confirm
@@ -8173,12 +8089,11 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   margin-top: 12px;
   font-size: 11px;
   color: var(--ink-3);
 }
-
 
 /* ─────────────────────────────────────────────────────────
    6. Order Success Card
@@ -8262,7 +8177,6 @@ html {
   font-family: 'JetBrains Mono', monospace;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    7. Order Tracking Steps
    ───────────────────────────────────────────────────────── */
@@ -8291,7 +8205,7 @@ html {
 .order-live-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   padding: 4px 10px;
   background: #FBE8EA;
   color: var(--rose);
@@ -8319,7 +8233,7 @@ html {
 
 .order-step {
   display: flex;
-  gap: 14px;
+  gap: 16px;
   position: relative;
   padding-bottom: 16px;
 }
@@ -8400,8 +8314,8 @@ html {
 .order-step-time {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 6px;
+  gap: 8px;
+  margin-top: 8px;
   padding: 4px 10px;
   background: #FBF4E0;
   color: var(--amber);
@@ -8418,7 +8332,6 @@ html {
   animation: pulse 1.5s infinite;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    8. Order Actions
    ───────────────────────────────────────────────────────── */
@@ -8434,7 +8347,7 @@ html {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px;
+  padding: 16px;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -8467,7 +8380,6 @@ html {
   background: #FBE8EA;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    9. Promo Card (Upsell)
    ───────────────────────────────────────────────────────── */
@@ -8476,7 +8388,7 @@ html {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px;
+  padding: 16px;
   background: linear-gradient(135deg, #F0DBC2 0%, #F0CB95 100%);
   border-radius: 14px;
   margin-top: 16px;
@@ -8505,7 +8417,7 @@ html {
 }
 
 .order-promo-link {
-  padding: 6px 12px;
+  padding: 8px 12px;
   background: var(--amber);
   color: var(--white);
   border-radius: 100px;
@@ -8514,7 +8426,6 @@ html {
   text-decoration: none;
   flex-shrink: 0;
 }
-
 
 /* ─────────────────────────────────────────────────────────
    10. Rating Page
@@ -8614,7 +8525,7 @@ html {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 4px;
+  padding: 12px 4px;
   border-bottom: 1px solid var(--line);
 }
 .rate-detail-row:last-child {
@@ -8655,7 +8566,7 @@ html {
 .rate-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
 }
 
 .rate-tag {
@@ -8710,8 +8621,8 @@ html {
 .rate-anonymous {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  padding: 14px;
+  gap: 12px;
+  padding: 16px;
   background: var(--paper-2);
   border-radius: 12px;
   margin-top: 12px;
@@ -8774,14 +8685,13 @@ html {
   text-decoration: underline;
 }
 
-
 /* Rating success */
 .rate-success {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 24px;
+  padding: 64px 24px;
   text-align: center;
   min-height: 80vh;
 }
@@ -8812,7 +8722,7 @@ html {
 }
 
 .rate-success-btn {
-  padding: 14px 32px;
+  padding: 16px 32px;
   background: var(--btn-primary-bg);
   color: var(--white);
   border-radius: 100px;
@@ -8821,14 +8731,12 @@ html {
   font-weight: 800;
 }
 
-
 /* ════════════════════════════════════════════════════════════════════
    انتهى - نظام السلة الكامل
    ════════════════════════════════════════════════════════════════════ */
 /* ════════════════════════════════════════════════════════════════════
    🔔 NOTIFICATIONS CSS
    ════════════════════════════════════════════════════════════════════ */
-
 
 /* ─────────────────────────────────────────────────────────
    Toast Stack
@@ -8857,7 +8765,7 @@ html {
 .toast {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px;
   padding: 12px 14px;
   background: var(--white);
   border: 1px solid var(--line);
@@ -8912,7 +8820,7 @@ html {
 
 .toast-action {
   align-self: center;
-  padding: 6px 12px;
+  padding: 8px 12px;
   background: var(--btn-primary-bg);
   color: var(--white);
   border-radius: 8px;
@@ -8940,7 +8848,6 @@ html {
 .toast-close:hover {
   color: var(--ink);
 }
-
 
 /* ─────────────────────────────────────────────────────────
    Push Permission Prompt
@@ -9011,7 +8918,7 @@ html {
 
 .push-prompt-btn-skip {
   flex: 1;
-  padding: 10px;
+  padding: 12px;
   background: var(--paper-3);
   color: var(--ink-2);
   border: none;
@@ -9024,7 +8931,7 @@ html {
 
 .push-prompt-btn-allow {
   flex: 1;
-  padding: 10px;
+  padding: 12px;
   background: var(--btn-primary-bg);
   color: var(--white);
   border: none;
@@ -9038,12 +8945,10 @@ html {
   background: var(--btn-primary-bg-hover);
 }
 
-
 /* ════════════════════════════════════════════════════════════════════ */
 /* ════════════════════════════════════════════════════════════════════
    ✨ POLISH + PWA CSS
    ════════════════════════════════════════════════════════════════════ */
-
 
 /* ─────────────────────────────────────────────────────────
    SKELETONS - مكوّنات التحميل
@@ -9106,7 +9011,7 @@ html {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .skeleton-chat-top {
@@ -9130,21 +9035,21 @@ html {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 /* Grid Skeleton */
 .skeleton-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 12px;
 }
 
 .skeleton-grid-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   padding: 16px 12px;
   background: var(--white);
   border: 1px solid var(--line);
@@ -9162,13 +9067,13 @@ html {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 0;
+  padding: 12px 0;
 }
 
 .skeleton-header-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .skeleton-search {
@@ -9207,7 +9112,7 @@ html {
 
 /* Appointments Skeleton */
 .skeleton-appt-card {
-  padding: 14px;
+  padding: 16px;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -9219,7 +9124,7 @@ html {
 .skeleton-appt-head {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 /* Profile Skeleton */
@@ -9227,7 +9132,7 @@ html {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 24px;
   background: var(--white);
   border: 1px solid var(--line);
@@ -9240,7 +9145,6 @@ html {
   margin-top: 8px;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    ERROR PAGES
    ───────────────────────────────────────────────────────── */
@@ -9251,7 +9155,7 @@ html {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 60px 24px;
+  padding: 64px 24px;
   min-height: 80vh;
   max-width: 480px;
   margin: 0 auto;
@@ -9287,8 +9191,8 @@ html {
 .error-digest {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  gap: 8px;
+  padding: 8px 12px;
   background: var(--paper-3);
   border-radius: 100px;
   margin-bottom: 20px;
@@ -9314,7 +9218,7 @@ html {
 .error-actions {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   width: 100%;
   max-width: 280px;
 }
@@ -9324,7 +9228,7 @@ html {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px;
+  padding: 16px;
   background: var(--btn-primary-bg);
   color: var(--white);
   border: none;
@@ -9346,7 +9250,7 @@ html {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px;
+  padding: 16px;
   background: var(--white);
   color: var(--ink);
   border: 1px solid var(--line);
@@ -9389,7 +9293,6 @@ html {
   line-height: 1.7;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    OFFLINE PAGE
    ───────────────────────────────────────────────────────── */
@@ -9400,7 +9303,7 @@ html {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 60px 24px;
+  padding: 64px 24px;
   min-height: 80vh;
   max-width: 480px;
   margin: 0 auto;
@@ -9445,7 +9348,7 @@ html {
 .offline-feature {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   font-size: 12px;
   color: var(--ink-2);
   text-align: start;
@@ -9463,7 +9366,7 @@ html {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px 28px;
+  padding: 16px 28px;
   background: var(--btn-primary-bg);
   color: var(--white);
   border: none;
@@ -9482,7 +9385,6 @@ html {
   color: var(--ink-3);
   text-decoration: underline;
 }
-
 
 /* ─────────────────────────────────────────────────────────
    PWA INSTALL PROMPT
@@ -9558,7 +9460,7 @@ html {
 
 .pwa-install-btn-skip {
   flex: 1;
-  padding: 10px 16px;
+  padding: 12px 16px;
   background: var(--paper-3);
   color: var(--ink-2);
   border: none;
@@ -9571,7 +9473,7 @@ html {
 
 .pwa-install-btn-install {
   flex: 1;
-  padding: 10px 16px;
+  padding: 12px 16px;
   background: var(--btn-primary-bg);
   color: var(--white);
   border: none;
@@ -9585,7 +9487,6 @@ html {
 .pwa-install-btn-install:hover {
   background: var(--btn-primary-bg-hover);
 }
-
 
 /* ─────────────────────────────────────────────────────────
    PAGE TRANSITIONS - حركات سلسة
@@ -9605,7 +9506,6 @@ html {
     transform: translateY(0);
   }
 }
-
 
 /* ─────────────────────────────────────────────────────────
    ENHANCED EMPTY STATES
@@ -9630,12 +9530,10 @@ html {
   100% { transform: translateY(0) scale(1); opacity: 1; }
 }
 
-
 /* ════════════════════════════════════════════════════════════════════ */
 /* ════════════════════════════════════════════════════════════════════
    📝 BLOG CSS - أنيق واحترافي
    ════════════════════════════════════════════════════════════════════ */
-
 
 /* ─────────────────────────────────────────────────────────
    BASE LAYOUT
@@ -9655,7 +9553,6 @@ html {
 @media (max-width: 768px) {
   .blog-container { padding: 20px 16px 60px; }
 }
-
 
 /* ─────────────────────────────────────────────────────────
    BLOG HERO
@@ -9704,7 +9601,6 @@ html {
   margin: 0 auto;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    CATEGORIES
    ───────────────────────────────────────────────────────── */
@@ -9723,7 +9619,7 @@ html {
 .blog-cat-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   padding: 8px 16px;
   background: var(--white);
   border: 1px solid var(--line);
@@ -9755,7 +9651,6 @@ html {
   background: rgba(255, 255, 255, 0.25);
 }
 
-
 /* ─────────────────────────────────────────────────────────
    SECTION LABEL
    ───────────────────────────────────────────────────────── */
@@ -9771,7 +9666,6 @@ html {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-
 
 /* ─────────────────────────────────────────────────────────
    FEATURED ARTICLE
@@ -9851,7 +9745,6 @@ html {
   margin: 0 0 24px;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    CARD META
    ───────────────────────────────────────────────────────── */
@@ -9873,7 +9766,6 @@ html {
   font-weight: 800;
 }
 
-
 /* ─────────────────────────────────────────────────────────
    AUTHOR
    ───────────────────────────────────────────────────────── */
@@ -9881,7 +9773,7 @@ html {
 .blog-card-author {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding-top: 16px;
   border-top: 1px solid var(--line);
 }
@@ -9910,7 +9802,6 @@ html {
   font-size: 11px;
   color: var(--ink-3);
 }
-
 
 /* ─────────────────────────────────────────────────────────
    BLOG GRID (Cards)
@@ -9974,7 +9865,7 @@ html {
   padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   flex: 1;
 }
 
@@ -10010,7 +9901,7 @@ html {
 .blog-card-author-small {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 11px;
   color: var(--ink-3);
 }
@@ -10039,13 +9930,12 @@ html {
   transform: translateX(-4px);
 }
 
-
 /* ─────────────────────────────────────────────────────────
    NEWSLETTER
    ───────────────────────────────────────────────────────── */
 
 .blog-newsletter {
-  margin: 60px 0;
+  margin: 64px 0;
   padding: 40px 24px;
   background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-deep) 100%);
   border-radius: 24px;
@@ -10078,7 +9968,7 @@ html {
 
 .blog-newsletter-input {
   flex: 1;
-  padding: 14px 18px;
+  padding: 16px 18px;
   background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 12px;
@@ -10099,7 +9989,7 @@ html {
 }
 
 .blog-newsletter-btn {
-  padding: 14px 28px;
+  padding: 16px 28px;
   background: var(--amber);
   color: var(--white);
   border: none;
@@ -10120,7 +10010,6 @@ html {
   opacity: 0.75;
   margin: 0;
 }
-
 
 /* ─────────────────────────────────────────────────────────
    FINAL CTA
@@ -10165,7 +10054,6 @@ html {
   transform: translateY(-2px);
 }
 
-
 /* ─────────────────────────────────────────────────────────
    ARTICLE PAGE
    ───────────────────────────────────────────────────────── */
@@ -10199,7 +10087,7 @@ html {
 
 .article-category-badge {
   display: inline-block;
-  padding: 6px 14px;
+  padding: 8px 14px;
   background: var(--paper-3);
   color: var(--emerald);
   border-radius: 100px;
@@ -10275,11 +10163,10 @@ html {
 .article-meta-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 12px;
   color: var(--ink-3);
 }
-
 
 /* Cover */
 .article-cover {
@@ -10302,7 +10189,6 @@ html {
   filter: drop-shadow(0 12px 40px rgba(0, 0, 0, 0.15));
   animation: emojiFloat 4s ease-in-out infinite;
 }
-
 
 /* Body */
 .article-body {
@@ -10354,13 +10240,12 @@ html {
   font-weight: 800;
 }
 
-
 /* Highlight / Warning / Tip Boxes */
 .article-highlight,
 .article-warning,
 .article-tip {
   display: flex;
-  gap: 14px;
+  gap: 16px;
   padding: 20px;
   border-radius: 14px;
   margin: 24px 0;
@@ -10403,7 +10288,6 @@ html {
   font-weight: 600;
 }
 
-
 /* Tags */
 .article-tags-section {
   display: flex;
@@ -10425,7 +10309,7 @@ html {
 .article-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
 }
 
 .article-tag {
@@ -10436,7 +10320,6 @@ html {
   font-size: 11px;
   font-weight: 700;
 }
-
 
 /* Author Bio */
 .article-author-bio {
@@ -10500,7 +10383,6 @@ html {
   text-decoration: none;
 }
 
-
 /* CTA Box */
 .article-cta {
   text-align: center;
@@ -10532,7 +10414,7 @@ html {
 .article-cta-btn {
   display: inline-flex;
   align-items: center;
-  padding: 14px 28px;
+  padding: 16px 28px;
   background: var(--btn-primary-bg);
   color: var(--white);
   border-radius: 14px;
@@ -10540,7 +10422,6 @@ html {
   font-weight: 800;
   text-decoration: none;
 }
-
 
 /* Related */
 .article-related {
@@ -10595,7 +10476,7 @@ html {
 }
 
 .article-related-info {
-  padding: 14px;
+  padding: 16px;
 }
 
 .article-related-cat {
@@ -10604,7 +10485,7 @@ html {
   font-weight: 800;
   color: var(--emerald);
   text-transform: uppercase;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .article-related-info h4 {
@@ -10618,7 +10499,6 @@ html {
   font-size: 11px;
   color: var(--ink-3);
 }
-
 
 /* Disclaimer */
 .article-disclaimer {
@@ -10637,7 +10517,6 @@ html {
   display: block;
   margin-bottom: 4px;
 }
-
 
 /* ─────────────────────────────────────────────────────────
    CATEGORY HERO
@@ -10678,11 +10557,10 @@ html {
   color: var(--emerald);
 }
 
-
 /* Blog Empty */
 .blog-empty {
   text-align: center;
-  padding: 60px 24px;
+  padding: 64px 24px;
 }
 
 .blog-empty-icon {
@@ -10714,8 +10592,6 @@ html {
   font-weight: 800;
   text-decoration: none;
 }
-
-
 
 /* ════════════════════════════════════════════════════════════════════
    🎨 V14 — DESIGN POLISH (Unified Final Layer)
@@ -10794,7 +10670,7 @@ html {
    2. DASHBOARD CONTENT WRAPPER
    ───────────────────────────────────────────────────────── */
 .scr-content {
-  padding: 14px 16px 16px;
+  padding: 16px 16px 16px;
   background: var(--paper);
   min-height: 100%;
 }
@@ -10807,7 +10683,7 @@ html {
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   padding: 4px 0;
 }
 .scr-header-user {
@@ -10865,14 +10741,14 @@ html {
 
 .scr-header-actions {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   flex-shrink: 0;
 }
 .scr-header-btn {
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 10px;
+  padding: 8px 10px;
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 100px;
@@ -10970,7 +10846,7 @@ html {
    ───────────────────────────────────────────────────────── */
 .scr-pills {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -11018,7 +10894,7 @@ html {
    ───────────────────────────────────────────────────────── */
 .scr-stories {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -11101,8 +10977,8 @@ html {
   scroll-snap-align: start;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px;
+  gap: 12px;
+  padding: 16px;
   background: linear-gradient(135deg, #D9E5DF 0%, #C0DD97 100%);
   color: var(--emerald-deep);
   border-radius: 16px;
@@ -11180,7 +11056,7 @@ html {
   letter-spacing: -0.01em;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 .scr-section-title::before {
   content: '';
@@ -11202,7 +11078,7 @@ html {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 .service-card {
   display: flex;
@@ -11287,13 +11163,13 @@ html {
   flex-direction: row !important;
   align-items: center;
   gap: 12px;
-  padding: 14px;
+  padding: 16px;
   border-radius: 16px;
   min-height: auto !important;
   position: relative;
   overflow: hidden;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 .service-featured::after {
   content: '';
@@ -11370,7 +11246,7 @@ html {
   flex-direction: row !important;
   align-items: center;
   gap: 12px;
-  padding: 14px 16px;
+  padding: 16px 16px;
   border-radius: 16px;
   min-height: auto !important;
   position: relative;
@@ -11422,7 +11298,7 @@ html {
    📝 LANDING — BLOG SECTION
    ──────────────────────────────────────────────────────────────────── */
 .landing-blog {
-  padding: 60px 0;
+  padding: 64px 0;
   background: var(--paper-3);
   position: relative;
 }
@@ -11510,7 +11386,7 @@ html {
 }
 .landing-blog-meta {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
   font-size: 11px;
   color: var(--ink-3);
