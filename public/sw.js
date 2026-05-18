@@ -7,7 +7,7 @@
 // - Stale While Revalidate: pages العادية
 // ════════════════════════════════════════════════════════════════════
 
-const CACHE_VERSION = 'spir-v1';
+const CACHE_VERSION = 'spir-v3';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
@@ -24,7 +24,7 @@ const STATIC_ASSETS = [
 
 // ────────────── Install ──────────────
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing...');
+  console.log('[SW] Installing...', CACHE_VERSION);
   event.waitUntil(
     caches.open(STATIC_CACHE).then((cache) => {
       console.log('[SW] Caching static assets');
@@ -33,12 +33,21 @@ self.addEventListener('install', (event) => {
       });
     })
   );
-  self.skipWaiting();
+  // ✨ V25.3: لا نستخدم skipWaiting تلقائياً - ننتظر إذن المستخدم
+  // self.skipWaiting() الآن يُستدعى عبر postMessage فقط
+});
+
+// ✨ V25.3: استمع لطلب التحديث من Client
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log('[SW] SKIP_WAITING received');
+    self.skipWaiting();
+  }
 });
 
 // ────────────── Activate ──────────────
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating...');
+  console.log('[SW] Activating...', CACHE_VERSION);
   event.waitUntil(
     caches.keys().then((names) => {
       return Promise.all(
@@ -172,14 +181,18 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: data.body || '',
-    icon: '/icon-192.png',
-    badge: '/icon-192.png',
+    icon: data.icon || '/icon-192.png',
+    badge: data.badge || '/icon-192.png',
     tag: data.tag || 'spir-notification',
-    data: data.url || '/',
+    data: {
+      url: data.url || '/dashboard',
+      ...(data.data || {}),
+    },
     dir: 'rtl',
     lang: 'ar',
     vibrate: [200, 100, 200],
     requireInteraction: data.urgent === true,
+    renotify: data.renotify === true,
   };
 
   event.waitUntil(
@@ -189,7 +202,7 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const url = event.notification.data || '/';
+  const url = event.notification.data?.url || event.notification.data || '/';
 
   event.waitUntil(
     self.clients.matchAll({ type: 'window' }).then((clients) => {
