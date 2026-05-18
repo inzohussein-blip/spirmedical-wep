@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import NotificationsClient from './NotificationsClient';
+import { EmptyState } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,8 +19,8 @@ const STATUS_META: Record<string, { color: string; bg: string; label: string }> 
 
 const CHANNEL_META: Record<string, { icon: string; color: string }> = {
   whatsapp: { icon: '💬', color: '#25D366' },
-  sms: { icon: '📱', color: '#0E5C4D' },
-  push: { icon: '🔔', color: '#B8540C' },
+  sms: { icon: '📱', color: 'var(--emerald)' },
+  push: { icon: '🔔', color: 'var(--amber)' },
 };
 
 export default async function NotificationsPage({ searchParams }: { searchParams: { status?: string } }) {
@@ -74,7 +75,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
       </div>
 
       {/* Filter */}
-      <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
         <Link href="/admin44/notifications" style={tabStyle(!searchParams.status)}>الكل</Link>
         <Link href="/admin44/notifications?status=pending" style={tabStyle(searchParams.status === 'pending')}>⏳ معلّقة</Link>
         <Link href="/admin44/notifications?status=sent" style={tabStyle(searchParams.status === 'sent')}>✅ أُرسلت</Link>
@@ -84,12 +85,14 @@ export default async function NotificationsPage({ searchParams }: { searchParams
 
       {/* List */}
       {!messages || messages.length === 0 ? (
-        <div style={{ background: '#fff', borderRadius: 14, padding: 60, textAlign: 'center' }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>💬</div>
-          <p style={{ fontSize: 14, color: 'var(--ink-3)' }}>لا توجد رسائل</p>
-        </div>
+        <EmptyState
+          icon="💬"
+          title="لا توجد رسائل"
+          description="ستظهر الرسائل والإشعارات هنا"
+          size="lg"
+        />
       ) : (
-        <div style={{ background: '#fff', borderRadius: 14, overflow: 'hidden' }}>
+        <div style={{ background: 'var(--white)', borderRadius: 14, overflow: 'hidden' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead style={{ background: 'var(--paper-3)' }}>
               <tr>
@@ -152,7 +155,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
           </table>
 
           {count && count > 100 && (
-            <div style={{ padding: 14, textAlign: 'center', fontSize: 11, color: 'var(--ink-3)', background: 'var(--paper-3)' }}>
+            <div style={{ padding: 16, textAlign: 'center', fontSize: 11, color: 'var(--ink-3)', background: 'var(--paper-3)' }}>
               يُعرض أحدث 100 من أصل {count}
             </div>
           )}
@@ -162,7 +165,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
       {/* Setup info */}
       {provider === 'mock' && (
         <div style={{
-          marginTop: 20, background: '#fff', borderRadius: 14, padding: 18,
+          marginTop: 20, background: 'var(--white)', borderRadius: 14, padding: 20,
           borderRight: '4px solid var(--amber)',
         }}>
           <h3 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 8px', color: 'var(--amber-deep, #6B3A08)' }}>
@@ -198,7 +201,7 @@ CRON_SECRET=<random-string>`}</pre>
 
 function StatBox({ label, value, color, icon }: { label: string; value: string; color: string; icon: string }) {
   return (
-    <div style={{ background: '#fff', borderRadius: 12, padding: 14, borderRight: `4px solid ${color}` }}>
+    <div style={{ background: 'var(--white)', borderRadius: 12, padding: 16, borderRight: `4px solid ${color}` }}>
       <div style={{ fontSize: 22, marginBottom: 4 }}>{icon}</div>
       <div style={{ fontSize: 22, fontWeight: 900, color, lineHeight: 1, marginBottom: 4 }}>{value}</div>
       <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>{label}</div>
@@ -209,8 +212,8 @@ function StatBox({ label, value, color, icon }: { label: string; value: string; 
 function tabStyle(active: boolean): React.CSSProperties {
   return {
     padding: '8px 14px',
-    background: active ? 'var(--emerald-deep)' : '#fff',
-    color: active ? '#fff' : 'var(--ink)',
+    background: active ? 'var(--emerald-deep)' : 'var(--white)',
+    color: active ? 'var(--white)' : 'var(--ink)',
     border: '1px solid var(--line)',
     borderRadius: 100,
     fontSize: 12, fontWeight: 700,
