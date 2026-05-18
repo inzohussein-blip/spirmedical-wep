@@ -12,6 +12,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { useState, useMemo, useRef, useEffect } from 'react';
+import { toast } from '@/components/ui/Toaster';
 import {
   Droplet, Search, Star, User, MapPin, Building2, Calendar,
   TestTube, Clock, CheckCircle2, BarChart3, Lock, X, Loader2,
@@ -55,6 +56,15 @@ interface Props {
   userPhone?: string;
   userAddress?: string;
   onSubmit: (data: BloodDrawSubmission) => Promise<void>;
+  /** ✨ V25.1: قائمة المواقع المحفوظة للمستخدم */
+  savedLocations?: Array<{
+    id: string;
+    label: string;
+    icon: string;
+    address: string;
+    lat: number;
+    lng: number;
+  }>;
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -80,6 +90,7 @@ export default function BloodDrawFlow({
   userPhone = '',
   userAddress = '',
   onSubmit,
+  savedLocations = [],
 }: Props) {
   // ─── State ───
   const [query, setQuery] = useState('');
@@ -204,7 +215,7 @@ export default function BloodDrawFlow({
   // GPS للموقع
   const handleUseGPS = () => {
     if (!navigator.geolocation) {
-      alert('متصفحك لا يدعم تحديد الموقع');
+      toast.warning('متصفحك لا يدعم تحديد الموقع');
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -222,7 +233,7 @@ export default function BloodDrawFlow({
           `📍 ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`
         );
       },
-      () => alert('لم نستطع تحديد موقعك. أدخل العنوان يدوياً.'),
+      () => toast.warning('لم نستطع تحديد موقعك. أدخل العنوان يدوياً.'),
       {
         enableHighAccuracy: true,
         timeout: 10000,
@@ -451,6 +462,86 @@ export default function BloodDrawFlow({
           <label>
             عنوان السحب <span className="bd-required">*</span>
           </label>
+
+          {/* ✨ V25.1: المواقع المحفوظة (إن وُجدت) */}
+          {savedLocations.length > 0 && (
+            <div className="bd-saved-locations">
+              <div className="bd-saved-label">
+                <MapPin size={11} strokeWidth={2.4} />
+                <span>اختر من مواقعك المحفوظة:</span>
+              </div>
+              <div className="bd-saved-chips">
+                {savedLocations.map((loc) => (
+                  <button
+                    key={loc.id}
+                    type="button"
+                    className="bd-saved-chip"
+                    onClick={() => {
+                      setAddress(loc.address);
+                      setGpsLocation({
+                        lat: loc.lat,
+                        lng: loc.lng,
+                        accuracy: 10,
+                      });
+                      toast.success(`تم اختيار: ${loc.label}`);
+                    }}
+                    title={`${loc.address}`}
+                  >
+                    <span className="bd-saved-icon">{loc.icon}</span>
+                    <span>{loc.label}</span>
+                  </button>
+                ))}
+              </div>
+              <style jsx>{`
+                .bd-saved-locations {
+                  margin-bottom: 12px;
+                  padding: 10px 12px;
+                  background: var(--emerald-soft);
+                  border-radius: 10px;
+                  border: 1px solid var(--emerald);
+                }
+                .bd-saved-label {
+                  display: flex;
+                  align-items: center;
+                  gap: 6px;
+                  font-size: 11px;
+                  font-weight: 800;
+                  color: var(--emerald-deep);
+                  margin-bottom: 8px;
+                }
+                .bd-saved-chips {
+                  display: flex;
+                  flex-wrap: wrap;
+                  gap: 6px;
+                }
+                .bd-saved-chip {
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 4px;
+                  padding: 6px 10px;
+                  background: var(--white);
+                  border: 1px solid var(--emerald);
+                  border-radius: 100px;
+                  font-size: 11px;
+                  font-weight: 700;
+                  color: var(--emerald-deep);
+                  cursor: pointer;
+                  transition: all 0.15s;
+                  font-family: inherit;
+                }
+                .bd-saved-chip:hover {
+                  background: var(--emerald);
+                  color: var(--paper-3);
+                  transform: translateY(-1px);
+                }
+                .bd-saved-icon {
+                  font-size: 14px;
+                  line-height: 1;
+                }
+              `}</style>
+            </div>
+          )}
+
           <textarea
             className="bd-textarea"
             rows={2}
