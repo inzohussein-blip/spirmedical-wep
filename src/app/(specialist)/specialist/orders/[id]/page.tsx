@@ -121,21 +121,21 @@ export default async function SpecialistOrderDetailPage({
         {/* بانر الاختصاص */}
         <div style={{
           background: meta.gradient,
-          color: '#fff',
+          color: 'var(--white)',
           padding: '14px 18px',
           borderRadius: 14,
           marginTop: 12,
           marginBottom: 16,
           display: 'flex',
           alignItems: 'center',
-          gap: 10,
+          gap: 12,
         }}>
           <div style={{ fontSize: 28 }}>{meta.icon}</div>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 14, fontWeight: 800 }}>{order.service_type}</div>
             <div style={{ fontSize: 11, opacity: 0.9 }}>{meta.label}</div>
           </div>
-          <span className={`scr-tag ${status.color}`} style={{ background: 'rgba(255,255,255,0.2)', color: '#fff' }}>
+          <span className={`scr-tag ${status.color}`} style={{ background: 'rgba(255,255,255,0.2)', color: 'var(--white)' }}>
             {status.label}
           </span>
         </div>
@@ -207,7 +207,7 @@ export default async function SpecialistOrderDetailPage({
         {specialistType === 'doctor' && patient?.medical_info && (
           <>
             <div className="scr-section-head" style={{ marginTop: 16 }}>
-              <div className="scr-section-title" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div className="scr-section-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <ClipboardList size={16} strokeWidth={2.2} />
                 ملف المريض الطبي
               </div>
