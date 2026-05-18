@@ -91,7 +91,7 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
 
   const btnPrimary: React.CSSProperties = {
     width: '100%', padding: '12px', background: 'var(--emerald-deep, #073B30)',
-    color: '#fff', border: 0, borderRadius: 10, fontSize: 13, fontWeight: 800,
+    color: 'var(--white)', border: 0, borderRadius: 10, fontSize: 13, fontWeight: 800,
     cursor: 'pointer', fontFamily: 'inherit',
   };
   const btnRose: React.CSSProperties = {
@@ -104,7 +104,7 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
   };
 
   return (
-    <div style={{ background: '#fff', borderRadius: 14, padding: 18 }}>
+    <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20 }}>
       <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}>الإجراءات</h2>
 
       {error && (
@@ -122,7 +122,7 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
       {approvalStatus === 'pending' && (
         <>
           <div style={{ marginBottom: 12 }}>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 6 }}>
+            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 8 }}>
               نوع الاختصاصي *
             </label>
             <select value={selectedType} onChange={(e) => setSelectedType(e.target.value as SpecialistType)} style={inputStyle}>
@@ -135,7 +135,7 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
           </div>
 
           <div style={{ marginBottom: 12 }}>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 6 }}>
+            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 8 }}>
               ملاحظات داخلية (اختياري)
             </label>
             <textarea
@@ -158,7 +158,7 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
               ❌ رفض
             </button>
           ) : (
-            <div style={{ background: 'var(--rose-soft)', padding: 12, borderRadius: 10, marginTop: 10 }}>
+            <div style={{ background: 'var(--rose-soft)', padding: 12, borderRadius: 10, marginTop: 12 }}>
               <textarea
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
@@ -183,7 +183,7 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
       {approvalStatus === 'approved' && (
         <>
           <div style={{ marginBottom: 12 }}>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 6 }}>
+            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 8 }}>
               نوع الاختصاصي
             </label>
             <select value={selectedType} onChange={(e) => setSelectedType(e.target.value as SpecialistType)} style={inputStyle}>
@@ -196,7 +196,7 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
           </div>
 
           {selectedType !== currentType && (
-            <button type="button" onClick={handleChangeType} disabled={isPending} style={{ ...btnPrimary, marginBottom: 10 }}>
+            <button type="button" onClick={handleChangeType} disabled={isPending} style={{ ...btnPrimary, marginBottom: 12 }}>
               💾 حفظ النوع الجديد
             </button>
           )}
@@ -239,7 +239,7 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
       {approvalStatus === 'rejected' && (
         <>
           <div style={{ marginBottom: 12 }}>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 6 }}>
+            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 8 }}>
               إعادة فتح الطلب — نوع الاختصاصي
             </label>
             <select value={selectedType} onChange={(e) => setSelectedType(e.target.value as SpecialistType)} style={inputStyle}>
