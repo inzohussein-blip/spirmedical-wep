@@ -199,7 +199,9 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
       if (authUser) {
         userId = authUser.id;
       } else {
-        // أنشئ مستخدم جديد - بدون phone (لأن provider قد لا يكون مفعّلاً)
+        // 🔧 V25.2: لا نمرر phone لـ auth (Phone provider قد لا يكون مفعّلاً)
+        // الـ trigger handle_new_user سيُنشئ row مع fallback_phone مؤقت
+        // ثم نحدّثه يدوياً بـ phone الحقيقي
         const { data: newUser, error: createErr } =
           await admin.auth.admin.createUser({
             email,
@@ -225,23 +227,36 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
         userId = newUser.user.id;
       }
 
-      // أنشئ صف في public.users (يدوياً - لا نعتمد على trigger)
-      const { error: profileErr } = await admin.from('users').upsert(
-        {
-          id: userId,
+      // 🔧 V25.2: الإصلاح الجوهري
+      // الـ trigger يكون أنشأ row بـ fallback_phone='+temp_xxx'
+      // نحن نحدّث phone للقيمة الحقيقية مع UPDATE (وليس upsert)
+      // upsert فشل لأن phone unique → conflict على phone حتى لو id موجود
+      const { error: updateErr } = await admin
+        .from('users')
+        .update({
+          phone,
+          full_name: 'مستخدم جديد',
+        })
+        .eq('id', userId!);
+
+      if (updateErr) {
+        // الـ row قد لا يكون موجود (لو trigger فشل)
+        // جرّب insert
+        const { error: insertErr } = await admin.from('users').insert({
+          id: userId!,
           phone,
           full_name: 'مستخدم جديد',
           role: 'patient',
-        },
-        { onConflict: 'id' }
-      );
-
-      if (profileErr) {
-        logger.error('Profile upsert failed', {
-          phone,
-          error: profileErr.message,
         });
-        // نُكمل رغم الخطأ - signInWithPassword يجب أن يعمل
+
+        if (insertErr) {
+          logger.error('Profile creation failed', {
+            phone,
+            updateErr: updateErr.message,
+            insertErr: insertErr.message,
+          });
+          // لا نُفشل - signIn قد ينجح
+        }
       }
     }
 
