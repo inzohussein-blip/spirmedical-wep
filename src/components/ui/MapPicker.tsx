@@ -220,6 +220,26 @@ export default function MapPicker({
     setIsGettingGps(true);
     setError(null);
 
+    // ✨ V25.1: تحقّق proactive من حالة الإذن قبل الاستدعاء
+    // هذا يكشف الـ "denied permanently" قبل ما نضيع وقت بالـ popup
+    if ('permissions' in navigator) {
+      try {
+        const permStatus = await navigator.permissions.query({
+          name: 'geolocation' as PermissionName,
+        });
+
+        if (permStatus.state === 'denied') {
+          setIsGettingGps(false);
+          setError(
+            'الموقع محظور للموقع. لتفعيله: اضغط على 🔒 يسار شريط العنوان → "أذونات الموقع" → "السماح" → أعد تحميل الصفحة.'
+          );
+          return;
+        }
+      } catch {
+        // بعض المتصفحات لا تدعم Permissions API - نُكمل عادياً
+      }
+    }
+
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
@@ -256,9 +276,20 @@ export default function MapPicker({
       (err) => {
         setIsGettingGps(false);
         if (err.code === err.PERMISSION_DENIED) {
-          setError('رفضت السماح بالوصول للموقع. اضغط على الخريطة لتحديد موقعك يدوياً.');
+          // رسالة مفصّلة تشرح كيف يُفعّل الإذن
+          setError(
+            'الموقع محظور. لتفعيله: اضغط على 🔒 (يسار العنوان) → "أذونات الموقع" → "السماح" → أعد تحميل الصفحة. أو اضغط على الخريطة لتحديد موقعك يدوياً.'
+          );
+        } else if (err.code === err.POSITION_UNAVAILABLE) {
+          setError(
+            'تعذّر تحديد موقعك. تأكّد من تشغيل GPS على جهازك، أو اضغط على الخريطة لتحديد موقعك يدوياً.'
+          );
+        } else if (err.code === err.TIMEOUT) {
+          setError(
+            'استغرق تحديد الموقع وقتاً طويلاً. حاول مرة أخرى في مكان بإشارة أفضل، أو اضغط على الخريطة.'
+          );
         } else {
-          setError('فشل تحديد الموقع. حاول مرة أخرى أو اضغط على الخريطة.');
+          setError('فشل تحديد الموقع. اضغط على الخريطة لتحديد موقعك يدوياً.');
         }
       },
       {
