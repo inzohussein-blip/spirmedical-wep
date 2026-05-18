@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useFormStatus } from 'react-dom';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { sendOtp } from './actions';
 
@@ -26,6 +27,187 @@ const roleHints: Record<Role, { icon: string; label: string; hint: string }> = {
     hint: 'لوحة تقديم الخدمات الطبية',
   },
 };
+
+/**
+ * SubmitButton — زر مع loading state تلقائي
+ * يستخدم useFormStatus() الذي يقرأ الحالة من الـ form parent
+ */
+function SubmitButton({
+  children,
+  loadingText,
+  variant = 'primary',
+  name,
+  value,
+}: {
+  children: React.ReactNode;
+  loadingText: string;
+  variant?: 'primary' | 'secondary';
+  name?: string;
+  value?: string;
+}) {
+  const { pending } = useFormStatus();
+
+  const className =
+    variant === 'primary'
+      ? 'auth-cta'
+      : 'auth-cta auth-cta-secondary';
+
+  return (
+    <button
+      type="submit"
+      className={className}
+      name={name}
+      value={value}
+      disabled={pending}
+      aria-busy={pending}
+      style={{
+        opacity: pending ? 0.85 : 1,
+        cursor: pending ? 'wait' : 'pointer',
+        transition: 'opacity 0.15s',
+      }}
+    >
+      {pending ? (
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+          }}
+        >
+          <Spinner />
+          <span>{loadingText}</span>
+        </span>
+      ) : (
+        children
+      )}
+    </button>
+  );
+}
+
+/**
+ * Spinner — أيقونة دوّارة
+ */
+function Spinner() {
+  return (
+    <>
+      <span
+        className="login-spinner"
+        aria-hidden="true"
+        style={{
+          display: 'inline-block',
+          width: 16,
+          height: 16,
+          border: '2.5px solid rgba(255, 255, 255, 0.3)',
+          borderTopColor: 'currentColor',
+          borderRadius: '50%',
+          animation: 'login-spin 0.7s linear infinite',
+        }}
+      />
+      <style jsx global>{`
+        @keyframes login-spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
+    </>
+  );
+}
+
+/**
+ * LoadingOverlay — يظهر فوق الـ form أثناء التسجيل
+ * يستخدم useFormStatus من parent form
+ */
+function LoadingOverlay() {
+  const { pending } = useFormStatus();
+
+  if (!pending) return null;
+
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(244, 239, 226, 0.92)',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
+        zIndex: 9999,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 16,
+        animation: 'login-overlay-in 0.2s ease-out',
+      }}
+    >
+      <div
+        style={{
+          width: 56,
+          height: 56,
+          border: '4px solid var(--paper-2, #EDE6D3)',
+          borderTopColor: 'var(--emerald, #0E5C4D)',
+          borderRadius: '50%',
+          animation: 'login-spin 0.7s linear infinite',
+        }}
+      />
+      <div
+        style={{
+          fontSize: 15,
+          fontWeight: 800,
+          color: 'var(--ink, #0F1A1C)',
+          textAlign: 'center',
+        }}
+      >
+        جارٍ تسجيل الدخول...
+      </div>
+      <div
+        style={{
+          fontSize: 12,
+          color: 'var(--ink-3, #6E7878)',
+          textAlign: 'center',
+          maxWidth: 280,
+        }}
+      >
+        نقوم بالتحقق من بياناتك وتجهيز حسابك
+      </div>
+      <style jsx global>{`
+        @keyframes login-overlay-in {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+/**
+ * FieldWrapper — يعطّل inputs أثناء التحميل
+ */
+function FieldWrapper({ children }: { children: React.ReactNode }) {
+  const { pending } = useFormStatus();
+  return (
+    <fieldset
+      disabled={pending}
+      style={{
+        border: 0,
+        padding: 0,
+        margin: 0,
+        opacity: pending ? 0.6 : 1,
+        pointerEvents: pending ? 'none' : 'auto',
+        transition: 'opacity 0.2s',
+      }}
+    >
+      {children}
+    </fieldset>
+  );
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -141,12 +323,15 @@ export default function LoginPage() {
           }
         }}
       >
+        <LoadingOverlay />
         {errorParam && (
           <div className="auth-error" role="alert">
             <div className="auth-error-icon">!</div>
             <span>{errorParam}</span>
           </div>
         )}
+
+        <FieldWrapper>
 
         <div className="auth-field">
           <label htmlFor="phone" className="auth-field-label">
@@ -213,47 +398,48 @@ export default function LoginPage() {
           </div>
           <span aria-hidden="true" style={{ fontSize: 18 }}>{rememberMe ? '✅' : '⚪'}</span>
         </label>
+        </FieldWrapper>
 
         {/* ─── الأزرار حسب OTP Mode ─── */}
 
         {isOtpRequired && (
           <>
             <input type="hidden" name="action" value="otp" />
-            <button type="submit" className="auth-cta">
+            <SubmitButton loadingText="جارٍ إرسال الرمز...">
               إرسال رمز التحقق ←
-            </button>
+            </SubmitButton>
           </>
         )}
 
         {isOtpDisabled && (
           <>
             <input type="hidden" name="action" value="skip" />
-            <button type="submit" className="auth-cta">
+            <SubmitButton loadingText="جارٍ تسجيل الدخول...">
               تسجيل الدخول ←
-            </button>
+            </SubmitButton>
           </>
         )}
 
         {isOtpOptional && (
           <div className="auth-cta-group">
-            <button
-              type="submit"
-              className="auth-cta auth-cta-primary"
+            <SubmitButton
+              loadingText="جارٍ الإرسال..."
+              variant="primary"
               name="action"
               value="otp"
             >
               <span aria-hidden="true">🔐</span>
               <span>إرسال رمز تحقق</span>
-            </button>
-            <button
-              type="submit"
-              className="auth-cta auth-cta-secondary"
+            </SubmitButton>
+            <SubmitButton
+              loadingText="جارٍ الدخول..."
+              variant="secondary"
               name="action"
               value="skip"
             >
               <span aria-hidden="true">⚡</span>
               <span>دخول سريع (بدون رمز)</span>
-            </button>
+            </SubmitButton>
           </div>
         )}
       </form>
