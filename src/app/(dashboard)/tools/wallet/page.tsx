@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { toast } from '@/components/ui/Toaster';
 
 interface Transaction {
   id: string;
@@ -64,7 +65,7 @@ export default function WalletPage() {
             <button
               type="button"
               className="account-edit-btn"
-              onClick={() => alert('شحن المحفظة قيد التطوير')}
+              onClick={() => toast.info('شحن المحفظة قيد التطوير')}
               style={{ flex: 1 }}
             >
               <span aria-hidden="true">💳</span>
@@ -73,7 +74,7 @@ export default function WalletPage() {
             <button
               type="button"
               className="account-edit-btn"
-              onClick={() => alert('تحويل قيد التطوير')}
+              onClick={() => toast.info('تحويل قيد التطوير')}
               style={{ flex: 1 }}
             >
               <span aria-hidden="true">📤</span>
