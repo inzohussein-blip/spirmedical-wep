@@ -25,7 +25,7 @@ export default async function SpecialistDashboard() {
     return (
       <main className="app-screen">
         <div className="scr-content">
-          <div className="scr-empty" style={{ marginTop: 60 }}>
+          <div className="scr-empty" style={{ marginTop: 64 }}>
             <div className="scr-empty-icon">⏳</div>
             <h2 className="scr-empty-title">حسابك قيد المراجعة</h2>
             <p className="scr-empty-desc">
@@ -85,7 +85,7 @@ export default async function SpecialistDashboard() {
         <div
           style={{
             background: meta.gradient,
-            color: '#fff',
+            color: 'var(--white)',
             padding: '20px 18px',
             borderRadius: 16,
             marginTop: 8,
