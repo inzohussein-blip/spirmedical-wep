@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { addPatientTag, removePatientTag, addPatientNote, deletePatientNote } from '../actions';
 import { toggleSuspendUser } from '../../specialists/actions';
+import { EmptyState } from '@/components/ui';
 
 interface Tag { id: string; tag: string; color: string; }
 interface Note {
@@ -102,15 +103,15 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
       {/* Tags */}
-      <div style={{ background: '#fff', borderRadius: 14, padding: 16 }}>
+      <div style={{ background: 'var(--white)', borderRadius: 14, padding: 16 }}>
         <h3 style={{ fontSize: 13, fontWeight: 800, margin: '0 0 10px' }}>🏷️ التصنيفات</h3>
 
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
           {tags.length === 0 ? (
-            <p style={{ fontSize: 11, color: 'var(--ink-3)', margin: 0 }}>لا توجد تصنيفات</p>
+            <EmptyState icon="🏷️" title="لا توجد تصنيفات" size="sm" variant="plain" />
           ) : (
             tags.map((t) => (
               <span key={t.id} style={{
@@ -128,7 +129,7 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
           )}
         </div>
 
-        <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
           <input
             type="text"
             value={newTag}
@@ -138,7 +139,7 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
             style={{ ...inputStyle, flex: 1 }}
           />
           <button onClick={() => handleAddTag()} disabled={isPending || !newTag.trim()} style={{
-            padding: '8px 14px', background: 'var(--emerald-deep)', color: '#fff',
+            padding: '8px 14px', background: 'var(--emerald-deep)', color: 'var(--white)',
             border: 0, borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer',
           }}>+</button>
         </div>
@@ -156,8 +157,8 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
       </div>
 
       {/* Notes */}
-      <div style={{ background: '#fff', borderRadius: 14, padding: 16 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+      <div style={{ background: 'var(--white)', borderRadius: 14, padding: 16 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
           <h3 style={{ fontSize: 13, fontWeight: 800, margin: 0 }}>📝 الملاحظات ({notes.length})</h3>
           {!showNoteForm && (
             <button onClick={() => setShowNoteForm(true)} style={{
@@ -168,7 +169,7 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
         </div>
 
         {showNoteForm && (
-          <div style={{ background: 'var(--paper-3)', padding: 10, borderRadius: 10, marginBottom: 12 }}>
+          <div style={{ background: 'var(--paper-3)', padding: 12, borderRadius: 10, marginBottom: 12 }}>
             <textarea
               value={newNote}
               onChange={(e) => setNewNote(e.target.value)}
@@ -176,7 +177,7 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
               rows={3}
               style={{ ...inputStyle, resize: 'vertical', marginBottom: 8 }}
             />
-            <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
               <select value={noteType} onChange={(e) => setNoteType(e.target.value as never)} style={{ ...inputStyle, flex: 1 }}>
                 {Object.entries(NOTE_TYPE_META).map(([k, v]) => (
                   <option key={k} value={k}>{v.icon} {v.label}</option>
@@ -187,9 +188,9 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
                 📌 تثبيت
               </label>
             </div>
-            <div style={{ display: 'flex', gap: 6 }}>
+            <div style={{ display: 'flex', gap: 8 }}>
               <button onClick={handleAddNote} disabled={isPending || !newNote.trim()} style={{
-                flex: 1, padding: '8px', background: 'var(--emerald-deep)', color: '#fff',
+                flex: 1, padding: '8px', background: 'var(--emerald-deep)', color: 'var(--white)',
                 border: 0, borderRadius: 8, fontSize: 12, fontWeight: 800, cursor: 'pointer',
               }}>حفظ</button>
               <button onClick={() => { setShowNoteForm(false); setNewNote(''); }} style={{
@@ -201,14 +202,14 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
         )}
 
         {notes.length === 0 ? (
-          <p style={{ fontSize: 11, color: 'var(--ink-3)', margin: 0 }}>لا توجد ملاحظات</p>
+          <EmptyState icon="📝" title="لا توجد ملاحظات" size="sm" variant="plain" />
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {notes.map((n) => {
               const meta = NOTE_TYPE_META[n.note_type];
               return (
                 <div key={n.id} style={{
-                  background: meta.color, padding: 10, borderRadius: 8,
+                  background: meta.color, padding: 12, borderRadius: 8,
                   borderRight: n.is_pinned ? '3px solid var(--amber)' : 'none',
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
@@ -232,7 +233,7 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
       </div>
 
       {/* Actions */}
-      <div style={{ background: '#fff', borderRadius: 14, padding: 16 }}>
+      <div style={{ background: 'var(--white)', borderRadius: 14, padding: 16 }}>
         <h3 style={{ fontSize: 13, fontWeight: 800, margin: '0 0 10px' }}>⚙️ إجراءات</h3>
         {error && (
           <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '8px 10px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginBottom: 8 }}>
@@ -242,7 +243,7 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
         <button onClick={handleToggleSuspend} disabled={isPending} style={{
           width: '100%', padding: '10px',
           background: isSuspended ? 'var(--emerald-deep)' : 'var(--rose)',
-          color: '#fff', border: 0, borderRadius: 10,
+          color: 'var(--white)', border: 0, borderRadius: 10,
           fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit',
         }}>
           {isSuspended ? '▶️ إلغاء تعليق المريض' : '⛔ تعليق المريض'}
