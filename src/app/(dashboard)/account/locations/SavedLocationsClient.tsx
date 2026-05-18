@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { MapPin, Plus, Trash2, Star, Edit3, X, Save, Crosshair } from 'lucide-react';
 import { MapPickerWrapper } from '@/components/ui/MapPickerWrapper';
-import { Card, CardHeader, CardTitle, EmptyState, Badge } from '@/components/ui';
+import { Card, CardHeader, CardTitle, EmptyState, Badge, useConfirm } from '@/components/ui';
 import {
   saveLocation,
   updateSavedLocation,
@@ -19,6 +19,7 @@ interface Props {
 
 export default function SavedLocationsClient({ initialLocations }: Props) {
   const router = useRouter();
+  const { confirm, ConfirmDialog } = useConfirm();
   const [locations, setLocations] = useState(initialLocations);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -103,8 +104,15 @@ export default function SavedLocationsClient({ initialLocations }: Props) {
     });
   };
 
-  const handleDelete = (id: string) => {
-    if (!confirm('هل أنت متأكد من حذف هذا الموقع؟')) return;
+  const handleDelete = async (id: string, label: string) => {
+    const ok = await confirm({
+      title: 'حذف الموقع',
+      message: `هل أنت متأكد من حذف موقع "${label}"؟ لا يمكن التراجع.`,
+      variant: 'danger',
+      confirmText: 'نعم، احذف',
+      cancelText: 'إلغاء',
+    });
+    if (!ok) return;
 
     startTransition(async () => {
       const result = await deleteSavedLocation(id);
@@ -489,7 +497,7 @@ export default function SavedLocationsClient({ initialLocations }: Props) {
                     <Edit3 size={14} strokeWidth={2.4} />
                   </button>
                   <button
-                    onClick={() => handleDelete(loc.id)}
+                    onClick={() => handleDelete(loc.id, loc.label)}
                     title="حذف"
                     style={{
                       width: 32,
@@ -512,6 +520,7 @@ export default function SavedLocationsClient({ initialLocations }: Props) {
           ))
         )}
       </div>
+      <ConfirmDialog />
     </main>
   );
 }
