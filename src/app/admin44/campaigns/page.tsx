@@ -17,8 +17,8 @@ export default async function CampaignsPage() {
 
   const TYPE_META: Record<string, { icon: string; color: string; label: string }> = {
     whatsapp: { icon: '💬', color: '#25D366', label: 'WhatsApp' },
-    sms: { icon: '📱', color: '#0E5C4D', label: 'SMS' },
-    push: { icon: '🔔', color: '#B8540C', label: 'إشعار' },
+    sms: { icon: '📱', color: 'var(--emerald)', label: 'SMS' },
+    push: { icon: '🔔', color: 'var(--amber)', label: 'إشعار' },
     email: { icon: '✉️', color: '#534AB7', label: 'بريد' },
   };
 
@@ -38,7 +38,7 @@ export default async function CampaignsPage() {
       </p>
 
       <div style={{
-        background: '#fff', borderRadius: 14, padding: 24,
+        background: 'var(--white)', borderRadius: 14, padding: 24,
         marginBottom: 16, borderRight: '4px solid var(--amber)',
       }}>
         <h3 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 6px', color: 'var(--amber-deep, #6B3A08)' }}>
@@ -53,7 +53,7 @@ export default async function CampaignsPage() {
 
       {/* List of past campaigns (if any) */}
       {campaigns && campaigns.length > 0 && (
-        <div style={{ background: '#fff', borderRadius: 14, overflow: 'hidden' }}>
+        <div style={{ background: 'var(--white)', borderRadius: 14, overflow: 'hidden' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead style={{ background: 'var(--paper-3)' }}>
               <tr>
