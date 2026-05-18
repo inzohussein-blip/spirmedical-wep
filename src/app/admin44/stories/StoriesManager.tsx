@@ -22,6 +22,7 @@ import {
 } from './actions';
 import type { Story, StoryColorTheme, StoryInput } from '@/types/story';
 import { COLOR_THEMES } from '@/types/story';
+import { useConfirm } from '@/components/ui';
 
 interface Props {
   initialStories: Story[];
@@ -38,6 +39,7 @@ const EMPTY_FORM: StoryInput = {
 };
 
 export default function StoriesManager({ initialStories }: Props) {
+  const { confirm, ConfirmDialog } = useConfirm();
   const [stories, setStories] = useState<Story[]>(initialStories);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -116,8 +118,14 @@ export default function StoriesManager({ initialStories }: Props) {
     });
   };
 
-  const handleDelete = (id: string, title: string) => {
-    if (!confirm(`هل تريد حذف القصة "${title}"؟`)) return;
+  const handleDelete = async (id: string, title: string) => {
+    const ok = await confirm({
+      title: 'حذف القصة',
+      message: 'سيتم حذف القصة نهائياً.',
+      variant: 'danger',
+      confirmText: 'احذف',
+    });
+    if (!ok) return;
 
     startTransition(async () => {
       const result = await deleteStory(id);
@@ -400,6 +408,7 @@ export default function StoriesManager({ initialStories }: Props) {
         .sm-empty h3 { font-size: 16px; font-weight: 800; margin: 0 0 6px; }
         .sm-empty p { font-size: 13px; color: var(--ink-3); margin: 0; }
       `}</style>
+      <ConfirmDialog />
     </div>
   );
 }
