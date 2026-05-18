@@ -6,6 +6,7 @@ import StructuredData from '@/components/seo/StructuredData';
 import PWAManager from '@/components/ui/PWAManager';
 import NetworkStatusDetector from '@/components/ui/NetworkStatusDetector';
 import SWUpdateBanner from '@/components/ui/SWUpdateBanner';
+import WebVitalsReporter from '@/components/seo/WebVitalsReporter';
 import { Toaster } from '@/components/ui/Toaster';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 
@@ -229,6 +230,7 @@ export default function RootLayout({
         <SWUpdateBanner />
         <CookieConsent />
         <PWAManager />
+        <WebVitalsReporter />
         <Analytics />
         <SpeedInsights />
       </body>
