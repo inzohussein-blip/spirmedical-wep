@@ -90,7 +90,7 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center text-center',
+        'flex flex-col items-center justify-center text-center animate-fade-in',
         config.padding,
         VARIANT_CLASSES[variant],
         className
