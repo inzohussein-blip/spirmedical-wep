@@ -273,10 +273,18 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
       metadata: { ip, phone, method: 'no_otp' },
     });
 
-    // 6. التوجيه حسب الدور
+    // 6. التوجيه حسب الدور (V25: دعم كل الأدوار)
     const role = existingProfile?.role || 'patient';
     if (role === 'specialist') {
       redirect('/specialist');
+    }
+    if (
+      role === 'admin' ||
+      role === 'super_admin' ||
+      role === 'manager' ||
+      role === 'support'
+    ) {
+      redirect('/admin44');
     }
     redirect('/dashboard');
   } catch (err) {
@@ -358,6 +366,14 @@ export async function verifyOtp(formData: FormData) {
 
   if (profile?.role === 'specialist') {
     redirect('/specialist');
+  }
+  if (
+    profile?.role === 'admin' ||
+    profile?.role === 'super_admin' ||
+    profile?.role === 'manager' ||
+    profile?.role === 'support'
+  ) {
+    redirect('/admin44');
   }
 
   redirect('/dashboard');
