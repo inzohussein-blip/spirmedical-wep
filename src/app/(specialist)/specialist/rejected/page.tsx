@@ -24,7 +24,7 @@ export default async function RejectedPage() {
 
   return (
     <main style={{ minHeight: '100vh', background: 'var(--paper)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-      <div style={{ maxWidth: 420, width: '100%', background: '#fff', borderRadius: 20, padding: 32, textAlign: 'center', boxShadow: '0 10px 40px rgba(0,0,0,0.08)' }}>
+      <div style={{ maxWidth: 420, width: '100%', background: 'var(--white)', borderRadius: 20, padding: 32, textAlign: 'center', boxShadow: '0 10px 40px rgba(0,0,0,0.08)' }}>
         <div style={{ fontSize: 64, marginBottom: 12 }}>❌</div>
         <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--ink)', margin: '0 0 8px' }}>
           عذراً، لم تتم الموافقة
@@ -34,7 +34,7 @@ export default async function RejectedPage() {
         </p>
 
         {profile?.rejection_reason && (
-          <div style={{ background: 'var(--rose-soft)', padding: 14, borderRadius: 12, marginBottom: 20 }}>
+          <div style={{ background: 'var(--rose-soft)', padding: 16, borderRadius: 12, marginBottom: 20 }}>
             <div style={{ fontSize: 11, color: 'var(--rose)', fontWeight: 800, marginBottom: 4 }}>السبب:</div>
             <div style={{ fontSize: 13, color: 'var(--ink)' }}>{profile.rejection_reason}</div>
           </div>
@@ -50,7 +50,7 @@ export default async function RejectedPage() {
             justifyContent: 'center',
             gap: 8,
             background: '#25D366',
-            color: '#fff',
+            color: 'var(--white)',
             padding: '12px 20px',
             borderRadius: 12,
             fontSize: 13,
