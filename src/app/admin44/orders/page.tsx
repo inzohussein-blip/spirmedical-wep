@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { SPECIALIST_META, SPECIALIST_TYPES, type SpecialistType } from '@/lib/specialist-types';
+import { EmptyState } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
 
@@ -74,7 +75,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
       </p>
 
       {/* Filters */}
-      <form method="GET" style={{ background: '#fff', padding: 16, borderRadius: 14, marginBottom: 20, display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+      <form method="GET" style={{ background: 'var(--white)', padding: 16, borderRadius: 14, marginBottom: 20, display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
         <div>
           <label style={lblStyle}>الحالة</label>
           <select name="status" defaultValue={searchParams.status ?? ''} style={inputStyle}>
@@ -107,17 +108,17 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
           <input type="date" name="to" defaultValue={searchParams.to ?? ''} style={inputStyle} />
         </div>
 
-        <button type="submit" style={{ padding: '8px 20px', background: 'var(--emerald-deep)', color: '#fff', border: 0, borderRadius: 8, fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
+        <button type="submit" style={{ padding: '8px 20px', background: 'var(--emerald-deep)', color: 'var(--white)', border: 0, borderRadius: 8, fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
           🔍 تطبيق
         </button>
 
         <div style={{ marginInlineStart: 'auto', display: 'flex', gap: 4 }}>
           <Link href={`/admin44/orders?${new URLSearchParams({ ...searchParams, view: 'list' } as Record<string, string>).toString()}`}
-                style={{ padding: '8px 14px', background: view === 'list' ? 'var(--emerald-deep)' : 'transparent', color: view === 'list' ? '#fff' : 'var(--ink-3)', textDecoration: 'none', borderRadius: 8, fontSize: 12, fontWeight: 700 }}>
+                style={{ padding: '8px 14px', background: view === 'list' ? 'var(--emerald-deep)' : 'transparent', color: view === 'list' ? 'var(--white)' : 'var(--ink-3)', textDecoration: 'none', borderRadius: 8, fontSize: 12, fontWeight: 700 }}>
             📋 قائمة
           </Link>
           <Link href={`/admin44/orders?${new URLSearchParams({ ...searchParams, view: 'kanban' } as Record<string, string>).toString()}`}
-                style={{ padding: '8px 14px', background: view === 'kanban' ? 'var(--emerald-deep)' : 'transparent', color: view === 'kanban' ? '#fff' : 'var(--ink-3)', textDecoration: 'none', borderRadius: 8, fontSize: 12, fontWeight: 700 }}>
+                style={{ padding: '8px 14px', background: view === 'kanban' ? 'var(--emerald-deep)' : 'transparent', color: view === 'kanban' ? 'var(--white)' : 'var(--ink-3)', textDecoration: 'none', borderRadius: 8, fontSize: 12, fontWeight: 700 }}>
             📊 Kanban
           </Link>
         </div>
@@ -125,10 +126,12 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
 
       {/* Display */}
       {filteredOrders.length === 0 ? (
-        <div style={{ background: '#fff', borderRadius: 14, padding: 60, textAlign: 'center' }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>📋</div>
-          <p style={{ fontSize: 14, color: 'var(--ink-3)' }}>لا توجد طلبات</p>
-        </div>
+        <EmptyState
+          icon="📋"
+          title="لا توجد طلبات"
+          description="ستظهر الطلبات هنا عند إنشائها"
+          size="lg"
+        />
       ) : view === 'kanban' ? (
         <KanbanView orders={filteredOrders} usersMap={usersMap} />
       ) : (
@@ -140,7 +143,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
 
 function ListView({ orders, usersMap }: { orders: Array<Record<string, unknown>>; usersMap: Map<string, { full_name: string | null; phone: string }> }) {
   return (
-    <div style={{ background: '#fff', borderRadius: 14, overflow: 'hidden' }}>
+    <div style={{ background: 'var(--white)', borderRadius: 14, overflow: 'hidden' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
         <thead style={{ background: 'var(--paper-3)' }}>
           <tr>
@@ -192,7 +195,7 @@ function KanbanView({ orders, usersMap }: { orders: Array<Record<string, unknown
   const columns = ['pending', 'confirmed', 'in_progress', 'completed', 'cancelled'];
 
   return (
-    <div style={{ display: 'flex', gap: 14, overflowX: 'auto', paddingBottom: 16 }}>
+    <div style={{ display: 'flex', gap: 16, overflowX: 'auto', paddingBottom: 16 }}>
       {columns.map((col) => {
         const colOrders = orders.filter((o: any) => o.status === col);
         const meta = STATUS_META[col];
@@ -228,7 +231,7 @@ function KanbanView({ orders, usersMap }: { orders: Array<Record<string, unknown
 
                 return (
                   <Link key={o.id} href={`/admin44/orders/${o.id}`} style={{
-                    background: '#fff', borderRadius: 10, padding: 10,
+                    background: 'var(--white)', borderRadius: 10, padding: 12,
                     textDecoration: 'none', color: 'var(--ink)', fontSize: 12,
                   }}>
                     <div style={{ fontWeight: 700, marginBottom: 4 }}>
