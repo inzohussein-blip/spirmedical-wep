@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useTransition } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { sendMessage, markChatAsRead } from '@/app/(specialist)/specialist/inbox/actions';
+import { toast } from '@/components/ui/Toaster';
 import {
   Phone, Video, MoreVertical, MessageCircle, Image as ImageIcon,
   Paperclip, Mic, MapPin, Plus, X, FileText, Send, Loader2, Zap,
@@ -154,7 +155,7 @@ export default function ChatWindow({
       if (result.error) {
         // Remove optimistic message on error
         setMessages(prev => prev.filter(m => m.id !== optimisticMsg.id));
-        alert(`خطأ: ${result.error}`);
+        toast.error(`خطأ: ${result.error}`);
       } else if (result.message) {
         // Replace optimistic with real message
         setMessages(prev => prev.map(m =>
@@ -339,19 +340,19 @@ export default function ChatWindow({
       {/* Attach Menu */}
       {showAttachMenu && (
         <div className="chat-attach-menu">
-          <button type="button" className="chat-attach-option" onClick={() => alert('رفع صورة قيد التطوير')}>
+          <button type="button" className="chat-attach-option" onClick={() => toast.info('رفع صورة قيد التطوير')}>
             <ImageIcon size={18} strokeWidth={2.2} aria-hidden />
             <span>صورة</span>
           </button>
-          <button type="button" className="chat-attach-option" onClick={() => alert('رفع ملف قيد التطوير')}>
+          <button type="button" className="chat-attach-option" onClick={() => toast.info('رفع ملف قيد التطوير')}>
             <Paperclip size={18} strokeWidth={2.2} aria-hidden />
             <span>ملف</span>
           </button>
-          <button type="button" className="chat-attach-option" onClick={() => alert('تسجيل صوتي قيد التطوير')}>
+          <button type="button" className="chat-attach-option" onClick={() => toast.info('تسجيل صوتي قيد التطوير')}>
             <Mic size={18} strokeWidth={2.2} aria-hidden />
             <span>صوت</span>
           </button>
-          <button type="button" className="chat-attach-option" onClick={() => alert('الموقع قيد التطوير')}>
+          <button type="button" className="chat-attach-option" onClick={() => toast.info('الموقع قيد التطوير')}>
             <MapPin size={18} strokeWidth={2.2} aria-hidden />
             <span>الموقع</span>
           </button>
