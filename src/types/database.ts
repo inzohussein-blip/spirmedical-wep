@@ -1100,6 +1100,113 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_saved_locations: {
+        Row: {
+          id: string;
+          user_id: string;
+          label: string;
+          icon: string;
+          address: string;
+          lat: number;
+          lng: number;
+          governorate: string | null;
+          notes: string | null;
+          is_pinned: boolean;
+          use_count: number;
+          last_used_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          label: string;
+          icon?: string;
+          address: string;
+          lat: number;
+          lng: number;
+          governorate?: string | null;
+          notes?: string | null;
+          is_pinned?: boolean;
+          use_count?: number;
+          last_used_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          label?: string;
+          icon?: string;
+          address?: string;
+          lat?: number;
+          lng?: number;
+          governorate?: string | null;
+          notes?: string | null;
+          is_pinned?: boolean;
+          use_count?: number;
+          last_used_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'user_saved_locations_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      geocoding_cache: {
+        Row: {
+          id: string;
+          lat_rounded: number;
+          lng_rounded: number;
+          display_name: string;
+          road: string | null;
+          suburb: string | null;
+          city: string | null;
+          governorate: string | null;
+          country: string | null;
+          raw_data: Json | null;
+          hit_count: number;
+          last_used_at: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          lat_rounded: number;
+          lng_rounded: number;
+          display_name: string;
+          road?: string | null;
+          suburb?: string | null;
+          city?: string | null;
+          governorate?: string | null;
+          country?: string | null;
+          raw_data?: Json | null;
+          hit_count?: number;
+          last_used_at?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          lat_rounded?: number;
+          lng_rounded?: number;
+          display_name?: string;
+          road?: string | null;
+          suburb?: string | null;
+          city?: string | null;
+          governorate?: string | null;
+          country?: string | null;
+          raw_data?: Json | null;
+          hit_count?: number;
+          last_used_at?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       appointments_with_users: {
