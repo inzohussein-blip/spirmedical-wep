@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { createReminder, toggleReminder, deleteReminder, type ReminderType, type ReminderFrequency } from './actions';
 import type { LucideIcon } from 'lucide-react';
+import { useConfirm } from '@/components/ui';
 import {
   Pill, Calendar, TestTube, Syringe, AlertTriangle, Clock,
   Pause, Play, Trash2,
@@ -34,6 +35,7 @@ const FREQ_LABEL: Record<string, string> = {
 };
 
 export default function RemindersClient({ reminders }: { reminders: Reminder[] }) {
+  const { confirm, ConfirmDialog } = useConfirm();
   const [showForm, setShowForm] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState('');
@@ -86,8 +88,14 @@ export default function RemindersClient({ reminders }: { reminders: Reminder[] }
     });
   }
 
-  function handleDelete(id: string) {
-    if (!confirm('حذف هذا التذكير؟')) return;
+  async function handleDelete(id: string) {
+    const ok = await confirm({
+      title: 'حذف التذكير',
+      message: 'هل تريد حذف هذا التذكير؟',
+      variant: 'danger',
+      confirmText: 'احذف',
+    });
+    if (!ok) return;
     startTransition(async () => {
       await deleteReminder(id);
     });
@@ -284,6 +292,7 @@ export default function RemindersClient({ reminders }: { reminders: Reminder[] }
           </div>
         </>
       )}
+      <ConfirmDialog />
     </>
   );
 }
