@@ -17,9 +17,18 @@ interface Props {
   userAddress: string;
   clinicId?: string;
   consultationType?: string;
+  /** ✨ V25.1: المواقع المحفوظة للمستخدم */
+  savedLocations?: Array<{
+    id: string;
+    label: string;
+    icon: string;
+    address: string;
+    lat: number;
+    lng: number;
+  }>;
 }
 
-export default function NewAppointmentClient({ service, userPhone, userAddress, clinicId, consultationType }: Props) {
+export default function NewAppointmentClient({ service, userPhone, userAddress, clinicId, consultationType, savedLocations = [] }: Props) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
@@ -216,6 +225,7 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
           userPhone={userPhone}
           userAddress={userAddress}
           onSubmit={handleBloodDrawSubmit}
+          savedLocations={savedLocations}
         />
       ) : (
         <AppointmentWizard
