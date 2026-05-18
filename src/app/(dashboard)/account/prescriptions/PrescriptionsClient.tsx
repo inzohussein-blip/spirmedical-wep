@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { createPrescription, deletePrescription } from './actions';
+import { useConfirm } from '@/components/ui';
 import {
   AlertTriangle, ClipboardList, Pill, Calendar, FileText, Trash2,
 } from 'lucide-react';
@@ -19,6 +20,7 @@ interface Prescription {
 }
 
 export default function PrescriptionsClient({ prescriptions }: { prescriptions: Prescription[] }) {
+  const { confirm, ConfirmDialog } = useConfirm();
   const [showForm, setShowForm] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState('');
@@ -61,8 +63,14 @@ export default function PrescriptionsClient({ prescriptions }: { prescriptions: 
     });
   }
 
-  function handleDelete(id: string) {
-    if (!confirm('حذف هذه الوصفة؟')) return;
+  async function handleDelete(id: string) {
+    const ok = await confirm({
+      title: 'حذف الوصفة',
+      message: 'هل تريد حذف هذه الوصفة؟',
+      variant: 'danger',
+      confirmText: 'احذف',
+    });
+    if (!ok) return;
     startTransition(async () => {
       await deletePrescription(id);
     });
@@ -74,16 +82,16 @@ export default function PrescriptionsClient({ prescriptions }: { prescriptions: 
         <button
           type="button"
           className="scr-empty-cta"
-          style={{ display: 'block', width: '100%', marginTop: 14 }}
+          style={{ display: 'block', width: '100%', marginTop: 16 }}
           onClick={() => setShowForm(true)}
         >
           + إضافة وصفة طبية
         </button>
       ) : (
-        <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 14, marginTop: 14 }}>
+        <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 16, marginTop: 16 }}>
           <div className="scr-section-title" style={{ marginBottom: 12 }}>وصفة جديدة</div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 10 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
             <div>
               <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>الطبيب *</label>
               <input
@@ -106,7 +114,7 @@ export default function PrescriptionsClient({ prescriptions }: { prescriptions: 
             </div>
           </div>
 
-          <div style={{ marginBottom: 10 }}>
+          <div style={{ marginBottom: 12 }}>
             <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>الدواء *</label>
             <input
               type="text"
@@ -117,7 +125,7 @@ export default function PrescriptionsClient({ prescriptions }: { prescriptions: 
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 10 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 12 }}>
             <div>
               <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>الجرعة</label>
               <input
@@ -162,7 +170,7 @@ export default function PrescriptionsClient({ prescriptions }: { prescriptions: 
           </div>
 
           {error && (
-            <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
               <AlertTriangle size={14} strokeWidth={2.4} />
               {error}
             </div>
@@ -243,6 +251,7 @@ export default function PrescriptionsClient({ prescriptions }: { prescriptions: 
           </div>
         </>
       )}
+      <ConfirmDialog />
     </>
   );
 }
