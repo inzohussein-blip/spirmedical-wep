@@ -3,6 +3,8 @@ import LandingMobileMenu from '@/components/landing/MobileMenu';
 import LandingFAQ from '@/components/landing/FAQ';
 import LandingStats from '@/components/landing/Stats';
 import { ARTICLES } from '@/lib/data/blog-articles';
+import { FreeMedicalMapWrapper } from '@/components/ui/FreeMedicalMapWrapper';
+import type { MapMarker } from '@/types/location';
 
 export const metadata = {
   title: 'سباير ميديكال · Spir Medical — منصة طبية رقمية متكاملة في العراق',
@@ -113,15 +115,26 @@ const TRUST_BADGES = [
 ];
 
 const ACTIVE_CITIES = [
-  { name: 'بغداد', doctors: 85, labs: 24 },
-  { name: 'البصرة', doctors: 32, labs: 12 },
-  { name: 'أربيل', doctors: 28, labs: 10 },
-  { name: 'الموصل', doctors: 22, labs: 8 },
-  { name: 'النجف', doctors: 18, labs: 7 },
-  { name: 'كربلاء', doctors: 15, labs: 6 },
-  { name: 'السليمانية', doctors: 14, labs: 5 },
-  { name: 'كركوك', doctors: 12, labs: 4 },
+  { name: 'بغداد', doctors: 85, labs: 24, lat: 33.3152, lng: 44.3661 },
+  { name: 'البصرة', doctors: 32, labs: 12, lat: 30.5085, lng: 47.7804 },
+  { name: 'أربيل', doctors: 28, labs: 10, lat: 36.1901, lng: 44.0094 },
+  { name: 'الموصل', doctors: 22, labs: 8, lat: 36.3489, lng: 43.1577 },
+  { name: 'النجف', doctors: 18, labs: 7, lat: 31.9997, lng: 44.3296 },
+  { name: 'كربلاء', doctors: 15, labs: 6, lat: 32.6149, lng: 44.0245 },
+  { name: 'السليمانية', doctors: 14, labs: 5, lat: 35.5556, lng: 45.4351 },
+  { name: 'كركوك', doctors: 12, labs: 4, lat: 35.4681, lng: 44.3923 },
 ];
+
+// 🗺️ Markers للخريطة - مشتقة من ACTIVE_CITIES
+const COVERAGE_MARKERS: MapMarker[] = ACTIVE_CITIES.map((c, i) => ({
+  id: `city-${i}`,
+  lat: c.lat,
+  lng: c.lng,
+  title: c.name,
+  subtitle: `${c.doctors} طبيب · ${c.labs} مختبر`,
+  variant: i === 0 ? 'specialist' : i < 4 ? 'lab' : 'pharmacy',
+  popup: `خدماتنا متاحة في ${c.name}`,
+}));
 
 const BLOG_POSTS = [
   {
@@ -168,6 +181,7 @@ export default function HomePage() {
           <div className="landing-nav-links">
             <a href="#services" className="landing-nav-link-section">الخدمات</a>
             <a href="#how-it-works" className="landing-nav-link-section">كيف يعمل</a>
+            <a href="#coverage-map" className="landing-nav-link-section">التغطية</a>
             <Link href="/blog" className="landing-nav-link-section">المدونة</Link>
             <a href="#testimonials" className="landing-nav-link-section">آراء المستخدمين</a>
             <a href="#faq" className="landing-nav-link-section">الأسئلة</a>
@@ -765,6 +779,61 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ============ MAP COVERAGE SECTION ============ */}
+      <section id="coverage-map" className="landing-coverage-map">
+        <div className="landing-wrap">
+          <div className="landing-section-head">
+            <span className="landing-eyebrow">🗺️ تغطية واسعة</span>
+            <h2 className="landing-section-title">
+              مناطق <span className="landing-italic">تغطيتنا</span> في العراق
+            </h2>
+            <p className="landing-section-subtitle">
+              خدماتنا الطبية متاحة في {ACTIVE_CITIES.length} محافظات رئيسية وأكثر · اطلب من أي مكان
+            </p>
+          </div>
+
+          <div className="landing-coverage-grid">
+            {/* الخريطة */}
+            <div className="landing-coverage-map-wrap">
+              <FreeMedicalMapWrapper
+                markers={COVERAGE_MARKERS}
+                height={420}
+                zoom={6}
+                showDirections={false}
+                showCoords={false}
+              />
+            </div>
+
+            {/* قائمة المدن */}
+            <div className="landing-coverage-cities">
+              <h3 className="landing-coverage-cities-title">
+                <span aria-hidden="true">📍</span>
+                <span>المحافظات المغطّاة</span>
+              </h3>
+              <ul className="landing-coverage-cities-list">
+                {ACTIVE_CITIES.map((city) => (
+                  <li key={city.name} className="landing-coverage-city">
+                    <div className="landing-coverage-city-name">
+                      <span aria-hidden="true" className="landing-coverage-dot"></span>
+                      <strong>{city.name}</strong>
+                    </div>
+                    <div className="landing-coverage-city-stats">
+                      <span>{city.doctors} طبيب</span>
+                      <span>·</span>
+                      <span>{city.labs} مختبر</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <Link href="/gate" className="landing-coverage-cta">
+                <span>ابدأ من مدينتك</span>
+                <span aria-hidden="true">←</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ============ FINAL CTA ============ */}
       <section className="landing-cta-section">
         <div className="landing-wrap">
@@ -811,10 +880,11 @@ export default function HomePage() {
             <div className="landing-footer-col">
               <h4>الخدمات</h4>
               <ul>
-                <li>سحب الدم المنزلي</li>
-                <li>الفحوصات المختبرية</li>
-                <li>الاستشارات الطبية</li>
-                <li>الصيدليات</li>
+                <li><a href="#services">سحب الدم المنزلي</a></li>
+                <li><a href="#services">الفحوصات المختبرية</a></li>
+                <li><a href="#services">الاستشارات الطبية</a></li>
+                <li><a href="#services">الصيدليات</a></li>
+                <li><a href="#coverage-map">🗺️ مناطق التغطية</a></li>
               </ul>
             </div>
             <div className="landing-footer-col">
