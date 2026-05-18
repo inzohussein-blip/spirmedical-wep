@@ -14,7 +14,9 @@ const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 // الأصول الأساسية للـ pre-cache
 const STATIC_ASSETS = [
   '/',
+  '/app',
   '/offline',
+  '/login',
   '/icon-192.png',
   '/icon-512.png',
   '/manifest.json',
