@@ -76,17 +76,17 @@ export default function TemplatesClient({ templates }: { templates: Template[] }
           type="button"
           onClick={() => setShowForm(true)}
           className="scr-empty-cta"
-          style={{ display: 'block', width: '100%', marginTop: 14 }}
+          style={{ display: 'block', width: '100%', marginTop: 16 }}
         >
           + إضافة قالب جديد
         </button>
       ) : (
-        <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 14, marginTop: 14 }}>
+        <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 16, marginTop: 16 }}>
           <div className="scr-section-title" style={{ marginBottom: 12 }}>
             {editingId ? 'تعديل القالب' : 'قالب جديد'}
           </div>
 
-          <div style={{ marginBottom: 10 }}>
+          <div style={{ marginBottom: 12 }}>
             <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>
               الاختصار (مثال: /سلام)
             </label>
@@ -100,7 +100,7 @@ export default function TemplatesClient({ templates }: { templates: Template[] }
             />
           </div>
 
-          <div style={{ marginBottom: 10 }}>
+          <div style={{ marginBottom: 12 }}>
             <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>
               التصنيف
             </label>
@@ -127,7 +127,7 @@ export default function TemplatesClient({ templates }: { templates: Template[] }
           </div>
 
           {error && (
-            <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
               <AlertTriangle size={14} strokeWidth={2.4} />
               {error}
             </div>
@@ -172,7 +172,7 @@ export default function TemplatesClient({ templates }: { templates: Template[] }
                     {t.shortcut}
                   </div>
                   <div className="scr-list-item-subtitle">{t.content}</div>
-                  <div className="scr-list-item-tags" style={{ marginTop: 6 }}>
+                  <div className="scr-list-item-tags" style={{ marginTop: 8 }}>
                     <span className="scr-tag">{t.category}</span>
                     {t.use_count > 0 && (
                       <span className="scr-tag" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
