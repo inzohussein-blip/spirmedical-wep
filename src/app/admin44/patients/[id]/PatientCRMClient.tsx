@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { addPatientTag, removePatientTag, addPatientNote, deletePatientNote } from '../actions';
 import { toggleSuspendUser } from '../../specialists/actions';
-import { EmptyState } from '@/components/ui';
+import { EmptyState, useConfirm } from '@/components/ui';
 
 interface Tag { id: string; tag: string; color: string; }
 interface Note {
@@ -32,6 +32,7 @@ const NOTE_TYPE_META = {
 const SUGGESTED_TAGS = ['VIP', 'مزمن', 'دائم', 'حذر', 'حامل', 'كبير سن', 'طوارئ متكررة'];
 
 export default function PatientCRMClient({ patientId, tags, notes, isSuspended }: Props) {
+  const { confirm, ConfirmDialog } = useConfirm();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState('');
@@ -57,8 +58,14 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
     });
   }
 
-  function handleRemoveTag(tagId: string) {
-    if (!confirm('حذف هذا التصنيف؟')) return;
+  async function handleRemoveTag(tagId: string) {
+    const ok = await confirm({
+      title: 'حذف التصنيف',
+      message: 'هل تريد حذف هذا التصنيف؟',
+      variant: 'danger',
+      confirmText: 'احذف',
+    });
+    if (!ok) return;
     startTransition(async () => {
       await removePatientTag(tagId, patientId);
       router.refresh();
@@ -79,18 +86,32 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
     });
   }
 
-  function handleDeleteNote(noteId: string) {
-    if (!confirm('حذف هذه الملاحظة؟')) return;
+  async function handleDeleteNote(noteId: string) {
+    const ok = await confirm({
+      title: 'حذف الملاحظة',
+      message: 'هل تريد حذف هذه الملاحظة؟',
+      variant: 'danger',
+      confirmText: 'احذف',
+    });
+    if (!ok) return;
     startTransition(async () => {
       await deletePatientNote(noteId, patientId);
       router.refresh();
     });
   }
 
-  function handleToggleSuspend() {
+  async function handleToggleSuspend() {
     const reason = isSuspended ? undefined : prompt('سبب التعليق؟');
     if (!isSuspended && !reason) return;
-    if (!confirm(isSuspended ? 'إلغاء تعليق المريض؟' : 'تعليق المريض؟')) return;
+    const ok = await confirm({
+      title: isSuspended ? 'إلغاء التعليق' : 'تعليق المريض',
+      message: isSuspended
+        ? 'سيتمكّن المريض من استخدام الحساب مجدداً.'
+        : 'لن يتمكن المريض من تسجيل الدخول.',
+      variant: 'warning',
+      confirmText: isSuspended ? 'إلغاء التعليق' : 'تعليق',
+    });
+    if (!ok) return;
     startTransition(async () => {
       await toggleSuspendUser(patientId, !isSuspended, reason ?? undefined);
       router.refresh();
@@ -249,6 +270,7 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
           {isSuspended ? '▶️ إلغاء تعليق المريض' : '⛔ تعليق المريض'}
         </button>
       </div>
+      <ConfirmDialog />
     </div>
   );
 }
