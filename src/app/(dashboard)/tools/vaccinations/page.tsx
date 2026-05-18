@@ -79,7 +79,7 @@ export default function VaccinationsPage() {
         </div>
 
         {/* الفئات */}
-        <div className="scr-pills" style={{ marginBottom: 14 }}>
+        <div className="scr-pills" style={{ marginBottom: 16 }}>
           {CATEGORIES.map((cat) => {
             const Icon = cat.icon;
             return (
@@ -112,7 +112,7 @@ export default function VaccinationsPage() {
               <div className="scr-list-item-content">
                 <div className="scr-list-item-title">{v.name}</div>
                 <div className="scr-list-item-subtitle">{v.age}</div>
-                <div className="scr-list-item-tags" style={{ marginTop: 6 }}>
+                <div className="scr-list-item-tags" style={{ marginTop: 8 }}>
                   {v.importance === 'critical' && <span className="scr-tag scr-tag-emergency">إلزامي</span>}
                   {v.importance === 'recommended' && <span className="scr-tag scr-tag-amber">موصى به</span>}
                   {v.importance === 'optional' && <span className="scr-tag">اختياري</span>}
@@ -187,7 +187,7 @@ export default function VaccinationsPage() {
             <h2 style={{ fontSize: 18, fontWeight: 800, color: 'var(--ink)', margin: '0 0 4px' }}>{selected.name}</h2>
             <div style={{ fontSize: 12, color: 'var(--ink-3)', marginBottom: 12 }}>{selected.age}</div>
 
-            <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
               {selected.importance === 'critical' && <span className="scr-tag scr-tag-emergency">إلزامي</span>}
               {selected.importance === 'recommended' && <span className="scr-tag scr-tag-amber">موصى به</span>}
               {selected.importance === 'optional' && <span className="scr-tag">اختياري</span>}
@@ -200,7 +200,7 @@ export default function VaccinationsPage() {
 
             <div style={{ background: 'var(--paper-3)', borderRadius: 12, padding: 12, marginBottom: 16 }}>
               <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700, marginBottom: 4 }}>الجرعات</div>
-              <div style={{ fontSize: 13, color: 'var(--ink)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ fontSize: 13, color: 'var(--ink)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
                 <ClipboardList size={14} strokeWidth={2.2} />
                 {selected.doses}
               </div>
@@ -210,7 +210,7 @@ export default function VaccinationsPage() {
               href="/account/reminders"
               onClick={() => setSelected(null)}
               className="scr-empty-cta"
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, textDecoration: 'none' }}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, textDecoration: 'none' }}
             >
               <Clock size={16} strokeWidth={2.2} />
               أضف تذكير لهذا اللقاح
