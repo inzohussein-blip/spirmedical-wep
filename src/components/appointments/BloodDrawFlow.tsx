@@ -492,53 +492,6 @@ export default function BloodDrawFlow({
                   </button>
                 ))}
               </div>
-              <style jsx>{`
-                .bd-saved-locations {
-                  margin-bottom: 12px;
-                  padding: 10px 12px;
-                  background: var(--emerald-soft);
-                  border-radius: 10px;
-                  border: 1px solid var(--emerald);
-                }
-                .bd-saved-label {
-                  display: flex;
-                  align-items: center;
-                  gap: 6px;
-                  font-size: 11px;
-                  font-weight: 800;
-                  color: var(--emerald-deep);
-                  margin-bottom: 8px;
-                }
-                .bd-saved-chips {
-                  display: flex;
-                  flex-wrap: wrap;
-                  gap: 6px;
-                }
-                .bd-saved-chip {
-                  display: inline-flex;
-                  align-items: center;
-                  gap: 4px;
-                  padding: 6px 10px;
-                  background: var(--white);
-                  border: 1px solid var(--emerald);
-                  border-radius: 100px;
-                  font-size: 11px;
-                  font-weight: 700;
-                  color: var(--emerald-deep);
-                  cursor: pointer;
-                  transition: all 0.15s;
-                  font-family: inherit;
-                }
-                .bd-saved-chip:hover {
-                  background: var(--emerald);
-                  color: var(--paper-3);
-                  transform: translateY(-1px);
-                }
-                .bd-saved-icon {
-                  font-size: 14px;
-                  line-height: 1;
-                }
-              `}</style>
             </div>
           )}
 
@@ -1429,6 +1382,52 @@ export default function BloodDrawFlow({
           font-size: 9px;
           color: var(--ink-3, #6E7878);
           margin-top: 7px;
+        }
+        /* ✨ V25.1: Saved Locations chips */
+        .bd-saved-locations {
+          margin-bottom: 12px;
+          padding: 10px 12px;
+          background: var(--emerald-soft);
+          border-radius: 10px;
+          border: 1px solid var(--emerald);
+        }
+        .bd-saved-label {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 11px;
+          font-weight: 800;
+          color: var(--emerald-deep);
+          margin-bottom: 8px;
+        }
+        .bd-saved-chips {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+        .bd-saved-chip {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 6px 10px;
+          background: var(--white);
+          border: 1px solid var(--emerald);
+          border-radius: 100px;
+          font-size: 11px;
+          font-weight: 700;
+          color: var(--emerald-deep);
+          cursor: pointer;
+          transition: all 0.15s;
+          font-family: inherit;
+        }
+        .bd-saved-chip:hover {
+          background: var(--emerald);
+          color: var(--paper-3);
+          transform: translateY(-1px);
+        }
+        .bd-saved-icon {
+          font-size: 14px;
+          line-height: 1;
         }
       `}</style>
     </div>
