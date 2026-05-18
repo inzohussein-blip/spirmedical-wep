@@ -115,7 +115,7 @@ export default async function SpecialistOrdersPage({
             </p>
           </div>
         ) : (
-          <div className="scr-list-stack" style={{ marginTop: 14 }}>
+          <div className="scr-list-stack" style={{ marginTop: 16 }}>
             {(orders ?? []).map((o) => {
               const status = STATUS_META[o.status] ?? STATUS_META.pending;
               const patient = patientMap.get(o.user_id);
@@ -143,7 +143,7 @@ export default async function SpecialistOrdersPage({
                     <div className="scr-list-item-subtitle">{o.service_type}</div>
                     <div className="scr-list-item-meta">📅 {dateStr} · {timeStr}</div>
                     {o.address && <div className="scr-list-item-meta">📍 {o.address}</div>}
-                    <div className="scr-list-item-tags" style={{ marginTop: 6 }}>
+                    <div className="scr-list-item-tags" style={{ marginTop: 8 }}>
                       <span className={`scr-tag ${status.color}`}>{status.label}</span>
                     </div>
                   </div>
