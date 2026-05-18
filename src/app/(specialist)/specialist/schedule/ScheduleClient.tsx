@@ -74,8 +74,8 @@ export default function ScheduleClient({ initialSchedules, initialAutoReply }: P
   return (
     <>
       {/* جدول الدوام */}
-      <div className="scr-section-head" style={{ marginTop: 14 }}>
-        <div className="scr-section-title" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <div className="scr-section-head" style={{ marginTop: 16 }}>
+        <div className="scr-section-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Calendar size={16} strokeWidth={2.2} />
           أيام وساعات العمل
         </div>
@@ -86,7 +86,7 @@ export default function ScheduleClient({ initialSchedules, initialAutoReply }: P
           const day = DAYS[i];
           return (
             <div key={day.num} style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 12, padding: 12 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: s.is_active ? 10 : 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: s.is_active ? 10 : 0 }}>
                 <label className="scr-toggle">
                   <input type="checkbox" checked={s.is_active} onChange={(e) => updateSlot(i, 'is_active', e.target.checked)} />
                   <span className="scr-toggle-slider"></span>
@@ -126,7 +126,7 @@ export default function ScheduleClient({ initialSchedules, initialAutoReply }: P
         onClick={handleSaveSchedule}
         disabled={isPending}
         className="scr-empty-cta"
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: '100%', marginTop: 14 }}
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, width: '100%', marginTop: 16 }}
       >
         <Save size={16} strokeWidth={2.2} />
         {isPending ? 'جارٍ الحفظ...' : 'حفظ الجدول'}
@@ -134,12 +134,12 @@ export default function ScheduleClient({ initialSchedules, initialAutoReply }: P
 
       {/* الرد التلقائي */}
       <div className="scr-section-head" style={{ marginTop: 24 }}>
-        <div className="scr-section-title" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div className="scr-section-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <MessageCircle size={16} strokeWidth={2.2} />
           الرد التلقائي للعميل
         </div>
       </div>
-      <p className="scr-page-subtitle" style={{ marginBottom: 10 }}>
+      <p className="scr-page-subtitle" style={{ marginBottom: 12 }}>
         رسالة تصل العميل تلقائياً عند حجزه طلب جديد
       </p>
 
@@ -165,14 +165,14 @@ export default function ScheduleClient({ initialSchedules, initialAutoReply }: P
         onClick={handleSaveAutoReply}
         disabled={isPending}
         className="scr-empty-cta"
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: '100%', marginTop: 10 }}
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, width: '100%', marginTop: 12 }}
       >
         <Save size={16} strokeWidth={2.2} />
         {isPending ? 'جارٍ الحفظ...' : 'حفظ الرسالة'}
       </button>
 
       {success && (
-        <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '10px 14px', borderRadius: 10, fontSize: 12, fontWeight: 700, marginTop: 12, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+        <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '10px 14px', borderRadius: 10, fontSize: 12, fontWeight: 700, marginTop: 12, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
           <CheckCircle2 size={14} strokeWidth={2.4} />
           {success}
         </div>
