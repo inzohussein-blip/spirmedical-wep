@@ -36,7 +36,7 @@ export default function NotificationsClient() {
   return (
     <>
       <button onClick={() => setShowForm(true)} style={{
-        padding: '10px 20px', background: 'var(--emerald-deep)', color: '#fff',
+        padding: '10px 20px', background: 'var(--emerald-deep)', color: 'var(--white)',
         border: 0, borderRadius: 10, fontSize: 13, fontWeight: 800,
         cursor: 'pointer', fontFamily: 'inherit',
       }}>
@@ -51,7 +51,7 @@ export default function NotificationsClient() {
           <div style={{
             position: 'fixed', top: '50%', left: '50%',
             transform: 'translate(-50%, -50%)',
-            background: '#fff', borderRadius: 16, padding: 24,
+            background: 'var(--white)', borderRadius: 16, padding: 24,
             width: 480, maxWidth: '90vw', zIndex: 101,
           }}>
             <h2 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 14px' }}>
@@ -71,7 +71,7 @@ export default function NotificationsClient() {
             )}
 
             <div style={{ marginBottom: 12 }}>
-              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 6 }}>
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 8 }}>
                 رقم الهاتف *
               </label>
               <input
@@ -81,8 +81,8 @@ export default function NotificationsClient() {
               />
             </div>
 
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 6 }}>
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 8 }}>
                 نص الرسالة * <span style={{ color: 'var(--ink-3)', fontWeight: 400 }}>({body.length} حرف)</span>
               </label>
               <textarea
@@ -98,7 +98,7 @@ export default function NotificationsClient() {
 
             <div style={{ display: 'flex', gap: 8 }}>
               <button onClick={handleSend} disabled={isPending} style={{
-                flex: 1, padding: '12px', background: 'var(--emerald-deep)', color: '#fff',
+                flex: 1, padding: '12px', background: 'var(--emerald-deep)', color: 'var(--white)',
                 border: 0, borderRadius: 10, fontSize: 13, fontWeight: 800,
                 cursor: 'pointer', fontFamily: 'inherit',
               }}>
