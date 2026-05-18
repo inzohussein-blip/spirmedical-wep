@@ -13,11 +13,11 @@ interface Props {
 }
 
 const STATUS_LABELS: Record<string, { label: string; bg: string; color: string }> = {
-  pending: { label: 'بانتظار', bg: '#F0DBC2', color: '#B8540C' },
-  confirmed: { label: 'مؤكّد', bg: '#D9E5DF', color: '#073B30' },
-  in_progress: { label: 'قيد التنفيذ', bg: '#D9E5DF', color: '#073B30' },
-  completed: { label: 'مُكتمل', bg: '#EDE6D3', color: '#1F2A2C' },
-  cancelled: { label: 'مُلغى', bg: '#F0D7D8', color: '#A82E3D' },
+  pending: { label: 'بانتظار', bg: 'var(--amber-soft)', color: 'var(--amber)' },
+  confirmed: { label: 'مؤكّد', bg: 'var(--emerald-soft)', color: 'var(--emerald-deep)' },
+  in_progress: { label: 'قيد التنفيذ', bg: 'var(--emerald-soft)', color: 'var(--emerald-deep)' },
+  completed: { label: 'مُكتمل', bg: 'var(--paper-2)', color: 'var(--ink-2)' },
+  cancelled: { label: 'مُلغى', bg: 'var(--rose-soft)', color: 'var(--rose)' },
 };
 
 const SERVICE_ICONS: Record<string, string> = {
