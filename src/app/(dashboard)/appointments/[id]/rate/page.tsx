@@ -292,7 +292,7 @@ export default function RatePage() {
                 borderRadius: 10,
                 fontSize: 12,
                 fontWeight: 700,
-                marginBottom: 10,
+                marginBottom: 12,
                 display: 'flex',
                 gap: 8,
                 alignItems: 'center',
