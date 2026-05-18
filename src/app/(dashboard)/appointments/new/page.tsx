@@ -28,6 +28,25 @@ export default async function NewAppointmentPage({
     .eq('id', user.id)
     .single();
 
+  // ✨ V25.1: جلب المواقع المحفوظة (الأكثر استخداماً + المثبّتة)
+  const { data: savedLocationsRaw } = await supabase
+    .from('user_saved_locations')
+    .select('id, label, icon, address, lat, lng')
+    .eq('user_id', user.id)
+    .order('is_pinned', { ascending: false })
+    .order('last_used_at', { ascending: false, nullsFirst: false })
+    .order('use_count', { ascending: false })
+    .limit(6);
+
+  const savedLocations = (savedLocationsRaw ?? []).map((l) => ({
+    id: l.id,
+    label: l.label,
+    icon: l.icon,
+    address: l.address,
+    lat: Number(l.lat),
+    lng: Number(l.lng),
+  }));
+
   return (
     <NewAppointmentClient
       service={searchParams.service || ''}
@@ -35,6 +54,7 @@ export default async function NewAppointmentPage({
       userAddress=""
       clinicId={searchParams.clinic}
       consultationType={searchParams.type}
+      savedLocations={savedLocations}
     />
   );
 }
