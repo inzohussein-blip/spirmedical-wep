@@ -164,6 +164,8 @@ export type Database = {
           location_lng: number | null;
           location_accuracy_m: number | null;
           location_captured_at: string | null;
+          // ✨ Reminders (V25.4):
+          reminder_sent_at: string | null;
         };
         Insert: {
           id?: string;
@@ -201,6 +203,8 @@ export type Database = {
           location_lng?: number | null;
           location_accuracy_m?: number | null;
           location_captured_at?: string | null;
+          // ✨ Reminders (V25.4):
+          reminder_sent_at?: string | null;
         };
         Update: {
           id?: string;
@@ -238,6 +242,8 @@ export type Database = {
           location_lng?: number | null;
           location_accuracy_m?: number | null;
           location_captured_at?: string | null;
+          // ✨ Reminders (V25.4):
+          reminder_sent_at?: string | null;
         };
         Relationships: [
           {
