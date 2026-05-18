@@ -4,6 +4,8 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { CookieConsent } from '@/components/legal/CookieConsent';
 import StructuredData from '@/components/seo/StructuredData';
 import PWAManager from '@/components/ui/PWAManager';
+import NetworkStatusDetector from '@/components/ui/NetworkStatusDetector';
+import SWUpdateBanner from '@/components/ui/SWUpdateBanner';
 import { Toaster } from '@/components/ui/Toaster';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 
@@ -223,6 +225,8 @@ export default function RootLayout({
           {children}
         </ThemeProvider>
         <Toaster />
+        <NetworkStatusDetector />
+        <SWUpdateBanner />
         <CookieConsent />
         <PWAManager />
         <Analytics />
