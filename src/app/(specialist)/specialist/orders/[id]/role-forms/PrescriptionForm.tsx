@@ -65,13 +65,13 @@ export default function PrescriptionForm({ orderId, initialData }: Props) {
   return (
     <div style={{ marginTop: 16 }}>
       <div className="scr-section-head">
-        <div className="scr-section-title" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div className="scr-section-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Stethoscope size={16} strokeWidth={2.2} />
           التشخيص والوصفة
         </div>
       </div>
 
-      <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 14 }}>
+      <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 16 }}>
         <div style={{ marginBottom: 12 }}>
           <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>التشخيص</label>
           <textarea
@@ -89,21 +89,21 @@ export default function PrescriptionForm({ orderId, initialData }: Props) {
         </div>
 
         {(data.medications ?? []).length === 0 ? (
-          <div style={{ background: 'var(--paper-3)', padding: 14, borderRadius: 10, textAlign: 'center', fontSize: 12, color: 'var(--ink-3)', marginBottom: 12 }}>
+          <div style={{ background: 'var(--paper-3)', padding: 16, borderRadius: 10, textAlign: 'center', fontSize: 12, color: 'var(--ink-3)', marginBottom: 12 }}>
             لا توجد أدوية. اضغط <strong>+ دواء</strong> لإضافة
           </div>
         ) : (
-          <div style={{ display: 'grid', gap: 10, marginBottom: 12 }}>
+          <div style={{ display: 'grid', gap: 12, marginBottom: 12 }}>
             {(data.medications ?? []).map((m, i) => (
-              <div key={i} style={{ background: 'var(--paper-3)', borderRadius: 10, padding: 10 }}>
+              <div key={i} style={{ background: 'var(--paper-3)', borderRadius: 10, padding: 12 }}>
                 <input
                   type="text"
                   value={m.name}
                   onChange={(e) => updateMed(i, 'name', e.target.value)}
                   placeholder="اسم الدواء"
-                  style={{ ...inputStyle, marginBottom: 6, fontWeight: 800 }}
+                  style={{ ...inputStyle, marginBottom: 8, fontWeight: 800 }}
                 />
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginBottom: 6 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 8 }}>
                   <input
                     type="text"
                     value={m.dosage}
@@ -124,7 +124,7 @@ export default function PrescriptionForm({ orderId, initialData }: Props) {
                   value={m.duration}
                   onChange={(e) => updateMed(i, 'duration', e.target.value)}
                   placeholder="المدة (مثل 7 أيام)"
-                  style={{ ...inputStyle, marginBottom: 6 }}
+                  style={{ ...inputStyle, marginBottom: 8 }}
                 />
                 <input
                   type="text"
@@ -133,7 +133,7 @@ export default function PrescriptionForm({ orderId, initialData }: Props) {
                   placeholder="ملاحظات (بعد الأكل، إلخ)"
                   style={inputStyle}
                 />
-                <button type="button" onClick={() => removeMed(i)} style={{ marginTop: 6, background: 'var(--rose-soft)', color: 'var(--rose)', border: 0, padding: '4px 10px', borderRadius: 6, fontSize: 11, fontWeight: 800, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <button type="button" onClick={() => removeMed(i)} style={{ marginTop: 8, background: 'var(--rose-soft)', color: 'var(--rose)', border: 0, padding: '4px 10px', borderRadius: 6, fontSize: 11, fontWeight: 800, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                   <Trash2 size={12} strokeWidth={2.2} />
                   حذف
                 </button>
@@ -169,14 +169,14 @@ export default function PrescriptionForm({ orderId, initialData }: Props) {
           onClick={handleSave}
           disabled={isPending}
           className="scr-empty-cta"
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: '100%' }}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, width: '100%' }}
         >
           <Save size={16} strokeWidth={2.2} />
           {isPending ? 'جارٍ الحفظ...' : 'حفظ الوصفة'}
         </button>
 
         {success && (
-          <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginTop: 8, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+          <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginTop: 8, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             <CheckCircle2 size={14} strokeWidth={2.4} />
             تم الحفظ
           </div>
