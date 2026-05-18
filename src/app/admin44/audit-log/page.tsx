@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { ACTION_TYPE_LABELS } from '@/lib/admin-types';
+import { EmptyState } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
 
@@ -44,7 +45,7 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Sea
       </p>
 
       {/* Filters */}
-      <form method="GET" style={{ background: '#fff', padding: 16, borderRadius: 14, marginBottom: 20, display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+      <form method="GET" style={{ background: 'var(--white)', padding: 16, borderRadius: 14, marginBottom: 20, display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
         <div>
           <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>نوع العملية</label>
           <select name="type" defaultValue={searchParams.type ?? ''} style={inputStyle}>
@@ -55,19 +56,21 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Sea
           </select>
         </div>
 
-        <button type="submit" style={{ padding: '8px 20px', background: 'var(--emerald-deep)', color: '#fff', border: 0, borderRadius: 8, fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
+        <button type="submit" style={{ padding: '8px 20px', background: 'var(--emerald-deep)', color: 'var(--white)', border: 0, borderRadius: 8, fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
           🔍 تطبيق
         </button>
       </form>
 
       {/* Timeline */}
       {!actions || actions.length === 0 ? (
-        <div style={{ background: '#fff', borderRadius: 14, padding: 60, textAlign: 'center' }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>📜</div>
-          <p style={{ fontSize: 14, color: 'var(--ink-3)' }}>لا توجد عمليات</p>
-        </div>
+        <EmptyState
+          icon="📜"
+          title="لا توجد عمليات"
+          description="ستظهر عمليات الإدارة هنا"
+          size="lg"
+        />
       ) : (
-        <div style={{ background: '#fff', borderRadius: 14, overflow: 'hidden' }}>
+        <div style={{ background: 'var(--white)', borderRadius: 14, overflow: 'hidden' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead style={{ background: 'var(--paper-3)' }}>
               <tr>
