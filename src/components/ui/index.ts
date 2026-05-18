@@ -61,6 +61,14 @@ export type { SeparatorProps } from './Separator';
 export { FreeMedicalMapWrapper } from './FreeMedicalMapWrapper';
 export type { FreeMedicalMapProps } from './FreeMedicalMap';
 
+// Map Picker (V25 - C1)
+export { MapPickerWrapper } from './MapPickerWrapper';
+export type { MapPickerProps } from './MapPicker';
+
+// Map Heatmap (V25 - D1)
+export { MapHeatmapWrapper } from './MapHeatmapWrapper';
+export type { MapHeatmapProps, HeatmapPoint } from './MapHeatmap';
+
 // Shadcn primitives (already in place)
 export {
   Dialog,
