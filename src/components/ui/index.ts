@@ -65,6 +65,18 @@ export type { FieldProps, FieldGroupProps } from './Field';
 export { toast, Toaster, useToasts } from './Toaster';
 export type { ToastVariant, ToastMessage } from './Toaster';
 
+// BottomSheet (V25.2 - Mobile UX)
+export {
+  BottomSheet,
+  BottomSheetHeader,
+  BottomSheetBody,
+  BottomSheetFooter,
+} from './BottomSheet';
+export type {
+  BottomSheetProps,
+  BottomSheetHeaderProps,
+} from './BottomSheet';
+
 // Map (Free Medical Map)
 export { FreeMedicalMapWrapper } from './FreeMedicalMapWrapper';
 export type { FreeMedicalMapProps } from './FreeMedicalMap';
