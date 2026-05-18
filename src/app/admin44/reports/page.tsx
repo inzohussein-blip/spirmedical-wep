@@ -132,6 +132,64 @@ export default async function ReportsPage({ searchParams }: { searchParams: Sear
         <ReportsClient fromDate={range.from.slice(0, 10)} toDate={range.to.slice(0, 10)} />
       </div>
 
+      {/* 🗺️ Maps-powered reports (V25) */}
+      <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
+        <a
+          href="/admin44/reports/live-ops"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            padding: '12px 20px',
+            background: 'var(--emerald-soft)',
+            color: 'var(--emerald-deep)',
+            borderRadius: 12,
+            fontSize: 13,
+            fontWeight: 800,
+            textDecoration: 'none',
+            border: '1px solid var(--emerald)',
+          }}
+        >
+          🎯 العمليات المباشرة
+        </a>
+        <a
+          href="/admin44/reports/heatmap"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            padding: '12px 20px',
+            background: 'var(--rose-soft)',
+            color: 'var(--rose)',
+            borderRadius: 12,
+            fontSize: 13,
+            fontWeight: 800,
+            textDecoration: 'none',
+            border: '1px solid var(--rose)',
+          }}
+        >
+          🌡️ خريطة الحرارة
+        </a>
+        <a
+          href="/admin44/reports/geographic"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            padding: '12px 20px',
+            background: 'var(--amber-soft)',
+            color: 'var(--amber)',
+            borderRadius: 12,
+            fontSize: 13,
+            fontWeight: 800,
+            textDecoration: 'none',
+            border: '1px solid var(--amber)',
+          }}
+        >
+          📊 التقارير الجغرافية
+        </a>
+      </div>
+
       {/* Period selector */}
       <form method="GET" style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
         {[
