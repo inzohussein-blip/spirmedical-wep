@@ -94,10 +94,10 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
           {/* Header */}
           <div style={{
             background: meta?.gradient ?? 'var(--emerald-deep)',
-            color: '#fff',
+            color: 'var(--white)',
             padding: 24, borderRadius: 14, marginBottom: 16,
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
               <div style={{ fontSize: 36 }}>{meta?.icon ?? '📋'}</div>
               <div>
                 <h1 style={{ fontSize: 20, fontWeight: 800, margin: 0 }}>{order.service_type}</h1>
@@ -110,9 +110,9 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
           </div>
 
           {/* Info Grid */}
-          <div style={{ background: '#fff', borderRadius: 14, padding: 18, marginBottom: 16 }}>
+          <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginBottom: 16 }}>
             <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}>المعلومات</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 14, fontSize: 13 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 16, fontSize: 13 }}>
               <InfoRow icon="🆔" label="رقم الطلب" value={order.id.slice(0, 8) + '...'} dir="ltr" />
               <InfoRow icon="📅" label="تاريخ الإنشاء" value={new Date(order.created_at).toLocaleDateString('ar-IQ')} />
               {order.address && <InfoRow icon="📍" label="العنوان" value={order.address} />}
@@ -120,7 +120,7 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
             </div>
 
             {notesText && (
-              <div style={{ marginTop: 14, padding: 12, background: 'var(--paper-3)', borderRadius: 10 }}>
+              <div style={{ marginTop: 16, padding: 12, background: 'var(--paper-3)', borderRadius: 10 }}>
                 <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--ink-3)', marginBottom: 4 }}>ملاحظات المريض</div>
                 <p style={{ fontSize: 13, margin: 0 }}>{notesText}</p>
               </div>
@@ -128,8 +128,8 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
           </div>
 
           {/* 🗺️ Map */}
-          <div style={{ background: '#fff', borderRadius: 14, padding: 18, marginBottom: 16 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+          <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginBottom: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
               <h2 style={{ fontSize: 14, fontWeight: 800, margin: 0 }}>🗺️ الموقع على الخريطة</h2>
               {mapMarkers.length > 1 && (
                 <span style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>
@@ -146,7 +146,7 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
             />
             {!orderLocation && (
               <div style={{
-                marginTop: 10,
+                marginTop: 12,
                 padding: '8px 12px',
                 background: 'var(--amber-soft, #F0DBC2)',
                 color: 'var(--amber, #B8540C)',
@@ -160,13 +160,13 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
           </div>
 
           {/* Patient Card */}
-          <div style={{ background: '#fff', borderRadius: 14, padding: 18, marginBottom: 16 }}>
+          <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginBottom: 16 }}>
             <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}>👤 المريض</h2>
             {patient && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{
                   width: 48, height: 48, borderRadius: '50%',
-                  background: 'var(--emerald-deep)', color: '#fff',
+                  background: 'var(--emerald-deep)', color: 'var(--white)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 20, fontWeight: 900,
                 }}>
@@ -185,14 +185,14 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
           </div>
 
           {/* Specialist Card */}
-          <div style={{ background: '#fff', borderRadius: 14, padding: 18 }}>
+          <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20 }}>
             <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}>👨‍⚕️ الاختصاصي</h2>
             {specialist ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{
                   width: 48, height: 48, borderRadius: '50%',
                   background: SPECIALIST_META[specialist.specialist_type as SpecialistType]?.gradient ?? 'var(--paper-3)',
-                  color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: 'var(--white)', display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 22,
                 }}>
                   {SPECIALIST_META[specialist.specialist_type as SpecialistType]?.icon ?? '⚕️'}
@@ -206,7 +206,7 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
                 <a href={`tel:${specialist.phone}`} style={{ padding: '8px 12px', background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', borderRadius: 8, textDecoration: 'none', fontSize: 12, fontWeight: 800 }}>📞</a>
               </div>
             ) : (
-              <div style={{ background: 'var(--amber-soft, #F8E5C7)', padding: 14, borderRadius: 10, fontSize: 12, color: 'var(--amber-deep, #6B3A08)', fontWeight: 700, textAlign: 'center' }}>
+              <div style={{ background: 'var(--amber-soft, #F8E5C7)', padding: 16, borderRadius: 10, fontSize: 12, color: 'var(--amber-deep, #6B3A08)', fontWeight: 700, textAlign: 'center' }}>
                 ⚠️ لم يُعيَّن اختصاصي بعد
               </div>
             )}
