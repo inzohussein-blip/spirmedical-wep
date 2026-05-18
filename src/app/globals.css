@@ -1038,6 +1038,168 @@
   display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;
 }
 
+/* ════════════════════════════════════════════════════════════════
+   INSTALL APP CTA SECTION (V25.3 - PWA Install Marketing)
+   ════════════════════════════════════════════════════════════════ */
+.landing-install {
+  background: linear-gradient(180deg, var(--paper-3) 0%, var(--paper) 100%);
+  padding: 80px 0;
+  border-top: 1px solid var(--line);
+}
+@media (max-width: 768px) {
+  .landing-install { padding: 48px 0; }
+}
+.landing-install-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 48px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 48px;
+  align-items: center;
+  box-shadow: 0 12px 40px -16px rgba(14, 92, 77, 0.15);
+}
+@media (max-width: 768px) {
+  .landing-install-card {
+    grid-template-columns: 1fr;
+    padding: 32px 24px;
+    gap: 32px;
+    border-radius: 20px;
+  }
+}
+.landing-install-title {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--ink);
+  margin: 12px 0 12px;
+  line-height: 1.2;
+}
+@media (max-width: 768px) {
+  .landing-install-title { font-size: 24px; }
+}
+.landing-install-desc {
+  font-size: 15px;
+  color: var(--ink-3);
+  line-height: 1.7;
+  margin: 0 0 20px;
+}
+.landing-install-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 28px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.landing-install-features li {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-2);
+  padding: 10px 14px;
+  background: var(--paper-3);
+  border-radius: 10px;
+}
+@media (max-width: 480px) {
+  .landing-install-features {
+    grid-template-columns: 1fr;
+  }
+}
+.landing-install-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.landing-install-btn-primary,
+.landing-install-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+.landing-install-btn-primary {
+  background: var(--emerald);
+  color: var(--paper-3);
+  border: 1.5px solid var(--emerald);
+}
+.landing-install-btn-primary:hover {
+  background: var(--emerald-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -8px rgba(14, 92, 77, 0.4);
+}
+.landing-install-btn-secondary {
+  background: var(--white);
+  color: var(--emerald-deep);
+  border: 1.5px solid var(--emerald);
+}
+.landing-install-btn-secondary:hover {
+  background: var(--emerald-soft);
+}
+
+.landing-install-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.landing-install-phone {
+  width: 220px;
+  height: 440px;
+  background: var(--ink);
+  border-radius: 36px;
+  padding: 12px;
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+.landing-install-phone::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 6px;
+  background: var(--ink-2);
+  border-radius: 100px;
+  z-index: 2;
+}
+.landing-install-phone-screen {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-deep) 100%);
+  border-radius: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.landing-install-phone-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  color: var(--paper-3);
+}
+.landing-install-phone-logo strong {
+  font-size: 18px;
+  font-weight: 900;
+}
+.landing-install-phone-logo span {
+  font-size: 11px;
+  opacity: 0.8;
+  font-weight: 600;
+}
+@media (max-width: 768px) {
+  .landing-install-phone {
+    width: 180px;
+    height: 360px;
+  }
+}
+
 /* Footer — V3 EXACT */
 .landing-footer {
   background: var(--paper);
