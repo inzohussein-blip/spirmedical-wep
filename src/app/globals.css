@@ -258,6 +258,118 @@
   to { transform: rotate(360deg); }
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   🎬 ANIMATIONS SYSTEM — V25 (UX Phase D)
+   ═══════════════════════════════════════════════════════════════════
+   استخدم هذه الـ classes للحركات الموحّدة عبر التطبيق:
+   .animate-fade-in        - ظهور تدريجي
+   .animate-fade-in-up     - ظهور من الأسفل
+   .animate-fade-in-down   - ظهور من الأعلى
+   .animate-scale-in       - تكبير عند الظهور
+   .animate-slide-in-right - دخول من اليمين
+   .animate-pulse-soft     - نبض خفيف للـ loading
+   .animate-bounce-in      - دخول مع bouncing
+   ═══════════════════════════════════════════════════════════════════ */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-24px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+@keyframes bounce-in {
+  0% { opacity: 0; transform: scale(0.3); }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Animation utility classes */
+.animate-fade-in { animation: fade-in 0.3s var(--ease-out) both; }
+.animate-fade-in-up { animation: fade-in-up 0.35s var(--ease-out) both; }
+.animate-fade-in-down { animation: fade-in-down 0.35s var(--ease-out) both; }
+.animate-scale-in { animation: scale-in 0.3s var(--ease-out) both; }
+.animate-slide-in-right { animation: slide-in-right 0.35s var(--ease-out) both; }
+.animate-slide-in-left { animation: slide-in-left 0.35s var(--ease-out) both; }
+.animate-pulse-soft { animation: pulse-soft 2s ease-in-out infinite; }
+.animate-bounce-in { animation: bounce-in 0.5s var(--ease-spring) both; }
+
+/* Stagger animation delays (للقوائم) */
+.stagger-1 { animation-delay: 50ms; }
+.stagger-2 { animation-delay: 100ms; }
+.stagger-3 { animation-delay: 150ms; }
+.stagger-4 { animation-delay: 200ms; }
+.stagger-5 { animation-delay: 250ms; }
+.stagger-6 { animation-delay: 300ms; }
+
+/* تجاهل الـ animations إذا فضّل المستخدم ذلك (accessibility) */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-fade-in-up,
+  .animate-fade-in-down,
+  .animate-scale-in,
+  .animate-slide-in-right,
+  .animate-slide-in-left,
+  .animate-bounce-in {
+    animation: none !important;
+  }
+  .animate-pulse-soft {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* ─── Interactive hover effects ──────────────────────────── */
+.hover-lift {
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.hover-scale {
+  transition: transform var(--transition-base);
+}
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+.hover-scale-sm {
+  transition: transform var(--transition-fast);
+}
+.hover-scale-sm:hover {
+  transform: scale(1.05);
+}
+
+/* Press effect (active state) */
+.press-effect:active {
+  transform: scale(0.97);
+  transition: transform 100ms;
+}
+
 /* ─── Spacing utilities ────────────────────────────────────────── */
 .p-0 { padding: var(--space-0); }
 .p-1 { padding: var(--space-1); }
