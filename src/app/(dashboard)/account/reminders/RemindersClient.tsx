@@ -100,19 +100,19 @@ export default function RemindersClient({ reminders }: { reminders: Reminder[] }
         <button
           type="button"
           className="scr-empty-cta"
-          style={{ display: 'block', width: '100%', marginTop: 14 }}
+          style={{ display: 'block', width: '100%', marginTop: 16 }}
           onClick={() => setShowForm(true)}
         >
           + إضافة تذكير جديد
         </button>
       ) : (
-        <div className="scr-form-card" style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 14, marginTop: 14 }}>
+        <div className="scr-form-card" style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 16, marginTop: 16 }}>
           <div className="scr-section-title" style={{ marginBottom: 12 }}>تذكير جديد</div>
 
           {/* Type */}
-          <div style={{ marginBottom: 10 }}>
+          <div style={{ marginBottom: 12 }}>
             <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>النوع</label>
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {(Object.keys(TYPE_META) as ReminderType[]).map((t) => {
                 const Icon = TYPE_META[t].icon;
                 return (
@@ -131,7 +131,7 @@ export default function RemindersClient({ reminders }: { reminders: Reminder[] }
           </div>
 
           {/* Title */}
-          <div style={{ marginBottom: 10 }}>
+          <div style={{ marginBottom: 12 }}>
             <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>العنوان</label>
             <input
               type="text"
@@ -144,7 +144,7 @@ export default function RemindersClient({ reminders }: { reminders: Reminder[] }
           </div>
 
           {/* Date + Time */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 10 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
             <div>
               <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>التاريخ</label>
               <input
@@ -168,7 +168,7 @@ export default function RemindersClient({ reminders }: { reminders: Reminder[] }
           </div>
 
           {/* Frequency */}
-          <div style={{ marginBottom: 10 }}>
+          <div style={{ marginBottom: 12 }}>
             <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>التكرار</label>
             <select
               value={frequency}
@@ -195,7 +195,7 @@ export default function RemindersClient({ reminders }: { reminders: Reminder[] }
           </div>
 
           {error && (
-            <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
               <AlertTriangle size={14} strokeWidth={2.4} />
               {error}
             </div>
