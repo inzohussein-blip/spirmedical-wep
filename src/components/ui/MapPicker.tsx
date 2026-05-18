@@ -8,7 +8,11 @@ import type {
   LatLngExpression,
 } from 'leaflet';
 import type { GpsCoordinates } from '@/types/location';
-import { IRAQ_CENTER, isValidCoordinates } from '@/types/location';
+import {
+  IRAQ_CENTER,
+  isValidCoordinates,
+  GOVERNORATE_OPTIONS,
+} from '@/types/location';
 
 /**
  * ═══════════════════════════════════════════════════════════════
@@ -41,6 +45,8 @@ export interface MapPickerProps {
   showGpsButton?: boolean;
   /** هل تظهر رسالة تعليمات؟ */
   showInstructions?: boolean;
+  /** ✨ V25.1: هل نظهر chips للمحافظات (تنقل سريع)؟ */
+  showGovernorateChips?: boolean;
 }
 
 function patchLeafletIcons(L: typeof import('leaflet')) {
@@ -85,6 +91,7 @@ export default function MapPicker({
   height = 380,
   showGpsButton = true,
   showInstructions = true,
+  showGovernorateChips = true,
 }: MapPickerProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
@@ -93,11 +100,51 @@ export default function MapPicker({
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isGettingGps, setIsGettingGps] = useState(false);
+  const [selectedGovId, setSelectedGovId] = useState<string | null>(null);
   const [currentCoords, setCurrentCoords] = useState<GpsCoordinates | null>(
     initialLocation && isValidCoordinates(initialLocation.lat, initialLocation.lng)
       ? initialLocation
       : null
   );
+
+  /* ─── Handler: ضغط على محافظة ───────────────────────── */
+
+  const handleGovernorateClick = async (gov: typeof GOVERNORATE_OPTIONS[0]) => {
+    if (!mapRef.current) return;
+
+    setSelectedGovId(gov.id);
+    setError(null);
+
+    // ✨ نحرّك الخريطة للمحافظة مع zoom مناسب لرؤية المدينة
+    mapRef.current.flyTo([gov.lat, gov.lng], 12, {
+      duration: 0.8,
+      easeLinearity: 0.5,
+    });
+
+    // أزل الـ marker القديم
+    if (markerRef.current) {
+      markerRef.current.remove();
+    }
+
+    // أضف marker في مركز المحافظة (المستخدم يستطيع تحريكه)
+    const L = await import('leaflet');
+    const coords = { lat: gov.lat, lng: gov.lng };
+    const newMarker = L.marker([coords.lat, coords.lng] as LatLngExpression, {
+      icon: createPickerIcon(L),
+      draggable: true,
+    }).addTo(mapRef.current);
+
+    newMarker.on('dragend', () => {
+      const pos = newMarker.getLatLng();
+      const c = { lat: pos.lat, lng: pos.lng };
+      setCurrentCoords(c);
+      onChange(c);
+    });
+
+    markerRef.current = newMarker;
+    setCurrentCoords(coords);
+    onChange(coords);
+  };
 
   /* ─── تهيئة الخريطة ──────────────────────────────────── */
 
@@ -302,6 +349,29 @@ export default function MapPicker({
 
   return (
     <div className="mp-wrap">
+      {/* ─── ✨ V25.1: Governorate Chips (التنقّل السريع) ─── */}
+      {showGovernorateChips && (
+        <div className="mp-gov-section">
+          <div className="mp-gov-label">
+            <MapPin size={12} strokeWidth={2.4} />
+            <span>تنقّل سريع للمحافظات:</span>
+          </div>
+          <div className="mp-gov-chips">
+            {GOVERNORATE_OPTIONS.map((gov) => (
+              <button
+                key={gov.id}
+                type="button"
+                onClick={() => handleGovernorateClick(gov)}
+                className={`mp-gov-chip ${selectedGovId === gov.id ? 'mp-gov-chip-active' : ''}`}
+                title={`الانتقال إلى ${gov.nameAr}`}
+              >
+                {gov.nameAr}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* ─── الخريطة ─── */}
       <div
         ref={mapContainerRef}
@@ -373,6 +443,57 @@ export default function MapPicker({
           border: 1px solid var(--line);
           background: var(--paper-3);
           cursor: crosshair;
+        }
+        /* ✨ V25.1: Governorate Chips */
+        .mp-gov-section {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          padding: 10px 12px;
+          background: var(--paper-3);
+          border-radius: 10px;
+          border: 1px solid var(--line);
+        }
+        .mp-gov-label {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 11px;
+          font-weight: 800;
+          color: var(--ink-3);
+        }
+        .mp-gov-chips {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+        .mp-gov-chip {
+          padding: 6px 12px;
+          border: 1px solid var(--line);
+          border-radius: 100px;
+          background: var(--white);
+          color: var(--ink);
+          font-size: 11px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.15s;
+          font-family: inherit;
+          white-space: nowrap;
+        }
+        .mp-gov-chip:hover {
+          border-color: var(--emerald);
+          background: var(--emerald-soft);
+          color: var(--emerald-deep);
+          transform: translateY(-1px);
+        }
+        .mp-gov-chip-active {
+          background: var(--emerald);
+          color: var(--paper-3);
+          border-color: var(--emerald);
+        }
+        .mp-gov-chip-active:hover {
+          background: var(--emerald-deep);
+          color: var(--paper-3);
         }
         .mp-toolbar {
           display: flex;
