@@ -48,14 +48,14 @@ export default async function SpecialistDetailPage({ params }: { params: { id: s
         {/* العمود الأيمن: المعلومات */}
         <div>
           {/* Profile Header */}
-          <div style={{ background: '#fff', borderRadius: 14, padding: 24, marginBottom: 16 }}>
-            <div style={{ display: 'flex', gap: 18, alignItems: 'flex-start' }}>
+          <div style={{ background: 'var(--white)', borderRadius: 14, padding: 24, marginBottom: 16 }}>
+            <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
               <div style={{
                 width: 80,
                 height: 80,
                 borderRadius: '50%',
                 background: meta?.gradient ?? 'var(--paper-3)',
-                color: '#fff',
+                color: 'var(--white)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -69,7 +69,7 @@ export default async function SpecialistDetailPage({ params }: { params: { id: s
                 <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--ink)', margin: '0 0 4px' }}>
                   {specialist.full_name ?? 'بدون اسم'}
                 </h1>
-                <div style={{ fontSize: 13, color: 'var(--ink-3)', marginBottom: 10 }}>
+                <div style={{ fontSize: 13, color: 'var(--ink-3)', marginBottom: 12 }}>
                   {meta ? `${meta.icon} ${meta.label}` : '⚕️ لم يحدد النوع'}
                 </div>
 
@@ -106,9 +106,9 @@ export default async function SpecialistDetailPage({ params }: { params: { id: s
           </div>
 
           {/* المعلومات */}
-          <div style={{ background: '#fff', borderRadius: 14, padding: 18, marginBottom: 16 }}>
+          <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginBottom: 16 }}>
             <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}>المعلومات</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 14, fontSize: 13 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 16, fontSize: 13 }}>
               <InfoRow icon="📱" label="الهاتف" value={specialist.phone} dir="ltr" />
               <InfoRow icon="✉️" label="البريد" value={specialist.email ?? '—'} />
               <InfoRow icon="📍" label="المحافظة" value={specialist.governorate ?? '—'} />
@@ -118,21 +118,21 @@ export default async function SpecialistDetailPage({ params }: { params: { id: s
             </div>
 
             {specialist.specialist_bio && (
-              <div style={{ marginTop: 16, padding: 14, background: 'var(--paper-3)', borderRadius: 10 }}>
+              <div style={{ marginTop: 16, padding: 16, background: 'var(--paper-3)', borderRadius: 10 }}>
                 <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--ink-3)', marginBottom: 4 }}>السيرة الذاتية</div>
                 <p style={{ fontSize: 13, color: 'var(--ink)', margin: 0, lineHeight: 1.7 }}>{specialist.specialist_bio}</p>
               </div>
             )}
 
             {specialist.rejection_reason && (
-              <div style={{ marginTop: 12, padding: 14, background: 'var(--rose-soft)', borderRadius: 10 }}>
+              <div style={{ marginTop: 12, padding: 16, background: 'var(--rose-soft)', borderRadius: 10 }}>
                 <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--rose)', marginBottom: 4 }}>سبب الرفض السابق</div>
                 <p style={{ fontSize: 13, color: 'var(--rose)', margin: 0 }}>{specialist.rejection_reason}</p>
               </div>
             )}
 
             {specialist.admin_internal_notes && (
-              <div style={{ marginTop: 12, padding: 14, background: 'var(--paper-3)', borderRadius: 10, borderRight: '3px solid var(--amber)' }}>
+              <div style={{ marginTop: 12, padding: 16, background: 'var(--paper-3)', borderRadius: 10, borderRight: '3px solid var(--amber)' }}>
                 <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--ink-3)', marginBottom: 4 }}>ملاحظات إدارية</div>
                 <p style={{ fontSize: 13, color: 'var(--ink)', margin: 0, lineHeight: 1.7 }}>{specialist.admin_internal_notes}</p>
               </div>
@@ -140,7 +140,7 @@ export default async function SpecialistDetailPage({ params }: { params: { id: s
           </div>
 
           {/* الإحصائيات */}
-          <div style={{ background: '#fff', borderRadius: 14, padding: 18 }}>
+          <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20 }}>
             <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}>الأداء</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
               <Stat label="إجمالي الطلبات" value={(totalOrders ?? 0).toString()} />
@@ -178,7 +178,7 @@ function InfoRow({ icon, label, value, dir }: { icon: string; label: string; val
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div style={{ background: 'var(--paper-3)', padding: 14, borderRadius: 10, textAlign: 'center' }}>
+    <div style={{ background: 'var(--paper-3)', padding: 16, borderRadius: 10, textAlign: 'center' }}>
       <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--emerald-deep)', marginBottom: 4 }}>{value}</div>
       <div style={{ fontSize: 10, color: 'var(--ink-3)', fontWeight: 700 }}>{label}</div>
     </div>
