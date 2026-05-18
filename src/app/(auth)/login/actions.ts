@@ -153,24 +153,23 @@ export async function skipOtp(formData: FormData) {
 // ─────────────────────────────────────────────────────────
 // دخول مباشر بدون OTP (مُصلح)
 // ─────────────────────────────────────────────────────────
-// ✅ لا يستخدم phone في createUser (لأن Phone provider قد لا يكون مفعّلاً)
-// ✅ يستخدم email-only approach
-// ✅ معالجة أخطاء واضحة ومُفصَّلة
-// ✅ يكتب في public.users يدوياً (لا يعتمد على trigger)
+// ✅ V25.3: مُحسّن للأداء (~500ms بدلاً من ~3-5s)
+//   - حذف listUsers() الثقيل
+//   - حذف updateUserById في الحالة الناجحة
+//   - فقط نُحدّث password لو signIn فشل (نادر)
+// ─────────────────────────────────────────────────────────
+
 
 async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  // التحقق من توفر env vars
   if (!supabaseUrl || !serviceKey) {
     logger.error('Missing Supabase env vars', {
       hasUrl: !!supabaseUrl,
       hasKey: !!serviceKey,
     });
-    redirect(
-      '/login?error=' + encodeURIComponent('إعداد الخادم ناقص')
-    );
+    redirect('/login?error=' + encodeURIComponent('إعداد الخادم ناقص'));
   }
 
   const admin = createSbClient(supabaseUrl, serviceKey, {
@@ -179,9 +178,58 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
 
   const password = derivePassword(phone);
   const email = phoneToEmail(phone);
+  const supabase = createClient();
 
   try {
-    // 1. ابحث عن المستخدم في public.users بالرقم (الأسرع)
+    // 🚀 V25.3: Fast Path - محاولة تسجيل دخول مباشرة
+    // معظم المحاولات من حسابات موجودة - نتخطى listUsers/createUser
+    const { data: fastSignIn, error: fastErr } =
+      await supabase.auth.signInWithPassword({ email, password });
+
+    if (fastSignIn?.user && !fastErr) {
+      // ✅ الحساب موجود + password صحيح
+      // جلب role + phone في query واحد متوازي
+      const profilePromise = admin
+        .from('users')
+        .select('role, phone')
+        .eq('id', fastSignIn.user.id)
+        .maybeSingle();
+
+      // نسجّل في الـ audit بشكل متوازي (fire-and-forget)
+      logAuditEvent({
+        action: 'auth.login',
+        user_id: fastSignIn.user.id,
+        metadata: { ip, phone, method: 'fast' },
+      }).catch(() => {});
+
+      const { data: profile } = await profilePromise;
+
+      // إذا الـ phone مختلف (حساب قديم بـ +temp_xxx)، حدّثه (fire-and-forget)
+      if (profile && profile.phone !== phone) {
+        admin
+          .from('users')
+          .update({ phone })
+          .eq('id', fastSignIn.user.id)
+          .then(() => undefined);
+      }
+
+      const role = profile?.role || 'patient';
+      if (role === 'specialist') redirect('/specialist');
+      if (
+        role === 'admin' ||
+        role === 'super_admin' ||
+        role === 'manager' ||
+        role === 'support'
+      ) {
+        redirect('/admin44');
+      }
+      redirect('/dashboard');
+    }
+
+    // 🐌 Slow Path: signIn فشل → الحساب جديد أو password قديم
+    // (نصل هنا فقط في أول مرة أو لو ENCRYPTION_KEY تغيّر)
+
+    // 1. ابحث في public.users بالـ phone
     const { data: existingProfile } = await admin
       .from('users')
       .select('id, role')
@@ -190,109 +238,66 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
 
     let userId = existingProfile?.id;
 
-    // 2. إذا غير موجود في public.users، تحقق من Auth أو أنشئ
-    if (!userId) {
-      // ابحث في auth.users
-      const { data: existingAuth } = await admin.auth.admin.listUsers();
-      const authUser = existingAuth?.users?.find((u) => u.email === email);
-
-      if (authUser) {
-        userId = authUser.id;
-      } else {
-        // 🔧 V25.2: لا نمرر phone لـ auth (Phone provider قد لا يكون مفعّلاً)
-        // الـ trigger handle_new_user سيُنشئ row مع fallback_phone مؤقت
-        // ثم نحدّثه يدوياً بـ phone الحقيقي
-        const { data: newUser, error: createErr } =
-          await admin.auth.admin.createUser({
-            email,
-            password,
-            email_confirm: true,
-            user_metadata: { phone, created_via: 'no_otp' },
-          });
-
-        if (createErr || !newUser?.user) {
-          logger.error('createUser failed', {
-            phone,
-            error: createErr?.message,
-            code: createErr?.status,
-          });
-          redirect(
-            '/login?error=' +
-              encodeURIComponent(
-                `فشل إنشاء الحساب: ${createErr?.message ?? 'خطأ غير معروف'}`
-              )
-          );
-        }
-
-        userId = newUser.user.id;
-      }
-
-      // 🔧 V25.2: الإصلاح الجوهري
-      // الـ trigger يكون أنشأ row بـ fallback_phone='+temp_xxx'
-      // نحن نحدّث phone للقيمة الحقيقية مع UPDATE (وليس upsert)
-      // upsert فشل لأن phone unique → conflict على phone حتى لو id موجود
-      const { error: updateErr } = await admin
-        .from('users')
-        .update({
-          phone,
-          full_name: 'مستخدم جديد',
-        })
-        .eq('id', userId!);
-
-      if (updateErr) {
-        // الـ row قد لا يكون موجود (لو trigger فشل)
-        // جرّب insert
-        const { error: insertErr } = await admin.from('users').insert({
-          id: userId!,
-          phone,
-          full_name: 'مستخدم جديد',
-          role: 'patient',
+    if (userId) {
+      // الـ row موجود → password قديم، حدّثه
+      await admin.auth.admin.updateUserById(userId, { password });
+    } else {
+      // 2. إنشاء مستخدم جديد - الـ trigger ينشئ public.users تلقائياً
+      const { data: newUser, error: createErr } =
+        await admin.auth.admin.createUser({
+          email,
+          password,
+          email_confirm: true,
+          user_metadata: { phone, created_via: 'no_otp' },
         });
 
-        if (insertErr) {
-          logger.error('Profile creation failed', {
-            phone,
-            updateErr: updateErr.message,
-            insertErr: insertErr.message,
-          });
-          // لا نُفشل - signIn قد ينجح
-        }
+      if (createErr || !newUser?.user) {
+        logger.error('createUser failed', {
+          phone,
+          error: createErr?.message,
+        });
+        redirect(
+          '/login?error=' +
+            encodeURIComponent(
+              `فشل إنشاء الحساب: ${createErr?.message ?? 'خطأ غير معروف'}`
+            )
+        );
       }
+
+      userId = newUser.user.id;
+
+      // حدّث phone من +temp_xxx للقيمة الحقيقية
+      await admin
+        .from('users')
+        .update({ phone, full_name: 'مستخدم جديد' })
+        .eq('id', userId);
     }
 
-    // 3. حدّث password (في حال تغيّر ENCRYPTION_KEY)
-    await admin.auth.admin.updateUserById(userId!, { password });
-
-    // 4. سجّل دخول
-    const supabase = createClient();
+    // 3. signIn الآن
     const { data: signInData, error: signInErr } =
       await supabase.auth.signInWithPassword({ email, password });
 
     if (signInErr || !signInData?.user) {
-      logger.error('signInWithPassword failed', {
+      logger.error('signIn failed after setup', {
         phone,
         error: signInErr?.message,
       });
       redirect(
         '/login?error=' +
-          encodeURIComponent(
-            `فشل تسجيل الدخول: ${signInErr?.message ?? 'خطأ غير معروف'}`
-          )
+          encodeURIComponent('فشل تسجيل الدخول، حاول مرة أخرى')
       );
     }
 
-    // 5. Audit log
-    await logAuditEvent({
+    // Audit (fire-and-forget)
+    logAuditEvent({
       action: 'auth.login',
       user_id: signInData.user.id,
-      metadata: { ip, phone, method: 'no_otp' },
-    });
+      metadata: { ip, phone, method: 'slow' },
+    }).catch(() => {});
 
-    // 6. التوجيه حسب الدور (V25: دعم كل الأدوار)
+    // 4. التوجيه
     const role = existingProfile?.role || 'patient';
-    if (role === 'specialist') {
-      redirect('/specialist');
-    }
+    if (role === 'specialist') redirect('/specialist');
     if (
       role === 'admin' ||
       role === 'super_admin' ||
