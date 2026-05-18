@@ -139,7 +139,7 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
           flex: 1,
           display: 'inline-flex',
           alignItems: 'center',
-          gap: 6,
+          gap: 8,
         }}>
           {isBloodDrawFlow ? (
             <>
