@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect, useTransition } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { cancelAppointment } from '../actions';
+import { toast } from '@/components/ui/Toaster';
 import type { LucideIcon } from 'lucide-react';
 import {
   ClipboardList, CheckCircle2, Car, RefreshCw, BadgeCheck,
@@ -34,7 +35,7 @@ export default function OrderTrackPage() {
 
   function handleCancel() {
     if (orderId === 'preview') {
-      alert('هذه معاينة فقط — لا يمكن إلغاء طلب وهمي');
+      toast.info('هذه معاينة فقط — لا يمكن إلغاء طلب وهمي');
       return;
     }
     const reason = prompt('لماذا تريد إلغاء الطلب؟ (اختياري)')?.trim() || 'لم يحدد المستخدم سبباً';
