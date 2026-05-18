@@ -19,7 +19,7 @@ export default async function AdminsPage() {
 
   if (!isSuperAdmin(profile?.role)) {
     return (
-      <div style={{ background: '#fff', borderRadius: 14, padding: 60, textAlign: 'center' }}>
+      <div style={{ background: 'var(--white)', borderRadius: 14, padding: 64, textAlign: 'center' }}>
         <div style={{ fontSize: 48, marginBottom: 12 }}>🚫</div>
         <h1 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 6px' }}>غير مصرّح</h1>
         <p style={{ fontSize: 13, color: 'var(--ink-3)' }}>هذه الصفحة للمدير العام فقط</p>
@@ -59,10 +59,10 @@ export default async function AdminsPage() {
           const meta = ADMIN_ROLES[role];
           return (
             <div key={role} style={{
-              background: '#fff', borderRadius: 12, padding: 16,
+              background: 'var(--white)', borderRadius: 12, padding: 16,
               borderRight: `4px solid ${meta.color}`,
             }}>
-              <div style={{ fontSize: 24, marginBottom: 6 }}>{meta.icon}</div>
+              <div style={{ fontSize: 24, marginBottom: 8 }}>{meta.icon}</div>
               <div style={{ fontSize: 14, fontWeight: 800, color: meta.color, marginBottom: 4 }}>
                 {meta.label}
               </div>
