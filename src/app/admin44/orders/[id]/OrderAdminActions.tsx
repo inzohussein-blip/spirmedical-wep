@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { assignOrderToSpecialist, adminCancelOrder, rescheduleOrder } from '../actions';
+import { useConfirm } from '@/components/ui';
 
 interface Props {
   orderId: string;
@@ -15,6 +16,7 @@ interface Props {
 export default function OrderAdminActions({
   orderId, status, currentSpecialistId, scheduledAt, availableSpecialists,
 }: Props) {
+  const { confirm, ConfirmDialog } = useConfirm();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState('');
@@ -26,11 +28,17 @@ export default function OrderAdminActions({
   const [showReschedule, setShowReschedule] = useState(false);
   const [newDate, setNewDate] = useState(scheduledAt.slice(0, 16));
 
-  function handleAssign() {
+  async function handleAssign() {
     setError('');
     if (!selectedSpecialist) { setError('اختر اختصاصي'); return; }
     if (selectedSpecialist === currentSpecialistId) return;
-    if (!confirm('تعيين هذا الاختصاصي للطلب؟')) return;
+    const ok = await confirm({
+      title: 'تعيين الاختصاصي',
+      message: 'هل تريد تعيين هذا الاختصاصي للطلب؟',
+      variant: 'info',
+      confirmText: 'تعيين',
+    });
+    if (!ok) return;
     startTransition(async () => {
       const result = await assignOrderToSpecialist(orderId, selectedSpecialist);
       if (!result.ok) { setError(result.error || 'حدث خطأ'); return; }
@@ -39,10 +47,16 @@ export default function OrderAdminActions({
     });
   }
 
-  function handleCancel() {
+  async function handleCancel() {
     setError('');
     if (!cancelReason.trim()) { setError('اذكر سبب الإلغاء'); return; }
-    if (!confirm('إلغاء هذا الطلب؟')) return;
+    const ok = await confirm({
+      title: 'إلغاء الطلب',
+      message: 'سيتم إلغاء الطلب نهائياً.',
+      variant: 'danger',
+      confirmText: 'إلغاء',
+    });
+    if (!ok) return;
     startTransition(async () => {
       const result = await adminCancelOrder(orderId, cancelReason);
       if (!result.ok) { setError(result.error || 'حدث خطأ'); return; }
@@ -52,10 +66,16 @@ export default function OrderAdminActions({
     });
   }
 
-  function handleReschedule() {
+  async function handleReschedule() {
     setError('');
     if (!newDate) { setError('اختر تاريخاً'); return; }
-    if (!confirm('إعادة جدولة الطلب؟')) return;
+    const ok = await confirm({
+      title: 'إعادة الجدولة',
+      message: 'هل تريد إعادة جدولة هذا الطلب؟',
+      variant: 'warning',
+      confirmText: 'إعادة',
+    });
+    if (!ok) return;
     startTransition(async () => {
       const result = await rescheduleOrder(orderId, new Date(newDate).toISOString());
       if (!result.ok) { setError(result.error || 'حدث خطأ'); return; }
@@ -175,6 +195,7 @@ export default function OrderAdminActions({
           الطلب {status === 'completed' ? 'مكتمل' : 'ملغى'} — لا توجد إجراءات
         </div>
       )}
+      <ConfirmDialog />
     </div>
   );
 }
