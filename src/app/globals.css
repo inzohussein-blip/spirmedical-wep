@@ -249,6 +249,15 @@
    استخدمها بدلاً من inline styles لتطبيق تلقائي للـ Theme
    ═══════════════════════════════════════════════════════════════════ */
 
+/* ─── Skeleton shimmer animation ───────────────────────────── */
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@keyframes spin-smooth {
+  to { transform: rotate(360deg); }
+}
+
 /* ─── Spacing utilities ────────────────────────────────────────── */
 .p-0 { padding: var(--space-0); }
 .p-1 { padding: var(--space-1); }
