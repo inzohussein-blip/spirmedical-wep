@@ -46,7 +46,7 @@ export default async function SpecialistAccountPage() {
         {/* بطاقة الملف */}
         <div style={{
           background: meta.gradient,
-          color: '#fff',
+          color: 'var(--white)',
           padding: '20px',
           borderRadius: 16,
           marginTop: 12,
@@ -57,7 +57,7 @@ export default async function SpecialistAccountPage() {
           <div style={{ fontSize: 18, fontWeight: 800, marginBottom: 4 }}>{profile?.full_name ?? '—'}</div>
           <div style={{ fontSize: 12, opacity: 0.9 }}>{meta.label}</div>
           {profile?.governorate && (
-            <div style={{ fontSize: 11, opacity: 0.85, marginTop: 6 }}>📍 {profile.governorate}</div>
+            <div style={{ fontSize: 11, opacity: 0.85, marginTop: 8 }}>📍 {profile.governorate}</div>
           )}
         </div>
 
