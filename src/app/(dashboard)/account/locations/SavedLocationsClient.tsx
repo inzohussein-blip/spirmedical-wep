@@ -316,8 +316,11 @@ export default function SavedLocationsClient({ initialLocations }: Props) {
               </label>
               <MapPickerWrapper
                 initialLocation={coords}
+                initialAddress={address}
                 onChange={(c) => setCoords(c)}
+                onAddressChange={(addr) => setAddress(addr)}
                 height={320}
+                showAddressField={true}
               />
             </div>
 
