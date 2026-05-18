@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { createCoupon, toggleCouponActive, deleteCoupon } from './actions';
+import { EmptyState } from '@/components/ui';
 
 interface Coupon {
   id: string;
@@ -72,10 +73,10 @@ export default function CouponsClient({ coupons }: Props) {
 
   return (
     <>
-      <div style={{ background: '#fff', borderRadius: 14, padding: 18, marginBottom: 16 }}>
+      <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginBottom: 16 }}>
         {!showForm ? (
           <button onClick={() => setShowForm(true)} style={{
-            padding: '10px 20px', background: 'var(--emerald-deep)', color: '#fff',
+            padding: '10px 20px', background: 'var(--emerald-deep)', color: 'var(--white)',
             border: 0, borderRadius: 10, fontSize: 13, fontWeight: 800,
             cursor: 'pointer', fontFamily: 'inherit',
           }}>
@@ -123,7 +124,7 @@ export default function CouponsClient({ coupons }: Props) {
 
             <div style={{ display: 'flex', gap: 8 }}>
               <button onClick={handleCreate} disabled={isPending} style={{
-                padding: '10px 20px', background: 'var(--emerald-deep)', color: '#fff',
+                padding: '10px 20px', background: 'var(--emerald-deep)', color: 'var(--white)',
                 border: 0, borderRadius: 8, fontSize: 12, fontWeight: 800,
                 cursor: 'pointer', fontFamily: 'inherit',
               }}>
@@ -143,12 +144,14 @@ export default function CouponsClient({ coupons }: Props) {
 
       {/* List */}
       {coupons.length === 0 ? (
-        <div style={{ background: '#fff', borderRadius: 14, padding: 60, textAlign: 'center' }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>🎁</div>
-          <p style={{ fontSize: 14, color: 'var(--ink-3)' }}>لا توجد كوبونات</p>
-        </div>
+        <EmptyState
+          icon="🎁"
+          title="لا توجد كوبونات"
+          description="ابدأ بإنشاء كوبون خصم جديد"
+          size="lg"
+        />
       ) : (
-        <div style={{ background: '#fff', borderRadius: 14, overflow: 'hidden' }}>
+        <div style={{ background: 'var(--white)', borderRadius: 14, overflow: 'hidden' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead style={{ background: 'var(--paper-3)' }}>
               <tr>
