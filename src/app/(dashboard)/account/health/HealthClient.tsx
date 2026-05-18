@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { recordVital, deleteVital, type VitalType } from './actions';
 import type { LucideIcon } from 'lucide-react';
+import { useConfirm } from '@/components/ui';
 import {
   Heart, Droplet, Candy, Thermometer, Scale, Wind, Ruler,
   AlertTriangle, Calendar, Trash2,
@@ -33,6 +34,7 @@ interface Props {
 }
 
 export default function HealthClient({ latestByType, history }: Props) {
+  const { confirm, ConfirmDialog } = useConfirm();
   const [showForm, setShowForm] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState('');
@@ -67,8 +69,14 @@ export default function HealthClient({ latestByType, history }: Props) {
     });
   }
 
-  function handleDelete(id: string) {
-    if (!confirm('حذف هذا القياس؟')) return;
+  async function handleDelete(id: string) {
+    const ok = await confirm({
+      title: 'حذف القياس',
+      message: 'هل تريد حذف هذا القياس؟',
+      variant: 'danger',
+      confirmText: 'احذف',
+    });
+    if (!ok) return;
     startTransition(async () => {
       await deleteVital(id);
     });
@@ -220,6 +228,7 @@ export default function HealthClient({ latestByType, history }: Props) {
           </div>
         </>
       )}
+      <ConfirmDialog />
     </>
   );
 }
