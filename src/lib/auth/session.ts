@@ -1,14 +1,12 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- * Authentication Session Helper
+ * Authentication Session Helper (V25.1 — fixes login loops)
  * ═══════════════════════════════════════════════════════════════
- * مكان مركزي لجلب user + profile + التحقق من الصلاحيات
  *
- * يستخدمه:
- *   - (dashboard)/layout.tsx
- *   - (specialist)/layout.tsx
- *   - admin44/layout.tsx
- *   - أي route protected
+ * 🔧 إصلاحات V25.1:
+ *   ✅ إذا profile غير موجود → نُنشئه افتراضياً بدلاً من redirect /login (يسبب loop)
+ *   ✅ إذا role غير معروف → نعامله كـ 'patient' (آمن)
+ *   ✅ ندعم كل أدوار admin بشكل صحيح
  */
 
 import { redirect } from 'next/navigation';
@@ -23,6 +21,8 @@ export type UserRole =
   | 'manager'
   | 'support';
 
+const ADMIN_ROLES: UserRole[] = ['admin', 'super_admin', 'manager', 'support'];
+
 export interface AuthenticatedSession {
   user: { id: string; email?: string | null };
   profile: {
@@ -35,28 +35,27 @@ export interface AuthenticatedSession {
 }
 
 export interface RequireSessionOptions {
-  /**
-   * الـ roles المسموح لها بفتح الـ route
-   * - patient/specialist: أحدهما فقط
-   * - admin: أي admin role
-   */
   allowedRoles?: UserRole[];
-  /**
-   * إذا role غير مسموح، يحوّل إلى هذا المسار
-   * default: حسب role الفعلي
-   */
   redirectOnDenied?: string;
-  /**
-   * المسار للـ redirect لو غير مسجل دخول
-   * default: /login
-   */
   redirectOnUnauth?: string;
 }
 
 /**
+ * يحدد المسار المناسب لكل دور
+ */
+function getDefaultPathForRole(role: UserRole): string {
+  if (role === 'specialist') return '/specialist';
+  if (ADMIN_ROLES.includes(role)) return '/admin44';
+  return '/dashboard';
+}
+
+/**
  * Helper رئيسي - يضمن وجود session صحيح
- * يعيد session مع profile جاهزة للاستخدام
- * يعمل redirects تلقائياً
+ *
+ * الفلسفة:
+ * - لو user موجود لكن بدون profile → ننشئه افتراضياً (تجنّب loops)
+ * - لو role غير مسموح → redirect للمسار المناسب لذلك الدور
+ * - لو role غير معروف (null) → عامله كـ 'patient'
  */
 export async function requireSession(
   options: RequireSessionOptions = {}
@@ -82,42 +81,57 @@ export async function requireSession(
     .eq('id', user.id)
     .single();
 
-  if (!profile) {
-    redirect(redirectOnUnauth);
-  }
+  // 🔧 V25.1: لو profile غير موجود في DB، أنشئه افتراضياً
+  // (يحدث للمستخدمين الجدد قبل اكتمال الـ trigger)
+  // ⚠️ مهم: لا نعمل redirect لـ /login هنا (يسبب loop)
+  let role: UserRole;
+  let fullName: string;
+  let approvalStatus: string | null;
+  let settings: UserSettings;
 
-  const role = profile.role as UserRole;
+  if (!profile) {
+    // ننشئ profile جديد
+    const { data: newProfile } = await supabase
+      .from('users')
+      .upsert(
+        {
+          id: user.id,
+          full_name: 'مستخدم جديد',
+          role: 'patient',
+          phone: user.user_metadata?.phone ?? null,
+        },
+        { onConflict: 'id' }
+      )
+      .select('full_name, role, approval_status, user_settings')
+      .single();
+
+    role = (newProfile?.role as UserRole) ?? 'patient';
+    fullName = newProfile?.full_name ?? 'مستخدم جديد';
+    approvalStatus = newProfile?.approval_status ?? null;
+    settings = (newProfile?.user_settings ?? {}) as UserSettings;
+  } else {
+    role = (profile.role as UserRole) ?? 'patient';
+    fullName = profile.full_name ?? 'مستخدم';
+    approvalStatus = profile.approval_status ?? null;
+    settings = (profile.user_settings ?? {}) as UserSettings;
+  }
 
   // التحقق من الصلاحيات
   if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(role)) {
-    // إذا role غير مسموح، نحوّل لمكان مناسب
     if (redirectOnDenied) {
       redirect(redirectOnDenied);
     }
-    // default routing حسب role
-    if (role === 'specialist') {
-      redirect('/specialist');
-    } else if (
-      role === 'admin' ||
-      role === 'super_admin' ||
-      role === 'manager' ||
-      role === 'support'
-    ) {
-      redirect('/admin44');
-    } else {
-      redirect('/dashboard');
-    }
+    redirect(getDefaultPathForRole(role));
   }
 
-  const settings = (profile.user_settings ?? {}) as UserSettings;
   const pinEnabled = settings.pin_enabled === true && !!settings.pin_hash;
 
   return {
     user: { id: user.id, email: user.email },
     profile: {
-      full_name: profile.full_name ?? 'مستخدم',
+      full_name: fullName,
       role,
-      approval_status: profile.approval_status,
+      approval_status: approvalStatus,
       user_settings: settings,
     },
     pinEnabled,
