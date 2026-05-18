@@ -29,7 +29,7 @@ export default async function PendingApprovalPage() {
 
   return (
     <main style={{ minHeight: '100vh', background: 'var(--paper)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-      <div style={{ maxWidth: 420, width: '100%', background: '#fff', borderRadius: 20, padding: 32, textAlign: 'center', boxShadow: '0 10px 40px rgba(0,0,0,0.08)' }}>
+      <div style={{ maxWidth: 420, width: '100%', background: 'var(--white)', borderRadius: 20, padding: 32, textAlign: 'center', boxShadow: '0 10px 40px rgba(0,0,0,0.08)' }}>
         <div style={{ fontSize: 64, marginBottom: 12 }}>⏳</div>
         <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--ink)', margin: '0 0 8px' }}>
           حسابك قيد المراجعة
@@ -60,7 +60,7 @@ export default async function PendingApprovalPage() {
             justifyContent: 'center',
             gap: 8,
             background: '#25D366',
-            color: '#fff',
+            color: 'var(--white)',
             padding: '12px 20px',
             borderRadius: 12,
             fontSize: 13,
