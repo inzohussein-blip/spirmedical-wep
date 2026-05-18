@@ -77,6 +77,10 @@ export type {
   BottomSheetHeaderProps,
 } from './BottomSheet';
 
+// ConfirmDialog (V25.3 - بديل native confirm())
+export { useConfirm } from './ConfirmDialog';
+export type { ConfirmOptions, ConfirmVariant } from './ConfirmDialog';
+
 // Map (Free Medical Map)
 export { FreeMedicalMapWrapper } from './FreeMedicalMapWrapper';
 export type { FreeMedicalMapProps } from './FreeMedicalMap';
