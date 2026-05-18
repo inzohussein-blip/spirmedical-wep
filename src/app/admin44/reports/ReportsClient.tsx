@@ -63,9 +63,9 @@ export default function ReportsClient({ fromDate, toDate }: Props) {
   return (
     <div style={{ position: 'relative' }}>
       <button onClick={() => setShowMenu(!showMenu)} disabled={isPending} style={{
-        padding: '10px 20px', background: 'var(--emerald-deep)', color: '#fff',
+        padding: '10px 20px', background: 'var(--emerald-deep)', color: 'var(--white)',
         border: 0, borderRadius: 10, fontSize: 13, fontWeight: 800,
-        cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 6,
+        cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 8,
       }}>
         📥 تصدير CSV {isPending && '...'}
       </button>
@@ -77,7 +77,7 @@ export default function ReportsClient({ fromDate, toDate }: Props) {
           }} />
           <div style={{
             position: 'absolute', top: 'calc(100% + 6px)', insetInlineEnd: 0,
-            background: '#fff', borderRadius: 12, padding: 8,
+            background: 'var(--white)', borderRadius: 12, padding: 8,
             boxShadow: '0 8px 24px rgba(0,0,0,0.12)', minWidth: 220, zIndex: 11,
             display: 'flex', flexDirection: 'column', gap: 2,
           }}>
