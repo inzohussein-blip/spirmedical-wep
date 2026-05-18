@@ -50,13 +50,13 @@ export default function NursingActions({ orderId, initialData }: Props) {
   return (
     <div style={{ marginTop: 16 }}>
       <div className="scr-section-head">
-        <div className="scr-section-title" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div className="scr-section-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Syringe size={16} strokeWidth={2.2} />
           الإجراء التمريضي
         </div>
       </div>
 
-      <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 14 }}>
+      <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 16 }}>
         <div style={{ marginBottom: 12 }}>
           <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>نوع الإجراء</label>
           <div className="scr-pills">
@@ -138,14 +138,14 @@ export default function NursingActions({ orderId, initialData }: Props) {
           onClick={handleSave}
           disabled={isPending}
           className="scr-empty-cta"
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: '100%' }}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, width: '100%' }}
         >
           <Save size={16} strokeWidth={2.2} />
           {isPending ? 'جارٍ الحفظ...' : 'حفظ الإجراء'}
         </button>
 
         {success && (
-          <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginTop: 8, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+          <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginTop: 8, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             <CheckCircle2 size={14} strokeWidth={2.4} />
             تم الحفظ
           </div>
