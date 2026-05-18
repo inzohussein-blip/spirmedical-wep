@@ -32,9 +32,9 @@ export default async function ThemeSettingsPage() {
     return (
       <div
         style={{
-          background: '#fff',
+          background: 'var(--white)',
           borderRadius: 14,
-          padding: 60,
+          padding: 64,
           textAlign: 'center',
         }}
       >
