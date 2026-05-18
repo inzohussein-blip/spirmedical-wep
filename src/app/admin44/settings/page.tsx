@@ -18,7 +18,7 @@ export default async function SettingsPage() {
 
   if (!isSuperAdmin(profile?.role)) {
     return (
-      <div style={{ background: '#fff', borderRadius: 14, padding: 60, textAlign: 'center' }}>
+      <div style={{ background: 'var(--white)', borderRadius: 14, padding: 64, textAlign: 'center' }}>
         <div style={{ fontSize: 48, marginBottom: 12 }}>🚫</div>
         <h1 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 6px' }}>غير مصرّح</h1>
         <p style={{ fontSize: 13, color: 'var(--ink-3)' }}>هذه الصفحة للمدير العام فقط</p>
@@ -47,7 +47,7 @@ export default async function SettingsPage() {
       </p>
 
       {/* النظام */}
-      <div style={{ background: '#fff', borderRadius: 14, padding: 20, marginBottom: 16 }}>
+      <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginBottom: 16 }}>
         <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}>📊 إحصائيات النظام</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
           <StatBox label="إجمالي المستخدمين" value={(totalUsers ?? 0).toLocaleString('ar-IQ')} />
@@ -58,9 +58,9 @@ export default async function SettingsPage() {
       </div>
 
       {/* روابط سريعة */}
-      <div style={{ background: '#fff', borderRadius: 14, padding: 20, marginBottom: 16 }}>
+      <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginBottom: 16 }}>
         <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}>🔗 روابط الإدارة</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
           <SettingsLink href="/admin44/settings/theme" icon="🎨" title="تخصيص الألوان" desc="غيّر ألوان المنصة كاملة" />
           <SettingsLink href="/admin44/admins" icon="👥" title="إدارة المديرين" desc="إضافة وتعيين الأدوار" />
           <SettingsLink href="/admin44/audit-log" icon="📜" title="سجل العمليات" desc="مراجعة كل النشاط الإداري" />
@@ -70,9 +70,9 @@ export default async function SettingsPage() {
       </div>
 
       {/* معلومات تقنية */}
-      <div style={{ background: '#fff', borderRadius: 14, padding: 20 }}>
+      <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20 }}>
         <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}>🔧 معلومات النظام</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14, fontSize: 13 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, fontSize: 13 }}>
           <Info label="نسخة النظام" value="Spir Medical v22 · Admin" />
           <Info label="قاعدة البيانات" value="Supabase PostgreSQL" />
           <Info label="نظام الأدوار" value="Multi-role (4 levels)" />
@@ -80,7 +80,7 @@ export default async function SettingsPage() {
         </div>
 
         <div style={{
-          marginTop: 16, padding: 14, background: 'var(--paper-3)',
+          marginTop: 16, padding: 16, background: 'var(--paper-3)',
           borderRadius: 10, fontSize: 12, color: 'var(--ink-3)', lineHeight: 1.7,
         }}>
           <strong>ملاحظة:</strong> لتعديل قائمة المحافظات، الخدمات، أو أوقات العمل، حالياً يتم ذلك مباشرة من قاعدة البيانات.
@@ -93,7 +93,7 @@ export default async function SettingsPage() {
 
 function StatBox({ label, value }: { label: string; value: string }) {
   return (
-    <div style={{ background: 'var(--paper-3)', padding: 14, borderRadius: 10, textAlign: 'center' }}>
+    <div style={{ background: 'var(--paper-3)', padding: 16, borderRadius: 10, textAlign: 'center' }}>
       <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--emerald-deep)', marginBottom: 4 }}>{value}</div>
       <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>{label}</div>
     </div>
@@ -103,7 +103,7 @@ function StatBox({ label, value }: { label: string; value: string }) {
 function SettingsLink({ href, icon, title, desc }: { href: string; icon: string; title: string; desc: string }) {
   return (
     <a href={href} style={{
-      display: 'flex', gap: 12, padding: 14, background: 'var(--paper-3)',
+      display: 'flex', gap: 12, padding: 16, background: 'var(--paper-3)',
       borderRadius: 10, textDecoration: 'none', color: 'var(--ink)',
     }}>
       <div style={{ fontSize: 24 }}>{icon}</div>
