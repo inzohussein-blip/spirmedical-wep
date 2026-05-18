@@ -84,6 +84,61 @@ export const IRAQ_GOVERNORATES: Record<string, GpsCoordinates> = {
   thi_qar: { lat: 31.0426, lng: 46.2592 },
 };
 
+/**
+ * الأسماء العربية للمحافظات (للعرض في UI)
+ */
+export const IRAQ_GOVERNORATES_AR: Record<string, string> = {
+  baghdad: 'بغداد',
+  basra: 'البصرة',
+  mosul: 'الموصل',
+  erbil: 'أربيل',
+  najaf: 'النجف',
+  karbala: 'كربلاء',
+  sulaymaniyah: 'السليمانية',
+  kirkuk: 'كركوك',
+  duhok: 'دهوك',
+  diyala: 'ديالى',
+  anbar: 'الأنبار',
+  saladin: 'صلاح الدين',
+  babil: 'بابل',
+  qadisiyyah: 'القادسية',
+  wasit: 'واسط',
+  muthanna: 'المثنى',
+  maysan: 'ميسان',
+  thi_qar: 'ذي قار',
+};
+
+/**
+ * قائمة محافظات للـ UI (مرتّبة بحسب الأكثر استخداماً)
+ */
+export interface GovernorateOption {
+  id: string;
+  nameAr: string;
+  lat: number;
+  lng: number;
+}
+
+export const GOVERNORATE_OPTIONS: GovernorateOption[] = [
+  { id: 'baghdad', nameAr: 'بغداد', lat: 33.3152, lng: 44.3661 },
+  { id: 'basra', nameAr: 'البصرة', lat: 30.5085, lng: 47.7804 },
+  { id: 'najaf', nameAr: 'النجف', lat: 31.9997, lng: 44.3296 },
+  { id: 'karbala', nameAr: 'كربلاء', lat: 32.6149, lng: 44.0245 },
+  { id: 'mosul', nameAr: 'الموصل', lat: 36.3489, lng: 43.1577 },
+  { id: 'erbil', nameAr: 'أربيل', lat: 36.1901, lng: 44.0094 },
+  { id: 'sulaymaniyah', nameAr: 'السليمانية', lat: 35.5556, lng: 45.4351 },
+  { id: 'kirkuk', nameAr: 'كركوك', lat: 35.4681, lng: 44.3923 },
+  { id: 'duhok', nameAr: 'دهوك', lat: 36.8662, lng: 42.9826 },
+  { id: 'diyala', nameAr: 'ديالى', lat: 33.7733, lng: 44.6342 },
+  { id: 'anbar', nameAr: 'الأنبار', lat: 33.4274, lng: 43.298 },
+  { id: 'saladin', nameAr: 'صلاح الدين', lat: 34.6047, lng: 43.6789 },
+  { id: 'babil', nameAr: 'بابل', lat: 32.4732, lng: 44.4222 },
+  { id: 'qadisiyyah', nameAr: 'القادسية', lat: 31.9893, lng: 44.9248 },
+  { id: 'wasit', nameAr: 'واسط', lat: 32.5126, lng: 45.8268 },
+  { id: 'muthanna', nameAr: 'المثنى', lat: 31.5667, lng: 45.2833 },
+  { id: 'maysan', nameAr: 'ميسان', lat: 31.8336, lng: 47.1444 },
+  { id: 'thi_qar', nameAr: 'ذي قار', lat: 31.0426, lng: 46.2592 },
+];
+
 /* ─── Validation ───────────────────────────────────────────── */
 
 /**
