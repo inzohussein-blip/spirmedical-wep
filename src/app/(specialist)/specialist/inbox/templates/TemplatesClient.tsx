@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { createTemplate, updateTemplate, deleteTemplate } from './actions';
+import { useConfirm } from '@/components/ui';
 import {
   Zap, AlertTriangle, BarChart3, Pencil, Trash2,
 } from 'lucide-react';
@@ -15,6 +16,7 @@ interface Template {
 }
 
 export default function TemplatesClient({ templates }: { templates: Template[] }) {
+  const { confirm, ConfirmDialog } = useConfirm();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -57,8 +59,14 @@ export default function TemplatesClient({ templates }: { templates: Template[] }
     });
   }
 
-  function handleDelete(id: string) {
-    if (!confirm('حذف هذا القالب؟')) return;
+  async function handleDelete(id: string) {
+    const ok = await confirm({
+      title: 'حذف القالب',
+      message: 'هل تريد حذف هذا القالب؟',
+      variant: 'danger',
+      confirmText: 'احذف',
+    });
+    if (!ok) return;
     startTransition(async () => {
       await deleteTemplate(id);
     });
@@ -197,6 +205,7 @@ export default function TemplatesClient({ templates }: { templates: Template[] }
           </div>
         </>
       )}
+      <ConfirmDialog />
     </>
   );
 }
