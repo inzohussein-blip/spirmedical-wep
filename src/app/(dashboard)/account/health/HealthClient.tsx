@@ -116,10 +116,10 @@ export default function HealthClient({ latestByType, history }: Props) {
           + إدخال قياس جديد
         </button>
       ) : (
-        <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 14, marginTop: 14 }}>
+        <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 16, marginTop: 16 }}>
           <div className="scr-section-title" style={{ marginBottom: 12 }}>قياس جديد</div>
 
-          <div style={{ marginBottom: 10 }}>
+          <div style={{ marginBottom: 12 }}>
             <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>النوع</label>
             <select
               value={vitalType}
@@ -132,7 +132,7 @@ export default function HealthClient({ latestByType, history }: Props) {
             </select>
           </div>
 
-          <div style={{ marginBottom: 10 }}>
+          <div style={{ marginBottom: 12 }}>
             <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>
               القيمة ({meta.unit})
             </label>
@@ -157,7 +157,7 @@ export default function HealthClient({ latestByType, history }: Props) {
           </div>
 
           {error && (
-            <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
               <AlertTriangle size={14} strokeWidth={2.4} />
               {error}
             </div>
