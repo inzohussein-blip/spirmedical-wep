@@ -83,6 +83,13 @@ const SECTION_SETTINGS = [
     desc: 'إدارة التنبيهات',
     href: '/account/notifications',
   },
+  {
+    id: 'push-notifications',
+    icon: '📲',
+    title: 'إشعارات التطبيق',
+    desc: 'فعّل إشعارات Push للمواعيد والنتائج',
+    href: '/account/notifications/settings',
+  },
 ];
 
 const SECTION_HELP = [
