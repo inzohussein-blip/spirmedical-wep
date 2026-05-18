@@ -1,0 +1,92 @@
+/**
+ * ═══════════════════════════════════════════════════════════════
+ * UI Primitives — Spir Medical V25
+ * ═══════════════════════════════════════════════════════════════
+ *
+ * كل المكوّنات الأساسية في مكان واحد للاستيراد السريع:
+ *
+ *   import { Button, Card, Input, Badge, Avatar } from '@/components/ui';
+ */
+
+// Button
+export { Button } from './Button';
+export type { ButtonProps } from './Button';
+
+// Card
+export {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from './Card';
+export type { CardProps } from './Card';
+
+// Input + Textarea
+export { Input, Textarea } from './Input';
+export type { InputProps, TextareaProps } from './Input';
+
+// Badge + DotBadge
+export { Badge, DotBadge } from './Badge';
+export type { BadgeProps, DotBadgeProps } from './Badge';
+
+// StatusBadge (للحالات الطبية المحددة)
+export { StatusBadge } from './StatusBadge';
+export type { StatusVariant, StatusSize } from './StatusBadge';
+
+// Avatar
+export { Avatar, AvatarGroup } from './Avatar';
+export type { AvatarProps, AvatarGroupProps } from './Avatar';
+
+// EmptyState + ErrorState
+export { EmptyState, ErrorState } from './EmptyState';
+export type { EmptyStateProps, ErrorStateProps } from './EmptyState';
+
+// Skeleton
+export {
+  Skeleton,
+  SkeletonCard,
+  SkeletonListItem,
+  SkeletonTable,
+  SkeletonStats,
+} from './Skeleton';
+export type { SkeletonProps, SkeletonTableProps } from './Skeleton';
+
+// Separator
+export { Separator } from './Separator';
+export type { SeparatorProps } from './Separator';
+
+// Map (Free Medical Map)
+export { FreeMedicalMapWrapper } from './FreeMedicalMapWrapper';
+export type { FreeMedicalMapProps } from './FreeMedicalMap';
+
+// Shadcn primitives (already in place)
+export {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogTrigger,
+  DialogClose,
+} from './Dialog';
+
+export {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from './DropdownMenu';
+
+export {
+  Toast,
+  ToastProvider,
+  ToastViewport,
+  ToastTitle,
+  ToastDescription,
+  ToastClose,
+} from './Toast';
