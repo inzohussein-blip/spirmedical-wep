@@ -57,6 +57,14 @@ export type { SkeletonProps, SkeletonTableProps } from './Skeleton';
 export { Separator } from './Separator';
 export type { SeparatorProps } from './Separator';
 
+// Field + FieldGroup (V25.1 - UX)
+export { Field, FieldGroup } from './Field';
+export type { FieldProps, FieldGroupProps } from './Field';
+
+// Toaster (V25.1 - UX)
+export { toast, Toaster, useToasts } from './Toaster';
+export type { ToastVariant, ToastMessage } from './Toaster';
+
 // Map (Free Medical Map)
 export { FreeMedicalMapWrapper } from './FreeMedicalMapWrapper';
 export type { FreeMedicalMapProps } from './FreeMedicalMap';
