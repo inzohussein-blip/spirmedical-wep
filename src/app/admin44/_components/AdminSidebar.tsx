@@ -43,7 +43,7 @@ export default function AdminSidebar({ userName, userRole, roleLabel, roleIcon }
     <aside style={{
       width: 260,
       background: 'var(--emerald-deep, #073B30)',
-      color: '#fff',
+      color: 'var(--white)',
       padding: '20px 14px',
       display: 'flex',
       flexDirection: 'column',
@@ -82,14 +82,14 @@ export default function AdminSidebar({ userName, userRole, roleLabel, roleIcon }
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 10,
+              gap: 12,
               padding: '10px 12px',
               borderRadius: 10,
               fontSize: 13,
               fontWeight: 700,
               textDecoration: 'none',
-              color: isActive ? 'var(--emerald-deep, #073B30)' : '#fff',
-              background: isActive ? '#fff' : 'transparent',
+              color: isActive ? 'var(--emerald-deep, #073B30)' : 'var(--white)',
+              background: isActive ? 'var(--white)' : 'transparent',
               transition: 'all 0.15s',
             }}
           >
@@ -98,7 +98,7 @@ export default function AdminSidebar({ userName, userRole, roleLabel, roleIcon }
             {item.badge && (
               <span style={{
                 background: 'var(--amber)',
-                color: '#fff',
+                color: 'var(--white)',
                 fontSize: 10,
                 padding: '2px 6px',
                 borderRadius: 100,
