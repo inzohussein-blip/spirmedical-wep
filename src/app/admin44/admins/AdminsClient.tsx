@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { promoteToAdmin, revokeAdminRole, changeAdminRole } from './actions';
 import { ADMIN_ROLES, type AdminRole } from '@/lib/admin-types';
+import { useConfirm } from '@/components/ui';
 
 interface AdminUser {
   id: string;
@@ -20,6 +21,7 @@ interface Props {
 }
 
 export default function AdminsClient({ admins }: Props) {
+  const { confirm, ConfirmDialog } = useConfirm();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState('');
@@ -45,8 +47,14 @@ export default function AdminsClient({ admins }: Props) {
     });
   }
 
-  function handleRevoke(adminId: string, name: string) {
-    if (!confirm(`إزالة صلاحيات الإدارة من "${name}"؟`)) return;
+  async function handleRevoke(adminId: string, name: string) {
+    const ok = await confirm({
+      title: 'إزالة الصلاحيات',
+      message: 'سيتم إزالة صلاحيات الإدارة.',
+      variant: 'danger',
+      confirmText: 'إزالة',
+    });
+    if (!ok) return;
     startTransition(async () => {
       const result = await revokeAdminRole(adminId);
       if (!result.ok) { setError(result.error || 'حدث خطأ'); return; }
@@ -55,8 +63,14 @@ export default function AdminsClient({ admins }: Props) {
     });
   }
 
-  function handleChangeRole(adminId: string, role: AdminRole) {
-    if (!confirm(`تغيير الدور إلى "${ADMIN_ROLES[role].label}"؟`)) return;
+  async function handleChangeRole(adminId: string, role: AdminRole) {
+    const ok = await confirm({
+      title: 'تغيير الدور',
+      message: 'هل تريد تغيير الدور الإداري؟',
+      variant: 'warning',
+      confirmText: 'تغيير',
+    });
+    if (!ok) return;
     startTransition(async () => {
       const result = await changeAdminRole(adminId, role);
       if (!result.ok) { setError(result.error || 'حدث خطأ'); return; }
@@ -205,6 +219,7 @@ export default function AdminsClient({ admins }: Props) {
           </tbody>
         </table>
       </div>
+      <ConfirmDialog />
     </>
   );
 }
