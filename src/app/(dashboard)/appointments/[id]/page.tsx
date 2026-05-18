@@ -223,7 +223,7 @@ export default async function AppointmentDetailsPage({ params }: Props) {
             borderRadius: '16px',
             padding: '20px',
           }}>
-            <h3 style={{ fontSize: '14px', fontWeight: 800, margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <h3 style={{ fontSize: '14px', fontWeight: 800, margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
               <MapPin size={16} strokeWidth={2.2} aria-hidden />
               عنوان الخدمة
             </h3>
@@ -249,7 +249,7 @@ export default async function AppointmentDetailsPage({ params }: Props) {
             borderRadius: '16px',
             padding: '20px',
           }}>
-            <h3 style={{ fontSize: '14px', fontWeight: 800, margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <h3 style={{ fontSize: '14px', fontWeight: 800, margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
               <FileText size={16} strokeWidth={2.2} aria-hidden />
               ملاحظاتك
             </h3>
