@@ -21,6 +21,10 @@ interface CreateAppointmentInput {
   needs_address: boolean;
   otp_channel: 'whatsapp' | 'telegram';
   otp_verified: boolean;
+  // ✨ GPS Location (V25 - Free Medical Map)
+  location_lat?: number;
+  location_lng?: number;
+  location_accuracy_m?: number;
 }
 
 export async function createAppointmentV2(input: CreateAppointmentInput) {
@@ -97,6 +101,19 @@ export async function createAppointmentV2(input: CreateAppointmentInput) {
   if (input.service_id) insertData.service_id = input.service_id;
   if (input.duration) insertData.duration_minutes = input.duration;
   if (input.otp_channel) insertData.otp_channel = input.otp_channel;
+
+  // ✨ V25: حفظ إحداثيات GPS لو المريض التقطها
+  if (
+    typeof input.location_lat === 'number' &&
+    typeof input.location_lng === 'number'
+  ) {
+    insertData.location_lat = input.location_lat;
+    insertData.location_lng = input.location_lng;
+    if (typeof input.location_accuracy_m === 'number') {
+      insertData.location_accuracy_m = input.location_accuracy_m;
+    }
+    insertData.location_captured_at = new Date().toISOString();
+  }
 
   const { data: created, error } = await supabase
     .from('appointments')
