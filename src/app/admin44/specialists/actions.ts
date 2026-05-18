@@ -4,7 +4,14 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { logAdminAction } from '@/lib/admin-audit';
 import { isAdminRole } from '@/lib/admin-types';
-import { notifySpecialistApproved, notifySpecialistRejected } from '@/lib/notifications';
+import {
+  notifySpecialistApproved as notifySpecialistApprovedWA,
+  notifySpecialistRejected as notifySpecialistRejectedWA,
+} from '@/lib/notifications';
+import {
+  notifySpecialistApproved,
+  notifySpecialistRejected,
+} from '@/lib/services/push-templates';
 import type { SpecialistType } from '@/lib/specialist-types';
 
 async function requireAdmin() {
@@ -54,7 +61,12 @@ export async function approveSpecialist(
   });
 
   // إرسال إشعار واتساب (fire-and-forget)
-  notifySpecialistApproved(specialistId, specialistType, auth.supabase).catch(console.error);
+  notifySpecialistApprovedWA(specialistId, specialistType, auth.supabase).catch(console.error);
+
+  // ✨ V25.3: Push notification للأخصائي (clean template)
+  notifySpecialistApproved(specialistId, {
+    specialistType,
+  }).catch((err) => console.error('Push approval failed:', err));
 
   revalidatePath('/admin44/specialists/pending');
   revalidatePath('/admin44/specialists');
@@ -90,7 +102,12 @@ export async function rejectSpecialist(specialistId: string, reason: string) {
   });
 
   // إرسال إشعار واتساب
-  notifySpecialistRejected(specialistId, reason, auth.supabase).catch(console.error);
+  notifySpecialistRejectedWA(specialistId, reason, auth.supabase).catch(console.error);
+
+  // ✨ V25.3: Push notification للأخصائي
+  notifySpecialistRejected(specialistId, {
+    reason: reason.trim(),
+  }).catch((err) => console.error('Push rejection failed:', err));
 
   revalidatePath('/admin44/specialists/pending');
   revalidatePath('/admin44/specialists');
