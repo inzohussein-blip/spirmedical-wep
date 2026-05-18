@@ -1207,6 +1207,100 @@ export type Database = {
         };
         Relationships: [];
       };
+      push_subscriptions: {
+        Row: {
+          id: string;
+          user_id: string;
+          endpoint: string;
+          p256dh: string;
+          auth: string;
+          user_agent: string | null;
+          device_label: string | null;
+          is_active: boolean;
+          last_used_at: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          endpoint: string;
+          p256dh: string;
+          auth: string;
+          user_agent?: string | null;
+          device_label?: string | null;
+          is_active?: boolean;
+          last_used_at?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          endpoint?: string;
+          p256dh?: string;
+          auth?: string;
+          user_agent?: string | null;
+          device_label?: string | null;
+          is_active?: boolean;
+          last_used_at?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'push_subscriptions_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      notification_preferences: {
+        Row: {
+          user_id: string;
+          appointment_reminders: boolean;
+          test_results: boolean;
+          messages: boolean;
+          promotions: boolean;
+          system_updates: boolean;
+          quiet_hours_start: string;
+          quiet_hours_end: string;
+          quiet_hours_enabled: boolean;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          appointment_reminders?: boolean;
+          test_results?: boolean;
+          messages?: boolean;
+          promotions?: boolean;
+          system_updates?: boolean;
+          quiet_hours_start?: string;
+          quiet_hours_end?: string;
+          quiet_hours_enabled?: boolean;
+          updated_at?: string;
+        };
+        Update: {
+          user_id?: string;
+          appointment_reminders?: boolean;
+          test_results?: boolean;
+          messages?: boolean;
+          promotions?: boolean;
+          system_updates?: boolean;
+          quiet_hours_start?: string;
+          quiet_hours_end?: string;
+          quiet_hours_enabled?: boolean;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'notification_preferences_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: true;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: {
       appointments_with_users: {
