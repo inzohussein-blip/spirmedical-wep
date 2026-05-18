@@ -45,6 +45,10 @@ export interface BloodDrawSubmission {
   needsFasting: boolean;
   fastingHours: number;
   resultTime: string;
+  // ✨ V25: إحداثيات GPS (لو التقطها المستخدم)
+  location_lat?: number;
+  location_lng?: number;
+  location_accuracy_m?: number;
 }
 
 interface Props {
@@ -87,6 +91,12 @@ export default function BloodDrawFlow({
   const [condition, setCondition] = useState('');
   const [address, setAddress] = useState(userAddress);
   const [phone, setPhone] = useState(userPhone);
+  // ✨ V25: GPS coordinates (لو التقطها المستخدم)
+  const [gpsLocation, setGpsLocation] = useState<{
+    lat: number;
+    lng: number;
+    accuracy: number;
+  } | null>(null);
 
   // المختبر والموعد
   const [labId, setLabId] = useState<string>(ANY_LAB.id);
@@ -181,6 +191,10 @@ export default function BloodDrawFlow({
         needsFasting: fasting.required,
         fastingHours: fasting.hours,
         resultTime,
+        // ✨ V25: نُمرّر GPS coordinates إذا توفّرت
+        location_lat: gpsLocation?.lat,
+        location_lng: gpsLocation?.lng,
+        location_accuracy_m: gpsLocation?.accuracy,
       });
     } finally {
       setSubmitting(false);
@@ -195,13 +209,25 @@ export default function BloodDrawFlow({
     }
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const { latitude, longitude } = pos.coords;
+        const { latitude, longitude, accuracy } = pos.coords;
+        // ✨ V25: نحفظ الإحداثيات في state ليتم إرسالها لقاعدة البيانات
+        setGpsLocation({
+          lat: latitude,
+          lng: longitude,
+          accuracy: Math.round(accuracy),
+        });
+        // ونعرضها في العنوان أيضاً (لرؤية المستخدم)
         setAddress((prev) =>
           prev + (prev ? ' · ' : '') +
-          `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`
+          `📍 ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`
         );
       },
-      () => alert('لم نستطع تحديد موقعك. أدخل العنوان يدوياً.')
+      () => alert('لم نستطع تحديد موقعك. أدخل العنوان يدوياً.'),
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
     );
   };
 
