@@ -370,7 +370,7 @@ export default function LoginPage() {
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 10,
+            gap: 12,
             padding: '12px 14px',
             background: 'var(--paper-3)',
             border: '1px solid var(--line)',
