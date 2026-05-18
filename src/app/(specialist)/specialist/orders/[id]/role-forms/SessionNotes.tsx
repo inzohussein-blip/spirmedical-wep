@@ -45,18 +45,18 @@ export default function SessionNotes({ orderId, initialData }: { orderId: string
 
   return (
     <div style={{ marginTop: 16 }}>
-      <div style={{ background: 'var(--paper-3)', padding: 10, borderRadius: 10, marginBottom: 10, fontSize: 11, color: 'var(--ink-3)', display: 'flex', gap: 8, alignItems: 'center' }}>
+      <div style={{ background: 'var(--paper-3)', padding: 12, borderRadius: 10, marginBottom: 12, fontSize: 11, color: 'var(--ink-3)', display: 'flex', gap: 8, alignItems: 'center' }}>
         <Lock size={14} strokeWidth={2.2} aria-hidden />
         <span>ملاحظاتك سرية تماماً. لن يراها أحد غيرك ومدير النظام.</span>
       </div>
 
       <div className="scr-section-head">
-        <div className="scr-section-title" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div className="scr-section-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Brain size={16} strokeWidth={2.2} />
           ملاحظات الجلسة النفسية
         </div>
       </div>
-      <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 14 }}>
+      <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 16 }}>
         {fields.map((f) => {
           const Icon = f.icon;
           return (
@@ -80,13 +80,13 @@ export default function SessionNotes({ orderId, initialData }: { orderId: string
           onClick={handleSave}
           disabled={isPending}
           className="scr-empty-cta"
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: '100%' }}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, width: '100%' }}
         >
           <Save size={16} strokeWidth={2.2} />
           {isPending ? 'جارٍ الحفظ...' : 'حفظ الجلسة'}
         </button>
         {success && (
-          <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginTop: 8, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+          <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginTop: 8, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             <CheckCircle2 size={14} strokeWidth={2.4} />
             تم الحفظ
           </div>
