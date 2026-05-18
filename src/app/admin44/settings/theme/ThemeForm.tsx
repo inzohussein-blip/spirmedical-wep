@@ -5,6 +5,7 @@ import { Palette, Save, RotateCcw, Check, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { updateTheme, resetThemeToDefault } from './actions';
 import { isValidHexColor, type ThemeSettings } from '@/types/theme';
+import { useConfirm } from '@/components/ui';
 
 interface ThemeFormProps {
   initialTheme: ThemeSettings;
@@ -54,6 +55,7 @@ const COLOR_FIELDS: ColorField[] = [
 ];
 
 export default function ThemeForm({ initialTheme }: ThemeFormProps) {
+  const { confirm, ConfirmDialog } = useConfirm();
   const [colors, setColors] = useState({
     primary_color: initialTheme.primary_color,
     primary_dark: initialTheme.primary_dark,
@@ -106,8 +108,14 @@ export default function ThemeForm({ initialTheme }: ThemeFormProps) {
     });
   };
 
-  const handleReset = () => {
-    if (!confirm('هل تريد إعادة الألوان للقيم الافتراضية؟')) return;
+  const handleReset = async () => {
+    const ok = await confirm({
+      title: 'إعادة الألوان',
+      message: 'ستفقد التخصيصات الحالية.',
+      variant: 'warning',
+      confirmText: 'إعادة',
+    });
+    if (!ok) return;
 
     startTransition(async () => {
       const result = await resetThemeToDefault();
@@ -391,6 +399,7 @@ export default function ThemeForm({ initialTheme }: ThemeFormProps) {
           margin-top: 4px;
         }
       `}</style>
+      <ConfirmDialog />
     </form>
   );
 }
