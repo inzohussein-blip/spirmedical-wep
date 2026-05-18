@@ -73,10 +73,10 @@ export default function AdminsClient({ admins }: Props) {
   return (
     <>
       {/* Add Form */}
-      <div style={{ background: '#fff', borderRadius: 14, padding: 18, marginBottom: 16 }}>
+      <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginBottom: 16 }}>
         {!showAddForm ? (
           <button onClick={() => setShowAddForm(true)} style={{
-            padding: '10px 20px', background: 'var(--emerald-deep)', color: '#fff',
+            padding: '10px 20px', background: 'var(--emerald-deep)', color: 'var(--white)',
             border: 0, borderRadius: 10, fontSize: 13, fontWeight: 800,
             cursor: 'pointer', fontFamily: 'inherit',
           }}>
@@ -119,7 +119,7 @@ export default function AdminsClient({ admins }: Props) {
               </div>
 
               <button onClick={handleAdd} disabled={isPending} style={{
-                padding: '10px 20px', background: 'var(--emerald-deep)', color: '#fff',
+                padding: '10px 20px', background: 'var(--emerald-deep)', color: 'var(--white)',
                 border: 0, borderRadius: 8, fontSize: 12, fontWeight: 800,
                 cursor: 'pointer', fontFamily: 'inherit',
               }}>
@@ -144,7 +144,7 @@ export default function AdminsClient({ admins }: Props) {
       </div>
 
       {/* List */}
-      <div style={{ background: '#fff', borderRadius: 14, overflow: 'hidden' }}>
+      <div style={{ background: 'var(--white)', borderRadius: 14, overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
           <thead style={{ background: 'var(--paper-3)' }}>
             <tr>
