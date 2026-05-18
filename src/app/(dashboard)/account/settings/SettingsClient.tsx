@@ -223,7 +223,7 @@ export default function SettingsClient({ initial, pinEnabled }: Props) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 6,
+            gap: 8,
           }}>
             {isSuccess && <CheckCircle2 size={14} strokeWidth={2.4} />}
             {exportMsg}
