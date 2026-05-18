@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { SPECIALIST_META } from '@/lib/specialist-types';
+import { EmptyState } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,27 +29,23 @@ export default async function PendingSpecialistsPage() {
       </p>
 
       {!pending || pending.length === 0 ? (
-        <div style={{
-          background: '#fff',
-          borderRadius: 14,
-          padding: 60,
-          textAlign: 'center',
-        }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>✅</div>
-          <h2 style={{ fontSize: 16, fontWeight: 800, margin: '0 0 6px' }}>لا توجد طلبات معلّقة</h2>
-          <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: 0 }}>كل الاختصاصيين تمت مراجعة طلباتهم</p>
-        </div>
+        <EmptyState
+          icon="✅"
+          title="لا توجد طلبات معلّقة"
+          description="كل الاختصاصيين تمت مراجعة طلباتهم"
+          size="lg"
+        />
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {pending.map((s) => {
             const meta = s.specialist_type ? SPECIALIST_META[s.specialist_type] : null;
             const daysAgo = Math.floor((Date.now() - new Date(s.created_at).getTime()) / 86400000);
 
             return (
               <div key={s.id} style={{
-                background: '#fff',
+                background: 'var(--white)',
                 borderRadius: 14,
-                padding: 18,
+                padding: 20,
                 display: 'flex',
                 gap: 16,
                 alignItems: 'flex-start',
@@ -59,7 +56,7 @@ export default async function PendingSpecialistsPage() {
                   height: 56,
                   borderRadius: '50%',
                   background: meta?.gradient ?? 'var(--paper-3)',
-                  color: '#fff',
+                  color: 'var(--white)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -92,7 +89,7 @@ export default async function PendingSpecialistsPage() {
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', gap: 16, fontSize: 12, color: 'var(--ink-3)', marginBottom: 10 }}>
+                  <div style={{ display: 'flex', gap: 16, fontSize: 12, color: 'var(--ink-3)', marginBottom: 12 }}>
                     {s.governorate && <span>📍 {s.governorate}</span>}
                     {s.specialist_type && meta && <span>{meta.icon} {meta.label}</span>}
                     {s.specialist_years_exp && <span>📅 {s.specialist_years_exp} سنوات</span>}
@@ -111,7 +108,7 @@ export default async function PendingSpecialistsPage() {
                       display: 'inline-block',
                       padding: '8px 16px',
                       background: 'var(--emerald-deep, #073B30)',
-                      color: '#fff',
+                      color: 'var(--white)',
                       borderRadius: 10,
                       fontSize: 12,
                       fontWeight: 800,
