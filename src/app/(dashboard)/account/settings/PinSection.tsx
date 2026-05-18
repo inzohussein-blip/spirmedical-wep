@@ -138,12 +138,12 @@ export default function PinSection({ pinEnabled: initialEnabled }: Props) {
             type="button"
             onClick={() => setMode('enable-1')}
             className="scr-action-btn"
-            style={{ background: 'var(--emerald)', color: '#fff', border: 0 }}
+            style={{ background: 'var(--emerald)', color: 'var(--white)', border: 0 }}
           >
             تفعيل
           </button>
         ) : (
-          <div style={{ display: 'flex', gap: 6 }}>
+          <div style={{ display: 'flex', gap: 8 }}>
             <button
               type="button"
               onClick={() => setMode('change-old')}
@@ -217,7 +217,7 @@ export default function PinSection({ pinEnabled: initialEnabled }: Props) {
             />
 
             {error && (
-              <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginTop: 10, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginTop: 12, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                 <AlertTriangle size={14} strokeWidth={2.4} />
                 {error}
               </div>
