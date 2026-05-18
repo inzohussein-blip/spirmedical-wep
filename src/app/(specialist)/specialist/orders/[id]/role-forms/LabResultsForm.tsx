@@ -66,7 +66,7 @@ export default function LabResultsForm({ orderId, initialData }: Props) {
   return (
     <div style={{ marginTop: 16 }}>
       <div className="scr-section-head">
-        <div className="scr-section-title" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div className="scr-section-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Droplet size={16} strokeWidth={2.2} fill="currentColor" />
           نتائج التحاليل
         </div>
@@ -107,7 +107,7 @@ export default function LabResultsForm({ orderId, initialData }: Props) {
                 placeholder="اسم التحليل"
                 style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--line)', borderRadius: 8, fontSize: 13, fontFamily: 'inherit', marginBottom: 8, fontWeight: 700 }}
               />
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 80px 1fr', gap: 6, marginBottom: 8 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 80px 1fr', gap: 8, marginBottom: 8 }}>
                 <input
                   type="text"
                   value={t.value}
@@ -131,7 +131,7 @@ export default function LabResultsForm({ orderId, initialData }: Props) {
                 />
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 700, color: 'var(--rose)' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, fontWeight: 700, color: 'var(--rose)' }}>
                   <input
                     type="checkbox"
                     checked={t.is_abnormal}
@@ -155,7 +155,7 @@ export default function LabResultsForm({ orderId, initialData }: Props) {
           onClick={handleSave}
           disabled={isPending}
           className="scr-empty-cta"
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: '100%', marginTop: 12 }}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, width: '100%', marginTop: 12 }}
         >
           <Save size={16} strokeWidth={2.2} />
           {isPending ? 'جارٍ الحفظ...' : 'حفظ النتائج'}
@@ -163,7 +163,7 @@ export default function LabResultsForm({ orderId, initialData }: Props) {
       )}
 
       {success && (
-        <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '10px 14px', borderRadius: 10, fontSize: 12, fontWeight: 700, marginTop: 10, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+        <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '10px 14px', borderRadius: 10, fontSize: 12, fontWeight: 700, marginTop: 12, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
           <CheckCircle2 size={14} strokeWidth={2.4} />
           تم الحفظ
         </div>
