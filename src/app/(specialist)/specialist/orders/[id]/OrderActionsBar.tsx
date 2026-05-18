@@ -59,7 +59,7 @@ export default function OrderActionsBar({ orderId, status, isMine, canAccept, pa
   return (
     <div style={{ marginTop: 24, paddingBottom: 80 }}>
       {error && (
-        <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '10px 14px', borderRadius: 10, fontSize: 12, fontWeight: 700, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '10px 14px', borderRadius: 10, fontSize: 12, fontWeight: 700, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
           <AlertTriangle size={14} strokeWidth={2.4} />
           {error}
         </div>
@@ -71,7 +71,7 @@ export default function OrderActionsBar({ orderId, status, isMine, canAccept, pa
           onClick={handleAccept}
           disabled={isPending}
           className="scr-empty-cta"
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: '100%' }}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, width: '100%' }}
         >
           {!isPending && <CheckCircle2 size={16} strokeWidth={2.2} />}
           {isPending ? 'جارٍ القبول...' : 'قبول الطلب'}
@@ -79,13 +79,13 @@ export default function OrderActionsBar({ orderId, status, isMine, canAccept, pa
       )}
 
       {isMine && status === 'confirmed' && (
-        <div style={{ display: 'grid', gap: 10 }}>
+        <div style={{ display: 'grid', gap: 12 }}>
           <button
             type="button"
             onClick={handleStart}
             disabled={isPending}
             className="scr-empty-cta"
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: '100%' }}
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, width: '100%' }}
           >
             {!isPending && <Play size={16} strokeWidth={2.2} />}
             {isPending ? '...' : 'بدء التنفيذ'}
@@ -94,7 +94,7 @@ export default function OrderActionsBar({ orderId, status, isMine, canAccept, pa
             <a
               href={`tel:${patientPhone}`}
               className="scr-action-btn"
-              style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '12px', textDecoration: 'none' }}
+              style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, padding: '12px', textDecoration: 'none' }}
             >
               <Phone size={16} strokeWidth={2.2} />
               <span>اتصل بالمريض</span>
@@ -115,7 +115,7 @@ export default function OrderActionsBar({ orderId, status, isMine, canAccept, pa
       )}
 
       {showComplete && (
-        <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 14 }}>
+        <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 16 }}>
           <div className="scr-section-title" style={{ marginBottom: 8 }}>ملاحظات إنهاء الخدمة</div>
           <textarea
             value={notes}
@@ -124,7 +124,7 @@ export default function OrderActionsBar({ orderId, status, isMine, canAccept, pa
             rows={3}
             style={{ width: '100%', padding: '10px', border: '1px solid var(--line)', borderRadius: 10, fontSize: 13, fontFamily: 'inherit', resize: 'vertical' }}
           />
-          <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+          <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
             <button
               type="button"
               onClick={handleComplete}
