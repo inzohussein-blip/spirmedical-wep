@@ -110,7 +110,7 @@ export default function MedicalRecordClient({ initial }: { initial: MedicalInfo 
   return (
     <>
       {/* Tabs */}
-      <div className="scr-pills" style={{ marginTop: 14 }}>
+      <div className="scr-pills" style={{ marginTop: 16 }}>
         <button type="button" onClick={() => setActiveTab('basic')} className={`scr-pill ${activeTab === 'basic' ? 'active' : ''}`}>
           <User size={13} strokeWidth={2.2} aria-hidden />
           <span>أساسي</span>
@@ -131,10 +131,10 @@ export default function MedicalRecordClient({ initial }: { initial: MedicalInfo 
 
       {/* Basic Info */}
       {activeTab === 'basic' && (
-        <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 14, marginTop: 8 }}>
+        <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 16, marginTop: 8 }}>
           <div className="scr-section-title" style={{ marginBottom: 12 }}>المعلومات الأساسية</div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 10 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
             <div>
               <label style={labelStyle}>
                 <Droplet size={11} strokeWidth={2.2} aria-hidden style={{ verticalAlign: '-1px', marginLeft: 2 }} fill="currentColor" />
@@ -363,13 +363,13 @@ export default function MedicalRecordClient({ initial }: { initial: MedicalInfo 
 
       {/* Save Button */}
       {error && (
-        <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '10px 14px', borderRadius: 10, fontSize: 12, fontWeight: 700, marginTop: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '10px 14px', borderRadius: 10, fontSize: 12, fontWeight: 700, marginTop: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
           <AlertTriangle size={14} strokeWidth={2.4} />
           {error}
         </div>
       )}
       {success && (
-        <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '10px 14px', borderRadius: 10, fontSize: 12, fontWeight: 700, marginTop: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '10px 14px', borderRadius: 10, fontSize: 12, fontWeight: 700, marginTop: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
           <CheckCircle2 size={14} strokeWidth={2.4} />
           تم حفظ السجل الطبي بنجاح
         </div>
@@ -380,7 +380,7 @@ export default function MedicalRecordClient({ initial }: { initial: MedicalInfo 
         onClick={handleSave}
         disabled={isPending}
         className="scr-empty-cta"
-        style={{ width: '100%', marginTop: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+        style={{ width: '100%', marginTop: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
       >
         <Save size={16} strokeWidth={2.2} />
         {isPending ? 'جارٍ الحفظ...' : 'حفظ السجل الطبي'}
