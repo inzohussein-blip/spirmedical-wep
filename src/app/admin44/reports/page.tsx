@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { SPECIALIST_META, type SpecialistType } from '@/lib/specialist-types';
 import ReportsClient from './ReportsClient';
+import { EmptyState } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
 
@@ -132,7 +133,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Sear
       </div>
 
       {/* Period selector */}
-      <form method="GET" style={{ display: 'flex', gap: 6, marginBottom: 20, flexWrap: 'wrap' }}>
+      <form method="GET" style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
         {[
           { v: 'today', label: 'اليوم' },
           { v: 'week', label: 'أسبوع' },
@@ -146,8 +147,8 @@ export default async function ReportsPage({ searchParams }: { searchParams: Sear
             value={p.v}
             style={{
               padding: '8px 16px',
-              background: (searchParams.period ?? 'month') === p.v ? 'var(--emerald-deep)' : '#fff',
-              color: (searchParams.period ?? 'month') === p.v ? '#fff' : 'var(--ink)',
+              background: (searchParams.period ?? 'month') === p.v ? 'var(--emerald-deep)' : 'var(--white)',
+              color: (searchParams.period ?? 'month') === p.v ? 'var(--white)' : 'var(--ink)',
               border: '1px solid var(--line)',
               borderRadius: 8,
               fontSize: 12, fontWeight: 700,
@@ -177,12 +178,12 @@ export default async function ReportsPage({ searchParams }: { searchParams: Sear
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
 
         {/* Top types */}
-        <div style={{ background: '#fff', borderRadius: 14, padding: 18 }}>
+        <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20 }}>
           <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}>📊 الطلبات حسب النوع</h2>
           {Object.keys(typeStats).length === 0 ? (
-            <p style={{ fontSize: 12, color: 'var(--ink-3)' }}>لا توجد بيانات</p>
+            <EmptyState icon="📊" title="لا توجد بيانات" size="sm" variant="plain" />
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {Object.entries(typeStats).sort(([, a], [, b]) => b - a).map(([type, count]) => {
                 const meta = SPECIALIST_META[type as SpecialistType];
                 const max = Math.max(...Object.values(typeStats));
@@ -204,12 +205,12 @@ export default async function ReportsPage({ searchParams }: { searchParams: Sear
         </div>
 
         {/* Top governorates */}
-        <div style={{ background: '#fff', borderRadius: 14, padding: 18 }}>
+        <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20 }}>
           <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}>📍 الطلبات حسب المحافظة</h2>
           {Object.keys(govStats).length === 0 ? (
-            <p style={{ fontSize: 12, color: 'var(--ink-3)' }}>لا توجد بيانات</p>
+            <EmptyState icon="📊" title="لا توجد بيانات" size="sm" variant="plain" />
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {Object.entries(govStats).sort(([, a], [, b]) => b - a).slice(0, 10).map(([gov, count]) => {
                 const max = Math.max(...Object.values(govStats));
                 const percent = max > 0 ? (count / max) * 100 : 0;
@@ -231,10 +232,10 @@ export default async function ReportsPage({ searchParams }: { searchParams: Sear
       </div>
 
       {/* Top specialists */}
-      <div style={{ background: '#fff', borderRadius: 14, padding: 18, marginTop: 20 }}>
+      <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginTop: 20 }}>
         <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}>🏆 أفضل الاختصاصيين أداءً</h2>
         {topSpecList.length === 0 ? (
-          <p style={{ fontSize: 12, color: 'var(--ink-3)' }}>لا توجد بيانات</p>
+          <EmptyState icon="📊" title="لا توجد بيانات" size="sm" variant="plain" />
         ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
@@ -269,7 +270,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Sear
 
 function StatBox({ label, value, icon, color }: { label: string; value: string; icon: string; color: string }) {
   return (
-    <div style={{ background: '#fff', borderRadius: 12, padding: 16, borderRight: `4px solid ${color}` }}>
+    <div style={{ background: 'var(--white)', borderRadius: 12, padding: 16, borderRight: `4px solid ${color}` }}>
       <div style={{ fontSize: 24, marginBottom: 4 }}>{icon}</div>
       <div style={{ fontSize: 22, fontWeight: 900, color, lineHeight: 1, marginBottom: 4 }}>{value}</div>
       <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>{label}</div>
