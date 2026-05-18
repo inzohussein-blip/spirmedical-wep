@@ -476,6 +476,132 @@
 .landing-step h3 { font-size: 16px; font-weight: 800; margin: 0 0 6px; color: var(--ink); }
 .landing-step p { font-size: 13px; color: var(--ink-3); line-height: 1.6; }
 
+/* ═══════════════════════════════════════════════════════════════
+   COVERAGE MAP SECTION (V25)
+   ═══════════════════════════════════════════════════════════════ */
+.landing-coverage-map {
+  padding: 80px 0;
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+}
+@media (max-width: 768px) {
+  .landing-coverage-map { padding: 50px 0; }
+}
+
+.landing-coverage-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+  margin-top: 40px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .landing-coverage-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+.landing-coverage-map-wrap {
+  background: #fff;
+  border-radius: 20px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  box-shadow: 0 4px 16px -6px rgba(15, 26, 28, 0.08);
+}
+
+.landing-coverage-cities {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  box-shadow: 0 4px 16px -6px rgba(15, 26, 28, 0.08);
+}
+
+.landing-coverage-cities-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 0 0 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.landing-coverage-cities-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.landing-coverage-city {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--paper-3);
+  border-radius: 10px;
+  transition: all 0.15s;
+}
+.landing-coverage-city:hover {
+  background: var(--paper-2);
+  transform: translateX(-2px);
+}
+
+.landing-coverage-city-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.landing-coverage-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--emerald);
+  box-shadow: 0 0 0 3px var(--emerald-soft);
+}
+
+.landing-coverage-city-stats {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--ink-3);
+  font-weight: 700;
+}
+
+.landing-coverage-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  background: var(--emerald);
+  color: #FAF6EB;
+  text-decoration: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 800;
+  transition: all 0.15s;
+  margin-top: 8px;
+}
+.landing-coverage-cta:hover {
+  background: var(--emerald-deep);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px -2px rgba(14, 92, 77, 0.3);
+}
+
 /* CTA section (dark) */
 .landing-cta-section {
   position: relative; padding: 80px 0; overflow: hidden;
