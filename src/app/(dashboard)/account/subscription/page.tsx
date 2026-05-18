@@ -206,7 +206,7 @@ export default function SubscriptionPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`subscription-cta ${plan.highlight ? 'primary' : ''}`}
-                    style={{ textDecoration: 'none', textAlign: 'center', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+                    style={{ textDecoration: 'none', textAlign: 'center', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
                   >
                     {plan.price === 0 ? 'متاحة' : <><span>💬</span><span>تواصل عبر واتساب</span></>}
                   </a>
