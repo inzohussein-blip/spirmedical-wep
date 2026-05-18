@@ -73,7 +73,7 @@ export default function OrderAdminActions({
   const isFinished = status === 'completed' || status === 'cancelled';
 
   return (
-    <div style={{ background: '#fff', borderRadius: 14, padding: 18 }}>
+    <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20 }}>
       <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}>إجراءات إدارية</h2>
 
       {error && (
@@ -90,8 +90,8 @@ export default function OrderAdminActions({
       {!isFinished && (
         <>
           {/* تعيين اختصاصي */}
-          <div style={{ marginBottom: 14 }}>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 6 }}>
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 8 }}>
               🎯 تعيين/تغيير الاختصاصي
             </label>
             <select value={selectedSpecialist} onChange={(e) => setSelectedSpecialist(e.target.value)} style={inputStyle}>
@@ -105,8 +105,8 @@ export default function OrderAdminActions({
             </div>
             {selectedSpecialist && selectedSpecialist !== currentSpecialistId && (
               <button onClick={handleAssign} disabled={isPending} style={{
-                width: '100%', marginTop: 8, padding: 10,
-                background: 'var(--emerald-deep)', color: '#fff',
+                width: '100%', marginTop: 8, padding: 12,
+                background: 'var(--emerald-deep)', color: 'var(--white)',
                 border: 0, borderRadius: 8, fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit',
               }}>
                 💾 تأكيد التعيين
@@ -119,7 +119,7 @@ export default function OrderAdminActions({
           {/* إعادة جدولة */}
           {!showReschedule ? (
             <button onClick={() => setShowReschedule(true)} style={{
-              width: '100%', padding: 10, background: 'var(--paper-3)',
+              width: '100%', padding: 12, background: 'var(--paper-3)',
               border: 0, borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
               marginBottom: 8,
             }}>
@@ -127,10 +127,10 @@ export default function OrderAdminActions({
             </button>
           ) : (
             <div style={{ marginBottom: 12 }}>
-              <input type="datetime-local" value={newDate} onChange={(e) => setNewDate(e.target.value)} style={{ ...inputStyle, marginBottom: 6 }} />
-              <div style={{ display: 'flex', gap: 6 }}>
+              <input type="datetime-local" value={newDate} onChange={(e) => setNewDate(e.target.value)} style={{ ...inputStyle, marginBottom: 8 }} />
+              <div style={{ display: 'flex', gap: 8 }}>
                 <button onClick={handleReschedule} disabled={isPending} style={{
-                  flex: 1, padding: 8, background: 'var(--emerald-deep)', color: '#fff',
+                  flex: 1, padding: 8, background: 'var(--emerald-deep)', color: 'var(--white)',
                   border: 0, borderRadius: 8, fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit',
                 }}>تأكيد</button>
                 <button onClick={() => setShowReschedule(false)} style={{
@@ -144,7 +144,7 @@ export default function OrderAdminActions({
           {/* إلغاء */}
           {!showCancel ? (
             <button onClick={() => setShowCancel(true)} style={{
-              width: '100%', padding: 10, background: 'var(--rose-soft)',
+              width: '100%', padding: 12, background: 'var(--rose-soft)',
               color: 'var(--rose)', border: 0, borderRadius: 8,
               fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit',
             }}>
@@ -155,13 +155,13 @@ export default function OrderAdminActions({
               <textarea value={cancelReason} onChange={(e) => setCancelReason(e.target.value)}
                         rows={2} placeholder="سبب الإلغاء..."
                         style={{ ...inputStyle, resize: 'vertical', marginBottom: 8 }} />
-              <div style={{ display: 'flex', gap: 6 }}>
+              <div style={{ display: 'flex', gap: 8 }}>
                 <button onClick={handleCancel} disabled={isPending} style={{
-                  flex: 1, padding: 8, background: 'var(--rose)', color: '#fff',
+                  flex: 1, padding: 8, background: 'var(--rose)', color: 'var(--white)',
                   border: 0, borderRadius: 8, fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit',
                 }}>تأكيد الإلغاء</button>
                 <button onClick={() => setShowCancel(false)} style={{
-                  padding: '8px 12px', background: '#fff', border: '1px solid var(--line)',
+                  padding: '8px 12px', background: 'var(--white)', border: '1px solid var(--line)',
                   borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
                 }}>إلغاء</button>
               </div>
