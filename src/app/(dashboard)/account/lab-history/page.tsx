@@ -114,7 +114,7 @@ export default async function LabHistoryPage() {
                         <Calendar size={12} strokeWidth={2.2} aria-hidden style={{ verticalAlign: '-2px', marginLeft: 2 }} />
                         {date}
                       </div>
-                      <div className="scr-list-item-tags" style={{ marginTop: 6 }}>
+                      <div className="scr-list-item-tags" style={{ marginTop: 8 }}>
                         <span className={`scr-tag ${status.color}`}>{status.label}</span>
                       </div>
                     </div>
