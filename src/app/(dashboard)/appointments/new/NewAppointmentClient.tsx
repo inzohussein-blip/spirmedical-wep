@@ -69,6 +69,10 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
       needs_address: true,
       otp_channel: 'whatsapp',
       otp_verified: true, // المستخدم مسجّل دخول = متحقَّق منه
+      // ✨ V25: تمرير GPS coordinates لو التقطها المستخدم
+      location_lat: data.location_lat,
+      location_lng: data.location_lng,
+      location_accuracy_m: data.location_accuracy_m,
     });
 
     if (result.success) {
