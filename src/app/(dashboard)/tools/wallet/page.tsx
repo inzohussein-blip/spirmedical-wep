@@ -16,8 +16,8 @@ const MOCK_TRANSACTIONS: Transaction[] = [];
 
 const LOYALTY_TIERS = [
   { name: 'فضي', threshold: 0, color: '#888780', discount: '0%' },
-  { name: 'ذهبي', threshold: 100, color: '#B8540C', discount: '5%' },
-  { name: 'بلاتيني', threshold: 500, color: '#0E5C4D', discount: '10%' },
+  { name: 'ذهبي', threshold: 100, color: 'var(--amber)', discount: '5%' },
+  { name: 'بلاتيني', threshold: 500, color: 'var(--emerald)', discount: '10%' },
   { name: 'الماس', threshold: 1000, color: '#534AB7', discount: '15%' },
 ];
 
@@ -103,7 +103,7 @@ export default function WalletPage() {
 
           {nextTier && (
             <>
-              <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 6 }}>
+              <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 8 }}>
                 {nextTier.threshold - loyaltyPoints} نقطة للوصول إلى مستوى <strong>{nextTier.name}</strong>
               </div>
               <div style={{ height: 8, background: 'var(--paper-3)', borderRadius: 100, overflow: 'hidden' }}>
