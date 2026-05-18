@@ -182,6 +182,7 @@ export default function HomePage() {
             <a href="#services" className="landing-nav-link-section">الخدمات</a>
             <a href="#how-it-works" className="landing-nav-link-section">كيف يعمل</a>
             <a href="#coverage-map" className="landing-nav-link-section">التغطية</a>
+            <a href="#install" className="landing-nav-link-section">التطبيق</a>
             <Link href="/blog" className="landing-nav-link-section">المدونة</Link>
             <a href="#testimonials" className="landing-nav-link-section">آراء المستخدمين</a>
             <a href="#faq" className="landing-nav-link-section">الأسئلة</a>
@@ -853,6 +854,48 @@ export default function HomePage() {
                 <Link href="/guest" className="landing-cta-secondary on-dark">
                   تصفّح كضيف
                 </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ INSTALL APP CTA ============ */}
+      <section className="landing-install" id="install">
+        <div className="landing-wrap">
+          <div className="landing-install-card">
+            <div className="landing-install-content">
+              <span className="landing-eyebrow">📱 التطبيق</span>
+              <h2 className="landing-install-title">
+                حمّل التطبيق على هاتفك
+              </h2>
+              <p className="landing-install-desc">
+                ثبّت سباير ميديكال للوصول السريع، الإشعارات الفورية، والعمل بدون إنترنت
+              </p>
+              <ul className="landing-install-features">
+                <li>⚡ فتح فوري بضغطة واحدة</li>
+                <li>🔔 إشعارات بمواعيدك ونتائجك</li>
+                <li>📴 يعمل بدون إنترنت</li>
+                <li>🏠 على شاشتك الرئيسية</li>
+              </ul>
+              <div className="landing-install-actions">
+                <Link href="/help/install" className="landing-install-btn-primary">
+                  كيف أُثبّته؟
+                </Link>
+                <Link href="/app" className="landing-install-btn-secondary">
+                  جرّب الآن
+                </Link>
+              </div>
+            </div>
+            <div className="landing-install-visual">
+              <div className="landing-install-phone">
+                <div className="landing-install-phone-screen">
+                  <div className="landing-install-phone-logo">
+                    <div className="landing-logo-mark" style={{ width: 64, height: 64, fontSize: 32 }}>س</div>
+                    <strong>Spir Medical</strong>
+                    <span>منصة طبية رقمية</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
