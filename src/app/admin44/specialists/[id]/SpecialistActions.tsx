@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { approveSpecialist, rejectSpecialist, toggleSuspendUser, updateSpecialistType } from '../actions';
 import { SPECIALIST_META, SPECIALIST_TYPES, type SpecialistType } from '@/lib/specialist-types';
+import { useConfirm } from '@/components/ui';
 
 interface Props {
   specialistId: string;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export default function SpecialistActions({ specialistId, approvalStatus, currentType, isSuspended }: Props) {
+  const { confirm, ConfirmDialog } = useConfirm();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState('');
@@ -30,13 +32,19 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
   const [suspendReason, setSuspendReason] = useState('');
   const [showSuspendForm, setShowSuspendForm] = useState(false);
 
-  function handleApprove() {
+  async function handleApprove() {
     setError('');
     if (!selectedType) {
       setError('يرجى اختيار نوع الاختصاصي');
       return;
     }
-    if (!confirm('هل أنت متأكد من الموافقة على هذا الاختصاصي؟')) return;
+    const ok = await confirm({
+      title: 'الموافقة على الاختصاصي',
+      message: 'سيتم تفعيل حساب الاختصاصي.',
+      variant: 'info',
+      confirmText: 'موافقة',
+    });
+    if (!ok) return;
     startTransition(async () => {
       const result = await approveSpecialist(specialistId, selectedType, approveNotes || undefined);
       if (!result.ok) { setError(result.error || 'حدث خطأ'); return; }
@@ -45,10 +53,16 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
     });
   }
 
-  function handleReject() {
+  async function handleReject() {
     setError('');
     if (!rejectReason.trim()) { setError('يرجى ذكر سبب الرفض'); return; }
-    if (!confirm('هل أنت متأكد من رفض هذا الاختصاصي؟')) return;
+    const ok = await confirm({
+      title: 'رفض الاختصاصي',
+      message: 'سيتم رفض الطلب نهائياً.',
+      variant: 'danger',
+      confirmText: 'رفض',
+    });
+    if (!ok) return;
     startTransition(async () => {
       const result = await rejectSpecialist(specialistId, rejectReason);
       if (!result.ok) { setError(result.error || 'حدث خطأ'); return; }
@@ -58,11 +72,17 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
     });
   }
 
-  function handleToggleSuspend() {
+  async function handleToggleSuspend() {
     setError('');
     if (!isSuspended && !suspendReason.trim()) { setError('يرجى ذكر سبب التعليق'); return; }
     const action = isSuspended ? 'إلغاء تعليق' : 'تعليق';
-    if (!confirm(`هل أنت متأكد من ${action} هذا الاختصاصي؟`)) return;
+    const ok = await confirm({
+      title: 'تغيير حالة الاختصاصي',
+      message: 'هل تريد المتابعة؟',
+      variant: 'warning',
+      confirmText: 'تأكيد',
+    });
+    if (!ok) return;
     startTransition(async () => {
       const result = await toggleSuspendUser(specialistId, !isSuspended, suspendReason || undefined);
       if (!result.ok) { setError(result.error || 'حدث خطأ'); return; }
@@ -72,10 +92,16 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
     });
   }
 
-  function handleChangeType() {
+  async function handleChangeType() {
     setError('');
     if (selectedType === currentType) return;
-    if (!confirm('تغيير نوع الاختصاصي؟ سيؤثر هذا على الطلبات الجديدة فقط.')) return;
+    const ok = await confirm({
+      title: 'تغيير النوع',
+      message: 'سيؤثر التغيير على الطلبات الجديدة فقط.',
+      variant: 'warning',
+      confirmText: 'تغيير',
+    });
+    if (!ok) return;
     startTransition(async () => {
       const result = await updateSpecialistType(specialistId, selectedType);
       if (!result.ok) { setError(result.error || 'حدث خطأ'); return; }
@@ -255,6 +281,7 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
           </button>
         </>
       )}
+      <ConfirmDialog />
     </div>
   );
 }
