@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { isAdminRole } from '@/lib/admin-types';
+import { EmptyState, Avatar, StatusBadge } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,9 +22,9 @@ interface StatCardProps {
 function StatCard({ icon, label, value, sublabel, color, href }: StatCardProps) {
   const inner = (
     <div style={{
-      background: '#fff',
+      background: 'var(--white)',
       borderRadius: 14,
-      padding: 18,
+      padding: 20,
       borderRight: `4px solid ${color}`,
       transition: 'transform 0.15s',
       cursor: href ? 'pointer' : 'default',
@@ -34,7 +35,7 @@ function StatCard({ icon, label, value, sublabel, color, href }: StatCardProps) 
       </div>
       <div style={{ fontSize: 28, fontWeight: 900, color, lineHeight: 1 }}>{value}</div>
       {sublabel && (
-        <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 6 }}>{sublabel}</div>
+        <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 8 }}>{sublabel}</div>
       )}
     </div>
   );
@@ -128,7 +129,7 @@ export default async function AdminDashboard() {
             alignItems: 'center',
             justifyContent: 'space-between',
             background: 'linear-gradient(135deg, #B8540C 0%, #6B3A08 100%)',
-            color: '#fff',
+            color: 'var(--white)',
             padding: '14px 20px',
             borderRadius: 14,
             marginBottom: 20,
@@ -149,7 +150,7 @@ export default async function AdminDashboard() {
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        gap: 14,
+        gap: 16,
         marginBottom: 28,
       }}>
         <StatCard
@@ -199,8 +200,8 @@ export default async function AdminDashboard() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
 
         {/* Recent Orders */}
-        <div style={{ background: '#fff', borderRadius: 14, padding: 18 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+        <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <h2 style={{ fontSize: 14, fontWeight: 800, color: 'var(--ink)', margin: 0 }}>أحدث الطلبات</h2>
             <Link href="/admin44/orders" style={{ fontSize: 11, color: 'var(--emerald)', fontWeight: 700, textDecoration: 'none' }}>
               عرض الكل ←
@@ -208,9 +209,13 @@ export default async function AdminDashboard() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {(recentOrders ?? []).length === 0 ? (
-              <div style={{ fontSize: 12, color: 'var(--ink-3)', textAlign: 'center', padding: 20 }}>
-                لا توجد طلبات
-              </div>
+              <EmptyState
+                size="sm"
+                icon="📦"
+                title="لا توجد طلبات"
+                description="ستظهر الطلبات الجديدة هنا"
+                variant="plain"
+              />
             ) : (
               (recentOrders ?? []).map((o) => (
                 <Link
@@ -219,7 +224,7 @@ export default async function AdminDashboard() {
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 10,
+                    gap: 12,
                     padding: '8px 10px',
                     borderRadius: 8,
                     textDecoration: 'none',
@@ -257,8 +262,8 @@ export default async function AdminDashboard() {
         </div>
 
         {/* Recent Signups */}
-        <div style={{ background: '#fff', borderRadius: 14, padding: 18 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+        <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <h2 style={{ fontSize: 14, fontWeight: 800, color: 'var(--ink)', margin: 0 }}>أحدث المسجّلين</h2>
             <Link href="/admin44/patients" style={{ fontSize: 11, color: 'var(--emerald)', fontWeight: 700, textDecoration: 'none' }}>
               عرض الكل ←
@@ -266,9 +271,13 @@ export default async function AdminDashboard() {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {(recentSignups ?? []).length === 0 ? (
-              <div style={{ fontSize: 12, color: 'var(--ink-3)', textAlign: 'center', padding: 20 }}>
-                لا توجد تسجيلات
-              </div>
+              <EmptyState
+                size="sm"
+                icon="👤"
+                title="لا توجد تسجيلات"
+                description="ستظهر التسجيلات الجديدة هنا"
+                variant="plain"
+              />
             ) : (
               (recentSignups ?? []).map((u) => (
                 <Link
@@ -277,24 +286,29 @@ export default async function AdminDashboard() {
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 10,
-                    padding: '8px 10px',
+                    gap: 12,
+                    padding: '8px 12px',
                     borderRadius: 8,
                     textDecoration: 'none',
                     color: 'var(--ink)',
                     background: 'var(--paper-3)',
                   }}
                 >
-                  <div style={{ flex: 1 }}>
+                  <Avatar
+                    name={u.full_name ?? 'مستخدم'}
+                    variant={u.role === 'specialist' ? 'specialist' : 'patient'}
+                    size="sm"
+                  />
+                  <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 12, fontWeight: 700 }}>{u.full_name ?? 'بدون اسم'}</div>
                     <div style={{ fontSize: 10, color: 'var(--ink-3)' }} dir="ltr">{u.phone}</div>
                   </div>
                   <div style={{
                     fontSize: 10,
-                    padding: '3px 8px',
+                    padding: '4px 8px',
                     borderRadius: 100,
-                    background: u.role === 'specialist' ? 'var(--amber-soft, #F8E5C7)' : 'var(--paper)',
-                    color: u.role === 'specialist' ? 'var(--amber-deep, #6B3A08)' : 'var(--ink-3)',
+                    background: u.role === 'specialist' ? 'var(--amber-soft)' : 'var(--paper)',
+                    color: u.role === 'specialist' ? 'var(--amber)' : 'var(--ink-3)',
                     fontWeight: 800,
                   }}>
                     {u.role === 'specialist' ? '⚕️ اختصاصي' : '👤 مريض'}
