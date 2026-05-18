@@ -6,6 +6,7 @@ import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import { cancelAppointment } from '../actions';
 import { toast } from '@/components/ui/Toaster';
 import type { LucideIcon } from 'lucide-react';
+import { useConfirm } from '@/components/ui';
 import {
   ClipboardList, CheckCircle2, Car, RefreshCw, BadgeCheck,
   MessageCircle, Phone, AlertTriangle, X, Loader2, Banknote, Star,
@@ -20,6 +21,7 @@ const STATUS_FLOW: Array<{ id: string; label: string; icon: LucideIcon; desc: st
 ];
 
 export default function OrderTrackPage() {
+  const { confirm, ConfirmDialog } = useConfirm();
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -33,7 +35,7 @@ export default function OrderTrackPage() {
   const [isCancelling, startCancelTransition] = useTransition();
   const [cancelError, setCancelError] = useState('');
 
-  function handleCancel() {
+  async function handleCancel() {
     if (orderId === 'preview') {
       toast.info('هذه معاينة فقط — لا يمكن إلغاء طلب وهمي');
       return;
@@ -41,7 +43,13 @@ export default function OrderTrackPage() {
     const reason = prompt('لماذا تريد إلغاء الطلب؟ (اختياري)')?.trim() || 'لم يحدد المستخدم سبباً';
     if (reason === null) return; // المستخدم ضغط Cancel
 
-    if (!confirm('هل أنت متأكد من إلغاء الطلب؟ هذا الإجراء لا يمكن التراجع عنه.')) return;
+    const ok = await confirm({
+      title: 'إلغاء الطلب',
+      message: 'هذا الإجراء لا يمكن التراجع عنه.',
+      variant: 'danger',
+      confirmText: 'إلغاء',
+    });
+    if (!ok) return;
 
     setCancelError('');
     startCancelTransition(async () => {
@@ -230,6 +238,7 @@ export default function OrderTrackPage() {
 
         <div style={{ height: 80 }} />
       </div>
+      <ConfirmDialog />
     </main>
   );
 }
