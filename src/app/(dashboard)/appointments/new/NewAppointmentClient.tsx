@@ -85,6 +85,8 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
       location_lat: data.location_lat,
       location_lng: data.location_lng,
       location_accuracy_m: data.location_accuracy_m,
+      // ✨ V25.8: Family member
+      family_member_id: data.family_member_id ?? null,
     });
 
     if (result.success) {
@@ -173,6 +175,8 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
       otp_verified: true,
       location_lat: data.location_lat,
       location_lng: data.location_lng,
+      // ✨ V25.8: Family member
+      family_member_id: data.family_member_id ?? null,
     });
 
     if (result.success) {
