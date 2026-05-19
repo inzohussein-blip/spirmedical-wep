@@ -166,6 +166,42 @@ export type Database = {
           location_captured_at: string | null;
           // ✨ Reminders (V25.4):
           reminder_sent_at: string | null;
+          // ✨ Nursing Enhancements (V25.5):
+          nurse_gender_preference: 'male' | 'female' | 'any' | null;
+          recurring_schedule: {
+            enabled: boolean;
+            interval_hours: number;
+            end_date?: string;
+            auto_confirm?: boolean;
+          } | null;
+          allergy_form: {
+            penicillin?: boolean;
+            sulfa?: boolean;
+            aspirin?: boolean;
+            iodine?: boolean;
+            latex?: boolean;
+            other?: string;
+            filled_at?: string;
+          } | null;
+          prescription_image_url: string | null;
+          prescription_required: boolean;
+          infectious_disease_alert: {
+            hepatitis_b?: boolean;
+            hepatitis_c?: boolean;
+            hiv?: boolean;
+            covid?: boolean;
+            tb?: boolean;
+            other?: string;
+            notes?: string;
+          } | null;
+          supplies_request: Array<{
+            item: string;
+            qty: number;
+            added_to_invoice: boolean;
+            price?: number;
+            notes?: string;
+          }> | null;
+          supplies_total: number;
         };
         Insert: {
           id?: string;
@@ -205,6 +241,15 @@ export type Database = {
           location_captured_at?: string | null;
           // ✨ Reminders (V25.4):
           reminder_sent_at?: string | null;
+          // ✨ Nursing Enhancements (V25.5):
+          nurse_gender_preference?: 'male' | 'female' | 'any' | null;
+          recurring_schedule?: object | null;
+          allergy_form?: object | null;
+          prescription_image_url?: string | null;
+          prescription_required?: boolean;
+          infectious_disease_alert?: object | null;
+          supplies_request?: object[] | null;
+          supplies_total?: number;
         };
         Update: {
           id?: string;
@@ -244,6 +289,15 @@ export type Database = {
           location_captured_at?: string | null;
           // ✨ Reminders (V25.4):
           reminder_sent_at?: string | null;
+          // ✨ Nursing Enhancements (V25.5):
+          nurse_gender_preference?: 'male' | 'female' | 'any' | null;
+          recurring_schedule?: object | null;
+          allergy_form?: object | null;
+          prescription_image_url?: string | null;
+          prescription_required?: boolean;
+          infectious_disease_alert?: object | null;
+          supplies_request?: object[] | null;
+          supplies_total?: number;
         };
         Relationships: [
           {
@@ -1306,6 +1360,107 @@ export type Database = {
             referencedColumns: ['id'];
           },
         ];
+      };
+      nursing_visit_history: {
+        Row: {
+          id: string;
+          user_id: string;
+          appointment_id: string | null;
+          specialist_id: string | null;
+          procedure_type: string;
+          procedure_details: Record<string, unknown> | null;
+          vital_signs: {
+            bp?: string;
+            pulse?: number;
+            temp?: number;
+            spo2?: number;
+          } | null;
+          notes: string | null;
+          complications: string | null;
+          follow_up_required: boolean;
+          performed_at: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          appointment_id?: string | null;
+          specialist_id?: string | null;
+          procedure_type: string;
+          procedure_details?: Record<string, unknown> | null;
+          vital_signs?: Record<string, unknown> | null;
+          notes?: string | null;
+          complications?: string | null;
+          follow_up_required?: boolean;
+          performed_at?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          appointment_id?: string | null;
+          specialist_id?: string | null;
+          procedure_type?: string;
+          procedure_details?: Record<string, unknown> | null;
+          vital_signs?: Record<string, unknown> | null;
+          notes?: string | null;
+          complications?: string | null;
+          follow_up_required?: boolean;
+          performed_at?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      nurse_emergency_logs: {
+        Row: {
+          id: string;
+          specialist_id: string;
+          appointment_id: string | null;
+          trigger_reason: string | null;
+          description: string | null;
+          latitude: number | null;
+          longitude: number | null;
+          accuracy_m: number | null;
+          status: 'open' | 'responding' | 'resolved' | 'false_alarm';
+          contacted_911: boolean;
+          call_center_notified: boolean;
+          resolved_at: string | null;
+          resolution_notes: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          specialist_id: string;
+          appointment_id?: string | null;
+          trigger_reason?: string | null;
+          description?: string | null;
+          latitude?: number | null;
+          longitude?: number | null;
+          accuracy_m?: number | null;
+          status?: 'open' | 'responding' | 'resolved' | 'false_alarm';
+          contacted_911?: boolean;
+          call_center_notified?: boolean;
+          resolved_at?: string | null;
+          resolution_notes?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          specialist_id?: string;
+          appointment_id?: string | null;
+          trigger_reason?: string | null;
+          description?: string | null;
+          latitude?: number | null;
+          longitude?: number | null;
+          accuracy_m?: number | null;
+          status?: 'open' | 'responding' | 'resolved' | 'false_alarm';
+          contacted_911?: boolean;
+          call_center_notified?: boolean;
+          resolved_at?: string | null;
+          resolution_notes?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
       };
     };
     Views: {
