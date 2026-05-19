@@ -645,6 +645,32 @@
 .landing-eyebrow .dot {
   width: 6px; height: 6px; border-radius: 50%;
   background: var(--btn-primary-bg); display: inline-block;
+  animation: landing-pulse 2s ease-in-out infinite;
+}
+
+/* ✨ V25.4: علم العراق المصغّر */
+.landing-eyebrow-flag {
+  display: inline-flex;
+  flex-direction: column;
+  width: 18px;
+  height: 12px;
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.1);
+  vertical-align: middle;
+}
+.landing-flag-red { flex: 1; background: #CE1126; }
+.landing-flag-white { flex: 1; background: #FFFFFF; }
+.landing-flag-black { flex: 1; background: #000000; }
+
+.landing-eyebrow-sep {
+  opacity: 0.5;
+  font-weight: 800;
+}
+
+@keyframes landing-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
 }
 
 /* h1 — V3 EXACT 72px */
