@@ -122,7 +122,7 @@
     },
     {
       "path": "/api/cron/appointment-reminders",
-      "schedule": "*/15 * * * *"
+      "schedule": "0 8 * * *"
     }
   ]
 }
