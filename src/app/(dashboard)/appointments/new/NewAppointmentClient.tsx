@@ -5,11 +5,12 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AppointmentWizard from '@/components/appointments/AppointmentWizard';
 import BloodDrawFlow, { type BloodDrawSubmission } from '@/components/appointments/BloodDrawFlow';
+import NursingFlow, { type NursingSubmission } from '@/components/appointments/NursingFlow';
 import { SERVICES } from '@/lib/services/services-data';
 import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
 import { ALL_LABS } from '@/lib/services/labs-data';
 import { createAppointmentV2 } from './actions';
-import { FlaskConical, AlertTriangle, Briefcase, MessageCircle } from 'lucide-react';
+import { FlaskConical, AlertTriangle, Briefcase, MessageCircle, Syringe } from 'lucide-react';
 
 interface Props {
   service: string;
@@ -33,7 +34,9 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
   const [error, setError] = useState<string | null>(null);
 
   const isBloodDrawFlow = service === 'blood-draw';
+  const isNursingFlow = service === 'home-nursing';
   const bloodDrawService = SERVICES.find((s) => s.id === 'blood-draw')!;
+  const nursingService = SERVICES.find((s) => s.id === 'home-nursing')!;
 
   // ─── Handler لـ BloodDrawFlow (الواجهة الجديدة الكاملة) ───
   async function handleBloodDrawSubmit(data: BloodDrawSubmission) {
@@ -82,6 +85,94 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
       location_lat: data.location_lat,
       location_lng: data.location_lng,
       location_accuracy_m: data.location_accuracy_m,
+    });
+
+    if (result.success) {
+      router.push(`/appointments/${result.appointmentId}?new=1`);
+    } else {
+      setError(result.error || 'حدث خطأ');
+    }
+  }
+
+  // ─── Handler لـ NursingFlow (V25.5) ───
+  async function handleNursingSubmit(data: NursingSubmission) {
+    setError(null);
+
+    // بناء ملاحظات منظّمة تحتوي على كل التفاصيل
+    const noteParts: string[] = [
+      '═══════ تفاصيل خدمة التمريض ═══════',
+      `[الإجراء] ${data.procedure_label}`,
+      `[تفضيل الكادر] ${
+        data.nurse_gender_preference === 'female' ? 'ممرضة (أنثى)' :
+        data.nurse_gender_preference === 'male' ? 'ممرض (ذكر)' : 'لا فرق'
+      }`,
+    ];
+
+    // التحسس الدوائي
+    const allergyList: string[] = [];
+    if (data.allergy_form.penicillin) allergyList.push('البنسلين');
+    if (data.allergy_form.sulfa) allergyList.push('السلفا');
+    if (data.allergy_form.aspirin) allergyList.push('الأسبرين');
+    if (data.allergy_form.iodine) allergyList.push('اليود');
+    if (data.allergy_form.latex) allergyList.push('اللاتكس');
+    if (data.allergy_form.other) allergyList.push(data.allergy_form.other);
+
+    if (allergyList.length > 0) {
+      noteParts.push(`[⚠️ تحسسات دوائية] ${allergyList.join('، ')}`);
+    } else {
+      noteParts.push('[التحسس] لا توجد تحسسات معروفة');
+    }
+
+    // الوصفة
+    if (data.prescription_skipped) {
+      noteParts.push('[⚠️ الوصفة] لا توجد وصفة - سيراها الممرض في الموقع');
+    } else if (data.prescription_image_url) {
+      noteParts.push('[✓ الوصفة] تم رفعها بنجاح');
+    }
+
+    // الأمراض المعدية
+    if (data.infectious_disease_alert) {
+      const infList: string[] = [];
+      if (data.infectious_disease_alert.hepatitis_b) infList.push('التهاب الكبد B');
+      if (data.infectious_disease_alert.hepatitis_c) infList.push('التهاب الكبد C');
+      if (data.infectious_disease_alert.hiv) infList.push('HIV');
+      if (data.infectious_disease_alert.covid) infList.push('كوفيد-19');
+      if (data.infectious_disease_alert.tb) infList.push('السل');
+      if (data.infectious_disease_alert.other) infList.push(data.infectious_disease_alert.other);
+
+      if (infList.length > 0) {
+        noteParts.push(`[🦠 تنبيه عدوى] ${infList.join('، ')} - يلزم احتياطات الحماية`);
+      }
+    }
+
+    // الجدولة الدورية
+    if (data.recurring_schedule?.enabled) {
+      noteParts.push(
+        `[🔁 جدولة دورية] كل ${data.recurring_schedule.interval_hours} ساعة` +
+        (data.recurring_schedule.end_date ? ` حتى ${data.recurring_schedule.end_date}` : '')
+      );
+    }
+
+    // الملاحظات
+    if (data.notes) {
+      noteParts.push(`[ملاحظات] ${data.notes}`);
+    }
+
+    const combinedNotes = noteParts.join('\n');
+
+    const result = await createAppointmentV2({
+      service_id: 'home-nursing',
+      service_name: `${nursingService.nameAr} - ${data.procedure_label}`,
+      scheduled_at: data.scheduledAt,
+      address: data.address,
+      notes: combinedNotes,
+
+      duration: nursingService.duration,
+      needs_address: true,
+      otp_channel: 'whatsapp',
+      otp_verified: true,
+      location_lat: data.location_lat,
+      location_lng: data.location_lng,
     });
 
     if (result.success) {
@@ -159,6 +250,11 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
               <FlaskConical size={18} strokeWidth={1.9} style={{ color: 'var(--emerald)' }} />
               سحب دم + تحاليل
             </>
+          ) : isNursingFlow ? (
+            <>
+              <Syringe size={18} strokeWidth={1.9} style={{ color: 'var(--emerald)' }} />
+              التمريض المنزلي
+            </>
           ) : 'حجز جديد'}
         </h1>
       </div>
@@ -225,6 +321,13 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
           userPhone={userPhone}
           userAddress={userAddress}
           onSubmit={handleBloodDrawSubmit}
+          savedLocations={savedLocations}
+        />
+      ) : isNursingFlow ? (
+        <NursingFlow
+          userPhone={userPhone}
+          userAddress={userAddress}
+          onSubmit={handleNursingSubmit}
           savedLocations={savedLocations}
         />
       ) : (
