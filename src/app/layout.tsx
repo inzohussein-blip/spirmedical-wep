@@ -30,37 +30,53 @@ export const metadata: Metadata = {
     template: '%s · Spir Medical',
   },
   description:
-    'منصة طبية رقمية متكاملة في العراق · سحب دم منزلي · تحاليل · استشارات طبية · طبيب عائلة · ١٤+ خدمة طبية',
+    'منصة طبية رقمية متكاملة في العراق · سحب دم منزلي · تحاليل · استشارات طبية · طبيب عائلة · 14 خدمة طبية · 18 محافظة · 24/7',
   applicationName: 'Spir Medical',
   category: 'Healthcare',
   classification: 'Medical Platform',
 
   // كلمات مفتاحية شاملة
   keywords: [
-    // عربي
+    // عربي - الأساسية
     'سباير ميديكال',
-    'منصة طبية',
-    'تطبيق طبي',
+    'سباير ميديكل',
+    'منصة طبية عراقية',
+    'تطبيق طبي عراقي',
+    // الخدمات الرئيسية
     'سحب دم منزلي',
+    'سحب دم بغداد',
     'تحاليل طبية',
-    'استشارة طبية',
-    'صيدلية',
+    'فحوصات منزلية',
+    'استشارة طبية أونلاين',
+    'صيدلية منزلية',
     'حجز طبيب',
     'طبيب عائلة',
-    'مستشفيات العراق',
+    'مختبر طبي',
+    // المحافظات
     'العراق',
     'بغداد',
+    'البصرة',
+    'الموصل',
+    'النجف',
+    'كربلاء',
+    'أربيل',
+    'كركوك',
+    'صناعة عراقية',
     // English
     'Spir Medical',
     'Iraq medical platform',
     'home blood draw Iraq',
+    'home lab tests Iraq',
     'medical consultation Iraq',
     'Iraqi pharmacies',
     'doctor booking Iraq',
     'health Iraq',
     'medical app Iraq',
     'Baghdad health',
+    'Basra health',
+    'Mosul health',
     'telemedicine Iraq',
+    'Iraqi made',
   ],
 
   authors: [{ name: 'Spir Medical Team', url: SITE_URL }],
@@ -91,7 +107,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'سباير ميديكال · Spir Medical',
     description:
-      'الرعاية الصحية بين يديك · ١٤+ خدمة طبية · في كل المحافظات العراقية',
+      'الرعاية الصحية بين يديك · 14 خدمة طبية · 18 محافظة · 24/7 · صناعة عراقية',
     url: SITE_URL,
     siteName: 'Spir Medical · سباير ميديكال',
     locale: 'ar_IQ',
@@ -112,7 +128,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'سباير ميديكال · Spir Medical',
-    description: 'الرعاية الصحية بين يديك · منصة طبية رقمية في العراق',
+    description: 'الرعاية الصحية بين يديك · 18 محافظة · 24/7 · صناعة عراقية',
     images: ['/api/og'],
     creator: '@spirmedical',
     site: '@spirmedical',
@@ -151,6 +167,9 @@ export const metadata: Metadata = {
     'apple-mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-status-bar-style': 'default',
     'mobile-web-app-capable': 'yes',
+    // ✨ V25.4: PWA install hints
+    'application-name': 'Spir Medical',
+    'theme-color': '#0E5C4D',
 
     // محتوى للـ AI
     'ai:purpose': 'medical-platform',
@@ -158,6 +177,11 @@ export const metadata: Metadata = {
     'ai:content-type': 'healthcare-information',
     'ai:languages': 'ar,en,ku',
     'ai:region': 'IQ',
+    // ✨ V25.4: AI tags إضافية
+    'ai:services': 'home-blood-draw,lab-tests,medical-consultation,family-doctor,pharmacy',
+    'ai:coverage': '18-governorates',
+    'ai:availability': '24/7',
+    'ai:made-in': 'Iraq',
 
     // Microsoft Tiles
     'msapplication-TileColor': '#0E5C4D',
