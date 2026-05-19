@@ -14,8 +14,10 @@
 // 6. العنوان + المراجعة + التأكيد
 // ═══════════════════════════════════════════════════════════════════
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { toast } from '@/components/ui/Toaster';
+import FamilyMemberPicker from '@/components/family/FamilyMemberPicker';
 import {
   Syringe, Droplet, Bandage, Stethoscope, Activity, Footprints,
   AlertTriangle, FileImage, ShieldCheck, Calendar, MapPin, Phone,
@@ -78,6 +80,9 @@ export interface NursingSubmission {
 
   // الملاحظات
   notes?: string;
+
+  // ✨ V25.8: Family member (null = self)
+  family_member_id?: string | null;
 
   totalPrice: number;
 }
@@ -233,6 +238,11 @@ export default function NursingFlow({
   const [phone, setPhone] = useState(userPhone);
   const [notes, setNotes] = useState('');
 
+  // ✨ V25.8: Family member
+  const searchParams = useSearchParams();
+  const initialFamilyId = searchParams?.get('family') ?? null;
+  const [familyMemberId, setFamilyMemberId] = useState<string | null>(initialFamilyId);
+
   const procedure = PROCEDURES.find((p) => p.id === procedureId);
 
   // ─── Step validation ────────────────────────
@@ -295,6 +305,7 @@ export default function NursingFlow({
         phone,
         patientGender: userGender || undefined,
         notes: notes.trim() || undefined,
+        family_member_id: familyMemberId,
         totalPrice: procedure.price,
       });
     } catch (err) {
@@ -961,6 +972,14 @@ export default function NursingFlow({
           <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '0 0 16px' }}>
             تأكد من المعلومات قبل الإرسال
           </p>
+
+          {/* ✨ V25.8: Family Member Picker */}
+          <div style={{ marginBottom: 14 }}>
+            <FamilyMemberPicker
+              value={familyMemberId}
+              onChange={setFamilyMemberId}
+            />
+          </div>
 
           {/* Saved locations */}
           {savedLocations.length > 0 && (
