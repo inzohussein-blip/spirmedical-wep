@@ -49,11 +49,11 @@ interface Service {
 
 const CORE_SERVICES: Service[] = [
   { id: 'blood-lab', icon: '🩸', title: 'سحب دم + تحاليل', desc: '+٢٠٠ فحص · منزلي', variant: 'default', href: '/appointments/new?service=blood-draw', badge: 'الأكثر طلباً' },
-  { id: 'nursing', icon: '💉', title: 'تمريض', desc: 'إبر · جروح', variant: 'amber', href: '/appointments/new?service=home-nursing' },
-  { id: 'hospitals', icon: '🏥', title: 'مستشفيات', desc: 'دليل · معلومات', variant: 'default', href: '/services/hospitals' },
-  { id: 'clinics', icon: '🏛️', title: 'عيادات', desc: 'حجز · اختصاصات', variant: 'amber', href: '/services/clinics' },
+  { id: 'nursing', icon: '💉', title: 'تمريض منزلي', desc: '7 خدمات · إبر · جروح · كانيولا', variant: 'amber', href: '/appointments/new?service=home-nursing' },
+  { id: 'family-doctor', icon: '👨‍⚕️', title: 'طبيب العائلة', desc: 'اشتراك · زيارات · استشارات', variant: 'default', href: '/services/doctors', badge: 'جديد' },
+  { id: 'hospitals', icon: '🏥', title: 'مستشفيات', desc: 'حكومي · أهلي · خريطة', variant: 'amber', href: '/services/hospitals' },
   { id: 'pharmacies', icon: '💊', title: 'صيدلية', desc: 'إرشاد لا بيع', variant: 'default', href: '/services/pharmacies' },
-  { id: 'consultation', icon: '💬', title: 'استشارة', desc: 'طبيبك أو عام', variant: 'amber', href: '/services/consultation' },
+  { id: 'consultation', icon: '💬', title: 'استشاراتي', desc: 'نص + صور · 24س', variant: 'amber', href: '/consultations' },
   { id: 'reminders', icon: '⏰', title: 'تنبيهات', desc: 'دواء · مواعيد', variant: 'default', href: '/account/reminders' },
   { id: 'prescriptions', icon: '📋', title: 'وصفاتي', desc: 'كل وصفاتك', variant: 'amber', href: '/account/prescriptions' },
   { id: 'health-dashboard', icon: '📊', title: 'لوحة الصحة', desc: 'ضغط · سكر', variant: 'default', href: '/account/health' },
