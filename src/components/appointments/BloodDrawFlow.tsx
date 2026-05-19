@@ -12,7 +12,9 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { useState, useMemo, useRef, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { toast } from '@/components/ui/Toaster';
+import FamilyMemberPicker from '@/components/family/FamilyMemberPicker';
 import {
   Droplet, Search, Star, User, MapPin, Building2, Calendar,
   TestTube, Clock, CheckCircle2, BarChart3, Lock, X, Loader2,
@@ -50,6 +52,8 @@ export interface BloodDrawSubmission {
   location_lat?: number;
   location_lng?: number;
   location_accuracy_m?: number;
+  // ✨ V25.8: Family member (null = self)
+  family_member_id?: string | null;
 }
 
 interface Props {
@@ -102,6 +106,12 @@ export default function BloodDrawFlow({
   const [condition, setCondition] = useState('');
   const [address, setAddress] = useState(userAddress);
   const [phone, setPhone] = useState(userPhone);
+
+  // ✨ V25.8: Family member
+  const searchParams = useSearchParams();
+  const initialFamilyId = searchParams?.get('family') ?? null;
+  const [familyMemberId, setFamilyMemberId] = useState<string | null>(initialFamilyId);
+
   // ✨ V25: GPS coordinates (لو التقطها المستخدم)
   const [gpsLocation, setGpsLocation] = useState<{
     lat: number;
@@ -206,6 +216,8 @@ export default function BloodDrawFlow({
         location_lat: gpsLocation?.lat,
         location_lng: gpsLocation?.lng,
         location_accuracy_m: gpsLocation?.accuracy,
+        // ✨ V25.8: Family member
+        family_member_id: familyMemberId,
       });
     } finally {
       setSubmitting(false);
@@ -398,6 +410,14 @@ export default function BloodDrawFlow({
             </div>
           </div>
         )}
+      </div>
+
+      {/* ✨ V25.8: Family Member Picker */}
+      <div style={{ marginBottom: 14 }}>
+        <FamilyMemberPicker
+          value={familyMemberId}
+          onChange={setFamilyMemberId}
+        />
       </div>
 
       {/* ═══ 2. بيانات المريض ═══ */}
