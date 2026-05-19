@@ -29,6 +29,13 @@ const SECTION_RECORDS = [
     href: '/account/lab-history',
   },
   {
+    id: 'nursing-history',
+    icon: '💉',
+    title: 'سجل التمريض',
+    desc: 'زياراتك التمريضية المنزلية',
+    href: '/account/nursing-history',
+  },
+  {
     id: 'prescriptions',
     icon: '📋',
     title: 'الوصفات',
