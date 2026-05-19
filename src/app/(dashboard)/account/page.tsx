@@ -49,6 +49,13 @@ const SECTION_RECORDS = [
     desc: 'تاريخك الصحي ومؤشراتك',
     href: '/account/medical-record',
   },
+  {
+    id: 'family',
+    icon: '👨‍👩‍👧‍👦',
+    title: 'أفراد العائلة',
+    desc: 'سجّل خدمات لعائلتك بسهولة',
+    href: '/account/family',
+  },
 ];
 
 const SECTION_FAMILY = [
