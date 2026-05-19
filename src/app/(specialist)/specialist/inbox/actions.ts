@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { notifyNewMessage } from '@/lib/services/push-templates';
 
 /**
  * إنشاء محادثة جديدة بين مريض وأخصائي
@@ -88,6 +89,53 @@ export async function sendMessage(
     .single();
 
   if (error) return { error: error.message };
+
+  // ✨ V25.4: Push notification للمستلم
+  try {
+    // جلب بيانات الشات + اسم المرسِل
+    const { data: chat } = await supabase
+      .from('chats')
+      .select('patient_id, specialist_id')
+      .eq('id', chatId)
+      .single();
+
+    if (chat) {
+      // تحديد المستلم (الطرف الآخر)
+      const recipientId =
+        user.id === chat.patient_id ? chat.specialist_id : chat.patient_id;
+
+      // جلب اسم المرسِل
+      const { data: senderProfile } = await supabase
+        .from('users')
+        .select('full_name, role')
+        .eq('id', user.id)
+        .single();
+
+      const senderName =
+        senderProfile?.full_name ||
+        (senderProfile?.role === 'specialist' ? 'الأخصائي' : 'المريض');
+
+      // تجهيز preview (للنص + مرفقات)
+      const preview =
+        type === 'text'
+          ? content.trim().slice(0, 80)
+          : type === 'image'
+            ? '📷 صورة'
+            : type === 'file'
+              ? '📎 ملف'
+              : type === 'audio'
+                ? '🎤 رسالة صوتية'
+                : 'رسالة جديدة';
+
+      notifyNewMessage(recipientId, {
+        senderName,
+        preview,
+        threadId: chatId,
+      }).catch((err) => console.error('Push new message failed:', err));
+    }
+  } catch (err) {
+    console.error('Push notification error:', err);
+  }
 
   revalidatePath(`/messages/${chatId}`);
   revalidatePath(`/specialist/inbox/${chatId}`);
