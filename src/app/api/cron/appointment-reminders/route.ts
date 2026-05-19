@@ -38,18 +38,22 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = createServiceClient();
 
-    // 2. ابحث عن مواعيد خلال 50-70 دقيقة (نافذة ±10 من ساعة قادمة)
+    // ✨ V25.5: تكييف للـ Hobby plan (cron يومي فقط)
+    // ─── نبحث عن كل مواعيد اليوم (00:00 → 23:59) ──────
     const now = new Date();
-    const lowerBound = new Date(now.getTime() + 50 * 60 * 1000);
-    const upperBound = new Date(now.getTime() + 70 * 60 * 1000);
+    const startOfDay = new Date(now);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(now);
+    endOfDay.setHours(23, 59, 59, 999);
 
     const { data: appointments, error } = await supabase
       .from('appointments')
       .select(
         'id, user_id, service_type, scheduled_at, status, reminder_sent_at'
       )
-      .gte('scheduled_at', lowerBound.toISOString())
-      .lte('scheduled_at', upperBound.toISOString())
+      .gte('scheduled_at', startOfDay.toISOString())
+      .lte('scheduled_at', endOfDay.toISOString())
       .in('status', ['confirmed', 'pending'])
       .is('reminder_sent_at', null);
 
@@ -71,7 +75,7 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // 3. أرسل push لكل موعد
+    // 3. أرسل push لكل موعد - رسالة "موعد اليوم"
     let sent = 0;
     let failed = 0;
 
@@ -79,14 +83,17 @@ export async function GET(request: NextRequest) {
       appointments.map(async (appt) => {
         try {
           const scheduledAt = new Date(appt.scheduled_at);
-          const minutesUntil = Math.round(
-            (scheduledAt.getTime() - now.getTime()) / (60 * 1000)
+          const hoursUntil = Math.round(
+            (scheduledAt.getTime() - now.getTime()) / (60 * 60 * 1000)
           );
+
+          // إذا الموعد قد فات اليوم، نتجاهله
+          if (hoursUntil < 0) return;
 
           await notifyAppointmentReminder(appt.user_id, {
             orderId: appt.id,
             serviceName: appt.service_type,
-            minutesBefore: minutesUntil,
+            minutesBefore: hoursUntil * 60,
           });
 
           // وضع علامة "تم إرسال التذكير"
