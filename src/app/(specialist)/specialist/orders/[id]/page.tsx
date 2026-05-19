@@ -11,6 +11,7 @@ import DrugConsultation from './role-forms/DrugConsultation';
 import SessionPlan from './role-forms/SessionPlan';
 import SessionNotes from './role-forms/SessionNotes';
 import MealPlan from './role-forms/MealPlan';
+import FamilyTargetBadge from '@/components/family/FamilyTargetBadge';
 import {
   User, Phone, Calendar, MapPin, FileText, ClipboardList,
 } from 'lucide-react';
@@ -139,6 +140,12 @@ export default async function SpecialistOrderDetailPage({
             {status.label}
           </span>
         </div>
+
+        {/* ✨ V25.8: Family Target Badge - يُظهر إذا كان الطلب لفرد عائلة */}
+        <FamilyTargetBadge
+          familyMemberId={(order as { family_member_id?: string | null }).family_member_id ?? null}
+          ownerName={patient?.full_name ?? undefined}
+        />
 
         {/* معلومات المريض */}
         <div className="scr-section-head">
