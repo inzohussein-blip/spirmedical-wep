@@ -43,6 +43,23 @@ export type Database = {
           suspended_by: string | null;
           admin_internal_notes: string | null;
           last_active_at: string | null;
+          // ✨ V25.6: Nurse Credentials
+          nursing_union_id_url: string | null;
+          nursing_union_id_number: string | null;
+          nursing_union_expires_at: string | null;
+          nursing_union_verified: boolean;
+          health_ministry_license_url: string | null;
+          health_ministry_license_number: string | null;
+          health_ministry_expires_at: string | null;
+          health_ministry_verified: boolean;
+          emergency_kit_confirmed: boolean;
+          emergency_kit_confirmed_at: string | null;
+          emergency_kit_items: string[] | null;
+          years_experience: number | null;
+          specializations: string[] | null;
+          cv_url: string | null;
+          credentials_verified_at: string | null;
+          credentials_verified_by: string | null;
           wa_otp_enabled: boolean;
           wa_verified: boolean;
           wa_id: string | null;
