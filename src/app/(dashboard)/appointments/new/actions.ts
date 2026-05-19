@@ -10,6 +10,7 @@ import { logAuditEvent } from '@/lib/audit';
 import { encrypt } from '@/lib/encryption';
 import { logger } from '@/lib/logger';
 import { sendAppointmentConfirmedEmail } from '@/lib/email/actions';
+import { notifyOrderConfirmed } from '@/lib/services/push-templates';
 
 interface CreateAppointmentInput {
   service_id: string;
@@ -25,6 +26,8 @@ interface CreateAppointmentInput {
   location_lat?: number;
   location_lng?: number;
   location_accuracy_m?: number;
+  // ✨ V25.8: Family member (null = self)
+  family_member_id?: string | null;
 }
 
 export async function createAppointmentV2(input: CreateAppointmentInput) {
@@ -115,6 +118,22 @@ export async function createAppointmentV2(input: CreateAppointmentInput) {
     insertData.location_captured_at = new Date().toISOString();
   }
 
+  // ✨ V25.8: Family member
+  if (input.family_member_id) {
+    // تحقق أن الفرد فعلاً يعود لهذا المستخدم
+    const { data: member } = await supabase
+      .from('family_members')
+      .select('id')
+      .eq('id', input.family_member_id)
+      .eq('owner_user_id', user.id)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    if (member) {
+      insertData.family_member_id = input.family_member_id;
+    }
+  }
+
   const { data: created, error } = await supabase
     .from('appointments')
     .insert(insertData)
@@ -148,6 +167,13 @@ export async function createAppointmentV2(input: CreateAppointmentInput) {
 
   // 📧 إرسال إيميل تأكيد (fire-and-forget)
   sendAppointmentConfirmedEmail(created.id).catch(() => null);
+
+  // ✨ V25.3: Push notification (fire-and-forget)
+  notifyOrderConfirmed(user.id, {
+    orderId: created.id,
+    serviceName: input.service_name,
+    scheduledAt: input.scheduled_at,
+  }).catch(() => null);
 
   logger.info('Appointment created', {
     user_id: user.id,
@@ -323,6 +349,13 @@ export async function createAppointment(formData: FormData) {
     entity_id: created.id,
     metadata: { ip, service_type: created.service_type },
   });
+
+  // ✨ V25.3: Push notification (legacy path)
+  notifyOrderConfirmed(user.id, {
+    orderId: created.id,
+    serviceName: validation.data.service_type,
+    scheduledAt: validation.data.scheduled_at,
+  }).catch(() => null);
 
   revalidatePath('/dashboard');
   revalidatePath('/appointments');
