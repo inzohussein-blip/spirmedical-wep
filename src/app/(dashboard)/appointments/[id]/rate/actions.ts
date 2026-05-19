@@ -27,7 +27,7 @@ export async function submitRating(input: RatingInput) {
   // تأكد أن الموعد للمستخدم وأنه completed
   const { data: appointment } = await supabase
     .from('appointments')
-    .select('id, user_id, status, specialist_id')
+    .select('id, user_id, status, specialist_id, assigned_specialist_id')
     .eq('id', input.appointment_id)
     .single();
 
@@ -43,10 +43,13 @@ export async function submitRating(input: RatingInput) {
 
   if (existing) return { ok: false, error: 'تم تقييم هذا الموعد مسبقاً' };
 
+  // ✨ V25.6: يستخدم assigned_specialist_id (الجديد) أو specialist_id (legacy)
+  const specialistId = appointment.assigned_specialist_id ?? appointment.specialist_id;
+
   const { error } = await supabase.from('ratings').insert({
     appointment_id: input.appointment_id,
     user_id: user.id,
-    specialist_id: appointment.specialist_id ?? null,
+    specialist_id: specialistId,
     overall_rating: input.overall_rating,
     punctuality_rating: input.punctuality_rating ?? null,
     professionalism_rating: input.professionalism_rating ?? null,
