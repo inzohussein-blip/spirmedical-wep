@@ -234,7 +234,16 @@ export default function HomePage() {
             <div className="landing-hero-text">
               <span className="landing-eyebrow">
                 <span className="dot"></span>
-                منصة طبية رقمية · العراق
+                <span>صناعة عراقية</span>
+                <span className="landing-eyebrow-flag" aria-hidden="true">
+                  <span className="landing-flag-red" />
+                  <span className="landing-flag-white" />
+                  <span className="landing-flag-black" />
+                </span>
+                <span className="landing-eyebrow-sep">·</span>
+                <span>18 محافظة</span>
+                <span className="landing-eyebrow-sep">·</span>
+                <span>24/7</span>
               </span>
               <h1 className="landing-h1">
                 الرعاية الصحية،
