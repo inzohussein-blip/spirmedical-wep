@@ -14,6 +14,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { href: '/admin44', icon: '📊', label: 'لوحة التحكم' },
+  { href: '/admin44/emergencies', icon: '🚨', label: 'الطوارئ الأمنية', permission: 'orders.view' },
   { href: '/admin44/specialists/pending', icon: '⏳', label: 'موافقات الاختصاصيين', permission: 'specialists.approve' },
   { href: '/admin44/specialists', icon: '👨‍⚕️', label: 'الاختصاصيون', permission: 'specialists.view' },
   { href: '/admin44/patients', icon: '👤', label: 'المرضى (CRM)', permission: 'patients.view' },
