@@ -219,6 +219,8 @@ export type Database = {
             notes?: string;
           }> | null;
           supplies_total: number;
+          // ✨ V25.8: Family Members
+          family_member_id: string | null;
         };
         Insert: {
           id?: string;
@@ -267,6 +269,8 @@ export type Database = {
           infectious_disease_alert?: object | null;
           supplies_request?: object[] | null;
           supplies_total?: number;
+          // ✨ V25.8: Family Members
+          family_member_id?: string | null;
         };
         Update: {
           id?: string;
@@ -315,6 +319,8 @@ export type Database = {
           infectious_disease_alert?: object | null;
           supplies_request?: object[] | null;
           supplies_total?: number;
+          // ✨ V25.8: Family Members
+          family_member_id?: string | null;
         };
         Relationships: [
           {
@@ -1701,6 +1707,65 @@ export type Database = {
           medication_id: string | null;
           results_count: number;
           found_any_available: boolean;
+        }>;
+        Relationships: [];
+      };
+      // ✨ V25.8: Family Members
+      family_members: {
+        Row: {
+          id: string;
+          owner_user_id: string;
+          full_name: string;
+          relation: string;
+          gender: 'male' | 'female' | null;
+          date_of_birth: string | null;
+          phone: string | null;
+          blood_type: string | null;
+          height_cm: number | null;
+          weight_kg: number | null;
+          chronic_conditions: string[] | null;
+          allergies: string[] | null;
+          current_medications: string | null;
+          notes: string | null;
+          avatar_emoji: string;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_user_id: string;
+          full_name: string;
+          relation: string;
+          gender?: 'male' | 'female' | null;
+          date_of_birth?: string | null;
+          phone?: string | null;
+          blood_type?: string | null;
+          height_cm?: number | null;
+          weight_kg?: number | null;
+          chronic_conditions?: string[] | null;
+          allergies?: string[] | null;
+          current_medications?: string | null;
+          notes?: string | null;
+          avatar_emoji?: string;
+          is_active?: boolean;
+        };
+        Update: Partial<{
+          full_name: string;
+          relation: string;
+          gender: 'male' | 'female' | null;
+          date_of_birth: string | null;
+          phone: string | null;
+          blood_type: string | null;
+          height_cm: number | null;
+          weight_kg: number | null;
+          chronic_conditions: string[] | null;
+          allergies: string[] | null;
+          current_medications: string | null;
+          notes: string | null;
+          avatar_emoji: string;
+          is_active: boolean;
+          updated_at: string;
         }>;
         Relationships: [];
       };
