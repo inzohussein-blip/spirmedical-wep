@@ -5,12 +5,13 @@ import { updateOrderRoleData } from '../actions';
 import type { LucideIcon } from 'lucide-react';
 import {
   Syringe, Droplet, Bandage, Stethoscope, Save, CheckCircle2,
+  Activity, Footprints,
 } from 'lucide-react';
 
 interface NursingData {
   action_type?: string;
   description?: string;
-  vitals?: { bp?: string; pulse?: string; temp?: string };
+  vitals?: { bp?: string; pulse?: string; temp?: string; spo2?: string };
   notes?: string;
 }
 
@@ -19,12 +20,17 @@ interface Props {
   initialData: NursingData | null;
 }
 
-const ACTION_TYPES: Array<{ id: string; label: string; icon: LucideIcon }> = [
-  { id: 'injection',   label: 'حقنة',          icon: Syringe },
-  { id: 'iv',          label: 'مغذٍ وريدي',     icon: Droplet },
-  { id: 'wound_care',  label: 'غيار جرح',       icon: Bandage },
-  { id: 'vaccination', label: 'لقاح',           icon: Syringe },
-  { id: 'catheter',    label: 'تركيب قسطرة',   icon: Stethoscope },
+// ═══════════════════════════════════════════════════════════════
+// ✨ V25.5: نطاق الخدمات التمريضية الكامل (من وثيقة المواصفات)
+// ═══════════════════════════════════════════════════════════════
+const ACTION_TYPES: Array<{ id: string; label: string; icon: LucideIcon; desc?: string }> = [
+  { id: 'injection',     label: 'زرق إبر',         icon: Syringe,    desc: 'عضلية، وريدية، تحت الجلد' },
+  { id: 'iv',            label: 'مغذٍ وريدي',       icon: Droplet,    desc: 'تركيب وإشراف' },
+  { id: 'cannula',       label: 'تركيب كانيولا',   icon: Activity,   desc: 'تأمين المجرى الوريدي' },
+  { id: 'wound_care',    label: 'تضميد جروح',      icon: Bandage,    desc: 'غيار جراحي معقّم' },
+  { id: 'diabetic_foot', label: 'قدم السكري',      icon: Footprints, desc: 'تنظيف وغيار - معقّم' },
+  { id: 'catheter',      label: 'قسطرة بولية',     icon: Stethoscope, desc: 'سحب القسطرة البولية' },
+  { id: 'vaccination',   label: 'لقاح',            icon: Syringe,    desc: 'تطعيمات' },
 ];
 
 export default function NursingActions({ orderId, initialData }: Props) {
@@ -88,8 +94,10 @@ export default function NursingActions({ orderId, initialData }: Props) {
           />
         </div>
 
-        <div className="scr-section-title" style={{ fontSize: 12, marginBottom: 8 }}>المؤشرات الحيوية (اختياري)</div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 12 }}>
+        <div className="scr-section-title" style={{ fontSize: 12, marginBottom: 8 }}>
+          المؤشرات الحيوية <span style={{ color: 'var(--ink-3)', fontWeight: 400 }}>(يُنصح بإكمالها)</span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
           <div>
             <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الضغط</label>
             <input
@@ -111,12 +119,22 @@ export default function NursingActions({ orderId, initialData }: Props) {
             />
           </div>
           <div>
-            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الحرارة</label>
+            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الحرارة (°C)</label>
             <input
               type="text"
               value={data.vitals?.temp ?? ''}
               onChange={(e) => setData({ ...data, vitals: { ...data.vitals, temp: e.target.value } })}
               placeholder="36.8"
+              style={inputStyle}
+            />
+          </div>
+          <div>
+            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الأوكسجين SpO₂ (%)</label>
+            <input
+              type="text"
+              value={data.vitals?.spo2 ?? ''}
+              onChange={(e) => setData({ ...data, vitals: { ...data.vitals, spo2: e.target.value } })}
+              placeholder="98"
               style={inputStyle}
             />
           </div>
