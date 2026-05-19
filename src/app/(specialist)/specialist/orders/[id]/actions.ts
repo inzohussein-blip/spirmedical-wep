@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { notifyTestResultsReady } from '@/lib/services/push-templates';
 
 /**
  * قبول طلب: تعيين الاختصاصي للطلب
@@ -84,6 +85,24 @@ export async function completeOrder(orderId: string, specialistNotes?: string) {
 
   if (error) return { ok: false, error: error.message };
 
+  // ✨ V25.3: Push للمريض - نتائج جاهزة
+  try {
+    const { data: order } = await supabase
+      .from('appointments')
+      .select('user_id, service_type')
+      .eq('id', orderId)
+      .single();
+
+    if (order?.user_id) {
+      notifyTestResultsReady(order.user_id, {
+        orderId,
+        testName: order.service_type || undefined,
+      }).catch(() => null);
+    }
+  } catch {
+    // fire-and-forget
+  }
+
   revalidatePath(`/specialist/orders/${orderId}`);
   revalidatePath('/specialist/orders');
   return { ok: true };
@@ -111,6 +130,46 @@ export async function updateOrderRoleData(
     .eq('assigned_specialist_id', user.id);
 
   if (error) return { ok: false, error: error.message };
+
+  // ✨ V25.6: تسجيل تلقائي في nursing_visit_history
+  if (field === 'nursing_actions') {
+    const nursingData = data as {
+      action_type?: string;
+      description?: string;
+      vitals?: { bp?: string; pulse?: string; temp?: string; spo2?: string };
+      notes?: string;
+    };
+
+    if (nursingData.action_type) {
+      // جلب user_id من الطلب
+      const { data: order } = await supabase
+        .from('appointments')
+        .select('user_id')
+        .eq('id', orderId)
+        .single();
+
+      if (order?.user_id) {
+        // تحويل vitals من string لـ numbers
+        const vital_signs: Record<string, unknown> = {};
+        if (nursingData.vitals?.bp) vital_signs.bp = nursingData.vitals.bp;
+        if (nursingData.vitals?.pulse) vital_signs.pulse = parseFloat(nursingData.vitals.pulse);
+        if (nursingData.vitals?.temp) vital_signs.temp = parseFloat(nursingData.vitals.temp);
+        if (nursingData.vitals?.spo2) vital_signs.spo2 = parseFloat(nursingData.vitals.spo2);
+
+        await supabase.from('nursing_visit_history').insert({
+          user_id: order.user_id,
+          appointment_id: orderId,
+          specialist_id: user.id,
+          procedure_type: nursingData.action_type,
+          procedure_details: nursingData.description
+            ? { description: nursingData.description }
+            : null,
+          vital_signs: Object.keys(vital_signs).length > 0 ? vital_signs : null,
+          notes: nursingData.notes || null,
+        });
+      }
+    }
+  }
 
   revalidatePath(`/specialist/orders/${orderId}`);
   return { ok: true };
