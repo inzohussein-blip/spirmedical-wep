@@ -51,6 +51,7 @@ export type NotificationCategory =
   | 'appointment_reminders'
   | 'test_results'
   | 'messages'
+  | 'consultations'
   | 'promotions'
   | 'system_updates';
 
