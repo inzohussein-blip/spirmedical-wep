@@ -2,6 +2,8 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { notifyConsultationReply, notifyMedicalRecordShared } from '@/lib/services/push-templates';
+import { sendConsultationReplyWA, isWhatsAppEnabled } from '@/lib/services/whatsapp';
 
 interface SendMessageInput {
   consultationId: string;
@@ -114,6 +116,55 @@ export async function sendMessage(input: SendMessageInput) {
     .update(updates)
     .eq('id', input.consultationId);
 
+  // ─── 🔔 Push notification للطرف الآخر ───
+  const recipientUserId = isPatient
+    ? consultation.doctor_user_id
+    : consultation.patient_user_id;
+
+  if (recipientUserId) {
+    // جلب اسم المُرسل
+    const { data: senderInfo } = isDoctor
+      ? await supabase.from('doctors').select('full_name, title').eq('user_id', user.id).maybeSingle()
+      : await supabase.from('users').select('full_name').eq('id', user.id).single();
+
+    const senderName = senderInfo
+      ? ('title' in senderInfo
+          ? `${senderInfo.title} ${senderInfo.full_name}`
+          : senderInfo.full_name) ?? (isDoctor ? 'الطبيب' : 'المريض')
+      : (isDoctor ? 'الطبيب' : 'المريض');
+
+    // محتوى المعاينة
+    const preview =
+      input.messageType === 'image' ? '📷 صورة'
+      : input.messageType === 'medical_record' ? '📋 سجل طبي مُحوَّل'
+      : input.content || '';
+
+    await notifyConsultationReply(recipientUserId, {
+      senderName,
+      senderRole: senderRole,
+      preview,
+      consultationId: input.consultationId,
+    });
+
+    // 📱 WhatsApp إذا الطبيب رد + مفعّل
+    if (isDoctor && isWhatsAppEnabled()) {
+      // جلب رقم هاتف المريض
+      const { data: patientData } = await supabase
+        .from('users')
+        .select('phone, full_name')
+        .eq('id', recipientUserId)
+        .single();
+
+      if (patientData?.phone) {
+        await sendConsultationReplyWA({
+          phone: patientData.phone,
+          patientName: patientData.full_name || 'عزيزي المريض',
+          doctorName: senderName,
+        });
+      }
+    }
+  }
+
   revalidatePath(`/consultations/${input.consultationId}`);
   return { success: true, message };
 }
@@ -193,6 +244,18 @@ export async function attachMedicalRecord(input: {
       updated_at: new Date().toISOString(),
     })
     .eq('id', input.consultationId);
+
+  // 🔔 Push للطبيب
+  if (consultation.doctor_user_id) {
+    const { data: patientInfo } = await supabase
+      .from('users').select('full_name').eq('id', user.id).single();
+
+    await notifyMedicalRecordShared(consultation.doctor_user_id, {
+      patientName: patientInfo?.full_name || 'مريض',
+      recordType: input.recordType,
+      consultationId: input.consultationId,
+    });
+  }
 
   revalidatePath(`/consultations/${input.consultationId}`);
   return { success: true, message };
