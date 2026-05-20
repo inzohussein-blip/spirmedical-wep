@@ -1,14 +1,10 @@
-'use client';
+import OnboardingClient from './OnboardingClient';
 
-import { useRouter } from 'next/navigation';
-import OnboardingTutorial from '@/components/onboarding/OnboardingTutorial';
+export const metadata = {
+  title: 'تعرّف على Spir Medical · سباير ميديكال',
+  description: 'جولة تعريفية بأهم ميزات منصة سباير الطبية',
+};
 
-export default function OnboardingPageRoute() {
-  const router = useRouter();
-  return (
-    <OnboardingTutorial
-      forceShow
-      onComplete={() => router.push('/dashboard')}
-    />
-  );
+export default function OnboardingPage() {
+  return <OnboardingClient />;
 }
