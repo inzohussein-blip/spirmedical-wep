@@ -1,6 +1,11 @@
 // تعطيل pre-rendering — searchParams
 export const dynamic = 'force-dynamic';
 
+export const metadata = {
+  title: "تسجيل دخول بالهاتف · سباير ميديكال",
+  description: "سجّل الدخول برقم هاتفك",
+};
+
 import Link from 'next/link';
 import { z } from 'zod';
 import { sendOtp } from '../actions';
