@@ -1183,6 +1183,174 @@ export type Database = {
         };
         Relationships: [];
       };
+      // ✨ V25.10: Analytics Events
+      analytics_events: {
+        Row: {
+          id: number;
+          event_name: string;
+          user_id: string | null;
+          session_id: string | null;
+          properties: Record<string, unknown> | null;
+          user_agent: string | null;
+          ip_address: string | null;
+          created_at: string;
+        };
+        Insert: {
+          event_name: string;
+          user_id?: string | null;
+          session_id?: string | null;
+          properties?: Record<string, unknown> | null;
+          user_agent?: string | null;
+          ip_address?: string | null;
+        };
+        Update: never;
+        Relationships: [];
+      };
+      // ✨ V25.11: App Settings
+      app_settings: {
+        Row: {
+          key: string;
+          value: unknown;
+          description: string | null;
+          category: 'general' | 'business' | 'features' | 'notifications' | 'security';
+          is_public: boolean;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          key: string;
+          value: unknown;
+          description?: string | null;
+          category?: 'general' | 'business' | 'features' | 'notifications' | 'security';
+          is_public?: boolean;
+        };
+        Update: {
+          value?: unknown;
+          description?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [];
+      };
+      // ✨ V25.11: User Favorites
+      user_favorites: {
+        Row: {
+          id: string;
+          user_id: string;
+          favorite_type: 'doctor' | 'hospital' | 'pharmacy' | 'medication' | 'lab_test';
+          reference_id: string;
+          display_name: string | null;
+          display_subtitle: string | null;
+          display_icon: string | null;
+          display_meta: Record<string, unknown> | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          favorite_type: 'doctor' | 'hospital' | 'pharmacy' | 'medication' | 'lab_test';
+          reference_id: string;
+          display_name?: string | null;
+          display_subtitle?: string | null;
+          display_icon?: string | null;
+          display_meta?: Record<string, unknown> | null;
+        };
+        Update: never;
+        Relationships: [];
+      };
+      // ✨ V25.11: Wallet Transactions
+      wallet_transactions: {
+        Row: {
+          id: string;
+          user_id: string;
+          transaction_type: 'credit' | 'debit' | 'refund' | 'reward' | 'points_redeem';
+          amount: number;
+          points: number;
+          balance_after: number | null;
+          points_after: number | null;
+          description: string;
+          reference_type: string | null;
+          reference_id: string | null;
+          status: 'pending' | 'completed' | 'failed' | 'cancelled';
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          user_id: string;
+          transaction_type: 'credit' | 'debit' | 'refund' | 'reward' | 'points_redeem';
+          amount?: number;
+          points?: number;
+          balance_after?: number | null;
+          points_after?: number | null;
+          description: string;
+          reference_type?: string | null;
+          reference_id?: string | null;
+          status?: 'pending' | 'completed' | 'failed' | 'cancelled';
+          created_by?: string | null;
+        };
+        Update: never;
+        Relationships: [];
+      };
+      // ✨ V25.11: Cosmetic Products
+      cosmetic_products: {
+        Row: {
+          id: string;
+          name: string;
+          name_en: string | null;
+          brand: string;
+          category: 'skincare' | 'haircare' | 'makeup' | 'fragrance' | 'supplements' | 'bodycare' | 'baby_care' | 'mens_care';
+          price: number;
+          discount_price: number | null;
+          description: string | null;
+          ingredients: string | null;
+          usage_instructions: string | null;
+          image_url: string | null;
+          image_emoji: string;
+          available_at_pharmacies: string[];
+          rating_avg: number;
+          rating_count: number;
+          is_in_stock: boolean;
+          stock_quantity: number | null;
+          country_of_origin: string | null;
+          is_recommended: boolean;
+          recommendation_note: string | null;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<{
+          id: string;
+          name_en: string | null;
+          price: number;
+          discount_price: number | null;
+          description: string | null;
+          ingredients: string | null;
+          usage_instructions: string | null;
+          image_url: string | null;
+          image_emoji: string;
+          available_at_pharmacies: string[];
+          rating_avg: number;
+          rating_count: number;
+          is_in_stock: boolean;
+          stock_quantity: number | null;
+          country_of_origin: string | null;
+          is_recommended: boolean;
+          recommendation_note: string | null;
+          is_active: boolean;
+        }> & { name: string; brand: string; category: 'skincare' | 'haircare' | 'makeup' | 'fragrance' | 'supplements' | 'bodycare' | 'baby_care' | 'mens_care' };
+        Update: Partial<{
+          name: string;
+          name_en: string | null;
+          brand: string;
+          price: number;
+          discount_price: number | null;
+          description: string | null;
+          image_emoji: string;
+          is_in_stock: boolean;
+          is_active: boolean;
+        }>;
+        Relationships: [];
+      };
       user_saved_locations: {
         Row: {
           id: string;
