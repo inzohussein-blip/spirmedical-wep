@@ -255,3 +255,13 @@ export function SkeletonChatList({ count = 5 }: { count?: number }) {
     </div>
   );
 }
+
+/* ─── SkeletonAvatar (V25.18) ──────────────────────────── */
+export function SkeletonAvatar({ size = 44 }: { size?: number }) {
+  return (
+    <Skeleton
+      variant="circle"
+      style={{ width: size, height: size, flexShrink: 0 }}
+    />
+  );
+}
