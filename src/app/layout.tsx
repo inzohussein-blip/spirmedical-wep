@@ -9,6 +9,8 @@ import SWUpdateBanner from '@/components/ui/SWUpdateBanner';
 import WebVitalsReporter from '@/components/seo/WebVitalsReporter';
 import { Toaster } from '@/components/ui/Toaster';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
+import PWAModeProvider from '@/components/pwa/PWAModeProvider';
+import SmartInstallPrompt from '@/components/pwa/SmartInstallPrompt';
 
 // خطوط — Tajawal فقط (وحّدنا الخط في V15)
 // JetBrains-Mono للأرقام والوقت فقط
@@ -19,6 +21,7 @@ import '@fontsource/tajawal/800.css';
 import '@fontsource/jetbrains-mono/500.css';
 
 import './globals.css';
+import './pwa.css';
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spirmedical-wep.vercel.app';
@@ -246,17 +249,20 @@ export default function RootLayout({
         <StructuredData />
       </head>
       <body>
-        <ThemeProvider>
-          {children}
-        </ThemeProvider>
-        <Toaster />
-        <NetworkStatusDetector />
-        <SWUpdateBanner />
-        <CookieConsent />
-        <PWAManager />
-        <WebVitalsReporter />
-        <Analytics />
-        <SpeedInsights />
+        <PWAModeProvider>
+          <ThemeProvider>
+            {children}
+          </ThemeProvider>
+          <Toaster />
+          <NetworkStatusDetector />
+          <SWUpdateBanner />
+          <CookieConsent />
+          <PWAManager />
+          <SmartInstallPrompt />
+          <WebVitalsReporter />
+          <Analytics />
+          <SpeedInsights />
+        </PWAModeProvider>
       </body>
     </html>
   );
