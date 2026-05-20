@@ -1,0 +1,33 @@
+import { SkeletonCard, Skeleton } from '@/components/ui/Skeleton';
+
+export default function FavoritesLoading() {
+  return (
+    <main className="app-screen">
+      <div className="scr-content">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+          <Skeleton variant="rect" className="w-8 h-8 rounded-md" />
+          <Skeleton className="w-32 h-5" />
+        </div>
+        <Skeleton className="w-48 h-3 mb-4" />
+
+        {/* Tabs */}
+        <div className="flex gap-2 mb-4 overflow-hidden">
+          {[60, 80, 90, 70, 75].map((w, i) => (
+            <Skeleton
+              key={i}
+              variant="rect"
+              className="h-8 rounded-full flex-shrink-0"
+              style={{ width: w }}
+            />
+          ))}
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {Array.from({ length: 3 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+      </div>
+    </main>
+  );
+}
