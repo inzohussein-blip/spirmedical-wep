@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
 import { subscribeToDoctor, startConsultation } from './actions';
+import { track } from '@/lib/analytics';
 
 interface Doctor {
   id: string;
@@ -83,6 +84,11 @@ export default function DoctorDetailClient({ doctor, activeSubscription }: Props
     startTransition(async () => {
       const result = await subscribeToDoctor(doctor.id, plan);
       if (result.success) {
+        track('subscription_started', {
+          doctor_id: doctor.id,
+          subscription_plan: plan,
+          total_price: price,
+        });
         toast.success('تم الاشتراك بنجاح!');
         router.refresh();
       } else {
@@ -95,6 +101,10 @@ export default function DoctorDetailClient({ doctor, activeSubscription }: Props
     startTransition(async () => {
       const result = await startConsultation(doctor.id);
       if (result.success && result.consultationId) {
+        track('consultation_started', {
+          doctor_id: doctor.id,
+          consultation_id: result.consultationId,
+        });
         router.push(`/consultations/${result.consultationId}`);
       } else {
         toast.error(result.error || 'فشل بدء الاستشارة');
