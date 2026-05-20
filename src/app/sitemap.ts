@@ -41,6 +41,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
       changeFrequency: 'monthly',
     },
+    {
+      url: '/contact',
+      priority: 0.8,
+      changeFrequency: 'monthly',
+    },
+    {
+      url: '/faq',
+      priority: 0.8,
+      changeFrequency: 'weekly',
+    },
 
     // ─────────────────────────────────────────
     // 📝 المدونة الطبية
@@ -71,6 +81,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: '/legal/disclaimer',
+      priority: 0.6,
+      changeFrequency: 'yearly',
+    },
+    {
+      url: '/legal/refund',
       priority: 0.6,
       changeFrequency: 'yearly',
     },
