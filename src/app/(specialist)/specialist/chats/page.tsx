@@ -1,19 +1,33 @@
-import Link from 'next/link';
+// ═══════════════════════════════════════════════════════════════
+// 💬 محادثات المختص (V25.11) - DB حقيقي
+// ═══════════════════════════════════════════════════════════════
+// تم استبدال Mock Data بقاعدة بيانات حقيقية
+// ═══════════════════════════════════════════════════════════════
 
-export const metadata = {
-  title: 'المحادثات · لوحة الأخصائي',
+import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
+import Link from 'next/link';
+import {
+  MessageCircle, Clock, AlertCircle, CheckCircle2,
+  ChevronLeft, Pin, Archive,
+} from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
+export const metadata = { title: 'المحادثات - لوحة الأخصائي' };
+
+const STATUS_META: Record<string, { label: string; color: string; emoji: string }> = {
+  open: { label: 'مفتوحة', color: 'var(--emerald)', emoji: '🟢' },
+  pending: { label: 'بانتظار', color: 'var(--amber)', emoji: '⏳' },
+  resolved: { label: 'محلولة', color: 'var(--ink-3)', emoji: '✓' },
+  archived: { label: 'مؤرشفة', color: 'var(--ink-4)', emoji: '📦' },
 };
 
-// بيانات تجريبية للمحادثات (سيتم ربطها بـ DB لاحقاً)
-const MOCK_CHATS: Array<{
-  id: string;
-  patientName: string;
-  lastMessage: string;
-  time: string;
-  unread: number;
-  online: boolean;
-  avatar: string;
-}> = [];
+const PRIORITY_META: Record<string, { color: string; label: string }> = {
+  urgent: { color: 'var(--rose)', label: 'عاجل' },
+  high: { color: 'var(--amber)', label: 'مهم' },
+  normal: { color: 'var(--ink-3)', label: 'عادي' },
+  low: { color: 'var(--ink-4)', label: 'منخفض' },
+};
 
 const QUICK_REPLIES = [
   { icon: '✓', text: 'سأكون عندك خلال 30 دقيقة' },
@@ -22,11 +36,45 @@ const QUICK_REPLIES = [
   { icon: '🩺', text: 'كم درجة حرارتك الآن؟' },
 ];
 
-export default function SpecialistChatsPage() {
+export default async function SpecialistChatsPage() {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect('/auth/login');
+
+  // تحقّق من أنه specialist
+  const { data: profile } = await supabase
+    .from('users')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile || profile.role !== 'specialist') {
+    redirect('/dashboard');
+  }
+
+  // جلب المحادثات
+  const { data: chats } = await supabase
+    .from('chats')
+    .select('*')
+    .eq('specialist_id', user.id)
+    .eq('is_archived', false)
+    .order('is_pinned', { ascending: false })
+    .order('last_message_at', { ascending: false, nullsFirst: false })
+    .limit(50);
+
+  // جلب أسماء المرضى
+  const patientIds = [...new Set((chats || []).map(c => c.patient_id).filter(Boolean))];
+  const { data: patients } = patientIds.length > 0
+    ? await supabase.from('users').select('id, full_name').in('id', patientIds)
+    : { data: [] };
+
+  const patientsMap = Object.fromEntries((patients || []).map(p => [p.id, p]));
+
+  const totalUnread = (chats || []).reduce((sum, c) => sum + (c.specialist_unread_count || 0), 0);
+
   return (
     <main className="app-screen">
       <div className="scr-content">
-
         <div className="scr-page-header">
           <Link href="/specialist" className="scr-back-btn" aria-label="العودة">
             <span aria-hidden="true">→</span>
@@ -36,100 +84,222 @@ export default function SpecialistChatsPage() {
         </div>
 
         <p className="scr-page-subtitle">
-          {MOCK_CHATS.length === 0 ? 'لا توجد محادثات حالياً' : `${MOCK_CHATS.length} محادثة نشطة`}
+          {!chats || chats.length === 0
+            ? 'لا توجد محادثات حالياً'
+            : `${chats.length} ${chats.length === 1 ? 'محادثة' : 'محادثات'}${totalUnread > 0 ? ` · ${totalUnread} غير مقروءة` : ''}`}
         </p>
 
-        {/* بانر معلوماتي */}
-        <div className="scr-info-banner">
-          <span aria-hidden="true">💡</span>
-          <span>تواصل مع مرضاك مباشرة بعد قبول الطلب. الرسائل مُشفّرة.</span>
+        {/* Quick replies info */}
+        <div
+          style={{
+            background: 'var(--emerald-soft)',
+            borderRadius: 10,
+            padding: 12,
+            marginBottom: 14,
+            fontSize: 11,
+          }}
+        >
+          <div style={{ fontWeight: 800, marginBottom: 6 }}>
+            💡 الردود السريعة المتاحة:
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+            {QUICK_REPLIES.map((q, i) => (
+              <span
+                key={i}
+                style={{
+                  padding: '3px 8px',
+                  background: 'var(--white)',
+                  borderRadius: 6,
+                  fontSize: 10,
+                  fontWeight: 700,
+                  color: 'var(--ink-2)',
+                }}
+              >
+                {q.icon} {q.text}
+              </span>
+            ))}
+          </div>
         </div>
 
-        {MOCK_CHATS.length === 0 ? (
-          <>
-            <div className="scr-empty" style={{ marginTop: 32 }}>
-              <div className="scr-empty-icon" aria-hidden="true">✉</div>
-              <h2 className="scr-empty-title">ابدأ محادثاتك</h2>
-              <p className="scr-empty-desc">
-                عند قبول طلب، ستتمكّن من بدء محادثة مع المريض هنا.
-                الرسائل تتضمن نصوص، صور، وملفات طبية.
-              </p>
-              <Link href="/specialist/orders?filter=pending" className="scr-empty-cta">
-                عرض الطلبات الجديدة ←
-              </Link>
+        {/* Chats list */}
+        {!chats || chats.length === 0 ? (
+          <div className="scr-empty" style={{ marginTop: 32 }}>
+            <div className="scr-empty-icon" aria-hidden="true">
+              <MessageCircle size={42} strokeWidth={1.5} />
             </div>
-
-            {/* الإجابات السريعة */}
-            <div className="scr-section-head" style={{ marginTop: 32 }}>
-              <div className="scr-section-title">إجابات سريعة جاهزة</div>
-            </div>
-
-            <p className="scr-page-subtitle" style={{ textAlign: 'right' }}>
-              قوالب جاهزة لتسريع ردودك على المرضى:
+            <h2 className="scr-empty-title">لا توجد محادثات</h2>
+            <p style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 8 }}>
+              ستظهر هنا المحادثات بعد قبول الطلبات
             </p>
-
-            <div className="scr-list-stack">
-              {QUICK_REPLIES.map((reply, i) => (
-                <div key={i} className="scr-list-item">
-                  <div className="scr-list-item-icon" aria-hidden="true">{reply.icon}</div>
-                  <div className="scr-list-item-content">
-                    <div className="scr-list-item-title">{reply.text}</div>
-                    <div className="scr-list-item-subtitle">انقر للاستخدام لاحقاً</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* ميزات قادمة */}
-            <div className="scr-section-head" style={{ marginTop: 24 }}>
-              <div className="scr-section-title">المميزات</div>
-            </div>
-
-            <div className="services-grid">
-              <div className="service-card service-default">
-                <div className="service-icon" aria-hidden="true">📝</div>
-                <div className="service-title">نصوص</div>
-                <div className="service-desc">رسائل سريعة</div>
-              </div>
-              <div className="service-card service-amber">
-                <div className="service-icon" aria-hidden="true">📷</div>
-                <div className="service-title">صور</div>
-                <div className="service-desc">تحاليل وأشعة</div>
-              </div>
-              <div className="service-card service-default">
-                <div className="service-icon" aria-hidden="true">📄</div>
-                <div className="service-title">ملفات</div>
-                <div className="service-desc">PDF وأكثر</div>
-              </div>
-              <div className="service-card service-rose">
-                <div className="service-icon" aria-hidden="true">🎤</div>
-                <div className="service-title">صوتي</div>
-                <div className="service-desc">رسائل صوتية</div>
-              </div>
-            </div>
-          </>
+          </div>
         ) : (
-          <div className="scr-list-stack">
-            {MOCK_CHATS.map((chat) => (
-              <Link
-                key={chat.id}
-                href={`/specialist/chats/${chat.id}`}
-                className="scr-list-item scr-list-item-clickable"
-              >
-                <div className="spec-chat-avatar" aria-hidden="true">
-                  {chat.avatar}
-                  {chat.online && <span className="spec-chat-online" aria-hidden="true"></span>}
-                </div>
-                <div className="scr-list-item-content">
-                  <div className="scr-list-item-title">{chat.patientName}</div>
-                  <div className="scr-list-item-subtitle">{chat.lastMessage}</div>
-                  <div className="scr-list-item-meta">{chat.time}</div>
-                </div>
-                {chat.unread > 0 && (
-                  <span className="spec-chat-badge">{chat.unread}</span>
-                )}
-              </Link>
-            ))}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {chats.map((chat) => {
+              const patient = patientsMap[chat.patient_id];
+              const statusMeta = STATUS_META[chat.status] || STATUS_META.open;
+              const priorityMeta = PRIORITY_META[chat.priority] || PRIORITY_META.normal;
+              const hasUnread = (chat.specialist_unread_count || 0) > 0;
+              const lastMsg = chat.last_message_at
+                ? new Date(chat.last_message_at)
+                : new Date(chat.created_at);
+              const diffHours = (Date.now() - lastMsg.getTime()) / (1000 * 60 * 60);
+
+              return (
+                <Link
+                  key={chat.id}
+                  href={`/messages/${chat.id}`}
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  <article
+                    style={{
+                      background: 'var(--white)',
+                      border: '1px solid',
+                      borderColor: hasUnread ? statusMeta.color : 'var(--line)',
+                      borderRadius: 12,
+                      padding: 12,
+                      borderInlineStartWidth: 4,
+                      borderInlineStartStyle: 'solid',
+                      borderInlineStartColor: statusMeta.color,
+                      position: 'relative',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      {/* Avatar */}
+                      <div
+                        style={{
+                          width: 44,
+                          height: 44,
+                          borderRadius: '50%',
+                          background: 'var(--paper-3)',
+                          fontSize: 22,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                          position: 'relative',
+                        }}
+                      >
+                        👤
+                        {chat.is_pinned && (
+                          <Pin
+                            size={11}
+                            style={{
+                              position: 'absolute',
+                              top: -2,
+                              insetInlineStart: -2,
+                              color: 'var(--amber)',
+                              background: 'var(--white)',
+                              borderRadius: '50%',
+                              padding: 1,
+                            }}
+                          />
+                        )}
+                      </div>
+
+                      {/* Content */}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                          <span
+                            style={{
+                              fontSize: 13,
+                              fontWeight: hasUnread ? 900 : 800,
+                              color: 'var(--ink)',
+                            }}
+                          >
+                            {patient?.full_name || 'مريض'}
+                          </span>
+                          {chat.priority !== 'normal' && (
+                            <span
+                              style={{
+                                fontSize: 9,
+                                padding: '1px 5px',
+                                background: `${priorityMeta.color}15`,
+                                color: priorityMeta.color,
+                                borderRadius: 3,
+                                fontWeight: 800,
+                              }}
+                            >
+                              {priorityMeta.label}
+                            </span>
+                          )}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: 11,
+                            color: hasUnread ? 'var(--ink)' : 'var(--ink-3)',
+                            fontWeight: hasUnread ? 700 : 400,
+                            display: '-webkit-box',
+                            WebkitLineClamp: 1,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          {chat.last_message || 'لا توجد رسائل بعد'}
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            marginTop: 4,
+                            fontSize: 9,
+                            color: 'var(--ink-3)',
+                          }}
+                        >
+                          <Clock size={9} />
+                          <span>
+                            {diffHours < 1
+                              ? 'الآن'
+                              : diffHours < 24
+                              ? `قبل ${Math.floor(diffHours)} ساعة`
+                              : lastMsg.toLocaleDateString('ar-IQ', {
+                                  month: 'short',
+                                  day: 'numeric',
+                                })}
+                          </span>
+                          <span
+                            style={{
+                              padding: '1px 5px',
+                              background: `${statusMeta.color}15`,
+                              color: statusMeta.color,
+                              borderRadius: 3,
+                              fontWeight: 700,
+                              marginInlineStart: 4,
+                            }}
+                          >
+                            {statusMeta.emoji} {statusMeta.label}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Unread count + arrow */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                        {hasUnread && (
+                          <div
+                            style={{
+                              minWidth: 22,
+                              height: 22,
+                              padding: '0 6px',
+                              background: statusMeta.color,
+                              color: 'var(--paper-3)',
+                              borderRadius: 11,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: 10,
+                              fontWeight: 900,
+                            }}
+                          >
+                            {chat.specialist_unread_count}
+                          </div>
+                        )}
+                        <ChevronLeft size={14} color="var(--ink-3)" />
+                      </div>
+                    </div>
+                  </article>
+                </Link>
+              );
+            })}
           </div>
         )}
 
