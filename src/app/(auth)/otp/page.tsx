@@ -1,6 +1,11 @@
 // تعطيل pre-rendering — searchParams
 export const dynamic = 'force-dynamic';
 
+export const metadata = {
+  title: "تحقّق من الرمز · سباير ميديكال",
+  description: "أدخل رمز التحقّق",
+};
+
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
