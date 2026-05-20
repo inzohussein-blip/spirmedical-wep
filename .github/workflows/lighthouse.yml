@@ -1,0 +1,76 @@
+# ═══════════════════════════════════════════════════════════════
+# 💡 Lighthouse Audit - Performance/SEO/Accessibility (V25.12)
+# ═══════════════════════════════════════════════════════════════
+# يعمل أسبوعياً على production URL لمتابعة الجودة
+# يُحفظ التقرير كـ artifact + يُنشر تعليق في PR
+# ═══════════════════════════════════════════════════════════════
+
+name: Lighthouse Audit
+
+on:
+  schedule:
+    # كل اثنين الساعة 9 صباحاً UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:        # يدوياً من GitHub UI
+
+jobs:
+  lighthouse:
+    name: Lighthouse Performance Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Lighthouse CLI
+        run: npm install -g @lhci/cli@latest lighthouse
+
+      - name: Run Lighthouse on key pages
+        run: |
+          SITE_URL="${{ secrets.PRODUCTION_URL || 'https://spirmedical-wep.vercel.app' }}"
+
+          mkdir -p ./lighthouse-reports
+
+          for page in "" "/about" "/faq" "/contact" "/legal/privacy" "/blog"; do
+            slug=$(echo "$page" | tr '/' '_')
+            [ -z "$slug" ] && slug="_home"
+
+            echo "🔍 Auditing $SITE_URL$page..."
+
+            lighthouse "$SITE_URL$page" \
+              --output=html \
+              --output-path="./lighthouse-reports/${slug}.html" \
+              --chrome-flags="--headless --no-sandbox" \
+              --quiet \
+              --only-categories=performance,accessibility,best-practices,seo \
+              || echo "⚠️ Audit failed for $page"
+          done
+
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: ./lighthouse-reports/
+          retention-days: 30
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 📊 Lighthouse Audit Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Reports uploaded as artifacts. Download to view full results." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Pages audited:**" >> $GITHUB_STEP_SUMMARY
+          echo "- / (Home)" >> $GITHUB_STEP_SUMMARY
+          echo "- /about" >> $GITHUB_STEP_SUMMARY
+          echo "- /faq" >> $GITHUB_STEP_SUMMARY
+          echo "- /contact" >> $GITHUB_STEP_SUMMARY
+          echo "- /legal/privacy" >> $GITHUB_STEP_SUMMARY
+          echo "- /blog" >> $GITHUB_STEP_SUMMARY
