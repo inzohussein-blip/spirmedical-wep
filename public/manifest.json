@@ -2,15 +2,20 @@
   "name": "سباير ميديكال - Spir Medical",
   "short_name": "Spir Medical",
   "description": "منصة طبية رقمية متكاملة في العراق · 14 خدمة · 18 محافظة · 24/7 · صناعة عراقية",
-  "start_url": "/app",
+  "start_url": "/dashboard?source=pwa",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "orientation": "portrait-primary",
   "theme_color": "#0E5C4D",
   "background_color": "#F4EFE2",
   "lang": "ar-IQ",
   "dir": "rtl",
   "categories": ["medical", "health", "lifestyle"],
+  "id": "spir-medical-app",
+  "prefer_related_applications": false,
+  "iarc_rating_id": "",
+
   "icons": [
     {
       "src": "/icon-192.png",
@@ -42,29 +47,77 @@
       "type": "image/png"
     }
   ],
+
   "shortcuts": [
     {
-      "name": "حجز موعد",
-      "short_name": "احجز",
-      "description": "احجز موعد جديد",
-      "url": "/appointments/new",
+      "name": "حجز سحب دم",
+      "short_name": "سحب دم",
+      "description": "احجز خدمة سحب الدم المنزلي",
+      "url": "/appointments/new?service=blood-draw&source=shortcut",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "الرسائل",
-      "short_name": "رسائل",
-      "description": "محادثاتي",
-      "url": "/messages",
+      "name": "الاستشارات",
+      "short_name": "استشارات",
+      "description": "استشارة طبية مع الأطباء",
+      "url": "/consultations?source=shortcut",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "حجوزاتي",
+      "short_name": "حجوزاتي",
+      "description": "كل حجوزاتي",
+      "url": "/appointments?source=shortcut",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "طوارئ SOS",
       "short_name": "SOS",
       "description": "اتصال طوارئ سريع",
-      "url": "/sos",
+      "url": "/sos?source=shortcut",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ],
-  "prefer_related_applications": false,
-  "id": "spir-medical-app"
+
+  "screenshots": [
+    {
+      "src": "/og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "الصفحة الرئيسية"
+    }
+  ],
+
+  "share_target": {
+    "action": "/share-target",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "files",
+          "accept": ["image/*", "application/pdf"]
+        }
+      ]
+    }
+  },
+
+  "protocol_handlers": [
+    {
+      "protocol": "tel",
+      "url": "/contact?phone=%s"
+    }
+  ],
+
+  "edge_side_panel": {
+    "preferred_width": 480
+  },
+
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  }
 }
