@@ -1,6 +1,11 @@
 // تعطيل pre-rendering — searchParams
 export const dynamic = 'force-dynamic';
 
+export const metadata = {
+  title: "استعادة كلمة المرور · سباير ميديكال",
+  description: "استعد الوصول إلى حسابك",
+};
+
 import Link from 'next/link';
 import { z } from 'zod';
 import { sendOtp } from '../login/actions';
