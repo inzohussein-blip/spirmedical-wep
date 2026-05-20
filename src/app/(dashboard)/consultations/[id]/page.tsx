@@ -8,6 +8,12 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
 import ConsultationClient from './ConsultationClient';
 
+export const metadata = {
+  title: 'تفاصيل الاستشارة · سباير ميديكال',
+  description: 'استشارتي مع الطبيب',
+};
+
+
 export const dynamic = 'force-dynamic';
 
 export default async function ConsultationDetailPage({
