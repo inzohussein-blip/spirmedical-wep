@@ -1183,6 +1183,299 @@ export type Database = {
         };
         Relationships: [];
       };
+      // ✨ V25.14: Beta Launch System
+      launch_checklist: {
+        Row: {
+          id: string;
+          category: 'technical' | 'content' | 'legal' | 'marketing' | 'operations' | 'security';
+          title: string;
+          description: string | null;
+          priority: 'critical' | 'high' | 'medium' | 'low';
+          is_completed: boolean;
+          completed_at: string | null;
+          completed_by: string | null;
+          notes: string | null;
+          order_index: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<{
+          id: string;
+          description: string | null;
+          priority: 'critical' | 'high' | 'medium' | 'low';
+          is_completed: boolean;
+          notes: string | null;
+          order_index: number;
+        }> & { category: 'technical' | 'content' | 'legal' | 'marketing' | 'operations' | 'security'; title: string };
+        Update: Partial<{
+          title: string;
+          description: string | null;
+          priority: 'critical' | 'high' | 'medium' | 'low';
+          is_completed: boolean;
+          completed_at: string | null;
+          completed_by: string | null;
+          notes: string | null;
+          order_index: number;
+        }>;
+        Relationships: [];
+      };
+      beta_codes: {
+        Row: {
+          id: string;
+          code: string;
+          description: string | null;
+          max_uses: number;
+          used_count: number;
+          is_active: boolean;
+          expires_at: string | null;
+          used_by: string[];
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: Partial<{
+          id: string;
+          description: string | null;
+          max_uses: number;
+          used_count: number;
+          is_active: boolean;
+          expires_at: string | null;
+          used_by: string[];
+        }> & { code: string };
+        Update: Partial<{
+          description: string | null;
+          max_uses: number;
+          used_count: number;
+          is_active: boolean;
+          expires_at: string | null;
+          used_by: string[];
+        }>;
+        Relationships: [];
+      };
+      user_feedback: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          type: 'suggestion' | 'complaint' | 'praise' | 'feature_request' | 'other';
+          category: string;
+          rating: number | null;
+          subject: string | null;
+          message: string;
+          contact_email: string | null;
+          contact_phone: string | null;
+          status: 'new' | 'reviewed' | 'in_progress' | 'resolved' | 'archived';
+          admin_notes: string | null;
+          page_url: string | null;
+          user_agent: string | null;
+          created_at: string;
+          reviewed_at: string | null;
+          resolved_at: string | null;
+        };
+        Insert: Partial<{
+          user_id: string | null;
+          rating: number | null;
+          subject: string | null;
+          contact_email: string | null;
+          contact_phone: string | null;
+          status: 'new' | 'reviewed' | 'in_progress' | 'resolved' | 'archived';
+          page_url: string | null;
+          user_agent: string | null;
+        }> & {
+          type: 'suggestion' | 'complaint' | 'praise' | 'feature_request' | 'other';
+          category: string;
+          message: string;
+        };
+        Update: Partial<{
+          status: 'new' | 'reviewed' | 'in_progress' | 'resolved' | 'archived';
+          admin_notes: string | null;
+          reviewed_at: string | null;
+          resolved_at: string | null;
+        }>;
+        Relationships: [];
+      };
+      bug_reports: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          title: string;
+          description: string;
+          steps_to_reproduce: string | null;
+          expected_behavior: string | null;
+          actual_behavior: string | null;
+          severity: 'critical' | 'high' | 'medium' | 'low';
+          status: 'open' | 'in_progress' | 'fixed' | 'wont_fix' | 'duplicate';
+          page_url: string | null;
+          browser: string | null;
+          device: string | null;
+          screenshot_url: string | null;
+          user_agent: string | null;
+          admin_notes: string | null;
+          fixed_in_version: string | null;
+          created_at: string;
+          updated_at: string;
+          fixed_at: string | null;
+        };
+        Insert: Partial<{
+          user_id: string | null;
+          steps_to_reproduce: string | null;
+          expected_behavior: string | null;
+          actual_behavior: string | null;
+          severity: 'critical' | 'high' | 'medium' | 'low';
+          status: 'open' | 'in_progress' | 'fixed' | 'wont_fix' | 'duplicate';
+          page_url: string | null;
+          browser: string | null;
+          device: string | null;
+          user_agent: string | null;
+        }> & { title: string; description: string };
+        Update: Partial<{
+          status: 'open' | 'in_progress' | 'fixed' | 'wont_fix' | 'duplicate';
+          admin_notes: string | null;
+          fixed_in_version: string | null;
+          fixed_at: string | null;
+        }>;
+        Relationships: [];
+      };
+      changelog_entries: {
+        Row: {
+          id: string;
+          version: string;
+          release_date: string;
+          title: string;
+          summary: string | null;
+          features: string[];
+          improvements: string[];
+          fixes: string[];
+          breaking_changes: string[];
+          is_published: boolean;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: Partial<{
+          summary: string | null;
+          features: string[];
+          improvements: string[];
+          fixes: string[];
+          breaking_changes: string[];
+          is_published: boolean;
+          created_by: string | null;
+        }> & { version: string; release_date: string; title: string };
+        Update: Partial<{
+          version: string;
+          release_date: string;
+          title: string;
+          summary: string | null;
+          features: string[];
+          improvements: string[];
+          fixes: string[];
+          breaking_changes: string[];
+          is_published: boolean;
+        }>;
+        Relationships: [];
+      };
+      // ✨ V25.14: Physio Service
+      physio_service_types: {
+        Row: {
+          id: string;
+          slug: string;
+          name_ar: string;
+          name_en: string | null;
+          description: string | null;
+          icon: string;
+          base_price: number;
+          session_duration_minutes: number;
+          recommended_sessions: number;
+          conditions: string[];
+          is_active: boolean;
+          order_index: number;
+          created_at: string;
+        };
+        Insert: Partial<{
+          id: string;
+          name_en: string | null;
+          description: string | null;
+          icon: string;
+          base_price: number;
+          session_duration_minutes: number;
+          recommended_sessions: number;
+          conditions: string[];
+          is_active: boolean;
+          order_index: number;
+        }> & { slug: string; name_ar: string };
+        Update: Partial<{
+          name_ar: string;
+          description: string | null;
+          base_price: number;
+          is_active: boolean;
+        }>;
+        Relationships: [];
+      };
+      physio_specialists: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          full_name: string;
+          title: string;
+          gender: 'male' | 'female' | null;
+          photo_url: string | null;
+          bio: string | null;
+          years_experience: number;
+          specialties: string[];
+          certifications: string[];
+          languages: string[];
+          cities: string[];
+          home_visit_price: number;
+          clinic_visit_price: number;
+          package_discount_pct: number;
+          rating_avg: number;
+          rating_count: number;
+          total_sessions: number;
+          is_active: boolean;
+          is_verified: boolean;
+          available_for_home: boolean;
+          available_for_clinic: boolean;
+          clinic_name: string | null;
+          clinic_address: string | null;
+          clinic_city: string | null;
+          clinic_phone: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<{
+          id: string;
+          user_id: string | null;
+          title: string;
+          gender: 'male' | 'female' | null;
+          photo_url: string | null;
+          bio: string | null;
+          years_experience: number;
+          specialties: string[];
+          certifications: string[];
+          languages: string[];
+          cities: string[];
+          home_visit_price: number;
+          clinic_visit_price: number;
+          package_discount_pct: number;
+          rating_avg: number;
+          rating_count: number;
+          total_sessions: number;
+          is_active: boolean;
+          is_verified: boolean;
+          available_for_home: boolean;
+          available_for_clinic: boolean;
+          clinic_name: string | null;
+          clinic_address: string | null;
+          clinic_city: string | null;
+          clinic_phone: string | null;
+        }> & { full_name: string };
+        Update: Partial<{
+          full_name: string;
+          bio: string | null;
+          rating_avg: number;
+          rating_count: number;
+          is_active: boolean;
+          is_verified: boolean;
+        }>;
+        Relationships: [];
+      };
       // ✨ V25.10: Analytics Events
       analytics_events: {
         Row: {
