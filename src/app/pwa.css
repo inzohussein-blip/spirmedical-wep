@@ -1,0 +1,241 @@
+/**
+ * ═══════════════════════════════════════════════════════════════
+ * 📱 PWA-Specific Styles (V25.15)
+ * ═══════════════════════════════════════════════════════════════
+ *
+ * يُضاف في globals.css أو يُحمّل من layout.tsx
+ *
+ * الميزات:
+ *   - Safe areas (notch) handling
+ *   - Standalone mode styles
+ *   - Platform-specific tweaks
+ *   - No-select على الـ UI (إلا للنصوص)
+ *   - Better tap highlights
+ *   - Native scroll behavior
+ * ═══════════════════════════════════════════════════════════════
+ */
+
+/* ─── Safe Area Variables (iOS notch) ─── */
+:root {
+  --sat: env(safe-area-inset-top, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+}
+
+/* ─── Safe Area Utility Classes ─── */
+.pwa-safe-top {
+  padding-top: var(--sat);
+}
+
+.pwa-safe-bottom {
+  padding-bottom: var(--sab);
+}
+
+.pwa-safe-x {
+  padding-inline-start: var(--sal);
+  padding-inline-end: var(--sar);
+}
+
+.pwa-safe-all {
+  padding-top: var(--sat);
+  padding-bottom: var(--sab);
+  padding-inline-start: var(--sal);
+  padding-inline-end: var(--sar);
+}
+
+/* ─── Standalone Mode (PWA installed) ─── */
+.pwa-standalone .app-screen {
+  padding-top: var(--sat);
+  padding-bottom: var(--sab);
+}
+
+.pwa-standalone body {
+  /* منع pull-to-refresh الافتراضي على Chrome Android */
+  overscroll-behavior-y: none;
+}
+
+/* ─── iOS-Specific ─── */
+.pwa-ios {
+  /* Smooth scrolling like native */
+  -webkit-overflow-scrolling: touch;
+}
+
+.pwa-ios.pwa-standalone {
+  /* فضاء إضافي لـ notch */
+  --header-safe-pad: max(var(--sat), 16px);
+}
+
+/* iOS: تأكّد من إخفاء الـ status bar في PWA standalone */
+@supports (-webkit-touch-callout: none) {
+  .pwa-standalone .app-screen {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* ─── Android-Specific ─── */
+.pwa-android {
+  /* Tap highlight أنظف */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ─── Tap Highlights ─── */
+button, a, [role="button"] {
+  -webkit-tap-highlight-color: rgba(15, 107, 88, 0.1);
+  touch-action: manipulation;  /* يمنع double-tap zoom */
+}
+
+/* ─── Selection ─── */
+.pwa-standalone {
+  /* في standalone: امنع select على الـ UI */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* لكن السماح بالـ select للنصوص الفعلية */
+.pwa-standalone p,
+.pwa-standalone h1,
+.pwa-standalone h2,
+.pwa-standalone h3,
+.pwa-standalone h4,
+.pwa-standalone h5,
+.pwa-standalone h6,
+.pwa-standalone input,
+.pwa-standalone textarea,
+.pwa-standalone [contenteditable] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* ─── Smooth Scrolling ─── */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ─── Disable text resize on iOS rotation ─── */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* ─── Pull-to-refresh visual ─── */
+.pwa-pull-indicator {
+  position: fixed;
+  top: var(--sat);
+  insetInline: 0;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--emerald-soft);
+  color: var(--emerald);
+  font-size: 12px;
+  font-weight: 800;
+  z-index: 998;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease;
+}
+
+.pwa-pull-indicator.visible {
+  transform: translateY(0);
+}
+
+/* ─── Skeleton Pulse للـ PWA ─── */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse, .animate-spin {
+    animation: none !important;
+  }
+}
+
+/* ─── Notch-Aware Header ─── */
+.pwa-standalone .scr-header-v2 {
+  padding-top: max(var(--sat), 12px);
+}
+
+/* ─── Bottom Nav Safe Area ─── */
+.bottom-nav {
+  padding-bottom: max(var(--sab), 8px);
+}
+
+/* ─── Floating Buttons - safe positioning ─── */
+.fab-floating {
+  bottom: max(calc(70px + var(--sab)), 80px);
+}
+
+/* ─── Loading Splash (للـ standalone) ─── */
+.pwa-splash {
+  position: fixed;
+  inset: 0;
+  background: var(--emerald);
+  color: var(--paper-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 99998;
+  animation: pwa-splash-fade 0.3s ease;
+}
+
+@keyframes pwa-splash-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.pwa-splash-logo {
+  width: 100px;
+  height: 100px;
+  background: white;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  margin-bottom: 24px;
+  animation: pwa-splash-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pwa-splash-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* ─── Native-like Button Active State ─── */
+@media (hover: none) {
+  button:active,
+  a:active,
+  [role="button"]:active {
+    transform: scale(0.97);
+    transition: transform 0.1s ease;
+  }
+}
+
+/* ─── Hide scrollbar للـ PWA standalone ─── */
+.pwa-standalone .scrollable-area::-webkit-scrollbar {
+  display: none;
+}
+
+.pwa-standalone .scrollable-area {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ─── Better Focus Indicators ─── */
+.pwa-standalone *:focus-visible {
+  outline: 2px solid var(--emerald);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Disable user-select على status bar فقط ─── */
+.status-bar-overlay {
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
