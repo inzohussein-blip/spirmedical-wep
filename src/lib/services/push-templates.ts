@@ -324,3 +324,85 @@ export async function notifyNewMessage(
     });
   }
 }
+
+/* ─── 10. رد جديد على استشارة (V25.10) ─── */
+
+export async function notifyConsultationReply(
+  recipientUserId: string,
+  data: {
+    senderName: string;      // اسم الطبيب أو المريض
+    senderRole: 'doctor' | 'patient';
+    preview: string;          // معاينة الرسالة
+    consultationId: string;
+    consultationTitle?: string;
+  }
+): Promise<void> {
+  try {
+    const icon = data.senderRole === 'doctor' ? '👨‍⚕️' : '👤';
+    const subject = data.senderRole === 'doctor' ? 'رد جديد من' : 'رسالة جديدة من';
+
+    await sendPushToUser(
+      recipientUserId,
+      {
+        title: `${icon} ${subject} ${data.senderName}`,
+        body:
+          data.preview.length > 80
+            ? data.preview.slice(0, 80) + '...'
+            : data.preview,
+        url: `/consultations/${data.consultationId}`,
+        tag: `consultation-${data.consultationId}`,
+        data: {
+          consultationId: data.consultationId,
+          type: 'consultation_reply',
+        },
+      },
+      'consultations'
+    );
+  } catch (err) {
+    logger.warn('notifyConsultationReply failed', {
+      recipientUserId,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
+/* ─── 11. مشاركة سجل طبي في استشارة (V25.10) ─── */
+
+export async function notifyMedicalRecordShared(
+  doctorUserId: string,
+  data: {
+    patientName: string;
+    recordType: string;
+    consultationId: string;
+  }
+): Promise<void> {
+  try {
+    const typeLabels: Record<string, string> = {
+      appointment: 'موعد سابق',
+      lab_result: 'نتيجة تحليل',
+      prescription: 'وصفة طبية',
+      nursing_visit: 'زيارة تمريض',
+    };
+    const typeLabel = typeLabels[data.recordType] || 'سجل طبي';
+
+    await sendPushToUser(
+      doctorUserId,
+      {
+        title: `📋 ${data.patientName} شارك ${typeLabel}`,
+        body: 'تم تحويل سجل طبي معك - افتح الاستشارة لعرضه',
+        url: `/consultations/${data.consultationId}`,
+        tag: `consultation-record-${data.consultationId}`,
+        data: {
+          consultationId: data.consultationId,
+          type: 'medical_record_shared',
+        },
+      },
+      'consultations'
+    );
+  } catch (err) {
+    logger.warn('notifyMedicalRecordShared failed', {
+      doctorUserId,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
