@@ -11,6 +11,7 @@ import { Toaster } from '@/components/ui/Toaster';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import PWAModeProvider from '@/components/pwa/PWAModeProvider';
 import SmartInstallPrompt from '@/components/pwa/SmartInstallPrompt';
+import IOSSplashScreens from '@/components/pwa/IOSSplashScreens';
 
 // خطوط — Tajawal فقط (وحّدنا الخط في V15)
 // JetBrains-Mono للأرقام والوقت فقط
@@ -247,8 +248,16 @@ export default function RootLayout({
 
         {/* JSON-LD Structured Data */}
         <StructuredData />
+
+        {/* ✨ V25.17: iOS Splash Screens */}
+        <IOSSplashScreens />
       </head>
       <body>
+        {/* ♿ Skip to content link (a11y) */}
+        <a href="#main-content" className="skip-link">
+          تخطّي إلى المحتوى
+        </a>
+
         <PWAModeProvider>
           <ThemeProvider>
             {children}
