@@ -10,6 +10,7 @@ import { SERVICES } from '@/lib/services/services-data';
 import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
 import { ALL_LABS } from '@/lib/services/labs-data';
 import { createAppointmentV2 } from './actions';
+import { track } from '@/lib/analytics';
 import { FlaskConical, AlertTriangle, Briefcase, MessageCircle, Syringe } from 'lucide-react';
 
 interface Props {
@@ -90,6 +91,12 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
     });
 
     if (result.success) {
+      track('booking_completed', {
+        service_type: 'home-nursing',
+        appointment_id: result.appointmentId,
+        total_price: data.totalPrice,
+        for_family_member: !!data.family_member_id,
+      });
       router.push(`/appointments/${result.appointmentId}?new=1`);
     } else {
       setError(result.error || 'حدث خطأ');
@@ -180,6 +187,12 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
     });
 
     if (result.success) {
+      track('booking_completed', {
+        service_type: 'home-nursing',
+        appointment_id: result.appointmentId,
+        total_price: data.totalPrice,
+        for_family_member: !!data.family_member_id,
+      });
       router.push(`/appointments/${result.appointmentId}?new=1`);
     } else {
       setError(result.error || 'حدث خطأ');
