@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import DashboardSearch from './search-client';
 import DashboardPills from './pills-client';
 import StoriesRow from '@/components/dashboard/StoriesRow';
+import OnboardingTrigger from '@/components/onboarding/OnboardingTrigger';
 
 export const dynamic = 'force-dynamic';
 
@@ -112,6 +113,7 @@ export default async function DashboardPage() {
 
   return (
     <main className="app-screen">
+      <OnboardingTrigger />
       <div className="scr-content">
 
         {/* HEADER */}
