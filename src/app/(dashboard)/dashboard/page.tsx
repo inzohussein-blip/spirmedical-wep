@@ -58,7 +58,7 @@ const CORE_SERVICES: Service[] = [
   { id: 'reminders', icon: '⏰', title: 'تنبيهات', desc: 'دواء · مواعيد', variant: 'default', href: '/account/reminders' },
   { id: 'prescriptions', icon: '📋', title: 'وصفاتي', desc: 'كل وصفاتك', variant: 'amber', href: '/account/prescriptions' },
   { id: 'health-dashboard', icon: '📊', title: 'لوحة الصحة', desc: 'ضغط · سكر', variant: 'default', href: '/account/health' },
-  { id: 'physio', icon: '🦾', title: 'فيزيائي', desc: 'علاج طبيعي', variant: 'amber', badge: 'قريباً' },
+  { id: 'physio', icon: '🦾', title: 'فيزيائي', desc: 'علاج طبيعي', variant: 'amber', href: '/services/physio' },
 ];
 
 // ============================================================
