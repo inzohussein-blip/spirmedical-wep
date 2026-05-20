@@ -239,3 +239,108 @@ html {
   user-select: none;
   pointer-events: none;
 }
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* ♿ Accessibility - Focus Indicators (V25.17)                    */
+/* ═══════════════════════════════════════════════════════════════ */
+
+/* Focus indicators واضحة لـ keyboard users فقط */
+*:focus {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--emerald);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Focus على الأزرار - shadow بدل outline أنعم */
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px var(--paper-3),
+    0 0 0 5px var(--emerald);
+}
+
+/* Inputs - border بدل outline */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  border-color: var(--emerald);
+  box-shadow: 0 0 0 3px rgba(15, 107, 88, 0.15);
+}
+
+/* Skip to content link - مخفي حتى focus */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  insetInlineStart: 12px;
+  background: var(--emerald);
+  color: var(--paper-3);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 800;
+  text-decoration: none;
+  z-index: 99999;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 12px;
+}
+
+/* Screen-reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Better focus على الـ tabs */
+[role="tab"]:focus-visible {
+  outline: 2px solid var(--emerald);
+  outline-offset: 2px;
+}
+
+/* Modal/Dialog focus trap */
+[role="dialog"] *:focus-visible {
+  outline: 2px solid var(--emerald);
+  outline-offset: 2px;
+}
+
+/* High contrast mode للـ a11y */
+@media (prefers-contrast: more) {
+  :root {
+    --line: #888;
+    --ink-3: #555;
+  }
+
+  button, a, input, select, textarea {
+    border-width: 2px !important;
+  }
+}
+
+/* Larger touch targets على mobile */
+@media (pointer: coarse) {
+  button,
+  a,
+  [role="button"] {
+    min-height: 44px;  /* WCAG minimum */
+    min-width: 44px;
+  }
+}
+
+/* RTL: outline يحترم الـ direction */
+[dir="rtl"] .skip-link {
+  insetInlineStart: 12px;
+}
