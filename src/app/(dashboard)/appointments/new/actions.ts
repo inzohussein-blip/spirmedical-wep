@@ -11,6 +11,7 @@ import { encrypt } from '@/lib/encryption';
 import { logger } from '@/lib/logger';
 import { sendAppointmentConfirmedEmail } from '@/lib/email/actions';
 import { notifyOrderConfirmed } from '@/lib/services/push-templates';
+import { sendAppointmentConfirmedWA, isWhatsAppEnabled } from '@/lib/services/whatsapp';
 
 interface CreateAppointmentInput {
   service_id: string;
@@ -174,6 +175,29 @@ export async function createAppointmentV2(input: CreateAppointmentInput) {
     serviceName: input.service_name,
     scheduledAt: input.scheduled_at,
   }).catch(() => null);
+
+  // ✨ V25.10: WhatsApp Business API (fire-and-forget)
+  if (isWhatsAppEnabled()) {
+    const { data: userData } = await supabase
+      .from('users')
+      .select('phone, full_name')
+      .eq('id', user.id)
+      .single();
+
+    if (userData?.phone) {
+      sendAppointmentConfirmedWA({
+        phone: userData.phone,
+        patientName: userData.full_name || 'عزيزي',
+        serviceName: input.service_name,
+        scheduledDate: new Date(input.scheduled_at).toLocaleDateString('ar-IQ', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        }),
+      }).catch(() => null);
+    }
+  }
 
   logger.info('Appointment created', {
     user_id: user.id,
