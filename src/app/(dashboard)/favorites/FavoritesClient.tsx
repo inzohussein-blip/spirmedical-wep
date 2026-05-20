@@ -8,6 +8,7 @@ import {
   Pill, FlaskConical, ChevronLeft, Loader2, Search,
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
+import EmptyStateV2, { type EmptyVariant } from '@/components/ui/EmptyStateV2';
 import { removeFavorite } from './actions';
 
 interface Favorite {
@@ -302,70 +303,45 @@ export default function FavoritesClient({ initialFavorites }: Props) {
 
 // ═══════════════════════════════════════════════════════════════
 function EmptyState({ activeTab }: { activeTab: string }) {
-  const messages: Record<string, { title: string; sub: string; cta?: { label: string; href: string } }> = {
+  const variantMap: Record<string, { variant: EmptyVariant; ctaLabel: string; href: string }> = {
     all: {
-      title: 'لا توجد مفضّلات',
-      sub: 'ابدأ بإضافة أطبائك والمستشفيات المفضّلة',
-      cta: { label: 'تصفّح الأطباء', href: '/services/doctors' },
+      variant: 'favorites',
+      ctaLabel: 'تصفّح الأطباء',
+      href: '/services/doctors',
     },
     doctor: {
-      title: 'لا توجد أطباء مفضّلون',
-      sub: 'احفظ أطبائك للوصول السريع',
-      cta: { label: 'تصفّح الأطباء', href: '/services/doctors' },
+      variant: 'doctors',
+      ctaLabel: 'تصفّح الأطباء',
+      href: '/services/doctors',
     },
     hospital: {
-      title: 'لا توجد مستشفيات مفضّلة',
-      sub: 'احفظ المستشفيات القريبة',
-      cta: { label: 'تصفّح المستشفيات', href: '/services/hospitals' },
+      variant: 'hospitals',
+      ctaLabel: 'تصفّح المستشفيات',
+      href: '/services/hospitals',
     },
     pharmacy: {
-      title: 'لا توجد صيدليات مفضّلة',
-      sub: 'احفظ صيدلياتك المعتادة',
-      cta: { label: 'تصفّح الصيدليات', href: '/services/pharmacies' },
+      variant: 'pharmacies',
+      ctaLabel: 'تصفّح الصيدليات',
+      href: '/services/pharmacies',
     },
     lab_test: {
-      title: 'لا توجد فحوصات محفوظة',
-      sub: 'احفظ فحوصاتك الدورية',
-      cta: { label: 'حجز فحص', href: '/appointments/new?service=blood-draw' },
+      variant: 'tests',
+      ctaLabel: 'حجز فحص',
+      href: '/appointments/new?service=blood-draw',
     },
     medication: {
-      title: 'لا توجد أدوية محفوظة',
-      sub: 'احفظ أدويتك المعتادة للبحث السريع',
-      cta: { label: 'بحث عن دواء', href: '/services/pharmacies/search' },
+      variant: 'inbox',
+      ctaLabel: 'بحث عن دواء',
+      href: '/services/pharmacies/search',
     },
   };
 
-  const msg = messages[activeTab] || messages.all;
+  const cfg = variantMap[activeTab] || variantMap.all;
 
   return (
-    <div className="scr-empty" style={{ marginTop: 32 }}>
-      <div className="scr-empty-icon" aria-hidden="true">
-        <Heart size={42} strokeWidth={1.5} />
-      </div>
-      <h2 className="scr-empty-title">{msg.title}</h2>
-      <p style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 8, marginBottom: 20 }}>
-        {msg.sub}
-      </p>
-      {msg.cta && (
-        <Link
-          href={msg.cta.href}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '10px 20px',
-            background: 'var(--emerald)',
-            color: 'var(--paper-3)',
-            borderRadius: 100,
-            textDecoration: 'none',
-            fontSize: 13,
-            fontWeight: 800,
-          }}
-        >
-          {msg.cta.label}
-          <ChevronLeft size={14} />
-        </Link>
-      )}
-    </div>
+    <EmptyStateV2
+      variant={cfg.variant}
+      cta={{ label: cfg.ctaLabel, href: cfg.href }}
+    />
   );
 }
