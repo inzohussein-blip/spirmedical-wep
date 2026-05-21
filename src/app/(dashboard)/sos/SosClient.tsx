@@ -4,6 +4,8 @@ import { useState } from 'react';
 import {
   MapPin, CheckCircle2, AlertTriangle, Loader2, AlertOctagon,
 } from 'lucide-react';
+import { haptic } from '@/lib/haptic';
+import StatusBar from '@/components/pwa/StatusBar';
 
 interface Props {
   userName: string;
@@ -16,7 +18,9 @@ export default function SosClient({ userName, userPhone }: Props) {
   const [errorMsg, setErrorMsg] = useState('');
 
   function getLocation() {
+    haptic.heavy();  // اهتزاز قوي للطوارئ
     if (!navigator.geolocation) {
+      haptic.error();
       setStatus('error');
       setErrorMsg('المتصفح لا يدعم تحديد الموقع');
       return;
@@ -24,10 +28,12 @@ export default function SosClient({ userName, userPhone }: Props) {
     setStatus('fetching');
     navigator.geolocation.getCurrentPosition(
       (pos) => {
+        haptic.success();
         setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
         setStatus('ready');
       },
       (err) => {
+        haptic.error();
         setStatus('error');
         setErrorMsg(err.code === 1 ? 'تم رفض إذن الموقع' : 'تعذّر تحديد الموقع');
       },
@@ -37,6 +43,7 @@ export default function SosClient({ userName, userPhone }: Props) {
 
   function sendLocation() {
     if (!coords) return;
+    haptic.heartbeat();  // اهتزاز نبضي خاص بالطوارئ
     const mapsUrl = `https://maps.google.com/?q=${coords.lat},${coords.lng}`;
     const message = `[طوارئ]\nالاسم: ${userName || 'مستخدم سباير ميديكال'}\nالموبايل: ${userPhone || '—'}\nالموقع: ${mapsUrl}`;
     // فتح WhatsApp مع الرسالة جاهزة
@@ -45,6 +52,8 @@ export default function SosClient({ userName, userPhone }: Props) {
   }
 
   return (
+    <>
+    <StatusBar color="rose" />
     <button
       type="button"
       onClick={status === 'ready' ? sendLocation : getLocation}
@@ -78,5 +87,6 @@ export default function SosClient({ userName, userPhone }: Props) {
       </div>
       <div className="sos-gps-arrow" aria-hidden="true">←</div>
     </button>
+    </>
   );
 }
