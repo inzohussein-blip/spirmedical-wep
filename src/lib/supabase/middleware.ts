@@ -13,6 +13,7 @@ export async function updateSession(request: NextRequest) {
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
+    // eslint-disable-next-line no-console
     console.error(
       '[middleware] Supabase environment variables not configured. ' +
         'Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Vercel.'
@@ -79,6 +80,7 @@ export async function updateSession(request: NextRequest) {
           return NextResponse.redirect(url);
         }
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error('[middleware] Failed to check specialist role:', err);
         const url = request.nextUrl.clone();
         url.pathname = '/dashboard';
@@ -107,6 +109,7 @@ export async function updateSession(request: NextRequest) {
 
     return supabaseResponse;
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.error('[middleware] Unexpected error:', err);
     return NextResponse.next({ request });
   }
