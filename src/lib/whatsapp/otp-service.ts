@@ -70,6 +70,7 @@ async function checkRateLimit(phone: string): Promise<{
     .gte('created_at', oneHourAgo);
 
   if (error) {
+    // eslint-disable-next-line no-console
     console.error('[OTP] Rate limit check failed:', error);
     return { allowed: true }; // fail open في حالة خطأ DB
   }
@@ -138,6 +139,7 @@ export async function sendOtp(params: {
     .single();
 
   if (dbError || !otpRecord) {
+    // eslint-disable-next-line no-console
     console.error('[OTP] DB insert failed:', dbError);
     return { success: false, error: 'فشل حفظ الرمز' };
   }
@@ -293,6 +295,7 @@ async function sendOtpViaTelegram(
 ): Promise<{ success: boolean; messageId?: string; error?: string }> {
   // TODO: تكامل مع Telegram bot الموجود
   // يحتاج user_telegram_links لربط الرقم بالحساب
+  // eslint-disable-next-line no-console
   console.warn(`[Telegram] Would send OTP ${otp} to ${phone}`);
   return { success: false, error: 'Telegram OTP غير مفعّل بعد' };
 }
@@ -302,6 +305,7 @@ async function sendOtpViaSms(
   otp: string
 ): Promise<{ success: boolean; messageId?: string; error?: string }> {
   // TODO: تكامل مع مزود SMS عراقي (Asiacell/Zain/etc)
+  // eslint-disable-next-line no-console
   console.warn(`[SMS] Would send OTP ${otp} to ${phone}`);
   return { success: false, error: 'SMS غير مفعّل بعد' };
 }
