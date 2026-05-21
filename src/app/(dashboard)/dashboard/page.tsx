@@ -60,6 +60,11 @@ const CORE_SERVICES: Service[] = [
   { id: 'prescriptions', icon: '📋', title: 'وصفاتي', desc: 'كل وصفاتك', variant: 'amber', href: '/account/prescriptions' },
   { id: 'health-dashboard', icon: '📊', title: 'لوحة الصحة', desc: 'ضغط · سكر', variant: 'default', href: '/account/health' },
   { id: 'physio', icon: '🦾', title: 'فيزيائي', desc: 'علاج طبيعي', variant: 'amber', href: '/services/physio' },
+  // ✨ V25.19: 4 خدمات جديدة
+  { id: 'dental', icon: '🦷', title: 'طب الأسنان', desc: 'تقويم · زراعة · تبييض', variant: 'default', href: '/services/dental', badge: 'جديد' },
+  { id: 'optical', icon: '👓', title: 'النظارات الطبية', desc: 'فحص · إطارات · عدسات', variant: 'amber', href: '/services/optical', badge: 'جديد' },
+  { id: 'mental-health', icon: '🧠', title: 'الصحة النفسية', desc: 'سرية · علاج · استشارات', variant: 'default', href: '/services/mental-health', badge: 'جديد' },
+  { id: 'nutrition', icon: '🥗', title: 'التغذية والحمية', desc: 'إنقاص وزن · سكري · رياضة', variant: 'amber', href: '/services/nutrition', badge: 'جديد' },
 ];
 
 // ============================================================
