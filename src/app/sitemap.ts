@@ -89,6 +89,34 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
       changeFrequency: 'yearly',
     },
+    // ─────────────────────────────────────────
+    // 🏥 صفحات الخدمات (V25.21)
+    // ─────────────────────────────────────────
+    {
+      url: '/services/dental',
+      priority: 0.9,
+      changeFrequency: 'weekly',
+    },
+    {
+      url: '/services/optical',
+      priority: 0.9,
+      changeFrequency: 'weekly',
+    },
+    {
+      url: '/services/mental-health',
+      priority: 0.9,
+      changeFrequency: 'weekly',
+    },
+    {
+      url: '/services/nutrition',
+      priority: 0.9,
+      changeFrequency: 'weekly',
+    },
+    {
+      url: '/services/physio',
+      priority: 0.9,
+      changeFrequency: 'weekly',
+    },
   ];
 
   // ─────────────────────────────────────────
