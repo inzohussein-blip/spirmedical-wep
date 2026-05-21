@@ -11,6 +11,8 @@ import {
 import { toast } from '@/components/ui/Toaster';
 import { subscribeToDoctor, startConsultation } from './actions';
 import { track } from '@/lib/analytics';
+import ShareButton from '@/components/pwa/ShareButton';
+import LazyImage from '@/components/ui/LazyImage';
 
 interface Doctor {
   id: string;
@@ -123,7 +125,14 @@ export default function DoctorDetailClient({ doctor, activeSubscription }: Props
           <h1 className="scr-page-title" style={{ fontSize: 15 }}>
             {doctor.title} {doctor.full_name.split(' ').slice(0, 2).join(' ')}
           </h1>
-          <div className="scr-page-spacer" />
+          <ShareButton
+            variant="icon"
+            size="sm"
+            title={`${doctor.title} ${doctor.full_name}`}
+            text={`طبيب على Spir Medical - ${doctor.specialty || 'طب عام'}`}
+            url={`/services/doctors/${doctor.id}`}
+            label="مشاركة"
+          />
         </div>
 
         {/* Hero card */}
@@ -166,8 +175,11 @@ export default function DoctorDetailClient({ doctor, activeSubscription }: Props
               }}
             >
               {doctor.avatar_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={doctor.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <LazyImage
+                  src={doctor.avatar_url}
+                  alt={doctor.full_name || 'طبيب'}
+                  style={{ width: '100%', height: '100%' }}
+                />
               ) : (
                 doctor.gender === 'female' ? '👩‍⚕️' : '👨‍⚕️'
               )}
