@@ -5,6 +5,7 @@ import DashboardSearch from './search-client';
 import DashboardPills from './pills-client';
 import StoriesRow from '@/components/dashboard/StoriesRow';
 import OnboardingTrigger from '@/components/onboarding/OnboardingTrigger';
+import RefreshWrapper from '@/components/pwa/RefreshWrapper';
 
 export const dynamic = 'force-dynamic';
 
@@ -114,6 +115,7 @@ export default async function DashboardPage() {
   return (
     <main className="app-screen">
       <OnboardingTrigger />
+      <RefreshWrapper>
       <div className="scr-content">
 
         {/* HEADER */}
@@ -218,6 +220,7 @@ export default async function DashboardPage() {
           <div className="service-arrow" aria-hidden="true">←</div>
         </Link>
       </div>
+      </RefreshWrapper>
     </main>
   );
 }
