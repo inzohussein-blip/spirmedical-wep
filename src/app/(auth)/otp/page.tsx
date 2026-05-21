@@ -14,17 +14,18 @@ import { verifyOtp } from '../login/actions';
 const searchParamsSchema = z.object({
   phone: z.string().min(10).max(20),
   error: z.string().max(500).optional(),
+  redirect: z.string().max(200).optional(),
 });
 
 export default function OtpPage({
   searchParams,
 }: {
-  searchParams: { phone?: string; error?: string };
+  searchParams: { phone?: string; error?: string; redirect?: string };
 }) {
   const params = searchParamsSchema.safeParse(searchParams);
   if (!params.success) redirect('/login');
 
-  const { phone, error } = params.data;
+  const { phone, error, redirect: redirectTo } = params.data;
   const maskedPhone =
     phone.length > 6
       ? phone.slice(0, 4) + ' ●●● ' + phone.slice(-3)
@@ -62,6 +63,7 @@ export default function OtpPage({
 
       <form action={verifyOtp} className="auth-form">
         <input type="hidden" name="phone" value={phone} />
+        {redirectTo && <input type="hidden" name="redirect" value={redirectTo} />}
 
         <label htmlFor="token" className="auth-field-label" style={{ position: 'absolute', left: '-9999px' }}>
           رمز التحقق
