@@ -16,6 +16,7 @@ import { useReportWebVitals } from 'next/web-vitals';
 export default function WebVitalsReporter() {
   useReportWebVitals((metric) => {
     if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
       console.log(`[Web Vitals] ${metric.name}:`, {
         value: Math.round(metric.value * 100) / 100,
         rating: metric.rating,
