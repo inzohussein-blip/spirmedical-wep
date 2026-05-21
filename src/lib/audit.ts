@@ -31,9 +31,11 @@ export async function logAuditEvent(event: AuditEvent): Promise<void> {
     if (error) {
       // فشل audit logging لا يجب أن يكسر العملية الأصلية،
       // لكن يجب أن يُسجَّل في الـ console لتنبيه DevOps
+      // eslint-disable-next-line no-console
       console.error('[audit] Failed to log event:', error.message, event);
     }
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.error('[audit] Exception:', err);
   }
 }
