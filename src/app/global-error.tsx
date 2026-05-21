@@ -13,6 +13,7 @@ export default function Error({
 }) {
   useEffect(() => {
     // في الإنتاج: أرسل لـ Sentry/error tracking
+    // eslint-disable-next-line no-console
     console.error('[error.tsx]', error);
   }, [error]);
 
