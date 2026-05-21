@@ -38,6 +38,10 @@ export default function SmartInstallPrompt() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    // 🎯 V25.28: refs للـ cleanup
+    let iosTimer: ReturnType<typeof setTimeout> | null = null;
+    let androidTimer: ReturnType<typeof setTimeout> | null = null;
+
     // ─── Detection ───
     const isStandalone =
       window.matchMedia('(display-mode: standalone)').matches ||
@@ -71,8 +75,11 @@ export default function SmartInstallPrompt() {
 
     if (iOSDetected) {
       // iOS لا يدعم beforeinstallprompt - نُظهر banner مع instructions
-      setTimeout(() => setShow(true), 3000);
-      return;
+      iosTimer = setTimeout(() => setShow(true), 3000);
+      // 🎯 V25.28: cleanup حتى لـ iOS path
+      return () => {
+        if (iosTimer) clearTimeout(iosTimer);
+      };
     }
 
     // ─── Android/Desktop: استمع للـ beforeinstallprompt ───
@@ -80,18 +87,25 @@ export default function SmartInstallPrompt() {
       e.preventDefault();
       const event = e as BeforeInstallPromptEvent;
       setDeferredPrompt(event);
-      setTimeout(() => setShow(true), 3000);
+      androidTimer = setTimeout(() => setShow(true), 3000);
     };
 
     window.addEventListener('beforeinstallprompt', handler);
 
     // App installed event
-    window.addEventListener('appinstalled', () => {
+    const installedHandler = () => {
       localStorage.setItem(STORAGE_KEY_INSTALLED, 'true');
       setShow(false);
-    });
+    };
+    window.addEventListener('appinstalled', installedHandler);
 
-    return () => window.removeEventListener('beforeinstallprompt', handler);
+    // 🎯 V25.28: cleanup شامل
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+      window.removeEventListener('appinstalled', installedHandler);
+      if (iosTimer) clearTimeout(iosTimer);
+      if (androidTimer) clearTimeout(androidTimer);
+    };
   }, []);
 
   const handleInstall = async () => {
