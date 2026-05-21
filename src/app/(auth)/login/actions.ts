@@ -55,6 +55,8 @@ function isNextRedirect(err: unknown): boolean {
 export async function sendOtp(formData: FormData) {
   const phone = formData.get('phone') as string;
   const action = (formData.get('action') as string) || 'auto';
+  // 🎯 V25.24: نُمرّر redirect URL لو موجود
+  const redirectTo = formData.get('redirect') as string | null;
 
   const ip = getIp();
   const limit = await checkRateLimit(`otp:send:${ip}`, {
@@ -110,7 +112,12 @@ export async function sendOtp(formData: FormData) {
     metadata: { phone: normalizedPhone, ip },
   });
 
-  redirect(`/otp?phone=${encodeURIComponent(normalizedPhone)}`);
+  // 🎯 V25.24: مرّر redirect إلى صفحة OTP
+  const otpUrl = redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')
+    ? `/otp?phone=${encodeURIComponent(normalizedPhone)}&redirect=${encodeURIComponent(redirectTo)}`
+    : `/otp?phone=${encodeURIComponent(normalizedPhone)}`;
+
+  redirect(otpUrl);
 }
 
 // ─────────────────────────────────────────────────────────
@@ -330,6 +337,8 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
 export async function verifyOtp(formData: FormData) {
   const phone = formData.get('phone') as string;
   const token = formData.get('token') as string;
+  // 🎯 V25.24: redirect URL لو المستخدم جاء من صفحة محمية
+  const redirectTo = (formData.get('redirect') as string | null) || null;
 
   const ip = getIp();
   const limit = await checkRateLimit(`otp:verify:${ip}`, {
@@ -394,6 +403,12 @@ export async function verifyOtp(formData: FormData) {
     profile?.role === 'support'
   ) {
     redirect('/admin44');
+  }
+
+  // 🎯 V25.24: لو فيه redirect URL صالح من الـ middleware، نُوجّه إليه
+  // (للأمان: نقبل فقط internal paths مش URLs خارجية)
+  if (redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')) {
+    redirect(redirectTo);
   }
 
   redirect('/dashboard');
