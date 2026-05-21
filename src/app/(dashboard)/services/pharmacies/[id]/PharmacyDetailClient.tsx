@@ -7,6 +7,7 @@ import {
   CheckCircle2, XCircle, Filter, AlertCircle, Building2,
   MessageCircle, Star, Package,
 } from 'lucide-react';
+import ShareButton from '@/components/pwa/ShareButton';
 
 interface Pharmacy {
   id: string;
@@ -122,7 +123,14 @@ export default function PharmacyDetailClient({ pharmacy, inventory }: Props) {
           <h1 className="scr-page-title" style={{ fontSize: 16 }}>
             {pharmacy.name}
           </h1>
-          <div className="scr-page-spacer" />
+          <ShareButton
+            variant="icon"
+            size="sm"
+            title={pharmacy.name}
+            text={`صيدلية على Spir Medical${pharmacy.city ? ` - ${pharmacy.city}` : ''}`}
+            url={`/services/pharmacies/${pharmacy.id}`}
+            label="مشاركة الصيدلية"
+          />
         </div>
 
         {/* Pharmacy Info Card */}
