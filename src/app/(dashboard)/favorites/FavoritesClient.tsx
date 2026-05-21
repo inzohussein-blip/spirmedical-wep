@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
 import EmptyStateV2, { type EmptyVariant } from '@/components/ui/EmptyStateV2';
+import PullToRefresh from '@/components/pwa/PullToRefresh';
 import { removeFavorite } from './actions';
 
 interface Favorite {
@@ -101,8 +102,14 @@ export default function FavoritesClient({ initialFavorites }: Props) {
     });
   };
 
+  const handleRefresh = async () => {
+    router.refresh();
+    await new Promise((r) => setTimeout(r, 500));
+  };
+
   return (
     <main className="app-screen">
+      <PullToRefresh onRefresh={handleRefresh}>
       <div className="scr-content">
         <div className="scr-page-header">
           <Link href="/dashboard" className="scr-back-btn" aria-label="العودة">
@@ -297,6 +304,7 @@ export default function FavoritesClient({ initialFavorites }: Props) {
 
         <div style={{ height: 80 }} />
       </div>
+      </PullToRefresh>
     </main>
   );
 }
