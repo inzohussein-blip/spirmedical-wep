@@ -24,7 +24,6 @@ const NEVER_CACHE = [
   '/api/auth',
   '/api/admin',
   '/auth/callback',
-  '/login',
 ];
 
 const CACHEABLE_APIS = ['/api/monitoring/health'];
