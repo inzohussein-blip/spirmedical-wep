@@ -16,7 +16,7 @@ const organizationSchema = {
   name: 'Spir Medical',
   alternateName: 'سباير ميديكال',
   description:
-    'منصة طبية رقمية متكاملة في العراق · 14 خدمة طبية · 18 محافظة · 24/7 · سحب دم منزلي · تحاليل · استشارات · صناعة عراقية',
+    'منصة طبية رقمية متكاملة في العراق · 15 خدمة طبية · 18 محافظة · 24/7 · سحب دم منزلي · تحاليل · استشارات · صناعة عراقية',
   url: SITE_URL,
   logo: `${SITE_URL}/logo.png`,
   image: `${SITE_URL}/api/og`,
@@ -60,6 +60,10 @@ const organizationSchema = {
     'Cardiovascular',
     'Dermatologic',
     'Nutritionist',
+    'Dentistry',
+    'Ophthalmologic',
+    'Psychiatric',
+    'Physiotherapy',
   ],
   availableService: [
     {
