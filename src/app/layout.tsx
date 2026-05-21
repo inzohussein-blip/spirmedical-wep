@@ -11,7 +11,10 @@ import { Toaster } from '@/components/ui/Toaster';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import PWAModeProvider from '@/components/pwa/PWAModeProvider';
 import SmartInstallPrompt from '@/components/pwa/SmartInstallPrompt';
+import IOSInstallPrompt from '@/components/pwa/IOSInstallPrompt';
 import IOSSplashScreens from '@/components/pwa/IOSSplashScreens';
+import AppBackHandler from '@/components/pwa/AppBackHandler';
+import SessionSync from '@/components/pwa/SessionSync';
 
 // خطوط — Tajawal فقط (وحّدنا الخط في V15)
 // JetBrains-Mono للأرقام والوقت فقط
@@ -166,14 +169,16 @@ export const metadata: Metadata = {
 
   // 📝 Meta tags إضافية (للـ AI agents الحديثة)
   other: {
-    // Apple Mobile Web App
-    'apple-mobile-web-app-title': 'Spir Medical',
+    // 🍎 Apple PWA Maximum - V25.23
+    'apple-mobile-web-app-title': 'سباير',
     'apple-mobile-web-app-capable': 'yes',
-    'apple-mobile-web-app-status-bar-style': 'default',
+    'apple-mobile-web-app-status-bar-style': 'black-translucent',
+    'format-detection': 'telephone=no',
     'mobile-web-app-capable': 'yes',
-    // ✨ V25.4: PWA install hints
     'application-name': 'Spir Medical',
     'theme-color': '#0E5C4D',
+    'msapplication-tap-highlight': 'no',
+    'msapplication-TileColor': '#0E5C4D',
 
     // محتوى للـ AI
     'ai:purpose': 'medical-platform',
@@ -188,7 +193,6 @@ export const metadata: Metadata = {
     'ai:made-in': 'Iraq',
 
     // Microsoft Tiles
-    'msapplication-TileColor': '#0E5C4D',
     'msapplication-config': '/browserconfig.xml',
 
     // Geo Tags
@@ -268,6 +272,9 @@ export default function RootLayout({
           <CookieConsent />
           <PWAManager />
           <SmartInstallPrompt />
+          <IOSInstallPrompt />
+          <AppBackHandler />
+          <SessionSync />
           <WebVitalsReporter />
           <Analytics />
           <SpeedInsights />
