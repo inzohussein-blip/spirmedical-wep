@@ -94,7 +94,7 @@ export default function SettingsClient({ initial, pinEnabled, userId, userEmail,
 
         <div className="scr-info-banner" style={{ marginTop: 8 }}>
           <Globe size={14} strokeWidth={2.2} aria-hidden />
-          <span>سيتم دعم الإنجليزية والكردية قريباً</span>
+          <span>الإنجليزية متاحة · الكردية قريباً 🇮🇶</span>
         </div>
 
         {/* الإشعارات - رابط */}
