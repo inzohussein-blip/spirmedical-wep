@@ -34,9 +34,17 @@ export async function updateSession(request: NextRequest) {
             request.cookies.set(name, value)
           );
           supabaseResponse = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
+          // 🔑 V25.23: cookies تدوم 400 يوم (الحد الأقصى للـ Chrome)
+          cookiesToSet.forEach(({ name, value, options }) => {
+            const persistentOptions = {
+              ...options,
+              maxAge: 60 * 60 * 24 * 400,  // 400 days (Chrome max)
+              sameSite: 'lax' as const,
+              secure: process.env.NODE_ENV === 'production',
+              httpOnly: name.includes('auth-token') ? true : options?.httpOnly,
+            };
+            supabaseResponse.cookies.set(name, value, persistentOptions);
+          });
         },
       },
     });
