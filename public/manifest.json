@@ -2,13 +2,14 @@
   "name": "سباير ميديكال - Spir Medical",
   "short_name": "Spir Medical",
   "description": "منصة طبية رقمية متكاملة في العراق · 15 خدمة · 18 محافظة · 24/7 · صناعة عراقية",
-  "start_url": "/dashboard?source=pwa",
+  "start_url": "/?source=pwa&utm_source=homescreen",
   "scope": "/",
   "display": "standalone",
   "display_override": [
     "window-controls-overlay",
     "standalone",
-    "minimal-ui"
+    "minimal-ui",
+    "browser"
   ],
   "orientation": "portrait-primary",
   "theme_color": "#0E5C4D",
@@ -172,6 +173,11 @@
     "preferred_width": 480
   },
   "launch_handler": {
-    "client_mode": "focus-existing"
-  }
+    "client_mode": [
+      "focus-existing",
+      "auto"
+    ]
+  },
+  "handle_links": "preferred",
+  "capture_links": "existing-client-navigate"
 }
