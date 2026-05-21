@@ -11,6 +11,7 @@ import {
   MessageCircle, Globe, Mail,
 } from 'lucide-react';
 import { FreeMedicalMapWrapper } from '@/components/ui/FreeMedicalMapWrapper';
+import ShareButton from '@/components/pwa/ShareButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -67,7 +68,14 @@ export default async function HospitalDetailPage({
           <h1 className="scr-page-title" style={{ fontSize: 15 }}>
             {hospital.name}
           </h1>
-          <div className="scr-page-spacer" />
+          <ShareButton
+            variant="icon"
+            size="sm"
+            title={hospital.name}
+            text={`مستشفى على Spir Medical${hospital.city ? ` - ${hospital.city}` : ''}`}
+            url={`/services/hospitals/${hospital.id}`}
+            label="مشاركة المستشفى"
+          />
         </div>
 
         {/* Hero */}
