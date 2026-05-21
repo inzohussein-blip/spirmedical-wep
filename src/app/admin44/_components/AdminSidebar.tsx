@@ -21,6 +21,11 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/admin44/hospitals', icon: '🏥', label: 'المستشفيات', permission: 'specialists.view' },
   { href: '/admin44/pharmacies', icon: '💊', label: 'الصيدليات', permission: 'specialists.view' },
   { href: '/admin44/medications', icon: '📋', label: 'كتالوج الأدوية', permission: 'specialists.view' },
+  // ─── V25.21: الخدمات الجديدة ───
+  { href: '/admin44/dental', icon: '🦷', label: 'عيادات الأسنان', permission: 'specialists.view' },
+  { href: '/admin44/optical', icon: '👓', label: 'متاجر النظارات', permission: 'specialists.view' },
+  { href: '/admin44/mental-health', icon: '🧠', label: 'الصحة النفسية', permission: 'specialists.view' },
+  { href: '/admin44/nutrition', icon: '🥗', label: 'التغذية', permission: 'specialists.view' },
   { href: '/admin44/patients', icon: '👤', label: 'المرضى (CRM)', permission: 'patients.view' },
   { href: '/admin44/orders', icon: '📋', label: 'الطلبات', permission: 'orders.view' },
   { href: '/admin44/notifications', icon: '💬', label: 'الإشعارات' },
