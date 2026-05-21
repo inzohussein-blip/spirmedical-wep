@@ -1816,7 +1816,8 @@
 /* App Screens */
 .app-screen { background: var(--paper); min-height: 100%; }
 .scr-content {
-  padding: 20px 20px;
+  /* 🎯 V25.27: safe-area-inset-top للـ iPhone notch */
+  padding: calc(20px + env(safe-area-inset-top)) 20px 20px;
   background: var(--paper);
   min-height: 600px;
 }
@@ -10970,7 +10971,8 @@ html {
    2. DASHBOARD CONTENT WRAPPER
    ───────────────────────────────────────────────────────── */
 .scr-content {
-  padding: 16px 16px 16px;
+  /* 🎯 V25.27: safe-area-inset-top للـ iPhone notch */
+  padding: calc(16px + env(safe-area-inset-top)) 16px 16px;
   background: var(--paper);
   min-height: 100%;
 }
