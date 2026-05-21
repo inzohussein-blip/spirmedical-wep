@@ -368,7 +368,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
       </div>
 
       <Link
-        href={`/appointments/new?service=mental-health&specialist=${specialist.id}`}
+        href={`/services/booking?service=mental-health&id=${specialist.id}${specialist.available_online ? '&package=online' : ''}`}
         onClick={() => haptic.medium()}
         style={{
           display: 'flex',
