@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { createClient } from '@/lib/supabase/server';
 import LandingMobileMenu from '@/components/landing/MobileMenu';
 import LandingFAQ from '@/components/landing/FAQ';
 import LandingStats from '@/components/landing/Stats';
@@ -8,8 +10,10 @@ import type { MapMarker } from '@/types/location';
 
 export const metadata = {
   title: 'سباير ميديكال · Spir Medical — منصة طبية رقمية متكاملة في العراق',
-  description: 'الرعاية الصحية بين يديك · ١٤ خدمة طبية · في كل المحافظات العراقية',
+  description: 'الرعاية الصحية بين يديك · ١٥ خدمة طبية · في كل المحافظات العراقية',
 };
+
+export const dynamic = 'force-dynamic';
 
 // ============================================================
 // البيانات الثابتة
@@ -163,7 +167,41 @@ const BLOG_POSTS = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: { source?: string; utm_source?: string };
+}) {
+  // ─── 🎯 V25.23: Smart PWA Routing ───
+  // عند فتح PWA من home screen، نوجّه المستخدم مباشرة
+  const isPWA = searchParams.source === 'pwa' || searchParams.utm_source === 'homescreen';
+
+  if (isPWA) {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+      // مستخدم مُسجّل → /dashboard مباشرة
+      const { data: profile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (profile?.role === 'specialist') {
+        redirect('/specialist');
+      } else if (['admin', 'super_admin', 'manager', 'support'].includes(profile?.role || '')) {
+        redirect('/admin44');
+      } else {
+        redirect('/dashboard');
+      }
+    } else {
+      // غير مُسجّل → /login
+      redirect('/login');
+    }
+  }
+
+  // غير PWA → الموقع التسويقي العادي
   return (
     <main className="landing">
       {/* ============ NAV (Sticky + Mobile Menu) ============ */}
