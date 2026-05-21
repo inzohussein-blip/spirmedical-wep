@@ -69,6 +69,7 @@ export async function POST(request: Request) {
       expiresAt: result.expiresAt,
     });
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.error('[OTP/send] Error:', err);
     return NextResponse.json(
       { success: false, error: 'خطأ في النظام' },
