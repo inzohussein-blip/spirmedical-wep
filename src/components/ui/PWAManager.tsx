@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Download, X, Share2, Plus } from 'lucide-react';
+import { isPWAInstalled } from '@/lib/pwa';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -10,13 +11,7 @@ interface BeforeInstallPromptEvent extends Event {
 
 /**
  * ═══════════════════════════════════════════════════════════════
- * PWA Manager (V25.3 - Multi-platform Install Banner)
- * ═══════════════════════════════════════════════════════════════
- *
- * يعرض install banner مناسب لكل منصة:
- *   🤖 Android Chrome: زر تثبيت تلقائي
- *   🍎 iOS Safari: تعليمات بصرية
- *   💻 Desktop: زر تثبيت تلقائي
+ * PWA Manager (V25.27 - مُوحّد مع lib/pwa.ts)
  * ═══════════════════════════════════════════════════════════════
  */
 
@@ -36,14 +31,6 @@ function detectPlatform(): Platform {
     return 'android';
   }
   return 'desktop';
-}
-
-function isStandalone(): boolean {
-  if (typeof window === 'undefined') return false;
-  return (
-    window.matchMedia('(display-mode: standalone)').matches ||
-    (window.navigator as { standalone?: boolean }).standalone === true
-  );
 }
 
 function shouldShowBanner(): boolean {
@@ -72,7 +59,7 @@ export default function PWAManager() {
 
     const currentPlatform = detectPlatform();
     setPlatform(currentPlatform);
-    const installed = isStandalone();
+    const installed = isPWAInstalled();
     setIsInstalled(installed);
 
     // تسجيل Service Worker
