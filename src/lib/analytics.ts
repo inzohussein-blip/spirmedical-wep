@@ -110,6 +110,7 @@ export function track(event: AnalyticsEvent, properties?: AnalyticsProperties): 
 
   // 1. Console log (dev only)
   if (process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line no-console
     console.log(`📊 [Analytics] ${event}`, properties || {});
   }
 
