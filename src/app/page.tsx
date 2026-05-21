@@ -196,8 +196,8 @@ export default async function HomePage({
         redirect('/dashboard');
       }
     } else {
-      // غير مُسجّل → /login
-      redirect('/login');
+      // 🎯 V25.24: غير مُسجّل → /gate (يعرض خياري: تسجيل دخول / حساب جديد)
+      redirect('/gate');
     }
   }
 
