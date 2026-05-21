@@ -13,6 +13,7 @@
 
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { haptic } from '@/lib/haptic';
 import { toast } from '@/components/ui/Toaster';
 import FamilyMemberPicker from '@/components/family/FamilyMemberPicker';
 import {
@@ -193,7 +194,11 @@ export default function BloodDrawFlow({
     if (!date) errs.push('اختر تاريخ سحب الدم');
     if (!time) errs.push('اختر وقت سحب الدم');
     setErrors(errs);
-    if (errs.length > 0) return;
+    if (errs.length > 0) {
+      haptic.error();
+      return;
+    }
+    haptic.medium();
 
     const scheduledAt = `${date}T${time}:00`;
     setSubmitting(true);
