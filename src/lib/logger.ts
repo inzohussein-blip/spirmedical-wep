@@ -71,12 +71,15 @@ function log(level: LogLevel, message: string, context: LogContext = {}): void {
 
   switch (level) {
     case 'error':
+      // eslint-disable-next-line no-console
       console.error(json);
       break;
     case 'warn':
+      // eslint-disable-next-line no-console
       console.warn(json);
       break;
     case 'debug':
+      // eslint-disable-next-line no-console
       console.debug(json);
       break;
     default:
