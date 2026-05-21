@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import RefreshWrapper from '@/components/pwa/RefreshWrapper';
 
 export const metadata = {
   title: 'مواعيدي · سباير ميديكال',
@@ -83,6 +84,7 @@ export default async function AppointmentsPage({ searchParams }: Props) {
 
   return (
     <main className="app-screen">
+      <RefreshWrapper>
       <div className="scr-content">
 
         <div className="scr-page-header">
@@ -162,6 +164,7 @@ export default async function AppointmentsPage({ searchParams }: Props) {
         )}
 
       </div>
+      </RefreshWrapper>
     </main>
   );
 }
