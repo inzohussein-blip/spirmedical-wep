@@ -122,6 +122,7 @@ export default function PullToRefresh({
         try {
           await Promise.resolve(onRefresh());
         } catch (e) {
+          // eslint-disable-next-line no-console
           console.error('Refresh failed:', e);
         } finally {
           // delay صغير لإظهار "تم"
