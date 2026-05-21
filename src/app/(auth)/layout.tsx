@@ -1,16 +1,46 @@
 /**
- * Auth Layout — صفحات الدخول/التسجيل/البوابة
+ * ════════════════════════════════════════════════════════════════════
+ * 🔐 Auth Layout (V25.24)
+ * ════════════════════════════════════════════════════════════════════
  *
- * يلف كل صفحات auth بـ auth-shell (شكل هاتف 480px مع ظل في الوسط)
- * نفس فلسفة AppShell لكن بدون header/bottom-nav
+ * صفحات: /gate, /register, /login, /login/phone, /forgot
  *
- * صفحات auth جزء من التطبيق وليست من الموقع التسويقي
+ * 🎯 الحماية: إذا المستخدم مُسجّل بالفعل → يُوجَّه حسب role
+ *
+ * استثناء: /login و /forgot يحتاجون فحصاً خاصاً عبر searchParams
+ * (لو في error= فلا نُحوّل لكي يرى الخطأ)
  */
-export default function AuthLayout({
+
+import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
+
+export const dynamic = 'force-dynamic';
+
+export default async function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // 🎯 V25.24: المُسجّل دخوله → redirect حسب role
+  if (user) {
+    const { data: profile } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (profile?.role === 'specialist') {
+      redirect('/specialist');
+    } else if (['admin', 'super_admin', 'manager', 'support'].includes(profile?.role || '')) {
+      redirect('/admin44');
+    } else {
+      redirect('/dashboard');
+    }
+  }
+
   return (
     <div className="auth-viewport">
       <div className="auth-shell">{children}</div>
