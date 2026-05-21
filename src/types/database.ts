@@ -71,6 +71,10 @@ export type Database = {
           work_lat: number | null;
           work_lng: number | null;
           work_address: string | null;
+          // ✨ V25.13: Wallet & Loyalty
+          wallet_balance: number;
+          loyalty_points: number;
+          loyalty_tier: 'silver' | 'gold' | 'platinum' | 'diamond';
         };
         Insert: {
           id?: string;
@@ -1637,6 +1641,96 @@ export type Database = {
         Update: Partial<Database['public']['Tables']['nutritionists']['Row']>;
         Relationships: [];
       };
+      // ✨ V25.13: Coupon Redemptions + Loyalty + Referrals (Migration 30)
+      coupon_redemptions: {
+        Row: {
+          id: string;
+          coupon_id: string;
+          user_id: string;
+          appointment_id: string | null;
+          discount_amount: number;
+          order_amount: number;
+          applied_at: string;
+        };
+        Insert: {
+          id?: string;
+          coupon_id: string;
+          user_id: string;
+          appointment_id?: string | null;
+          discount_amount: number;
+          order_amount: number;
+          applied_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['coupon_redemptions']['Row']>;
+        Relationships: [];
+      };
+      loyalty_milestones: {
+        Row: {
+          id: string;
+          tier: 'silver' | 'gold' | 'platinum' | 'diamond';
+          name_ar: string;
+          min_points: number;
+          discount_percent: number;
+          free_consultations_per_month: number;
+          priority_support: boolean;
+          free_delivery: boolean;
+          badge_color: string;
+          badge_icon: string;
+          description_ar: string | null;
+          is_active: boolean;
+          created_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['loyalty_milestones']['Row']> & {
+          tier: 'silver' | 'gold' | 'platinum' | 'diamond';
+          name_ar: string;
+          min_points: number;
+        };
+        Update: Partial<Database['public']['Tables']['loyalty_milestones']['Row']>;
+        Relationships: [];
+      };
+      referral_codes: {
+        Row: {
+          id: string;
+          user_id: string;
+          code: string;
+          total_referrals: number;
+          successful_referrals: number;
+          total_earned: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          code: string;
+          total_referrals?: number;
+          successful_referrals?: number;
+          total_earned?: number;
+          created_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['referral_codes']['Row']>;
+        Relationships: [];
+      };
+      referrals: {
+        Row: {
+          id: string;
+          referrer_id: string;
+          referred_id: string;
+          referral_code: string;
+          status: 'pending' | 'qualified' | 'rewarded';
+          referrer_reward: number;
+          referred_bonus: number;
+          qualified_at: string | null;
+          rewarded_at: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['referrals']['Row']> & {
+          referrer_id: string;
+          referred_id: string;
+          referral_code: string;
+        };
+        Update: Partial<Database['public']['Tables']['referrals']['Row']>;
+        Relationships: [];
+      };
       // ✨ V25.10: Analytics Events
       analytics_events: {
         Row: {
@@ -2770,6 +2864,24 @@ export type Database = {
       cleanup_expired_otps: {
         Args: Record<string, never>;
         Returns: void;
+      };
+      generate_referral_code: {
+        Args: { p_user_id: string };
+        Returns: string;
+      };
+      validate_coupon_for_user: {
+        Args: {
+          p_code: string;
+          p_user_id: string;
+          p_order_amount: number;
+          p_user_city?: string;
+        };
+        Returns: {
+          is_valid: boolean;
+          coupon_id: string | null;
+          discount_amount: number;
+          error_message: string | null;
+        }[];
       };
     };
     Enums: {
