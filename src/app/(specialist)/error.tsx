@@ -12,6 +12,7 @@ export default function SpecialistError({
   reset: () => void;
 }) {
   useEffect(() => {
+    // eslint-disable-next-line no-console
     console.error('[specialist/error]', error);
   }, [error]);
 
