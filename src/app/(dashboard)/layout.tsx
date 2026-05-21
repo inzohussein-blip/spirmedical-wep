@@ -1,5 +1,6 @@
 import { requireSession } from '@/lib/auth/session';
 import { AuthenticatedShell } from '@/components/layout/AuthenticatedShell';
+import BugReportButton from '@/components/feedback/BugReportButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,6 +27,8 @@ export default async function DashboardLayout({
       notificationRole="patient"
     >
       {children}
+      {/* ✨ V25.18: زر الإبلاغ عن الأعطال (floating) */}
+      <BugReportButton />
     </AuthenticatedShell>
   );
 }
