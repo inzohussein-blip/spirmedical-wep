@@ -81,8 +81,8 @@ export default function ContactPage() {
             color="var(--amber)"
             title="البريد الإلكتروني"
             subtitle="للاستفسارات الرسمية"
-            value="support@spirmedical.com"
-            href="mailto:support@spirmedical.com"
+            value="support@spirmedical.iq"
+            href="mailto:support@spirmedical.iq"
             hours="رد خلال ٢٤ ساعة"
           />
 
