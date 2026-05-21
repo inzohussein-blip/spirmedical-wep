@@ -33,6 +33,15 @@ const SERVICE_ICONS: Record<string, string> = {
   'توصيل أدوية': '💊',
   'حجز موعد مستشفى': '🏥',
   'طبيب الأسرة': '⌬',
+  // ✨ V25.21: الخدمات الجديدة
+  'dental-visit': '🦷',
+  'optical-visit': '👓',
+  'mental-session': '🧠',
+  'nutrition-consult': '🥗',
+  '🦷 زيارة طبيب أسنان': '🦷',
+  '👓 زيارة متجر نظارات': '👓',
+  '🧠 جلسة نفسية': '🧠',
+  '🥗 استشارة تغذية': '🥗',
 };
 
 const FILTERS = [
