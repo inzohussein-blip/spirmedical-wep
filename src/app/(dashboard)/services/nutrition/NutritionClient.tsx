@@ -293,7 +293,7 @@ function NutritionistCard({ nutritionist }: { nutritionist: Nutritionist }) {
       </div>
 
       <Link
-        href={`/appointments/new?service=nutrition&specialist=${nutritionist.id}`}
+        href={`/services/booking?service=nutrition&id=${nutritionist.id}&package=initial`}
         onClick={() => haptic.medium()}
         style={{
           display: 'flex',
