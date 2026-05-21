@@ -7,6 +7,7 @@ import {
   clearPersistedSession,
   isPWAInstalled,
 } from '@/lib/pwa';
+import { clearUserCacheInSW } from '@/lib/logout-cleanup';
 
 /**
  * SessionSync (V25.23)
@@ -71,7 +72,9 @@ export default function SessionSync() {
             });
           }
         } else if (event === 'SIGNED_OUT') {
+          // 🎯 V25.26: تنظيف شامل عند logout
           clearPersistedSession();
+          clearUserCacheInSW().catch(() => { /* ignore */ });
         } else if (event === 'TOKEN_REFRESHED' && session?.user) {
           // نُحدّث الـ timestamp
           const existing = JSON.parse(localStorage.getItem('spir-session-info') || 'null');
