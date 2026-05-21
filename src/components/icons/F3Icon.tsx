@@ -236,6 +236,7 @@ export default function F3Icon({
 
   if (!Icon) {
     if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
       console.warn(`F3Icon: unknown icon "${name}"`);
     }
     return null;
