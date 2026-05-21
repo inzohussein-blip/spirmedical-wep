@@ -1,29 +1,51 @@
 // ════════════════════════════════════════════════════════════════════
-// 🛠️ SERVICE WORKER - Spir Medical PWA Maximum (V25.23)
+// 🛠️ SERVICE WORKER - Spir Medical PWA Maximum (V25.26)
+// ════════════════════════════════════════════════════════════════════
+// تحسينات V25.26:
+//   • عدم cache لـ HTML الصفحات الشخصية (privacy)
+//   • Pre-cache فقط للأصول العامة
+//   • Listener لرسالة CLEAR_USER_CACHE عند logout
 // ════════════════════════════════════════════════════════════════════
 
-const CACHE_VERSION = 'spir-v5';
+const CACHE_VERSION = 'spir-v6';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 const IMAGE_CACHE = `${CACHE_VERSION}-images`;
 const API_CACHE = `${CACHE_VERSION}-api`;
 
+// 🎯 V25.26: pre-cache فقط للأصول العامة (لا صفحات محمية!)
 const STATIC_ASSETS = [
-  '/',
-  '/dashboard',
   '/offline',
-  '/login',
-  '/account',
-  '/appointments',
   '/icon-192.png',
   '/icon-512.png',
   '/manifest.json',
 ];
 
+// مسارات لا تُحفظ أبداً (auth + admin + dynamic)
 const NEVER_CACHE = [
   '/api/auth',
   '/api/admin',
   '/auth/callback',
+];
+
+// 🎯 V25.26: صفحات شخصية - لا تُحفظ HTML الخاص بها (privacy!)
+const PERSONAL_HTML_PATHS = [
+  '/dashboard',
+  '/account',
+  '/appointments',
+  '/favorites',
+  '/messages',
+  '/consultations',
+  '/specialist',
+  '/admin',
+  '/admin44',
+  '/sos',
+  '/tools',
+  '/family',
+  '/locations',
+  '/notifications',
+  '/prescriptions',
+  '/reminders',
 ];
 
 const CACHEABLE_APIS = ['/api/monitoring/health'];
@@ -31,7 +53,7 @@ const API_CACHE_DURATION = 15 * 60 * 1000;
 
 // ────────────── Install ──────────────
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing v5...');
+  console.log('[SW] Installing v6...');
   event.waitUntil(
     Promise.all([
       caches.open(STATIC_CACHE).then((cache) => {
@@ -47,12 +69,31 @@ self.addEventListener('install', (event) => {
 self.addEventListener('message', (event) => {
   if (event.data === 'SKIP_WAITING') {
     self.skipWaiting();
+    return;
+  }
+
+  // 🎯 V25.26: مسح cache المستخدم عند logout
+  if (event.data?.type === 'CLEAR_USER_CACHE') {
+    event.waitUntil(clearUserCaches());
   }
 });
 
+async function clearUserCaches() {
+  console.log('[SW] Clearing user caches...');
+  try {
+    // نحذف cache الـ runtime (يحوي HTML pages)
+    await caches.delete(RUNTIME_CACHE);
+    // نحذف cache الـ API
+    await caches.delete(API_CACHE);
+    console.log('[SW] User caches cleared');
+  } catch (err) {
+    console.error('[SW] Failed to clear caches:', err);
+  }
+}
+
 // ────────────── Activate ──────────────
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating v5...');
+  console.log('[SW] Activating v6...');
   event.waitUntil(
     Promise.all([
       caches.keys().then((keys) => {
@@ -70,6 +111,12 @@ self.addEventListener('activate', (event) => {
 // ────────────── Helpers ──────────────
 function isNeverCache(url) {
   return NEVER_CACHE.some((path) => url.pathname.startsWith(path));
+}
+
+function isPersonalHTMLPath(url) {
+  return PERSONAL_HTML_PATHS.some((path) =>
+    url.pathname === path || url.pathname.startsWith(path + '/')
+  );
 }
 
 function isStaticAsset(url) {
@@ -131,8 +178,20 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // HTML Pages - Network First + Cache Fallback
+  // HTML Pages
   if (isHTMLPage(request)) {
+    // 🎯 V25.26: صفحات شخصية - Network Only (لا cache - privacy!)
+    if (isPersonalHTMLPath(url)) {
+      event.respondWith(
+        fetch(request).catch(() => {
+          // فقط لو offline، نعرض offline page
+          return caches.match('/offline');
+        })
+      );
+      return;
+    }
+
+    // الصفحات العامة - Network First + Cache Fallback
     event.respondWith(
       fetch(request)
         .then((response) => {
@@ -263,4 +322,4 @@ async function updateBackgroundData() {
   console.log('[SW] Periodic sync running...');
 }
 
-console.log('[SW] Service Worker v5 loaded');
+console.log('[SW] Service Worker v6 loaded');
