@@ -66,6 +66,13 @@ const SECTION_FAMILY = [
     desc: 'باقات مميزة وطبيب العائلة',
     href: '/account/subscription',
   },
+  {
+    id: 'rewards',
+    icon: '🏆',
+    title: 'المكافآت والإحالات',
+    desc: 'برنامج الولاء + كود الإحالة',
+    href: '/account/rewards',
+  },
 ];
 
 const SECTION_SETTINGS = [
