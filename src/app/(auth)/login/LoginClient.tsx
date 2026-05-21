@@ -329,6 +329,14 @@ export default function LoginClient() {
         }}
       >
         <LoadingOverlay />
+        {/* 🎯 V25.24: مرّر redirect URL لو موجود لإكمال الـ flow بعد التسجيل */}
+        {searchParams.get('redirect') && (
+          <input
+            type="hidden"
+            name="redirect"
+            value={searchParams.get('redirect') || ''}
+          />
+        )}
         {errorParam && (
           <div className="auth-error" role="alert">
             <div className="auth-error-icon">!</div>
@@ -467,7 +475,9 @@ export default function LoginClient() {
           mode="login"
           onSuccess={() => {
             haptic.success();
-            router.push('/dashboard');
+            // 🎯 V25.24: احترم redirect من URL لو موجود
+            const redirectTo = searchParams.get('redirect') || '/dashboard';
+            router.push(redirectTo);
           }}
         />
       </div>
