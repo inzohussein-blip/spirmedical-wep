@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     template: '%s · Spir Medical',
   },
   description:
-    'منصة طبية رقمية متكاملة في العراق · سحب دم منزلي · تحاليل · استشارات طبية · طبيب عائلة · 14 خدمة طبية · 18 محافظة · 24/7',
+    'منصة طبية رقمية متكاملة في العراق · سحب دم منزلي · تحاليل · استشارات طبية · طبيب عائلة · 15 خدمة طبية · 18 محافظة · 24/7',
   applicationName: 'Spir Medical',
   category: 'Healthcare',
   classification: 'Medical Platform',
@@ -111,7 +111,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'سباير ميديكال · Spir Medical',
     description:
-      'الرعاية الصحية بين يديك · 14 خدمة طبية · 18 محافظة · 24/7 · صناعة عراقية',
+      'الرعاية الصحية بين يديك · 15 خدمة طبية · 18 محافظة · 24/7 · صناعة عراقية',
     url: SITE_URL,
     siteName: 'Spir Medical · سباير ميديكال',
     locale: 'ar_IQ',
