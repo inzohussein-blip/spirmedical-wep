@@ -9,6 +9,7 @@ import {
   ArrowRight, MessageCircle, Plus, Clock, CheckCircle2,
   AlertCircle, ChevronLeft,
 } from 'lucide-react';
+import RefreshWrapper from '@/components/pwa/RefreshWrapper';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'استشاراتي - Spir Medical' };
@@ -47,6 +48,7 @@ export default async function ConsultationsPage() {
 
   return (
     <main className="app-screen">
+      <RefreshWrapper>
       <div className="scr-content">
         <div className="scr-page-header">
           <Link href="/dashboard" className="scr-back-btn">
@@ -184,6 +186,7 @@ export default async function ConsultationsPage() {
 
         <div style={{ height: 80 }} />
       </div>
+      </RefreshWrapper>
     </main>
   );
 }
