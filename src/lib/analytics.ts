@@ -100,6 +100,7 @@ async function initPostHog(): Promise<void> {
       posthogReady = true;
     }
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.warn('PostHog init failed:', e);
   }
 }
