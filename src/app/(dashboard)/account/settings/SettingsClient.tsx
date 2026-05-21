@@ -8,6 +8,7 @@ import type { UserSettings } from '@/lib/services/user-settings-types';
 import { exportUserData } from './actions';
 import PinSection from './PinSection';
 import BiometricLoginButton from '@/components/pwa/BiometricLoginButton';
+import InstallAppButton from '@/components/pwa/InstallAppButton';
 import {
   ArrowRight, Globe, Bell, Lock, BarChart3, Download, Loader2,
   ScrollText, FileText, HelpCircle, AlertTriangle, Info, LogOut,
@@ -70,6 +71,11 @@ export default function SettingsClient({ initial, pinEnabled, userId, userEmail,
           </Link>
           <h1 className="scr-page-title">الإعدادات</h1>
           <div className="scr-page-spacer" />
+        </div>
+
+        {/* 🎯 V25.27: زر تثبيت التطبيق */}
+        <div style={{ marginTop: 12, marginBottom: 16 }}>
+          <InstallAppButton />
         </div>
 
         {/* اللغة */}
