@@ -16,7 +16,7 @@ export default async function SettingsPage() {
 
   const { data: profile } = await supabase
     .from('users')
-    .select('user_settings')
+    .select('user_settings, full_name, phone')
     .eq('id', user.id)
     .single();
 
@@ -27,5 +27,13 @@ export default async function SettingsPage() {
 
   const pinEnabled = settings.pin_enabled === true && !!settings.pin_hash;
 
-  return <SettingsClient initial={settings} pinEnabled={pinEnabled} />;
+  return (
+    <SettingsClient
+      initial={settings}
+      pinEnabled={pinEnabled}
+      userId={user.id}
+      userEmail={user.email || ''}
+      userName={profile?.full_name || profile?.phone || 'مستخدم'}
+    />
+  );
 }
