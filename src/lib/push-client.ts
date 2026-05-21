@@ -207,3 +207,56 @@ export async function sendTestPush(): Promise<{
     };
   }
 }
+
+// ════════════════════════════════════════════════════════════════════
+// 🍎 V25.23: iOS Push Support (16.4+)
+// ════════════════════════════════════════════════════════════════════
+
+import { isIOSDevice, isPWAInstalled } from '@/lib/pwa';
+
+export interface PushSupportStatus {
+  supported: boolean;
+  reason?: string;
+  iosVersion?: number | null;
+  needsPWAInstall?: boolean;
+}
+
+/**
+ * يتفقد دعم الـ push للجهاز الحالي مع تفاصيل iOS
+ */
+export function checkPushSupport(): PushSupportStatus {
+  if (!isPushSupported()) {
+    return { supported: false, reason: 'Push API غير مدعوم' };
+  }
+
+  // iOS-specific check
+  if (isIOSDevice()) {
+    const iosVersion = getIOSVersion();
+
+    if (iosVersion !== null && iosVersion < 16.4) {
+      return {
+        supported: false,
+        reason: `iOS ${iosVersion} - تحتاج iOS 16.4 أو أحدث`,
+        iosVersion,
+      };
+    }
+
+    if (!isPWAInstalled()) {
+      return {
+        supported: false,
+        reason: 'iOS 16.4+ يحتاج تثبيت التطبيق أولاً',
+        iosVersion,
+        needsPWAInstall: true,
+      };
+    }
+  }
+
+  return { supported: true, iosVersion: isIOSDevice() ? getIOSVersion() : null };
+}
+
+function getIOSVersion(): number | null {
+  if (typeof navigator === 'undefined') return null;
+  const match = navigator.userAgent.match(/OS (\d+)_(\d+)/);
+  if (!match) return null;
+  return parseFloat(`${match[1]}.${match[2]}`);
+}
