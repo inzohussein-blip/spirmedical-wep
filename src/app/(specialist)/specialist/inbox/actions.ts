@@ -134,6 +134,7 @@ export async function sendMessage(
       }).catch((err) => console.error('Push new message failed:', err));
     }
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.error('Push notification error:', err);
   }
 
