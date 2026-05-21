@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useMemo } from 'react';
+import LazyImage from '@/components/ui/LazyImage';
 import {
   ArrowRight, Search, MapPin, Star, Stethoscope, Video,
   Home, Building2, Languages, Award, CheckCircle2, Clock,
@@ -221,8 +222,11 @@ export default function DoctorsClient({ doctors }: Props) {
                         }}
                       >
                         {d.avatar_url ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={d.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          <LazyImage
+                            src={d.avatar_url}
+                            alt={d.full_name || 'طبيب'}
+                            style={{ width: '100%', height: '100%' }}
+                          />
                         ) : (
                           d.gender === 'female' ? '👩‍⚕️' : '👨‍⚕️'
                         )}
