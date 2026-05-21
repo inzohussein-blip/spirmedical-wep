@@ -7,6 +7,7 @@ import { updateUserSettings } from '@/lib/services/user-settings';
 import type { UserSettings } from '@/lib/services/user-settings-types';
 import { exportUserData } from './actions';
 import PinSection from './PinSection';
+import BiometricLoginButton from '@/components/pwa/BiometricLoginButton';
 import {
   ArrowRight, Globe, Bell, Lock, BarChart3, Download, Loader2,
   ScrollText, FileText, HelpCircle, AlertTriangle, Info, LogOut,
@@ -16,9 +17,12 @@ import {
 interface Props {
   initial: UserSettings;
   pinEnabled: boolean;
+  userId: string;
+  userEmail: string;
+  userName: string;
 }
 
-export default function SettingsClient({ initial, pinEnabled }: Props) {
+export default function SettingsClient({ initial, pinEnabled, userId, userEmail, userName }: Props) {
   const [autoLock, setAutoLock] = useState(initial.auto_lock ?? true);
   const [analytics, setAnalytics] = useState(initial.analytics ?? true);
   const [, startTransition] = useTransition();
@@ -140,6 +144,30 @@ export default function SettingsClient({ initial, pinEnabled }: Props) {
           </div>
 
           <PinSection pinEnabled={pinEnabled} />
+
+          {/* ✨ V25.18: Biometric Login Registration */}
+          <div style={{
+            background: 'var(--white)',
+            border: '1px solid var(--line)',
+            borderRadius: 12,
+            padding: 14,
+            marginTop: 10,
+          }}>
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ fontSize: 13, fontWeight: 800, marginBottom: 2 }}>
+                البصمة / Face ID
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
+                دخول سريع وآمن بدون إدخال رقم الهاتف
+              </div>
+            </div>
+            <BiometricLoginButton
+              mode="register"
+              userId={userId}
+              email={userEmail}
+              displayName={userName}
+            />
+          </div>
         </div>
 
         {/* البيانات */}
