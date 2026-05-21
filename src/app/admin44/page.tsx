@@ -98,6 +98,19 @@ export default async function AdminDashboard() {
       .order('created_at', { ascending: false }).limit(5),
   ]);
 
+  // ─── V25.21: stats للخدمات الجديدة ───
+  const [
+    { count: dentalCount },
+    { count: opticalCount },
+    { count: mentalCount },
+    { count: nutritionCount },
+  ] = await Promise.all([
+    supabase.from('dental_clinics').select('*', { count: 'exact', head: true }).eq('is_active', true),
+    supabase.from('optical_stores').select('*', { count: 'exact', head: true }).eq('is_active', true),
+    supabase.from('mental_health_specialists').select('*', { count: 'exact', head: true }).eq('is_active', true),
+    supabase.from('nutritionists').select('*', { count: 'exact', head: true }).eq('is_active', true),
+  ]);
+
   // مقارنة اليوم بالأمس
   const todayVsYesterday = (todayOrders ?? 0) - (yesterdayOrders ?? 0);
   const completionRate = totalOrdersThisMonth && totalOrdersThisMonth > 0
@@ -193,6 +206,41 @@ export default async function AdminDashboard() {
           label="ملغاة (شهر)"
           value={(cancelledThisMonth ?? 0).toLocaleString('ar-IQ')}
           color="#A82E3D"
+        />
+      </div>
+
+      {/* ─── V25.21: Stats الخدمات الجديدة ─── */}
+      <h2 style={{ fontSize: 16, fontWeight: 800, color: 'var(--ink)', margin: '24px 0 12px' }}>
+        🆕 الخدمات الجديدة
+      </h2>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
+        <StatCard
+          icon="🦷"
+          label="عيادات أسنان"
+          value={(dentalCount ?? 0).toLocaleString('ar-IQ')}
+          color="#0F6B58"
+          href="/admin44/dental"
+        />
+        <StatCard
+          icon="👓"
+          label="متاجر نظارات"
+          value={(opticalCount ?? 0).toLocaleString('ar-IQ')}
+          color="#C97916"
+          href="/admin44/optical"
+        />
+        <StatCard
+          icon="🧠"
+          label="أخصائيو نفس"
+          value={(mentalCount ?? 0).toLocaleString('ar-IQ')}
+          color="#0F6B58"
+          href="/admin44/mental-health"
+        />
+        <StatCard
+          icon="🥗"
+          label="أخصائيو تغذية"
+          value={(nutritionCount ?? 0).toLocaleString('ar-IQ')}
+          color="#C97916"
+          href="/admin44/nutrition"
         />
       </div>
 
