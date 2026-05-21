@@ -61,6 +61,12 @@ export async function updateSession(request: NextRequest) {
       '/specialist',
       '/account',
       '/favorites',
+      // 🎯 V25.26: مسارات إضافية تحتاج auth (تسريع redirect)
+      '/services',
+      '/consultations',
+      '/messages',
+      '/sos',
+      '/tools',
     ];
     const isProtected = protectedPaths.some((path) =>
       request.nextUrl.pathname.startsWith(path)
