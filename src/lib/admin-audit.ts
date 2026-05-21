@@ -33,6 +33,7 @@ export async function logAdminAction(input: LogActionInput): Promise<void> {
     });
   } catch (err) {
     // لا نريد فشل تسجيل audit يكسر العملية الأصلية
+    // eslint-disable-next-line no-console
     console.error('logAdminAction failed:', err);
   }
 }
