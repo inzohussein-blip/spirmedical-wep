@@ -179,8 +179,11 @@ async function sendViaMock(params: SendWhatsAppParams): Promise<SendResult> {
   const to = normalizePhoneIQ(params.to);
   /* eslint-disable no-console */
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  // eslint-disable-next-line no-console
   console.log(`📱 [MOCK WhatsApp] → ${to}`);
+  // eslint-disable-next-line no-console
   console.log(params.body);
+  // eslint-disable-next-line no-console
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   /* eslint-enable no-console */
   return {
