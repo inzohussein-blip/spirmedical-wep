@@ -1,7 +1,7 @@
 {
   "name": "سباير ميديكال - Spir Medical",
   "short_name": "Spir Medical",
-  "description": "منصة طبية رقمية متكاملة في العراق · 14 خدمة · 18 محافظة · 24/7 · صناعة عراقية",
+  "description": "منصة طبية رقمية متكاملة في العراق · 15 خدمة · 18 محافظة · 24/7 · صناعة عراقية",
   "start_url": "/dashboard?source=pwa",
   "scope": "/",
   "display": "standalone",
@@ -102,6 +102,30 @@
       "short_name": "SOS",
       "description": "اتصال طوارئ سريع",
       "url": "/sos?source=shortcut",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "طب الأسنان",
+      "short_name": "أسنان",
+      "description": "احجز موعد عيادة أسنان",
+      "url": "/services/dental?source=shortcut",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "الصحة النفسية",
+      "short_name": "نفسي",
+      "description": "احجز جلسة نفسية",
+      "url": "/services/mental-health?source=shortcut",
       "icons": [
         {
           "src": "/icon-192.png",
