@@ -62,18 +62,25 @@ export default function PWAManager() {
     const installed = isPWAInstalled();
     setIsInstalled(installed);
 
+    // 🎯 V25.28: حفظ refs للـ timers لتنظيفها عند unmount
+    let updateInterval: ReturnType<typeof setInterval> | null = null;
+    let beforeInstallTimer: ReturnType<typeof setTimeout> | null = null;
+    let iosTimer: ReturnType<typeof setTimeout> | null = null;
+    let loadHandler: (() => void) | null = null;
+
     // تسجيل Service Worker
     if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
-      window.addEventListener('load', () => {
+      loadHandler = () => {
         navigator.serviceWorker
           .register('/sw.js', { scope: '/' })
           .then((registration) => {
-            setInterval(() => {
+            updateInterval = setInterval(() => {
               registration.update();
             }, 3600000);
           })
           .catch(() => {});
-      });
+      };
+      window.addEventListener('load', loadHandler);
     }
 
     if (installed) return;
@@ -84,12 +91,12 @@ export default function PWAManager() {
       e.preventDefault();
       const event = e as BeforeInstallPromptEvent;
       setInstallPrompt(event);
-      setTimeout(() => setShowBanner(true), 30000);
+      beforeInstallTimer = setTimeout(() => setShowBanner(true), 30000);
     };
 
     // iOS: أظهر banner بعد 30 ثانية (لا API)
     if (currentPlatform === 'ios') {
-      setTimeout(() => setShowBanner(true), 30000);
+      iosTimer = setTimeout(() => setShowBanner(true), 30000);
     }
 
     window.addEventListener('beforeinstallprompt', beforeInstallHandler);
@@ -102,8 +109,13 @@ export default function PWAManager() {
     window.addEventListener('appinstalled', installedHandler);
 
     return () => {
+      // 🎯 V25.28: cleanup شامل
       window.removeEventListener('beforeinstallprompt', beforeInstallHandler);
       window.removeEventListener('appinstalled', installedHandler);
+      if (loadHandler) window.removeEventListener('load', loadHandler);
+      if (updateInterval) clearInterval(updateInterval);
+      if (beforeInstallTimer) clearTimeout(beforeInstallTimer);
+      if (iosTimer) clearTimeout(iosTimer);
     };
   }, []);
 
