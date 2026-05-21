@@ -64,6 +64,7 @@ async function sendToMeta(payload: Record<string, unknown>): Promise<MetaSendRes
     const data = await response.json();
 
     if (!response.ok) {
+      // eslint-disable-next-line no-console
       console.error('[Meta] API error:', data);
       return {
         success: false,
@@ -77,6 +78,7 @@ async function sendToMeta(payload: Record<string, unknown>): Promise<MetaSendRes
       messageId: data?.messages?.[0]?.id,
     };
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.error('[Meta] Network error:', err);
     return {
       success: false,
@@ -141,6 +143,7 @@ export function verifyWebhookSignature(
 
   const appSecret = process.env.META_APP_SECRET;
   if (!appSecret) {
+    // eslint-disable-next-line no-console
     console.error('[Meta] META_APP_SECRET not set');
     return false;
   }
