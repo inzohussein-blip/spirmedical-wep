@@ -326,54 +326,79 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
       </div>
 
       {/* Actions */}
-      <div style={{ display: 'flex', gap: 6 }}>
-        {clinic.phone && (
-          <a
-            href={`tel:${clinic.phone}`}
-            onClick={() => haptic.light()}
-            style={{
-              flex: 1,
-              padding: '10px 14px',
-              background: 'var(--white)',
-              color: 'var(--emerald)',
-              border: '1px solid var(--emerald)',
-              borderRadius: 10,
-              textDecoration: 'none',
-              textAlign: 'center',
-              fontSize: 12,
-              fontWeight: 800,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 4,
-            }}
-          >
-            <Phone size={13} />
-            اتصل
-          </a>
-        )}
-        {clinic.phone && (
-          <a
-            href={`https://wa.me/${clinic.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('السلام عليكم - أود حجز موعد عبر Spir Medical')}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => haptic.light()}
-            style={{
-              flex: 2,
-              padding: '10px 14px',
-              background: 'var(--emerald)',
-              color: 'var(--paper-3)',
-              border: 'none',
-              borderRadius: 10,
-              textDecoration: 'none',
-              textAlign: 'center',
-              fontSize: 12,
-              fontWeight: 800,
-            }}
-          >
-            💬 احجز عبر WhatsApp
-          </a>
-        )}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {/* Primary CTA: Book via Spir */}
+        <Link
+          href={`/services/booking?service=dental&id=${clinic.id}`}
+          onClick={() => haptic.medium()}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 4,
+            padding: '10px 14px',
+            background: 'var(--emerald)',
+            color: 'var(--paper-3)',
+            borderRadius: 10,
+            textDecoration: 'none',
+            textAlign: 'center',
+            fontSize: 12,
+            fontWeight: 800,
+          }}
+        >
+          📅 احجز موعد عبر سباير
+        </Link>
+
+        {/* Secondary actions */}
+        <div style={{ display: 'flex', gap: 6 }}>
+          {clinic.phone && (
+            <a
+              href={`tel:${clinic.phone}`}
+              onClick={() => haptic.light()}
+              style={{
+                flex: 1,
+                padding: '8px 12px',
+                background: 'var(--white)',
+                color: 'var(--emerald)',
+                border: '1px solid var(--emerald)',
+                borderRadius: 10,
+                textDecoration: 'none',
+                textAlign: 'center',
+                fontSize: 11,
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 4,
+              }}
+            >
+              <Phone size={12} />
+              اتصل
+            </a>
+          )}
+          {clinic.phone && (
+            <a
+              href={`https://wa.me/${clinic.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('السلام عليكم - أود حجز موعد عبر Spir Medical')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => haptic.light()}
+              style={{
+                flex: 1,
+                padding: '8px 12px',
+                background: 'var(--white)',
+                color: 'var(--ink-2)',
+                border: '1px solid var(--line)',
+                borderRadius: 10,
+                textDecoration: 'none',
+                textAlign: 'center',
+                fontSize: 11,
+                fontWeight: 700,
+              }}
+            >
+              💬 WhatsApp
+            </a>
+          )}
+        </div>
       </div>
     </article>
   );
