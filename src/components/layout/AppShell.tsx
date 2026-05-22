@@ -57,10 +57,11 @@ export function AppShell({
     return () => window.removeEventListener('keydown', handleKey);
   }, []);
 
-  // ٤ نوافذ أساسية (مطابقة لمواصفاتك)
+  // 🎯 V25.32: 5 tabs (إضافة "الخدمات" للمريض)
   const navItems: NavItem[] = isGuest
     ? [
         { id: 'home', href: '/guest', label: 'الرئيسية', icon: '⌂', ariaLabel: 'الصفحة الرئيسية' },
+        { id: 'services', href: '/guest/services', label: 'الخدمات', icon: '⊕', ariaLabel: 'الخدمات' },
         { id: 'orders', href: '/guest/orders', label: 'الطلبات', icon: '▤', ariaLabel: 'الطلبات' },
         { id: 'favorites', href: '/guest/favorites', label: 'المفضلة', icon: '♡', ariaLabel: 'المفضلة' },
         { id: 'account', href: '/guest/account', label: 'حسابي', icon: '◔', ariaLabel: 'حسابي' },
@@ -74,6 +75,7 @@ export function AppShell({
       ]
     : [
         { id: 'home', href: '/dashboard', label: 'الرئيسية', icon: '⌂', ariaLabel: 'الصفحة الرئيسية' },
+        { id: 'services', href: '/services', label: 'الخدمات', icon: '⊕', ariaLabel: 'كل الخدمات' },
         { id: 'orders', href: '/appointments', label: 'طلباتي', icon: '▤', ariaLabel: 'طلباتي' },
         { id: 'messages', href: '/messages', label: 'الرسائل', icon: '✉', ariaLabel: 'الرسائل' },
         { id: 'account', href: '/account', label: 'حسابي', icon: '◔', ariaLabel: 'حسابي' },
