@@ -158,6 +158,15 @@ export default async function SpecialistDashboard() {
             </div>
             <div style={{ color: 'var(--ink-3)', fontSize: 18 }}>←</div>
           </Link>
+          {/* 🎯 V25.30: link للإحصائيات */}
+          <Link href="/specialist/stats" className="scr-list-item scr-list-item-clickable">
+            <div className="scr-list-item-icon">📊</div>
+            <div className="scr-list-item-content">
+              <div className="scr-list-item-title">الإحصائيات</div>
+              <div className="scr-list-item-subtitle">أداؤك · تقييماتك · دخلك</div>
+            </div>
+            <div style={{ color: 'var(--ink-3)', fontSize: 18 }}>←</div>
+          </Link>
           {profile?.specialist_type === 'pharmacist' && (
             <Link href="/specialist/pharmacy" className="scr-list-item scr-list-item-clickable">
               <div className="scr-list-item-icon">💊</div>
