@@ -6,6 +6,7 @@ import DashboardPills from './pills-client';
 import StoriesRow from '@/components/dashboard/StoriesRow';
 import OnboardingTrigger from '@/components/onboarding/OnboardingTrigger';
 import RefreshWrapper from '@/components/pwa/RefreshWrapper';
+import PatientHeroCard from '@/components/dashboard/PatientHeroCard';
 
 export const dynamic = 'force-dynamic';
 
@@ -156,6 +157,9 @@ export default async function DashboardPage() {
         {/* البحث */}
         <DashboardSearch />
 
+        {/* 🎨 V25.34: Hero Card الشخصي */}
+        <PatientHeroCard fullName={fullName} governorate={governorate} />
+
         {/* Quick Action Pills */}
         <DashboardPills />
 
@@ -180,14 +184,29 @@ export default async function DashboardPage() {
         <div className="scr-section-head" style={{ marginTop: 20 }}>
           <div className="scr-section-title">المُميّز</div>
         </div>
-        <Link href={FEATURED_SERVICE.href} className="service-card service-featured">
-          <div className="service-icon" aria-hidden="true">{FEATURED_SERVICE.icon}</div>
-          <div style={{ flex: 1, textAlign: 'right' }}>
-            <div className="service-title">{FEATURED_SERVICE.title}</div>
-            <div className="service-desc">{FEATURED_SERVICE.desc}</div>
-            <div className="service-meta">{FEATURED_SERVICE.meta}</div>
+        <Link href={FEATURED_SERVICE.href} className="service-featured-v2">
+          <div className="service-featured-v2-row">
+            <div className="service-featured-v2-icon" aria-hidden="true">{FEATURED_SERVICE.icon}</div>
+            <div className="service-featured-v2-body">
+              <div className="service-featured-v2-title-row">
+                <span className="service-featured-v2-title">{FEATURED_SERVICE.title}</span>
+                <span className="service-featured-v2-badge">الأكثر طلباً</span>
+              </div>
+              <div className="service-featured-v2-desc">{FEATURED_SERVICE.desc}</div>
+              <div className="service-featured-v2-tags">
+                <span className="service-featured-v2-tag">
+                  <span aria-hidden="true">⏱</span> 30د
+                </span>
+                <span className="service-featured-v2-tag">
+                  <span aria-hidden="true">💵</span> من 15$
+                </span>
+                <span className="service-featured-v2-tag">
+                  <span aria-hidden="true">🏠</span> في منزلك
+                </span>
+              </div>
+            </div>
+            <div className="service-featured-v2-arrow" aria-hidden="true">←</div>
           </div>
-          <div className="service-arrow" aria-hidden="true">←</div>
         </Link>
 
         {/* الخدمات الرئيسية */}
