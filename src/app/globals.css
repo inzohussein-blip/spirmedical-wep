@@ -13540,3 +13540,261 @@ html {
   transform: scale(1.1);
   z-index: 1000 !important;
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   🎨 V25.39: Marker Animations Polish
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Drop-in animation for markers as they appear */
+@keyframes marker-drop-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.7);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(4px) scale(1.05);
+  }
+  80% {
+    transform: translateY(-2px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.leaflet-marker-icon.spir-map-marker {
+  animation: marker-drop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease;
+}
+
+/* Subtle hover lift */
+.leaflet-marker-icon.spir-map-marker:hover {
+  transform: scale(1.12) translateY(-2px) !important;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.25));
+  z-index: 1000 !important;
+}
+
+/* Active/selected state */
+.leaflet-marker-icon.spir-map-marker-selected {
+  animation: marker-bounce 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 6px 16px rgba(15, 110, 86, 0.4));
+  z-index: 2000 !important;
+}
+
+@keyframes marker-bounce {
+  0% { transform: scale(1) translateY(0); }
+  30% { transform: scale(1.2) translateY(-8px); }
+  60% { transform: scale(0.95) translateY(2px); }
+  100% { transform: scale(1.1) translateY(0); }
+}
+
+/* Pulse for user marker - تحسين الموجود */
+.leaflet-marker-icon.spir-map-user-marker,
+.leaflet-marker-icon.spir-user-location-marker {
+  animation: marker-drop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+@keyframes marker-pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.1;
+    transform: scale(1.6);
+  }
+}
+
+/* Cluster animations */
+.leaflet-marker-icon.spir-map-cluster {
+  animation: marker-drop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.leaflet-marker-icon.spir-map-cluster:hover {
+  transform: scale(1.1) !important;
+  z-index: 1500 !important;
+}
+
+/* Loading overlay عند تحديث الـ markers */
+.services-map-loading-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  border: 0.5px solid var(--line, #E8E5DC);
+  border-radius: 100px;
+  padding: 8px 14px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink-2, #444441);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  animation: services-map-loading-fade 0.2s ease-out;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+@keyframes services-map-loading-fade {
+  from { opacity: 0; transform: translate(-50%, -40%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+.services-map-loading-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--line-2, #D3D1C7);
+  border-top-color: var(--emerald, #1D9E75);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+/* Filter button polish */
+.services-map-filter-btn {
+  transform-origin: center;
+}
+
+.services-map-filter-btn.active {
+  animation: filter-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes filter-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+/* Selected card slide-up smoother */
+@keyframes services-map-card-up {
+  0% {
+    transform: translateY(40px) scale(0.95);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(-4px) scale(1.02);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.services-map-selected-card {
+  animation: services-map-card-up 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* FAB controls hover */
+.services-map-fab {
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s;
+}
+
+.services-map-fab:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.services-map-fab:active {
+  transform: scale(0.92);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   🗺️ V25.39: SpirMapView (replaces FreeMedicalMap)
+   ════════════════════════════════════════════════════════════════════ */
+
+.spir-map-view-recenter {
+  position: absolute;
+  top: 12px;
+  inset-inline-end: 52px;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: white;
+  border: 0.5px solid var(--line, #E8E5DC);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.15s;
+  z-index: 500;
+  padding: 0;
+  font-family: inherit;
+}
+
+.spir-map-view-recenter:active {
+  transform: scale(0.92);
+}
+
+.spir-map-view-card {
+  position: absolute;
+  bottom: 12px;
+  inset-inline-start: 12px;
+  inset-inline-end: 12px;
+  background: white;
+  border: 0.5px solid var(--line, #E8E5DC);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  animation: spir-map-card-up 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 600;
+}
+
+@keyframes spir-map-card-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.spir-map-view-card-close {
+  position: absolute;
+  top: 6px;
+  inset-inline-end: 8px;
+  width: 26px;
+  height: 26px;
+  background: var(--paper-2, #F1EFE8);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-3, #5F5E5A);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.spir-map-view-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding-inline-end: 28px;
+}
+
+.spir-map-view-card-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--ink, #2C2C2A);
+  line-height: 1.4;
+}
+
+.spir-map-view-card-subtitle {
+  font-size: 11px;
+  color: var(--ink-3, #5F5E5A);
+  margin-top: 2px;
+}
+
+.spir-map-view-card-desc {
+  font-size: 11px;
+  color: var(--ink-2, #444441);
+  line-height: 1.6;
+  margin: 8px 0 10px;
+  padding: 8px 10px;
+  background: var(--paper-2, #F1EFE8);
+  border-radius: 8px;
+}
