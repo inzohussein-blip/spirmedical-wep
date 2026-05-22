@@ -43,9 +43,12 @@ export interface SpecialistLocation extends GpsCoordinates {
  */
 export interface MapMarker extends GpsCoordinates {
   id: string;
-  title: string;
+  title?: string;
   subtitle?: string;
-  /** نوع الـ marker للتمييز البصري */
+  description?: string;
+  /** نوع الـ marker للتمييز البصري - النظام الجديد V25.37 */
+  type?: 'blood-draw' | 'home-nursing' | 'pharmacy' | 'dental' | 'optical' | 'mental-health' | 'nutrition' | 'hospital' | 'doctor' | 'clinic' | 'user';
+  /** @deprecated - استخدم type بدلاً */
   variant?: 'patient' | 'specialist' | 'lab' | 'pharmacy' | 'default';
   popup?: string;
 }
