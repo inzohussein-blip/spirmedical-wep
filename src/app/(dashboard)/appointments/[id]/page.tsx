@@ -5,6 +5,7 @@ import { decrypt } from '@/lib/encryption';
 import AppointmentStatusCard from '@/components/appointments/AppointmentStatusCard';
 import AppointmentTimeline from '@/components/appointments/AppointmentTimeline';
 import AppointmentActions from '@/components/appointments/AppointmentActions';
+import ExternalMapButton from '@/components/maps/ExternalMapButton';
 import {
   Stethoscope, Calendar, Clock, Smartphone, MessageCircle, Send,
   MapPin, FileText, Lock,
@@ -231,13 +232,22 @@ export default async function AppointmentDetailsPage({ params }: Props) {
               fontSize: '13px',
               color: 'var(--ink-2, #1F2A2C)',
               lineHeight: 1.7,
-              margin: 0,
+              margin: '0 0 12px',
               padding: '12px',
               background: 'var(--paper-3, #FAF6EB)',
               borderRadius: '10px',
             }}>
               {appointment.address}
             </p>
+            {(appointment as { latitude?: number | null; longitude?: number | null }).latitude && (appointment as { latitude?: number | null; longitude?: number | null }).longitude && (
+              <ExternalMapButton
+                lat={(appointment as { latitude?: number | null }).latitude}
+                lng={(appointment as { longitude?: number | null }).longitude}
+                label="عنوان الموعد"
+                description={appointment.address}
+                variant="full"
+              />
+            )}
           </div>
         )}
 
