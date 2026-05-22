@@ -7,6 +7,7 @@ import {
   MapPin, Eye, EyeOff,
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
+import { useConfirm } from '@/components/ui';
 import { createHospital, updateHospital, deleteHospital, toggleHospitalActive } from './actions';
 
 interface Hospital {
@@ -74,6 +75,7 @@ export default function HospitalsAdminClient({ hospitals }: Props) {
   const [filterCity, setFilterCity] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<Hospital | null>(null);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const filtered = useMemo(() => {
     return hospitals.filter((h) => {
@@ -84,8 +86,14 @@ export default function HospitalsAdminClient({ hospitals }: Props) {
     });
   }, [hospitals, searchQuery, filterType, filterCity]);
 
-  const handleDelete = (h: Hospital) => {
-    if (!confirm(`حذف "${h.name}" نهائياً؟`)) return;
+  const handleDelete = async (h: Hospital) => {
+    const ok = await confirm({
+      title: 'حذف المستشفى',
+      message: `هل تريد حذف "${h.name}" نهائياً؟ لا يمكن التراجع.`,
+      variant: 'danger',
+      confirmText: 'احذف نهائياً',
+    });
+    if (!ok) return;
     startTransition(async () => {
       const r = await deleteHospital(h.id);
       if (r.success) { toast.success('تم الحذف'); router.refresh(); }
@@ -103,6 +111,7 @@ export default function HospitalsAdminClient({ hospitals }: Props) {
 
   return (
     <div>
+      <ConfirmDialog />
       <div style={{ display: 'flex', gap: 8, marginBottom: 14, flexWrap: 'wrap' }}>
         <button
           type="button"
