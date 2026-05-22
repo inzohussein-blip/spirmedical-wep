@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next';
+import { SITE_TYPE } from '@/lib/site-config';
 
 // ============================================================
 // 🤖 Robots Configuration - مع دعم Vercel Screenshot Bot
@@ -7,6 +8,23 @@ import { MetadataRoute } from 'next';
 export default function robots(): MetadataRoute.Robots {
   const baseUrl =
     process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spirmedical-wep.vercel.app';
+
+  // 📱 على App site - منع كل البوتات (التطبيق ليس للجمهور)
+  if (SITE_TYPE === 'app') {
+    return {
+      rules: [
+        {
+          userAgent: ['vercel-screenshot-bot', 'Vercelbot', 'vercel-favicon', 'HeadlessChrome'],
+          allow: ['/'],
+        },
+        {
+          userAgent: '*',
+          disallow: '/',
+        },
+      ],
+      host: baseUrl,
+    };
+  }
 
   const publicPaths = [
     '/',
