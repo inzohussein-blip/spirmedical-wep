@@ -7,7 +7,7 @@ import {
   Map as MapIcon, List, Hospital as HospitalIcon, AlertTriangle,
   CheckCircle2, Activity, BedDouble,
 } from 'lucide-react';
-import { FreeMedicalMapWrapper } from '@/components/ui/FreeMedicalMapWrapper';
+import FreeMedicalMapWrapper from '@/components/maps/SpirMapViewWrapper';
 import type { MapMarker } from '@/types/location';
 
 interface Hospital {
