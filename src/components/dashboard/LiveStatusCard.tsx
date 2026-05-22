@@ -79,6 +79,7 @@ export default function LiveStatusCard({
         </div>
         <span className="live-status-label">{statusLabel}</span>
         <span className="live-status-time">
+          {new Date().toLocaleDateString('ar-IQ', { weekday: 'long' })}{' '}
           {new Date().toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' })}
         </span>
       </div>
