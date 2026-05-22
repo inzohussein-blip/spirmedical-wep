@@ -24,6 +24,7 @@ import Link from 'next/link';
 interface Props {
   fullName: string;
   governorate?: string | null;
+  hasNotifications?: boolean;
 }
 
 function getGreeting(): string {
@@ -39,7 +40,7 @@ function getFirstChar(name: string): string {
   return name.trim().charAt(0).toUpperCase() || 'ح';
 }
 
-export default async function PatientHeroCard({ fullName, governorate }: Props) {
+export default async function PatientHeroCard({ fullName, governorate, hasNotifications = false }: Props) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -104,6 +105,14 @@ export default async function PatientHeroCard({ fullName, governorate }: Props) 
               )}
             </div>
           </div>
+          <Link
+            href="/account/notifications"
+            className="hero-card-notif-btn"
+            aria-label="الإشعارات"
+          >
+            <span aria-hidden="true">🔔</span>
+            {hasNotifications && <span className="hero-card-notif-dot" aria-hidden="true" />}
+          </Link>
         </div>
 
         <div className="hero-card-pills-row">
