@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { Plus, Edit, Trash2, Star, CheckCircle2, XCircle, Search } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
+import { useConfirm } from '@/components/ui';
 import {
   createDentalClinic,
   updateDentalClinic,
@@ -86,14 +87,21 @@ export default function DentalAdminClient({ initialClinics }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showCreate, setShowCreate] = useState(false);
   const [, startTransition] = useTransition();
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const filtered = clinics.filter((c) =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.city.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleDelete = (id: string, name: string) => {
-    if (!confirm(`حذف عيادة "${name}" نهائياً؟`)) return;
+  const handleDelete = async (id: string, name: string) => {
+    const ok = await confirm({
+      title: 'حذف العيادة',
+      message: `هل تريد حذف عيادة "${name}" نهائياً؟ لا يمكن التراجع.`,
+      variant: 'danger',
+      confirmText: 'احذف نهائياً',
+    });
+    if (!ok) return;
     startTransition(async () => {
       const result = await deleteDentalClinic(id);
       if (result.ok) {
@@ -121,6 +129,7 @@ export default function DentalAdminClient({ initialClinics }: Props) {
 
   return (
     <div>
+      <ConfirmDialog />
       {/* Stats */}
       <div style={{
         display: 'grid',
