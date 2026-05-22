@@ -7,6 +7,7 @@ import {
   CheckCircle2, Eye,
 } from 'lucide-react';
 import { haptic } from '@/lib/haptic';
+import ExternalMapButton from '@/components/maps/ExternalMapButton';
 
 interface Store {
   id: string;
@@ -29,6 +30,8 @@ interface Store {
   is_verified: boolean;
   is_featured: boolean;
   working_hours: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 const CITIES = ['الكل', 'بغداد', 'البصرة', 'الموصل', 'النجف', 'كربلاء', 'أربيل'];
@@ -318,6 +321,13 @@ function StoreCard({ store }: { store: Store }) {
               💬 WhatsApp
             </a>
           )}
+          <ExternalMapButton
+            lat={store.latitude}
+            lng={store.longitude}
+            label={store.name}
+            description={`${store.city}${store.district ? ' · ' + store.district : ''}`}
+            variant="compact"
+          />
         </div>
       </div>
     </article>
