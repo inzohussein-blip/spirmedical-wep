@@ -10,7 +10,7 @@ import {
   CheckCircle2, Clock, BedDouble, Activity, Map as MapIcon,
   MessageCircle, Globe, Mail,
 } from 'lucide-react';
-import { FreeMedicalMapWrapper } from '@/components/ui/FreeMedicalMapWrapper';
+import FreeMedicalMapWrapper from '@/components/maps/SpirMapViewWrapper';
 import ShareButton from '@/components/pwa/ShareButton';
 
 export const dynamic = 'force-dynamic';
@@ -300,7 +300,7 @@ export default async function HospitalDetailPage({
                 lng: hospital.longitude,
                 title: hospital.name,
                 subtitle: hospital.address || `${hospital.city} - ${hospital.district}`,
-                variant: hospital.type === 'government' ? 'specialist' : 'pharmacy',
+                type: 'hospital',
               }}
               height={280}
               showDirections={true}
