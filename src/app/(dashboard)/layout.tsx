@@ -2,6 +2,7 @@ import { requireSession } from '@/lib/auth/session';
 import { AuthenticatedShell } from '@/components/layout/AuthenticatedShell';
 import BugReportButton from '@/components/feedback/BugReportButton';
 import PageTransitionProvider from '@/components/pwa/PageTransitionProvider';
+import FloatingActionButton from '@/components/ui/FloatingActionButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,6 +32,8 @@ export default async function DashboardLayout({
       <PageTransitionProvider>
         {children}
       </PageTransitionProvider>
+      {/* 🎯 V25.34: FAB ديناميكي حسب الصفحة */}
+      <FloatingActionButton />
       {/* ✨ V25.18: زر الإبلاغ عن الأعطال (floating) */}
       <BugReportButton />
     </AuthenticatedShell>
