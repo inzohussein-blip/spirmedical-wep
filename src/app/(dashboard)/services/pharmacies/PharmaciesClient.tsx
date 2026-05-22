@@ -3,9 +3,10 @@
 import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import {
-  ArrowRight, Search, MapPin, Phone, Star, Pill, Clock, Map, Info,
+  ArrowRight, Search, MapPin, Phone, Star, Pill, Clock, Info,
   ChevronLeft, Package,
 } from 'lucide-react';
+import ExternalMapButton from '@/components/maps/ExternalMapButton';
 
 interface Pharmacy {
   id: string;
@@ -21,6 +22,8 @@ interface Pharmacy {
   rating_avg: number;
   rating_count: number;
   is_verified: boolean;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 interface Props {
@@ -250,16 +253,15 @@ export default function PharmaciesClient({ pharmacies }: Props) {
                         <Phone size={14} strokeWidth={2.2} aria-hidden />
                         <span>اتصال</span>
                       </a>
-                      <a
-                        href={`https://maps.google.com/?q=${encodeURIComponent(p.name + ' ' + p.district + ' ' + p.city)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="scr-action-btn"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Map size={14} strokeWidth={2.2} aria-hidden />
-                        <span>الموقع</span>
-                      </a>
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <ExternalMapButton
+                          lat={p.latitude}
+                          lng={p.longitude}
+                          label={p.name}
+                          description={`${p.city} · ${p.district}`}
+                          variant="compact"
+                        />
+                      </div>
                       {p.rating_count > 0 && (
                         <span
                           className="scr-tag"
