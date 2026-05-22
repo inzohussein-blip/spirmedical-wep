@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import RefreshWrapper from '@/components/pwa/RefreshWrapper';
+import EnhancedEmptyState from '@/components/ui/EnhancedEmptyState';
 
 export const metadata = {
   title: 'مواعيدي · سباير ميديكال',
@@ -126,19 +127,30 @@ export default async function AppointmentsPage({ searchParams }: Props) {
         </div>
 
         {(appointments?.length ?? 0) === 0 ? (
-          <div className="scr-empty">
-            <div className="scr-empty-icon" aria-hidden="true">📋</div>
-            <h2 className="scr-empty-title">لا توجد طلبات</h2>
-            <p className="scr-empty-desc">
-              {filter === 'all'
-                ? 'لم تحجز أي خدمة بعد. ابدأ بالحجز الأول.'
-                : `لا توجد طلبات في فلتر "${FILTERS.find(f => f.id === filter)?.label}".`}
-            </p>
-            <Link href="/appointments/new" className="scr-empty-cta">حجز جديد ←</Link>
-            {filter !== 'all' && (
-              <Link href="/appointments" className="scr-empty-link">عرض كل الطلبات</Link>
-            )}
-          </div>
+          <EnhancedEmptyState
+            icon="📋"
+            decorIcon="➕"
+            title="ما عندك طلبات بعد"
+            description={
+              filter === 'all'
+                ? <>احجز أول خدمة وستظهر هنا<br />سهلة وسريعة في 3 خطوات</>
+                : `لا توجد طلبات في فلتر "${FILTERS.find(f => f.id === filter)?.label}"`
+            }
+            primaryAction={{
+              href: '/appointments/new',
+              label: '➕ احجز خدمتك الأولى',
+            }}
+            secondaryActions={
+              filter === 'all'
+                ? [
+                    { href: '/services', label: '🔍 استكشف الخدمات' },
+                    { href: '/account/help', label: '💬 اسأل دعم' },
+                  ]
+                : [
+                    { href: '/appointments', label: 'عرض كل الطلبات' },
+                  ]
+            }
+          />
         ) : (
           <div>
             {appointments!.map((appt) => {
