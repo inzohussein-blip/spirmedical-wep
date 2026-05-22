@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { SERVICES, CATEGORIES, formatPrice, formatDuration, type Service } from '@/lib/services/services-data';
 import { generateAvailableDates, generateTimeSlotsForDate, groupTimeSlots, formatDateRelative, toArabicDigits, type TimeSlot } from '@/lib/services/time-slots';
 import OtpChannelSelector from './OtpChannelSelector';
+import UserLocationPickerWrapper from '@/components/maps/UserLocationPickerWrapper';
 import {
   Calendar, MapPin, Lightbulb, Monitor, Clock, FileText, ChevronUp,
 } from 'lucide-react';
@@ -20,6 +21,9 @@ interface BookingData {
   address: string;
   notes: string;
   phone: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  governorate?: string;
 }
 
 interface Props {
@@ -39,6 +43,9 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
     address: '',
     notes: '',
     phone: userPhone,
+    latitude: null,
+    longitude: null,
+    governorate: '',
   });
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -233,24 +240,28 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
         <div className="step-content">
           {data.service?.needsAddress ? (
             <>
-              <div className="field-group">
-                <label>العنوان التفصيلي *</label>
-                <textarea
-                  value={data.address}
-                  onChange={(e) => setData({ ...data, address: e.target.value })}
-                  placeholder="مثال: بغداد - حي الجامعة - شارع 14 - عمارة رقم 8 - الشقة 3"
-                  rows={3}
-                  maxLength={500}
-                />
-                <div className="field-hint">
-                  <Lightbulb size={13} strokeWidth={2.2} aria-hidden style={{ verticalAlign: '-2px', marginLeft: 4 }} />
-                  العنوان أدق = وصول أسرع · يُمكنك مشاركة الموقع تلقائياً
-                </div>
-                <button type="button" className="gps-btn">
-                  <MapPin size={14} strokeWidth={2.2} aria-hidden />
-                  <span>استخدم موقعي الحالي</span>
-                </button>
-              </div>
+              <UserLocationPickerWrapper
+                initialLocation={{
+                  latitude: data.latitude ?? undefined,
+                  longitude: data.longitude ?? undefined,
+                  address: data.address,
+                  governorate: data.governorate,
+                }}
+                onLocationChange={(loc) => {
+                  setData((prev) => ({
+                    ...prev,
+                    latitude: loc.latitude,
+                    longitude: loc.longitude,
+                    address: loc.address,
+                    governorate: loc.governorate,
+                  }));
+                }}
+                height={280}
+                label="عنوان الخدمة"
+                description="اضغط على الخريطة أو استخدم GPS لتحديد موقعك"
+                showAddress
+                showGovernorate
+              />
             </>
           ) : (
             <div className="online-banner">
