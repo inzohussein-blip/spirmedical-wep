@@ -1,5 +1,6 @@
 import { requireSession } from '@/lib/auth/session';
 import { AuthenticatedShell } from '@/components/layout/AuthenticatedShell';
+import PageTransitionProvider from '@/components/pwa/PageTransitionProvider';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,7 +26,10 @@ export default async function SpecialistLayout({
       shellRole="specialist"
       notificationRole="specialist"
     >
-      {children}
+      {/* 🎯 V25.32: page transitions */}
+      <PageTransitionProvider>
+        {children}
+      </PageTransitionProvider>
     </AuthenticatedShell>
   );
 }
