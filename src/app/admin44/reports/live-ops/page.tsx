@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { isAdminRole } from '@/lib/admin-types';
-import { FreeMedicalMapWrapper } from '@/components/ui/FreeMedicalMapWrapper';
+import FreeMedicalMapWrapper from '@/components/maps/SpirMapViewWrapper';
 import { Card, EmptyState, StatusBadge } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
