@@ -5,7 +5,7 @@ import LandingMobileMenu from '@/components/landing/MobileMenu';
 import LandingFAQ from '@/components/landing/FAQ';
 import LandingStats from '@/components/landing/Stats';
 import { ARTICLES } from '@/lib/data/blog-articles';
-import { FreeMedicalMapWrapper } from '@/components/ui/FreeMedicalMapWrapper';
+import FreeMedicalMapWrapper from '@/components/maps/SpirMapViewWrapper';
 import type { MapMarker } from '@/types/location';
 import { SITE_TYPE, getAppUrl } from '@/lib/site-config';
 
@@ -855,7 +855,7 @@ export default async function HomePage({
                 height={420}
                 zoom={6}
                 showDirections={false}
-                showCoords={false}
+                
               />
             </div>
 
