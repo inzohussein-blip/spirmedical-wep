@@ -7,6 +7,7 @@ import {
   CheckCircle2, Sparkles, Award, Users,
 } from 'lucide-react';
 import { haptic } from '@/lib/haptic';
+import ExternalMapButton from '@/components/maps/ExternalMapButton';
 
 interface DentalClinic {
   id: string;
@@ -32,6 +33,8 @@ interface DentalClinic {
   is_verified: boolean;
   is_featured: boolean;
   working_hours: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 interface Props {
@@ -398,6 +401,13 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
               💬 WhatsApp
             </a>
           )}
+          <ExternalMapButton
+            lat={clinic.latitude}
+            lng={clinic.longitude}
+            label={clinic.name}
+            description={`${clinic.city}${clinic.district ? ' · ' + clinic.district : ''}`}
+            variant="compact"
+          />
         </div>
       </div>
     </article>
