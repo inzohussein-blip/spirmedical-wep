@@ -1,20 +1,23 @@
 // ═══════════════════════════════════════════════════════════════
-// 🏥 صفحة كل الخدمات الشاملة (V25.30)
+// 🗺️ صفحة كل الخدمات - مع الخريطة المركزية (V25.37)
 // ═══════════════════════════════════════════════════════════════
-// Index page لكل الخدمات الـ 13 المتوفرة في Spir Medical
+// نظام موحّد: خريطة + filters + 11 نوع خدمة + 18 محافظة
 // ═══════════════════════════════════════════════════════════════
 
+import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import ServicesMapHubWrapper, { type ServiceLocation } from '@/components/maps/ServicesMapHubWrapper';
+import type { ServiceMarkerType } from '@/lib/maps/markers';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'كل الخدمات الطبية - Spir Medical',
-  description: 'استكشف كل الخدمات الطبية في سباير ميديكال: سحب دم، تمريض، أسنان، نظارات، صحة نفسية، تغذية، وأكثر',
+  description: 'استكشف كل الخدمات الطبية على الخريطة: سحب دم، تمريض، أسنان، صيدليات، مستشفيات، وأكثر',
 };
 
-interface ServiceCategory {
+interface CategoryCard {
   id: string;
   icon: string;
   title: string;
@@ -24,136 +27,131 @@ interface ServiceCategory {
   badge?: string;
 }
 
-const ALL_SERVICES: ServiceCategory[] = [
-  // 🩸 الخدمات الأساسية
-  {
-    id: 'blood-lab',
-    icon: '🩸',
-    title: 'سحب دم + تحاليل',
-    desc: '+٢٠٠ فحص · في منزلك',
-    href: '/appointments/new?service=blood-draw',
-    variant: 'emerald',
-    badge: 'الأكثر طلباً',
-  },
-  {
-    id: 'nursing',
-    icon: '💉',
-    title: 'تمريض منزلي',
-    desc: 'إبر · جروح · كانيولا · مغذي',
-    href: '/appointments/new?service=home-nursing',
-    variant: 'amber',
-  },
-  {
-    id: 'consultations',
-    icon: '💬',
-    title: 'استشارات طبية',
-    desc: 'نص · صور · 24 ساعة',
-    href: '/consultations',
-    variant: 'emerald',
-  },
-
-  // 👨‍⚕️ الأطباء والمتخصّصون
-  {
-    id: 'doctors',
-    icon: '👨‍⚕️',
-    title: 'الأطباء والاختصاصيون',
-    desc: 'دليل · طبيب عائلة',
-    href: '/services/doctors',
-    variant: 'amber',
-  },
-  {
-    id: 'consultation-services',
-    icon: '🩺',
-    title: 'استشارات إضافية',
-    desc: 'استشارات تخصّصية',
-    href: '/services/consultation',
-    variant: 'emerald',
-  },
-
-  // 🏥 المرافق الصحية
-  {
-    id: 'hospitals',
-    icon: '🏥',
-    title: 'مستشفيات',
-    desc: 'حكومي · أهلي · على الخريطة',
-    href: '/services/hospitals',
-    variant: 'amber',
-  },
-  {
-    id: 'clinics',
-    icon: '🏨',
-    title: 'عيادات',
-    desc: 'دليل عيادات مُعتمدة',
-    href: '/services/clinics',
-    variant: 'emerald',
-  },
-  {
-    id: 'pharmacies',
-    icon: '💊',
-    title: 'صيدليات',
-    desc: 'إرشاد لا بيع',
-    href: '/services/pharmacies',
-    variant: 'amber',
-  },
-
-  // 🦷 الخدمات التخصّصية الجديدة
-  {
-    id: 'dental',
-    icon: '🦷',
-    title: 'طب الأسنان',
-    desc: 'تقويم · زراعة · تبييض',
-    href: '/services/dental',
-    variant: 'emerald',
-    badge: 'جديد',
-  },
-  {
-    id: 'optical',
-    icon: '👓',
-    title: 'النظارات الطبية',
-    desc: 'فحص · إطارات · عدسات',
-    href: '/services/optical',
-    variant: 'amber',
-    badge: 'جديد',
-  },
-  {
-    id: 'mental-health',
-    icon: '🧠',
-    title: 'الصحة النفسية',
-    desc: 'سرية تامة · علاج · استشارات',
-    href: '/services/mental-health',
-    variant: 'emerald',
-    badge: 'جديد',
-  },
-  {
-    id: 'nutrition',
-    icon: '🥗',
-    title: 'التغذية والحمية',
-    desc: 'إنقاص وزن · سكري · رياضة',
-    href: '/services/nutrition',
-    variant: 'amber',
-    badge: 'جديد',
-  },
-
-  // 🦾 خدمات أخرى
-  {
-    id: 'physio',
-    icon: '🦾',
-    title: 'العلاج الفيزيائي',
-    desc: 'إعادة تأهيل · علاج طبيعي',
-    href: '/services/physio',
-    variant: 'emerald',
-  },
-  {
-    id: 'cosmetic',
-    icon: '💄',
-    title: 'الطب التجميلي',
-    desc: 'بشرة · فيلر · بوتوكس',
-    href: '/services/cosmetic',
-    variant: 'amber',
-  },
+const QUICK_ACCESS: CategoryCard[] = [
+  { id: 'blood-lab', icon: '🩸', title: 'سحب دم + تحاليل', desc: '+٢٠٠ فحص · في منزلك', href: '/appointments/new?service=blood-draw', variant: 'emerald', badge: 'الأكثر طلباً' },
+  { id: 'nursing', icon: '💉', title: 'تمريض منزلي', desc: 'إبر · جروح · كانيولا', href: '/appointments/new?service=home-nursing', variant: 'amber' },
 ];
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const supabase = createClient();
+
+  // جلب كل المواقع من قواعد البيانات (مع graceful fallback)
+  const [
+    hospitalsRes,
+    pharmaciesRes,
+    dentalClinicsRes,
+    opticalStoresRes,
+    mentalHealthSpecialistsRes,
+    nutritionistsRes,
+    doctorsRes,
+  ] = await Promise.all([
+    supabase.from('hospitals').select('id, name, city, latitude, longitude, rating_avg').eq('is_active', true).not('latitude', 'is', null).not('longitude', 'is', null),
+    supabase.from('pharmacies').select('id, name, city, latitude, longitude').eq('is_active', true).not('latitude', 'is', null).not('longitude', 'is', null),
+    supabase.from('dental_clinics').select('id, name, city, latitude, longitude').eq('is_active', true).not('latitude', 'is', null).not('longitude', 'is', null),
+    supabase.from('optical_stores').select('id, name, city, latitude, longitude').eq('is_active', true).not('latitude', 'is', null).not('longitude', 'is', null),
+    supabase.from('mental_health_specialists').select('id, full_name, city, latitude, longitude').eq('is_active', true).not('latitude', 'is', null).not('longitude', 'is', null),
+    supabase.from('nutritionists').select('id, full_name, city, latitude, longitude').eq('is_active', true).not('latitude', 'is', null).not('longitude', 'is', null),
+    supabase.from('users').select('id, full_name, governorate, latitude, longitude').eq('role', 'specialist').eq('specialist_type', 'doctor').eq('is_active', true).not('latitude', 'is', null).not('longitude', 'is', null),
+  ]);
+
+  // Safely extract data (تجاهل أي errors)
+  type RawLoc = { id: string; name?: string; full_name?: string; city?: string | null; governorate?: string | null; latitude: number | null; longitude: number | null; rating_avg?: number | null };
+  const hospitals: RawLoc[] = (hospitalsRes.data as unknown as RawLoc[]) || [];
+  const pharmacies: RawLoc[] = (pharmaciesRes.data as unknown as RawLoc[]) || [];
+  const dentalClinics: RawLoc[] = (dentalClinicsRes.data as unknown as RawLoc[]) || [];
+  const opticalStores: RawLoc[] = (opticalStoresRes.data as unknown as RawLoc[]) || [];
+  const mentalHealthSpecialists: RawLoc[] = (mentalHealthSpecialistsRes.data as unknown as RawLoc[]) || [];
+  const nutritionists: RawLoc[] = (nutritionistsRes.data as unknown as RawLoc[]) || [];
+  const doctors: RawLoc[] = (doctorsRes.data as unknown as RawLoc[]) || [];
+
+  // تحويل كل المصادر لـ ServiceLocation موحّد
+  const locations: ServiceLocation[] = [
+    ...hospitals.map((h): ServiceLocation => ({
+      id: `hospital-${h.id}`,
+      type: 'hospital' as ServiceMarkerType,
+      name: h.name || 'مستشفى',
+      latitude: h.latitude!,
+      longitude: h.longitude!,
+      governorate: h.city ?? null,
+      rating: h.rating_avg ?? null,
+      href: `/services/hospitals/${h.id}`,
+    })),
+    ...pharmacies.map((p): ServiceLocation => ({
+      id: `pharmacy-${p.id}`,
+      type: 'pharmacy' as ServiceMarkerType,
+      name: p.name || 'صيدلية',
+      latitude: p.latitude!,
+      longitude: p.longitude!,
+      governorate: p.city ?? null,
+      rating: null,
+      href: `/services/pharmacies`,
+    })),
+    ...dentalClinics.map((d): ServiceLocation => ({
+      id: `dental-${d.id}`,
+      type: 'dental' as ServiceMarkerType,
+      name: d.name || 'عيادة أسنان',
+      latitude: d.latitude!,
+      longitude: d.longitude!,
+      governorate: d.city ?? null,
+      rating: null,
+      href: `/services/dental/${d.id}`,
+    })),
+    ...opticalStores.map((o): ServiceLocation => ({
+      id: `optical-${o.id}`,
+      type: 'optical' as ServiceMarkerType,
+      name: o.name || 'محل نظارات',
+      latitude: o.latitude!,
+      longitude: o.longitude!,
+      governorate: o.city ?? null,
+      rating: null,
+      href: `/services/optical/${o.id}`,
+    })),
+    ...mentalHealthSpecialists.map((m): ServiceLocation => ({
+      id: `mental-${m.id}`,
+      type: 'mental-health' as ServiceMarkerType,
+      name: m.full_name || 'اختصاصي نفسي',
+      latitude: m.latitude!,
+      longitude: m.longitude!,
+      governorate: m.city ?? null,
+      rating: null,
+      href: `/services/mental-health/${m.id}`,
+    })),
+    ...nutritionists.map((n): ServiceLocation => ({
+      id: `nutrition-${n.id}`,
+      type: 'nutrition' as ServiceMarkerType,
+      name: n.full_name || 'اختصاصي تغذية',
+      latitude: n.latitude!,
+      longitude: n.longitude!,
+      governorate: n.city ?? null,
+      rating: null,
+      href: `/services/nutrition/${n.id}`,
+    })),
+    ...doctors.map((d): ServiceLocation => ({
+      id: `doctor-${d.id}`,
+      type: 'doctor' as ServiceMarkerType,
+      name: d.full_name || 'طبيب',
+      latitude: d.latitude!,
+      longitude: d.longitude!,
+      governorate: d.governorate ?? null,
+      rating: null,
+      href: `/services/doctors`,
+    })),
+  ];
+
+  // إحصائيات الفئات
+  const counts = {
+    hospitals: hospitals.length,
+    pharmacies: pharmacies.length,
+    dentalClinics: dentalClinics.length,
+    opticalStores: opticalStores.length,
+    mentalHealthSpecialists: mentalHealthSpecialists.length,
+    nutritionists: nutritionists.length,
+    doctors: doctors.length,
+  };
+
+  // إحصائيات
+  const governoratesCount = new Set(locations.map((l) => l.governorate).filter(Boolean)).size;
+
   return (
     <main className="app-screen">
       <div className="scr-content">
@@ -167,17 +165,26 @@ export default function ServicesPage() {
         </div>
 
         <p className="scr-page-subtitle" style={{ marginBottom: 16 }}>
-          استكشف {ALL_SERVICES.length} خدمة طبية متكاملة
+          {locations.length} موقع · {governoratesCount} محافظة · استكشف على الخريطة
         </p>
 
-        {/* Grid */}
+        {/* 🗺️ الخريطة المركزية */}
+        <div style={{ marginBottom: 20 }}>
+          <ServicesMapHubWrapper locations={locations} height={500} />
+        </div>
+
+        {/* Quick access cards */}
+        <div className="scr-section-head" style={{ marginTop: 8 }}>
+          <div className="scr-section-title">الأكثر طلباً</div>
+        </div>
+
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(2, 1fr)',
           gap: 12,
           marginBottom: 20,
         }}>
-          {ALL_SERVICES.map((service) => (
+          {QUICK_ACCESS.map((service) => (
             <Link
               key={service.id}
               href={service.href}
@@ -200,29 +207,48 @@ export default function ServicesPage() {
                 </span>
               )}
 
-              <div style={{ fontSize: 32, marginBottom: 8 }}>
-                {service.icon}
-              </div>
-              <div style={{
-                fontSize: 13,
-                fontWeight: 900,
-                marginBottom: 4,
-                color: 'var(--ink)',
-              }}>
+              <div style={{ fontSize: 32, marginBottom: 8 }}>{service.icon}</div>
+              <div style={{ fontSize: 13, fontWeight: 900, marginBottom: 4, color: 'var(--ink)' }}>
                 {service.title}
               </div>
-              <div style={{
-                fontSize: 10,
-                color: 'var(--ink-3)',
-                lineHeight: 1.5,
-              }}>
+              <div style={{ fontSize: 10, color: 'var(--ink-3)', lineHeight: 1.5 }}>
                 {service.desc}
               </div>
             </Link>
           ))}
         </div>
 
-        {/* CTA: 24/7 */}
+        {/* Categories list */}
+        <div className="scr-section-head">
+          <div className="scr-section-title">استكشف حسب الفئة</div>
+        </div>
+
+        <div style={{ display: 'grid', gap: 8, marginBottom: 20 }}>
+          {[
+            { href: '/services/hospitals', icon: '🏥', label: 'المستشفيات', count: counts.hospitals },
+            { href: '/services/pharmacies', icon: '💊', label: 'الصيدليات', count: counts.pharmacies },
+            { href: '/services/dental', icon: '🦷', label: 'طب الأسنان', count: counts.dentalClinics },
+            { href: '/services/optical', icon: '👓', label: 'النظارات الطبية', count: counts.opticalStores },
+            { href: '/services/mental-health', icon: '🧠', label: 'الصحة النفسية', count: counts.mentalHealthSpecialists },
+            { href: '/services/nutrition', icon: '🥗', label: 'التغذية', count: counts.nutritionists },
+            { href: '/services/doctors', icon: '👨‍⚕️', label: 'الأطباء', count: counts.doctors },
+          ].map((cat) => (
+            <Link
+              key={cat.href}
+              href={cat.href}
+              className="scr-list-item scr-list-item-clickable"
+            >
+              <div className="scr-list-item-icon">{cat.icon}</div>
+              <div className="scr-list-item-content">
+                <div className="scr-list-item-title">{cat.label}</div>
+                <div className="scr-list-item-subtitle">{cat.count} موقع متاح</div>
+              </div>
+              <div style={{ color: 'var(--ink-3)', fontSize: 18 }}>←</div>
+            </Link>
+          ))}
+        </div>
+
+        {/* SOS */}
         <Link
           href="/sos"
           style={{
@@ -234,7 +260,6 @@ export default function ServicesPage() {
             border: '1px solid var(--rose)',
             borderRadius: 14,
             textDecoration: 'none',
-            marginBottom: 14,
           }}
         >
           <div>
@@ -247,20 +272,6 @@ export default function ServicesPage() {
           </div>
           <ArrowRight size={18} color="var(--rose)" style={{ transform: 'scaleX(-1)' }} />
         </Link>
-
-        {/* المعلومات الإضافية */}
-        <div style={{
-          background: 'var(--emerald-soft)',
-          borderRadius: 12,
-          padding: 14,
-          fontSize: 11,
-          color: 'var(--ink-2)',
-          lineHeight: 1.8,
-        }}>
-          💡 <strong>سباير ميديكال</strong> منصة طبية رقمية عراقية متكاملة
-          <br />
-          📞 خدمة عملاء 24/7 · 🇮🇶 صناعة عراقية · ⚡ خدمة سريعة
-        </div>
       </div>
     </main>
   );
