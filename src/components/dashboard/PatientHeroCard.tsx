@@ -92,27 +92,31 @@ export default async function PatientHeroCard({ fullName, governorate }: Props) 
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div className="hero-card-greeting">
-              {greeting} {firstName} 👋
+              مرحباً {firstName} 👋
             </div>
             <div className="hero-card-subtitle">
+              {greeting}
               {governorate && (
                 <>
-                  <i className="hero-card-icon-location" aria-hidden="true" />
-                  {governorate} ·{' '}
+                  {' '}<span className="hero-card-separator" aria-hidden="true">·</span>{' '}
+                  {governorate}
                 </>
               )}
-              كيف يمكننا مساعدتك اليوم؟
             </div>
           </div>
         </div>
 
         <div className="hero-card-pills-row">
           <Link href="/appointments" className="hero-card-pill">
-            <span className="hero-card-pill-icon" aria-hidden="true">🩸</span>
+            <svg className="hero-card-pill-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <path d="M6.8 22A6.5 6.5 0 0 1 1 17.5c0-3 1.5-5.5 6-9.5 4.5 4 6 6.5 6 9.5a6.5 6.5 0 0 1-5.8 4.5z M19 22a3 3 0 0 1-3-3c0-2 3-5 3-5s3 3 3 5a3 3 0 0 1-3 3z"/>
+            </svg>
             <span>{appointmentsCount} فحص</span>
           </Link>
           <Link href="/account/prescriptions" className="hero-card-pill">
-            <span className="hero-card-pill-icon" aria-hidden="true">📋</span>
+            <svg className="hero-card-pill-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <path d="M10.5 20.5L3.5 13.5a4.95 4.95 0 1 1 7-7L17.5 13.5a4.95 4.95 0 1 1-7 7z M8.5 8.5l7 7"/>
+            </svg>
             <span>{prescriptionsCount} وصفات</span>
           </Link>
         </div>
