@@ -7,6 +7,7 @@ import LandingStats from '@/components/landing/Stats';
 import { ARTICLES } from '@/lib/data/blog-articles';
 import { FreeMedicalMapWrapper } from '@/components/ui/FreeMedicalMapWrapper';
 import type { MapMarker } from '@/types/location';
+import { SITE_TYPE, getAppUrl } from '@/lib/site-config';
 
 export const metadata = {
   title: 'سباير ميديكال · Spir Medical — منصة طبية رقمية متكاملة في العراق',
@@ -172,6 +173,12 @@ export default async function HomePage({
 }: {
   searchParams: { source?: string; utm_source?: string };
 }) {
+  // 🎯 V25.35: لو هذا App site → /dashboard (middleware يتولّى الأمر)
+  // لكن نُضيف safety check هنا
+  if (SITE_TYPE === 'app') {
+    redirect('/dashboard');
+  }
+
   // ─── 🎯 V25.23: Smart PWA Routing ───
   // عند فتح PWA من home screen، نوجّه المستخدم مباشرة
   const isPWA = searchParams.source === 'pwa' || searchParams.utm_source === 'homescreen';
