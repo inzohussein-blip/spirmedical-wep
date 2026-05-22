@@ -13510,3 +13510,33 @@ html {
   background: transparent !important;
   border: none !important;
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   🗺️ V25.37 D: Marker Cluster + tweaks
+   ════════════════════════════════════════════════════════════════════ */
+
+/* استيراد CSS الخاص بـ markercluster */
+@import url('https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css');
+@import url('https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css');
+
+/* استبدال الـ default cluster style بـ style خاصّ بنا */
+.spir-map-cluster {
+  background: transparent !important;
+  border: none !important;
+}
+
+.leaflet-cluster-anim .leaflet-marker-icon,
+.leaflet-cluster-anim .leaflet-marker-shadow {
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+/* hover effect للـ markers */
+.spir-map-marker {
+  cursor: pointer;
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.spir-map-marker:hover {
+  transform: scale(1.1);
+  z-index: 1000 !important;
+}
