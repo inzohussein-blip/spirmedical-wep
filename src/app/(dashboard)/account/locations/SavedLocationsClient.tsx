@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { MapPin, Plus, Trash2, Star, Edit3, X, Save, Crosshair } from 'lucide-react';
-import { MapPickerWrapper } from '@/components/ui/MapPickerWrapper';
+import UserLocationPickerWrapper from '@/components/maps/UserLocationPickerWrapper';
 import { Card, CardHeader, CardTitle, EmptyState, Badge, useConfirm } from '@/components/ui';
 import {
   saveLocation,
@@ -322,13 +322,16 @@ export default function SavedLocationsClient({ initialLocations }: Props) {
               >
                 حدّد الموقع على الخريطة
               </label>
-              <MapPickerWrapper
-                initialLocation={coords}
-                initialAddress={address}
-                onChange={(c) => setCoords(c)}
-                onAddressChange={(addr) => setAddress(addr)}
+              <UserLocationPickerWrapper
+                initialLocation={coords ? { latitude: coords.lat, longitude: coords.lng, address, governorate: '' } : undefined}
+                onLocationChange={(loc) => {
+                  setCoords({ lat: loc.latitude, lng: loc.longitude });
+                  if (loc.address) setAddress(loc.address);
+                }}
                 height={320}
-                showAddressField={true}
+                showAddress={true}
+                showGovernorate={false}
+                label="الموقع"
               />
             </div>
 
