@@ -87,7 +87,7 @@ export default function FloatingActionButton() {
             className={`fab-action ${isOpen ? 'open' : ''}`}
             style={{
               transitionDelay: isOpen ? `${i * 50}ms` : `${(actions.length - 1 - i) * 30}ms`,
-              bottom: `${72 + i * 56}px`,
+              bottom: `${64 + i * 52}px`,
             }}
           >
             <span className={`fab-action-label ${action.variant === 'danger' ? 'danger' : ''}`}>
