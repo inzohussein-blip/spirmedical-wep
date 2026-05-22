@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { SPECIALIST_META, type SpecialistType } from '@/lib/specialist-types';
 import { decrypt } from '@/lib/encryption';
 import OrderAdminActions from './OrderAdminActions';
-import { FreeMedicalMapWrapper } from '@/components/ui/FreeMedicalMapWrapper';
+import FreeMedicalMapWrapper from '@/components/maps/SpirMapViewWrapper';
 import { getOrderLocation, getAssignedSpecialistLocation } from './actions';
 import type { MapMarker } from '@/types/location';
 
@@ -142,7 +142,7 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
               height={340}
               zoom={14}
               showDirections={true}
-              showCoords={true}
+              
             />
             {!orderLocation && (
               <div style={{
