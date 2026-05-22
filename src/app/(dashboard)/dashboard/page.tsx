@@ -7,6 +7,7 @@ import StoriesRow from '@/components/dashboard/StoriesRow';
 import OnboardingTrigger from '@/components/onboarding/OnboardingTrigger';
 import RefreshWrapper from '@/components/pwa/RefreshWrapper';
 import PatientHeroCard from '@/components/dashboard/PatientHeroCard';
+import ActiveAppointmentCard from '@/components/dashboard/ActiveAppointmentCard';
 
 export const dynamic = 'force-dynamic';
 
@@ -124,41 +125,14 @@ export default async function DashboardPage() {
       <RefreshWrapper>
       <div className="scr-content">
 
-        {/* HEADER */}
-        <div className="scr-header-v2">
-          <Link href="/account" className="scr-header-user">
-            <div className="scr-avatar-small" aria-hidden="true">{initial}</div>
-            <div className="scr-header-info">
-              <div className="scr-header-greeting">{greeting}</div>
-              <div className="scr-header-name">{displayName} <span aria-hidden="true">👋</span></div>
-            </div>
-          </Link>
+        {/* 🎨 V25.34: Hero Card الشخصي (يحلّ محلّ scr-header القديم) */}
+        <PatientHeroCard fullName={fullName} governorate={governorate} hasNotifications={hasNotifications} />
 
-          <div className="scr-header-actions">
-            <button
-              className="scr-header-btn"
-              aria-label={`الموقع: ${governorate}`}
-              type="button"
-            >
-              <span className="scr-header-btn-icon" aria-hidden="true">📍</span>
-              <span className="scr-header-btn-label">{governorate}</span>
-            </button>
-            <Link
-              href="/account/notifications"
-              className="scr-header-btn scr-header-btn-notif"
-              aria-label="الإشعارات"
-            >
-              <span aria-hidden="true">🔔</span>
-              {hasNotifications && <span className="scr-header-notif-dot" aria-hidden="true"></span>}
-            </Link>
-          </div>
-        </div>
+        {/* 🎯 V25.36: Live status للطلب النشط (لو موجود) */}
+        <ActiveAppointmentCard />
 
         {/* البحث */}
         <DashboardSearch />
-
-        {/* 🎨 V25.34: Hero Card الشخصي */}
-        <PatientHeroCard fullName={fullName} governorate={governorate} />
 
         {/* Quick Action Pills */}
         <DashboardPills />
