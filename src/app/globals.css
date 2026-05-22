@@ -11994,6 +11994,10 @@ html {
   line-height: 1.5;
 }
 
+.hero-card-separator {
+  opacity: 0.6;
+}
+
 .hero-card-icon-location {
   display: inline-block;
   width: 4px;
@@ -12034,6 +12038,14 @@ html {
 .hero-card-pill-icon {
   font-size: 14px;
   line-height: 1;
+}
+
+.hero-card-pill-svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .hero-card-next-appt {
@@ -12646,15 +12658,15 @@ html {
 }
 
 .empty-state-v2-illustration {
-  width: 96px;
-  height: 96px;
+  width: 80px;
+  height: 80px;
   margin: 0 auto 18px;
   position: relative;
 }
 
 .empty-state-v2-bg-circle {
-  width: 96px;
-  height: 96px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   position: absolute;
   top: 0;
@@ -12662,20 +12674,20 @@ html {
 }
 
 .empty-state-v2-fg-circle {
-  width: 72px;
-  height: 72px;
+  width: 60px;
+  height: 60px;
   background: white;
   border-radius: 50%;
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 10px;
+  left: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .empty-state-v2-main-icon {
-  font-size: 34px;
+  font-size: 28px;
   line-height: 1;
 }
 
@@ -12683,14 +12695,14 @@ html {
   position: absolute;
   top: -4px;
   inset-inline-end: 6px;
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   background: #FAC775;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 13px;
   color: #412402;
   border: 2px solid white;
 }
@@ -12793,8 +12805,8 @@ html {
 
 /* Main FAB button */
 .fab-main {
-  width: 54px;
-  height: 54px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background: linear-gradient(135deg, #1D9E75 0%, #0F6E56 100%);
   border: none;
@@ -12818,7 +12830,7 @@ html {
 }
 
 .fab-main-icon {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 100;
   color: white;
   line-height: 1;
@@ -12880,15 +12892,15 @@ html {
 }
 
 .fab-action-btn {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background: white;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  font-size: 18px;
   cursor: pointer;
   text-decoration: none;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
@@ -12905,5 +12917,5 @@ html {
   background: #E24B4A;
   box-shadow: 0 2px 12px rgba(226, 75, 74, 0.4);
   color: white;
-  font-size: 20px;
+  font-size: 16px;
 }
