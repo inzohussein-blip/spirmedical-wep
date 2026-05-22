@@ -1816,7 +1816,6 @@
 /* App Screens */
 .app-screen { background: var(--paper); min-height: 100%; }
 .scr-content {
-  /* 🎯 V25.27 + V25.33: safe-area-inset-top للـ iPhone notch */
   padding: calc(20px + env(safe-area-inset-top)) 20px 20px;
   background: var(--paper);
   min-height: 600px;
@@ -10971,7 +10970,6 @@ html {
    2. DASHBOARD CONTENT WRAPPER
    ───────────────────────────────────────────────────────── */
 .scr-content {
-  /* 🎯 V25.27 + V25.33: safe-area-inset-top للـ iPhone notch */
   padding: calc(16px + env(safe-area-inset-top)) 16px 16px;
   background: var(--paper);
   min-height: 100%;
@@ -11915,4 +11913,997 @@ html {
   box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.05),
     0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   🎨 V25.34: Hero Card (المجموعة 1)
+   ════════════════════════════════════════════════════════════════════ */
+
+.hero-card-container {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1D9E75 0%, #0F6E56 100%);
+  border-radius: 18px;
+  padding: 18px;
+  color: white;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 16px rgba(15, 110, 86, 0.18);
+}
+
+.hero-card-bg-decoration-1 {
+  position: absolute;
+  top: -30px;
+  inset-inline-start: -30px;
+  width: 120px;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero-card-bg-decoration-2 {
+  position: absolute;
+  bottom: -50px;
+  inset-inline-end: -50px;
+  width: 150px;
+  height: 150px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero-card-content {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-card-greeting-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.hero-card-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: white;
+  color: #0F6E56;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.hero-card-greeting {
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1.2;
+  margin-bottom: 3px;
+}
+
+.hero-card-subtitle {
+  font-size: 11px;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1.5;
+}
+
+.hero-card-icon-location {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.7;
+}
+
+.hero-card-pills-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.hero-card-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 100px;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  color: white;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hero-card-pill:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.hero-card-pill-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.hero-card-next-appt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(90deg, rgba(250, 199, 117, 0.95) 0%, rgba(250, 199, 117, 0.85) 100%);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-top: 14px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hero-card-next-appt:active {
+  transform: scale(0.98);
+}
+
+.hero-card-next-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.hero-card-next-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.hero-card-next-label {
+  font-size: 10px;
+  font-weight: 900;
+  color: #633806;
+  line-height: 1.2;
+}
+
+.hero-card-next-detail {
+  font-size: 11px;
+  font-weight: 500;
+  color: #412402;
+  margin-top: 3px;
+}
+
+.hero-card-next-arrow {
+  font-size: 18px;
+  color: #633806;
+  font-weight: 900;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   🎨 V25.34: Enhanced Service Cards (المجموعة 2)
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── نمط 1: Featured Service Card (للخدمة الرئيسية) ── */
+.service-featured-v2 {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1D9E75 0%, #0F6E56 100%);
+  border-radius: 18px;
+  padding: 16px;
+  color: white;
+  display: block;
+  text-decoration: none;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 16px rgba(15, 110, 86, 0.16);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.service-featured-v2:active {
+  transform: scale(0.98);
+}
+
+.service-featured-v2::before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  inset-inline-start: -30px;
+  width: 120px;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.service-featured-v2::after {
+  content: '';
+  position: absolute;
+  bottom: -50px;
+  inset-inline-end: -50px;
+  width: 160px;
+  height: 160px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.service-featured-v2-row {
+  display: flex;
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.service-featured-v2-icon {
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.service-featured-v2-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.service-featured-v2-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.service-featured-v2-title {
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.service-featured-v2-badge {
+  background: #FAC775;
+  color: #412402;
+  font-size: 9px;
+  font-weight: 900;
+  padding: 2px 7px;
+  border-radius: 100px;
+  display: inline-block;
+}
+
+.service-featured-v2-desc {
+  font-size: 11px;
+  opacity: 0.9;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.service-featured-v2-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.service-featured-v2-tag {
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.service-featured-v2-arrow {
+  align-self: center;
+  font-size: 22px;
+  opacity: 0.7;
+  margin-inline-start: 4px;
+}
+
+/* ── نمط 3: List Card (للقوائم الطويلة) ── */
+.service-list-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: white;
+  border-bottom: 0.5px solid var(--line);
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.service-list-card:last-child {
+  border-bottom: none;
+}
+
+.service-list-card:active {
+  background: rgba(0, 0, 0, 0.02);
+  transform: scale(0.99);
+}
+
+.service-list-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+  background: var(--emerald-soft, #E1F5EE);
+}
+
+.service-list-card-icon.amber {
+  background: #FAEEDA;
+}
+
+.service-list-card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.service-list-card-title {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--ink, #2C2C2A);
+  line-height: 1.3;
+}
+
+.service-list-card-subtitle {
+  font-size: 10px;
+  color: var(--ink-3, #5F5E5A);
+  margin-top: 2px;
+}
+
+.service-list-card-meta {
+  text-align: end;
+  flex-shrink: 0;
+}
+
+.service-list-card-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #BA7517;
+}
+
+.service-list-card-reviews {
+  font-size: 9px;
+  color: var(--ink-3, #5F5E5A);
+  margin-top: 2px;
+}
+
+.service-list-card-arrow {
+  font-size: 18px;
+  color: #B4B2A9;
+  flex-shrink: 0;
+}
+
+/* ── List Container (يلف عدّة list cards) ── */
+.service-list-container {
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 0.5px solid var(--line);
+}
+
+/* ── Service Card Tags الإضافية ── */
+.service-card-mini-tag {
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+  font-weight: 500;
+  color: #0F6E56;
+}
+
+.service-card-mini-tag.amber-tag {
+  color: #854F0B;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   🎯 V25.34: Live Status Card (المجموعة 3)
+   ════════════════════════════════════════════════════════════════════ */
+
+.live-status-card {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  border: 0.5px solid var(--line);
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+/* Top progress bar */
+.live-status-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #0F6E56 0%, #1D9E75 100%);
+  overflow: hidden;
+}
+
+.live-status-progress-bar-inner {
+  height: 100%;
+  width: 60%;
+  background: rgba(255, 255, 255, 0.5);
+  animation: live-progress-shimmer 2.2s ease-in-out infinite;
+}
+
+@keyframes live-progress-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+/* Header row */
+.live-status-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  margin-bottom: 14px;
+}
+
+.live-status-pulse-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #1D9E75;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.live-status-pulse-ring {
+  position: absolute;
+  inset: -5px;
+  border: 2px solid #1D9E75;
+  border-radius: 50%;
+  opacity: 0.5;
+  animation: live-status-ping 1.6s ease-in-out infinite;
+}
+
+@keyframes live-status-ping {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.6); opacity: 0; }
+}
+
+.live-status-label {
+  font-size: 12px;
+  font-weight: 900;
+  color: #0F6E56;
+}
+
+.live-status-time {
+  margin-inline-start: auto;
+  font-size: 10px;
+  color: var(--ink-3, #888780);
+}
+
+/* Specialist row */
+.live-status-specialist-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.live-status-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--emerald-soft, #E1F5EE);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.live-status-specialist-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.live-status-specialist-name {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--ink, #2C2C2A);
+  line-height: 1.3;
+}
+
+.live-status-specialist-title {
+  font-size: 10px;
+  color: var(--ink-3, #888780);
+  margin-top: 2px;
+}
+
+.live-status-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.live-status-action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--emerald-soft, #E1F5EE);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.live-status-action-btn:active {
+  transform: scale(0.92);
+  background: #9FE1CB;
+}
+
+/* Steps */
+.live-status-steps {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  margin-bottom: 14px;
+}
+
+.live-status-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.live-status-step-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+  color: white;
+  position: relative;
+}
+
+.live-status-step-circle.complete {
+  background: #1D9E75;
+}
+
+.live-status-step-circle.active {
+  background: #1D9E75;
+}
+
+.live-status-step-circle.pending {
+  background: var(--line-2, #D3D1C7);
+  color: var(--line-2, #D3D1C7);
+}
+
+.live-status-step-ring {
+  position: absolute;
+  inset: -4px;
+  border: 2px solid #1D9E75;
+  border-radius: 50%;
+  opacity: 0.4;
+  animation: live-status-ping 1.6s ease-in-out infinite;
+}
+
+.live-status-step-label {
+  font-size: 9px;
+  color: var(--ink-3, #888780);
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+.live-status-step-label.highlighted {
+  color: #0F6E56;
+  font-weight: 500;
+}
+
+.live-status-step-line {
+  flex: 1;
+  height: 2px;
+  background: var(--line-2, #D3D1C7);
+  margin: 0 4px;
+  margin-top: 10px;
+}
+
+.live-status-step-line.complete {
+  background: #1D9E75;
+}
+
+/* ETA */
+.live-status-eta {
+  background: #FAEEDA;
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.live-status-eta-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.live-status-eta-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.live-status-eta-label {
+  font-size: 10px;
+  color: var(--ink-3, #5F5E5A);
+  line-height: 1.2;
+}
+
+.live-status-eta-value {
+  font-size: 15px;
+  font-weight: 900;
+  color: #633806;
+  margin-top: 2px;
+}
+
+.live-status-eta-distance {
+  font-size: 9px;
+  color: var(--ink-3, #888780);
+  text-align: end;
+  line-height: 1.4;
+}
+
+.live-status-eta-moving {
+  color: #BA7517;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   🏷️ V25.34: Status Pills (للتطبيق العام)
+   ════════════════════════════════════════════════════════════════════ */
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 100px;
+}
+
+.status-pill-icon {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-pill-active {
+  background: var(--emerald-soft, #E1F5EE);
+  color: #04342C;
+}
+.status-pill-active .status-pill-icon { background: #1D9E75; }
+
+.status-pill-amber {
+  background: #FAEEDA;
+  color: #633806;
+}
+
+.status-pill-rose {
+  background: #FCEBEB;
+  color: #791F1F;
+}
+
+.status-pill-purple {
+  background: #EEEDFE;
+  color: #3C3489;
+}
+
+.status-pill-pink {
+  background: #FBEAF0;
+  color: #72243E;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   🎨 V25.34: Empty State v2 (المجموعة 4)
+   ════════════════════════════════════════════════════════════════════ */
+
+.empty-state-v2 {
+  text-align: center;
+  padding: 32px 16px;
+  background: white;
+  border-radius: 16px;
+  border: 0.5px solid var(--line);
+}
+
+.empty-state-v2-illustration {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 18px;
+  position: relative;
+}
+
+.empty-state-v2-bg-circle {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.empty-state-v2-fg-circle {
+  width: 72px;
+  height: 72px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-state-v2-main-icon {
+  font-size: 34px;
+  line-height: 1;
+}
+
+.empty-state-v2-decor {
+  position: absolute;
+  top: -4px;
+  inset-inline-end: 6px;
+  width: 28px;
+  height: 28px;
+  background: #FAC775;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #412402;
+  border: 2px solid white;
+}
+
+.empty-state-v2-title {
+  font-size: 16px;
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+
+.empty-state-v2-description {
+  font-size: 12px;
+  color: var(--ink-3, #5F5E5A);
+  line-height: 1.7;
+  margin-bottom: 18px;
+}
+
+.empty-state-v2-primary-btn {
+  background: #1D9E75;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 900;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 4px 12px rgba(29, 158, 117, 0.25);
+}
+
+.empty-state-v2-primary-btn:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 6px rgba(29, 158, 117, 0.25);
+}
+
+.empty-state-v2-or {
+  font-size: 10px;
+  color: var(--ink-3, #888780);
+  margin: 14px 0 6px;
+}
+
+.empty-state-v2-secondary-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.empty-state-v2-secondary-btn {
+  background: white;
+  border: 0.5px solid var(--line-2, #D3D1C7);
+  color: var(--ink-3, #5F5E5A);
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.empty-state-v2-secondary-btn:active {
+  transform: scale(0.97);
+  background: var(--paper-2, #F1EFE8);
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   🎯 V25.34: Floating Action Button (المجموعة 5)
+   ════════════════════════════════════════════════════════════════════ */
+
+.fab-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  z-index: 998;
+  animation: fab-backdrop-in 0.2s ease-out;
+}
+
+@keyframes fab-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fab-container {
+  position: fixed;
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  inset-inline-end: 16px;
+  z-index: 999;
+}
+
+/* Main FAB button */
+.fab-main {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1D9E75 0%, #0F6E56 100%);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(15, 110, 86, 0.4);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+}
+
+.fab-main:active {
+  transform: scale(0.92);
+}
+
+.fab-main.open {
+  background: linear-gradient(135deg, #0F6E56 0%, #085041 100%);
+  box-shadow: 0 4px 20px rgba(15, 110, 86, 0.6);
+}
+
+.fab-main-icon {
+  font-size: 28px;
+  font-weight: 100;
+  color: white;
+  line-height: 1;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: block;
+}
+
+.fab-main.open .fab-main-icon {
+  transform: rotate(45deg);
+}
+
+.fab-main:not(.open)::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 2px solid rgba(29, 158, 117, 0.3);
+  border-radius: 50%;
+  animation: fab-pulse-ring 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes fab-pulse-ring {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0; transform: scale(1.3); }
+}
+
+/* Quick action items */
+.fab-action {
+  position: absolute;
+  inset-inline-end: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  transform: translateY(20px) scale(0.5);
+  pointer-events: none;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.fab-action.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.fab-action-label {
+  background: white;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #04342C;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  white-space: nowrap;
+}
+
+.fab-action-label.danger {
+  color: #791F1F;
+}
+
+.fab-action-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+
+.fab-action-btn:active {
+  transform: scale(0.9);
+}
+
+.fab-action-btn.danger {
+  background: #E24B4A;
+  box-shadow: 0 2px 12px rgba(226, 75, 74, 0.4);
+  color: white;
+  font-size: 20px;
 }
