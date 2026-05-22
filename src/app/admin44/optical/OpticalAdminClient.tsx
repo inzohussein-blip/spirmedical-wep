@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { Plus, Edit, Trash2, Star, CheckCircle2, XCircle, Search } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
+import { useConfirm } from '@/components/ui';
 import {
   createOpticalStore,
   updateOpticalStore,
@@ -57,14 +58,21 @@ export default function OpticalAdminClient({ initialStores }: { initialStores: O
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showCreate, setShowCreate] = useState(false);
   const [, startTransition] = useTransition();
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const filtered = stores.filter((s) =>
     s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     s.city.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleDelete = (id: string, name: string) => {
-    if (!confirm(`حذف "${name}" نهائياً؟`)) return;
+  const handleDelete = async (id: string, name: string) => {
+    const ok = await confirm({
+      title: 'حذف المتجر',
+      message: `هل تريد حذف "${name}" نهائياً؟ لا يمكن التراجع.`,
+      variant: 'danger',
+      confirmText: 'احذف نهائياً',
+    });
+    if (!ok) return;
     startTransition(async () => {
       const r = await deleteOpticalStore(id);
       if (r.ok) { toast.success('تم'); window.location.reload(); }
@@ -74,6 +82,7 @@ export default function OpticalAdminClient({ initialStores }: { initialStores: O
 
   return (
     <div>
+      <ConfirmDialog />
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 20 }}>
         <StatCard label="الإجمالي" value={stores.length} color="var(--ink-2)" />
