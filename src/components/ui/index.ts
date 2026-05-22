@@ -81,13 +81,10 @@ export type {
 export { useConfirm } from './ConfirmDialog';
 export type { ConfirmOptions, ConfirmVariant } from './ConfirmDialog';
 
-// Map (Free Medical Map)
-export { FreeMedicalMapWrapper } from './FreeMedicalMapWrapper';
-export type { FreeMedicalMapProps } from './FreeMedicalMap';
-
-// Map Picker (V25 - C1)
-export { MapPickerWrapper } from './MapPickerWrapper';
-export type { MapPickerProps } from './MapPicker';
+// Map components - حُذفوا في V25.39 وحلّ محلّهم نظام SpirMap الموحّد:
+//   - FreeMedicalMap → @/components/maps/SpirMapViewWrapper
+//   - MapPicker → @/components/maps/UserLocationPickerWrapper
+// لـ admin heatmap فقط:
 
 // Map Heatmap (V25 - D1)
 export { MapHeatmapWrapper } from './MapHeatmapWrapper';
