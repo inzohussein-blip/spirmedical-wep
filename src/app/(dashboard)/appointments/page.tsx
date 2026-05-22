@@ -14,12 +14,12 @@ interface Props {
   searchParams: { filter?: 'all' | 'upcoming' | 'completed' | 'cancelled' };
 }
 
-const STATUS_LABELS: Record<string, { label: string; bg: string; color: string }> = {
-  pending: { label: 'بانتظار', bg: 'var(--amber-soft)', color: 'var(--amber)' },
-  confirmed: { label: 'مؤكّد', bg: 'var(--emerald-soft)', color: 'var(--emerald-deep)' },
-  in_progress: { label: 'قيد التنفيذ', bg: 'var(--emerald-soft)', color: 'var(--emerald-deep)' },
-  completed: { label: 'مُكتمل', bg: 'var(--paper-2)', color: 'var(--ink-2)' },
-  cancelled: { label: 'مُلغى', bg: 'var(--rose-soft)', color: 'var(--rose)' },
+const STATUS_LABELS: Record<string, { label: string; pillClass: string; icon?: string }> = {
+  pending: { label: 'بانتظار', pillClass: 'status-pill status-pill-amber', icon: '⏱' },
+  confirmed: { label: 'مؤكّد', pillClass: 'status-pill status-pill-active', icon: '' },
+  in_progress: { label: 'قيد التنفيذ', pillClass: 'status-pill status-pill-active', icon: '' },
+  completed: { label: 'مُكتمل', pillClass: 'status-pill status-pill-purple', icon: '✓' },
+  cancelled: { label: 'مُلغى', pillClass: 'status-pill status-pill-rose', icon: '✕' },
 };
 
 const SERVICE_ICONS: Record<string, string> = {
@@ -164,7 +164,11 @@ export default async function AppointmentsPage({ searchParams }: Props) {
                       <div className="appt-card-title">{appt.service_type}</div>
                       <div className="appt-card-when">{formatDateRelative(appt.scheduled_at)}</div>
                     </div>
-                    <span className="appt-card-status" style={{ background: status.bg, color: status.color }}>
+                    <span className={status.pillClass}>
+                      {status.pillClass.includes('status-pill-active') && (
+                        <span className="status-pill-icon" aria-hidden="true" />
+                      )}
+                      {status.icon && status.icon !== '' && <span aria-hidden="true">{status.icon}</span>}
                       {status.label}
                     </span>
                   </div>
