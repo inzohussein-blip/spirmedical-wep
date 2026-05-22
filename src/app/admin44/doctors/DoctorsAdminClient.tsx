@@ -7,6 +7,7 @@ import {
   Loader2, Filter, Star, MapPin, Award, Eye, EyeOff,
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
+import { useConfirm } from '@/components/ui';
 import {
   createDoctor, updateDoctor, deleteDoctor, toggleDoctorActive, verifyDoctor,
 } from './actions';
@@ -66,6 +67,7 @@ export default function DoctorsAdminClient({ doctors }: Props) {
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive' | 'unverified'>('all');
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<Doctor | null>(null);
+  const { confirm, ConfirmDialog } = useConfirm();
 
   const filtered = useMemo(() => {
     return doctors.filter((d) => {
@@ -81,8 +83,14 @@ export default function DoctorsAdminClient({ doctors }: Props) {
     });
   }, [doctors, searchQuery, filterSpec, filterStatus]);
 
-  const handleDelete = (d: Doctor) => {
-    if (!confirm(`حذف "${d.title} ${d.full_name}" نهائياً؟`)) return;
+  const handleDelete = async (d: Doctor) => {
+    const ok = await confirm({
+      title: 'حذف الطبيب',
+      message: `هل تريد حذف "${d.title} ${d.full_name}" نهائياً؟ لا يمكن التراجع.`,
+      variant: 'danger',
+      confirmText: 'احذف نهائياً',
+    });
+    if (!ok) return;
     startTransition(async () => {
       const result = await deleteDoctor(d.id);
       if (result.success) {
@@ -120,6 +128,7 @@ export default function DoctorsAdminClient({ doctors }: Props) {
 
   return (
     <div>
+      <ConfirmDialog />
       {/* Add button + filters */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 14, flexWrap: 'wrap' }}>
         <button
