@@ -6,6 +6,7 @@ import {
   ArrowRight, Search, MapPin, Phone, Star, Stethoscope,
   Building2, Calendar, CheckCircle2, Clock, Languages,
 } from 'lucide-react';
+import ExternalMapButton from '@/components/maps/ExternalMapButton';
 
 interface Doctor {
   id: string;
@@ -25,6 +26,8 @@ interface Doctor {
   rating_avg: number;
   rating_count: number;
   is_verified: boolean;
+  clinic_latitude?: number | null;
+  clinic_longitude?: number | null;
 }
 
 interface Props {
@@ -301,6 +304,17 @@ export default function ClinicsClient({ doctors }: Props) {
                         <Phone size={12} />
                         اتصال
                       </a>
+                    )}
+                    {d.clinic_latitude && d.clinic_longitude && (
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <ExternalMapButton
+                          lat={d.clinic_latitude}
+                          lng={d.clinic_longitude}
+                          label={d.clinic_name || d.full_name}
+                          description={d.clinic_address || d.clinic_city || ''}
+                          variant="compact"
+                        />
+                      </div>
                     )}
                     <div
                       style={{
