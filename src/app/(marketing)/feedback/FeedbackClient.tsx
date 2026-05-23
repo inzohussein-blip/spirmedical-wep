@@ -74,17 +74,17 @@ export default function FeedbackClient() {
   };
 
   return (
-    <main className="app-screen">
-      <div className="scr-content">
-        <div className="scr-page-header">
-          <Link href="/dashboard" className="scr-back-btn" aria-label="العودة">
+    <main className="mkt-screen">
+      <div className="mkt-content">
+        <div className="mkt-page-header">
+          <Link href="/dashboard" className="mkt-back-btn" aria-label="العودة">
             <ArrowRight size={20} strokeWidth={2.2} />
           </Link>
-          <h1 className="scr-page-title">شاركنا رأيك</h1>
-          <div className="scr-page-spacer" />
+          <h1 className="mkt-page-title">شاركنا رأيك</h1>
+          <div className="mkt-page-spacer" />
         </div>
 
-        <p className="scr-page-subtitle">
+        <p className="mkt-page-subtitle">
           ملاحظاتك تُساعدنا في تطوير الخدمة. كل اقتراح مهم لنا 💚
         </p>
 
