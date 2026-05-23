@@ -1,133 +1,254 @@
-// ═══════════════════════════════════════════════════════════════
-// 🩸 V25.43: Lab Trends Page - رسوم بيانية للنتائج عبر الزمن
-// ═══════════════════════════════════════════════════════════════
+'use client';
 
-import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
-import { ArrowRight, TrendingUp, Activity, Calendar, BarChart3 } from 'lucide-react';
-import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
-import LabTrendsClient from './LabTrendsClient';
+import { useState } from 'react';
+import { TrendingUp, TrendingDown, Minus, Calendar } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
-export const metadata = { title: 'تطوّر نتائج التحاليل · سباير ميديكال' };
-
-export default async function LabTrendsPage() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect('/login');
-
-  
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      select: (cols: string) => {
-        eq: (col: string, val: string) => {
-          order: (col: string, opts: { ascending: boolean }) => Promise<{ data: unknown }>;
-        };
-      };
-    };
-  };
-
-  // جلب كل النتائج للمستخدم مرتّبة زمنياً
-  const result = await supabaseAny
-    .from('lab_results')
-    .select('test_id, test_name, result_value, result_numeric, unit, normal_range_min, normal_range_max, normal_range_text, status, results_at')
-    .eq('user_id', user.id)
-    .order('results_at', { ascending: true });
-
-  const allResults = (result.data as Array<{
-    test_id: string;
-    test_name: string;
-    result_value: string;
-    result_numeric: number | null;
-    unit: string | null;
-    normal_range_min: number | null;
-    normal_range_max: number | null;
-    normal_range_text: string | null;
+interface TrendableTest {
+  testId: string;
+  testName: string;
+  unit: string | null;
+  normalRangeText: string | null;
+  normalMin: number | null;
+  normalMax: number | null;
+  results: Array<{
+    value: number;
+    valueText: string;
     status: string;
-    results_at: string;
-  }>) ?? [];
+    date: string;
+  }>;
+}
 
-  // تجميع حسب test_id
-  const resultsByTest = new Map<string, typeof allResults>();
-  allResults.forEach((r) => {
-    if (!resultsByTest.has(r.test_id)) {
-      resultsByTest.set(r.test_id, []);
-    }
-    resultsByTest.get(r.test_id)!.push(r);
+interface Props {
+  trendableTests: TrendableTest[];
+}
+
+/**
+ * ════════════════════════════════════════════════════════════════════
+ * 🩸 V25.43: Lab Trends Charts (SVG-based, no library)
+ * ════════════════════════════════════════════════════════════════════
+ * 
+ * يعرض لكل تحليل رسم بياني خطّي مع:
+ *   ✓ آخر نتيجة + الاتجاه (↑/↓/→)
+ *   ✓ النطاق الطبيعي (مظلّل)
+ *   ✓ تاريخ كل نقطة
+ * ════════════════════════════════════════════════════════════════════
+ */
+
+const STATUS_COLORS: Record<string, string> = {
+  normal: '#0F6E56',
+  low: '#A57100',
+  high: '#A57100',
+  critical: '#A32D2D',
+  inconclusive: '#6B7280',
+};
+
+export default function LabTrendsClient({ trendableTests }: Props) {
+  return (
+    <div style={{ marginTop: 16 }}>
+      {trendableTests.map((test) => (
+        <TestTrendCard key={test.testId} test={test} />
+      ))}
+    </div>
+  );
+}
+
+function TestTrendCard({ test }: { test: TrendableTest }) {
+  const { results, normalMin, normalMax, normalRangeText, unit, testName } = test;
+  
+  // الـ trend
+  let trend: 'up' | 'down' | 'stable' | null = null;
+  if (results.length >= 2) {
+    const last = results[results.length - 1].value;
+    const prev = results[results.length - 2].value;
+    const diff = last - prev;
+    const pctDiff = Math.abs(diff / prev);
+    
+    if (pctDiff < 0.05) trend = 'stable';
+    else if (diff > 0) trend = 'up';
+    else trend = 'down';
+  }
+
+  const lastResult = results[results.length - 1];
+  
+  // حدود الرسم
+  const allValues = results.map((r) => r.value);
+  let minVal = Math.min(...allValues);
+  let maxVal = Math.max(...allValues);
+  
+  // أضِف النطاق الطبيعي
+  if (normalMin !== null) minVal = Math.min(minVal, normalMin);
+  if (normalMax !== null) maxVal = Math.max(maxVal, normalMax);
+  
+  // padding
+  const range = maxVal - minVal;
+  const padding = range * 0.2 || 10;
+  minVal -= padding;
+  maxVal += padding;
+  
+  // SVG dimensions
+  const width = 320;
+  const height = 120;
+  const padX = 30;
+  const padY = 20;
+  const innerW = width - 2 * padX;
+  const innerH = height - 2 * padY;
+  
+  // نقاط
+  const points = results.map((r, i) => {
+    const x = padX + (i / Math.max(results.length - 1, 1)) * innerW;
+    const y = padY + (1 - (r.value - minVal) / (maxVal - minVal)) * innerH;
+    return { x, y, value: r.value, valueText: r.valueText, status: r.status, date: r.date };
   });
-
-  // فقط التحاليل التي لديها 2+ نتائج (للـ chart)
-  const trendableTests = Array.from(resultsByTest.entries())
-    .filter(([_, results]) => results.length >= 1)
-    .map(([testId, results]) => ({
-      testId,
-      testName: results[0].test_name,
-      unit: results[0].unit,
-      normalRangeText: results[0].normal_range_text,
-      normalMin: results[0].normal_range_min,
-      normalMax: results[0].normal_range_max,
-      results: results.map((r) => ({
-        value: r.result_numeric ?? parseFloat(r.result_value),
-        valueText: r.result_value,
-        status: r.status,
-        date: r.results_at,
-      })).filter((r) => !isNaN(r.value)),
-    }))
-    .filter((t) => t.results.length >= 1);
+  
+  // path للـ line
+  const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
+  
+  // النطاق الطبيعي
+  let normalRangeRect = null;
+  if (normalMin !== null && normalMax !== null) {
+    const minY = padY + (1 - (normalMin - minVal) / (maxVal - minVal)) * innerH;
+    const maxY = padY + (1 - (normalMax - minVal) / (maxVal - minVal)) * innerH;
+    normalRangeRect = {
+      y: maxY,
+      height: minY - maxY,
+    };
+  }
 
   return (
-    <main className="app-screen">
-      <div className="scr-content">
-        <div className="scr-page-header">
-          <Link href="/account/lab-history" className="scr-back-btn" aria-label="العودة">
-            <ArrowRight size={20} strokeWidth={2.2} aria-hidden />
-          </Link>
-          <h1 className="scr-page-title">تطوّر النتائج</h1>
-          <div className="scr-page-spacer" />
+    <div style={{
+      background: 'var(--white)',
+      border: '1px solid var(--line)',
+      borderRadius: 14,
+      padding: 16,
+      marginBottom: 12,
+    }}>
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+        <div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>
+            {testName}
+          </div>
+          {normalRangeText && (
+            <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 2 }}>
+              المعدّل الطبيعي: {normalRangeText}
+            </div>
+          )}
         </div>
-        <p className="scr-page-subtitle">شاهد كيف تتطوّر نتائجك عبر الزمن</p>
-
-        {/* Stats */}
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(2, 1fr)', 
-          gap: 8, 
-          marginTop: 8 
-        }}>
-          <div className="service-card service-emerald">
-            <div className="service-icon" aria-hidden="true">
-              <Activity size={22} strokeWidth={2} />
-            </div>
-            <div className="service-title">{allResults.length}</div>
-            <div className="service-desc">نتيجة محفوظة</div>
+        <div style={{ textAlign: 'left' }}>
+          <div style={{ 
+            fontSize: 18, 
+            fontWeight: 800,
+            color: STATUS_COLORS[lastResult.status] || '#6B7280',
+          }}>
+            {lastResult.valueText} {unit}
           </div>
-          <div className="service-card service-amber">
-            <div className="service-icon" aria-hidden="true">
-              <TrendingUp size={22} strokeWidth={2} />
+          {trend && (
+            <div style={{ 
+              fontSize: 11, 
+              color: trend === 'up' ? '#A57100' : trend === 'down' ? '#0F6E56' : '#6B7280',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
+              justifyContent: 'flex-end',
+            }}>
+              {trend === 'up' && <TrendingUp size={12} strokeWidth={2.5} />}
+              {trend === 'down' && <TrendingDown size={12} strokeWidth={2.5} />}
+              {trend === 'stable' && <Minus size={12} strokeWidth={2.5} />}
+              {trend === 'up' ? 'ارتفاع' : trend === 'down' ? 'انخفاض' : 'ثابت'}
             </div>
-            <div className="service-title">{trendableTests.length}</div>
-            <div className="service-desc">نوع تحليل</div>
-          </div>
+          )}
         </div>
-
-        {trendableTests.length === 0 ? (
-          <div className="scr-empty" style={{ marginTop: 40 }}>
-            <div className="scr-empty-icon" aria-hidden="true">
-              <BarChart3 size={42} strokeWidth={1.5} />
-            </div>
-            <h2 className="scr-empty-title">لا توجد نتائج كافية</h2>
-            <p className="scr-empty-desc">
-              احتاج إلى نتيجتين أو أكثر من نفس الفحص لعرض الرسم البياني.
-            </p>
-            <Link href="/appointments/new?service=blood-draw" className="scr-empty-cta">
-              احجز فحص دم ←
-            </Link>
-          </div>
-        ) : (
-          <LabTrendsClient trendableTests={trendableTests} />
-        )}
       </div>
-    </main>
+
+      {/* Chart */}
+      {results.length >= 2 ? (
+        <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} style={{ direction: 'ltr' }}>
+          {/* النطاق الطبيعي */}
+          {normalRangeRect && (
+            <rect
+              x={padX}
+              y={normalRangeRect.y}
+              width={innerW}
+              height={normalRangeRect.height}
+              fill="#E1F5EE"
+              opacity={0.5}
+            />
+          )}
+          
+          {/* Grid lines */}
+          <line x1={padX} y1={padY} x2={padX + innerW} y2={padY} stroke="#E5E7EB" strokeWidth={1} strokeDasharray="2,2" />
+          <line x1={padX} y1={padY + innerH / 2} x2={padX + innerW} y2={padY + innerH / 2} stroke="#E5E7EB" strokeWidth={1} strokeDasharray="2,2" />
+          <line x1={padX} y1={padY + innerH} x2={padX + innerW} y2={padY + innerH} stroke="#E5E7EB" strokeWidth={1} strokeDasharray="2,2" />
+          
+          {/* Y labels */}
+          <text x={padX - 5} y={padY + 4} fontSize="9" fill="#9CA3AF" textAnchor="end">{maxVal.toFixed(0)}</text>
+          <text x={padX - 5} y={padY + innerH + 4} fontSize="9" fill="#9CA3AF" textAnchor="end">{minVal.toFixed(0)}</text>
+          
+          {/* Line */}
+          <path
+            d={pathD}
+            fill="none"
+            stroke="#0F6E56"
+            strokeWidth={2}
+            strokeLinejoin="round"
+            strokeLinecap="round"
+          />
+          
+          {/* Points */}
+          {points.map((p, i) => (
+            <g key={i}>
+              <circle
+                cx={p.x}
+                cy={p.y}
+                r={4}
+                fill={STATUS_COLORS[p.status] || '#6B7280'}
+                stroke="white"
+                strokeWidth={2}
+              />
+            </g>
+          ))}
+        </svg>
+      ) : (
+        <div style={{ 
+          padding: 20, 
+          textAlign: 'center', 
+          color: 'var(--ink-3)',
+          background: 'var(--paper-2)',
+          borderRadius: 10,
+          fontSize: 12,
+        }}>
+          نتيجة واحدة فقط - يلزم نتيجتان لعرض الاتجاه
+        </div>
+      )}
+
+      {/* Recent results list */}
+      <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--line)' }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', marginBottom: 6 }}>
+          آخر نتائج:
+        </div>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {results.slice(-3).reverse().map((r, i) => {
+            const date = new Date(r.date).toLocaleDateString('ar-IQ', { day: 'numeric', month: 'short' });
+            return (
+              <div key={i} style={{
+                fontSize: 11,
+                padding: '4px 10px',
+                background: 'var(--paper-2)',
+                borderRadius: 8,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+              }}>
+                <Calendar size={10} strokeWidth={2.2} aria-hidden />
+                <span style={{ color: 'var(--ink-3)' }}>{date}:</span>
+                <strong style={{ color: STATUS_COLORS[r.status] || 'var(--ink)' }}>
+                  {r.valueText}
+                </strong>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
   );
 }
