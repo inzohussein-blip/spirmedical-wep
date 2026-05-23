@@ -8,6 +8,7 @@ import {
   MessageCircle, Star, Package,
 } from 'lucide-react';
 import ShareButton from '@/components/pwa/ShareButton';
+import PharmacyReservationModal from '@/components/pharmacies/PharmacyReservationModal';
 
 interface Pharmacy {
   id: string;
@@ -76,6 +77,7 @@ export default function PharmacyDetailClient({ pharmacy, inventory }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [availabilityFilter, setAvailabilityFilter] = useState<'all' | 'available' | 'unavailable'>('all');
+  const [showReservation, setShowReservation] = useState(false);
 
   const filtered = useMemo(() => {
     return inventory.filter((item) => {
@@ -222,12 +224,38 @@ export default function PharmacyDetailClient({ pharmacy, inventory }: Props) {
             )}
           </div>
 
+          {/* احجز دواء - V25.46 جديد */}
+          <button
+            type="button"
+            onClick={() => setShowReservation(true)}
+            style={{
+              width: '100%',
+              padding: 12,
+              marginTop: 14,
+              background: 'white',
+              color: 'var(--emerald-deep)',
+              border: 0,
+              borderRadius: 12,
+              fontSize: 14,
+              fontWeight: 800,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+            }}
+          >
+            <Package size={16} strokeWidth={2.5} />
+            احجز الدواء قبل الذهاب
+          </button>
+
           {/* Actions */}
           <div
             style={{
               display: 'flex',
               gap: 8,
-              marginTop: 14,
+              marginTop: 10,
               position: 'relative',
             }}
           >
@@ -642,6 +670,19 @@ export default function PharmacyDetailClient({ pharmacy, inventory }: Props) {
 
         <div style={{ height: 80 }} />
       </div>
+      
+      {/* Reservation Modal - V25.46 */}
+      {showReservation && (
+        <PharmacyReservationModal
+          pharmacy={{
+            id: pharmacy.id,
+            name: pharmacy.name,
+            city: pharmacy.city,
+            district: pharmacy.district,
+          }}
+          onClose={() => setShowReservation(false)}
+        />
+      )}
     </main>
   );
 }
