@@ -2,9 +2,18 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { encrypt } from '@/lib/encryption';
 
-interface BookingInput {
-  service_type: 'dental' | 'optical' | 'mental-health' | 'nutrition';
+/**
+ * ════════════════════════════════════════════════════════════════════
+ * 📅 V25.47: Universal Service Booking (Hospital + Dental + Optical + ...)
+ * ════════════════════════════════════════════════════════════════════
+ * يحفظ في columns structured بدل notes text
+ * ════════════════════════════════════════════════════════════════════
+ */
+
+export interface BookingInput {
+  service_type: 'hospital' | 'dental' | 'optical' | 'mental-health' | 'nutrition';
   provider_id: string;
   provider_name: string;
   scheduled_at: string;  // ISO datetime
@@ -13,6 +22,19 @@ interface BookingInput {
   package_type?: string;
   package_price?: number;
   address?: string;
+  
+  // ─── V25.47: Structured fields ───
+  // Hospital
+  hospital_department?: string;
+  
+  // Dental
+  dental_procedure_type?: 'cleaning' | 'filling' | 'extraction' | 'root_canal' | 'crown' | 'orthodontics' | 'whitening' | 'consultation' | 'other';
+  
+  // Optical
+  optical_service_type?: 'eye_exam' | 'prescription_lenses' | 'sunglasses' | 'contact_lenses' | 'frames_only' | 'consultation';
+  
+  // Family member
+  family_member_id?: string | null;
 }
 
 export async function createServiceBooking(input: BookingInput) {
@@ -23,55 +45,86 @@ export async function createServiceBooking(input: BookingInput) {
     return { ok: false, error: 'يجب تسجيل الدخول' };
   }
 
-  // نُجهّز بيانات الـ appointment
-  const serviceMap = {
-    dental:           { id: 'dental-visit',          name: '🦷 زيارة طبيب أسنان' },
+  // service map
+  const serviceMap: Record<string, { id: string; name: string; specialist?: string }> = {
+    hospital:         { id: 'hospital-visit',        name: '🏥 موعد مستشفى' },
+    dental:           { id: 'dental-visit',          name: '🦷 زيارة طبيب أسنان',     specialist: 'doctor' },
     optical:          { id: 'optical-visit',         name: '👓 زيارة متجر نظارات' },
-    'mental-health':  { id: 'mental-session',        name: '🧠 جلسة نفسية' },
-    nutrition:        { id: 'nutrition-consult',     name: '🥗 استشارة تغذية' },
+    'mental-health':  { id: 'mental-session',        name: '🧠 جلسة نفسية',           specialist: 'psychologist' },
+    nutrition:        { id: 'nutrition-consult',     name: '🥗 استشارة تغذية',        specialist: 'nutritionist' },
   };
 
   const serviceMeta = serviceMap[input.service_type];
-
-  // نُنشئ ملاحظات منظّمة
-  const noteParts: string[] = [
-    '═══════ تفاصيل الحجز ═══════',
-    `[الخدمة] ${serviceMeta.name}`,
-    `[الموفّر] ${input.provider_name}`,
-  ];
-
-  if (input.package_type) {
-    noteParts.push(`[الباقة] ${input.package_type}`);
-  }
-  if (input.package_price) {
-    noteParts.push(`[السعر] ${input.package_price.toLocaleString('ar-IQ')} د.ع`);
-  }
-  if (input.notes) {
-    noteParts.push(`[ملاحظات المريض] ${input.notes}`);
+  if (!serviceMeta) {
+    return { ok: false, error: 'نوع الخدمة غير صالح' };
   }
 
-  const combinedNotes = noteParts.join('\n\n');
+  // notes اختياري - فقط ملاحظات المريض
+  const encryptedNotes = input.notes ? encrypt(input.notes) : null;
 
-  const { data, error } = await supabase
+  
+  const supabaseAny = supabase as unknown as {
+    from: (t: string) => {
+      insert: (d: object) => {
+        select: (cols: string) => { single: () => Promise<{ data: { id: string } | null; error: { message: string } | null }> };
+      };
+    };
+  };
+
+  // Build structured appointment data
+  const appointmentData: Record<string, unknown> = {
+    user_id: user.id,
+    service_type: serviceMeta.name,
+    service_id: serviceMeta.id,
+    scheduled_at: input.scheduled_at,
+    address: input.address || `${serviceMeta.name} - ${input.provider_name}`,
+    notes_encrypted: encryptedNotes,
+    status: 'pending',
+    otp_channel: 'whatsapp',
+    estimated_price: input.package_price || null,
+    family_member_id: input.family_member_id || null,
+  };
+
+  if (serviceMeta.specialist) {
+    appointmentData.required_specialist_type = serviceMeta.specialist;
+  }
+
+  // Structured columns حسب نوع الخدمة
+  switch (input.service_type) {
+    case 'hospital':
+      appointmentData.hospital_id = input.provider_id;
+      if (input.hospital_department) {
+        appointmentData.hospital_department = input.hospital_department;
+      }
+      break;
+    
+    case 'dental':
+      appointmentData.dental_clinic_id = input.provider_id;
+      if (input.dental_procedure_type) {
+        appointmentData.dental_procedure_type = input.dental_procedure_type;
+      }
+      break;
+    
+    case 'optical':
+      appointmentData.optical_store_id = input.provider_id;
+      if (input.optical_service_type) {
+        appointmentData.optical_service_type = input.optical_service_type;
+      }
+      break;
+  }
+
+  const { data, error } = await supabaseAny
     .from('appointments')
-    .insert({
-      user_id: user.id,
-      service_type: serviceMeta.id,
-      service_id: serviceMeta.id,
-      scheduled_at: input.scheduled_at,
-      address: input.address || `${input.service_type} - عبر سباير`,
-      notes: combinedNotes,
-      status: 'pending' as const,
-      otp_channel: 'whatsapp' as const,
-      estimated_price: input.package_price || null,
-    })
+    .insert(appointmentData)
     .select('id')
     .single();
 
-  if (error) {
-    return { ok: false, error: error.message };
+  if (error || !data) {
+    return { ok: false, error: error?.message || 'فشل الحجز' };
   }
 
   revalidatePath('/appointments');
+  revalidatePath('/dashboard');
+  
   return { ok: true, appointmentId: data.id };
 }
