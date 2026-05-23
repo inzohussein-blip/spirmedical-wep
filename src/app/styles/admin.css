@@ -1,0 +1,91 @@
+/* ═══════════════════════════════════════════════════════════════════
+   🛡️ ADMIN.CSS — Spir Medical (V25.40)
+   ═══════════════════════════════════════════════════════════════════
+   
+   CSS خاصّ بالأدمن فقط - overrides + admin-specific utilities
+   
+   ⚠️ يُحمّل بعد shared.css في صفحات /admin44/*
+   ⚠️ لا يحوي scr-* / landing-* / spec-* (موجودة في shared.css أو app.css)
+   
+   يحتوي على:
+     • Animation: urgent (للـ emergencies)
+     • Skeleton shimmer (للـ admin tables)
+     • Admin utilities (.admin-tabular, .admin-mono)
+     • Print styles (للـ reports)
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════
+   ANIMATIONS - خاصّة بالأدمن
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* urgent animation (للـ emergencies notifications) */
+@keyframes urgent {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(168, 46, 61, 0.6); }
+  50% { box-shadow: 0 0 0 8px rgba(168, 46, 61, 0); }
+}
+
+.urgent-pulse {
+  animation: urgent 1.5s ease-in-out infinite;
+}
+
+/* skeleton shimmer (للـ admin tables loading) */
+@keyframes admin-skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.admin-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--paper-2, #EDE6D3) 0%,
+    var(--paper-3, #FAF6EB) 50%,
+    var(--paper-2, #EDE6D3) 100%
+  );
+  background-size: 200% 100%;
+  animation: admin-skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ADMIN UTILITIES
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* tabular numbers (للأرقام في tables) */
+.admin-tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+/* mono font (للـ admin IDs + timestamps) */
+.admin-mono {
+  font-family: 'JetBrains Mono', 'Menlo', 'Consolas', monospace;
+  font-size: 0.9em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PRINT STYLES (للـ admin reports)
+   ═══════════════════════════════════════════════════════════════════ */
+@media print {
+  /* إخفاء sidebar + topbar في الطباعة */
+  .admin-sidebar,
+  .admin-topbar,
+  .no-print {
+    display: none !important;
+  }
+  
+  /* صفحة كاملة للمحتوى */
+  .admin-content {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* إزالة الخلفيات */
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   ✓ Admin CSS Complete
+   ═══════════════════════════════════════════════════════════════════ */
