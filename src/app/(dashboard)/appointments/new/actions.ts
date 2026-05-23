@@ -598,3 +598,195 @@ export async function createBloodDrawOrder(input: CreateBloodDrawInput) {
     return { success: false, error: 'حدث خطأ غير متوقّع. حاول مرة أخرى.' };
   }
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 💉 V25.44: createNursingAppointment - حجز تمريض منزلي (structured)
+// ═══════════════════════════════════════════════════════════════════════════
+
+export interface CreateNursingInput {
+  // الأساسيات
+  scheduled_at: string;
+  address: string;
+  otp_channel: 'whatsapp' | 'telegram';
+  otp_verified: boolean;
+  duration: number;
+  total_price: number;
+  
+  // إجراء التمريض (structured)
+  procedure_type: string;        // 'injection', 'iv', 'wound_care', etc.
+  procedure_label: string;       // 'زرق إبر', 'مغذٍ وريدي', etc.
+  
+  // الكادر (structured)
+  nurse_gender_preference: 'male' | 'female' | 'any';
+  
+  // التحسس (structured JSONB)
+  allergy_form: {
+    penicillin?: boolean;
+    sulfa?: boolean;
+    aspirin?: boolean;
+    iodine?: boolean;
+    latex?: boolean;
+    other?: string;
+    filled_at: string;
+  };
+  
+  // الوصفة (structured)
+  prescription_image_url?: string;
+  prescription_skipped?: boolean;
+  
+  // الأمراض المعدية (structured JSONB)
+  infectious_disease_alert?: {
+    hepatitis_b?: boolean;
+    hepatitis_c?: boolean;
+    hiv?: boolean;
+    covid?: boolean;
+    tb?: boolean;
+    other?: string;
+  };
+  
+  // الجدولة الدورية (structured JSONB)
+  recurring_schedule?: {
+    enabled: boolean;
+    interval_hours: number;
+    end_date?: string;
+    auto_confirm?: boolean;
+  };
+  
+  // المستلزمات (structured JSONB)
+  supplies_request?: {
+    items: Array<{ name: string; quantity: number }>;
+    total: number;
+  };
+  
+  // إضافي
+  notes?: string;
+  family_member_id?: string | null;
+  
+  // GPS
+  location_lat?: number;
+  location_lng?: number;
+  location_accuracy_m?: number;
+}
+
+export async function createNursingAppointment(input: CreateNursingInput) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: 'يجب تسجيل الدخول أولاً', redirect: '/login' };
+  }
+
+  if (!input.otp_verified) {
+    return { success: false, error: 'يجب تأكيد رقم الهاتف أولاً' };
+  }
+
+  // Rate limit
+  const limit = await checkRateLimit(`nursing:create:${user.id}`, {
+    max: 10,
+    windowSeconds: 3600,
+  });
+  if (!limit.allowed) {
+    return {
+      success: false,
+      error: `عدد كبير من الطلبات. حاول بعد ${Math.ceil(limit.retryAfterSeconds / 60)} دقيقة`,
+    };
+  }
+
+  // Validation
+  if (!input.address || input.address.length < 10) {
+    return { success: false, error: 'يجب إدخال عنوان مفصّل' };
+  }
+
+  if (!input.procedure_type) {
+    return { success: false, error: 'يجب اختيار نوع الإجراء' };
+  }
+
+  try {
+    // ─── حفظ في appointments بـ structured columns ───
+    const encryptedNotes = input.notes ? encrypt(input.notes) : null;
+
+    
+    const supabaseAny = supabase as unknown as {
+      from: (t: string) => {
+        insert: (d: object) => { select: () => { single: () => Promise<{ data: { id: string } | null; error: { message: string } | null }> } };
+      };
+    };
+
+    const appointmentData = {
+      user_id: user.id,
+      service_type: input.procedure_label,
+      service_id: 'home-nursing',
+      scheduled_at: input.scheduled_at,
+      address: input.address,
+      notes_encrypted: encryptedNotes,
+      estimated_price: input.total_price,
+      duration_minutes: input.duration,
+      otp_channel: input.otp_channel,
+      status: 'pending',
+      required_specialist_type: 'nurse',
+      family_member_id: input.family_member_id || null,
+      
+      // ─── Structured columns (V25.44) ───
+      nurse_gender_preference: input.nurse_gender_preference,
+      allergy_form: input.allergy_form,
+      allergy_form_filled: true,
+      prescription_image_url: input.prescription_image_url || null,
+      prescription_required: !input.prescription_skipped,
+      infectious_disease_alert: input.infectious_disease_alert || null,
+      recurring_schedule: input.recurring_schedule || null,
+      supplies_request: input.supplies_request || null,
+      supplies_total: input.supplies_request?.total || 0,
+      
+      // GPS
+      location_lat: input.location_lat || null,
+      location_lng: input.location_lng || null,
+      location_accuracy_m: input.location_accuracy_m || null,
+    };
+
+    const { data: appointment, error: appointmentError } = await supabaseAny
+      .from('appointments')
+      .insert(appointmentData)
+      .select()
+      .single();
+
+    if (appointmentError || !appointment) {
+      logger.error('Failed to create nursing appointment', { error: appointmentError });
+      return { success: false, error: 'فشل إنشاء الموعد. حاول مرة أخرى.' };
+    }
+
+    // Audit log
+    await logAuditEvent({
+      user_id: user.id,
+      action: 'nursing.create',
+      entity_type: 'appointments',
+      entity_id: appointment.id,
+      metadata: {
+        procedure_type: input.procedure_type,
+        nurse_gender: input.nurse_gender_preference,
+        total_price: input.total_price,
+        has_recurring: !!input.recurring_schedule?.enabled,
+        has_infectious: !!input.infectious_disease_alert,
+        has_allergies: Object.values(input.allergy_form).some((v) => v === true || (typeof v === 'string' && v.length > 0)),
+      },
+    }).catch(() => null);
+
+    // Notifications
+    notifyOrderConfirmed(user.id, {
+      orderId: appointment.id,
+      serviceName: input.procedure_label,
+      scheduledAt: input.scheduled_at,
+    }).catch(() => null);
+
+    revalidatePath('/dashboard');
+    revalidatePath('/appointments');
+    revalidatePath('/account/nursing-history');
+
+    return {
+      success: true,
+      appointment_id: appointment.id,
+    };
+  } catch (error) {
+    logger.error('createNursingAppointment unexpected error', { error });
+    return { success: false, error: 'حدث خطأ غير متوقّع. حاول مرة أخرى.' };
+  }
+}
