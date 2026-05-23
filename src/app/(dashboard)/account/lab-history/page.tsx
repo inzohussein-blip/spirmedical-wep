@@ -327,13 +327,38 @@ export default async function LabHistoryPage() {
 
         {/* CTA للحجز الجديد */}
         {(orders.length > 0 || fallbackAppointments.length > 0) && (
-          <Link
-            href="/appointments/new?service=blood-draw"
-            className="scr-empty-cta"
-            style={{ marginTop: 16, display: 'block', textAlign: 'center' }}
-          >
-            احجز فحص جديد ←
-          </Link>
+          <>
+            {totalResults > 0 && (
+              <Link
+                href="/account/lab-trends"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6,
+                  marginTop: 16,
+                  padding: 12,
+                  background: 'var(--paper-2)',
+                  borderRadius: 10,
+                  textDecoration: 'none',
+                  color: 'var(--ink)',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  border: '1px solid var(--line)',
+                }}
+              >
+                <TrendingUp size={16} strokeWidth={2.2} aria-hidden />
+                عرض تطوّر النتائج عبر الزمن →
+              </Link>
+            )}
+            <Link
+              href="/appointments/new?service=blood-draw"
+              className="scr-empty-cta"
+              style={{ marginTop: 8, display: 'block', textAlign: 'center' }}
+            >
+              احجز فحص جديد ←
+            </Link>
+          </>
         )}
       </div>
     </main>
