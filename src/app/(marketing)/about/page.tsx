@@ -22,12 +22,12 @@ const TEAM_VALUES = [
 
 export default function AboutPage() {
   return (
-    <main className="app-screen">
-      <div className="scr-content">
-        <div className="scr-page-header">
-          <Link href="/account" className="scr-back-btn" aria-label="العودة"><span aria-hidden="true">→</span></Link>
-          <h1 className="scr-page-title">حول التطبيق</h1>
-          <div className="scr-page-spacer" />
+    <main className="mkt-screen">
+      <div className="mkt-content">
+        <div className="mkt-page-header">
+          <Link href="/account" className="mkt-back-btn" aria-label="العودة"><span aria-hidden="true">→</span></Link>
+          <h1 className="mkt-page-title">حول التطبيق</h1>
+          <div className="mkt-page-spacer" />
         </div>
 
         {/* Logo + Brand */}
@@ -39,10 +39,10 @@ export default function AboutPage() {
         </div>
 
         {/* الرؤية */}
-        <div className="scr-section-head" style={{ marginTop: 8 }}>
-          <div className="scr-section-title">رؤيتنا</div>
+        <div className="mkt-section-head" style={{ marginTop: 8 }}>
+          <div className="mkt-section-title">رؤيتنا</div>
         </div>
-        <div className="scr-info-banner" style={{ background: 'var(--paper-3)', display: 'block', padding: 16 }}>
+        <div className="mkt-info-banner" style={{ background: 'var(--paper-3)', display: 'block', padding: 16 }}>
           <p style={{ margin: 0, lineHeight: 1.7, fontSize: 13 }}>
             <strong>سباير ميديكال</strong> منصة طبية رقمية عراقية تهدف إلى تسهيل الوصول للخدمات الصحية. 
             من سحب الدم المنزلي إلى الاستشارات الطبية والصيدليات، نوفّر كل ما تحتاجه في مكان واحد.
@@ -50,8 +50,8 @@ export default function AboutPage() {
         </div>
 
         {/* خدماتنا */}
-        <div className="scr-section-head" style={{ marginTop: 24 }}>
-          <div className="scr-section-title">ما نقدمه</div>
+        <div className="mkt-section-head" style={{ marginTop: 24 }}>
+          <div className="mkt-section-title">ما نقدمه</div>
         </div>
         <div className="services-grid">
           {FEATURES.map((f) => (
@@ -64,51 +64,51 @@ export default function AboutPage() {
         </div>
 
         {/* قيمنا */}
-        <div className="scr-section-head" style={{ marginTop: 24 }}>
-          <div className="scr-section-title">قيمنا</div>
+        <div className="mkt-section-head" style={{ marginTop: 24 }}>
+          <div className="mkt-section-title">قيمنا</div>
         </div>
-        <div className="scr-list-stack">
+        <div className="mkt-list-stack">
           {TEAM_VALUES.map((v) => (
-            <div key={v.title} className="scr-list-item">
-              <div className="scr-list-item-icon" aria-hidden="true">{v.icon}</div>
-              <div className="scr-list-item-content">
-                <div className="scr-list-item-title">{v.title}</div>
-                <div className="scr-list-item-subtitle">{v.desc}</div>
+            <div key={v.title} className="mkt-list-item">
+              <div className="mkt-list-item-icon" aria-hidden="true">{v.icon}</div>
+              <div className="mkt-list-item-content">
+                <div className="mkt-list-item-title">{v.title}</div>
+                <div className="mkt-list-item-subtitle">{v.desc}</div>
               </div>
             </div>
           ))}
         </div>
 
         {/* روابط قانونية */}
-        <div className="scr-section-head" style={{ marginTop: 24 }}>
-          <div className="scr-section-title">معلومات قانونية</div>
+        <div className="mkt-section-head" style={{ marginTop: 24 }}>
+          <div className="mkt-section-title">معلومات قانونية</div>
         </div>
-        <div className="scr-list-stack">
-          <Link href="/legal/terms" className="scr-list-item scr-list-item-clickable">
-            <div className="scr-list-item-icon" aria-hidden="true">📜</div>
-            <div className="scr-list-item-content">
-              <div className="scr-list-item-title">الشروط والأحكام</div>
+        <div className="mkt-list-stack">
+          <Link href="/legal/terms" className="mkt-list-item mkt-list-item-clickable">
+            <div className="mkt-list-item-icon" aria-hidden="true">📜</div>
+            <div className="mkt-list-item-content">
+              <div className="mkt-list-item-title">الشروط والأحكام</div>
             </div>
             <div style={{ color: 'var(--ink-3)', fontSize: 18 }} aria-hidden="true">←</div>
           </Link>
-          <Link href="/legal/privacy" className="scr-list-item scr-list-item-clickable">
-            <div className="scr-list-item-icon" aria-hidden="true">🔒</div>
-            <div className="scr-list-item-content">
-              <div className="scr-list-item-title">سياسة الخصوصية</div>
+          <Link href="/legal/privacy" className="mkt-list-item mkt-list-item-clickable">
+            <div className="mkt-list-item-icon" aria-hidden="true">🔒</div>
+            <div className="mkt-list-item-content">
+              <div className="mkt-list-item-title">سياسة الخصوصية</div>
             </div>
             <div style={{ color: 'var(--ink-3)', fontSize: 18 }} aria-hidden="true">←</div>
           </Link>
-          <Link href="/legal/disclaimer" className="scr-list-item scr-list-item-clickable">
-            <div className="scr-list-item-icon" aria-hidden="true">⚠️</div>
-            <div className="scr-list-item-content">
-              <div className="scr-list-item-title">إخلاء المسؤولية الطبية</div>
+          <Link href="/legal/disclaimer" className="mkt-list-item mkt-list-item-clickable">
+            <div className="mkt-list-item-icon" aria-hidden="true">⚠️</div>
+            <div className="mkt-list-item-content">
+              <div className="mkt-list-item-title">إخلاء المسؤولية الطبية</div>
             </div>
             <div style={{ color: 'var(--ink-3)', fontSize: 18 }} aria-hidden="true">←</div>
           </Link>
-          <Link href="/legal/cookies" className="scr-list-item scr-list-item-clickable">
-            <div className="scr-list-item-icon" aria-hidden="true">🍪</div>
-            <div className="scr-list-item-content">
-              <div className="scr-list-item-title">سياسة الكوكيز</div>
+          <Link href="/legal/cookies" className="mkt-list-item mkt-list-item-clickable">
+            <div className="mkt-list-item-icon" aria-hidden="true">🍪</div>
+            <div className="mkt-list-item-content">
+              <div className="mkt-list-item-title">سياسة الكوكيز</div>
             </div>
             <div style={{ color: 'var(--ink-3)', fontSize: 18 }} aria-hidden="true">←</div>
           </Link>
