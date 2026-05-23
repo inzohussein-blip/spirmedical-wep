@@ -4,6 +4,10 @@ import BugReportButton from '@/components/feedback/BugReportButton';
 import PageTransitionProvider from '@/components/pwa/PageTransitionProvider';
 import FloatingActionButton from '@/components/ui/FloatingActionButton';
 
+// 📱 App-specific CSS (V25.40)
+// scr-*, hero-card-*, fab-*, account-*, checkout-*, etc.
+import '@/app/styles/app.css';
+
 export const dynamic = 'force-dynamic';
 
 /**
