@@ -9,7 +9,7 @@ import NursingFlow, { type NursingSubmission } from '@/components/appointments/N
 import { SERVICES } from '@/lib/services/services-data';
 import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
 import { ALL_LABS } from '@/lib/services/labs-data';
-import { createAppointmentV2 } from './actions';
+import { createAppointmentV2, createBloodDrawOrder } from './actions';
 import { track } from '@/lib/analytics';
 import { FlaskConical, AlertTriangle, Briefcase, MessageCircle, Syringe } from 'lucide-react';
 
@@ -43,61 +43,75 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
   async function handleBloodDrawSubmit(data: BloodDrawSubmission) {
     setError(null);
 
-    // بناء نص ملاحظات منظّم وقابل للقراءة
+    // ─── V25.43: استخدام createBloodDrawOrder الجديد ───
+    // بدل ما نحفظ كل البيانات في notes كنص، نستخدم structured columns
+    // في جدول lab_orders + ربط مع appointments
+    
     const lab = ALL_LABS.find((l) => l.id === data.labId);
-    const testsList = data.testIds
-      .map((id) => {
-        const t = BLOOD_TESTS.find((bt) => bt.id === id);
-        return t ? `• ${t.nameAr} (${t.code})` : '';
-      })
-      .filter(Boolean)
-      .join('\n');
-
-    const noteParts: string[] = [
-      '═══════ تفاصيل الطلب ═══════',
-      `[التحاليل المطلوبة]\n${testsList}`,
-      `[المختبر] ${lab?.nameAr || 'لم يُحدّد'}`,
-    ];
-
-    if (data.patientAge) noteParts.push(`[العمر] ${data.patientAge} سنة`);
-    if (data.patientGender) {
-      noteParts.push(`[الجنس] ${data.patientGender === 'male' ? 'ذكر' : 'أنثى'}`);
+    
+    // notes اختياري - فقط معلومات المريض المهمّة
+    const customNotes: string[] = [];
+    if (data.patientCondition) {
+      customNotes.push(`الحالة الطبية: ${data.patientCondition}`);
     }
-    if (data.patientCondition) noteParts.push(`[الحالة] ${data.patientCondition}`);
     if (data.needsFasting) {
-      noteParts.push(`[تنبيه] صيام ${data.fastingHours} ساعة قبل سحب الدم`);
+      customNotes.push(`⚠️ صيام ${data.fastingHours} ساعة قبل سحب الدم`);
     }
-    noteParts.push(`[وقت النتيجة] ${data.resultTime}`);
 
-    const combinedNotes = noteParts.join('\n\n');
-
-    const result = await createAppointmentV2({
-      service_id: 'blood-draw',
-      service_name: bloodDrawService.nameAr,
+    const result = await createBloodDrawOrder({
+      // البيانات الأساسية
       scheduled_at: data.scheduledAt,
       address: data.address,
-      notes: combinedNotes,
-
-      duration: bloodDrawService.duration,
-      needs_address: true,
       otp_channel: 'whatsapp',
-      otp_verified: true, // المستخدم مسجّل دخول = متحقَّق منه
-      // ✨ V25: تمرير GPS coordinates لو التقطها المستخدم
+      otp_verified: true,
+      duration: bloodDrawService.duration,
+      
+      // التحاليل (structured)
+      test_ids: data.testIds,
+      bundle_id: data.bundleId,
+      
+      // المختبر (structured)
+      partner_lab_id: null, // الـ static labs ليست في DB - سنُحدّث لاحقاً
+      lab_name_snapshot: lab?.nameAr || 'لم يُحدّد',
+      
+      // بيانات المريض (structured)
+      patient_age: data.patientAge ? parseInt(data.patientAge) : undefined,
+      patient_gender: data.patientGender || undefined,
+      patient_condition: data.patientCondition || undefined,
+      
+      // الصيام
+      needs_fasting: data.needsFasting,
+      fasting_hours: data.fastingHours,
+      
+      // التسعير
+      draw_fee: 15000,
+      tests_total: data.totalPrice - 15000,
+      discount: 0,
+      total_price: data.totalPrice,
+      
+      // متوقع النتيجة (نُحسب من resultTime لاحقاً)
+      expected_result_at: undefined,
+      
+      // اختياري
+      family_member_id: data.family_member_id ?? null,
+      notes: customNotes.length > 0 ? customNotes.join('\n') : undefined,
+      
+      // GPS
       location_lat: data.location_lat,
       location_lng: data.location_lng,
       location_accuracy_m: data.location_accuracy_m,
-      // ✨ V25.8: Family member
-      family_member_id: data.family_member_id ?? null,
     });
 
     if (result.success) {
       track('booking_completed', {
-        service_type: 'home-nursing',
-        appointment_id: result.appointmentId,
+        service_type: 'blood-draw',
+        appointment_id: result.appointment_id,
+        lab_order_id: result.lab_order_id,
         total_price: data.totalPrice,
+        test_count: data.testIds.length,
         for_family_member: !!data.family_member_id,
       });
-      router.push(`/appointments/${result.appointmentId}?new=1`);
+      router.push(`/appointments/${result.appointment_id}?new=1`);
     } else {
       setError(result.error || 'حدث خطأ');
     }
