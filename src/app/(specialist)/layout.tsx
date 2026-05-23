@@ -2,6 +2,9 @@ import { requireSession } from '@/lib/auth/session';
 import { AuthenticatedShell } from '@/components/layout/AuthenticatedShell';
 import PageTransitionProvider from '@/components/pwa/PageTransitionProvider';
 
+// 📱 App-specific CSS (V25.40)
+import '@/app/styles/app.css';
+
 export const dynamic = 'force-dynamic';
 
 /**
