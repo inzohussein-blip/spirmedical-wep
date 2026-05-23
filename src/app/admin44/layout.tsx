@@ -5,6 +5,14 @@ import { isAdminRole, ADMIN_ROLES } from '@/lib/admin-types';
 import { signOut } from '../(auth)/login/actions';
 import AdminSidebar from './_components/AdminSidebar';
 
+// 🛡️ Admin-specific CSS (V25.40 — Hybrid Approach)
+// Root layout يستورد shared.css (المشترك) — لا تكرار
+// admin.css هنا فقط للـ:
+//   • Animations خاصّة بالأدمن (urgent pulse)
+//   • Print styles للـ reports
+//   • Admin utilities (.admin-tabular, .admin-mono)
+import '@/app/styles/admin.css';
+
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
