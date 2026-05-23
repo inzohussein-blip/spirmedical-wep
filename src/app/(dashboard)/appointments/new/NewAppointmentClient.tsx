@@ -9,7 +9,7 @@ import NursingFlow, { type NursingSubmission } from '@/components/appointments/N
 import { SERVICES } from '@/lib/services/services-data';
 import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
 import { ALL_LABS } from '@/lib/services/labs-data';
-import { createAppointmentV2, createBloodDrawOrder } from './actions';
+import { createAppointmentV2, createBloodDrawOrder, createNursingAppointment } from './actions';
 import { track } from '@/lib/analytics';
 import { FlaskConical, AlertTriangle, Briefcase, MessageCircle, Syringe } from 'lucide-react';
 
@@ -121,93 +121,59 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
   async function handleNursingSubmit(data: NursingSubmission) {
     setError(null);
 
-    // بناء ملاحظات منظّمة تحتوي على كل التفاصيل
-    const noteParts: string[] = [
-      '═══════ تفاصيل خدمة التمريض ═══════',
-      `[الإجراء] ${data.procedure_label}`,
-      `[تفضيل الكادر] ${
-        data.nurse_gender_preference === 'female' ? 'ممرضة (أنثى)' :
-        data.nurse_gender_preference === 'male' ? 'ممرض (ذكر)' : 'لا فرق'
-      }`,
-    ];
-
-    // التحسس الدوائي
-    const allergyList: string[] = [];
-    if (data.allergy_form.penicillin) allergyList.push('البنسلين');
-    if (data.allergy_form.sulfa) allergyList.push('السلفا');
-    if (data.allergy_form.aspirin) allergyList.push('الأسبرين');
-    if (data.allergy_form.iodine) allergyList.push('اليود');
-    if (data.allergy_form.latex) allergyList.push('اللاتكس');
-    if (data.allergy_form.other) allergyList.push(data.allergy_form.other);
-
-    if (allergyList.length > 0) {
-      noteParts.push(`[⚠️ تحسسات دوائية] ${allergyList.join('، ')}`);
-    } else {
-      noteParts.push('[التحسس] لا توجد تحسسات معروفة');
-    }
-
-    // الوصفة
-    if (data.prescription_skipped) {
-      noteParts.push('[⚠️ الوصفة] لا توجد وصفة - سيراها الممرض في الموقع');
-    } else if (data.prescription_image_url) {
-      noteParts.push('[✓ الوصفة] تم رفعها بنجاح');
-    }
-
-    // الأمراض المعدية
-    if (data.infectious_disease_alert) {
-      const infList: string[] = [];
-      if (data.infectious_disease_alert.hepatitis_b) infList.push('التهاب الكبد B');
-      if (data.infectious_disease_alert.hepatitis_c) infList.push('التهاب الكبد C');
-      if (data.infectious_disease_alert.hiv) infList.push('HIV');
-      if (data.infectious_disease_alert.covid) infList.push('كوفيد-19');
-      if (data.infectious_disease_alert.tb) infList.push('السل');
-      if (data.infectious_disease_alert.other) infList.push(data.infectious_disease_alert.other);
-
-      if (infList.length > 0) {
-        noteParts.push(`[🦠 تنبيه عدوى] ${infList.join('، ')} - يلزم احتياطات الحماية`);
-      }
-    }
-
-    // الجدولة الدورية
-    if (data.recurring_schedule?.enabled) {
-      noteParts.push(
-        `[🔁 جدولة دورية] كل ${data.recurring_schedule.interval_hours} ساعة` +
-        (data.recurring_schedule.end_date ? ` حتى ${data.recurring_schedule.end_date}` : '')
-      );
-    }
-
-    // الملاحظات
-    if (data.notes) {
-      noteParts.push(`[ملاحظات] ${data.notes}`);
-    }
-
-    const combinedNotes = noteParts.join('\n');
-
-    const result = await createAppointmentV2({
-      service_id: 'home-nursing',
-      service_name: `${nursingService.nameAr} - ${data.procedure_label}`,
+    // ─── V25.44: استخدام createNursingAppointment الجديد ───
+    // يحفظ كل البيانات في columns بدلاً من text داخل notes
+    
+    const result = await createNursingAppointment({
+      // الأساسيات
       scheduled_at: data.scheduledAt,
       address: data.address,
-      notes: combinedNotes,
-
-      duration: nursingService.duration,
-      needs_address: true,
       otp_channel: 'whatsapp',
       otp_verified: true,
+      duration: nursingService.duration,
+      total_price: data.totalPrice,
+      
+      // إجراء التمريض (structured)
+      procedure_type: data.procedure_type,
+      procedure_label: data.procedure_label,
+      
+      // الكادر (structured)
+      nurse_gender_preference: data.nurse_gender_preference || 'any',
+      
+      // التحسس (structured JSONB)
+      allergy_form: data.allergy_form,
+      
+      // الوصفة (structured)
+      prescription_image_url: data.prescription_image_url,
+      prescription_skipped: data.prescription_skipped,
+      
+      // الأمراض المعدية (structured JSONB)
+      infectious_disease_alert: data.infectious_disease_alert,
+      
+      // الجدولة الدورية (structured JSONB)
+      recurring_schedule: data.recurring_schedule,
+      
+      // notes إضافية
+      notes: data.notes,
+      
+      // family
+      family_member_id: data.family_member_id ?? null,
+      
+      // GPS
       location_lat: data.location_lat,
       location_lng: data.location_lng,
-      // ✨ V25.8: Family member
-      family_member_id: data.family_member_id ?? null,
     });
 
     if (result.success) {
       track('booking_completed', {
         service_type: 'home-nursing',
-        appointment_id: result.appointmentId,
+        appointment_id: result.appointment_id,
+        procedure_type: data.procedure_type,
         total_price: data.totalPrice,
         for_family_member: !!data.family_member_id,
+        has_recurring: !!data.recurring_schedule?.enabled,
       });
-      router.push(`/appointments/${result.appointmentId}?new=1`);
+      router.push(`/appointments/${result.appointment_id}?new=1`);
     } else {
       setError(result.error || 'حدث خطأ');
     }
