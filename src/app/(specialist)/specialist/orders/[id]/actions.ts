@@ -174,3 +174,151 @@ export async function updateOrderRoleData(
   revalidatePath(`/specialist/orders/${orderId}`);
   return { ok: true };
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 🩸 V25.43: saveLabResults - حفظ نتائج التحاليل في lab_results table
+// ═══════════════════════════════════════════════════════════════════════════
+// يستبدل الـ saving في notes - يحفظ كل نتيجة في صف منفصل بـ structured data
+// ═══════════════════════════════════════════════════════════════════════════
+
+export interface LabResultInput {
+  test_id: string;
+  test_name: string;
+  result_value: string;
+  result_numeric?: number | null;
+  unit?: string;
+  normal_range_min?: number | null;
+  normal_range_max?: number | null;
+  normal_range_text?: string;
+  status: 'normal' | 'low' | 'high' | 'critical' | 'inconclusive';
+  flag?: string;
+  notes?: string;
+  pdf_url?: string;
+}
+
+export async function saveLabResults(
+  appointmentId: string,
+  results: LabResultInput[]
+) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: 'unauthorized' };
+
+  // التحقق من أن المستخدم specialist (lab_analyst)
+  const { data: profile } = await supabase
+    .from('users')
+    .select('specialist_type, role')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile || (profile.specialist_type !== 'lab_analyst' && profile.role !== 'admin')) {
+    return { ok: false, error: 'permission_denied' };
+  }
+
+    const supabaseAny = supabase as any;
+
+  // جلب الـ appointment + lab_order (نستخدم supabaseAny لأن lab_order_id جديد)
+  const { data: appointment } = await supabaseAny
+    .from('appointments')
+    .select('id, user_id, lab_order_id, assigned_specialist_id, specialist_id')
+    .eq('id', appointmentId)
+    .single();
+
+  if (!appointment) return { ok: false, error: 'appointment_not_found' };
+
+  // التحقق من أن الـ specialist مُسند له
+  if (appointment.assigned_specialist_id !== user.id && 
+      appointment.specialist_id !== user.id && 
+      profile.role !== 'admin') {
+    return { ok: false, error: 'not_assigned' };
+  }
+
+  // الحصول على lab_order_id
+  const labOrderId = appointment.lab_order_id;
+  if (!labOrderId) {
+    return { ok: false, error: 'no_lab_order' };
+  }
+
+  // حذف النتائج القديمة (لو في) وإضافة الجديدة
+  await supabaseAny
+    .from('lab_results')
+    .delete()
+    .eq('lab_order_id', labOrderId);
+
+  const resultsToInsert = results.map((r) => ({
+    lab_order_id: labOrderId,
+    user_id: appointment.user_id,
+    test_id: r.test_id,
+    test_name: r.test_name,
+    result_value: r.result_value,
+    result_numeric: r.result_numeric ?? null,
+    unit: r.unit ?? null,
+    normal_range_min: r.normal_range_min ?? null,
+    normal_range_max: r.normal_range_max ?? null,
+    normal_range_text: r.normal_range_text ?? null,
+    status: r.status,
+    flag: r.flag ?? null,
+    notes: r.notes ?? null,
+    pdf_url: r.pdf_url ?? null,
+    tested_at: new Date().toISOString(),
+    entered_by: user.id,
+  }));
+
+  const { error: insertError } = await supabaseAny
+    .from('lab_results')
+    .insert(resultsToInsert);
+
+  if (insertError) {
+    return { ok: false, error: insertError.message };
+  }
+
+  // تحديث lab_order status
+  await supabaseAny
+    .from('lab_orders')
+    .update({ 
+      status: 'results_ready',
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', labOrderId);
+
+  // تحديث appointment status
+  await supabase
+    .from('appointments')
+    .update({ status: 'completed', completed_at: new Date().toISOString() } as never)
+    .eq('id', appointmentId);
+
+  revalidatePath(`/specialist/orders/${appointmentId}`);
+  revalidatePath(`/account/lab-history`);
+
+  return { ok: true };
+}
+
+export async function updateLabOrderStatus(
+  appointmentId: string,
+  newStatus: 'pending' | 'sample_collected' | 'sent_to_lab' | 'processing' | 'results_ready' | 'delivered' | 'cancelled'
+) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: 'unauthorized' };
+
+    const supabaseAny = supabase as any;
+
+  const { data: appointment } = await supabaseAny
+    .from('appointments')
+    .select('id, lab_order_id, assigned_specialist_id, specialist_id')
+    .eq('id', appointmentId)
+    .single();
+
+  if (!appointment) return { ok: false, error: 'not_found' };
+
+  const labOrderId = appointment.lab_order_id;
+  if (!labOrderId) return { ok: false, error: 'no_lab_order' };
+
+  await supabaseAny
+    .from('lab_orders')
+    .update({ status: newStatus })
+    .eq('id', labOrderId);
+
+  revalidatePath(`/specialist/orders/${appointmentId}`);
+  return { ok: true };
+}
