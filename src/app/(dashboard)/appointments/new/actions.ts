@@ -385,3 +385,216 @@ export async function createAppointment(formData: FormData) {
   revalidatePath('/appointments');
   redirect('/appointments');
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 🩸 V25.43: createBloodDrawOrder - حجز سحب دم + تحاليل (structured)
+// ═══════════════════════════════════════════════════════════════════════════
+// بدل ما نحفظ كل البيانات في notes كنص، نُنشئ:
+//   1. lab_order (مع test_ids[], lab_id, patient_info)
+//   2. appointment (مرتبط بـ lab_order_id)
+// ═══════════════════════════════════════════════════════════════════════════
+
+export interface CreateBloodDrawInput {
+  // البيانات الأساسية
+  scheduled_at: string;
+  address: string;
+  otp_channel: 'whatsapp' | 'telegram';
+  otp_verified: boolean;
+  
+  // التحاليل
+  test_ids: string[];
+  bundle_id: string | null;
+  
+  // المختبر
+  partner_lab_id: string | null;
+  lab_name_snapshot: string;
+  
+  // بيانات المريض
+  patient_age?: number;
+  patient_gender?: 'male' | 'female';
+  patient_condition?: string;
+  
+  // الصيام
+  needs_fasting: boolean;
+  fasting_hours: number;
+  
+  // التسعير
+  draw_fee: number;
+  tests_total: number;
+  discount: number;
+  total_price: number;
+  
+  // متوقع النتيجة
+  expected_result_at?: string;
+  
+  // اختياري
+  family_member_id?: string | null;
+  notes?: string;
+  
+  // GPS
+  location_lat?: number;
+  location_lng?: number;
+  location_accuracy_m?: number;
+  
+  // duration للموعد
+  duration: number;
+}
+
+export async function createBloodDrawOrder(input: CreateBloodDrawInput) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return {
+      success: false,
+      error: 'يجب تسجيل الدخول أولاً',
+      redirect: '/login',
+    };
+  }
+
+  if (!input.otp_verified) {
+    return {
+      success: false,
+      error: 'يجب تأكيد رقم الهاتف أولاً',
+    };
+  }
+
+  // Rate limit
+  const limit = await checkRateLimit(`blood-draw:create:${user.id}`, {
+    max: 5,
+    windowSeconds: 3600,
+  });
+  if (!limit.allowed) {
+    return {
+      success: false,
+      error: `عدد كبير من الطلبات. حاول بعد ${Math.ceil(limit.retryAfterSeconds / 60)} دقيقة`,
+    };
+  }
+
+  // Validation
+  if (!input.test_ids || input.test_ids.length === 0) {
+    return { success: false, error: 'يجب اختيار تحليل واحد على الأقل' };
+  }
+
+  if (!input.address || input.address.length < 10) {
+    return { success: false, error: 'يجب إدخال عنوان مفصّل' };
+  }
+
+  try {
+    // ─── 1. أنشئ lab_order أولاً ───
+    // ملاحظة: lab_orders, lab_results, partner_labs ستُضاف لـ Database types
+    // بعد تشغيل migration 38. حالياً نستخدم `as any` للالتفاف على types.
+        const supabaseAny = supabase as any;
+    
+    const { data: labOrder, error: labOrderError } = await supabaseAny
+      .from('lab_orders')
+      .insert({
+        user_id: user.id,
+        family_member_id: input.family_member_id || null,
+        test_ids: input.test_ids,
+        bundle_id: input.bundle_id,
+        partner_lab_id: input.partner_lab_id,
+        lab_name_snapshot: input.lab_name_snapshot,
+        patient_age: input.patient_age || null,
+        patient_gender: input.patient_gender || null,
+        patient_condition: input.patient_condition || null,
+        needs_fasting: input.needs_fasting,
+        fasting_hours: input.fasting_hours,
+        draw_fee: input.draw_fee,
+        tests_total: input.tests_total,
+        discount: input.discount,
+        total_price: input.total_price,
+        expected_result_at: input.expected_result_at || null,
+        notes: input.notes || null,
+        status: 'pending',
+      })
+      .select()
+      .single();
+
+    if (labOrderError || !labOrder) {
+      logger.error('Failed to create lab_order', { error: labOrderError });
+      return { success: false, error: 'فشل إنشاء طلب التحاليل. حاول مرة أخرى.' };
+    }
+
+    // ─── 2. أنشئ appointment مرتبط ───
+    const encryptedNotes = input.notes ? encrypt(input.notes) : null;
+
+    const appointmentData: Record<string, unknown> = {
+      user_id: user.id,
+      service_type: 'سحب دم + تحاليل',
+      service_id: 'blood-draw',
+      scheduled_at: input.scheduled_at,
+      address: input.address,
+      notes_encrypted: encryptedNotes,
+      estimated_price: input.total_price,
+      duration_minutes: input.duration,
+      otp_channel: input.otp_channel,
+      status: 'pending',
+      required_specialist_type: 'lab_analyst',
+      lab_order_id: labOrder.id,  // ← الربط!
+    };
+
+    if (input.location_lat !== undefined && input.location_lng !== undefined) {
+      appointmentData.location_lat = input.location_lat;
+      appointmentData.location_lng = input.location_lng;
+      appointmentData.location_accuracy_m = input.location_accuracy_m || null;
+    }
+
+    const { data: appointment, error: appointmentError } = await supabaseAny
+      .from('appointments')
+      .insert(appointmentData)
+      .select()
+      .single();
+
+    if (appointmentError || !appointment) {
+      // تراجع: احذف lab_order الذي أنشأناه
+      await supabaseAny.from('lab_orders').delete().eq('id', labOrder.id);
+      logger.error('Failed to create appointment', { error: appointmentError });
+      return { success: false, error: 'فشل إنشاء الموعد. حاول مرة أخرى.' };
+    }
+
+    // ─── 3. ربط الموعد بـ lab_order ───
+    await supabaseAny
+      .from('lab_orders')
+      .update({ appointment_id: appointment.id })
+      .eq('id', labOrder.id);
+
+    // ─── 4. Audit log ───
+    await logAuditEvent({
+      user_id: user.id,
+      action: 'blood_draw.create',
+      entity_type: 'lab_orders',
+      entity_id: labOrder.id,
+      metadata: {
+        test_count: input.test_ids.length,
+        total_price: input.total_price,
+        partner_lab_id: input.partner_lab_id,
+      },
+    }).catch(() => null);
+
+    // ─── 5. Notifications (best-effort) ───
+    notifyOrderConfirmed(user.id, {
+      orderId: appointment.id,
+      serviceName: 'سحب دم + تحاليل',
+      scheduledAt: input.scheduled_at,
+    }).catch(() => null);
+
+    // ملاحظة: WhatsApp notification متروك لـ trigger في DB أو background job
+    // (الـ signature يتطلّب phone + patientName اللي مش متاح هنا مباشرة)
+
+    revalidatePath('/dashboard');
+    revalidatePath('/appointments');
+    revalidatePath('/account/lab-history');
+
+    return {
+      success: true,
+      appointment_id: appointment.id,
+      lab_order_id: labOrder.id,
+    };
+  } catch (error) {
+    logger.error('createBloodDrawOrder unexpected error', { error });
+    return { success: false, error: 'حدث خطأ غير متوقّع. حاول مرة أخرى.' };
+  }
+}
