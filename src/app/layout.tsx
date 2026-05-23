@@ -7,6 +7,7 @@ import PWAManager from '@/components/ui/PWAManager';
 import NetworkStatusDetector from '@/components/ui/NetworkStatusDetector';
 import SWUpdateBanner from '@/components/ui/SWUpdateBanner';
 import WebVitalsReporter from '@/components/seo/WebVitalsReporter';
+import PerformanceMonitor from '@/components/dev/PerformanceMonitor';
 import { Toaster } from '@/components/ui/Toaster';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import PWAModeProvider from '@/components/pwa/PWAModeProvider';
@@ -24,7 +25,7 @@ import '@fontsource/tajawal/700.css';
 import '@fontsource/tajawal/800.css';
 import '@fontsource/jetbrains-mono/500.css';
 
-import './globals.css';
+import './styles/shared.css';
 import './pwa.css';
 
 const SITE_URL =
@@ -280,6 +281,7 @@ export default function RootLayout({
           <WebVitalsReporter />
           <Analytics />
           <SpeedInsights />
+          <PerformanceMonitor />
         </PWAModeProvider>
       </body>
     </html>
