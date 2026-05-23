@@ -9,6 +9,10 @@ import FreeMedicalMapWrapper from '@/components/maps/SpirMapViewWrapper';
 import type { MapMarker } from '@/types/location';
 import { SITE_TYPE, getAppUrl } from '@/lib/site-config';
 
+// 🌐 Marketing CSS — الـ landing page يستخدم landing-* classes
+// (V25.40: لا يدخل في (marketing) group لأنه root /)
+import './styles/marketing.css';
+
 export const metadata = {
   title: 'سباير ميديكال · Spir Medical — منصة طبية رقمية متكاملة في العراق',
   description: 'الرعاية الصحية بين يديك · ١٥ خدمة طبية · في كل المحافظات العراقية',
