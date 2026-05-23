@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import FreeMedicalMapWrapper from '@/components/maps/SpirMapViewWrapper';
 import ShareButton from '@/components/pwa/ShareButton';
+import HospitalBookingButton from '@/components/hospitals/HospitalBookingButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -171,6 +172,18 @@ export default async function HospitalDetailPage({
             )}
           </div>
         </div>
+
+        {/* Booking button - V25.47 جديد */}
+        <HospitalBookingButton
+          hospital={{
+            id: hospital.id,
+            name: hospital.name,
+            type: hospital.type,
+            city: hospital.city,
+            district: hospital.district,
+            departments: hospital.departments,
+          }}
+        />
 
         {/* Contact actions */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6, marginBottom: 14 }}>
