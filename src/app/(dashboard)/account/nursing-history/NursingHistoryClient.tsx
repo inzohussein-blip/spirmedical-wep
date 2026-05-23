@@ -89,6 +89,25 @@ export default function NursingHistoryClient({ visits, specialistsMap }: Props) 
             تاريخك الطبي مع خدمة التمريض
           </p>
         </div>
+        
+        {/* Link لـ vitals trends */}
+        <Link
+          href="/account/vitals-trends"
+          style={{
+            padding: '8px 12px',
+            background: 'var(--emerald-soft)',
+            color: 'var(--emerald-deep)',
+            borderRadius: 20,
+            textDecoration: 'none',
+            fontSize: 11,
+            fontWeight: 700,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 4,
+          }}
+        >
+          📈 التطوّر
+        </Link>
       </div>
 
       {/* Stats */}
