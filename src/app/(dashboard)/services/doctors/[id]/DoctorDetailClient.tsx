@@ -13,6 +13,7 @@ import { subscribeToDoctor, startConsultation } from './actions';
 import { track } from '@/lib/analytics';
 import ShareButton from '@/components/pwa/ShareButton';
 import LazyImage from '@/components/ui/LazyImage';
+import DoctorBookingModal from '@/components/doctors/DoctorBookingModal';
 
 interface Doctor {
   id: string;
@@ -70,6 +71,7 @@ const SPECIALTIES: Record<string, { label: string; emoji: string }> = {
 export default function DoctorDetailClient({ doctor, activeSubscription }: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [bookingModalType, setBookingModalType] = useState<'home_visit' | 'clinic_visit' | 'video' | null>(null);
   const specMeta = SPECIALTIES[doctor.specialty];
 
   const handleSubscribe = (plan: 'monthly' | 'yearly') => {
@@ -366,8 +368,9 @@ export default function DoctorDetailClient({ doctor, activeSubscription }: Props
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
           {/* Home visit */}
           {doctor.available_for_home_visit && (
-            <Link
-              href={`/appointments/new?service=home-doctor-visit&doctor=${doctor.id}`}
+            <button
+              type="button"
+              onClick={() => setBookingModalType('home_visit')}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -376,8 +379,10 @@ export default function DoctorDetailClient({ doctor, activeSubscription }: Props
                 background: 'var(--white)',
                 border: '1px solid var(--line)',
                 borderRadius: 12,
-                textDecoration: 'none',
-                color: 'inherit',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                textAlign: 'start',
+                width: '100%',
               }}
             >
               <div
@@ -396,7 +401,7 @@ export default function DoctorDetailClient({ doctor, activeSubscription }: Props
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 14, fontWeight: 800 }}>زيارة منزلية</div>
-                <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>الطبيب يأتي لمنزلك</div>
+                <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>الطبيب يأتي لمنزلك · 60 دقيقة</div>
               </div>
               <div style={{ textAlign: 'end' }}>
                 <div style={{ fontSize: 14, fontWeight: 900, color: 'var(--emerald)' }}>
@@ -404,7 +409,103 @@ export default function DoctorDetailClient({ doctor, activeSubscription }: Props
                 </div>
                 <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
               </div>
-            </Link>
+            </button>
+          )}
+
+          {/* Clinic visit - V25.45 جديد */}
+          {doctor.available_for_clinic && (
+            <button
+              type="button"
+              onClick={() => setBookingModalType('clinic_visit')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                padding: 14,
+                background: 'var(--white)',
+                border: '1px solid var(--line)',
+                borderRadius: 12,
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                textAlign: 'start',
+                width: '100%',
+              }}
+            >
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 12,
+                  background: '#FAEEDA',
+                  color: '#A57100',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Building2 size={22} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 800 }}>زيارة العيادة</div>
+                <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
+                  تزور الطبيب في عيادته · 30 دقيقة
+                </div>
+              </div>
+              <div style={{ textAlign: 'end' }}>
+                <div style={{ fontSize: 14, fontWeight: 900, color: '#A57100' }}>
+                  25,000
+                </div>
+                <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
+              </div>
+            </button>
+          )}
+
+          {/* Video consultation - V25.45 جديد */}
+          {doctor.available_for_video && (
+            <button
+              type="button"
+              onClick={() => setBookingModalType('video')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                padding: 14,
+                background: 'var(--white)',
+                border: '1px solid var(--line)',
+                borderRadius: 12,
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                textAlign: 'start',
+                width: '100%',
+              }}
+            >
+              <div
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 12,
+                  background: '#E1F5EE',
+                  color: '#1D9E75',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Video size={22} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 800 }}>استشارة فيديو</div>
+                <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
+                  مكالمة فيديو مباشرة · 20 دقيقة
+                </div>
+              </div>
+              <div style={{ textAlign: 'end' }}>
+                <div style={{ fontSize: 14, fontWeight: 900, color: '#1D9E75' }}>
+                  {doctor.video_consult_price.toLocaleString('ar-IQ')}
+                </div>
+                <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
+              </div>
+            </button>
           )}
 
           {/* Chat consultation */}
@@ -580,6 +681,15 @@ export default function DoctorDetailClient({ doctor, activeSubscription }: Props
           </>
         )}
       </div>
+
+      {/* Booking Modal - V25.45 */}
+      {bookingModalType && (
+        <DoctorBookingModal
+          doctor={doctor}
+          defaultType={bookingModalType}
+          onClose={() => setBookingModalType(null)}
+        />
+      )}
     </main>
   );
 }
