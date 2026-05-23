@@ -187,6 +187,7 @@ export default function ServicesMapHub({
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filteredLocations.length, selectedFilter, selectedGovernorate]);
 
   // زر "موقعي الحالي"
