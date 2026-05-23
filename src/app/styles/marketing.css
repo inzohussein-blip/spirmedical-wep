@@ -3917,3 +3917,548 @@
   justify-content: center;
   margin-top: 40px;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   🆕 V25.41 - Mobile-First Enhancements + Map Refinements
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ───────────────────────────────────────────────
+   1. Scroll Progress Indicator
+   ─────────────────────────────────────────────── */
+.landing-scroll-progress {
+  position: fixed;
+  top: 0;
+  inset-inline-start: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--emerald) 0%, var(--amber) 100%);
+  transform-origin: left;
+  transform: scaleX(0);
+  z-index: 9998;
+  transition: transform 0.1s ease-out;
+  pointer-events: none;
+}
+
+/* RTL fix */
+[dir='rtl'] .landing-scroll-progress {
+  transform-origin: right;
+}
+
+/* ───────────────────────────────────────────────
+   2. Back to Top Button
+   ─────────────────────────────────────────────── */
+.landing-back-to-top {
+  position: fixed;
+  bottom: 24px;
+  inset-inline-end: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--emerald);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(15, 26, 28, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px) scale(0.8);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 999;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.landing-back-to-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.landing-back-to-top:active {
+  transform: translateY(0) scale(0.92);
+}
+
+.landing-back-to-top:hover {
+  background: var(--emerald-deep);
+  box-shadow: 0 6px 20px rgba(15, 26, 28, 0.3);
+}
+
+/* ───────────────────────────────────────────────
+   3. Fade-in animation on scroll
+   ─────────────────────────────────────────────── */
+.landing-fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.landing-fade-in-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-fade-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ───────────────────────────────────────────────
+   4. Sticky Nav with scroll behavior
+   ─────────────────────────────────────────────── */
+body.landing-scrolled .landing-nav {
+  background: rgba(244, 239, 226, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 16px rgba(15, 26, 28, 0.06);
+}
+
+body.landing-nav-hidden .landing-nav {
+  transform: translateY(-100%);
+}
+
+.landing-nav {
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ───────────────────────────────────────────────
+   5. Coverage Map (V25.41 - Enhanced)
+   ─────────────────────────────────────────────── */
+
+.landing-coverage-map-container {
+  position: relative;
+  width: 100%;
+}
+
+.landing-map-inner {
+  position: relative;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #E8EEF1;
+  border: 1px solid var(--line);
+}
+
+/* Skeleton أثناء التحميل */
+.landing-map-skeleton {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  border-radius: 16px;
+  background: linear-gradient(
+    90deg,
+    #E8EEF1 0%,
+    #F1EFE8 50%,
+    #E8EEF1 100%
+  );
+  background-size: 200% 100%;
+  animation: landing-map-skeleton-shimmer 1.8s ease-in-out infinite;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+@keyframes landing-map-skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.landing-map-skeleton-shimmer {
+  display: none; /* placeholder */
+}
+
+.landing-map-skeleton-pin {
+  color: var(--emerald);
+  opacity: 0.5;
+  animation: landing-pin-bounce 1.5s ease-in-out infinite;
+}
+
+@keyframes landing-pin-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.landing-map-skeleton-text {
+  font-size: 13px;
+  color: var(--ink-3);
+  font-weight: 500;
+}
+
+/* Custom Markers */
+.landing-map-marker {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.landing-map-marker:hover {
+  transform: scale(1.2);
+}
+
+/* Primary marker (Baghdad) - bigger + pulse */
+.landing-map-marker-primary .landing-map-marker-dot {
+  width: 16px;
+  height: 16px;
+  background: var(--emerald);
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(15, 26, 28, 0.3);
+  z-index: 2;
+}
+
+.landing-map-marker-pulse {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  background: var(--emerald);
+  border-radius: 50%;
+  opacity: 0.4;
+  animation: landing-marker-pulse 2s ease-out infinite;
+  z-index: 1;
+}
+
+@keyframes landing-marker-pulse {
+  0% { transform: scale(0.6); opacity: 0.6; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* Secondary markers - smaller, no pulse */
+.landing-map-marker-secondary .landing-map-marker-dot {
+  width: 12px;
+  height: 12px;
+  background: var(--amber);
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(15, 26, 28, 0.25);
+}
+
+/* Custom tooltip styling */
+.landing-map-tooltip-wrapper {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.landing-map-tooltip-wrapper::before {
+  border-top-color: transparent !important;
+}
+
+.landing-map-tooltip {
+  background: var(--ink);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: 'Tajawal', system-ui, sans-serif;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.landing-map-tooltip-name {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.landing-map-tooltip-stats {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+/* City info card */
+.landing-map-city-card {
+  position: absolute;
+  bottom: 16px;
+  inset-inline-start: 16px;
+  inset-inline-end: 16px;
+  background: white;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(15, 26, 28, 0.15);
+  border: 1px solid var(--line);
+  animation: landing-card-slide-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 500;
+  max-width: 320px;
+}
+
+@keyframes landing-card-slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.landing-map-city-close {
+  position: absolute;
+  top: 8px;
+  inset-inline-end: 8px;
+  width: 28px;
+  height: 28px;
+  background: var(--paper-2);
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  color: var(--ink-3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.landing-map-city-close:active {
+  transform: scale(0.92);
+}
+
+.landing-map-city-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 12px;
+  padding-inline-end: 32px;
+}
+
+.landing-map-city-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.landing-map-city-stat {
+  background: var(--paper-2);
+  border-radius: 10px;
+  padding: 10px 12px;
+  text-align: center;
+}
+
+.landing-map-city-stat-num {
+  display: block;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--emerald);
+  line-height: 1;
+}
+
+.landing-map-city-stat-label {
+  display: block;
+  font-size: 11px;
+  color: var(--ink-3);
+  margin-top: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   📱 MOBILE-FIRST RESPONSIVE - V25.41
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Tablet & Mobile (max-width: 1023px) ─── */
+@media (max-width: 1023px) {
+  .landing-coverage-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  
+  .landing-coverage-map-wrap {
+    padding: 12px !important;
+  }
+}
+
+/* ─── Mobile (max-width: 768px) ─── */
+@media (max-width: 768px) {
+  /* General spacing */
+  .landing-hero {
+    padding: 48px 0 32px !important;
+  }
+  
+  .landing-stats,
+  .landing-features,
+  .landing-coverage-map,
+  .landing-blog,
+  .landing-faq,
+  .landing-testimonials,
+  .landing-cta {
+    padding: 48px 0 !important;
+  }
+  
+  /* Typography responsive */
+  .landing-h1 {
+    font-size: clamp(28px, 8vw, 40px) !important;
+    line-height: 1.2 !important;
+  }
+  
+  .landing-h2 {
+    font-size: clamp(24px, 6vw, 32px) !important;
+  }
+  
+  .landing-hero-tagline,
+  .landing-hero-desc {
+    font-size: 15px !important;
+  }
+  
+  /* Stats grid - 2 columns on mobile */
+  .landing-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+  
+  /* Blog grid - 1 column */
+  .landing-blog-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  
+  /* Features grid - 1 column */
+  .landing-features-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  
+  /* Coverage cities - simpler list */
+  .landing-coverage-cities {
+    padding: 16px !important;
+  }
+  
+  /* CTA buttons - bigger, full width */
+  .landing-cta-primary,
+  .landing-cta-secondary,
+  .landing-nav-cta,
+  .landing-hero-cta {
+    min-height: 48px !important;
+    font-size: 15px !important;
+    padding: 14px 24px !important;
+  }
+  
+  /* Nav mobile - smaller padding */
+  .landing-nav-inner {
+    padding: 10px 16px !important;
+  }
+  
+  /* Hide hero visual on mobile (saves space + performance) */
+  .landing-hero-visual {
+    display: none !important;
+  }
+  
+  /* FAQ items - bigger touch targets */
+  .landing-faq-question {
+    padding: 16px !important;
+    font-size: 15px !important;
+    min-height: 56px !important;
+  }
+  
+  .landing-faq-answer {
+    padding: 0 16px 16px !important;
+    font-size: 14px !important;
+  }
+  
+  /* Map - reduce height on mobile */
+  .landing-map-inner {
+    height: 320px !important;
+    border-radius: 12px !important;
+  }
+  
+  .landing-map-skeleton {
+    height: 320px !important;
+    border-radius: 12px !important;
+  }
+  
+  /* City info card - full bottom sheet on mobile */
+  .landing-map-city-card {
+    inset-inline-start: 12px !important;
+    inset-inline-end: 12px !important;
+    bottom: 12px !important;
+    max-width: none !important;
+  }
+  
+  /* Back to top - smaller on mobile */
+  .landing-back-to-top {
+    width: 44px !important;
+    height: 44px !important;
+    bottom: 16px !important;
+    inset-inline-end: 16px !important;
+  }
+}
+
+/* ─── Small Mobile (max-width: 480px) ─── */
+@media (max-width: 480px) {
+  .landing-wrap {
+    padding: 0 16px !important;
+  }
+  
+  .landing-h1 {
+    font-size: 28px !important;
+  }
+  
+  .landing-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Nav - hide menu text, keep logo + cta */
+  .landing-nav-link {
+    display: none !important;
+  }
+  
+  /* Map height shorter */
+  .landing-map-inner {
+    height: 280px !important;
+  }
+  
+  .landing-map-skeleton {
+    height: 280px !important;
+  }
+  
+  /* Footer adjustments */
+  .landing-footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+}
+
+/* ───────────────────────────────────────────────
+   Touch-friendly improvements
+   ─────────────────────────────────────────────── */
+@media (hover: none) and (pointer: coarse) {
+  /* كل الـ touch targets على الموبايل ≥ 44px */
+  .landing-nav-link,
+  .landing-nav-cta,
+  .landing-cta-primary,
+  .landing-cta-secondary {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* تعطيل hover effects على touch */
+  .landing-blog-card:hover,
+  .landing-feature-card:hover {
+    transform: none;
+  }
+}
+
+/* ───────────────────────────────────────────────
+   Smooth scroll للـ html
+   ─────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* لـ sticky nav */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
