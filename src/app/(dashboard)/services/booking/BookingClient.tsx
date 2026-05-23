@@ -29,6 +29,10 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
+  
+  // V25.47: structured fields
+  const [dentalProcedure, setDentalProcedure] = useState<string>('');
+  const [opticalService, setOpticalService] = useState<string>('');
 
   // قيم افتراضية: غداً 10:00 ص
   const tomorrow = new Date();
@@ -83,6 +87,9 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
         package_type: provider.packageType,
         package_price: provider.packagePrice,
         address: isOnlineService ? undefined : address,
+        // V25.47: structured fields
+                dental_procedure_type: (dentalProcedure || undefined) as any,
+                optical_service_type: (opticalService || undefined) as any,
       });
 
       if (result.ok) {
@@ -318,6 +325,88 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
                   rows={2}
                   style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit' }}
                 />
+              </>
+            )}
+
+            {/* V25.47: Dental Procedure Selector */}
+            {provider.type === 'dental' && (
+              <>
+                <SectionTitle style={{ marginTop: 14 }}>🦷 نوع الإجراء</SectionTitle>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6 }}>
+                  {[
+                    { id: 'cleaning', label: 'تنظيف الأسنان' },
+                    { id: 'filling', label: 'حشوة' },
+                    { id: 'extraction', label: 'قلع' },
+                    { id: 'root_canal', label: 'علاج عصب' },
+                    { id: 'crown', label: 'تركيب تاج' },
+                    { id: 'orthodontics', label: 'تقويم' },
+                    { id: 'whitening', label: 'تبييض' },
+                    { id: 'consultation', label: 'استشارة' },
+                  ].map((proc) => {
+                    const selected = dentalProcedure === proc.id;
+                    return (
+                      <button
+                        key={proc.id}
+                        type="button"
+                        onClick={() => setDentalProcedure(proc.id)}
+                        style={{
+                          padding: '8px 10px',
+                          borderRadius: 8,
+                          fontSize: 12,
+                          fontWeight: 600,
+                          border: '1px solid',
+                          borderColor: selected ? '#0F6E56' : 'var(--line)',
+                          background: selected ? '#0F6E56' : 'var(--white)',
+                          color: selected ? 'white' : 'var(--ink-2)',
+                          cursor: 'pointer',
+                          fontFamily: 'inherit',
+                        }}
+                      >
+                        {proc.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+
+            {/* V25.47: Optical Service Selector */}
+            {provider.type === 'optical' && (
+              <>
+                <SectionTitle style={{ marginTop: 14 }}>👓 نوع الخدمة</SectionTitle>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6 }}>
+                  {[
+                    { id: 'eye_exam', label: 'فحص نظر' },
+                    { id: 'prescription_lenses', label: 'نظارة طبية' },
+                    { id: 'sunglasses', label: 'نظارة شمسية' },
+                    { id: 'contact_lenses', label: 'عدسات لاصقة' },
+                    { id: 'frames_only', label: 'إطار فقط' },
+                    { id: 'consultation', label: 'استشارة' },
+                  ].map((svc) => {
+                    const selected = opticalService === svc.id;
+                    return (
+                      <button
+                        key={svc.id}
+                        type="button"
+                        onClick={() => setOpticalService(svc.id)}
+                        style={{
+                          padding: '8px 10px',
+                          borderRadius: 8,
+                          fontSize: 12,
+                          fontWeight: 600,
+                          border: '1px solid',
+                          borderColor: selected ? '#0F6E56' : 'var(--line)',
+                          background: selected ? '#0F6E56' : 'var(--white)',
+                          color: selected ? 'white' : 'var(--ink-2)',
+                          cursor: 'pointer',
+                          fontFamily: 'inherit',
+                        }}
+                      >
+                        {svc.label}
+                      </button>
+                    );
+                  })}
+                </div>
               </>
             )}
 
