@@ -144,23 +144,23 @@ export default function FAQClient() {
   });
 
   return (
-    <main className="app-screen">
-      <div className="scr-content">
-        <div className="scr-page-header">
-          <Link href="/" className="scr-back-btn" aria-label="العودة">
+    <main className="mkt-screen">
+      <div className="mkt-content">
+        <div className="mkt-page-header">
+          <Link href="/" className="mkt-back-btn" aria-label="العودة">
             <ArrowRight size={20} strokeWidth={2.2} />
           </Link>
-          <h1 className="scr-page-title">الأسئلة الشائعة</h1>
-          <div className="scr-page-spacer" />
+          <h1 className="mkt-page-title">الأسئلة الشائعة</h1>
+          <div className="mkt-page-spacer" />
         </div>
 
-        <p className="scr-page-subtitle">
+        <p className="mkt-page-subtitle">
           {FAQS.length} سؤال شائع · إذا لم تجد إجابتك، تواصل معنا
         </p>
 
         {/* Search */}
-        <div className="scr-search" style={{ marginBottom: 12 }}>
-          <div className="scr-search-icon">
+        <div className="mkt-search" style={{ marginBottom: 12 }}>
+          <div className="mkt-search-icon">
             <Search size={16} strokeWidth={2.4} />
           </div>
           <input
@@ -205,11 +205,11 @@ export default function FAQClient() {
 
         {/* FAQs */}
         {filtered.length === 0 ? (
-          <div className="scr-empty" style={{ marginTop: 32 }}>
-            <div className="scr-empty-icon">
+          <div className="mkt-empty" style={{ marginTop: 32 }}>
+            <div className="mkt-empty-icon">
               <HelpCircle size={42} strokeWidth={1.5} />
             </div>
-            <h2 className="scr-empty-title">لا توجد إجابات</h2>
+            <h2 className="mkt-empty-title">لا توجد إجابات</h2>
             <p style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 8 }}>
               جرّب كلمات أخرى أو
               <Link href="/contact" style={{ color: 'var(--emerald)', fontWeight: 800, marginInline: 4 }}>
