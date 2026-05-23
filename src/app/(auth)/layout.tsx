@@ -14,6 +14,10 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 
+// 📱 App-specific CSS (V25.40)
+// Auth pages تستخدم scr-* و gate-* + auth-* (auth-* في shared.css)
+import '@/app/styles/app.css';
+
 export const dynamic = 'force-dynamic';
 
 export default async function AuthLayout({
