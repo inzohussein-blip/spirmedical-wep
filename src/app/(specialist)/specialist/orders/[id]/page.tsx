@@ -63,6 +63,54 @@ export default async function SpecialistOrderDetailPage({
     .eq('id', order.user_id)
     .single();
 
+  // ─── V25.43: جلب lab_order + lab_results لو موجودة ───
+  const orderAny = order as Record<string, unknown>;
+  const labOrderId = orderAny.lab_order_id as string | null | undefined;
+  
+    const supabaseAny = supabase as any;
+  
+  let labOrderData: { test_ids: string[] } | null = null;
+  let existingLabResults: Array<{
+    test_id: string;
+    test_name: string;
+    result_value: string;
+    unit: string;
+    normal_range_text: string;
+    normal_range_min?: number;
+    normal_range_max?: number;
+    status: 'normal' | 'low' | 'high' | 'critical' | 'inconclusive';
+    notes: string;
+  }> = [];
+  
+  if (labOrderId) {
+    const { data: labOrder } = await supabaseAny
+      .from('lab_orders')
+      .select('test_ids')
+      .eq('id', labOrderId)
+      .single();
+    
+    if (labOrder) labOrderData = labOrder;
+    
+    const { data: labResults } = await supabaseAny
+      .from('lab_results')
+      .select('*')
+      .eq('lab_order_id', labOrderId);
+    
+    if (labResults && labResults.length > 0) {
+            existingLabResults = labResults.map((r: any) => ({
+        test_id: r.test_id,
+        test_name: r.test_name,
+        result_value: r.result_value || '',
+        unit: r.unit || '',
+        normal_range_text: r.normal_range_text || '',
+        normal_range_min: r.normal_range_min,
+        normal_range_max: r.normal_range_max,
+        status: r.status,
+        notes: r.notes || '',
+      }));
+    }
+  }
+
   // فك تشفير الملاحظات لو موجودة
   let notesText: string | null = null;
   if (order.notes_encrypted) {
@@ -76,8 +124,6 @@ export default async function SpecialistOrderDetailPage({
   const isCompleted = order.status === 'completed';
   const isCancelled = order.status === 'cancelled';
 
-  const orderAny = order as Record<string, unknown>;
-
   // اختر الفورم الخاص بالاختصاص
   function RoleForm() {
     if (!isMine || isCompleted || isCancelled) return null;
@@ -90,7 +136,13 @@ export default async function SpecialistOrderDetailPage({
 
     switch (specialistType) {
       case 'lab_analyst':
-        return <LabResultsForm {...commonProps} initialData={(orderAny.lab_results_data ?? null) as never} />;
+        return (
+          <LabResultsForm 
+            orderId={order.id}
+            expectedTests={labOrderData?.test_ids ?? []}
+            existingResults={existingLabResults}
+          />
+        );
       case 'nurse':
         return <NursingActions {...commonProps} initialData={(orderAny.nursing_actions ?? null) as never} />;
       case 'doctor':
