@@ -4,9 +4,9 @@ import { createClient } from '@/lib/supabase/server';
 import LandingMobileMenu from '@/components/landing/MobileMenu';
 import LandingFAQ from '@/components/landing/FAQ';
 import LandingStats from '@/components/landing/Stats';
+import LandingCoverageMap from '@/components/landing/LandingCoverageMap';
+import LandingScrollEffects from '@/components/landing/LandingScrollEffects';
 import { ARTICLES } from '@/lib/data/blog-articles';
-import FreeMedicalMapWrapper from '@/components/maps/SpirMapViewWrapper';
-import type { MapMarker } from '@/types/location';
 import { SITE_TYPE, getAppUrl } from '@/lib/site-config';
 
 // 🌐 Marketing CSS — الـ landing page يستخدم landing-* classes
@@ -134,16 +134,7 @@ const ACTIVE_CITIES = [
   { name: 'كركوك', doctors: 12, labs: 4, lat: 35.4681, lng: 44.3923 },
 ];
 
-// 🗺️ Markers للخريطة - مشتقة من ACTIVE_CITIES
-const COVERAGE_MARKERS: MapMarker[] = ACTIVE_CITIES.map((c, i) => ({
-  id: `city-${i}`,
-  lat: c.lat,
-  lng: c.lng,
-  title: c.name,
-  subtitle: `${c.doctors} طبيب · ${c.labs} مختبر`,
-  variant: i === 0 ? 'specialist' : i < 4 ? 'lab' : 'pharmacy',
-  popup: `خدماتنا متاحة في ${c.name}`,
-}));
+// 🆕 V25.41: COVERAGE_MARKERS removed - الـ LandingCoverageMap الجديد يبني markers من cities داخلياً
 
 const BLOG_POSTS = [
   {
@@ -852,15 +843,9 @@ export default async function HomePage({
           </div>
 
           <div className="landing-coverage-grid">
-            {/* الخريطة */}
+            {/* الخريطة - محسّنة V25.41 */}
             <div className="landing-coverage-map-wrap">
-              <FreeMedicalMapWrapper
-                markers={COVERAGE_MARKERS}
-                height={420}
-                zoom={6}
-                showDirections={false}
-                
-              />
+              <LandingCoverageMap cities={ACTIVE_CITIES} height={420} />
             </div>
 
             {/* قائمة المدن */}
@@ -1011,6 +996,9 @@ export default async function HomePage({
           </div>
         </div>
       </footer>
+
+      {/* 🆕 V25.41: Scroll effects (sticky nav + back-to-top + animations) */}
+      <LandingScrollEffects />
     </main>
   );
 }
