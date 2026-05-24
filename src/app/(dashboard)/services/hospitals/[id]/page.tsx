@@ -13,6 +13,8 @@ import {
 import FreeMedicalMapWrapper from '@/components/maps/SpirMapViewWrapper';
 import ShareButton from '@/components/pwa/ShareButton';
 import HospitalBookingButton from '@/components/hospitals/HospitalBookingButton';
+import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
+import { checkIsFavorite } from '@/components/services/favorites-actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -58,6 +60,7 @@ export default async function HospitalDetailPage({
   if (!hospital) notFound();
 
   const typeMeta = TYPE_META[hospital.type] || TYPE_META.private;
+  const isFavorite = await checkIsFavorite('hospital', hospital.id);
 
   return (
     <main className="app-screen">
@@ -69,6 +72,13 @@ export default async function HospitalDetailPage({
           <h1 className="scr-page-title" style={{ fontSize: 15 }}>
             {hospital.name}
           </h1>
+          <div style={{ display: 'flex', gap: 4 }}>
+            <ServiceFavoriteButton
+              serviceType="hospital"
+              serviceId={hospital.id}
+              initialIsFavorite={isFavorite}
+              size="sm"
+            />
           <ShareButton
             variant="icon"
             size="sm"
@@ -77,6 +87,7 @@ export default async function HospitalDetailPage({
             url={`/services/hospitals/${hospital.id}`}
             label="مشاركة المستشفى"
           />
+          </div>
         </div>
 
         {/* Hero */}
