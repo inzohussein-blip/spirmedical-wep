@@ -9,6 +9,8 @@ import {
   ArrowRight, MapPin, Star, CheckCircle2,
   Award, Heart, AlertCircle, Globe,
 } from 'lucide-react';
+import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
+import { checkIsFavorite } from '@/components/services/favorites-actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -61,6 +63,7 @@ export default async function MentalDetailPage({
   if (!s) notFound();
 
   const typeMeta = TYPE_LABELS[s.specialist_type];
+  const isFavorite = await checkIsFavorite('mental_health', s.id);
 
   return (
     <main className="app-screen">
@@ -70,7 +73,12 @@ export default async function MentalDetailPage({
             <ArrowRight size={20} strokeWidth={2.2} />
           </Link>
           <h1 className="scr-page-title" style={{ fontSize: 14 }}>🧠 تفاصيل الأخصائي</h1>
-          <div className="scr-page-spacer" />
+          <ServiceFavoriteButton
+            serviceType="mental_health"
+            serviceId={s.id}
+            initialIsFavorite={isFavorite}
+            size="sm"
+          />
         </div>
 
         {/* Privacy banner */}
