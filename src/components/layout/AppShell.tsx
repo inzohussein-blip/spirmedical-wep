@@ -3,6 +3,11 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import {
+  IconHome, IconHome2, IconLayoutGrid, IconClipboardList,
+  IconMessageCircle, IconUser, IconHeart, IconMessages,
+} from '@tabler/icons-react';
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -16,7 +21,7 @@ interface NavItem {
   id: string;
   href: string;
   label: string;
-  icon: string;
+  icon: TablerIcon;
   ariaLabel: string;
 }
 
@@ -57,29 +62,32 @@ export function AppShell({
     return () => window.removeEventListener('keydown', handleKey);
   }, []);
 
-  // 🎯 V25.32: 5 tabs (إضافة "الخدمات" للمريض)
+  // 🎯 V26.0: Tabler Icons (Design System V3)
   const navItems: NavItem[] = isGuest
     ? [
-        { id: 'home', href: '/guest', label: 'الرئيسية', icon: '⌂', ariaLabel: 'الصفحة الرئيسية' },
-        { id: 'services', href: '/guest/services', label: 'الخدمات', icon: '⊕', ariaLabel: 'الخدمات' },
-        { id: 'orders', href: '/guest/orders', label: 'الطلبات', icon: '▤', ariaLabel: 'الطلبات' },
-        { id: 'favorites', href: '/guest/favorites', label: 'المفضلة', icon: '♡', ariaLabel: 'المفضلة' },
-        { id: 'account', href: '/guest/account', label: 'حسابي', icon: '◔', ariaLabel: 'حسابي' },
+        { id: 'home', href: '/guest', label: 'الرئيسية', icon: IconHome, ariaLabel: 'الصفحة الرئيسية' },
+        { id: 'services', href: '/guest/services', label: 'الخدمات', icon: IconLayoutGrid, ariaLabel: 'الخدمات' },
+        { id: 'orders', href: '/guest/orders', label: 'الطلبات', icon: IconClipboardList, ariaLabel: 'الطلبات' },
+        { id: 'favorites', href: '/guest/favorites', label: 'المفضلة', icon: IconHeart, ariaLabel: 'المفضلة' },
+        { id: 'account', href: '/guest/account', label: 'حسابي', icon: IconUser, ariaLabel: 'حسابي' },
       ]
     : userRole === 'specialist'
     ? [
-        { id: 'home', href: '/specialist', label: 'الرئيسية', icon: '⌂', ariaLabel: 'الصفحة الرئيسية' },
-        { id: 'orders', href: '/specialist/orders', label: 'الطلبات', icon: '▤', ariaLabel: 'الطلبات' },
-        { id: 'chats', href: '/specialist/chats', label: 'المحادثات', icon: '✉', ariaLabel: 'المحادثات' },
-        { id: 'account', href: '/specialist/account', label: 'حسابي', icon: '◔', ariaLabel: 'حسابي' },
+        { id: 'home', href: '/specialist', label: 'الرئيسية', icon: IconHome, ariaLabel: 'الصفحة الرئيسية' },
+        { id: 'orders', href: '/specialist/orders', label: 'الطلبات', icon: IconClipboardList, ariaLabel: 'الطلبات' },
+        { id: 'chats', href: '/specialist/chats', label: 'المحادثات', icon: IconMessages, ariaLabel: 'المحادثات' },
+        { id: 'account', href: '/specialist/account', label: 'حسابي', icon: IconUser, ariaLabel: 'حسابي' },
       ]
     : [
-        { id: 'home', href: '/dashboard', label: 'الرئيسية', icon: '⌂', ariaLabel: 'الصفحة الرئيسية' },
-        { id: 'services', href: '/services', label: 'الخدمات', icon: '⊕', ariaLabel: 'كل الخدمات' },
-        { id: 'orders', href: '/appointments', label: 'طلباتي', icon: '▤', ariaLabel: 'طلباتي' },
-        { id: 'messages', href: '/messages', label: 'الرسائل', icon: '✉', ariaLabel: 'الرسائل' },
-        { id: 'account', href: '/account', label: 'حسابي', icon: '◔', ariaLabel: 'حسابي' },
+        { id: 'home', href: '/dashboard', label: 'الرئيسية', icon: IconHome, ariaLabel: 'الصفحة الرئيسية' },
+        { id: 'services', href: '/services', label: 'الخدمات', icon: IconLayoutGrid, ariaLabel: 'كل الخدمات' },
+        { id: 'orders', href: '/appointments', label: 'طلباتي', icon: IconClipboardList, ariaLabel: 'طلباتي' },
+        { id: 'messages', href: '/messages', label: 'الرسائل', icon: IconMessageCircle, ariaLabel: 'الرسائل' },
+        { id: 'account', href: '/account', label: 'حسابي', icon: IconUser, ariaLabel: 'حسابي' },
       ];
+
+  // suppress unused
+  void IconHome2;
 
   function isActive(href: string): boolean {
     if (href === '/guest' || href === '/dashboard' || href === '/specialist') {
@@ -154,17 +162,22 @@ export function AppShell({
                 </div>
               )}
 
-              {navItems.map((item) => (
-                <Link
-                  key={item.id}
-                  href={item.href}
-                  className={`app-drawer-link ${isActive(item.href) ? 'active' : ''}`}
-                  aria-current={isActive(item.href) ? 'page' : undefined}
-                >
-                  <span className="app-drawer-icon" aria-hidden="true">{item.icon}</span>
-                  <span>{item.label}</span>
-                </Link>
-              ))}
+              {navItems.map((item) => {
+                const DrawerIcon = item.icon;
+                return (
+                  <Link
+                    key={item.id}
+                    href={item.href}
+                    className={`app-drawer-link ${isActive(item.href) ? 'active' : ''}`}
+                    aria-current={isActive(item.href) ? 'page' : undefined}
+                  >
+                    <span className="app-drawer-icon" aria-hidden="true">
+                      <DrawerIcon size={20} stroke={1.8} />
+                    </span>
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
 
               <div className="app-drawer-divider" />
 
@@ -199,18 +212,24 @@ export function AppShell({
           role="navigation"
           aria-label="التنقّل الرئيسي"
         >
-          {navItems.map((item) => (
-            <Link
-              key={item.id}
-              href={item.href}
-              className={`app-bottom-item ${isActive(item.href) ? 'active' : ''}`}
-              aria-current={isActive(item.href) ? 'page' : undefined}
-              aria-label={item.ariaLabel}
-            >
-              <span className="app-bottom-icon" aria-hidden="true">{item.icon}</span>
-              <span className="app-bottom-label">{item.label}</span>
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.id}
+                href={item.href}
+                className={`app-bottom-item ${active ? 'active' : ''}`}
+                aria-current={active ? 'page' : undefined}
+                aria-label={item.ariaLabel}
+              >
+                <span className="app-bottom-icon" aria-hidden="true">
+                  <Icon size={22} stroke={active ? 2.2 : 1.8} />
+                </span>
+                <span className="app-bottom-label">{item.label}</span>
+              </Link>
+            );
+          })}
         </nav>
       </div>
     </div>
