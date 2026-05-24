@@ -80,7 +80,75 @@
 /* ─── 1. DESIGN TOKENS — V3 EXACT (Light only) ─── */
 :root {
   /* ═══════════════════════════════════════════════════════════════
-     🎨 COLORS — Spir Brand
+     🎨 V26.0 — DESIGN SYSTEM V3 (Google Play Palette)
+     ═══════════════════════════════════════════════════════════════
+     المرجع: docs/spir-v3-design-reference.md
+     استخدم --spir-* للواجهة الجديدة
+     ═══════════════════════════════════════════════════════════════ */
+  
+  /* Brand Colors (Google Play) */
+  --spir-primary:        #01875F;  /* Spanish Green */
+  --spir-primary-deep:   #056559;
+  --spir-primary-soft:   #E6F3EF;
+  
+  --spir-yellow:         #FBBC04;  /* Cyber Yellow */
+  --spir-yellow-soft:    #FEF7E0;
+  --spir-yellow-deep:    #B06000;
+  
+  --spir-pink:           #C71C56;  /* Carmine Pink */
+  --spir-pink-soft:      #FCE8E6;
+  --spir-pink-deep:      #8B1240;
+  
+  --spir-blue:           #1A73E8;  /* Google Blue */
+  --spir-blue-soft:      #E8F0FE;
+  
+  --spir-purple:         #9334E6;
+  --spir-purple-soft:    #F3E8FD;
+  
+  /* Neutrals (V3) */
+  --spir-bg:             #FFFFFF;
+  --spir-surface:        #F8F9FA;
+  --spir-surface-2:      #F1F3F4;
+  --spir-border:         #DADCE0;
+  --spir-border-soft:    #E8EAED;
+  
+  --spir-text:           #202124;
+  --spir-text-2:         #3C4043;
+  --spir-text-3:         #5F6368;
+  --spir-text-4:         #80868B;
+  
+  /* Service Colors (14) */
+  --svc-blood:           #EA4335;
+  --svc-blood-soft:      #FCE8E6;
+  --svc-nursing:         #B06000;
+  --svc-nursing-soft:    #FEF7E0;
+  --svc-doctor:          #01875F;
+  --svc-doctor-soft:     #E6F3EF;
+  --svc-hospital:        #1A73E8;
+  --svc-hospital-soft:   #E8F0FE;
+  --svc-pharmacy:        #9334E6;
+  --svc-pharmacy-soft:   #F3E8FD;
+  --svc-consult:         #00BCD4;
+  --svc-consult-soft:    #E0F7FA;
+  --svc-dental:          #00838F;
+  --svc-dental-soft:     #E0F7FA;
+  --svc-nutrition:       #34A853;
+  --svc-nutrition-soft:  #E8F5E9;
+  --svc-vaccines:        #FF6D00;
+  --svc-vaccines-soft:   #FFF3E0;
+  --svc-emergency:       #8B0000;
+  --svc-emergency-soft:  #FCE8E6;
+  --svc-video:           #7C4DFF;
+  --svc-video-soft:      #EDE7F6;
+  --svc-symptom:         #00897B;
+  --svc-symptom-soft:    #E0F2F1;
+  --svc-risk:            #FF7043;
+  --svc-risk-soft:       #FBE9E7;
+  --svc-vaccine-table:   #26A69A;
+  --svc-vaccine-table-soft: #E0F2F1;
+  
+  /* ═══════════════════════════════════════════════════════════════
+     🎨 COLORS — Spir Brand (V25 Legacy - kept for compat)
      ═══════════════════════════════════════════════════════════════ */
   --emerald: #0E5C4D;
   --emerald-deep: #073B30;
