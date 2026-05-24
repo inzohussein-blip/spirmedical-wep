@@ -9,6 +9,8 @@ import {
   ArrowRight, MapPin, Phone, Star, CheckCircle2,
   Clock, MessageCircle, Eye,
 } from 'lucide-react';
+import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
+import { checkIsFavorite } from '@/components/services/favorites-actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -44,6 +46,8 @@ export default async function OpticalDetailPage({
 
   if (!store) notFound();
 
+  const isFavorite = await checkIsFavorite('optical', store.id);
+
   return (
     <main className="app-screen">
       <div className="scr-content">
@@ -52,7 +56,12 @@ export default async function OpticalDetailPage({
             <ArrowRight size={20} strokeWidth={2.2} />
           </Link>
           <h1 className="scr-page-title" style={{ fontSize: 14 }}>👓 تفاصيل المتجر</h1>
-          <div className="scr-page-spacer" />
+          <ServiceFavoriteButton
+            serviceType="optical"
+            serviceId={store.id}
+            initialIsFavorite={isFavorite}
+            size="sm"
+          />
         </div>
 
         {/* Hero */}
