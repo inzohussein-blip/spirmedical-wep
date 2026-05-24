@@ -9,7 +9,7 @@ import { revalidatePath } from 'next/cache';
  * ════════════════════════════════════════════════════════════════════
  */
 
-export type ServiceType = 'hospital' | 'dental' | 'optical' | 'pharmacy' | 'doctor';
+export type ServiceType = 'hospital' | 'dental' | 'optical' | 'pharmacy' | 'doctor' | 'mental_health' | 'nutritionist' | 'physio';
 
 export async function toggleServiceFavorite(serviceType: ServiceType, serviceId: string) {
   const supabase = createClient();
