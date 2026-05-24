@@ -9,6 +9,11 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import ServicesMapHubWrapper, { type ServiceLocation } from '@/components/maps/ServicesMapHubWrapper';
 import type { ServiceMarkerType } from '@/lib/maps/markers';
+import {
+  IconDroplet, IconVaccine, IconBuildingHospital, IconPill,
+  IconDental, IconEye, IconBrain, IconApple, IconStethoscope,
+  IconAlertTriangle, IconArrowLeft,
+} from '@tabler/icons-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,10 +32,9 @@ interface CategoryCard {
   badge?: string;
 }
 
-const QUICK_ACCESS: CategoryCard[] = [
-  { id: 'blood-lab', icon: '🩸', title: 'سحب دم + تحاليل', desc: '+٢٠٠ فحص · في منزلك', href: '/appointments/new?service=blood-draw', variant: 'emerald', badge: 'الأكثر طلباً' },
-  { id: 'nursing', icon: '💉', title: 'تمريض منزلي', desc: 'إبر · جروح · كانيولا', href: '/appointments/new?service=home-nursing', variant: 'amber' },
-];
+// suppress unused
+type _UnusedCategoryCard = CategoryCard;
+
 
 export default async function ServicesPage() {
   const supabase = createClient();
@@ -173,7 +177,7 @@ export default async function ServicesPage() {
           <ServicesMapHubWrapper locations={locations} height={500} />
         </div>
 
-        {/* Quick access cards */}
+        {/* Quick access cards - V26.1 V3 style */}
         <div className="scr-section-head" style={{ marginTop: 8 }}>
           <div className="scr-section-title">الأكثر طلباً</div>
         </div>
@@ -181,74 +185,136 @@ export default async function ServicesPage() {
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: 12,
+          gap: 8,
           marginBottom: 20,
         }}>
-          {QUICK_ACCESS.map((service) => (
-            <Link
-              key={service.id}
-              href={service.href}
-              className={`service-card service-${service.variant}`}
-              aria-label={service.title}
-            >
-              {service.badge && (
-                <span style={{
-                  position: 'absolute',
-                  top: 8,
-                  insetInlineEnd: 8,
-                  fontSize: 9,
-                  fontWeight: 900,
-                  background: service.variant === 'emerald' ? 'var(--amber)' : 'var(--emerald)',
-                  color: 'var(--paper-3)',
-                  padding: '2px 6px',
-                  borderRadius: 100,
-                }}>
-                  {service.badge}
-                </span>
-              )}
+          {/* سحب الدم - V3 style */}
+          <Link
+            href="/appointments/new?service=blood-draw"
+            style={{
+              background: '#FFFFFF',
+              border: '0.5px solid #DADCE0',
+              borderRadius: 14,
+              padding: 14,
+              position: 'relative',
+              overflow: 'hidden',
+              minHeight: 110,
+              textDecoration: 'none',
+              color: 'inherit',
+              display: 'block',
+            }}
+          >
+            <div aria-hidden style={{
+              position: 'absolute', width: 70, height: 70, borderRadius: '50%',
+              background: '#FCE8E6', opacity: 0.7, top: -12, left: -12,
+            }} />
+            <span style={{
+              position: 'absolute', top: 10, right: 10,
+              background: '#FBBC04', color: '#202124',
+              fontSize: 8, fontWeight: 700,
+              padding: '2px 7px', borderRadius: 9999, zIndex: 2,
+            }}>
+              الأكثر طلباً
+            </span>
+            <div style={{ marginBottom: 12, position: 'relative', zIndex: 1 }}>
+              <IconDroplet size={26} stroke={1.75} color="#EA4335" />
+            </div>
+            <div style={{ fontSize: 12, fontWeight: 500, color: '#202124', marginBottom: 3, position: 'relative', zIndex: 1 }}>
+              سحب دم + تحاليل
+            </div>
+            <div style={{ fontSize: 10, color: '#5F6368', lineHeight: 1.4, position: 'relative', zIndex: 1 }}>
+              +٢٠٠ فحص · في منزلك
+            </div>
+            <div style={{ position: 'absolute', bottom: 10, left: 10, color: '#80868B' }}>
+              <IconArrowLeft size={14} stroke={2} />
+            </div>
+          </Link>
 
-              <div style={{ fontSize: 32, marginBottom: 8 }}>{service.icon}</div>
-              <div style={{ fontSize: 13, fontWeight: 900, marginBottom: 4, color: 'var(--ink)' }}>
-                {service.title}
-              </div>
-              <div style={{ fontSize: 10, color: 'var(--ink-3)', lineHeight: 1.5 }}>
-                {service.desc}
-              </div>
-            </Link>
-          ))}
+          {/* التمريض - V3 style */}
+          <Link
+            href="/appointments/new?service=home-nursing"
+            style={{
+              background: '#FFFFFF',
+              border: '0.5px solid #DADCE0',
+              borderRadius: 14,
+              padding: 14,
+              position: 'relative',
+              overflow: 'hidden',
+              minHeight: 110,
+              textDecoration: 'none',
+              color: 'inherit',
+              display: 'block',
+            }}
+          >
+            <div aria-hidden style={{
+              position: 'absolute', width: 70, height: 70, borderRadius: '50%',
+              background: '#FEF7E0', opacity: 0.7, top: -12, left: -12,
+            }} />
+            <div style={{ marginBottom: 12, position: 'relative', zIndex: 1 }}>
+              <IconVaccine size={26} stroke={1.75} color="#B06000" />
+            </div>
+            <div style={{ fontSize: 12, fontWeight: 500, color: '#202124', marginBottom: 3, position: 'relative', zIndex: 1 }}>
+              تمريض منزلي
+            </div>
+            <div style={{ fontSize: 10, color: '#5F6368', lineHeight: 1.4, position: 'relative', zIndex: 1 }}>
+              إبر · جروح · كانيولا
+            </div>
+            <div style={{ position: 'absolute', bottom: 10, left: 10, color: '#80868B' }}>
+              <IconArrowLeft size={14} stroke={2} />
+            </div>
+          </Link>
         </div>
 
-        {/* Categories list */}
+        {/* Categories list - V26.1 Tabler icons */}
         <div className="scr-section-head">
           <div className="scr-section-title">استكشف حسب الفئة</div>
         </div>
 
         <div style={{ display: 'grid', gap: 8, marginBottom: 20 }}>
           {[
-            { href: '/services/hospitals', icon: '🏥', label: 'المستشفيات', count: counts.hospitals },
-            { href: '/services/pharmacies', icon: '💊', label: 'الصيدليات', count: counts.pharmacies },
-            { href: '/services/dental', icon: '🦷', label: 'طب الأسنان', count: counts.dentalClinics },
-            { href: '/services/optical', icon: '👓', label: 'النظارات الطبية', count: counts.opticalStores },
-            { href: '/services/mental-health', icon: '🧠', label: 'الصحة النفسية', count: counts.mentalHealthSpecialists },
-            { href: '/services/nutrition', icon: '🥗', label: 'التغذية', count: counts.nutritionists },
-            { href: '/services/doctors', icon: '👨‍⚕️', label: 'الأطباء', count: counts.doctors },
-          ].map((cat) => (
-            <Link
-              key={cat.href}
-              href={cat.href}
-              className="scr-list-item scr-list-item-clickable"
-            >
-              <div className="scr-list-item-icon">{cat.icon}</div>
-              <div className="scr-list-item-content">
-                <div className="scr-list-item-title">{cat.label}</div>
-                <div className="scr-list-item-subtitle">{cat.count} موقع متاح</div>
-              </div>
-              <div style={{ color: 'var(--ink-3)', fontSize: 18 }}>←</div>
-            </Link>
-          ))}
+            { href: '/services/hospitals', Icon: IconBuildingHospital, color: '#1A73E8', bg: '#E8F0FE', label: 'المستشفيات', count: counts.hospitals },
+            { href: '/services/pharmacies', Icon: IconPill, color: '#9334E6', bg: '#F3E8FD', label: 'الصيدليات', count: counts.pharmacies },
+            { href: '/services/dental', Icon: IconDental, color: '#00838F', bg: '#E0F7FA', label: 'طب الأسنان', count: counts.dentalClinics },
+            { href: '/services/optical', Icon: IconEye, color: '#FF6D00', bg: '#FFF3E0', label: 'النظارات الطبية', count: counts.opticalStores },
+            { href: '/services/mental-health', Icon: IconBrain, color: '#7C4DFF', bg: '#EDE7F6', label: 'الصحة النفسية', count: counts.mentalHealthSpecialists },
+            { href: '/services/nutrition', Icon: IconApple, color: '#34A853', bg: '#E8F5E9', label: 'التغذية', count: counts.nutritionists },
+            { href: '/services/doctors', Icon: IconStethoscope, color: '#01875F', bg: '#E6F3EF', label: 'الأطباء', count: counts.doctors },
+          ].map((cat) => {
+            const CatIcon = cat.Icon;
+            return (
+              <Link
+                key={cat.href}
+                href={cat.href}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  padding: '12px 14px',
+                  background: '#FFFFFF',
+                  border: '0.5px solid #DADCE0',
+                  borderRadius: 14,
+                  textDecoration: 'none',
+                  color: 'inherit',
+                }}
+              >
+                <div style={{
+                  width: 40, height: 40, borderRadius: 10,
+                  background: cat.bg, display: 'inline-flex',
+                  alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                }}>
+                  <CatIcon size={22} stroke={1.75} color={cat.color} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#202124' }}>{cat.label}</div>
+                  <div style={{ fontSize: 11, color: '#5F6368' }}>{cat.count} موقع متاح</div>
+                </div>
+                <IconArrowLeft size={18} stroke={2} color="#80868B" />
+              </Link>
+            );
+          })}
         </div>
 
-        {/* SOS */}
+        {/* SOS - V3 emergency style */}
         <Link
           href="/sos"
           style={{
@@ -256,21 +322,25 @@ export default async function ServicesPage() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '14px 16px',
-            background: 'var(--rose-soft)',
-            border: '1px solid var(--rose)',
+            background: '#FCE8E6',
+            border: '1px solid #8B0000',
             borderRadius: 14,
             textDecoration: 'none',
+            marginBottom: 20,
           }}
         >
-          <div>
-            <div style={{ fontSize: 13, fontWeight: 900, color: 'var(--rose)' }}>
-              🚨 طوارئ SOS
-            </div>
-            <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 2 }}>
-              مساعدة فورية 24/7
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <IconAlertTriangle size={20} stroke={2.2} color="#8B0000" />
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 900, color: '#8B0000' }}>
+                طوارئ SOS
+              </div>
+              <div style={{ fontSize: 11, color: '#5F6368', marginTop: 2 }}>
+                مساعدة فورية 24/7
+              </div>
             </div>
           </div>
-          <ArrowRight size={18} color="var(--rose)" style={{ transform: 'scaleX(-1)' }} />
+          <IconArrowLeft size={18} stroke={2} color="#8B0000" />
         </Link>
       </div>
     </main>
