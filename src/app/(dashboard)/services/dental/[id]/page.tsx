@@ -9,6 +9,8 @@ import {
   ArrowRight, MapPin, Phone, Star, CheckCircle2,
   Users, Clock, MessageCircle,
 } from 'lucide-react';
+import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
+import { checkIsFavorite } from '@/components/services/favorites-actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -44,6 +46,8 @@ export default async function DentalDetailPage({
 
   if (!clinic) notFound();
 
+  const isFavorite = await checkIsFavorite('dental', clinic.id);
+
   const services = [
     clinic.offers_cleaning && { icon: '✨', label: 'تنظيف الأسنان' },
     clinic.offers_fillings && { icon: '🦷', label: 'حشوات' },
@@ -67,7 +71,12 @@ export default async function DentalDetailPage({
           <h1 className="scr-page-title" style={{ fontSize: 14 }}>
             🦷 تفاصيل العيادة
           </h1>
-          <div className="scr-page-spacer" />
+          <ServiceFavoriteButton
+            serviceType="dental"
+            serviceId={clinic.id}
+            initialIsFavorite={isFavorite}
+            size="sm"
+          />
         </div>
 
         {/* Hero */}
