@@ -139,30 +139,47 @@
   background: var(--paper-3); transform: translateY(-1px);
 }
 
-/* Bottom Nav */
+/* Bottom Nav — V26.0 Design System V3 */
 .app-bottom-nav {
   position: sticky; bottom: 0; z-index: 40;
-  background: var(--paper-3); border-top: 1px solid var(--line);
+  background: #FFFFFF; border-top: 1px solid #E8EAED;
   padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
   display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;
-  margin-top: 0; backdrop-filter: blur(12px);
+  margin-top: 0;
 }
 
 .app-bottom-item {
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  gap: 3px; padding: 8px 4px;
-  border-radius: 10px;
-  color: var(--ink-3);
-  font-size: 10px; font-weight: 600;
+  gap: 4px; padding: 8px 4px;
+  border-radius: 12px;
+  color: #5F6368;
+  font-size: 10px; font-weight: 500;
   min-height: 52px; transition: all 0.15s;
+  text-decoration: none;
 }
 
-.app-bottom-item.active { color: var(--emerald); background: var(--emerald-soft); }
+.app-bottom-item.active { 
+  color: #01875F; 
+  background: #E6F3EF; 
+}
 
-.app-bottom-icon { font-size: 20px; line-height: 1; }
+.app-bottom-item:hover { 
+  background: #F1F3F4;
+}
 
-.app-bottom-label { font-size: 10px; line-height: 1; font-weight: 700; }
+.app-bottom-icon { 
+  display: inline-flex; 
+  align-items: center; 
+  justify-content: center;
+  line-height: 1;
+}
+
+.app-bottom-label { 
+  font-size: 10px; 
+  line-height: 1; 
+  font-weight: 600; 
+}
 
 /* App Screens */
 .app-screen { background: var(--paper); min-height: 100%; }
