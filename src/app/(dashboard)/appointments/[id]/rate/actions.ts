@@ -62,6 +62,70 @@ export async function submitRating(input: RatingInput) {
 
   if (error) return { ok: false, error: error.message };
 
+  // ─── V25.47: حفظ أيضاً في الجدول الخاص (hospital/dental/optical) ───
+  
+  const supabaseAny = supabase as unknown as {
+    from: (t: string) => {
+      select: (cols: string) => {
+        eq: (col: string, val: string) => {
+          single: () => Promise<{ data: Record<string, unknown> | null }>;
+        };
+      };
+      insert: (d: object) => Promise<{ error: unknown }>;
+    };
+  };
+
+  // إعادة جلب الـ appointment مع الأعمدة الإضافية (hospital_id, dental_clinic_id, optical_store_id)
+  const { data: fullAppt } = await supabaseAny
+    .from('appointments')
+    .select('id, hospital_id, dental_clinic_id, optical_store_id')
+    .eq('id', input.appointment_id)
+    .single();
+
+  if (fullAppt) {
+    const hospitalId = fullAppt.hospital_id as string | null;
+    const dentalClinicId = fullAppt.dental_clinic_id as string | null;
+    const opticalStoreId = fullAppt.optical_store_id as string | null;
+
+    if (hospitalId) {
+      await supabaseAny.from('hospital_ratings').insert({
+        user_id: user.id,
+        hospital_id: hospitalId,
+        appointment_id: input.appointment_id,
+        rating: input.overall_rating,
+        cleanliness_rating: input.cleanliness_rating || null,
+        staff_rating: input.professionalism_rating || null,
+        wait_time_rating: input.punctuality_rating || null,
+        comment: input.review_text?.trim() || null,
+        is_public: !input.is_anonymous,
+      });
+    } else if (dentalClinicId) {
+      await supabaseAny.from('dental_ratings').insert({
+        user_id: user.id,
+        dental_clinic_id: dentalClinicId,
+        appointment_id: input.appointment_id,
+        rating: input.overall_rating,
+        cleanliness_rating: input.cleanliness_rating || null,
+        skill_rating: input.professionalism_rating || null,
+        price_rating: null,
+        comment: input.review_text?.trim() || null,
+        is_public: !input.is_anonymous,
+      });
+    } else if (opticalStoreId) {
+      await supabaseAny.from('optical_ratings').insert({
+        user_id: user.id,
+        optical_store_id: opticalStoreId,
+        appointment_id: input.appointment_id,
+        rating: input.overall_rating,
+        product_quality_rating: input.cleanliness_rating || null,
+        service_rating: input.professionalism_rating || null,
+        price_rating: null,
+        comment: input.review_text?.trim() || null,
+        is_public: !input.is_anonymous,
+      });
+    }
+  }
+
   revalidatePath(`/appointments/${input.appointment_id}`);
   revalidatePath('/appointments');
   return { ok: true };
