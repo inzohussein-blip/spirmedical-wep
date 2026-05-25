@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { signOut } from '../../(auth)/login/actions';
+import ServiceDetailHeader from '@/components/dashboard-v3/ServiceDetailHeader';
 import {
   IconHistory, IconFlask, IconVaccine, IconClipboardList,
   IconHeartbeat, IconUsers, IconSettings, IconMapPin,
@@ -111,43 +112,25 @@ export default async function AccountPage() {
   return (
     <main className="app-screen" style={{ background: '#F8F9FA' }}>
       <div className="scr-content" style={{ padding: 0 }}>
-        {/* Header - V3 */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '12px 16px',
-          background: '#FFFFFF',
-          borderBottom: '1px solid #E8EAED',
-        }}>
-          <Link
-            href="/dashboard"
-            aria-label="العودة"
-            style={{
-              width: 38, height: 38, borderRadius: '50%',
-              background: '#F1F3F4',
-              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              color: '#202124', textDecoration: 'none',
-            }}
-          >
-            <IconArrowLeft size={20} stroke={2.2} style={{ transform: 'scaleX(-1)' }} />
-          </Link>
-          <h1 style={{ fontSize: 17, fontWeight: 800, margin: 0, color: '#202124' }}>
-            حسابي
-          </h1>
-          <Link
-            href="/account/settings"
-            aria-label="الإعدادات"
-            style={{
-              width: 38, height: 38, borderRadius: '50%',
-              background: '#F1F3F4',
-              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              color: '#202124', textDecoration: 'none',
-            }}
-          >
-            <IconSettings size={20} stroke={2} />
-          </Link>
-        </div>
+        {/* Header - V26.3 ServiceDetailHeader */}
+        <ServiceDetailHeader
+          backHref="/dashboard"
+          title="حسابي"
+          rightAction={
+            <Link
+              href="/account/settings"
+              aria-label="الإعدادات"
+              style={{
+                width: 38, height: 38, borderRadius: '50%',
+                background: '#F1F3F4',
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                color: '#202124', textDecoration: 'none',
+              }}
+            >
+              <IconSettings size={20} stroke={2} />
+            </Link>
+          }
+        />
 
         {/* Profile Card - V3 Hero style */}
         <div style={{
