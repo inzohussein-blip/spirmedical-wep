@@ -15,6 +15,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { href: '/admin44', icon: '📊', label: 'لوحة التحكم' },
   { href: '/admin44/users/create', icon: '➕', label: 'إنشاء حساب جديد', permission: 'admins.manage' },
+  { href: '/admin44/seed-data', icon: '📦', label: 'البيانات الأولية', permission: 'admins.manage' },
   { href: '/admin44/emergencies', icon: '🚨', label: 'الطوارئ الأمنية', permission: 'orders.view' },
   { href: '/admin44/specialists/pending', icon: '⏳', label: 'موافقات الاختصاصيين', permission: 'specialists.approve' },
   { href: '/admin44/specialists', icon: '👨‍⚕️', label: 'الاختصاصيون', permission: 'specialists.view' },
