@@ -358,7 +358,7 @@
    APP SUB-PAGES (orders/favorites/account) — patterns مشتركة
    ═══════════════════════════════════════════════════════════════════ */
 
-/* Page Header (مع زر العودة) */
+/* Page Header (V26.3 - V3 design) */
 .scr-page-header {
   display: flex;
   align-items: center;
@@ -368,32 +368,32 @@
 }
 
 .scr-back-btn {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--paper-2);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  color: var(--ink);
+  background: #F1F3F4;
+  border: 0;
+  border-radius: 50%;
+  color: #202124;
   font-size: 16px;
   font-weight: 700;
   flex-shrink: 0;
   transition: all 0.15s;
 }
 
-.scr-back-btn:hover { background: var(--paper-3); transform: translateY(-1px); }
+.scr-back-btn:hover { background: #E8EAED; transform: scale(1.05); }
 
 .scr-page-title {
   font-size: 16px;
   font-weight: 800;
-  color: var(--ink);
+  color: #202124;
   text-align: center;
   flex: 1;
 }
 
-.scr-page-spacer { width: 36px; flex-shrink: 0; }
+.scr-page-spacer { width: 38px; flex-shrink: 0; }
 
 /* Empty State */
 .scr-empty {
