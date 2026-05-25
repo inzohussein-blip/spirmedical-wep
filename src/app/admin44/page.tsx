@@ -144,7 +144,7 @@ export default async function AdminDashboard() {
           color: 'var(--white)',
           padding: '14px 20px',
           borderRadius: 14,
-          marginBottom: 16,
+          marginBottom: 12,
           textDecoration: 'none',
         }}
       >
@@ -154,6 +154,32 @@ export default async function AdminDashboard() {
           </div>
           <div style={{ fontSize: 11, opacity: 0.9 }}>
             أنشئ حسابات للموظّفين والمختصّين بسرعة
+          </div>
+        </div>
+        <div style={{ fontSize: 20 }}>←</div>
+      </Link>
+
+      {/* ✨ Quick Action: Seed Data */}
+      <Link
+        href="/admin44/seed-data"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: 'linear-gradient(135deg, #1A73E8 0%, #0E5C9E 100%)',
+          color: 'var(--white)',
+          padding: '14px 20px',
+          borderRadius: 14,
+          marginBottom: 16,
+          textDecoration: 'none',
+        }}
+      >
+        <div>
+          <div style={{ fontSize: 14, fontWeight: 800, marginBottom: 2 }}>
+            📦 البيانات الأولية (Seed Data)
+          </div>
+          <div style={{ fontSize: 11, opacity: 0.9 }}>
+            أضف مستشفيات وصيدليات وأطباء حقيقيين بضغطة
           </div>
         </div>
         <div style={{ fontSize: 20 }}>←</div>
