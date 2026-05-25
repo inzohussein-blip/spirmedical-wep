@@ -5,6 +5,8 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
+import ServiceDetailHeader from '@/components/dashboard-v3/ServiceDetailHeader';
+import InfoCardV3 from '@/components/dashboard-v3/InfoCardV3';
 import {
   IconArrowLeft, IconVaccineBottle, IconAlertTriangle,
   IconCalendar, IconClock, IconInfoCircle, IconCheck,
@@ -91,23 +93,11 @@ export default async function VaccineDetailPage({
   return (
     <main className="app-screen" style={{ background: '#F8F9FA' }}>
       <div className="scr-content" style={{ padding: 0 }}>
-        {/* Header */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '12px 16px',
-          background: '#FFFFFF',
-          borderBottom: '1px solid #E8EAED',
-        }}>
-          <Link href="/services/vaccines" style={backBtnStyle} aria-label="العودة">
-            <IconArrowLeft size={20} stroke={2.2} style={{ transform: 'scaleX(-1)' }} />
-          </Link>
-          <h1 style={{ fontSize: 15, fontWeight: 800, margin: 0, color: '#202124' }}>
-            تفاصيل اللقاح
-          </h1>
-          <div style={{ width: 38 }} />
-        </div>
+        {/* Header - V26.3 ServiceDetailHeader */}
+        <ServiceDetailHeader
+          backHref="/services/vaccines"
+          title="تفاصيل اللقاح"
+        />
 
         {/* Hero */}
         <div style={{
@@ -302,18 +292,16 @@ export default async function VaccineDetailPage({
 
         {/* Description */}
         {vaccine.description && (
-          <div style={infoCardStyle}>
-            <div style={infoTitleStyle}>الوصف</div>
+          <InfoCardV3 title="الوصف">
             <p style={{ fontSize: 13, color: '#3C4043', margin: 0, lineHeight: 1.7 }}>
               {vaccine.description}
             </p>
-          </div>
+          </InfoCardV3>
         )}
 
         {/* Diseases */}
         {vaccine.diseases && vaccine.diseases.length > 0 && (
-          <div style={infoCardStyle}>
-            <div style={infoTitleStyle}>الأمراض المُستهدفة</div>
+          <InfoCardV3 title="الأمراض المُستهدفة">
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {vaccine.diseases.map((d: string, i: number) => (
                 <span
@@ -331,13 +319,12 @@ export default async function VaccineDetailPage({
                 </span>
               ))}
             </div>
-          </div>
+          </InfoCardV3>
         )}
 
         {/* Recommended age */}
         {vaccine.recommended_age_months !== null && (
-          <div style={infoCardStyle}>
-            <div style={infoTitleStyle}>العمر الموصى به</div>
+          <InfoCardV3 title="العمر الموصى به">
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <IconClock size={16} stroke={2.2} color="#FF6D00" />
               <span style={{ fontSize: 13, fontWeight: 700, color: '#3C4043' }}>
@@ -345,24 +332,20 @@ export default async function VaccineDetailPage({
                 {vaccine.recommended_age_months_max && ` إلى ${vaccine.recommended_age_months_max} شهر`}
               </span>
             </div>
-          </div>
+          </InfoCardV3>
         )}
 
         {/* Side effects */}
         {vaccine.side_effects && (
-          <div style={{
-            ...infoCardStyle,
-            background: '#FEF7E0',
-            border: '1px solid #FBBC04',
-          }}>
-            <div style={{ ...infoTitleStyle, color: '#B06000' }}>
-              <IconAlertTriangle size={14} stroke={2.2} style={{ verticalAlign: -2, marginInlineEnd: 4 }} />
-              آثار جانبية محتملة
-            </div>
+          <InfoCardV3
+            title="آثار جانبية محتملة"
+            titleIcon={IconAlertTriangle}
+            variant="warning"
+          >
             <p style={{ fontSize: 12, color: '#412402', margin: 0, lineHeight: 1.7 }}>
               {vaccine.side_effects}
             </p>
-          </div>
+          </InfoCardV3>
         )}
 
         {/* CTA Buttons */}
@@ -411,49 +394,23 @@ export default async function VaccineDetailPage({
         )}
 
         {/* Info banner */}
-        <div style={{
-          margin: '0 14px 80px',
-          padding: 12,
-          background: '#E8F0FE',
-          borderRadius: 12,
-          fontSize: 11,
-          color: '#1A73E8',
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: 6,
-          lineHeight: 1.6,
-        }}>
-          <IconInfoCircle size={16} stroke={2.2} style={{ flexShrink: 0, marginTop: 2 }} />
-          <span>
+        <InfoCardV3
+          variant="info"
+          titleIcon={IconInfoCircle}
+          title="نصيحة طبية"
+          style={{ marginBottom: 80 }}
+        >
+          <p style={{ fontSize: 11, color: '#1967D2', margin: 0, lineHeight: 1.6 }}>
             استشر طبيبك دائماً قبل أخذ أي لقاح، خصوصاً إذا كان لديك حساسية أو حالة صحية مزمنة.
-          </span>
-        </div>
+          </p>
+        </InfoCardV3>
       </div>
     </main>
   );
 }
 
-const backBtnStyle: React.CSSProperties = {
-  width: 38, height: 38, borderRadius: '50%',
-  background: '#F1F3F4',
-  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-  color: '#202124', textDecoration: 'none',
-};
-
 const sectionTitleStyle: React.CSSProperties = {
   padding: '0 16px 8px',
   fontSize: 11, fontWeight: 700, color: '#5F6368',
   textTransform: 'uppercase', letterSpacing: '0.3px',
-};
-
-const infoCardStyle: React.CSSProperties = {
-  margin: '0 14px 12px',
-  padding: 14,
-  background: '#FFFFFF',
-  border: '0.5px solid #DADCE0',
-  borderRadius: 14,
-};
-
-const infoTitleStyle: React.CSSProperties = {
-  fontSize: 12, fontWeight: 800, color: '#5F6368', marginBottom: 6,
 };
