@@ -148,27 +148,29 @@
   --svc-vaccine-table-soft: #E0F2F1;
   
   /* ═══════════════════════════════════════════════════════════════
-     🎨 COLORS — Spir Brand (V25 Legacy - kept for compat)
+     🎨 COLORS — V26.3 رفع كل الـ legacy vars لـ V3 (rebrand)
+     ═══════════════════════════════════════════════════════════════
+     النتيجة: كل الصفحات القديمة تأخذ ألوان V3 تلقائياً
      ═══════════════════════════════════════════════════════════════ */
-  --emerald: #0E5C4D;
-  --emerald-deep: #073B30;
-  --emerald-soft: #D9E5DF;
-  --amber: #B8540C;
-  --amber-soft: #F0DBC2;
-  --rose: #A82E3D;
-  --rose-soft: #F0D7D8;
-  --paper: #F4EFE2;
-  --paper-2: #EDE6D3;
-  --paper-3: #FAF6EB;
+  --emerald: #01875F;          /* V3 Primary */
+  --emerald-deep: #056559;     /* V3 Primary Deep */
+  --emerald-soft: #E6F3EF;     /* V3 Primary Soft */
+  --amber: #B06000;            /* V3 Yellow Deep */
+  --amber-soft: #FEF7E0;       /* V3 Yellow Soft */
+  --rose: #C71C56;             /* V3 Pink */
+  --rose-soft: #FCE8E6;        /* V3 Pink Soft */
+  --paper: #F8F9FA;            /* V3 Surface */
+  --paper-2: #F1F3F4;          /* V3 Surface 2 */
+  --paper-3: #FFFFFF;          /* V3 BG (kept white for compat) */
   --white: #FFFFFF;
-  --ink: #0F1A1C;
-  --ink-2: #1F2A2C;
-  --ink-3: #6E7878;
-  --ink-4: #A4ACAA;
-  --line: rgba(15, 26, 28, 0.08);
-  --line-2: rgba(15, 26, 28, 0.18);
-  --header-bg: rgba(244, 239, 226, 0.95);
-  --viewport-bg: #E8E0CE;
+  --ink: #202124;              /* V3 Text */
+  --ink-2: #3C4043;            /* V3 Text 2 */
+  --ink-3: #5F6368;            /* V3 Text 3 */
+  --ink-4: #80868B;            /* V3 Text 4 */
+  --line: #DADCE0;             /* V3 Border */
+  --line-2: #E8EAED;           /* V3 Border Soft */
+  --header-bg: rgba(255, 255, 255, 0.95);
+  --viewport-bg: #F8F9FA;
 
   /* ═══════════════════════════════════════════════════════════════
      📏 SPACING SCALE — V25 (4px base)
