@@ -133,6 +133,32 @@ export default async function AdminDashboard() {
         نظرة عامة على نشاط المنصة
       </p>
 
+      {/* ✨ Quick Action: Create User */}
+      <Link
+        href="/admin44/users/create"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: 'linear-gradient(135deg, #01875F 0%, #073B30 100%)',
+          color: 'var(--white)',
+          padding: '14px 20px',
+          borderRadius: 14,
+          marginBottom: 16,
+          textDecoration: 'none',
+        }}
+      >
+        <div>
+          <div style={{ fontSize: 14, fontWeight: 800, marginBottom: 2 }}>
+            ➕ إنشاء حساب جديد (مختصّ / مراجع / أدمن)
+          </div>
+          <div style={{ fontSize: 11, opacity: 0.9 }}>
+            أنشئ حسابات للموظّفين والمختصّين بسرعة
+          </div>
+        </div>
+        <div style={{ fontSize: 20 }}>←</div>
+      </Link>
+
       {/* Alert: pending specialists */}
       {pendingSpecialists !== null && pendingSpecialists > 0 && (
         <Link
