@@ -242,10 +242,10 @@
   font-size: 9px; font-weight: 700; color: var(--ink-3);
 }
 
-/* Stories - حسب الـ mockup: 60x60 مع 5 ألوان مختلفة */
+/* Stories - V26.7 مطابقة HTML Design (مربعات بـ gradient backgrounds) */
 .scr-stories {
-  display: flex; gap: 12px; overflow-x: auto;
-  padding-bottom: 16px;
+  display: flex; gap: 10px; overflow-x: auto;
+  padding-bottom: 14px;
   scrollbar-width: none;
 }
 
@@ -253,47 +253,77 @@
 
 .story {
   display: flex; flex-direction: column; align-items: center;
-  gap: 4px; flex-shrink: 0;
+  gap: 5px; flex-shrink: 0;
   border: 0; background: transparent; cursor: pointer;
   width: 64px;
+  text-decoration: none;
 }
 
 .story-circle {
-  width: 60px; height: 60px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--rose) 0%, var(--amber) 100%);
-  padding: 2px;
+  width: 64px; height: 64px; border-radius: 18px;
+  background: linear-gradient(135deg, #01875F 0%, #FBBC04 50%, #C71C56 100%);
+  padding: 2.5px;
   display: flex; align-items: center; justify-content: center;
 }
 
-/* تنويعات ألوان الـ stories — حسب index */
-.story:nth-child(1) .story-circle { background: linear-gradient(135deg, var(--rose), var(--amber)); }
+/* تنويعات ألوان الـ stories — gradient ملوّن للـ inner */
+.story:nth-child(1) .story-inner {
+  background: linear-gradient(135deg, #E6F3EF, #01875F);
+  color: #FFFFFF;
+}
 
-.story:nth-child(2) .story-circle { background: linear-gradient(135deg, var(--emerald), #534AB7); }
+.story:nth-child(2) .story-inner {
+  background: linear-gradient(135deg, #FEF7E0, #FBBC04);
+  color: #202124;
+}
 
-.story:nth-child(3) .story-circle { background: linear-gradient(135deg, var(--amber), var(--rose)); }
+.story:nth-child(3) .story-inner {
+  background: linear-gradient(135deg, #FCE8E6, #C71C56);
+  color: #FFFFFF;
+}
 
-.story:nth-child(4) .story-circle { background: linear-gradient(135deg, var(--emerald), var(--amber)); }
+.story:nth-child(4) .story-inner {
+  background: linear-gradient(135deg, #E8F0FE, #1A73E8);
+  color: #FFFFFF;
+}
 
-.story:nth-child(5) .story-circle { background: linear-gradient(135deg, var(--rose), #534AB7); }
+.story:nth-child(5) .story-inner {
+  background: linear-gradient(135deg, #F3E8FD, #9334E6);
+  color: #FFFFFF;
+}
 
 .story-inner {
-  width: 100%; height: 100%; border-radius: 50%;
-  background: var(--white);
+  width: 100%; height: 100%; border-radius: 15px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 24px;
+  font-size: 26px;
+  position: relative;
 }
 
 .story-label {
-  font-size: 9px; color: var(--ink-2);
-  font-weight: 700; text-align: center;
+  font-size: 9px; color: #202124;
+  font-weight: 500; text-align: center;
 }
 
-.story-add .story-circle { background: var(--paper-2); }
+/* Badge في زاوية الـ story (للعروض/الخصومات) */
+.story-badge {
+  position: absolute;
+  bottom: 3px;
+  left: 3px;
+  background: #FFFFFF;
+  font-size: 7px;
+  font-weight: 600;
+  padding: 1px 4px;
+  border-radius: 9999px;
+}
+
+.story-add .story-circle { 
+  background: linear-gradient(135deg, #DADCE0 0%, #9AA0A6 100%);
+}
 
 .story-add .story-inner {
   background: transparent;
-  border: 2px dashed var(--ink-4);
-  color: var(--ink-3);
+  border: 2px dashed #80868B;
+  color: #5F6368;
 }
 
 .scr-banner {
@@ -5331,81 +5361,8 @@
 .scr-pill-label { font-size: 11px; font-weight: 700; }
 
 /* ─────────────────────────────────────────────────────────
-   6. STORIES (horizontal scroll, 5 gradients)
+   6. STORIES (moved to top - see section above)
    ───────────────────────────────────────────────────────── */
-.scr-stories {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  padding: 0 0 14px;
-  margin: 0;
-}
-
-.scr-stories::-webkit-scrollbar { display: none; }
-
-.story {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  flex-shrink: 0;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  width: 56px;
-  transition: transform 0.2s;
-}
-
-.story:hover { transform: scale(1.05); }
-
-.story-circle {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  padding: 2.5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s;
-}
-
-.story:nth-child(1) .story-circle { background: linear-gradient(135deg, #A82E3D, #B8540C); }
-
-.story:nth-child(2) .story-circle { background: linear-gradient(135deg, #0E5C4D, #534AB7); }
-
-.story:nth-child(3) .story-circle { background: linear-gradient(135deg, #B8540C, #A82E3D); }
-
-.story:nth-child(4) .story-circle { background: linear-gradient(135deg, #0E5C4D, #B8540C); }
-
-.story:nth-child(5) .story-circle { background: linear-gradient(135deg, #A82E3D, #534AB7); }
-
-.story-inner {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: var(--white);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-}
-
-.story-label {
-  font-size: 10px;
-  color: var(--ink);
-  font-weight: 700;
-  text-align: center;
-}
-
-.story-add .story-circle { background: var(--paper-2); }
-
-.story-add .story-inner {
-  background: transparent;
-  border: 2px dashed var(--ink-4);
-  color: var(--ink-3);
-}
 
 /* ─────────────────────────────────────────────────────────
    7. PROMO CARDS (horizontal scroll)
