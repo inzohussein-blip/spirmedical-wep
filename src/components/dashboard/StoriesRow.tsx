@@ -1,41 +1,60 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- * StoriesRow — صف القصص في dashboard
+ * StoriesRow — V26.8 (Tabler Icons + HTML Design)
  * ═══════════════════════════════════════════════════════════════
- * يستبدل الـ hardcoded array في dashboard/page.tsx
  * يجلب من DB عبر getActiveStories()
+ * يدعم Tabler Icons (ti-*) و emojis في حقل icon
  */
 
 import Link from 'next/link';
+import type { Icon as TablerIcon } from '@tabler/icons-react';
+import {
+  IconVaccine,
+  IconStethoscope,
+  IconPill,
+  IconApple,
+  IconAmbulance,
+  IconHeartbeat,
+  IconBuildingHospital,
+  IconDroplet,
+  IconBrain,
+  IconEye,
+} from '@tabler/icons-react';
 import { getActiveStories } from '@/lib/stories/get-stories';
-import type { Story, StoryColorTheme } from '@/types/story';
+import type { Story } from '@/types/story';
 
-/**
- * Gradient لكل theme
- */
-const COLOR_GRADIENTS: Record<StoryColorTheme, string> = {
-  emerald: 'linear-gradient(135deg, var(--emerald), #534AB7)',
-  amber: 'linear-gradient(135deg, var(--amber), var(--rose))',
-  rose: 'linear-gradient(135deg, var(--rose), var(--amber))',
-  paper: 'linear-gradient(135deg, var(--paper-2), var(--paper))',
-  ink: 'linear-gradient(135deg, var(--ink), var(--ink-3))',
+const TABLER_ICON_MAP: Record<string, TablerIcon> = {
+  'ti-vaccine': IconVaccine,
+  'ti-stethoscope': IconStethoscope,
+  'ti-pill': IconPill,
+  'ti-apple': IconApple,
+  'ti-ambulance': IconAmbulance,
+  'ti-heartbeat': IconHeartbeat,
+  'ti-building-hospital': IconBuildingHospital,
+  'ti-droplet': IconDroplet,
+  'ti-brain': IconBrain,
+  'ti-eye': IconEye,
 };
 
-/**
- * Fallback stories (إذا كان الجدول فارغاً أو حدث خطأ)
- */
 const FALLBACK_STORIES: Story[] = [
-  { id: '1', title: 'لقاحات', icon: '💉', description: null, href: '/tools/vaccinations', color_theme: 'rose', sort_order: 1, is_active: true, starts_at: null, ends_at: null, created_by: null, created_at: '', updated_at: '' },
-  { id: '2', title: 'صحتك', icon: '🩺', description: null, href: '/account/health', color_theme: 'emerald', sort_order: 2, is_active: true, starts_at: null, ends_at: null, created_by: null, created_at: '', updated_at: '' },
-  { id: '3', title: 'دواء', icon: '💊', description: null, href: '/account/prescriptions', color_theme: 'amber', sort_order: 3, is_active: true, starts_at: null, ends_at: null, created_by: null, created_at: '', updated_at: '' },
-  { id: '4', title: 'تغذية', icon: '🍎', description: null, href: '/tools/risk-calculator', color_theme: 'rose', sort_order: 4, is_active: true, starts_at: null, ends_at: null, created_by: null, created_at: '', updated_at: '' },
-  { id: '5', title: 'إسعافات', icon: '🚑', description: null, href: '/tools/first-aid', color_theme: 'amber', sort_order: 5, is_active: true, starts_at: null, ends_at: null, created_by: null, created_at: '', updated_at: '' },
+  { id: '1', title: 'لقاحات',   icon: 'ti-vaccine',     description: null, href: '/tools/vaccinations',    color_theme: 'rose',    sort_order: 1, is_active: true, starts_at: null, ends_at: null, created_by: null, created_at: '', updated_at: '' },
+  { id: '2', title: 'صحتك',     icon: 'ti-stethoscope', description: null, href: '/account/health',        color_theme: 'emerald', sort_order: 2, is_active: true, starts_at: null, ends_at: null, created_by: null, created_at: '', updated_at: '' },
+  { id: '3', title: 'دواء',     icon: 'ti-pill',        description: null, href: '/account/prescriptions', color_theme: 'amber',   sort_order: 3, is_active: true, starts_at: null, ends_at: null, created_by: null, created_at: '', updated_at: '' },
+  { id: '4', title: 'تغذية',    icon: 'ti-apple',       description: null, href: '/tools/risk-calculator', color_theme: 'rose',    sort_order: 4, is_active: true, starts_at: null, ends_at: null, created_by: null, created_at: '', updated_at: '' },
+  { id: '5', title: 'إسعافات',  icon: 'ti-ambulance',   description: null, href: '/tools/first-aid',       color_theme: 'amber',   sort_order: 5, is_active: true, starts_at: null, ends_at: null, created_by: null, created_at: '', updated_at: '' },
 ];
+
+function StoryIcon({ icon }: { icon: string }) {
+  if (icon.startsWith('ti-') && TABLER_ICON_MAP[icon]) {
+    const IconComp = TABLER_ICON_MAP[icon];
+    return <IconComp size={26} stroke={1.75} />;
+  }
+  return <>{icon}</>;
+}
 
 export default async function StoriesRow() {
   const stories = await getActiveStories();
   const displayStories = stories.length > 0 ? stories : FALLBACK_STORIES;
-
   if (displayStories.length === 0) return null;
 
   return (
@@ -47,13 +66,10 @@ export default async function StoriesRow() {
           className="story"
           aria-label={`قصة: ${story.title}`}
         >
-          <div
-            className="story-circle"
-            style={{
-              background: COLOR_GRADIENTS[story.color_theme],
-            }}
-          >
-            <div className="story-inner">{story.icon}</div>
+          <div className="story-circle">
+            <div className="story-inner">
+              <StoryIcon icon={story.icon} />
+            </div>
           </div>
           <div className="story-label">{story.title}</div>
         </Link>
