@@ -5,6 +5,8 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import ServiceDetailHeader from '@/components/dashboard-v3/ServiceDetailHeader';
+import InfoCardV3 from '@/components/dashboard-v3/InfoCardV3';
 import {
   IconArrowLeft, IconVaccineBottle, IconBabyCarriage, IconUser,
   IconPlane, IconVirus, IconCalendar, IconInfoCircle,
@@ -78,23 +80,25 @@ export default async function VaccinesPage() {
   return (
     <main className="app-screen" style={{ background: '#F8F9FA' }}>
       <div className="scr-content" style={{ padding: 0 }}>
-        {/* Header */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '12px 16px',
-          background: '#FFFFFF',
-          borderBottom: '1px solid #E8EAED',
-        }}>
-          <Link href="/services" style={backBtnStyle} aria-label="العودة">
-            <IconArrowLeft size={20} stroke={2.2} style={{ transform: 'scaleX(-1)' }} />
-          </Link>
-          <h1 style={titleStyle}>💉 اللقاحات</h1>
-          <Link href="/account/vaccinations" style={backBtnStyle} aria-label="سجل تطعيماتي">
-            <IconVaccineBottle size={20} stroke={2} />
-          </Link>
-        </div>
+        {/* Header - V26.3 ServiceDetailHeader */}
+        <ServiceDetailHeader
+          backHref="/services"
+          title="💉 اللقاحات"
+          rightAction={
+            <Link 
+              href="/account/vaccinations" 
+              aria-label="سجل تطعيماتي"
+              style={{
+                width: 38, height: 38, borderRadius: '50%',
+                background: '#F1F3F4',
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                color: '#202124', textDecoration: 'none',
+              }}
+            >
+              <IconVaccineBottle size={20} stroke={2} />
+            </Link>
+          }
+        />
 
         {/* Hero info card */}
         <div style={{
@@ -271,24 +275,16 @@ export default async function VaccinesPage() {
         })}
 
         {/* Info banner */}
-        <div style={{
-          margin: '0 14px 80px',
-          padding: 12,
-          background: '#E8F0FE',
-          border: '1px solid #1A73E8',
-          borderRadius: 12,
-          fontSize: 11,
-          color: '#1A73E8',
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: 6,
-          lineHeight: 1.6,
-        }}>
-          <IconInfoCircle size={16} stroke={2.2} style={{ flexShrink: 0, marginTop: 2 }} />
-          <span>
+        <InfoCardV3
+          variant="info"
+          titleIcon={IconInfoCircle}
+          title="ملاحظة هامّة"
+          style={{ marginBottom: 80 }}
+        >
+          <p style={{ fontSize: 11, color: '#1967D2', margin: 0, lineHeight: 1.6 }}>
             اللقاحات الحكومية مجانية في مراكز الرعاية الصحية الأولية. للقاحات الأخرى، تواصل مع المراكز الخاصة المعتمدة.
-          </span>
-        </div>
+          </p>
+        </InfoCardV3>
       </div>
     </main>
   );
