@@ -174,6 +174,24 @@ export default function SettingsClient({ initial, pinEnabled, userId, userEmail,
               displayName={userName}
             />
           </div>
+
+          {/* ✨ V26.5: WhatsApp OTP Settings */}
+          <Link
+            href="/account/whatsapp-otp"
+            className="scr-list-item scr-list-item-clickable"
+            style={{ marginTop: 10, textDecoration: 'none' }}
+          >
+            <div className="scr-list-item-icon" aria-hidden="true">
+              <span style={{ fontSize: 22 }}>💬</span>
+            </div>
+            <div className="scr-list-item-content">
+              <div className="scr-list-item-title">رمز OTP عبر واتساب</div>
+              <div className="scr-list-item-subtitle">
+                استلم رموز التحقق عبر واتساب أو تليجرام بدلاً من SMS
+              </div>
+            </div>
+            <ArrowRight size={18} style={{ transform: 'scaleX(-1)', color: 'var(--ink-3)' }} />
+          </Link>
         </div>
 
         {/* البيانات */}
