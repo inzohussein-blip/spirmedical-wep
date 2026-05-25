@@ -57,6 +57,12 @@ export async function sendOtp(formData: FormData) {
   const action = (formData.get('action') as string) || 'auto';
   // 🎯 V25.24: نُمرّر redirect URL لو موجود
   const redirectTo = formData.get('redirect') as string | null;
+  // 🎯 V26.6: قناة OTP مفضّلة (اختياري من Frontend)
+  const preferredChannel = (formData.get('channel') as string | null) as
+    | 'whatsapp'
+    | 'telegram'
+    | 'sms'
+    | null;
 
   const ip = getIp();
   const limit = await checkRateLimit(`otp:send:${ip}`, {
@@ -90,7 +96,95 @@ export async function sendOtp(formData: FormData) {
     return await loginWithoutOtp(normalizedPhone, ip);
   }
 
-  // إرسال OTP عبر Supabase Auth
+  // ═══════════════════════════════════════════════════════════
+  // 🎯 V26.6: تحديد قناة OTP المُفضّلة
+  // الأولوية:
+  //   1. القناة المرسلة من Frontend (preferredChannel)
+  //   2. تفضيل المستخدم من DB (لو الحساب موجود)
+  //   3. WhatsApp افتراضياً (أرخص + أسرع)
+  // ═══════════════════════════════════════════════════════════
+
+  let channel: 'whatsapp' | 'telegram' | 'sms' = preferredChannel || 'whatsapp';
+
+  // محاولة قراءة تفضيل المستخدم من DB (إن وُجد الحساب مسبقاً)
+  if (!preferredChannel) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+    const admin = createSbClient(supabaseUrl, serviceKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+
+    
+    const adminAny = admin as unknown as {
+      from: (t: string) => {
+        
+        select: (cols: string) => any;
+      };
+    };
+
+    const userPrefRes = await adminAny
+      .from('users')
+      .select('preferred_otp_channel, wa_verified, wa_otp_enabled')
+      .eq('phone', normalizedPhone)
+      .maybeSingle();
+
+    const userPref = userPrefRes.data as {
+      preferred_otp_channel?: 'whatsapp' | 'telegram' | 'sms';
+      wa_verified?: boolean;
+      wa_otp_enabled?: boolean;
+    } | null;
+
+    if (userPref?.wa_otp_enabled && userPref?.wa_verified && userPref?.preferred_otp_channel) {
+      channel = userPref.preferred_otp_channel;
+    }
+    // لو الـ wa_verified = false → فعّل WhatsApp افتراضياً (للحسابات الجديدة)
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  // 📤 إرسال OTP عبر القناة المختارة
+  // ═══════════════════════════════════════════════════════════
+
+  if (channel === 'whatsapp' || channel === 'telegram') {
+    // ─── WhatsApp / Telegram via Meta API ───
+    try {
+      const { sendOtp: sendWhatsAppOtp } = await import('@/lib/whatsapp/otp-service');
+      const result = await sendWhatsAppOtp({
+        phone: normalizedPhone,
+        channel,
+        purpose: 'login',
+        ipAddress: ip,
+      });
+
+      if (result.success) {
+        await logAuditEvent({
+          action: 'auth.otp_sent',
+          metadata: { phone: normalizedPhone, ip, channel },
+        });
+
+        const otpUrl = redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')
+          ? `/otp?phone=${encodeURIComponent(normalizedPhone)}&channel=${channel}&redirect=${encodeURIComponent(redirectTo)}`
+          : `/otp?phone=${encodeURIComponent(normalizedPhone)}&channel=${channel}`;
+
+        redirect(otpUrl);
+      }
+
+      // لو فشل → نسجّل + نتحوّل لـ SMS fallback
+      logger.warn('WhatsApp OTP failed, falling back to SMS', {
+        phone: normalizedPhone,
+        error: result.error,
+      });
+    } catch (err) {
+      // 🎯 mengyper next/navigation redirect → نُعيد إطلاقه
+      if (isNextRedirect(err)) throw err;
+      logger.warn('WhatsApp OTP exception, falling back to SMS', {
+        phone: normalizedPhone,
+        error: err instanceof Error ? err.message : 'unknown',
+      });
+    }
+    // ↓ يستمر للـ SMS fallback
+  }
+
+  // ─── SMS fallback (الافتراضي القديم) ───
   const supabase = createClient();
   const { error } = await supabase.auth.signInWithOtp({
     phone: normalizedPhone,
@@ -109,13 +203,13 @@ export async function sendOtp(formData: FormData) {
 
   await logAuditEvent({
     action: 'auth.otp_sent',
-    metadata: { phone: normalizedPhone, ip },
+    metadata: { phone: normalizedPhone, ip, channel: 'sms' },
   });
 
   // 🎯 V25.24: مرّر redirect إلى صفحة OTP
   const otpUrl = redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')
-    ? `/otp?phone=${encodeURIComponent(normalizedPhone)}&redirect=${encodeURIComponent(redirectTo)}`
-    : `/otp?phone=${encodeURIComponent(normalizedPhone)}`;
+    ? `/otp?phone=${encodeURIComponent(normalizedPhone)}&channel=sms&redirect=${encodeURIComponent(redirectTo)}`
+    : `/otp?phone=${encodeURIComponent(normalizedPhone)}&channel=sms`;
 
   redirect(otpUrl);
 }
@@ -339,6 +433,11 @@ export async function verifyOtp(formData: FormData) {
   const token = formData.get('token') as string;
   // 🎯 V25.24: redirect URL لو المستخدم جاء من صفحة محمية
   const redirectTo = (formData.get('redirect') as string | null) || null;
+  // 🎯 V26.6: قناة OTP (whatsapp/telegram/sms)
+  const channel = ((formData.get('channel') as string | null) || 'sms') as
+    | 'whatsapp'
+    | 'telegram'
+    | 'sms';
 
   const ip = getIp();
   const limit = await checkRateLimit(`otp:verify:${ip}`, {
@@ -348,7 +447,7 @@ export async function verifyOtp(formData: FormData) {
 
   if (!limit.allowed) {
     redirect(
-      `/otp?phone=${encodeURIComponent(phone)}&error=` +
+      `/otp?phone=${encodeURIComponent(phone)}&channel=${channel}&error=` +
         encodeURIComponent(
           `محاولات كثيرة، حاول بعد ${limit.retryAfterSeconds} ثانية`
         )
@@ -358,11 +457,157 @@ export async function verifyOtp(formData: FormData) {
   const validation = otpSchema.safeParse({ phone, token });
   if (!validation.success) {
     redirect(
-      `/otp?phone=${encodeURIComponent(phone)}&error=` +
+      `/otp?phone=${encodeURIComponent(phone)}&channel=${channel}&error=` +
         encodeURIComponent(validation.error.errors[0].message)
     );
   }
 
+  // ═══════════════════════════════════════════════════════════
+  // 🎯 V26.6: التحقّق حسب القناة
+  // ═══════════════════════════════════════════════════════════
+
+  if (channel === 'whatsapp' || channel === 'telegram') {
+    // ─── التحقّق عبر Meta OTP Service ───
+    try {
+      const { verifyOtp: verifyWhatsAppOtp } = await import('@/lib/whatsapp/otp-service');
+      const result = await verifyWhatsAppOtp({
+        phone,
+        code: token,
+        purpose: 'login',
+      });
+
+      if (!result.success) {
+        logger.warn('WhatsApp OTP verification failed', {
+          phone,
+          error: result.error,
+        });
+        redirect(
+          `/otp?phone=${encodeURIComponent(phone)}&channel=${channel}&error=` +
+            encodeURIComponent(result.error || 'الرمز غير صحيح')
+        );
+      }
+
+      // ✅ OTP صحيح → الآن نُسجّل الدخول بـ Supabase (passwordless)
+      // نستخدم phone-to-password derivation (مثل loginWithoutOtp)
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+      const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+      const admin = createSbClient(supabaseUrl, serviceKey, {
+        auth: { autoRefreshToken: false, persistSession: false },
+      });
+
+      const password = derivePassword(phone);
+      const email = phoneToEmail(phone);
+      const supabase = createClient();
+
+      // محاولة تسجيل دخول مباشرة
+      const { data: signInData, error: signInErr } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      let userId: string | undefined = signInData?.user?.id;
+
+      if (signInErr || !signInData?.user) {
+        // الحساب جديد → نُنشئه
+        const { data: newUser, error: createErr } = await admin.auth.admin.createUser({
+          email,
+          password,
+          phone,
+          email_confirm: true,
+          phone_confirm: true,
+        });
+
+        if (createErr || !newUser?.user) {
+          logger.error('Failed to create user after WhatsApp OTP', {
+            phone,
+            error: createErr?.message,
+          });
+          redirect(
+            `/otp?phone=${encodeURIComponent(phone)}&channel=${channel}&error=` +
+              encodeURIComponent('فشل إنشاء الحساب')
+          );
+        }
+
+        userId = newUser.user.id;
+
+        // إنشاء profile في public.users
+        
+        const adminAny = admin as unknown as {
+          from: (t: string) => {
+            insert: (d: object) => Promise<{ error: { message: string } | null }>;
+          };
+        };
+
+        await adminAny.from('users').insert({
+          id: userId,
+          phone,
+          role: 'patient',
+          wa_otp_enabled: channel === 'whatsapp',
+          wa_verified: true,
+          preferred_otp_channel: channel,
+        });
+
+        // تسجيل دخول الحساب الجديد
+        await supabase.auth.signInWithPassword({ email, password });
+      } else {
+        // الحساب موجود → تحديث wa_verified إذا لزم
+        
+        const adminAny = admin as unknown as {
+          from: (t: string) => {
+            update: (d: object) => { eq: (col: string, val: string) => Promise<{ error: { message: string } | null }> };
+          };
+        };
+
+        await adminAny.from('users').update({
+          wa_verified: true,
+          preferred_otp_channel: channel,
+        }).eq('id', userId!);
+      }
+
+      await logAuditEvent({
+        action: 'auth.login',
+        user_id: userId,
+        metadata: { ip, phone, method: 'otp', channel },
+      });
+
+      // جلب الـ role للتوجيه
+      
+      const adminAny2 = admin as unknown as {
+        from: (t: string) => {
+          
+          select: (cols: string) => any;
+        };
+      };
+
+      const profileRes = await adminAny2.from('users')
+        .select('role')
+        .eq('id', userId!)
+        .single();
+
+      const role = (profileRes.data as { role?: string } | null)?.role || 'patient';
+
+      if (role === 'specialist') redirect('/specialist');
+      if (role === 'admin' || role === 'super_admin' || role === 'manager' || role === 'support') {
+        redirect('/admin44');
+      }
+      if (redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')) {
+        redirect(redirectTo);
+      }
+      redirect('/dashboard');
+    } catch (err) {
+      if (isNextRedirect(err)) throw err;
+      logger.error('WhatsApp OTP verify exception', {
+        phone,
+        error: err instanceof Error ? err.message : 'unknown',
+      });
+      redirect(
+        `/otp?phone=${encodeURIComponent(phone)}&channel=${channel}&error=` +
+          encodeURIComponent('فشل التحقّق، حاول مرة أخرى')
+      );
+    }
+  }
+
+  // ─── SMS Verification (الافتراضي القديم via Supabase Auth) ───
   const supabase = createClient();
   const { data, error } = await supabase.auth.verifyOtp({
     phone,
@@ -376,7 +621,7 @@ export async function verifyOtp(formData: FormData) {
       error: error?.message,
     });
     redirect(
-      `/otp?phone=${encodeURIComponent(phone)}&error=` +
+      `/otp?phone=${encodeURIComponent(phone)}&channel=sms&error=` +
         encodeURIComponent('الرمز غير صحيح')
     );
   }
@@ -384,7 +629,7 @@ export async function verifyOtp(formData: FormData) {
   await logAuditEvent({
     action: 'auth.login',
     user_id: data.user.id,
-    metadata: { ip, phone, method: 'otp' },
+    metadata: { ip, phone, method: 'otp', channel: 'sms' },
   });
 
   const { data: profile } = await supabase
@@ -406,7 +651,6 @@ export async function verifyOtp(formData: FormData) {
   }
 
   // 🎯 V25.24: لو فيه redirect URL صالح من الـ middleware، نُوجّه إليه
-  // (للأمان: نقبل فقط internal paths مش URLs خارجية)
   if (redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')) {
     redirect(redirectTo);
   }
