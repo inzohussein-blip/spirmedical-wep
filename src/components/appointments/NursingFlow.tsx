@@ -18,6 +18,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { toast } from '@/components/ui/Toaster';
 import FamilyMemberPicker from '@/components/family/FamilyMemberPicker';
+import CameraCapture from '@/components/pwa/CameraCapture';
 import {
   Syringe, Droplet, Bandage, Stethoscope, Activity, Footprints,
   AlertTriangle, FileImage, ShieldCheck, Calendar, MapPin, Phone,
@@ -603,34 +604,21 @@ export default function NursingFlow({
                 <p style={{ fontSize: 11, color: 'var(--ink-3)', margin: '0 0 12px' }}>
                   PNG / JPG · الحد الأقصى 5 ميجا
                 </p>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  style={{ display: 'none' }}
-                />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  style={{
-                    background: 'var(--emerald)',
-                    color: 'var(--paper-3)',
-                    border: 'none',
-                    padding: '10px 20px',
-                    borderRadius: 10,
-                    cursor: 'pointer',
-                    fontFamily: 'inherit',
-                    fontSize: 13,
-                    fontWeight: 800,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
+                <CameraCapture
+                  mode="both"
+                  maxFiles={1}
+                  label="ارفع أو التقط صورة"
+                  onCapture={(files) => {
+                    const file = files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      setPrescriptionImage(reader.result as string);
+                      toast.success('تم رفع الصورة');
+                    };
+                    reader.readAsDataURL(file);
                   }}
-                >
-                  <Upload size={14} />
-                  اختر صورة
-                </button>
+                />
               </>
             )}
           </div>
