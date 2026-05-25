@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { X, Home, Building2, Video, Calendar, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { createDoctorAppointment } from '@/app/(dashboard)/services/doctors/[id]/actions';
+import HapticButton from '@/components/pwa/HapticButton';
 
 interface Doctor {
   id: string;
@@ -346,8 +347,9 @@ export default function DoctorBookingModal({ doctor, defaultType, onClose, userA
         )}
 
         {/* Submit */}
-        <button
+        <HapticButton
           type="button"
+          hapticStrength="success"
           onClick={handleSubmit}
           disabled={isPending}
           style={{
@@ -374,7 +376,7 @@ export default function DoctorBookingModal({ doctor, defaultType, onClose, userA
               تأكيد الحجز · {price.toLocaleString('ar-IQ')} د.ع
             </>
           )}
-        </button>
+        </HapticButton>
       </div>
     </div>
   );
