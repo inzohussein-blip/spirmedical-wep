@@ -1,3 +1,6 @@
+// ⚡ V27 Performance: ISR caching (3600s)
+export const revalidate = 3600;
+
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
