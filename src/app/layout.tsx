@@ -3,14 +3,13 @@ import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { CookieConsent } from '@/components/legal/CookieConsent';
 import StructuredData from '@/components/seo/StructuredData';
-import PWAManager from '@/components/ui/PWAManager';
+import PWAModeProvider from '@/components/pwa/PWAModeProvider';
 import NetworkStatusDetector from '@/components/ui/NetworkStatusDetector';
 import SWUpdateBanner from '@/components/ui/SWUpdateBanner';
 import WebVitalsReporter from '@/components/seo/WebVitalsReporter';
 import PerformanceMonitor from '@/components/dev/PerformanceMonitor';
 import { Toaster } from '@/components/ui/Toaster';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
-import PWAModeProvider from '@/components/pwa/PWAModeProvider';
 import SmartInstallPrompt from '@/components/pwa/SmartInstallPrompt';
 import IOSInstallPrompt from '@/components/pwa/IOSInstallPrompt';
 import IOSSplashScreens from '@/components/pwa/IOSSplashScreens';
@@ -273,7 +272,6 @@ export default function RootLayout({
           <NetworkStatusDetector />
           <SWUpdateBanner />
           <CookieConsent />
-          <PWAManager />
           <SmartInstallPrompt />
           <IOSInstallPrompt />
           <AppBackHandler />
