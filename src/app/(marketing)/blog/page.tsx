@@ -1,3 +1,6 @@
+// ⚡ V27 Performance: ISR caching (3600s)
+export const revalidate = 3600;
+
 import Link from 'next/link';
 import { ARTICLES, getAllCategories } from '@/lib/data/blog-articles';
 import type { Metadata } from 'next';
