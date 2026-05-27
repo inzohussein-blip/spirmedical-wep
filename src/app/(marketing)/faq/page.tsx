@@ -1,3 +1,6 @@
+// ⚡ V27 Performance: ISR caching (86400s)
+export const revalidate = 86400;
+
 import FAQClient from './FAQClient';
 
 export const metadata = {
