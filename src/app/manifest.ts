@@ -36,7 +36,8 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'Spir Medical · سباير ميديكال',
     short_name: 'Spir Medical',
     description: 'منصة طبية رقمية متكاملة في العراق',
-    start_url: isAppSite ? '/dashboard?source=pwa&utm_source=homescreen' : '/?source=pwa&utm_source=homescreen',
+    // 📱 V26.12: PWA install دائماً يفتح التطبيق (/dashboard) وليس Landing/Marketing
+    start_url: '/dashboard?source=pwa&utm_source=homescreen',
     display: 'standalone',
     background_color: '#F4EFE2',
     theme_color: '#0E5C4D',
