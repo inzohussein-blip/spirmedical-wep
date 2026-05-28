@@ -13,6 +13,10 @@ export default function Error({
   useEffect(() => {
     // eslint-disable-next-line no-console
     console.error('App Error:', error);
+    // 🚀 V29: أرسل لـ Sentry
+    void import('@/lib/error-tracking')
+      .then((m) => m.trackError(error, { action: 'app-error', extra: { digest: error.digest } }))
+      .catch(() => {});
   }, [error]);
 
   return (
