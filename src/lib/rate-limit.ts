@@ -30,11 +30,77 @@ if (typeof globalThis !== 'undefined' && !(globalThis as any).__rateLimitCleanup
   }, 60_000);
 }
 
+// ─────────────────────────────────────────────────────────
+// 🚀 V29: Upstash Redis client (singleton)
+// ─────────────────────────────────────────────────────────
+let upstashRedis: unknown = null;
+let upstashReady = false;
+let upstashChecked = false;
+
+async function getUpstashRedis(): Promise<unknown> {
+  if (upstashChecked) return upstashRedis;
+  upstashChecked = true;
+
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return null;
+
+  try {
+    const mod = await import(
+      /* webpackIgnore: true */ '@upstash/redis' as string
+    ).catch(() => null);
+    if (!mod) return null;
+
+    const Redis = (mod as { Redis?: new (cfg: unknown) => unknown }).Redis;
+    if (!Redis) return null;
+
+    upstashRedis = new Redis({ url, token });
+    upstashReady = true;
+    return upstashRedis;
+  } catch {
+    return null;
+  }
+}
+
+async function checkRateLimitUpstash(
+  key: string,
+  options: RateLimitOptions,
+  redis: unknown
+): Promise<RateLimitResult> {
+  const r = redis as {
+    incr: (k: string) => Promise<number>;
+    expire: (k: string, s: number) => Promise<number>;
+    ttl: (k: string) => Promise<number>;
+  };
+
+  const redisKey = `rl:${key}`;
+  const count = await r.incr(redisKey);
+
+  if (count === 1) {
+    await r.expire(redisKey, options.windowSeconds);
+  }
+
+  if (count > options.max) {
+    const ttl = await r.ttl(redisKey);
+    return {
+      allowed: false,
+      remaining: 0,
+      retryAfterSeconds: ttl > 0 ? ttl : options.windowSeconds,
+    };
+  }
+
+  return {
+    allowed: true,
+    remaining: Math.max(0, options.max - count),
+    retryAfterSeconds: 0,
+  };
+}
+
 /**
  * فحص rate limit
  *
- * في التطوير: يستخدم in-memory store.
- * في الإنتاج (موصى به): استبدله بـ Upstash Redis أو Vercel KV.
+ * في الإنتاج (لو UPSTASH_* مُعرّف): يستخدم Upstash Redis (دائم + multi-instance).
+ * خلاف ذلك: in-memory store (fallback).
  *
  * @example
  * const result = await checkRateLimit(`otp:${phone}`, { max: 3, windowSeconds: 600 });
@@ -44,10 +110,17 @@ export async function checkRateLimit(
   key: string,
   options: RateLimitOptions
 ): Promise<RateLimitResult> {
-  // في الإنتاج، استخدم Upstash:
-  // if (process.env.UPSTASH_REDIS_REST_URL) {
-  //   return checkRateLimitUpstash(key, options);
-  // }
+  // 🚀 V29: استخدم Upstash لو متاح
+  if (process.env.UPSTASH_REDIS_REST_URL) {
+    try {
+      const redis = await getUpstashRedis();
+      if (redis && upstashReady) {
+        return await checkRateLimitUpstash(key, options, redis);
+      }
+    } catch {
+      // لو فشل Upstash لأي سبب، ارجع للذاكرة
+    }
+  }
 
   return checkRateLimitMemory(key, options);
 }
