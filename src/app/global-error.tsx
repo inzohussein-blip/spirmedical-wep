@@ -12,9 +12,12 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // في الإنتاج: أرسل لـ Sentry/error tracking
     // eslint-disable-next-line no-console
-    console.error('[error.tsx]', error);
+    console.error('[global-error.tsx]', error);
+    // 🚀 V29: أرسل لـ Sentry (لو مُعرّف NEXT_PUBLIC_SENTRY_DSN)
+    void import('@/lib/error-tracking')
+      .then((m) => m.trackError(error, { action: 'global-error', extra: { digest: error.digest } }))
+      .catch(() => {});
   }, [error]);
 
   return (
