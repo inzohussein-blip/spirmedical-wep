@@ -340,38 +340,87 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
     let userId = existingProfile?.id;
 
     if (userId) {
-      // الـ row موجود → password قديم، حدّثه
+      // الـ row موجود في public.users → password قديم، حدّثه
       await admin.auth.admin.updateUserById(userId, { password });
     } else {
-      // 2. إنشاء مستخدم جديد - الـ trigger ينشئ public.users تلقائياً
-      const { data: newUser, error: createErr } =
-        await admin.auth.admin.createUser({
-          email,
-          password,
-          email_confirm: true,
-          user_metadata: { phone, created_via: 'no_otp' },
+      // 🔍 V28: ابحث أيضاً في auth.users قبل محاولة الإنشاء
+      // (قد يكون الحساب في auth لكن مش في public.users)
+      let authUserId: string | undefined;
+      try {
+        const { data: authUsers } = await admin.auth.admin.listUsers({
+          page: 1,
+          perPage: 1000,
         });
-
-      if (createErr || !newUser?.user) {
-        logger.error('createUser failed', {
-          phone,
-          error: createErr?.message,
-        });
-        redirect(
-          '/login?error=' +
-            encodeURIComponent(
-              `فشل إنشاء الحساب: ${createErr?.message ?? 'خطأ غير معروف'}`
-            )
+        const found = authUsers?.users?.find(
+          (u) =>
+            u.email === email ||
+            (typeof u.user_metadata?.phone === 'string' &&
+              u.user_metadata.phone === phone)
         );
+        if (found) authUserId = found.id;
+      } catch (e) {
+        logger.warn('listUsers failed, proceeding to createUser', {
+          error: (e as Error).message,
+        });
       }
 
-      userId = newUser.user.id;
+      if (authUserId) {
+        // ✅ الحساب موجود في auth.users → حدّث الـ password
+        await admin.auth.admin.updateUserById(authUserId, { password });
+        userId = authUserId;
 
-      // حدّث phone من +temp_xxx للقيمة الحقيقية
-      await admin
-        .from('users')
-        .update({ phone, full_name: 'مستخدم جديد' })
-        .eq('id', userId);
+        // أنشئ row في public.users لو ناقص
+        const { data: pubExists } = await admin
+          .from('users')
+          .select('id')
+          .eq('id', authUserId)
+          .maybeSingle();
+
+        if (!pubExists) {
+          await admin.from('users').insert({
+            id: authUserId,
+            phone,
+            full_name: 'مستخدم جديد',
+            role: 'patient',
+          });
+        } else {
+          // حدّث phone لو مختلف
+          await admin
+            .from('users')
+            .update({ phone })
+            .eq('id', authUserId);
+        }
+      } else {
+        // 2. إنشاء مستخدم جديد - الـ trigger ينشئ public.users تلقائياً
+        const { data: newUser, error: createErr } =
+          await admin.auth.admin.createUser({
+            email,
+            password,
+            email_confirm: true,
+            user_metadata: { phone, created_via: 'no_otp' },
+          });
+
+        if (createErr || !newUser?.user) {
+          logger.error('createUser failed', {
+            phone,
+            error: createErr?.message,
+          });
+          redirect(
+            '/login?error=' +
+              encodeURIComponent(
+                `فشل إنشاء الحساب: ${createErr?.message ?? 'خطأ غير معروف'}`
+              )
+          );
+        }
+
+        userId = newUser.user.id;
+
+        // حدّث phone من +temp_xxx للقيمة الحقيقية
+        await admin
+          .from('users')
+          .update({ phone, full_name: 'مستخدم جديد' })
+          .eq('id', userId);
+      }
     }
 
     // 3. signIn الآن
