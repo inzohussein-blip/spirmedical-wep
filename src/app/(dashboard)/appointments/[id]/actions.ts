@@ -6,6 +6,7 @@ import { headers } from 'next/headers';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { notifyOrderCancelled } from '@/lib/services/push-templates';
 
 export async function cancelAppointment(appointmentId: string, reason: string) {
   const supabase = createClient();
@@ -51,6 +52,10 @@ export async function cancelAppointment(appointmentId: string, reason: string) {
     };
   }
 
+  // 🆕 V31: احفظ المختص المُعيّن (للإشعار + تحديث صفحته)
+  const assignedSpecialistId =
+    (appointment as { assigned_specialist_id?: string | null }).assigned_specialist_id ?? null;
+
   // تحديث الحالة
   const updateData: any = {
     status: 'cancelled',
@@ -89,6 +94,17 @@ export async function cancelAppointment(appointmentId: string, reason: string) {
     appointment_id: appointmentId,
     reason,
   });
+
+  // 🆕 V31: لو كان الطلب مُعيّناً لمختص، أشعره + حدّث صفحته
+  if (assignedSpecialistId) {
+    notifyOrderCancelled(assignedSpecialistId, {
+      orderId: appointmentId,
+      reason,
+    }).catch(() => null);
+    revalidatePath('/specialist/orders');
+    revalidatePath(`/specialist/orders/${appointmentId}`);
+    revalidatePath('/specialist');
+  }
 
   revalidatePath('/appointments');
   revalidatePath(`/appointments/${appointmentId}`);
