@@ -34,6 +34,11 @@ export async function submitRating(input: RatingInput) {
   if (!appointment) return { ok: false, error: 'الموعد غير موجود' };
   if (appointment.user_id !== user.id) return { ok: false, error: 'غير مسموح' };
 
+  // 🆕 V31: لا يُسمح بالتقييم إلا بعد إكمال الموعد فعلياً
+  if (appointment.status !== 'completed') {
+    return { ok: false, error: 'يمكن التقييم بعد إكمال الموعد فقط' };
+  }
+
   // تحقق من عدم وجود تقييم سابق
   const { data: existing } = await supabase
     .from('ratings')
