@@ -12,6 +12,7 @@ import { getOtpMode, canSkipOtp } from '@/lib/flags';
 import {
   patientRegisterSchema,
   specialistRegisterSchema,
+  mapSpecializationToDbType,
 } from '@/lib/validations/auth-forms';
 import { normalizePhone } from '@/lib/validations/auth';
 import { sendWelcomePatientEmail, sendWelcomeSpecialistEmail } from '@/lib/email/actions';
@@ -155,8 +156,11 @@ export async function registerSpecialist(formData: FormData) {
     );
   }
 
-  const { fullName, phone } = validation.data;
+  const { fullName, phone, specialization, specializationDetails } = validation.data;
   const normalizedPhone = normalizePhone(phone);
+
+  // 🔧 V30: تحويل specialization → specialist_type (DB format)
+  const specialistType = mapSpecializationToDbType(specialization);
 
   try {
     await createOrGetAccount({
@@ -164,6 +168,8 @@ export async function registerSpecialist(formData: FormData) {
       fullName,
       role: 'specialist',
       ip,
+      specialistType,
+      specializationDetails,
     });
 
     await routeAfterRegister(normalizedPhone, 'specialist', action);
@@ -233,6 +239,9 @@ async function createOrGetAccount(opts: {
   fullName: string;
   role: 'patient' | 'specialist';
   ip: string;
+  // 🔧 V30: حقول المختص (اختيارية)
+  specialistType?: 'lab_analyst' | 'nurse' | 'doctor' | 'pharmacist' | 'physio' | 'psychologist' | 'nutritionist';
+  specializationDetails?: string;
 }): Promise<string> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -304,6 +313,14 @@ async function createOrGetAccount(opts: {
     // فقط لو ما عنده موافقة سابقة
     if (!existingProfile?.id) {
       profileData.approval_status = 'pending';
+    }
+    // 🔧 V30: حفظ specialist_type (مطلوب لربط المختص بالطلبات)
+    if (opts.specialistType) {
+      profileData.specialist_type = opts.specialistType;
+    }
+    // ملاحظات اختصاص "other"
+    if (opts.specializationDetails) {
+      profileData.specialist_bio = opts.specializationDetails;
     }
   }
 
