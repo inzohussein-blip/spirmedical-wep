@@ -408,6 +408,8 @@ export interface CreateBloodDrawInput {
   // المختبر
   partner_lab_id: string | null;
   lab_name_snapshot: string;
+  // 🆕 V31: slug للبحث عن المختبر الحقيقي في DB (إن توفّر)
+  lab_slug?: string | null;
   
   // بيانات المريض
   patient_age?: number;
@@ -487,7 +489,19 @@ export async function createBloodDrawOrder(input: CreateBloodDrawInput) {
     // ملاحظة: lab_orders, lab_results, partner_labs ستُضاف لـ Database types
     // بعد تشغيل migration 38. حالياً نستخدم `as any` للالتفاف على types.
         const supabaseAny = supabase as any;
-    
+
+    // 🆕 V31: حُلّ partner_lab_id الحقيقي من الـ slug (migration 47)
+    // لو الـ UI مرّر slug ('medcare', 'al-hayat'...) نبحث عن الـ UUID في DB.
+    let resolvedLabId: string | null = input.partner_lab_id;
+    if (!resolvedLabId && input.lab_slug && input.lab_slug !== 'any') {
+      const { data: labRow } = await supabaseAny
+        .from('partner_labs')
+        .select('id')
+        .eq('slug', input.lab_slug)
+        .maybeSingle();
+      if (labRow?.id) resolvedLabId = labRow.id as string;
+    }
+
     const { data: labOrder, error: labOrderError } = await supabaseAny
       .from('lab_orders')
       .insert({
@@ -495,7 +509,7 @@ export async function createBloodDrawOrder(input: CreateBloodDrawInput) {
         family_member_id: input.family_member_id || null,
         test_ids: input.test_ids,
         bundle_id: input.bundle_id,
-        partner_lab_id: input.partner_lab_id,
+        partner_lab_id: resolvedLabId,
         lab_name_snapshot: input.lab_name_snapshot,
         patient_age: input.patient_age || null,
         patient_gender: input.patient_gender || null,
