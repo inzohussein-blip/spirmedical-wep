@@ -6144,3 +6144,188 @@
   border-radius: 50%;
   pointer-events: none;
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   🖥️ V30: Desktop Responsive Layer
+   ════════════════════════════════════════════════════════════════════
+   فوق 1024px:
+     • Bottom nav يختفي
+     • Sidebar يظهر يمين (RTL)
+     • Header يصبح horizontal
+     • المحتوى يستخدم max-width: 1200px
+     • Cards تتحول لـ grid 2-3 أعمدة
+   ════════════════════════════════════════════════════════════════════ */
+
+@media (min-width: 1024px) {
+  /* ─── إخفاء الـ Bottom Nav في الديسكتوب ─── */
+  .app-bottom-nav {
+    display: none !important;
+  }
+
+  /* ─── Sidebar بدلاً من Bottom Nav ─── */
+  .app-sidebar {
+    display: flex !important;
+    flex-direction: column;
+    width: 240px;
+    flex-shrink: 0;
+    background: #FFFFFF;
+    border-inline-start: 1px solid #E8EAED;
+    padding: 20px 16px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+    z-index: 30;
+  }
+
+  .app-sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 8px 20px;
+    border-bottom: 1px solid #E8EAED;
+    margin-bottom: 16px;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .app-sidebar-brand-mark {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #01875F, #073B30);
+    color: white;
+    font-weight: 800;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .app-sidebar-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  .app-sidebar-brand-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--ink);
+  }
+
+  .app-sidebar-brand-sub {
+    font-size: 11px;
+    color: var(--ink-2);
+  }
+
+  .app-sidebar-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 8px 12px 6px;
+  }
+
+  .app-sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: var(--ink-2);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.15s;
+    margin-bottom: 2px;
+  }
+
+  .app-sidebar-item:hover {
+    background: #F1F3F4;
+    color: var(--ink);
+  }
+
+  .app-sidebar-item.active {
+    background: #E6F3EF;
+    color: #01875F;
+    font-weight: 600;
+  }
+
+  .app-sidebar-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .app-sidebar-footer {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid #E8EAED;
+  }
+
+  /* ─── الـ Header في الديسكتوب: يبقى لكن بدون مساحة كبيرة ─── */
+  .app-header {
+    display: none !important;
+  }
+
+  /* ─── Main Content في الديسكتوب ─── */
+  .app-main {
+    padding: 0;
+  }
+
+  /* المحتوى الداخلي للصفحات يحصل على padding مناسب */
+  .scr-content {
+    padding: 32px 40px;
+    max-width: 1200px;
+    margin-inline: auto;
+  }
+
+  /* العنوان الرئيسي للصفحات يكبر */
+  .scr-h1 {
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+
+  /* ─── Grid Helpers للديسكتوب ─── */
+  /* الـ services-grid يتحول لـ 3 أعمدة */
+  .services-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  /* lists تتحول لـ 2 أعمدة */
+  .scr-list-stack {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  /* form fields توسّع المسافات */
+  .field-group {
+    max-width: 600px;
+  }
+
+  /* الـ FAB يبقى لكن أصغر */
+  .fab {
+    bottom: 24px !important;
+    inset-inline-end: 24px !important;
+  }
+}
+
+/* Desktop واسع (≥1280px): grid 4 أعمدة للـ services */
+@media (min-width: 1280px) {
+  .services-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Mobile: السايدبار مخفي */
+@media (max-width: 1023.98px) {
+  .app-sidebar {
+    display: none !important;
+  }
+}
