@@ -108,7 +108,76 @@ export function AppShell({
         الانتقال للمحتوى الرئيسي
       </a>
 
-      {/* الإطار الفعلي للتطبيق - بعرض هاتف */}
+      {/* 🖥️ V30: Sidebar للديسكتوب (CSS يتحكّم بالإظهار/الإخفاء) */}
+      <aside
+        className="app-sidebar"
+        style={{ display: 'none' }}
+        role="navigation"
+        aria-label="القائمة الجانبية"
+      >
+        <Link href={homeHref} className="app-sidebar-brand">
+          <div className="app-sidebar-brand-mark" aria-hidden="true">س</div>
+          <div className="app-sidebar-brand-text">
+            <div className="app-sidebar-brand-name">Spir Medical</div>
+            <div className="app-sidebar-brand-sub">سباير ميديكال</div>
+          </div>
+        </Link>
+
+        <div className="app-sidebar-section-label">القائمة</div>
+        {navItems.map((item) => {
+          const SidebarIcon = item.icon;
+          const active = isActive(item.href);
+          return (
+            <Link
+              key={item.id}
+              href={item.href}
+              className={`app-sidebar-item ${active ? 'active' : ''}`}
+              aria-current={active ? 'page' : undefined}
+            >
+              <span className="app-sidebar-icon" aria-hidden="true">
+                <SidebarIcon size={20} stroke={active ? 2.2 : 1.8} />
+              </span>
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+
+        <div className="app-sidebar-footer">
+          {userName && (
+            <div className="app-sidebar-item" style={{ background: '#F8F9FA', cursor: 'default' }}>
+              <span className="app-sidebar-icon" aria-hidden="true">
+                <IconUser size={20} stroke={1.8} />
+              </span>
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {userName}
+              </span>
+            </div>
+          )}
+          {!isGuest && signOutAction && (
+            <form action={signOutAction}>
+              <button
+                type="submit"
+                className="app-sidebar-item"
+                style={{ width: '100%', border: 'none', background: 'transparent', cursor: 'pointer', font: 'inherit', color: 'inherit', textAlign: 'inherit' }}
+              >
+                <span className="app-sidebar-icon" aria-hidden="true">⎋</span>
+                <span>تسجيل الخروج</span>
+              </button>
+            </form>
+          )}
+          {isGuest && (
+            <Link
+              href="/login"
+              className="app-sidebar-item"
+              style={{ background: '#01875F', color: '#fff', justifyContent: 'center' }}
+            >
+              <span>تسجيل الدخول</span>
+            </Link>
+          )}
+        </div>
+      </aside>
+
+      {/* الإطار الفعلي للتطبيق - بعرض هاتف في الموبايل، كامل في الديسكتوب */}
       <div className="app-shell">
         {/* === HEADER (مخفي في الصفحات اللي عندها header مخصّصة) === */}
         {!hideAppShellHeader && (
