@@ -71,7 +71,8 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
       bundle_id: data.bundleId,
       
       // المختبر (structured)
-      partner_lab_id: null, // الـ static labs ليست في DB - سنُحدّث لاحقاً
+      partner_lab_id: null, // يُحلّ من الـ slug في الـ action (migration 47)
+      lab_slug: data.labId, // 🆕 V31: slug للبحث عن المختبر الحقيقي
       lab_name_snapshot: lab?.nameAr || 'لم يُحدّد',
       
       // بيانات المريض (structured)
