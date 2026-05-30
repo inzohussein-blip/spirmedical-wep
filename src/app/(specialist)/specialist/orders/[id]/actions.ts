@@ -2,7 +2,8 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { notifyTestResultsReady } from '@/lib/services/push-templates';
+import { notifyTestResultsReady, notifySpecialistAssigned } from '@/lib/services/push-templates';
+import { logAuditEvent } from '@/lib/audit';
 
 /**
  * قبول طلب: تعيين الاختصاصي للطلب
@@ -15,7 +16,7 @@ export async function acceptOrder(orderId: string) {
   // تحقق أن الاختصاصي معتمد ونوعه يطابق
   const { data: profile } = await supabase
     .from('users')
-    .select('specialist_type, approval_status, role')
+    .select('specialist_type, approval_status, role, full_name')
     .eq('id', user.id)
     .single();
 
@@ -27,8 +28,8 @@ export async function acceptOrder(orderId: string) {
     return { ok: false, error: 'نوع الاختصاص غير محدّد' };
   }
 
-  // تحديث الطلب
-  const { error } = await supabase
+  // تحديث الطلب + استرجاع بياناته (للإشعار)
+  const { data: updated, error } = await supabase
     .from('appointments')
     .update({
       assigned_specialist_id: user.id,
@@ -36,13 +37,38 @@ export async function acceptOrder(orderId: string) {
     } as never)
     .eq('id', orderId)
     .eq('required_specialist_type', profile.specialist_type)
-    .is('assigned_specialist_id', null);
+    .is('assigned_specialist_id', null)
+    .select('id, user_id, service_type, scheduled_at')
+    .maybeSingle();
 
   if (error) return { ok: false, error: error.message };
+
+  // 🆕 V31: لو لم يُحدَّث أي صف، فالطلب مأخوذ مسبقاً أو لا يطابق النوع
+  if (!updated) {
+    return { ok: false, error: 'الطلب لم يَعُد متاحاً (قد يكون مأخوذاً)' };
+  }
+
+  // 🆕 V31: إشعار المراجع بأنّ مختصاً قَبِل طلبه (best-effort)
+  const order = updated as { id: string; user_id: string; service_type: string; scheduled_at: string };
+  notifySpecialistAssigned(order.user_id, {
+    orderId: order.id,
+    specialistName: profile.full_name ?? 'المختصّ',
+    serviceName: order.service_type,
+  }).catch(() => null);
+
+  // 🆕 V31: Audit log
+  logAuditEvent({
+    user_id: user.id,
+    action: 'order.accept',
+    entity_type: 'appointments',
+    entity_id: order.id,
+    metadata: { specialist_type: profile.specialist_type },
+  }).catch(() => null);
 
   revalidatePath(`/specialist/orders/${orderId}`);
   revalidatePath('/specialist/orders');
   revalidatePath('/specialist');
+  revalidatePath('/appointments');
   return { ok: true };
 }
 
@@ -62,7 +88,16 @@ export async function startOrder(orderId: string) {
 
   if (error) return { ok: false, error: error.message };
 
+  // 🆕 V31: audit + تحديث صفحة المراجع أيضاً
+  logAuditEvent({
+    user_id: user.id,
+    action: 'order.start',
+    entity_type: 'appointments',
+    entity_id: orderId,
+  }).catch(() => null);
+
   revalidatePath(`/specialist/orders/${orderId}`);
+  revalidatePath('/appointments');
   return { ok: true };
 }
 
