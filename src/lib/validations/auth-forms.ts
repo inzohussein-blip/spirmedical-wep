@@ -196,3 +196,43 @@ export const genderLabels: Record<string, string> = {
   male: 'ذكر',
   female: 'أنثى',
 };
+
+// ============================================================
+// 🔧 V30: Specialization → DB specialist_type mapping
+// ============================================================
+// الـ DB constraint يقبل: 'lab_analyst', 'nurse', 'doctor', 'pharmacist',
+//                         'physio', 'psychologist', 'nutritionist'
+// لكن الـ UI يستخدم: 'doctor', 'nurse', 'analyst', 'pharmacist',
+//                    'physiotherapist', 'dentist', 'lab_tech', 'radiologist', 'other'
+//
+// هذه الدالة تُحوّل بينهما.
+export type DbSpecialistType =
+  | 'lab_analyst'
+  | 'nurse'
+  | 'doctor'
+  | 'pharmacist'
+  | 'physio'
+  | 'psychologist'
+  | 'nutritionist';
+
+export function mapSpecializationToDbType(
+  specialization: string
+): DbSpecialistType {
+  switch (specialization) {
+    case 'analyst':
+    case 'lab_tech':
+      return 'lab_analyst';
+    case 'nurse':
+      return 'nurse';
+    case 'pharmacist':
+      return 'pharmacist';
+    case 'physiotherapist':
+      return 'physio';
+    case 'dentist':
+    case 'radiologist':
+    case 'doctor':
+    case 'other':
+    default:
+      return 'doctor';
+  }
+}
