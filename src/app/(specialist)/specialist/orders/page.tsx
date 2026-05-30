@@ -39,6 +39,8 @@ export default async function SpecialistOrdersPage({
     .eq('id', user.id)
     .single();
 
+  // 🔧 V30: تنبيه واضح إذا الحساب غير مكتمل (specialist_type ناقص)
+  const profileIncomplete = !profile?.specialist_type;
   const specialistType = (profile?.specialist_type ?? 'doctor') as SpecialistType;
   const meta = SPECIALIST_META[specialistType] ?? SPECIALIST_META.doctor;
   const filter = searchParams.filter ?? 'all';
@@ -88,6 +90,34 @@ export default async function SpecialistOrdersPage({
         <p className="scr-page-subtitle">
           {meta.icon} {meta.label}
         </p>
+
+        {/* 🔧 V30: تنبيه إذا الحساب غير مكتمل */}
+        {profileIncomplete && (
+          <div
+            style={{
+              marginTop: 12,
+              padding: '12px 14px',
+              background: '#FAEEDA',
+              border: '1px solid #E8C77A',
+              borderRadius: 12,
+              fontSize: 13,
+              color: '#633806',
+              display: 'flex',
+              gap: 10,
+              alignItems: 'flex-start',
+            }}
+          >
+            <span style={{ fontSize: 18, flexShrink: 0 }}>⚠️</span>
+            <div>
+              <div style={{ fontWeight: 700, marginBottom: 4 }}>
+                ملفك غير مكتمل
+              </div>
+              <div>
+                لم يُحدَّد اختصاصك في النظام. تواصل مع الدعم لإكمال البيانات حتى تتمكّن من رؤية الطلبات المناسبة لك.
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* فلاتر */}
         <div className="scr-pills" style={{ marginTop: 12 }}>
