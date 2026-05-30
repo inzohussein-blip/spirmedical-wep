@@ -1195,20 +1195,48 @@
   background: var(--paper);
 }
 
-/* الديسكتوب: خلفية خضراء حول الشاشة */
-@media (min-width: 768px) {
+/* ═════════════════════════════════════════════════════════════════
+   🖥️ V30: Desktop Mode (≥1024px)
+   ═════════════════════════════════════════════════════════════════
+   فوق 1024px نتحول من "phone-frame" إلى تطبيق ديسكتوب كامل
+   مع sidebar جانبي والـ bottom nav يختفي.
+   
+   المساحات:
+     • Sidebar:  240px (يمين في RTL)
+     • Content:  بقية المساحة (max-width: 1200px للقراءة المريحة)
+   ═════════════════════════════════════════════════════════════════ */
+
+/* Tablet (768px–1023px): يبقى phone-frame مع خلفية خضراء */
+@media (min-width: 768px) and (max-width: 1023.98px) {
   .app-viewport {
     background: linear-gradient(135deg, #073B30 0%, #0E5C4D 50%, #134A3F 100%);
     padding: 0;
   }
+  .app-shell {
+    width: 480px;
+    max-width: 480px;
+    box-shadow: 0 0 60px -20px rgba(0, 0, 0, 0.3);
+  }
 }
 
-/* الديسكتوب: عرض هاتف ثابت 420px */
-@media (min-width: 768px) {
+/* Desktop (≥1024px): تطبيق كامل العرض */
+@media (min-width: 1024px) {
+  .app-viewport {
+    background: var(--paper);
+    justify-content: flex-start;
+  }
   .app-shell {
-    width: 420px;
-    max-width: 420px;
-    box-shadow: 0 0 60px -20px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 100%;
+    box-shadow: none;
+    flex-direction: row;
+  }
+  /* main content: max 1200px للقراءة المريحة */
+  .app-main {
+    max-width: 1200px;
+    margin-inline: auto;
+    width: 100%;
+    flex: 1;
   }
 }
 
@@ -2856,7 +2884,7 @@ html {
    ════════════════════════════════════════════════════════════════════ */
 
 /* ─────────────────────────────────────────────────────────
-   1. APP SHELL — Phone-only frame (clean, no inner scroll)
+   1. APP SHELL — V30 Responsive (Mobile + Tablet + Desktop)
    ───────────────────────────────────────────────────────── */
 .app-viewport {
   min-height: 100vh;
@@ -2866,7 +2894,8 @@ html {
   background: var(--paper);
 }
 
-@media (min-width: 768px) {
+/* Tablet (768px–1023px): phone-frame مع خلفية خضراء */
+@media (min-width: 768px) and (max-width: 1023.98px) {
   .app-viewport {
     background: linear-gradient(135deg, #073B30 0%, #0E5C4D 50%, #134A3F 100%);
     padding: 0;
@@ -2881,13 +2910,24 @@ html {
     pointer-events: none;
     z-index: 0;
   }
+  .app-shell {
+    width: 480px;
+    max-width: 480px;
+    box-shadow: 0 0 60px -20px rgba(0, 0, 0, 0.3);
+  }
 }
 
-@media (min-width: 768px) {
+/* Desktop (≥1024px): full-width layout */
+@media (min-width: 1024px) {
+  .app-viewport {
+    background: var(--paper);
+    justify-content: flex-start;
+  }
   .app-shell {
-    width: 420px;
-    max-width: 420px;
-    box-shadow: 0 0 60px -20px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 100%;
+    box-shadow: none;
+    flex-direction: row;
   }
 }
 
