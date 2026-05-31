@@ -73,8 +73,9 @@ export default function InstallAppButton() {
         toast.error('فشل التثبيت');
       }
     } else {
-      // لا يوجد prompt - ربما المتصفّح غير مدعوم
-      toast.error('التثبيت غير متاح في هذا المتصفّح');
+      // لا يوجد prompt جاهز — قد يكون التطبيق مُثبّتاً أو المتصفّح يحتاج
+      // التثبيت اليدوي. نعرض تعليمات بدل رسالة خطأ محبطة.
+      setShowIOSInstructions(true);
     }
   };
 
@@ -181,18 +182,21 @@ export default function InstallAppButton() {
             }}
           >
             <h3 style={{ fontSize: 16, fontWeight: 900, marginBottom: 12 }}>
-              📱 تثبيت على iPhone
+              📱 {isIOSDevice() ? 'تثبيت على iPhone / iPad' : 'تثبيت التطبيق'}
             </h3>
-            <ol style={{
-              fontSize: 13,
-              lineHeight: 1.9,
-              color: 'var(--ink-2)',
-              paddingInlineStart: 18,
-            }}>
-              <li>اضغط زر <strong>المشاركة</strong> ⎙ في Safari</li>
-              <li>مرّر للأسفل واختر <strong>إضافة إلى الشاشة الرئيسية</strong> ✚</li>
-              <li>اضغط <strong>إضافة</strong> 🎉</li>
-            </ol>
+            {isIOSDevice() ? (
+              <ol style={{ fontSize: 13, lineHeight: 1.9, color: 'var(--ink-2)', paddingInlineStart: 18 }}>
+                <li>اضغط زر <strong>المشاركة</strong> ⎙ في Safari</li>
+                <li>مرّر للأسفل واختر <strong>إضافة إلى الشاشة الرئيسية</strong> ✚</li>
+                <li>اضغط <strong>إضافة</strong> 🎉</li>
+              </ol>
+            ) : (
+              <ol style={{ fontSize: 13, lineHeight: 1.9, color: 'var(--ink-2)', paddingInlineStart: 18 }}>
+                <li>افتح قائمة المتصفّح <strong>⋮</strong> (أعلى الزاوية)</li>
+                <li>اختر <strong>«تثبيت التطبيق»</strong> أو <strong>«Add to Home screen»</strong></li>
+                <li>أكّد التثبيت 🎉</li>
+              </ol>
+            )}
             <button
               type="button"
               onClick={() => setShowIOSInstructions(false)}
