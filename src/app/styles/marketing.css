@@ -4411,3 +4411,56 @@ html {
 .mkt-screen button {
   -webkit-tap-highlight-color: transparent;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   📱 V32 FIX: Responsive الموقع على الهاتف
+   ═══════════════════════════════════════════════════════════════════
+   السبب الجذري: القواعد الأساسية (hero-grid: 1.1fr 1fr, nav-links: none)
+   في marketing.css كانت تتجاوز media queries في shared.css بسبب ترتيب
+   التحميل (marketing بعد shared). الحلّ: media queries في نهاية نفس الملف
+   لتفوز بترتيب المصدر.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* 🖥️ الحاسوب: أظهر روابط الـ nav */
+@media (min-width: 1024px) {
+  .landing-nav-links { display: flex !important; }
+}
+
+/* 📱 التابلت وأصغر: hero عمود واحد */
+@media (max-width: 1023px) {
+  .landing-hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+  .landing-hero-visual { display: none !important; }
+  .landing-nav-links { display: none !important; }
+}
+
+/* 📱 الموبايل: تكييف كامل */
+@media (max-width: 768px) {
+  .landing-hero-grid { gap: 24px !important; }
+  .landing-services-grid { grid-template-columns: 1fr !important; }
+  .landing-features-grid { grid-template-columns: 1fr !important; }
+  .landing-doctors-grid { grid-template-columns: 1fr !important; }
+  .landing-testimonials-grid { grid-template-columns: 1fr !important; }
+  .landing-blog-grid { grid-template-columns: 1fr !important; }
+  .landing-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .landing-cities-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .landing-coverage-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+  .landing-footer-grid { grid-template-columns: 1fr 1fr !important; gap: 24px !important; }
+  .landing-install-card { flex-direction: column !important; }
+  .landing-install-visual { display: none !important; }
+  .landing-wrap { padding-left: 18px !important; padding-right: 18px !important; }
+  .landing-nav-inner { padding-left: 16px !important; padding-right: 16px !important; }
+  /* أخفِ روابط nav المنفصلة، أظهر زر القائمة */
+  .landing-nav-links { display: none !important; }
+}
+
+/* 📱 الموبايل الصغير */
+@media (max-width: 480px) {
+  .landing-stats-grid { grid-template-columns: 1fr 1fr !important; }
+  .landing-cities-grid { grid-template-columns: 1fr 1fr !important; }
+  .landing-footer-grid { grid-template-columns: 1fr !important; }
+  .landing-h1 { font-size: clamp(26px, 8vw, 36px) !important; }
+  .landing-h2 { font-size: clamp(22px, 6vw, 30px) !important; }
+}
