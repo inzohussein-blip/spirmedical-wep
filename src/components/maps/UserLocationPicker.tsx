@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { MapPin, Crosshair, Loader2, Check, Info } from 'lucide-react';
 import type { Map as LeafletMap, Marker as LeafletMarker } from 'leaflet';
 import { buildMarkerSvg } from '@/lib/maps/markers';
+import { reverseGeocode } from '@/lib/services/geocoding';
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -71,6 +72,34 @@ export default function UserLocationPicker({
   const [address, setAddress] = useState(initialLocation?.address || '');
   const [locating, setLocating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // 🆕 V31: reverse geocoding (إحداثيات → عنوان تلقائياً)
+  const [geocoding, setGeocoding] = useState(false);
+
+  // 🆕 V31: يملأ المحافظة + العنوان تلقائياً من الإحداثيات
+  async function fillFromCoords(lat: number, lng: number) {
+    setGeocoding(true);
+    try {
+      const result = await reverseGeocode(lat, lng);
+      if (result) {
+        // طابِق المحافظة مع قائمتنا (Nominatim قد يُرجع صيغة مختلفة)
+        if (result.governorate) {
+          const matched = GOVERNORATES.find(
+            (g) => result.governorate?.includes(g) || g.includes(result.governorate ?? '')
+          );
+          if (matched) setGovernorate(matched);
+        }
+        // املأ العنوان فقط لو فارغ (لا نطمس ما كتبه المستخدم)
+        if (!address.trim()) {
+          const parts = [result.road, result.suburb, result.city].filter(Boolean);
+          if (parts.length > 0) setAddress(parts.join(' · '));
+        }
+      }
+    } catch {
+      // fire-and-forget — لا نُفشل تحديد الموقع لو فشل العنوان
+    } finally {
+      setGeocoding(false);
+    }
+  }
 
   // تهيئة الخريطة
   useEffect(() => {
@@ -104,6 +133,7 @@ export default function UserLocationPicker({
         const newCoords = { lat: e.latlng.lat, lng: e.latlng.lng };
         setCoords(newCoords);
         updateMarker(L, newCoords);
+        void fillFromCoords(newCoords.lat, newCoords.lng);
       });
 
       mapRef.current = map;
@@ -172,6 +202,8 @@ export default function UserLocationPicker({
         await updateMarker(L, newCoords);
         mapRef.current?.setView([newCoords.lat, newCoords.lng], 16);
         setLocating(false);
+        // 🆕 V31: املأ العنوان + المحافظة تلقائياً من GPS
+        void fillFromCoords(newCoords.lat, newCoords.lng);
       },
       (err) => {
         setLocating(false);
@@ -226,8 +258,17 @@ export default function UserLocationPicker({
       {/* Status */}
       {coords && (
         <div className="user-location-status">
-          <Check size={14} aria-hidden style={{ color: '#0F6E56' }} />
-          الموقع محدّد
+          {geocoding ? (
+            <>
+              <Loader2 size={14} aria-hidden style={{ animation: 'spin 1s linear infinite', color: '#185FA5' }} />
+              جارٍ تحديد العنوان...
+            </>
+          ) : (
+            <>
+              <Check size={14} aria-hidden style={{ color: '#0F6E56' }} />
+              الموقع محدّد
+            </>
+          )}
         </div>
       )}
 
