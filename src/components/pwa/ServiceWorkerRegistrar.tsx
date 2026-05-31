@@ -1,33 +1,32 @@
 'use client';
 
 import { useEffect } from 'react';
+import { initInstallPromptCapture } from '@/lib/pwa';
 
 /**
  * ════════════════════════════════════════════════════════════════════
- * 🛠️ ServiceWorkerRegistrar (V31)
+ * 🛠️ ServiceWorkerRegistrar (V31/V32)
  * ════════════════════════════════════════════════════════════════════
  *
- * يُسجّل /sw.js عند تحميل الموقع.
- *
- * لماذا هذا مهم:
- *   - بدون Service Worker مُسجّل، المتصفّح لا يُطلق حدث
- *     `beforeinstallprompt` → زر "تثبيت التطبيق" لا يعمل أبداً.
- *   - هذا كان السبب الجذري لعدم عمل خاصية التثبيت.
- *
- * يُسجّل فقط في الإنتاج (أو HTTPS/localhost) ويتجاهل الأخطاء بهدوء.
+ * 1. يُسجّل /sw.js (مطلوب لإطلاق beforeinstallprompt → زر التثبيت)
+ * 2. يُهيّئ الالتقاط العالمي للحدث beforeinstallprompt مبكّراً
+ *    (قبل أن تُركّب مكوّنات الزر، لأنّ الحدث يُطلق مرّة واحدة فقط).
  * ════════════════════════════════════════════════════════════════════
  */
 export default function ServiceWorkerRegistrar() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
+
+    // 🆕 V32: ابدأ التقاط حدث التثبيت فوراً (قبل أي مكوّن زر)
+    initInstallPromptCapture();
+
     if (!('serviceWorker' in navigator)) return;
 
-    // نُسجّل بعد تحميل الصفحة (لا نُعطّل الـ initial render)
     const register = () => {
       navigator.serviceWorker
         .register('/sw.js', { scope: '/' })
         .catch(() => {
-          // فشل التسجيل (مثلاً في بيئة غير HTTPS) — نتجاهل بهدوء
+          // فشل التسجيل (مثلاً بيئة غير HTTPS) — نتجاهل بهدوء
         });
     };
 
