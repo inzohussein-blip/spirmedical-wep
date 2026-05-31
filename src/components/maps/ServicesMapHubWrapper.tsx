@@ -22,7 +22,7 @@ const ServicesMapHub = dynamic(
     loading: () => (
       <div
         style={{
-          height: 500,
+          height: 'clamp(300px, 50vh, 500px)',
           background: '#E8EEF1',
           borderRadius: 12,
           display: 'flex',
