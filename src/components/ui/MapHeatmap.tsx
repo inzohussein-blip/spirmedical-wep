@@ -240,7 +240,7 @@ export default function MapHeatmap({
         ref={mapContainerRef}
         style={{
           width: '100%',
-          height: `${height}px`,
+          height: `clamp(300px, 50vh, ${height}px)`,
           borderRadius: 12,
           overflow: 'hidden',
           border: '1px solid var(--line)',
