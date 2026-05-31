@@ -37,6 +37,7 @@ export default function LandingCoverageMapInner({
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -137,10 +138,25 @@ export default function LandingCoverageMapInner({
       map.fitBounds(bounds, { padding: [40, 40], maxZoom: 7 });
 
       mapRef.current = map;
+
+      // 🔧 V31 FIX: إعادة حساب أبعاد الخريطة بعد الرسم
+      const fixSize = () => { if (mapRef.current) mapRef.current.invalidateSize(); };
+      setTimeout(fixSize, 0);
+      setTimeout(fixSize, 150);
+      setTimeout(fixSize, 400);
+      requestAnimationFrame(fixSize);
+      if (typeof ResizeObserver !== 'undefined' && containerRef.current) {
+        resizeObserverRef.current = new ResizeObserver(() => fixSize());
+        resizeObserverRef.current.observe(containerRef.current);
+      }
     })();
 
     return () => {
       cancelled = true;
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        resizeObserverRef.current = null;
+      }
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
