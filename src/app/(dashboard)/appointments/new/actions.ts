@@ -484,6 +484,20 @@ export async function createBloodDrawOrder(input: CreateBloodDrawInput) {
     return { success: false, error: 'يجب إدخال عنوان مفصّل' };
   }
 
+  // 🔧 V32 FIX: تطبيع scheduled_at لصيغة ISO كاملة (UTC مع Z).
+  // المشكلة: BloodDrawFlow يبني "2026-06-01T10:00:00" (بلا timezone)،
+  // والفلتر في صفحة الطلبات يقارن مع now() بـ UTC → الطلب قد لا يظهر
+  // في تبويب "القادمة" بسبب اختلاف التوقيت. نُحوّله لـ ISO صريح.
+  let normalizedScheduledAt = input.scheduled_at;
+  try {
+    const d = new Date(input.scheduled_at);
+    if (!isNaN(d.getTime())) {
+      normalizedScheduledAt = d.toISOString();
+    }
+  } catch {
+    // إبقاء القيمة الأصلية لو فشل التحويل
+  }
+
   try {
     // ─── 1. أنشئ lab_order أولاً ───
     // ملاحظة: lab_orders, lab_results, partner_labs ستُضاف لـ Database types
@@ -539,7 +553,7 @@ export async function createBloodDrawOrder(input: CreateBloodDrawInput) {
       user_id: user.id,
       service_type: 'سحب دم + تحاليل',
       service_id: 'blood-draw',
-      scheduled_at: input.scheduled_at,
+      scheduled_at: normalizedScheduledAt,
       address: input.address,
       notes_encrypted: encryptedNotes,
       estimated_price: input.total_price,
