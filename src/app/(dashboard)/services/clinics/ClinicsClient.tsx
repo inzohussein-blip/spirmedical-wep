@@ -26,8 +26,9 @@ interface Doctor {
   rating_avg: number;
   rating_count: number;
   is_verified: boolean;
-  clinic_latitude?: number | null;
-  clinic_longitude?: number | null;
+  // 🔧 V31: أسماء الأعمدة الفعلية في جدول doctors (clinic_lat/clinic_lng)
+  clinic_lat?: number | null;
+  clinic_lng?: number | null;
 }
 
 interface Props {
@@ -305,11 +306,11 @@ export default function ClinicsClient({ doctors }: Props) {
                         اتصال
                       </a>
                     )}
-                    {d.clinic_latitude && d.clinic_longitude && (
+                    {d.clinic_lat && d.clinic_lng && (
                       <div onClick={(e) => e.stopPropagation()}>
                         <ExternalMapButton
-                          lat={d.clinic_latitude}
-                          lng={d.clinic_longitude}
+                          lat={d.clinic_lat}
+                          lng={d.clinic_lng}
                           label={d.clinic_name || d.full_name}
                           description={d.clinic_address || d.clinic_city || ''}
                           variant="compact"
