@@ -51,6 +51,7 @@ export default function MapHeatmap({
 }: MapHeatmapProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
   const heatLayerRef = useRef<L.Layer | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -88,6 +89,17 @@ export default function MapHeatmap({
 
         mapRef.current = map;
         setIsReady(true);
+
+        // 🔧 V31 FIX: إعادة حساب أبعاد الخريطة بعد الرسم
+        const fixSize = () => { if (mapRef.current) mapRef.current.invalidateSize(); };
+        setTimeout(fixSize, 0);
+        setTimeout(fixSize, 150);
+        setTimeout(fixSize, 400);
+        requestAnimationFrame(fixSize);
+        if (typeof ResizeObserver !== 'undefined' && mapContainerRef.current) {
+          resizeObserverRef.current = new ResizeObserver(() => fixSize());
+          resizeObserverRef.current.observe(mapContainerRef.current);
+        }
       } catch (err) {
         if (!cancelled) {
           setError('فشل تحميل الخريطة');
@@ -101,6 +113,10 @@ export default function MapHeatmap({
 
     return () => {
       cancelled = true;
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        resizeObserverRef.current = null;
+      }
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
