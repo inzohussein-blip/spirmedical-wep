@@ -197,7 +197,7 @@ export default function AdminLocationPicker({
           border: '1px solid #E8EAED',
         }}
       >
-        <div ref={mapContainerRef} style={{ width: '100%', height: '100%', background: '#E8EEF1' }} />
+        <div ref={mapContainerRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', background: '#E8EEF1' }} />
 
         <button
           type="button"
