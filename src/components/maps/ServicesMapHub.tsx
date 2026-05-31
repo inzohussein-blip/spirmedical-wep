@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { MapPin, Filter, Crosshair, ChevronUp, X } from 'lucide-react';
 import type { Map as LeafletMap, Marker as LeafletMarker, MarkerClusterGroup } from 'leaflet';
 import { MARKER_STYLES, buildMarkerSvg, buildClusterSvg, type ServiceMarkerType } from '@/lib/maps/markers';
+import { distanceKm } from '@/types/location';
 import ExternalMapButton from './ExternalMapButton';
 
 /**
@@ -83,6 +84,20 @@ export default function ServicesMapHub({
     if (selectedGovernorate !== 'all' && loc.governorate !== selectedGovernorate) return false;
     return true;
   });
+
+  // 🆕 V31: أقرب 3 مواقع لموقع المستخدم (ضمن الفلتر الحالي)
+  const nearestLocations = userLocation
+    ? [...filteredLocations]
+        .map((loc) => ({
+          loc,
+          dist: distanceKm(
+            { lat: userLocation.lat, lng: userLocation.lng },
+            { lat: loc.latitude, lng: loc.longitude }
+          ),
+        }))
+        .sort((a, b) => a.dist - b.dist)
+        .slice(0, 3)
+    : [];
 
   // تهيئة الخريطة
   useEffect(() => {
@@ -230,6 +245,12 @@ export default function ServicesMapHub({
   const handleZoomIn = () => mapRef.current?.zoomIn();
   const handleZoomOut = () => mapRef.current?.zoomOut();
 
+  // 🆕 V31: ركّز الخريطة على موقع محدّد (من شريط "الأقرب إليك")
+  const focusLocation = (loc: ServiceLocation) => {
+    setSelectedLocation(loc);
+    mapRef.current?.setView([loc.latitude, loc.longitude], 15);
+  };
+
   return (
     <div className="services-map-hub" style={{ position: 'relative' }}>
       {/* Filters row */}
@@ -266,6 +287,61 @@ export default function ServicesMapHub({
           <strong>{filteredLocations.length}</strong> موقع
         </div>
       </div>
+
+      {/* 🆕 V31: شريط "الأقرب إليك" — يظهر بعد تحديد الموقع */}
+      {nearestLocations.length > 0 && (
+        <div
+          style={{
+            display: 'flex',
+            gap: 8,
+            alignItems: 'center',
+            overflowX: 'auto',
+            padding: '4px 0 10px',
+            WebkitOverflowScrolling: 'touch',
+          }}
+        >
+          <span
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              color: '#185FA5',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+            }}
+          >
+            📍 الأقرب إليك:
+          </span>
+          {nearestLocations.map(({ loc, dist }) => (
+            <button
+              key={loc.id}
+              type="button"
+              onClick={() => focusLocation(loc)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '6px 12px',
+                background: '#E8F0FE',
+                border: '1px solid #B4D2F5',
+                borderRadius: 100,
+                fontSize: 12,
+                color: '#0C447C',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                fontWeight: 600,
+              }}
+            >
+              <span style={{ maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {loc.name}
+              </span>
+              <span style={{ opacity: 0.7, fontSize: 11 }}>
+                {dist < 1 ? `${Math.round(dist * 1000)} م` : `${dist.toFixed(1)} كم`}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Map container */}
       <div style={{ position: 'relative', height, borderRadius: 12, overflow: 'hidden' }}>
