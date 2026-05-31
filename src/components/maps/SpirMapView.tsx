@@ -66,6 +66,7 @@ export default function SpirMapView({
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const markersRef = useRef<LeafletMarker[]>([]);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
   const [selected, setSelected] = useState<MapMarker | null>(null);
 
@@ -109,6 +110,23 @@ export default function SpirMapView({
 
       mapRef.current = map;
 
+      // 🔧 V31 FIX: إجبار Leaflet على إعادة حساب الأبعاد بعد رسم الـ DOM.
+      // بدون هذا، الخريطة تُحمّل tiles جزئية وتنزاح (المشكلة المعروفة).
+      const fixSize = () => {
+        if (mapRef.current) mapRef.current.invalidateSize();
+      };
+      // عدّة محاولات لتغطية animations / flex layout / dynamic import
+      setTimeout(fixSize, 0);
+      setTimeout(fixSize, 150);
+      setTimeout(fixSize, 400);
+      requestAnimationFrame(fixSize);
+
+      // ResizeObserver: يُصلح الحجم عند أيّ تغيير في أبعاد الـ container
+      if (typeof ResizeObserver !== 'undefined' && mapContainerRef.current) {
+        resizeObserverRef.current = new ResizeObserver(() => fixSize());
+        resizeObserverRef.current.observe(mapContainerRef.current);
+      }
+
       // Add markers
       allMarkers.forEach((m) => {
         const divIcon = L.divIcon({
@@ -138,6 +156,10 @@ export default function SpirMapView({
 
     return () => {
       cancelled = true;
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        resizeObserverRef.current = null;
+      }
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
