@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { isAdminRole } from '@/lib/admin-types';
 import FreeMedicalMapWrapper from '@/components/maps/SpirMapViewWrapper';
 import { Card, EmptyState, StatusBadge } from '@/components/ui';
+import AutoRefresh from '@/components/admin/AutoRefresh';
 
 export const dynamic = 'force-dynamic';
 
@@ -110,9 +111,11 @@ export default async function LiveOpsPage() {
         <h1 style={{ fontSize: 22, fontWeight: 800, margin: '8px 0 4px' }}>
           🎯 العمليات المباشرة
         </h1>
-        <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: 0 }}>
-          الطلبات النشطة والأخصائيين على الخريطة (تحديث تلقائي عند فتح الصفحة)
+        <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '0 0 12px' }}>
+          الطلبات النشطة والأخصائيين على الخريطة
         </p>
+        {/* 🆕 V31: تحديث تلقائي حيّ كل 30 ثانية */}
+        <AutoRefresh intervalSeconds={30} label="العمليات المباشرة" />
       </div>
 
       {/* الإحصاءات */}
