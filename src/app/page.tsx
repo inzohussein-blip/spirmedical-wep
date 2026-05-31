@@ -6,6 +6,7 @@ import LandingFAQ from '@/components/landing/FAQ';
 import LandingStats from '@/components/landing/Stats';
 import LandingCoverageMap from '@/components/landing/LandingCoverageMap';
 import LandingScrollEffects from '@/components/landing/LandingScrollEffects';
+import LandingInstallButton from '@/components/landing/LandingInstallButton';
 import { ARTICLES } from '@/lib/data/blog-articles';
 import { SITE_TYPE, getAppUrl } from '@/lib/site-config';
 
@@ -798,37 +799,6 @@ export default async function HomePage({
       </section>
 
       {/* ============ BLOG (جديد) ============ */}
-      <section className="landing-blog">
-        <div className="landing-wrap">
-          <div className="landing-section-head">
-            <span className="landing-eyebrow">المدوّنة</span>
-            <h2 className="landing-h2">
-              نصائح طبية
-              <br />
-              <span className="landing-italic">من خبرائنا</span>
-            </h2>
-          </div>
-
-          <div className="landing-blog-grid">
-            {BLOG_POSTS.map((post, i) => (
-              <article key={i} className="landing-blog-card">
-                <div className="landing-blog-icon">{post.icon}</div>
-                <div className="landing-blog-meta">
-                  <span className="landing-blog-category">{post.category}</span>
-                  <span className="landing-blog-date">{post.date}</span>
-                </div>
-                <h3 className="landing-blog-title">{post.title}</h3>
-                <p className="landing-blog-excerpt">{post.excerpt}</p>
-                <div className="landing-blog-footer">
-                  <span>📖 {post.readTime}</span>
-                  <span className="landing-blog-link">اقرأ ←</span>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ============ MAP COVERAGE SECTION ============ */}
       <section id="coverage-map" className="landing-coverage-map">
         <div className="landing-wrap">
@@ -922,13 +892,14 @@ export default async function HomePage({
                 <li>🏠 على شاشتك الرئيسية</li>
               </ul>
               <div className="landing-install-actions">
-                <Link href="/help/install" className="landing-install-btn-primary">
-                  كيف أُثبّته؟
+                <Link href="/app" className="landing-install-btn-primary">
+                  ادخل التطبيق ←
                 </Link>
-                <Link href="/app" className="landing-install-btn-secondary">
-                  جرّب الآن
+                <Link href="/help/install" className="landing-install-btn-secondary">
+                  كيف أُثبّته على الشاشة الرئيسية؟
                 </Link>
               </div>
+              <LandingInstallButton />
             </div>
             <div className="landing-install-visual">
               <div className="landing-install-phone">
