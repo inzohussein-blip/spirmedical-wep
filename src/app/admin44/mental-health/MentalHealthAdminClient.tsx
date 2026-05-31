@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { Plus, Edit, Trash2, CheckCircle2, XCircle, Search, Shield } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
 import { useConfirm } from '@/components/ui';
+import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWrapper';
 import {
   createMentalSpecialist,
   updateMentalSpecialist,
@@ -28,6 +29,10 @@ interface Specialist {
   online_session_price: number;
   clinic_session_price: number;
   session_duration_minutes: number;
+  // 🆕 V31: إحداثيات العيادة (للظهور على الخريطة)
+  latitude?: number | null;
+  longitude?: number | null;
+  address?: string | null;
   rating_avg: number;
   rating_count: number;
   total_sessions: number;
@@ -253,6 +258,20 @@ function SpecialistModal({ specialist, onClose }: { specialist: Specialist | nul
           <Field label="المدن (مفصولة بفاصلة)">
             <input type="text" value={citiesText} onChange={(e) => setCitiesText(e.target.value)} placeholder="بغداد, البصرة" style={inputStyle} />
           </Field>
+
+          {/* 🆕 V31: موقع العيادة على الخريطة (اختياري — للأطباء بعيادة ثابتة) */}
+          <div style={{ marginBottom: 4 }}>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6, color: '#2C2C2A' }}>
+              📍 موقع العيادة على الخريطة (اختياري)
+            </label>
+            <AdminLocationPickerWrapper
+              initialLat={form.latitude ?? null}
+              initialLng={form.longitude ?? null}
+              markerType="mental-health"
+              onChange={(la, ln) => setForm({ ...form, latitude: la, longitude: ln })}
+              onAddressDetected={(addr) => { if (!form.address) setForm((f) => ({ ...f, address: addr })); }}
+            />
+          </div>
 
           <div style={{ background: 'var(--paper-3)', padding: 12, borderRadius: 8 }}>
             <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>💰 الأسعار (د.ع)</div>
