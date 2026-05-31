@@ -240,7 +240,7 @@ export default function UserLocationPicker({
 
       {/* Map */}
       <div style={{ position: 'relative', height, borderRadius: 12, overflow: 'hidden', marginBottom: 12 }}>
-        <div ref={mapContainerRef} style={{ width: '100%', height: '100%', background: '#E8EEF1' }} />
+        <div ref={mapContainerRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', background: '#E8EEF1' }} />
 
         {/* "موقعي الحالي" button */}
         <button
