@@ -6,7 +6,6 @@ import LandingFAQ from '@/components/landing/FAQ';
 import LandingStats from '@/components/landing/Stats';
 import LandingCoverageMap from '@/components/landing/LandingCoverageMap';
 import LandingScrollEffects from '@/components/landing/LandingScrollEffects';
-import LandingInstallButton from '@/components/landing/LandingInstallButton';
 import { ARTICLES } from '@/lib/data/blog-articles';
 import { SITE_TYPE, getAppUrl } from '@/lib/site-config';
 
@@ -899,7 +898,6 @@ export default async function HomePage({
                   كيف أُثبّته على الشاشة الرئيسية؟
                 </Link>
               </div>
-              <LandingInstallButton />
             </div>
             <div className="landing-install-visual">
               <div className="landing-install-phone">
