@@ -261,6 +261,29 @@ export default async function AdminDashboard() {
         />
       </div>
 
+      {/* ─── V31: لوحة إدارة المواقع الموحّدة ─── */}
+      <Link
+        href="/admin44/locations"
+        style={{
+          display: 'flex', alignItems: 'center', gap: 16,
+          padding: '18px 20px', marginBottom: 24,
+          background: 'linear-gradient(135deg, #01875F, #073B30)',
+          borderRadius: 16, textDecoration: 'none', color: '#fff',
+          boxShadow: '0 4px 16px rgba(1,135,95,0.2)',
+        }}
+      >
+        <span style={{ fontSize: 36, flexShrink: 0 }}>🗺️</span>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 17, fontWeight: 800, marginBottom: 2 }}>
+            إدارة المواقع الموحّدة
+          </div>
+          <div style={{ fontSize: 13, opacity: 0.9 }}>
+            كل مقدّمي الخدمات على خريطة واحدة — أضف، أظهر، أخفِ، أو احذف أي موقع
+          </div>
+        </div>
+        <span style={{ fontSize: 20, opacity: 0.8 }}>←</span>
+      </Link>
+
       {/* ─── V25.21: Stats الخدمات الجديدة ─── */}
       <h2 style={{ fontSize: 16, fontWeight: 800, color: 'var(--ink)', margin: '24px 0 12px' }}>
         🆕 الخدمات الجديدة
