@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { Plus, Edit, Trash2, Star, CheckCircle2, XCircle, Search } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
 import { useConfirm } from '@/components/ui';
+import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWrapper';
 import {
   createDentalClinic,
   updateDentalClinic,
@@ -19,6 +20,8 @@ interface DentalClinic {
   city: string;
   district: string | null;
   address: string | null;
+  latitude: number | null;
+  longitude: number | null;
   phone: string | null;
   whatsapp: string | null;
   doctor_count: number;
@@ -322,6 +325,8 @@ function ClinicModal({ clinic, onClose }: { clinic: DentalClinic | null; onClose
         city: form.city!,
         district: form.district || null,
         address: form.address || null,
+        latitude: form.latitude ?? null,
+        longitude: form.longitude ?? null,
         phone: form.phone || null,
         whatsapp: form.whatsapp || null,
         doctor_count: form.doctor_count || 1,
@@ -420,6 +425,20 @@ function ClinicModal({ clinic, onClose }: { clinic: DentalClinic | null; onClose
               style={inputStyle}
             />
           </Field>
+
+          {/* 🆕 V31: اختيار موقع العيادة من الخريطة */}
+          <div style={{ marginBottom: 12 }}>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6, color: '#2C2C2A' }}>
+              📍 حدّد الموقع على الخريطة
+            </label>
+            <AdminLocationPickerWrapper
+              initialLat={form.latitude ?? null}
+              initialLng={form.longitude ?? null}
+              markerType="dental"
+              onChange={(la, ln) => setForm({ ...form, latitude: la, longitude: ln })}
+              onAddressDetected={(addr) => { if (!form.address) setForm((f) => ({ ...f, address: addr })); }}
+            />
+          </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             <Field label="هاتف">
