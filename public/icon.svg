@@ -1,4 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#0E5C4D"/>
-  <text x="32" y="44" font-family="Tajawal, system-ui, sans-serif" font-size="38" font-weight="900" fill="#FAF6EB" text-anchor="middle">س</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="spirGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0E7A66"/>
+      <stop offset="1" stop-color="#0A5446"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#spirGrad)"/>
+  <path d="M32 13c0 0 11 12.5 11 20.2C43 39.7 38.1 44 32 44s-11-4.3-11-10.8C21 25.5 32 13 32 13z" fill="#FAF6EB" opacity="0.96"/>
+  <path d="M32 26.5v11M26.5 32h11" stroke="#0E7A66" stroke-width="3.4" stroke-linecap="round"/>
+  <path d="M20 51h6l2.5-5 3.5 9 3-7 2 3h7" fill="none" stroke="#FAC775" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.92"/>
 </svg>
