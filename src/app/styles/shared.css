@@ -14,26 +14,37 @@
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════════════════
-   🔧 V31 FIX: قواعد container صريحة — تضمن أنّ كل خريطة تملأ مساحتها.
-   بدونها، إذا تأخّر تحميل leaflet.css من unpkg، يكون للخريطة ارتفاع 0.
+   🔧 V31 FIX (مُصحّح): قواعد Leaflet آمنة ومحدّدة.
+   
+   ❌ تجنّبنا: .leaflet-container { height: 100% !important } لأنّها تكسر
+      الخرائط (تتجاوز الارتفاعات الصريحة وتُسبّب تمدّداً عشوائياً).
+   ❌ تجنّبنا: .leaflet-tile { width: 256px } لأنّها تكسر الـ zoom.
+   
+   ✅ بدلاً من ذلك: نضمن فقط أنّ الـ container له خلفية أثناء التحميل
+      والخطّ صحيح. الأبعاد تأتي من الـ inline styles (height محدّد لكل خريطة)
+      ومن leaflet.css الأصلي.
    ═══════════════════════════════════════════════════════════════════ */
 .leaflet-container {
-  width: 100% !important;
-  height: 100% !important;
   background: #E8EEF1;
   font-family: 'Tajawal', system-ui, sans-serif;
-  z-index: 1;
+  /* يضمن ألا تتجاوز الخريطة عرض حاويتها (مهم في الـ 480px shell) */
+  max-width: 100%;
 }
-.leaflet-tile {
-  /* يمنع الخطوط الرفيعة بين الـ tiles */
-  width: 256px !important;
-  height: 256px !important;
+
+/* 🔧 V31: حاويات الخرائط — ارتفاع responsive ومتناسق.
+   كل خريطة تُلفّ في .spir-map-shell التي تتحكّم بالارتفاع حسب الشاشة. */
+.spir-map-shell {
+  position: relative;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
 }
-.leaflet-pane,
-.leaflet-tile-pane,
-.leaflet-overlay-pane,
-.leaflet-marker-pane {
-  z-index: auto;
+.spir-map-shell > .spir-map-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: #E8EEF1;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
