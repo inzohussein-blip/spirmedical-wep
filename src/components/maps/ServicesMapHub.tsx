@@ -360,10 +360,10 @@ export default function ServicesMapHub({
       )}
 
       {/* Map container */}
-      <div style={{ position: 'relative', height, borderRadius: 12, overflow: 'hidden' }}>
+      <div style={{ position: 'relative', height: `clamp(300px, 50vh, ${height}px)`, borderRadius: 12, overflow: 'hidden' }}>
         <div
           ref={mapContainerRef}
-          style={{ width: '100%', height: '100%', background: '#E8EEF1' }}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', background: '#E8EEF1' }}
         />
 
         {/* Floating controls */}
