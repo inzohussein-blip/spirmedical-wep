@@ -9,6 +9,7 @@ import {
 import { toast } from '@/components/ui/Toaster';
 import { useConfirm } from '@/components/ui';
 import { createHospital, updateHospital, deleteHospital, toggleHospitalActive } from './actions';
+import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWrapper';
 
 interface Hospital {
   id: string;
@@ -370,6 +371,20 @@ function HospitalModal({
         <Field label="العنوان الكامل">
           <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="شارع 62، قرب جامع..." style={inputStyle} />
         </Field>
+
+        {/* 🆕 V31: اختيار الموقع من الخريطة (يملأ الإحداثيات تلقائياً) */}
+        <div style={{ marginBottom: 12 }}>
+          <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6, color: '#2C2C2A' }}>
+            📍 حدّد الموقع على الخريطة
+          </label>
+          <AdminLocationPickerWrapper
+            initialLat={lat ? parseFloat(lat) : null}
+            initialLng={lng ? parseFloat(lng) : null}
+            markerType="hospital"
+            onChange={(la, ln) => { setLat(la.toFixed(6)); setLng(ln.toFixed(6)); }}
+            onAddressDetected={(addr) => { if (!address.trim()) setAddress(addr); }}
+          />
+        </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
           <Field label="خط العرض (latitude)">
