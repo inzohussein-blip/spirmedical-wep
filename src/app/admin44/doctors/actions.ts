@@ -31,6 +31,8 @@ interface DoctorInput {
   clinic_city: string | null;
   clinic_address: string | null;
   clinic_phone: string | null;
+  clinic_lat: number | null;
+  clinic_lng: number | null;
   bio: string | null;
   qualifications: string[];
   languages: string[];
