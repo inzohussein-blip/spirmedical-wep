@@ -65,6 +65,7 @@ export default function ServicesMapHub({
 }: Props) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
   const clusterGroupRef = useRef<MarkerClusterGroup | null>(null);
   const userMarkerRef = useRef<LeafletMarker | null>(null);
 
@@ -150,10 +151,25 @@ export default function ServicesMapHub({
       clusterGroupRef.current = clusterGroup;
 
       mapRef.current = map;
+
+      // 🔧 V31 FIX: إعادة حساب أبعاد الخريطة بعد الرسم (يمنع tiles الجزئية والانزياح)
+      const fixSize = () => { if (mapRef.current) mapRef.current.invalidateSize(); };
+      setTimeout(fixSize, 0);
+      setTimeout(fixSize, 150);
+      setTimeout(fixSize, 400);
+      requestAnimationFrame(fixSize);
+      if (typeof ResizeObserver !== 'undefined' && mapContainerRef.current) {
+        resizeObserverRef.current = new ResizeObserver(() => fixSize());
+        resizeObserverRef.current.observe(mapContainerRef.current);
+      }
     })();
 
     return () => {
       cancelled = true;
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        resizeObserverRef.current = null;
+      }
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
