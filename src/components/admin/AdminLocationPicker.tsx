@@ -52,6 +52,7 @@ export default function AdminLocationPicker({
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const markerRef = useRef<LeafletMarker | null>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
     initialLat != null && initialLng != null
@@ -131,10 +132,25 @@ export default function AdminLocationPicker({
 
       mapRef.current = map;
       if (coords) void placeMarker(L, coords);
+
+      // 🔧 V31 FIX: إعادة حساب أبعاد الخريطة بعد الرسم (داخل modal خصوصاً)
+      const fixSize = () => { if (mapRef.current) mapRef.current.invalidateSize(); };
+      setTimeout(fixSize, 0);
+      setTimeout(fixSize, 150);
+      setTimeout(fixSize, 400);
+      requestAnimationFrame(fixSize);
+      if (typeof ResizeObserver !== 'undefined' && mapContainerRef.current) {
+        resizeObserverRef.current = new ResizeObserver(() => fixSize());
+        resizeObserverRef.current.observe(mapContainerRef.current);
+      }
     })();
 
     return () => {
       cancelled = true;
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        resizeObserverRef.current = null;
+      }
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
