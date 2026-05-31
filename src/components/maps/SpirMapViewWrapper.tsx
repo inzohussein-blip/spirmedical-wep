@@ -10,7 +10,7 @@ const SpirMapView = dynamic(
     loading: () => (
       <div
         style={{
-          height: 400,
+          height: 'clamp(280px, 45vh, 400px)',
           background: '#E8EEF1',
           borderRadius: 12,
           display: 'flex',
