@@ -75,7 +75,11 @@ export default async function AppointmentsPage({ searchParams }: Props) {
   const { data: { user } } = await supabase.auth.getUser();
 
   const filter = searchParams.filter || 'all';
-  const now = new Date().toISOString();
+  // 🔧 V32 FIX: نستخدم بداية اليوم (وليس اللحظة الحالية) لفلتر "القادمة".
+  // المشكلة: طلب أُنشئ لوقت اليوم لكنه مضى بساعات كان يختفي من "القادمة".
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const upcomingFrom = startOfToday.toISOString();
 
   let query = supabase
     .from('appointments')
@@ -83,7 +87,7 @@ export default async function AppointmentsPage({ searchParams }: Props) {
     .eq('user_id', user!.id);
 
   if (filter === 'upcoming') {
-    query = query.in('status', ['pending', 'confirmed', 'in_progress']).gte('scheduled_at', now);
+    query = query.in('status', ['pending', 'confirmed', 'in_progress']).gte('scheduled_at', upcomingFrom);
   } else if (filter === 'completed') {
     query = query.eq('status', 'completed');
   } else if (filter === 'cancelled') {
