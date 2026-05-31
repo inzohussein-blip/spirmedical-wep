@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Download, X, Smartphone, Sparkles, CheckCircle2 } from 'lucide-react';
+import { getDeferredPrompt, onInstallPromptChange, triggerInstall } from '@/lib/pwa';
 
 /**
  * ═══════════════════════════════════════════════════════════════
@@ -82,15 +83,19 @@ export default function SmartInstallPrompt() {
       };
     }
 
-    // ─── Android/Desktop: استمع للـ beforeinstallprompt ───
-    const handler = (e: Event) => {
-      e.preventDefault();
-      const event = e as BeforeInstallPromptEvent;
-      setDeferredPrompt(event);
+    // ─── Android/Desktop: عبر النظام الموحّد (V32) ───
+    // نقرأ من النظام الموحّد بدل الاستماع المباشر (يمنع تضارب استهلاك الحدث)
+    const existing = getDeferredPrompt();
+    if (existing) {
+      setDeferredPrompt(existing);
       androidTimer = setTimeout(() => setShow(true), 3000);
-    };
-
-    window.addEventListener('beforeinstallprompt', handler);
+    }
+    const unsub = onInstallPromptChange((p) => {
+      setDeferredPrompt(p);
+      if (p) {
+        androidTimer = setTimeout(() => setShow(true), 3000);
+      }
+    });
 
     // App installed event
     const installedHandler = () => {
@@ -101,7 +106,7 @@ export default function SmartInstallPrompt() {
 
     // 🎯 V25.28: cleanup شامل
     return () => {
-      window.removeEventListener('beforeinstallprompt', handler);
+      unsub();
       window.removeEventListener('appinstalled', installedHandler);
       if (iosTimer) clearTimeout(iosTimer);
       if (androidTimer) clearTimeout(androidTimer);
@@ -117,10 +122,9 @@ export default function SmartInstallPrompt() {
     if (!deferredPrompt) return;
 
     try {
-      await deferredPrompt.prompt();
-      const choice = await deferredPrompt.userChoice;
+      const outcome = await triggerInstall();
 
-      if (choice.outcome === 'accepted') {
+      if (outcome === 'accepted') {
         localStorage.setItem(STORAGE_KEY_INSTALLED, 'true');
       } else {
         localStorage.setItem(STORAGE_KEY_DISMISSED, Date.now().toString());
