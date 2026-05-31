@@ -47,11 +47,14 @@
 
 .landing-logo-mark {
   width: 44px; height: 44px;
-  background: var(--btn-primary-bg); color: var(--paper-3);
+  /* 🆕 V31: الشعار الجديد (قطرة + علامة طبية + نبضة) */
+  background: url('/icon.svg') center / cover no-repeat;
   border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 22px; font-weight: 900;
+  /* نُخفي حرف "س" القديم — الشعار الآن في الصورة */
+  font-size: 0; color: transparent;
   box-shadow: 0 6px 16px -4px rgba(14,92,77,0.4);
+  flex-shrink: 0;
 }
 
 .landing-logo-text { display: flex; flex-direction: column; }
@@ -432,6 +435,9 @@
   padding: 16px;
   border: 1px solid var(--line);
   box-shadow: 0 4px 16px -6px rgba(15, 26, 28, 0.08);
+  /* 🔧 V32 FIX: يمنع الـ grid item من التمدّد بسبب عرض الخريطة الداخلية
+     (السبب الجذري لظهور الخريطة في صندوق عريض والـ tiles في الزاوية) */
+  min-width: 0;
 }
 
 .landing-coverage-cities {
@@ -440,6 +446,7 @@
   padding: 24px;
   border: 1px solid var(--line);
   box-shadow: 0 4px 16px -6px rgba(15, 26, 28, 0.08);
+  min-width: 0;
 }
 
 .landing-coverage-cities-title {
@@ -621,6 +628,34 @@
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+/* 🆕 V31: زر التثبيت المباشر (PWA install) */
+.landing-install-direct-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 14px 24px;
+  width: 100%;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 800;
+  font-family: inherit;
+  cursor: pointer;
+  background: linear-gradient(135deg, #B8540C, #9A4309);
+  color: #FAF6EB;
+  border: none;
+  box-shadow: 0 6px 18px -6px rgba(184, 84, 12, 0.5);
+  transition: all 0.15s;
+}
+.landing-install-direct-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -8px rgba(184, 84, 12, 0.6);
+}
+.landing-install-direct-btn:active {
+  transform: translateY(0);
 }
 
 .landing-install-btn-primary,
@@ -3605,11 +3640,13 @@ body.landing-nav-hidden .landing-nav {
 .landing-coverage-map-container {
   position: relative;
   width: 100%;
+  min-width: 0;
 }
 
 .landing-map-inner {
   position: relative;
   width: 100%;
+  min-width: 0;
   border-radius: 16px;
   overflow: hidden;
   background: #E8EEF1;
