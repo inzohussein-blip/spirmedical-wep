@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
 import { useConfirm } from '@/components/ui';
+import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWrapper';
 import {
   createDoctor, updateDoctor, deleteDoctor, toggleDoctorActive, verifyDoctor,
 } from './actions';
@@ -27,6 +28,8 @@ interface Doctor {
   clinic_city: string | null;
   clinic_address: string | null;
   clinic_phone: string | null;
+  clinic_lat: number | null;
+  clinic_lng: number | null;
   bio: string | null;
   languages: string[];
   rating_avg: number;
@@ -414,6 +417,9 @@ function DoctorModal({
   const [city, setCity] = useState(editing?.clinic_city ?? '');
   const [address, setAddress] = useState(editing?.clinic_address ?? '');
   const [phone, setPhone] = useState(editing?.clinic_phone ?? '');
+  // 🆕 V31: إحداثيات العيادة
+  const [clinicLat, setClinicLat] = useState<number | null>(editing?.clinic_lat ?? null);
+  const [clinicLng, setClinicLng] = useState<number | null>(editing?.clinic_lng ?? null);
   const [bio, setBio] = useState(editing?.bio ?? '');
   const [qualifications, setQualifications] = useState(editing?.qualifications?.join('\n') ?? '');
   const [languages, setLanguages] = useState(editing?.languages?.join(',') ?? 'ar');
@@ -441,6 +447,8 @@ function DoctorModal({
         clinic_city: city || null,
         clinic_address: address.trim() || null,
         clinic_phone: phone.trim() || null,
+        clinic_lat: clinicLat,
+        clinic_lng: clinicLng,
         bio: bio.trim() || null,
         qualifications: qualifications.split('\n').map(s => s.trim()).filter(Boolean),
         languages: languages.split(',').map(s => s.trim()).filter(Boolean),
@@ -607,6 +615,20 @@ function DoctorModal({
             style={inputStyle}
           />
         </Field>
+
+        {/* 🆕 V31: موقع العيادة على الخريطة (للأطباء بعيادة ثابتة) */}
+        <div style={{ marginBottom: 12 }}>
+          <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6, color: '#2C2C2A' }}>
+            📍 موقع العيادة على الخريطة (اختياري)
+          </label>
+          <AdminLocationPickerWrapper
+            initialLat={clinicLat}
+            initialLng={clinicLng}
+            markerType="doctor"
+            onChange={(la, ln) => { setClinicLat(la); setClinicLng(ln); }}
+            onAddressDetected={(addr) => { if (!address.trim()) setAddress(addr); }}
+          />
+        </div>
 
         <Field label="نبذة">
           <textarea
