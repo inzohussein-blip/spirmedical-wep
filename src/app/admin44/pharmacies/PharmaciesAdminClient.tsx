@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
 import { createPharmacy, updatePharmacy, deletePharmacy, togglePharmacyActive } from './actions';
+import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWrapper';
 
 interface Pharmacy {
   id: string;
@@ -273,6 +274,19 @@ function PharmacyModal({
         <Field label="العنوان">
           <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} style={inputStyle} />
         </Field>
+
+        {/* 🆕 V31: اختيار موقع الصيدلية من الخريطة */}
+        <div style={{ marginBottom: 12 }}>
+          <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6, color: '#2C2C2A' }}>
+            📍 حدّد الموقع على الخريطة
+          </label>
+          <AdminLocationPickerWrapper
+            initialLat={lat ? parseFloat(lat) : null}
+            initialLng={lng ? parseFloat(lng) : null}
+            markerType="pharmacy"
+            onChange={(la, ln) => { setLat(la.toFixed(6)); setLng(ln.toFixed(6)); }}
+          />
+        </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
           <Field label="خط العرض">
