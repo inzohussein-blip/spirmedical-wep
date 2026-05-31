@@ -47,7 +47,9 @@ export default async function DashboardPage() {
   const supabaseAny = supabase as unknown as {
     from: (t: string) => {
       select: (cols: string, opts?: { count?: 'exact'; head?: boolean }) => {
-        eq: (col: string, val: string) => Promise<{ count: number | null }>;
+        eq: (col: string, val: string | boolean) => Promise<{ count: number | null }> & {
+          eq: (col: string, val: string | boolean) => Promise<{ count: number | null }>;
+        };
       };
     };
   };
@@ -70,7 +72,8 @@ export default async function DashboardPage() {
   const notifRes = await supabaseAny
     .from('notifications')
     .select('id', { count: 'exact', head: true })
-    .eq('user_id', user.id);
+    .eq('user_id', user.id)
+    .eq('is_read', false);
   const hasUnread = (notifRes.count ?? 0) > 0;
 
   return (
