@@ -831,6 +831,33 @@
   .landing-coverage-map { padding: 48px 0; }
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   🔧 V31 FIX: تخطيط قسم التغطية (كان بلا قواعد أساسية على الديسكتوب!)
+   السبب الجذري لمشكلة الخريطة: الـ grid معرّف فقط في media query،
+   فعلى الشاشات الكبيرة لم يكن هناك display:grid → الخريطة تتمدّد بفوضى.
+   ═══════════════════════════════════════════════════════════════════ */
+.landing-coverage-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 28px;
+  align-items: stretch;
+}
+.landing-coverage-map-wrap {
+  position: relative;
+  width: 100%;
+  min-width: 0; /* مهم: يمنع الـ grid item من التمدّد بسبب محتوى الخريطة */
+}
+.landing-coverage-map-container {
+  position: relative;
+  width: 100%;
+}
+.landing-map-inner {
+  width: 100%;
+}
+.landing-coverage-cities {
+  min-width: 0;
+}
+
 @media (max-width: 900px) {
   .landing-coverage-grid {
     grid-template-columns: 1fr;
