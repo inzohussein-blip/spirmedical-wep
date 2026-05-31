@@ -48,6 +48,24 @@ export default function LandingCoverageMapInner({
       const L = (await import('leaflet')).default;
       if (cancelled || !containerRef.current) return;
 
+      // 🔧 V31 FIX: انتظر حتى يكون للـ container أبعاد فعلية قبل تهيئة Leaflet.
+      // المشكلة: مع lazy-load (IntersectionObserver) + fade-in animations،
+      // قد يُهيّأ Leaflet والـ container عرضه 0 → tiles في الزاوية فقط.
+      const el = containerRef.current;
+      const waitForSize = (): Promise<void> =>
+        new Promise((resolve) => {
+          let tries = 0;
+          const check = () => {
+            if (cancelled) return resolve();
+            if (el.offsetWidth > 0 && el.offsetHeight > 0) return resolve();
+            if (tries++ > 60) return resolve(); // أقصى ~1 ثانية، ثم نُكمل بأي حال
+            requestAnimationFrame(check);
+          };
+          check();
+        });
+      await waitForSize();
+      if (cancelled || !containerRef.current) return;
+
       const map = L.map(containerRef.current, {
         center: [33.3152, 44.3661],
         zoom: 6,
@@ -133,20 +151,27 @@ export default function LandingCoverageMapInner({
         });
       });
 
-      // Fit bounds مع padding
+      mapRef.current = map;
+
+      // 🔧 V31 FIX: invalidateSize أولاً (الحجم صحيح) ثم fitBounds (توسيط صحيح).
+      // الترتيب مهم: لو fitBounds قبل invalidateSize، يحسب على حجم خاطئ.
+      map.invalidateSize();
       const bounds = L.latLngBounds(markers.map((m) => [m.lat, m.lng]));
       map.fitBounds(bounds, { padding: [40, 40], maxZoom: 7 });
 
-      mapRef.current = map;
-
-      // 🔧 V31 FIX: إعادة حساب أبعاد الخريطة بعد الرسم
-      const fixSize = () => { if (mapRef.current) mapRef.current.invalidateSize(); };
-      setTimeout(fixSize, 0);
-      setTimeout(fixSize, 150);
-      setTimeout(fixSize, 400);
-      requestAnimationFrame(fixSize);
+      // تأكيدات إضافية بعد الرسم/الـ animations
+      const fixSize = () => {
+        if (!mapRef.current) return;
+        mapRef.current.invalidateSize();
+        mapRef.current.fitBounds(bounds, { padding: [40, 40], maxZoom: 7 });
+      };
+      setTimeout(fixSize, 100);
+      setTimeout(fixSize, 350);
+      setTimeout(fixSize, 700);
       if (typeof ResizeObserver !== 'undefined' && containerRef.current) {
-        resizeObserverRef.current = new ResizeObserver(() => fixSize());
+        resizeObserverRef.current = new ResizeObserver(() => {
+          if (mapRef.current) mapRef.current.invalidateSize();
+        });
         resizeObserverRef.current.observe(containerRef.current);
       }
     })();
