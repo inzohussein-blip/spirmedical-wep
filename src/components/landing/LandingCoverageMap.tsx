@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import type { MapMarker } from '@/types/location';
 
@@ -61,28 +61,7 @@ function MapSkeleton() {
 }
 
 export default function LandingCoverageMap({ cities, height = 420 }: Props) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
   const [selectedCity, setSelectedCity] = useState<CityData | null>(null);
-
-  // Lazy loading عبر IntersectionObserver
-  useEffect(() => {
-    if (!containerRef.current || isVisible) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: '200px', threshold: 0.01 }
-    );
-
-    observer.observe(containerRef.current);
-
-    return () => observer.disconnect();
-  }, [isVisible]);
 
   // تحويل cities لـ markers
   const markers: MapMarker[] = cities.map((c, i) => ({
@@ -95,17 +74,17 @@ export default function LandingCoverageMap({ cities, height = 420 }: Props) {
   }));
 
   return (
-    <div ref={containerRef} className="landing-coverage-map-container" style={{ position: 'relative' }}>
-      {isVisible ? (
-        <InteractiveMap
-          markers={markers}
-          cities={cities}
-          height={height}
-          onSelectCity={setSelectedCity}
-        />
-      ) : (
-        <MapSkeleton />
-      )}
+    <div className="landing-coverage-map-container" style={{ position: 'relative', width: '100%' }}>
+      {/* 🔧 V32: تحميل مباشر عبر dynamic import (ssr:false) — أزلنا
+          IntersectionObserver لأنّه كان قد يُهيّئ الخريطة قبل اكتمال
+          الـ layout → tiles في الزاوية. الـ dynamic import يضمن التحميل
+          بعد mount مع أبعاد صحيحة. */}
+      <InteractiveMap
+        markers={markers}
+        cities={cities}
+        height={height}
+        onSelectCity={setSelectedCity}
+      />
 
       {/* City Info Card - للموبايل bottom sheet */}
       {selectedCity && (
