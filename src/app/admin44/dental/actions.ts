@@ -27,6 +27,9 @@ interface DentalInput {
   city: string;
   district: string | null;
   address: string | null;
+  // 🆕 V31: إحداثيات GPS (للظهور على الخريطة)
+  latitude: number | null;
+  longitude: number | null;
   phone: string | null;
   whatsapp: string | null;
   doctor_count: number;
