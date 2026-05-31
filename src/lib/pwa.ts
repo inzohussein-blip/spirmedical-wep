@@ -37,6 +37,65 @@ export function isMobileDevice(): boolean {
   return isIOSDevice() || isAndroidDevice();
 }
 
+/* ════════════════════════════════════════════════════════════════════
+   🆕 V32: نظام موحّد لالتقاط beforeinstallprompt
+   ════════════════════════════════════════════════════════════════════
+   المشكلة: عدّة مكوّنات (SmartInstallPrompt + InstallAppButton) كانت
+   تستمع لنفس الحدث الذي يُطلق مرّة واحدة فقط → تضارب وعدم عمل الزر.
+
+   الحلّ: نلتقط الحدث مرّة واحدة عالمياً ونخزّنه، وكل المكوّنات تقرأ منه
+   عبر getDeferredPrompt() وتشترك في التحديثات عبر onInstallPromptChange().
+   ════════════════════════════════════════════════════════════════════ */
+
+export interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
+let deferredPrompt: BeforeInstallPromptEvent | null = null;
+const promptListeners = new Set<(p: BeforeInstallPromptEvent | null) => void>();
+let captureInitialized = false;
+
+/** يُهيّئ الالتقاط العالمي (يُستدعى مرّة واحدة من ServiceWorkerRegistrar) */
+export function initInstallPromptCapture(): void {
+  if (typeof window === 'undefined' || captureInitialized) return;
+  captureInitialized = true;
+
+  window.addEventListener('beforeinstallprompt', (e: Event) => {
+    e.preventDefault();
+    deferredPrompt = e as BeforeInstallPromptEvent;
+    promptListeners.forEach((fn) => fn(deferredPrompt));
+  });
+
+  window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    promptListeners.forEach((fn) => fn(null));
+  });
+}
+
+/** يُرجع الحدث المُخزّن (أو null لو لم يُطلق بعد) */
+export function getDeferredPrompt(): BeforeInstallPromptEvent | null {
+  return deferredPrompt;
+}
+
+/** يشترك في تغييرات الحدث — يُرجع دالة إلغاء الاشتراك */
+export function onInstallPromptChange(
+  fn: (p: BeforeInstallPromptEvent | null) => void
+): () => void {
+  promptListeners.add(fn);
+  return () => promptListeners.delete(fn);
+}
+
+/** يُشغّل التثبيت ويُنظّف الحدث بعد الاستخدام */
+export async function triggerInstall(): Promise<'accepted' | 'dismissed' | 'unavailable'> {
+  if (!deferredPrompt) return 'unavailable';
+  await deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  promptListeners.forEach((fn) => fn(null));
+  return outcome;
+}
+
 /**
  * يحفظ session info في localStorage بشكل دائم
  * للوصول السريع بدون انتظار Supabase
