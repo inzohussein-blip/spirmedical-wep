@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { Plus, Edit, Trash2, CheckCircle2, XCircle, Search, Shield, TrendingUp } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
+import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWrapper';
 import {
   createNutritionist,
   updateNutritionist,
@@ -26,6 +27,10 @@ interface Nutritionist {
   initial_consultation_price: number;
   follow_up_price: number;
   monthly_plan_price: number;
+  // 🆕 V31: إحداثيات العيادة (للظهور على الخريطة)
+  latitude?: number | null;
+  longitude?: number | null;
+  address?: string | null;
   rating_avg: number;
   rating_count: number;
   total_clients: number;
@@ -231,6 +236,20 @@ function NutritionistModal({ nutritionist, onClose }: { nutritionist: Nutritioni
           <Field label="المدن (مفصولة بفاصلة)">
             <input type="text" value={citiesText} onChange={(e) => setCitiesText(e.target.value)} placeholder="بغداد, البصرة" style={inputStyle} />
           </Field>
+
+          {/* 🆕 V31: موقع العيادة على الخريطة (اختياري) */}
+          <div style={{ marginBottom: 4 }}>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6, color: '#2C2C2A' }}>
+              📍 موقع العيادة على الخريطة (اختياري)
+            </label>
+            <AdminLocationPickerWrapper
+              initialLat={form.latitude ?? null}
+              initialLng={form.longitude ?? null}
+              markerType="nutrition"
+              onChange={(la, ln) => setForm({ ...form, latitude: la, longitude: ln })}
+              onAddressDetected={(addr) => { if (!form.address) setForm((f) => ({ ...f, address: addr })); }}
+            />
+          </div>
 
           <div style={{ background: 'var(--paper-3)', padding: 12, borderRadius: 8 }}>
             <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>💰 الباقات (د.ع)</div>
