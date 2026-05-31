@@ -12,7 +12,7 @@
 DROP TABLE IF EXISTS public.stories CASCADE;
 
 -- ─── 1. الجدول ───
-CREATE TABLE public.stories (
+CREATE TABLE IF NOT EXISTS public.stories (
   id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 
   -- المحتوى
