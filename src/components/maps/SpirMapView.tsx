@@ -201,14 +201,15 @@ export default function SpirMapView({
       <div
         style={{
           position: 'relative',
-          height,
+          // 🔧 V31: ارتفاع متجاوب — لا يتجاوز القيمة المطلوبة، يتقلّص على الشاشات الصغيرة
+          height: `clamp(280px, 45vh, ${height}px)`,
           borderRadius: 12,
           overflow: 'hidden',
         }}
       >
         <div
           ref={mapContainerRef}
-          style={{ width: '100%', height: '100%', background: '#E8EEF1' }}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', background: '#E8EEF1' }}
         />
 
         {/* Recenter button */}
