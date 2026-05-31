@@ -2,51 +2,40 @@
 
 import { useEffect, useState } from 'react';
 import { Download, Check, Smartphone } from 'lucide-react';
-import { isPWAInstalled, isIOSDevice, isAndroidDevice } from '@/lib/pwa';
+import {
+  isPWAInstalled, isIOSDevice,
+  getDeferredPrompt, onInstallPromptChange, triggerInstall,
+} from '@/lib/pwa';
 import { haptic } from '@/lib/haptic';
-import { toast } from '@/components/ui/Toaster';
-
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
-}
 
 /**
- * InstallAppButton (V25.27)
+ * InstallAppButton (V32)
  *
- * زر دائم في الـ Settings لتثبيت التطبيق
- *   ✅ Android Chrome: زر تثبيت فوري
+ * زر دائم في الـ Settings لتثبيت التطبيق — يستخدم النظام الموحّد
+ * لالتقاط beforeinstallprompt (يحلّ تضارب الاستماع المتعدّد).
+ *   ✅ Android/Desktop Chrome: زر تثبيت فوري
  *   ✅ iOS Safari: يفتح modal تعليمات
- *   ✅ Desktop Chrome: زر تثبيت فوري
  *   ✅ Already installed: يعرض "مُثبّت بالفعل"
  */
 export default function InstallAppButton() {
-  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [hasPrompt, setHasPrompt] = useState(false);
   const [installed, setInstalled] = useState(false);
   const [showIOSInstructions, setShowIOSInstructions] = useState(false);
 
   useEffect(() => {
     setInstalled(isPWAInstalled());
 
-    // Android/Desktop: استمع لـ beforeinstallprompt
-    const handler = (e: Event) => {
-      e.preventDefault();
-      setInstallPrompt(e as BeforeInstallPromptEvent);
-    };
-    window.addEventListener('beforeinstallprompt', handler);
+    // 🆕 V32: اقرأ من النظام الموحّد (الحدث قد يكون التُقط مسبقاً)
+    setHasPrompt(getDeferredPrompt() !== null);
 
-    // كشف عند التثبيت
-    const installedHandler = () => {
-      setInstalled(true);
-      setInstallPrompt(null);
-      toast.success('🎉 تم تثبيت التطبيق بنجاح!');
-    };
-    window.addEventListener('appinstalled', installedHandler);
+    const unsub = onInstallPromptChange((p) => {
+      setHasPrompt(p !== null);
+      if (p === null && isPWAInstalled()) {
+        setInstalled(true);
+      }
+    });
 
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handler);
-      window.removeEventListener('appinstalled', installedHandler);
-    };
+    return unsub;
   }, []);
 
   const handleInstall = async () => {
@@ -58,23 +47,14 @@ export default function InstallAppButton() {
       return;
     }
 
-    // Android/Desktop: استخدم beforeinstallprompt
-    if (installPrompt) {
-      try {
-        await installPrompt.prompt();
-        const { outcome } = await installPrompt.userChoice;
-        if (outcome === 'accepted') {
-          haptic.success();
-        } else {
-          haptic.error();
-        }
-        setInstallPrompt(null);
-      } catch {
-        toast.error('فشل التثبيت');
-      }
+    // 🆕 V32: Android/Desktop عبر النظام الموحّد
+    const outcome = await triggerInstall();
+    if (outcome === 'accepted') {
+      haptic.success();
+    } else if (outcome === 'dismissed') {
+      haptic.error();
     } else {
-      // لا يوجد prompt جاهز — قد يكون التطبيق مُثبّتاً أو المتصفّح يحتاج
-      // التثبيت اليدوي. نعرض تعليمات بدل رسالة خطأ محبطة.
+      // unavailable — لا prompt جاهز، نعرض تعليمات يدوية
       setShowIOSInstructions(true);
     }
   };
@@ -151,7 +131,11 @@ export default function InstallAppButton() {
             ثبّت التطبيق على شاشتك الرئيسية
           </div>
           <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 2 }}>
-            {isIOSDevice() ? 'تعليمات Safari' : 'تجربة سريعة بدون متصفّح'}
+            {isIOSDevice()
+              ? 'تعليمات Safari'
+              : hasPrompt
+                ? 'جاهز للتثبيت بضغطة واحدة ✓'
+                : 'تجربة سريعة بدون متصفّح'}
           </div>
         </div>
         <Smartphone size={20} color="var(--emerald)" />
