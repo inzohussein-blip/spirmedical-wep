@@ -62,6 +62,7 @@ export default function UserLocationPicker({
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const markerRef = useRef<LeafletMarker | null>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
     initialLocation?.latitude && initialLocation?.longitude
@@ -138,6 +139,17 @@ export default function UserLocationPicker({
 
       mapRef.current = map;
 
+      // 🔧 V31 FIX: إعادة حساب أبعاد الخريطة بعد الرسم (يمنع tiles الجزئية)
+      const fixSize = () => { if (mapRef.current) mapRef.current.invalidateSize(); };
+      setTimeout(fixSize, 0);
+      setTimeout(fixSize, 150);
+      setTimeout(fixSize, 400);
+      requestAnimationFrame(fixSize);
+      if (typeof ResizeObserver !== 'undefined' && mapContainerRef.current) {
+        resizeObserverRef.current = new ResizeObserver(() => fixSize());
+        resizeObserverRef.current.observe(mapContainerRef.current);
+      }
+
       // marker مبدئي لو موجود
       if (coords) {
         updateMarker(L, coords);
@@ -146,6 +158,10 @@ export default function UserLocationPicker({
 
     return () => {
       cancelled = true;
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        resizeObserverRef.current = null;
+      }
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
