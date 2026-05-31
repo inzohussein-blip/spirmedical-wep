@@ -1,35 +1,44 @@
 /* ═══════════════════════════════════════════════════════════════════
    🔄 SHARED.CSS — Spir Medical (V25.40)
-   ═══════════════════════════════════════════════════════════════════
-   
-   CSS مشترك بين كل الـ routes (الموقع + التطبيق + الأدمن).
-   
-   يحتوي على:
-     • @tailwind directives
-     • Leaflet CSS imports
-     • CSS variables (98)
-     • Reset + base styles (html, body, *)
-     • Animations (@keyframes)
-     • Map system (.spir-map-*, .ext-map-*, .services-map-*, .user-location-*)
-     • Auth components (.auth-*)
-     • Service cards (.service-*)
-     • Hero components (.hero-*)
-     • Empty states, skeletons, badges, status pills
-     • UI primitives (buttons, dialogs, sheets)
-     • Tailwind utilities (tracking-*, leading-*, sr-only)
-     • Forms (.field-*, .input-*)
-   
-   يُحمّل في: src/app/layout.tsx (root)
    ═══════════════════════════════════════════════════════════════════ */
+
+/* 🔧 V31 FIX: كل @import يجب أن يسبق أيّ قاعدة (قاعدة CSS صارمة).
+   نقلنا Leaflet + MarkerCluster CSS للأعلى لضمان تحميلها (كانت
+   markercluster في وسط الملف = تُتجاهل تماماً → خرائط ناقصة). */
+@import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
+@import url('https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css');
+@import url('https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════════════════════
+   🔧 V31 FIX: قواعد container صريحة — تضمن أنّ كل خريطة تملأ مساحتها.
+   بدونها، إذا تأخّر تحميل leaflet.css من unpkg، يكون للخريطة ارتفاع 0.
+   ═══════════════════════════════════════════════════════════════════ */
+.leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+  background: #E8EEF1;
+  font-family: 'Tajawal', system-ui, sans-serif;
+  z-index: 1;
+}
+.leaflet-tile {
+  /* يمنع الخطوط الرفيعة بين الـ tiles */
+  width: 256px !important;
+  height: 256px !important;
+}
+.leaflet-pane,
+.leaflet-tile-pane,
+.leaflet-overlay-pane,
+.leaflet-marker-pane {
+  z-index: auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
    Leaflet Map Styles (V25 — Free Medical Map)
    ═══════════════════════════════════════════════════════════════════ */
-@import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
 
 /* Custom marker container - يخفي background الافتراضي للـ divIcon */
 .free-medical-map-marker {
@@ -4365,9 +4374,7 @@ html {
    🗺️ V25.37 D: Marker Cluster + tweaks
    ════════════════════════════════════════════════════════════════════ */
 
-/* استيراد CSS الخاص بـ markercluster */
-@import url('https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css');
-@import url('https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css');
+/* (MarkerCluster CSS مُستورد في أعلى الملف — V31) */
 
 /* استبدال الـ default cluster style بـ style خاصّ بنا */
 .spir-map-cluster {
