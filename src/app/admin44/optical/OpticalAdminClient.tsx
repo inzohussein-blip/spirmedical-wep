@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { Plus, Edit, Trash2, Star, CheckCircle2, XCircle, Search } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
 import { useConfirm } from '@/components/ui';
+import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWrapper';
 import {
   createOpticalStore,
   updateOpticalStore,
@@ -19,6 +20,8 @@ interface OpticalStore {
   city: string;
   district: string | null;
   address: string | null;
+  latitude: number | null;
+  longitude: number | null;
   phone: string | null;
   brands: string[];
   exam_price: number;
@@ -224,6 +227,20 @@ function StoreModal({ store, onClose }: { store: OpticalStore | null; onClose: (
           <Field label="هاتف">
             <input type="text" value={form.phone || ''} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+9647707000000" style={inputStyle} />
           </Field>
+
+          {/* 🆕 V31: اختيار موقع المتجر من الخريطة */}
+          <div style={{ marginBottom: 12 }}>
+            <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6, color: '#2C2C2A' }}>
+              📍 حدّد الموقع على الخريطة
+            </label>
+            <AdminLocationPickerWrapper
+              initialLat={form.latitude ?? null}
+              initialLng={form.longitude ?? null}
+              markerType="optical"
+              onChange={(la, ln) => setForm({ ...form, latitude: la, longitude: ln })}
+              onAddressDetected={(addr) => { if (!form.address) setForm((f) => ({ ...f, address: addr })); }}
+            />
+          </div>
 
           <Field label="العلامات التجارية (مفصولة بفاصلة)">
             <input type="text" value={brandsText} onChange={(e) => setBrandsText(e.target.value)} placeholder="Ray-Ban, Oakley, Persol" style={inputStyle} />
