@@ -1821,14 +1821,13 @@ VALUES
 ON CONFLICT DO NOTHING;
 
 -- ─── 6. Notification templates ───
-INSERT INTO public.notification_templates (key, title_ar, body_ar, icon, type)
+INSERT INTO public.notification_templates (key, name_ar, channel, body_ar)
 VALUES 
-  ('vaccine_reminder', 'تذكير: موعد لقاح قريب 💉', 'لديك جرعة لقاح مستحقّة قريباً', '💉', 'info'),
-  ('vaccine_overdue', 'تنبيه: جرعة لقاح متأخّرة ⚠️', 'فاتك موعد جرعة - راجع جدول اللقاحات', '⚠️', 'warning'),
-  ('vaccine_appointment_booked', 'تأكيد موعد اللقاح ✓', 'تم حجز موعد اللقاح بنجاح', '✅', 'success')
+  ('vaccine_reminder', 'تذكير: موعد لقاح قريب 💉', 'push', 'لديك جرعة لقاح مستحقّة قريباً'),
+  ('vaccine_overdue', 'تنبيه: جرعة لقاح متأخّرة ⚠️', 'push', 'فاتك موعد جرعة - راجع جدول اللقاحات'),
+  ('vaccine_appointment_booked', 'تأكيد موعد اللقاح ✓', 'push', 'تم حجز موعد اللقاح بنجاح')
 ON CONFLICT (key) DO NOTHING;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 🎉 انتهى Migration 45 (V25.50)
 -- ═══════════════════════════════════════════════════════════════════════════
-
