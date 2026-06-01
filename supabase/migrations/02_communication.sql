@@ -817,4 +817,3 @@ CREATE POLICY "users_update_own_notifications"
   WITH CHECK (auth.uid() = user_id);
 
 -- الإدراج عبر service_role فقط (من الخادم) — لا policy للـ INSERT للمستخدمين.
-
