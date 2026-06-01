@@ -419,7 +419,7 @@ CREATE POLICY "lab_orders_specialist_read"
     EXISTS (
       SELECT 1 FROM public.appointments a
       WHERE a.lab_order_id = lab_orders.id
-        AND (a.assigned_specialist_id = auth.uid() OR a.specialist_id = auth.uid())
+        AND a.specialist_id = auth.uid()
     )
   );
 
@@ -430,7 +430,7 @@ CREATE POLICY "lab_orders_specialist_update"
     EXISTS (
       SELECT 1 FROM public.appointments a
       WHERE a.lab_order_id = lab_orders.id
-        AND (a.assigned_specialist_id = auth.uid() OR a.specialist_id = auth.uid())
+        AND a.specialist_id = auth.uid()
     )
   );
 
@@ -513,13 +513,12 @@ ON CONFLICT DO NOTHING;
 -- ═══════════════════════════════════════════════════════════════════════════
 
 -- ─── 1. Notification template للنتائج الجاهزة ───
-INSERT INTO public.notification_templates (key, title_ar, body_ar, icon, type)
+INSERT INTO public.notification_templates (key, name_ar, channel, body_ar)
 VALUES (
   'lab_results_ready',
   'نتائج التحاليل جاهزة 🎉',
-  'نتائج فحوصاتك جاهزة الآن! انقر لعرضها.',
-  '🩸',
-  'success'
+  'push',
+  'نتائج فحوصاتك جاهزة الآن! انقر لعرضها.'
 ) ON CONFLICT (key) DO NOTHING;
 
 -- ─── 2. Trigger: عند تغيير lab_orders.status إلى 'results_ready' ───
@@ -626,4 +625,3 @@ GRANT SELECT ON public.admin_lab_orders_summary TO authenticated;
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 🎉 انتهى Migration 39
 -- ═══════════════════════════════════════════════════════════════════════════
-
