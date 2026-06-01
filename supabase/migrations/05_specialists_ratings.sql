@@ -11,16 +11,7 @@
 -- ═══════════════════════════════════════════════════════════════════
 
 -- ─── 1. توسيع جدول users ───
-ALTER TABLE public.users
-  ADD COLUMN IF NOT EXISTS specialist_type text,
-  ADD COLUMN IF NOT EXISTS approval_status text DEFAULT 'approved'
-    CHECK (approval_status IN ('pending', 'approved', 'rejected')),
-  ADD COLUMN IF NOT EXISTS rejection_reason text,
-  ADD COLUMN IF NOT EXISTS specialist_bio text,
-  ADD COLUMN IF NOT EXISTS specialist_certifications jsonb DEFAULT '[]'::jsonb,
-  ADD COLUMN IF NOT EXISTS specialist_years_exp integer,
-  ADD COLUMN IF NOT EXISTS specialist_languages text[] DEFAULT ARRAY['ar']::text[],
-  ADD COLUMN IF NOT EXISTS auto_reply_message text DEFAULT 'مرحباً! استلمنا طلبك وسنرد عليك في أقرب وقت. شكراً لاختياركم Spir Medical.';
+-- (كتلة ALTER users نُقلت للملف 01 — V33)
 
 -- check المسموح في specialist_type
 DO $$
@@ -279,6 +270,15 @@ CREATE TABLE IF NOT EXISTS public.nursing_visit_history (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- 🔧 V33: ربط nursing_visit_history بفرد العائلة (نُقل من 01 — يحتاج الجدول موجوداً)
+ALTER TABLE public.nursing_visit_history
+  ADD COLUMN IF NOT EXISTS family_member_id UUID 
+    REFERENCES public.family_members(id) ON DELETE SET NULL;
+
+CREATE INDEX IF NOT EXISTS idx_nursing_history_family_member 
+  ON public.nursing_visit_history(family_member_id) 
+  WHERE family_member_id IS NOT NULL;
+
 CREATE INDEX IF NOT EXISTS idx_nursing_history_user
   ON public.nursing_visit_history(user_id, performed_at DESC);
 
@@ -350,13 +350,7 @@ CREATE POLICY "nurse_emergency_admin_select"
   );
 
 -- ─── 4. تقييم جودة الخدمة التمريضية ──────────────────────
-ALTER TABLE public.order_reviews
-  ADD COLUMN IF NOT EXISTS hygiene_rating INTEGER 
-    CHECK (hygiene_rating BETWEEN 1 AND 5),
-  ADD COLUMN IF NOT EXISTS expertise_rating INTEGER 
-    CHECK (expertise_rating BETWEEN 1 AND 5),
-  ADD COLUMN IF NOT EXISTS punctuality_rating INTEGER 
-    CHECK (punctuality_rating BETWEEN 1 AND 5);
+-- (ALTER order_reviews أُزيل — الجدول غير موجود في المخطّط الحالي — V33)
 
 -- ─── 5. تعليقات ──────────────────────────────────────────
 COMMENT ON COLUMN public.appointments.nurse_gender_preference IS
@@ -635,21 +629,19 @@ CREATE TRIGGER trigger_nurse_avg_rating
   EXECUTE FUNCTION update_nurse_avg_rating();
 
 -- ─── 4. Notification template للنوسنج ───
-INSERT INTO public.notification_templates (key, title_ar, body_ar, icon, type)
+INSERT INTO public.notification_templates (key, name_ar, channel, body_ar)
 VALUES 
   (
     'nursing_request_accepted',
     'تمّ قبول طلب التمريض ✓',
-    'الممرض في الطريق إليك',
-    '💉',
-    'info'
+    'push',
+    'الممرض في الطريق إليك'
   ),
   (
     'nursing_visit_completed',
     'انتهت زيارة التمريض ✓',
-    'كيف كانت تجربتك مع الممرض؟ قيّمها الآن.',
-    '⭐',
-    'success'
+    'push',
+    'كيف كانت تجربتك مع الممرض؟ قيّمها الآن.'
   )
 ON CONFLICT (key) DO NOTHING;
 
@@ -782,12 +774,32 @@ CREATE POLICY "video_sessions_admin"
   USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'));
 
 -- ─── 4. Notification templates ───
-INSERT INTO public.notification_templates (key, title_ar, body_ar, icon, type)
+INSERT INTO public.notification_templates (key, name_ar, channel, body_ar)
 VALUES 
-  ('doctor_appointment_confirmed', 'تمّ تأكيد موعد الطبيب ✓', 'موعدك مع الطبيب جاهز', '👨‍⚕️', 'info'),
-  ('consultation_new_message', 'رسالة جديدة من الطبيب 💬', 'افتح المحادثة لقراءة الرد', '💬', 'info'),
-  ('video_session_starting', 'استشارة الفيديو على وشك البدء 📹', 'انضم الآن', '📹', 'info'),
-  ('doctor_subscription_renewed', 'تجديد اشتراك الطبيب ✓', 'تم تجديد اشتراكك بنجاح', '✓', 'success')
+  (
+    'doctor_appointment_confirmed',
+    'تمّ تأكيد موعد الطبيب ✓',
+    'push',
+    'موعدك مع الطبيب جاهز'
+  ),
+  (
+    'consultation_new_message',
+    'رسالة جديدة من الطبيب 💬',
+    'push',
+    'افتح المحادثة لقراءة الرد'
+  ),
+  (
+    'video_session_starting',
+    'استشارة الفيديو على وشك البدء 📹',
+    'push',
+    'انضم الآن'
+  ),
+  (
+    'doctor_subscription_renewed',
+    'تجديد اشتراك الطبيب ✓',
+    'push',
+    'تم تجديد اشتراكك بنجاح'
+  )
 ON CONFLICT (key) DO NOTHING;
 
 -- ─── 5. Trigger: تحديث rating_avg للطبيب ───
@@ -1043,14 +1055,44 @@ CREATE POLICY "user_medications_user_all"
   ON public.user_medications FOR ALL USING (user_id = auth.uid());
 
 -- ─── 5. Notification templates ───
-INSERT INTO public.notification_templates (key, title_ar, body_ar, icon, type)
+INSERT INTO public.notification_templates (key, name_ar, channel, body_ar)
 VALUES 
-  ('pharmacy_reservation_new', 'حجز دواء جديد 💊', 'لديك حجز جديد من مريض - يرجى الرد', '💊', 'info'),
-  ('pharmacy_reservation_confirmed', 'تأكيد الحجز ✓', 'الصيدلية أكّدت توفّر الأدوية', '✅', 'success'),
-  ('pharmacy_reservation_partial', 'تأكيد جزئي ⚠️', 'بعض الأدوية فقط متوفّرة', '⚠️', 'warning'),
-  ('pharmacy_reservation_rejected', 'الأدوية غير متوفّرة', 'للأسف الأدوية غير متوفّرة حالياً', '❌', 'warning'),
-  ('pharmacy_reservation_ready', 'الدواء جاهز للاستلام 🎉', 'يمكنك المرور لاستلامه', '🎉', 'success'),
-  ('medication_reminder', 'تذكير بموعد الدواء ⏰', 'حان وقت تناول الدواء', '⏰', 'info')
+  (
+    'pharmacy_reservation_new',
+    'حجز دواء جديد 💊',
+    'push',
+    'لديك حجز جديد من مريض - يرجى الرد'
+  ),
+  (
+    'pharmacy_reservation_confirmed',
+    'تأكيد الحجز ✓',
+    'push',
+    'الصيدلية أكّدت توفّر الأدوية'
+  ),
+  (
+    'pharmacy_reservation_partial',
+    'تأكيد جزئي ⚠️',
+    'push',
+    'بعض الأدوية فقط متوفّرة'
+  ),
+  (
+    'pharmacy_reservation_rejected',
+    'الأدوية غير متوفّرة',
+    'push',
+    'للأسف الأدوية غير متوفّرة حالياً'
+  ),
+  (
+    'pharmacy_reservation_ready',
+    'الدواء جاهز للاستلام 🎉',
+    'push',
+    'يمكنك المرور لاستلامه'
+  ),
+  (
+    'medication_reminder',
+    'تذكير بموعد الدواء ⏰',
+    'push',
+    'حان وقت تناول الدواء'
+  )
 ON CONFLICT (key) DO NOTHING;
 
 -- ─── 6. Trigger: تحديث pharmacy rating stats ───
@@ -1850,4 +1892,3 @@ CREATE TRIGGER trigger_cosmetic_rating_stats
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 🎉 انتهى Migration 44 (V25.48 + V25.49)
 -- ═══════════════════════════════════════════════════════════════════════════
-
