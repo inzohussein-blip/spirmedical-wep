@@ -1,434 +1,8 @@
 -- ═══════════════════════════════════════════════════════════════════
 -- 📦 09_seed_and_fixes.sql — الإصلاحات المتأخّرة + البيانات الأولية (الأخير)
--- مدموج (V33) من: 16_fix_login_phone.sql 19_appointment_reminders.sql 46_fix_specialist_types.sql 47_link_static_labs.sql 25_seed_data.sql
+-- مدموج (V33) من: 19_appointment_reminders 46_fix_specialist_types 47_link_static_labs 25_seed_data
+-- (ملاحظة: 16_fix_login_phone كان ملف TypeScript — مُستبعَد)
 -- ═══════════════════════════════════════════════════════════════════
-
--- ─── 16_fix_login_phone.sql ───
-'use server';
-
-import { createClient } from '@/lib/supabase/server';
-import { phoneSchema, otpSchema, normalizePhone } from '@/lib/validations/auth';
-import { redirect } from 'next/navigation';
-import { headers } from 'next/headers';
-import { createHash } from 'crypto';
-import { createClient as createSbClient } from '@supabase/supabase-js';
-import { checkRateLimit } from '@/lib/rate-limit';
-import { logAuditEvent } from '@/lib/audit';
-import { logger } from '@/lib/logger';
-import { getOtpMode, canSkipOtp } from '@/lib/flags';
-
-// ═══════════════════════════════════════════════════════════
-// 🔐 نظام تسجيل الدخول مع 3 أوضاع OTP
-// ═══════════════════════════════════════════════════════════
-
-function getIp(): string {
-  const h = headers();
-  return (
-    h.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    h.get('x-real-ip') ??
-    'unknown'
-  );
-}
-
-function derivePassword(phone: string): string {
-  const encryptionKey = process.env.ENCRYPTION_KEY!;
-  return createHash('sha256')
-    .update(phone + ':' + encryptionKey)
-    .digest('hex')
-    .slice(0, 32);
-}
-
-function phoneToEmail(phone: string): string {
-  return `${phone.replace(/\D/g, '')}@phone.spirmedical.local`;
-}
-
-/**
- * NEXT_REDIRECT helper - يميز redirects (المتوقعة) عن الأخطاء الحقيقية
- */
-function isNextRedirect(err: unknown): boolean {
-  return (
-    err instanceof Error &&
-    'digest' in err &&
-    typeof (err as { digest?: string }).digest === 'string' &&
-    (err as { digest: string }).digest.includes('NEXT_REDIRECT')
-  );
-}
-
-// ─────────────────────────────────────────────────────────
-// إرسال OTP أو دخول مباشر (حسب action)
-// ─────────────────────────────────────────────────────────
-
-export async function sendOtp(formData: FormData) {
-  const phone = formData.get('phone') as string;
-  const action = (formData.get('action') as string) || 'auto';
-
-  const ip = getIp();
-  const limit = await checkRateLimit(`otp:send:${ip}`, {
-    max: 10,
-    windowSeconds: 900,
-  });
-
-  if (!limit.allowed) {
-    redirect(
-      '/login?error=' +
-        encodeURIComponent(
-          `محاولات كثيرة، حاول بعد ${limit.retryAfterSeconds} ثانية`
-        )
-    );
-  }
-
-  const validation = phoneSchema.safeParse({ phone });
-  if (!validation.success) {
-    redirect(
-      '/login?error=' + encodeURIComponent(validation.error.errors[0].message)
-    );
-  }
-
-  const normalizedPhone = normalizePhone(validation.data.phone);
-  const mode = getOtpMode();
-
-  const shouldUseOtp =
-    mode === 'required' || (mode === 'optional' && action === 'otp');
-
-  if (!shouldUseOtp) {
-    return await loginWithoutOtp(normalizedPhone, ip);
-  }
-
-  // إرسال OTP عبر Supabase Auth
-  const supabase = createClient();
-  const { error } = await supabase.auth.signInWithOtp({
-    phone: normalizedPhone,
-  });
-
-  if (error) {
-    logger.error('OTP send failed', {
-      phone: normalizedPhone,
-      error: error.message,
-    });
-    redirect(
-      '/login?error=' +
-        encodeURIComponent('فشل إرسال الرمز. حاول مرة أخرى')
-    );
-  }
-
-  await logAuditEvent({
-    action: 'auth.otp_sent',
-    metadata: { phone: normalizedPhone, ip },
-  });
-
-  redirect(`/otp?phone=${encodeURIComponent(normalizedPhone)}`);
-}
-
-// ─────────────────────────────────────────────────────────
-// تخطي OTP
-// ─────────────────────────────────────────────────────────
-
-export async function skipOtp(formData: FormData) {
-  if (!canSkipOtp()) {
-    redirect('/login?error=' + encodeURIComponent('OTP مطلوب'));
-  }
-
-  const phone = formData.get('phone') as string;
-  const ip = getIp();
-
-  const limit = await checkRateLimit(`otp:skip:${ip}`, {
-    max: 10,
-    windowSeconds: 900,
-  });
-
-  if (!limit.allowed) {
-    redirect(
-      '/login?error=' +
-        encodeURIComponent(
-          `محاولات كثيرة، حاول بعد ${limit.retryAfterSeconds} ثانية`
-        )
-    );
-  }
-
-  const validation = phoneSchema.safeParse({ phone });
-  if (!validation.success) {
-    redirect(
-      '/login?error=' + encodeURIComponent(validation.error.errors[0].message)
-    );
-  }
-
-  const normalizedPhone = normalizePhone(validation.data.phone);
-  return await loginWithoutOtp(normalizedPhone, ip);
-}
-
-// ─────────────────────────────────────────────────────────
-// دخول مباشر بدون OTP (مُصلح)
-// ─────────────────────────────────────────────────────────
-// ✅ لا يستخدم phone في createUser (لأن Phone provider قد لا يكون مفعّلاً)
-// ✅ يستخدم email-only approach
-// ✅ معالجة أخطاء واضحة ومُفصَّلة
-// ✅ يكتب في public.users يدوياً (لا يعتمد على trigger)
-
-async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  // التحقق من توفر env vars
-  if (!supabaseUrl || !serviceKey) {
-    logger.error('Missing Supabase env vars', {
-      hasUrl: !!supabaseUrl,
-      hasKey: !!serviceKey,
-    });
-    redirect(
-      '/login?error=' + encodeURIComponent('إعداد الخادم ناقص')
-    );
-  }
-
-  const admin = createSbClient(supabaseUrl, serviceKey, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  });
-
-  const password = derivePassword(phone);
-  const email = phoneToEmail(phone);
-
-  try {
-    // 1. ابحث عن المستخدم في public.users بالرقم (الأسرع)
-    const { data: existingProfile } = await admin
-      .from('users')
-      .select('id, role')
-      .eq('phone', phone)
-      .maybeSingle();
-
-    let userId = existingProfile?.id;
-
-    // 2. إذا غير موجود في public.users، تحقق من Auth أو أنشئ
-    if (!userId) {
-      // ابحث في auth.users
-      const { data: existingAuth } = await admin.auth.admin.listUsers();
-      const authUser = existingAuth?.users?.find((u) => u.email === email);
-
-      if (authUser) {
-        userId = authUser.id;
-      } else {
-        // 🔧 V25.2: لا نمرر phone لـ auth (Phone provider قد لا يكون مفعّلاً)
-        // الـ trigger handle_new_user سيُنشئ row مع fallback_phone مؤقت
-        // ثم نحدّثه يدوياً بـ phone الحقيقي
-        const { data: newUser, error: createErr } =
-          await admin.auth.admin.createUser({
-            email,
-            password,
-            email_confirm: true,
-            user_metadata: { phone, created_via: 'no_otp' },
-          });
-
-        if (createErr || !newUser?.user) {
-          logger.error('createUser failed', {
-            phone,
-            error: createErr?.message,
-            code: createErr?.status,
-          });
-          redirect(
-            '/login?error=' +
-              encodeURIComponent(
-                `فشل إنشاء الحساب: ${createErr?.message ?? 'خطأ غير معروف'}`
-              )
-          );
-        }
-
-        userId = newUser.user.id;
-      }
-
-      // 🔧 V25.2: الإصلاح الجوهري
-      // الـ trigger يكون أنشأ row بـ fallback_phone='+temp_xxx'
-      // نحن نحدّث phone للقيمة الحقيقية مع UPDATE (وليس upsert)
-      // upsert فشل لأن phone unique → conflict على phone حتى لو id موجود
-      const { error: updateErr } = await admin
-        .from('users')
-        .update({
-          phone,
-          full_name: 'مستخدم جديد',
-        })
-        .eq('id', userId!);
-
-      if (updateErr) {
-        // الـ row قد لا يكون موجود (لو trigger فشل)
-        // جرّب insert
-        const { error: insertErr } = await admin.from('users').insert({
-          id: userId!,
-          phone,
-          full_name: 'مستخدم جديد',
-          role: 'patient',
-        });
-
-        if (insertErr) {
-          logger.error('Profile creation failed', {
-            phone,
-            updateErr: updateErr.message,
-            insertErr: insertErr.message,
-          });
-          // لا نُفشل - signIn قد ينجح
-        }
-      }
-    }
-
-    // 3. حدّث password (في حال تغيّر ENCRYPTION_KEY)
-    await admin.auth.admin.updateUserById(userId!, { password });
-
-    // 4. سجّل دخول
-    const supabase = createClient();
-    const { data: signInData, error: signInErr } =
-      await supabase.auth.signInWithPassword({ email, password });
-
-    if (signInErr || !signInData?.user) {
-      logger.error('signInWithPassword failed', {
-        phone,
-        error: signInErr?.message,
-      });
-      redirect(
-        '/login?error=' +
-          encodeURIComponent(
-            `فشل تسجيل الدخول: ${signInErr?.message ?? 'خطأ غير معروف'}`
-          )
-      );
-    }
-
-    // 5. Audit log
-    await logAuditEvent({
-      action: 'auth.login',
-      user_id: signInData.user.id,
-      metadata: { ip, phone, method: 'no_otp' },
-    });
-
-    // 6. التوجيه حسب الدور (V25: دعم كل الأدوار)
-    const role = existingProfile?.role || 'patient';
-    if (role === 'specialist') {
-      redirect('/specialist');
-    }
-    if (
-      role === 'admin' ||
-      role === 'super_admin' ||
-      role === 'manager' ||
-      role === 'support'
-    ) {
-      redirect('/admin44');
-    }
-    redirect('/dashboard');
-  } catch (err) {
-    if (isNextRedirect(err)) throw err;
-
-    logger.error('No-OTP flow failed', {
-      phone,
-      error: err instanceof Error ? err.message : String(err),
-    });
-    redirect(
-      '/login?error=' +
-        encodeURIComponent(
-          `خطأ: ${err instanceof Error ? err.message : 'غير معروف'}`
-        )
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────
-// التحقق من OTP
-// ─────────────────────────────────────────────────────────
-
-export async function verifyOtp(formData: FormData) {
-  const phone = formData.get('phone') as string;
-  const token = formData.get('token') as string;
-
-  const ip = getIp();
-  const limit = await checkRateLimit(`otp:verify:${ip}`, {
-    max: 5,
-    windowSeconds: 900,
-  });
-
-  if (!limit.allowed) {
-    redirect(
-      `/otp?phone=${encodeURIComponent(phone)}&error=` +
-        encodeURIComponent(
-          `محاولات كثيرة، حاول بعد ${limit.retryAfterSeconds} ثانية`
-        )
-    );
-  }
-
-  const validation = otpSchema.safeParse({ phone, token });
-  if (!validation.success) {
-    redirect(
-      `/otp?phone=${encodeURIComponent(phone)}&error=` +
-        encodeURIComponent(validation.error.errors[0].message)
-    );
-  }
-
-  const supabase = createClient();
-  const { data, error } = await supabase.auth.verifyOtp({
-    phone,
-    token,
-    type: 'sms',
-  });
-
-  if (error || !data.user) {
-    logger.warn('OTP verification failed', {
-      phone,
-      error: error?.message,
-    });
-    redirect(
-      `/otp?phone=${encodeURIComponent(phone)}&error=` +
-        encodeURIComponent('الرمز غير صحيح')
-    );
-  }
-
-  await logAuditEvent({
-    action: 'auth.login',
-    user_id: data.user.id,
-    metadata: { ip, phone, method: 'otp' },
-  });
-
-  const { data: profile } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', data.user.id)
-    .single();
-
-  if (profile?.role === 'specialist') {
-    redirect('/specialist');
-  }
-  if (
-    profile?.role === 'admin' ||
-    profile?.role === 'super_admin' ||
-    profile?.role === 'manager' ||
-    profile?.role === 'support'
-  ) {
-    redirect('/admin44');
-  }
-
-  redirect('/dashboard');
-}
-
-// ─────────────────────────────────────────────────────────
-// إعادة إرسال OTP
-// ─────────────────────────────────────────────────────────
-
-export async function resendOtp(formData: FormData) {
-  return sendOtp(formData);
-}
-
-// ─────────────────────────────────────────────────────────
-// تسجيل الخروج
-// ─────────────────────────────────────────────────────────
-
-export async function signOut() {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (user) {
-    await logAuditEvent({
-      action: 'auth.logout',
-      user_id: user.id,
-    });
-  }
-
-  await supabase.auth.signOut();
-  redirect('/');
-}
-
 
 -- ─── 19_appointment_reminders.sql ───
 -- ════════════════════════════════════════════════════════════════════
@@ -626,7 +200,7 @@ INSERT INTO public.hospitals (
   name, name_en, type, city, district, address,
   latitude, longitude, phone, phone_emergency,
   is_24h, departments, has_emergency, has_ambulance, has_pharmacy, has_lab, has_radiology,
-  beds_count, icu_beds_count, description, is_active, is_verified, verified_at
+  beds_count, icu_beds_count, description, is_active, is_verified
 ) VALUES
 
 -- ═══ بغداد - مستشفيات حكومية ═══
@@ -637,7 +211,7 @@ INSERT INTO public.hospitals (
   true, true, true, true, true,
   1300, 80,
   'أكبر مجمع طبي حكومي في العراق - يضم 8 مستشفيات تخصصية',
-  true, true, now()),
+  true, true),
 
 ('مستشفى ابن البلدي للنساء والأطفال', 'Ibn Al-Baladi Hospital', 'government', 'بغداد', 'الباب الشرقي',
   'الباب الشرقي، شارع ٧',
@@ -646,7 +220,7 @@ INSERT INTO public.hospitals (
   true, true, false, true, true,
   400, 30,
   'مستشفى متخصص بالأطفال والنسائية والولادة',
-  true, true, now()),
+  true, true),
 
 ('مستشفى الكاظمية التعليمي', 'Al-Kadhimiya Teaching Hospital', 'government', 'بغداد', 'الكاظمية',
   'شارع الإمام موسى الكاظم',
@@ -655,7 +229,7 @@ INSERT INTO public.hospitals (
   true, true, true, true, true,
   600, 40,
   'مستشفى تعليمي رئيسي في الكاظمية',
-  true, true, now()),
+  true, true),
 
 ('مستشفى الشهيد الصدر العام', 'Al-Sadr Hospital', 'government', 'بغداد', 'مدينة الصدر',
   'مدينة الصدر، القطاع ٣٧',
@@ -664,7 +238,7 @@ INSERT INTO public.hospitals (
   true, true, false, true, true,
   500, 25,
   'يخدم سكان مدينة الصدر وضواحيها',
-  true, true, now()),
+  true, true),
 
 ('مستشفى الجراحات التخصصي', 'Specialized Surgery Hospital', 'government', 'بغداد', 'الباب المعظم',
   'مجمع مدينة الطب',
@@ -673,7 +247,7 @@ INSERT INTO public.hospitals (
   true, false, true, true, true,
   250, 20,
   'متخصص بالجراحات التخصصية الكبرى',
-  true, true, now()),
+  true, true),
 
 -- ═══ بغداد - مستشفيات أهلية ═══
 ('المستشفى التركي', 'Turkish Hospital', 'private', 'بغداد', 'الكرادة',
@@ -683,7 +257,7 @@ INSERT INTO public.hospitals (
   true, true, true, true, true,
   300, 25,
   'مستشفى أهلي راقي بمعايير عالمية - شراكة تركية',
-  true, true, now()),
+  true, true),
 
 ('مستشفى الكندي', 'Al-Kindi Hospital', 'private', 'بغداد', 'المنصور',
   'المنصور، شارع الأميرات',
@@ -692,7 +266,7 @@ INSERT INTO public.hospitals (
   true, true, true, true, true,
   280, 22,
   'مستشفى عام بخدمات شاملة في المنصور',
-  true, true, now()),
+  true, true),
 
 ('مستشفى ابن سينا للقلب', 'Ibn Sina Cardiac Hospital', 'specialized', 'بغداد', 'الجادرية',
   'الجادرية، قرب جامعة بغداد',
@@ -701,7 +275,7 @@ INSERT INTO public.hospitals (
   true, true, true, true, true,
   150, 30,
   'تخصصي في أمراض وجراحة القلب',
-  true, true, now()),
+  true, true),
 
 ('مستشفى دار السلام', 'Dar Al-Salam Hospital', 'private', 'بغداد', 'الكرادة',
   'الكرادة، شارع الرفعة',
@@ -710,7 +284,7 @@ INSERT INTO public.hospitals (
   true, true, true, true, true,
   120, 15,
   'متخصص بالنسائية والولادة',
-  true, true, now()),
+  true, true),
 
 ('مستشفى الشفاء الأهلي', 'Al-Shifa Private Hospital', 'private', 'بغداد', 'الكاظمية',
   'الكاظمية، شارع المتنبي',
@@ -719,7 +293,7 @@ INSERT INTO public.hospitals (
   false, false, true, true, true,
   80, 0,
   'مستشفى متوسط الحجم بخدمات نهارية',
-  true, true, now()),
+  true, true),
 
 -- ═══ مراكز صحية في بغداد ═══
 ('مركز الكرادة الصحي', 'Karrada Health Center', 'health_center', 'بغداد', 'الكرادة',
@@ -729,7 +303,7 @@ INSERT INTO public.hospitals (
   false, false, true, true, false,
   null, null,
   'رعاية أولية وعيادات عامة',
-  true, true, now()),
+  true, true),
 
 ('مركز الجادرية الصحي', 'Jadriya Health Center', 'health_center', 'بغداد', 'الجادرية',
   'شارع الجادرية',
@@ -738,7 +312,7 @@ INSERT INTO public.hospitals (
   false, false, true, true, false,
   null, null,
   'رعاية أولية',
-  true, true, now()),
+  true, true),
 
 -- ═══ البصرة ═══
 ('مستشفى البصرة التعليمي', 'Basra Teaching Hospital', 'government', 'البصرة', 'البصرة',
@@ -748,7 +322,7 @@ INSERT INTO public.hospitals (
   true, true, true, true, true,
   700, 50,
   'أكبر مستشفى تعليمي في الجنوب',
-  true, true, now()),
+  true, true),
 
 ('مستشفى الفيحاء العام', 'Al-Faiha Hospital', 'government', 'البصرة', 'الفيحاء',
   'الفيحاء، البصرة',
@@ -757,7 +331,7 @@ INSERT INTO public.hospitals (
   true, true, false, true, true,
   400, 30,
   'مستشفى عام كبير',
-  true, true, now()),
+  true, true),
 
 ('مستشفى الموانئ الأهلي', 'Al-Mawanee Private Hospital', 'private', 'البصرة', 'البصرة',
   'البصرة الجديدة',
@@ -766,7 +340,7 @@ INSERT INTO public.hospitals (
   true, true, true, true, true,
   150, 18,
   'مستشفى أهلي بمعايير دولية',
-  true, true, now()),
+  true, true),
 
 -- ═══ الموصل ═══
 ('مستشفى الموصل العام', 'Mosul General Hospital', 'government', 'الموصل', 'الموصل',
@@ -776,7 +350,7 @@ INSERT INTO public.hospitals (
   true, true, true, true, true,
   500, 35,
   'المستشفى الرئيسي في الموصل',
-  true, true, now()),
+  true, true),
 
 -- ═══ النجف ═══
 ('مستشفى الحكيم العام', 'Al-Hakeem Hospital', 'government', 'النجف', 'النجف',
@@ -786,7 +360,7 @@ INSERT INTO public.hospitals (
   true, true, true, true, true,
   450, 30,
   'مستشفى تعليمي في النجف',
-  true, true, now()),
+  true, true),
 
 ('مستشفى السلام الأهلي', 'Al-Salam Private Hospital', 'private', 'النجف', 'النجف',
   'شارع الكوفة',
@@ -795,7 +369,7 @@ INSERT INTO public.hospitals (
   true, true, true, true, true,
   100, 10,
   'مستشفى أهلي شامل',
-  true, true, now()),
+  true, true),
 
 -- ═══ كربلاء ═══
 ('مستشفى الإمام الحسين التعليمي', 'Imam Hussein Teaching Hospital', 'government', 'كربلاء', 'كربلاء',
@@ -805,7 +379,7 @@ INSERT INTO public.hospitals (
   true, true, true, true, true,
   600, 40,
   'أكبر مستشفى في كربلاء',
-  true, true, now()),
+  true, true),
 
 -- ═══ أربيل ═══
 ('مستشفى أربيل التعليمي', 'Erbil Teaching Hospital', 'government', 'أربيل', 'أربيل',
@@ -815,7 +389,7 @@ INSERT INTO public.hospitals (
   true, true, true, true, true,
   800, 60,
   'أكبر مستشفى تعليمي في كردستان',
-  true, true, now()),
+  true, true),
 
 ('مستشفى زانكو الأهلي', 'Zanko Private Hospital', 'private', 'أربيل', 'أربيل',
   'منطقة جوار جرا',
@@ -824,7 +398,7 @@ INSERT INTO public.hospitals (
   true, true, true, true, true,
   200, 20,
   'مستشفى أهلي راقي',
-  true, true, now()),
+  true, true),
 
 -- ═══ السليمانية ═══
 ('مستشفى شار العام', 'Shar General Hospital', 'government', 'السليمانية', 'السليمانية',
@@ -834,7 +408,7 @@ INSERT INTO public.hospitals (
   true, true, true, true, true,
   450, 30,
   'مستشفى رئيسي في السليمانية',
-  true, true, now()),
+  true, true),
 
 -- ═══ كركوك ═══
 ('مستشفى كركوك العام', 'Kirkuk General Hospital', 'government', 'كركوك', 'كركوك',
@@ -844,7 +418,7 @@ INSERT INTO public.hospitals (
   true, true, false, true, true,
   350, 25,
   'مستشفى عام',
-  true, true, now()),
+  true, true),
 
 -- ═══ بابل ═══
 ('مستشفى مرجان التعليمي', 'Marjan Teaching Hospital', 'government', 'بابل', 'الحلة',
@@ -854,7 +428,7 @@ INSERT INTO public.hospitals (
   true, true, true, true, true,
   500, 35,
   'مستشفى تعليمي في الحلة',
-  true, true, now()),
+  true, true),
 
 -- ═══ ذي قار ═══
 ('مستشفى الحسين التعليمي', 'Al-Hussein Hospital', 'government', 'ذي قار', 'الناصرية',
@@ -864,7 +438,7 @@ INSERT INTO public.hospitals (
   true, true, false, true, true,
   400, 28,
   'مستشفى رئيسي في الناصرية',
-  true, true, now());
+  true, true);
 
 
 -- ════════════════════════════════════════════════════════════════════
@@ -1142,3 +716,102 @@ BEGIN
   RAISE NOTICE '   - ~600 inventory records';
 END $$;
 
+
+-- ════════════════════════════════════════════════════════════════════
+-- 🔧 V33: Admin policies (نُقلت من 01 — تحتاج جداول chats/messages/payments/ratings)
+-- ════════════════════════════════════════════════════════════════════
+-- Admins يرون كل المحادثات
+DROP POLICY IF EXISTS "Admins see all chats" ON public.chats;
+CREATE POLICY "Admins see all chats" ON public.chats
+  FOR SELECT USING (public.is_admin(auth.uid()));
+
+DROP POLICY IF EXISTS "Admins see all messages" ON public.messages;
+CREATE POLICY "Admins see all messages" ON public.messages
+  FOR SELECT USING (public.is_admin(auth.uid()));
+
+-- Admins يرون كل المدفوعات
+DROP POLICY IF EXISTS "Admins see all payments" ON public.payments;
+CREATE POLICY "Admins see all payments" ON public.payments
+  FOR SELECT USING (public.is_admin(auth.uid()));
+
+DROP POLICY IF EXISTS "Admins update all payments" ON public.payments;
+CREATE POLICY "Admins update all payments" ON public.payments
+  FOR UPDATE USING (public.is_admin(auth.uid()));
+
+-- Admins يرون كل التقييمات
+DROP POLICY IF EXISTS "Admins see all ratings" ON public.ratings;
+CREATE POLICY "Admins see all ratings" ON public.ratings
+  FOR SELECT USING (public.is_admin(auth.uid()));
+
+DROP POLICY IF EXISTS "Admins update ratings" ON public.ratings;
+CREATE POLICY "Admins update ratings" ON public.ratings
+  FOR UPDATE USING (public.is_admin(auth.uid()));
+
+-- ════════════════════════════════════════════════════════════════════
+-- 🔧 V33: Admin Views (نُقلت من 01 — تحتاج جداول payments وغيرها)
+-- ════════════════════════════════════════════════════════════════════
+-- ════════════════════════════════════════════════════════════════════
+-- 📊 ADMIN VIEWS - مفيدة للـ Dashboard (V24 — security_invoker)
+-- ════════════════════════════════════════════════════════════════════
+
+-- إجمالي الإيرادات اليومية
+CREATE OR REPLACE VIEW public.daily_revenue
+WITH (security_invoker = on) AS
+SELECT
+  DATE(paid_at) AS date,
+  COUNT(*) AS total_payments,
+  SUM(amount) AS total_amount,
+  method,
+  currency
+FROM public.payments
+WHERE status = 'paid' AND paid_at IS NOT NULL
+GROUP BY DATE(paid_at), method, currency
+ORDER BY date DESC;
+
+-- مواعيد اليوم (لكل أخصائي)
+CREATE OR REPLACE VIEW public.today_appointments
+WITH (security_invoker = on) AS
+SELECT
+  a.id,
+  a.user_id,
+  a.specialist_id,
+  a.service_type,
+  a.status,
+  a.scheduled_at,
+  a.address,
+  u.full_name AS patient_name,
+  u.phone AS patient_phone,
+  s.full_name AS specialist_name
+FROM public.appointments a
+LEFT JOIN public.users u ON u.id = a.user_id
+LEFT JOIN public.users s ON s.id = a.specialist_id
+WHERE DATE(a.scheduled_at) = CURRENT_DATE
+ORDER BY a.scheduled_at;
+
+-- إحصاءات عامة (للأدمن dashboard)
+CREATE OR REPLACE VIEW public.platform_stats
+WITH (security_invoker = on) AS
+SELECT
+  (SELECT COUNT(*) FROM public.users WHERE role = 'patient') AS total_patients,
+  (SELECT COUNT(*) FROM public.users WHERE role = 'specialist') AS total_specialists,
+  (SELECT COUNT(*) FROM public.appointments WHERE status = 'completed') AS completed_appointments,
+  (SELECT COUNT(*) FROM public.appointments WHERE status = 'pending') AS pending_appointments,
+  (SELECT COUNT(*) FROM public.appointments WHERE DATE(created_at) = CURRENT_DATE) AS today_new_appointments,
+  (SELECT COUNT(*) FROM public.users WHERE DATE(created_at) = CURRENT_DATE) AS today_new_users,
+  (SELECT SUM(amount) FROM public.payments WHERE status = 'paid' AND DATE(paid_at) = CURRENT_DATE) AS today_revenue,
+  (SELECT ROUND(AVG(overall_rating)::numeric, 2) FROM public.ratings WHERE is_published) AS platform_avg_rating;
+
+
+-- Appointments مع تفاصيل المستخدمين (يستخدمه الكود)
+CREATE OR REPLACE VIEW public.appointments_with_users
+WITH (security_invoker = on) AS
+SELECT
+  a.*,
+  u.full_name AS patient_name,
+  u.phone AS patient_phone,
+  u.governorate AS patient_governorate,
+  s.full_name AS specialist_name,
+  s.specialty AS specialist_specialty
+FROM public.appointments a
+LEFT JOIN public.users u ON u.id = a.user_id
+LEFT JOIN public.users s ON s.id = a.specialist_id;
