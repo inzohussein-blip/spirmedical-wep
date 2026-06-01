@@ -27,46 +27,98 @@ DROP VIEW IF EXISTS public.specialist_stats CASCADE;
 -- 🗑️ إسقاط الجداول مباشرة (CASCADE يحذف triggers + foreign keys)
 -- ════════════════════════════════════════════════════════════════════
 
--- 🆕 V24: جداول Notifications
+-- 🔧 V33: إسقاط شامل لكل الجداول (87) — إعادة بناء نظيفة 100%
+-- CASCADE يحذف triggers + foreign keys + dependent objects تلقائياً.
+-- يحلّ خطأ 'column does not exist' الناتج عن بقايا جداول قديمة.
+
+DROP TABLE IF EXISTS public.admin_actions CASCADE;
+DROP TABLE IF EXISTS public.analytics_events CASCADE;
+DROP TABLE IF EXISTS public.app_theme_settings CASCADE;
+DROP TABLE IF EXISTS public.appointments CASCADE;
+DROP TABLE IF EXISTS public.audit_logs CASCADE;
+DROP TABLE IF EXISTS public.beta_codes CASCADE;
+DROP TABLE IF EXISTS public.bug_reports CASCADE;
+DROP TABLE IF EXISTS public.campaigns CASCADE;
+DROP TABLE IF EXISTS public.changelog_entries CASCADE;
+DROP TABLE IF EXISTS public.chat_notes CASCADE;
+DROP TABLE IF EXISTS public.chats CASCADE;
+DROP TABLE IF EXISTS public.consultation_messages CASCADE;
+DROP TABLE IF EXISTS public.consultations CASCADE;
+DROP TABLE IF EXISTS public.cosmetic_product_reviews CASCADE;
+DROP TABLE IF EXISTS public.cosmetic_products CASCADE;
+DROP TABLE IF EXISTS public.cosmetic_wishlist CASCADE;
+DROP TABLE IF EXISTS public.coupon_redemptions CASCADE;
+DROP TABLE IF EXISTS public.coupons CASCADE;
+DROP TABLE IF EXISTS public.dental_clinics CASCADE;
+DROP TABLE IF EXISTS public.dental_ratings CASCADE;
+DROP TABLE IF EXISTS public.doctor_ratings CASCADE;
+DROP TABLE IF EXISTS public.doctor_subscriptions CASCADE;
+DROP TABLE IF EXISTS public.doctors CASCADE;
+DROP TABLE IF EXISTS public.family_members CASCADE;
+DROP TABLE IF EXISTS public.geocoding_cache CASCADE;
+DROP TABLE IF EXISTS public.health_vitals CASCADE;
+DROP TABLE IF EXISTS public.hospital_ratings CASCADE;
+DROP TABLE IF EXISTS public.hospitals CASCADE;
+DROP TABLE IF EXISTS public.idempotency_keys CASCADE;
+DROP TABLE IF EXISTS public.lab_orders CASCADE;
+DROP TABLE IF EXISTS public.lab_results CASCADE;
+DROP TABLE IF EXISTS public.launch_checklist CASCADE;
+DROP TABLE IF EXISTS public.loyalty_milestones CASCADE;
+DROP TABLE IF EXISTS public.medication_searches CASCADE;
+DROP TABLE IF EXISTS public.medications CASCADE;
+DROP TABLE IF EXISTS public.mental_health_ratings CASCADE;
+DROP TABLE IF EXISTS public.mental_health_specialists CASCADE;
+DROP TABLE IF EXISTS public.messages CASCADE;
 DROP TABLE IF EXISTS public.notification_logs CASCADE;
+DROP TABLE IF EXISTS public.notification_preferences CASCADE;
 DROP TABLE IF EXISTS public.notification_queue CASCADE;
 DROP TABLE IF EXISTS public.notification_templates CASCADE;
-
--- 🆕 V22-V23: جداول Admin System
-DROP TABLE IF EXISTS public.coupons CASCADE;
-DROP TABLE IF EXISTS public.campaigns CASCADE;
+DROP TABLE IF EXISTS public.notifications CASCADE;
+DROP TABLE IF EXISTS public.nurse_emergency_logs CASCADE;
+DROP TABLE IF EXISTS public.nurse_ratings CASCADE;
+DROP TABLE IF EXISTS public.nursing_visit_history CASCADE;
+DROP TABLE IF EXISTS public.nutritionist_ratings CASCADE;
+DROP TABLE IF EXISTS public.nutritionists CASCADE;
+DROP TABLE IF EXISTS public.optical_ratings CASCADE;
+DROP TABLE IF EXISTS public.optical_stores CASCADE;
+DROP TABLE IF EXISTS public.otp_attempts CASCADE;
+DROP TABLE IF EXISTS public.partner_labs CASCADE;
 DROP TABLE IF EXISTS public.patient_notes CASCADE;
 DROP TABLE IF EXISTS public.patient_tags CASCADE;
-DROP TABLE IF EXISTS public.admin_actions CASCADE;
-
--- 🆕 V21: Specialist System
-DROP TABLE IF EXISTS public.specialist_schedules CASCADE;
-
--- 🆕 V20: Personal Health
-DROP TABLE IF EXISTS public.health_vitals CASCADE;
-DROP TABLE IF EXISTS public.prescriptions CASCADE;
-DROP TABLE IF EXISTS public.reminders CASCADE;
-
--- جداول الـ Inbox
-DROP TABLE IF EXISTS public.chat_notes CASCADE;
-DROP TABLE IF EXISTS public.quick_replies CASCADE;
-DROP TABLE IF EXISTS public.messages CASCADE;
-DROP TABLE IF EXISTS public.chats CASCADE;
-
--- جداول Payments & Ratings
-DROP TABLE IF EXISTS public.ratings CASCADE;
 DROP TABLE IF EXISTS public.payments CASCADE;
-
--- جداول Security
-DROP TABLE IF EXISTS public.idempotency_keys CASCADE;
+DROP TABLE IF EXISTS public.pharmacies CASCADE;
+DROP TABLE IF EXISTS public.pharmacy_favorites CASCADE;
+DROP TABLE IF EXISTS public.pharmacy_inventory CASCADE;
+DROP TABLE IF EXISTS public.pharmacy_ratings CASCADE;
+DROP TABLE IF EXISTS public.pharmacy_reservations CASCADE;
+DROP TABLE IF EXISTS public.physio_ratings CASCADE;
+DROP TABLE IF EXISTS public.physio_service_types CASCADE;
+DROP TABLE IF EXISTS public.physio_specialists CASCADE;
+DROP TABLE IF EXISTS public.prescriptions CASCADE;
+DROP TABLE IF EXISTS public.push_subscriptions CASCADE;
+DROP TABLE IF EXISTS public.quick_replies CASCADE;
 DROP TABLE IF EXISTS public.rate_limit_buckets CASCADE;
-DROP TABLE IF EXISTS public.otp_attempts CASCADE;
+DROP TABLE IF EXISTS public.ratings CASCADE;
+DROP TABLE IF EXISTS public.referral_codes CASCADE;
+DROP TABLE IF EXISTS public.referrals CASCADE;
+DROP TABLE IF EXISTS public.reminders CASCADE;
+DROP TABLE IF EXISTS public.service_favorites CASCADE;
+DROP TABLE IF EXISTS public.specialist_credentials_log CASCADE;
+DROP TABLE IF EXISTS public.specialist_schedules CASCADE;
+DROP TABLE IF EXISTS public.stories CASCADE;
+DROP TABLE IF EXISTS public.user_favorites CASCADE;
+DROP TABLE IF EXISTS public.user_feedback CASCADE;
+DROP TABLE IF EXISTS public.user_medications CASCADE;
+DROP TABLE IF EXISTS public.user_saved_locations CASCADE;
 DROP TABLE IF EXISTS public.user_telegram_links CASCADE;
-
--- جداول core (أخيراً)
-DROP TABLE IF EXISTS public.audit_logs CASCADE;
-DROP TABLE IF EXISTS public.appointments CASCADE;
 DROP TABLE IF EXISTS public.users CASCADE;
+DROP TABLE IF EXISTS public.vaccination_records CASCADE;
+DROP TABLE IF EXISTS public.vaccine_clinics CASCADE;
+DROP TABLE IF EXISTS public.vaccines CASCADE;
+DROP TABLE IF EXISTS public.video_sessions CASCADE;
+DROP TABLE IF EXISTS public.wallet_transactions CASCADE;
+DROP TABLE IF EXISTS public.whatsapp_otp CASCADE;
+
 
 
 -- ════════════════════════════════════════════════════════════════════
@@ -237,6 +289,20 @@ CREATE TABLE IF NOT EXISTS public.users (
   updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   last_seen_at TIMESTAMPTZ
 );
+
+-- 🔧 V33: أعمدة المختصّين (نُقلت من 05 — تُستخدم في policies مبكّرة بـ 03/04)
+ALTER TABLE public.users
+  ADD COLUMN IF NOT EXISTS specialist_type text,
+  ADD COLUMN IF NOT EXISTS approval_status text DEFAULT 'approved'
+    CHECK (approval_status IN ('pending', 'approved', 'rejected')),
+  ADD COLUMN IF NOT EXISTS rejection_reason text,
+  ADD COLUMN IF NOT EXISTS specialist_bio text,
+  ADD COLUMN IF NOT EXISTS specialist_certifications jsonb DEFAULT '[]'::jsonb,
+  ADD COLUMN IF NOT EXISTS specialist_years_exp integer,
+  ADD COLUMN IF NOT EXISTS specialist_languages text[] DEFAULT ARRAY['ar']::text[],
+  ADD COLUMN IF NOT EXISTS auto_reply_message text DEFAULT 'مرحباً! استلمنا طلبك وسنرد عليك في أقرب وقت. شكراً لاختياركم Spir Medical.',
+  ADD COLUMN IF NOT EXISTS years_experience integer,
+  ADD COLUMN IF NOT EXISTS specializations text[];
 
 CREATE INDEX IF NOT EXISTS idx_users_phone ON public.users(phone);
 CREATE INDEX IF NOT EXISTS idx_users_role ON public.users(role);
@@ -720,6 +786,15 @@ CREATE INDEX IF NOT EXISTS idx_family_members_owner
 
 ALTER TABLE public.family_members ENABLE ROW LEVEL SECURITY;
 
+-- ─── ربط appointments بفرد العائلة (يجب أن يسبق الـ policies التي تستخدمه) ───
+ALTER TABLE public.appointments
+  ADD COLUMN IF NOT EXISTS family_member_id UUID 
+    REFERENCES public.family_members(id) ON DELETE SET NULL;
+
+CREATE INDEX IF NOT EXISTS idx_appointments_family_member 
+  ON public.appointments(family_member_id) 
+  WHERE family_member_id IS NOT NULL;
+
 -- قراءة: صاحب الحساب + المختصون الذين لديهم طلبات لهذا الفرد + الأدمن
 DROP POLICY IF EXISTS "family_members_select_own" ON public.family_members;
 CREATE POLICY "family_members_select_own"
@@ -729,7 +804,7 @@ CREATE POLICY "family_members_select_own"
     OR EXISTS (
       SELECT 1 FROM public.appointments a
       WHERE a.family_member_id = family_members.id
-        AND a.assigned_specialist_id = auth.uid()
+        AND a.specialist_id = auth.uid()
     )
     OR EXISTS (
       SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin')
@@ -754,30 +829,15 @@ CREATE POLICY "family_members_delete_own"
   ON public.family_members FOR DELETE
   USING (auth.uid() = owner_user_id);
 
--- ─── 2. ربط appointments بفرد العائلة (اختياري) ─────────
-ALTER TABLE public.appointments
-  ADD COLUMN IF NOT EXISTS family_member_id UUID 
-    REFERENCES public.family_members(id) ON DELETE SET NULL;
-
-CREATE INDEX IF NOT EXISTS idx_appointments_family_member 
-  ON public.appointments(family_member_id) 
-  WHERE family_member_id IS NOT NULL;
-
--- ─── 3. ربط nursing_visit_history (للسجلات) ─────────────
-ALTER TABLE public.nursing_visit_history
-  ADD COLUMN IF NOT EXISTS family_member_id UUID 
-    REFERENCES public.family_members(id) ON DELETE SET NULL;
-
-CREATE INDEX IF NOT EXISTS idx_nursing_history_family_member 
-  ON public.nursing_visit_history(family_member_id) 
-  WHERE family_member_id IS NOT NULL;
+-- ملاحظة: ربط nursing_visit_history.family_member_id يتم في الملف 05
+-- (حيث يُنشأ جدول nursing_visit_history).
 
 -- ─── 4. View: عرض الطلب مع معلومات الفرد ────────────────
 CREATE OR REPLACE VIEW public.appointments_with_target AS
 SELECT
   a.*,
   COALESCE(fm.full_name, owner.full_name) as target_name,
-  COALESCE(fm.gender, owner.gender) as target_gender,
+  fm.gender as target_gender,
   COALESCE(
     EXTRACT(YEAR FROM AGE(CURRENT_DATE, fm.date_of_birth))::int,
     NULL
@@ -1021,99 +1081,8 @@ DROP POLICY IF EXISTS "Admins see all audit logs" ON public.audit_logs;
 CREATE POLICY "Admins see all audit logs" ON public.audit_logs
   FOR SELECT USING (public.is_admin(auth.uid()));
 
--- Admins يرون كل المحادثات
-DROP POLICY IF EXISTS "Admins see all chats" ON public.chats;
-CREATE POLICY "Admins see all chats" ON public.chats
-  FOR SELECT USING (public.is_admin(auth.uid()));
-
-DROP POLICY IF EXISTS "Admins see all messages" ON public.messages;
-CREATE POLICY "Admins see all messages" ON public.messages
-  FOR SELECT USING (public.is_admin(auth.uid()));
-
--- Admins يرون كل المدفوعات
-DROP POLICY IF EXISTS "Admins see all payments" ON public.payments;
-CREATE POLICY "Admins see all payments" ON public.payments
-  FOR SELECT USING (public.is_admin(auth.uid()));
-
-DROP POLICY IF EXISTS "Admins update all payments" ON public.payments;
-CREATE POLICY "Admins update all payments" ON public.payments
-  FOR UPDATE USING (public.is_admin(auth.uid()));
-
--- Admins يرون كل التقييمات
-DROP POLICY IF EXISTS "Admins see all ratings" ON public.ratings;
-CREATE POLICY "Admins see all ratings" ON public.ratings
-  FOR SELECT USING (public.is_admin(auth.uid()));
-
-DROP POLICY IF EXISTS "Admins update ratings" ON public.ratings;
-CREATE POLICY "Admins update ratings" ON public.ratings
-  FOR UPDATE USING (public.is_admin(auth.uid()));
 
 
--- ════════════════════════════════════════════════════════════════════
--- 📊 ADMIN VIEWS - مفيدة للـ Dashboard (V24 — security_invoker)
--- ════════════════════════════════════════════════════════════════════
-
--- إجمالي الإيرادات اليومية
-CREATE OR REPLACE VIEW public.daily_revenue
-WITH (security_invoker = on) AS
-SELECT
-  DATE(paid_at) AS date,
-  COUNT(*) AS total_payments,
-  SUM(amount) AS total_amount,
-  method,
-  currency
-FROM public.payments
-WHERE status = 'paid' AND paid_at IS NOT NULL
-GROUP BY DATE(paid_at), method, currency
-ORDER BY date DESC;
-
--- مواعيد اليوم (لكل أخصائي)
-CREATE OR REPLACE VIEW public.today_appointments
-WITH (security_invoker = on) AS
-SELECT
-  a.id,
-  a.user_id,
-  a.specialist_id,
-  a.service_type,
-  a.status,
-  a.scheduled_at,
-  a.address,
-  u.full_name AS patient_name,
-  u.phone AS patient_phone,
-  s.full_name AS specialist_name
-FROM public.appointments a
-LEFT JOIN public.users u ON u.id = a.user_id
-LEFT JOIN public.users s ON s.id = a.specialist_id
-WHERE DATE(a.scheduled_at) = CURRENT_DATE
-ORDER BY a.scheduled_at;
-
--- إحصاءات عامة (للأدمن dashboard)
-CREATE OR REPLACE VIEW public.platform_stats
-WITH (security_invoker = on) AS
-SELECT
-  (SELECT COUNT(*) FROM public.users WHERE role = 'patient') AS total_patients,
-  (SELECT COUNT(*) FROM public.users WHERE role = 'specialist') AS total_specialists,
-  (SELECT COUNT(*) FROM public.appointments WHERE status = 'completed') AS completed_appointments,
-  (SELECT COUNT(*) FROM public.appointments WHERE status = 'pending') AS pending_appointments,
-  (SELECT COUNT(*) FROM public.appointments WHERE DATE(created_at) = CURRENT_DATE) AS today_new_appointments,
-  (SELECT COUNT(*) FROM public.users WHERE DATE(created_at) = CURRENT_DATE) AS today_new_users,
-  (SELECT SUM(amount) FROM public.payments WHERE status = 'paid' AND DATE(paid_at) = CURRENT_DATE) AS today_revenue,
-  (SELECT ROUND(AVG(overall_rating)::numeric, 2) FROM public.ratings WHERE is_published) AS platform_avg_rating;
-
-
--- Appointments مع تفاصيل المستخدمين (يستخدمه الكود)
-CREATE OR REPLACE VIEW public.appointments_with_users
-WITH (security_invoker = on) AS
-SELECT
-  a.*,
-  u.full_name AS patient_name,
-  u.phone AS patient_phone,
-  u.governorate AS patient_governorate,
-  s.full_name AS specialist_name,
-  s.specialty AS specialist_specialty
-FROM public.appointments a
-LEFT JOIN public.users u ON u.id = a.user_id
-LEFT JOIN public.users s ON s.id = a.specialist_id;
 
 
 -- ════════════════════════════════════════════════════════════════════
@@ -1192,4 +1161,3 @@ LEFT JOIN public.users s ON s.id = a.specialist_id;
 --
 -- 4) سجّل دخول في: https://spirmedical-wep.vercel.app/admin44
 -- ════════════════════════════════════════════════════════════════════
-
