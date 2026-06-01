@@ -134,7 +134,7 @@ CREATE POLICY "consultation_images_doctor_select"
     bucket_id = 'consultation-images'
     AND EXISTS (
       SELECT 1 FROM public.consultations c
-      WHERE c.patient_id::text = (storage.foldername(name))[1]
+      WHERE c.patient_user_id::text = (storage.foldername(name))[1]
       AND c.doctor_id IN (
         SELECT id FROM public.doctors WHERE user_id = auth.uid()
       )
@@ -367,56 +367,35 @@ $$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
 -- 2. إصلاح policies للـ nursing_services (من 20_nursing_enhancements)
 -- ════════════════════════════════════════════════════════════════════
 
--- ─── nursing_services: SELECT ─────────────────────────
-DROP POLICY IF EXISTS "nursing_services_select" ON public.nursing_services;
-CREATE POLICY "nursing_services_select"
-  ON public.nursing_services FOR SELECT
-  USING (TRUE);  -- الكل يرى الخدمات
-
--- ─── nursing_services: ALL لـ admins ──────────────────
-DROP POLICY IF EXISTS "nursing_services_admin_all" ON public.nursing_services;
-CREATE POLICY "nursing_services_admin_all"
-  ON public.nursing_services FOR ALL
-  USING (public.is_admin(auth.uid()));
+-- (سياسات nursing_services أُزيلت — الجدول غير موجود في المخطّط الحالي — V33)
 
 -- ════════════════════════════════════════════════════════════════════
--- 3. إصلاح policies للـ nursing_orders
+-- 3. إصلاح policies للـ nursing_orders (محميّ — الجدول قد لا يكون موجوداً)
 -- ════════════════════════════════════════════════════════════════════
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'nursing_orders') THEN
+    DROP POLICY IF EXISTS "nursing_orders_select_own" ON public.nursing_orders;
+    CREATE POLICY "nursing_orders_select_own"
+      ON public.nursing_orders FOR SELECT
+      USING (user_id = auth.uid() OR nurse_id = auth.uid() OR public.is_admin(auth.uid()));
 
--- ─── nursing_orders: SELECT ──────────────────────────
-DROP POLICY IF EXISTS "nursing_orders_select_own" ON public.nursing_orders;
-CREATE POLICY "nursing_orders_select_own"
-  ON public.nursing_orders FOR SELECT
-  USING (
-    user_id = auth.uid()
-    OR nurse_id = auth.uid()
-    OR public.is_admin(auth.uid())
-  );
+    DROP POLICY IF EXISTS "nursing_orders_insert_own" ON public.nursing_orders;
+    CREATE POLICY "nursing_orders_insert_own"
+      ON public.nursing_orders FOR INSERT
+      WITH CHECK (user_id = auth.uid() OR public.is_admin(auth.uid()));
 
--- ─── nursing_orders: INSERT ──────────────────────────
-DROP POLICY IF EXISTS "nursing_orders_insert_own" ON public.nursing_orders;
-CREATE POLICY "nursing_orders_insert_own"
-  ON public.nursing_orders FOR INSERT
-  WITH CHECK (
-    user_id = auth.uid()
-    OR public.is_admin(auth.uid())
-  );
+    DROP POLICY IF EXISTS "nursing_orders_update_own" ON public.nursing_orders;
+    CREATE POLICY "nursing_orders_update_own"
+      ON public.nursing_orders FOR UPDATE
+      USING (user_id = auth.uid() OR nurse_id = auth.uid() OR public.is_admin(auth.uid()));
 
--- ─── nursing_orders: UPDATE ──────────────────────────
-DROP POLICY IF EXISTS "nursing_orders_update_own" ON public.nursing_orders;
-CREATE POLICY "nursing_orders_update_own"
-  ON public.nursing_orders FOR UPDATE
-  USING (
-    user_id = auth.uid()
-    OR nurse_id = auth.uid()
-    OR public.is_admin(auth.uid())
-  );
-
--- ─── nursing_orders: DELETE (admin فقط) ──────────────
-DROP POLICY IF EXISTS "nursing_orders_admin_delete" ON public.nursing_orders;
-CREATE POLICY "nursing_orders_admin_delete"
-  ON public.nursing_orders FOR DELETE
-  USING (public.is_admin(auth.uid()));
+    DROP POLICY IF EXISTS "nursing_orders_admin_delete" ON public.nursing_orders;
+    CREATE POLICY "nursing_orders_admin_delete"
+      ON public.nursing_orders FOR DELETE
+      USING (public.is_admin(auth.uid()));
+  END IF;
+END $$;
 
 -- ════════════════════════════════════════════════════════════════════
 -- 4. تحقّق + تحسين باقي الجداول الحساسة
@@ -448,13 +427,7 @@ END $$;
 -- 5. Performance: indexes إضافية مهمة
 -- ════════════════════════════════════════════════════════════════════
 
--- إذا الـ nursing_orders كثير الاستخدام
-CREATE INDEX IF NOT EXISTS idx_nursing_orders_status_date
-  ON public.nursing_orders(status, scheduled_at DESC);
-
-CREATE INDEX IF NOT EXISTS idx_nursing_orders_nurse
-  ON public.nursing_orders(nurse_id, status)
-  WHERE nurse_id IS NOT NULL;
+-- (indexes nursing_orders أُزيلت — الجدول غير موجود في المخطّط الحالي — V33)
 
 -- ════════════════════════════════════════════════════════════════════
 -- 6. تحسينات الـ appointments policies (تأكيد is_admin)
@@ -498,4 +471,3 @@ BEGIN
   RAISE NOTICE '   - nursing_orders policies updated';
   RAISE NOTICE '   - 2 new indexes for nursing performance';
 END $$;
-
