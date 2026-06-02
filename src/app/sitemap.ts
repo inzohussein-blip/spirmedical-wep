@@ -10,7 +10,7 @@ import { ARTICLES, getAllCategorySlugs } from '@/lib/data/blog-articles';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spirmedical-wep.vercel.app';
+    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spir-medical.com';
 
   const now = new Date();
 
