@@ -302,7 +302,10 @@ ALTER TABLE public.users
   ADD COLUMN IF NOT EXISTS specialist_languages text[] DEFAULT ARRAY['ar']::text[],
   ADD COLUMN IF NOT EXISTS auto_reply_message text DEFAULT 'مرحباً! استلمنا طلبك وسنرد عليك في أقرب وقت. شكراً لاختياركم Spir Medical.',
   ADD COLUMN IF NOT EXISTS years_experience integer,
-  ADD COLUMN IF NOT EXISTS specializations text[];
+  ADD COLUMN IF NOT EXISTS specializations text[],
+  ADD COLUMN IF NOT EXISTS is_suspended boolean NOT NULL DEFAULT false,
+  ADD COLUMN IF NOT EXISTS suspended_at timestamptz,
+  ADD COLUMN IF NOT EXISTS suspension_reason text;
 
 CREATE INDEX IF NOT EXISTS idx_users_phone ON public.users(phone);
 CREATE INDEX IF NOT EXISTS idx_users_role ON public.users(role);
