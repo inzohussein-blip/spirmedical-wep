@@ -22,8 +22,8 @@ import {
  *
  * ENV variables المطلوبة:
  *   - NEXT_PUBLIC_SITE_TYPE = 'app' | 'marketing' | 'all'
- *   - NEXT_PUBLIC_APP_URL = 'https://spirmedical-app.vercel.app'
- *   - NEXT_PUBLIC_MARKETING_URL = 'https://spirmedical-web.vercel.app'
+ *   - NEXT_PUBLIC_APP_URL = 'https://spir-medical.com'
+ *   - NEXT_PUBLIC_MARKETING_URL = 'https://spir-medical.com'
  * ════════════════════════════════════════════════════════════════════
  */
 export async function middleware(request: NextRequest) {
