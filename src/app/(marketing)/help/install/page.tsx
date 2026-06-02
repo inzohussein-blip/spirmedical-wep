@@ -83,7 +83,7 @@ export default function InstallHelpPage() {
               display: 'inline-block',
             }}
           >
-            spirmedical-wep.vercel.app
+            spir-medical.com
           </code>{' '}
           من Safari
         </Step>
