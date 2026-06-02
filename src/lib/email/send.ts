@@ -161,7 +161,7 @@ function emailWrapper(content: string, footerText?: string): string {
               <div style="color:#666460;font-size:11px;line-height:1.7;">
                 ${footerText || 'منصة طبية رقمية متكاملة في العراق'}
                 <br />
-                <a href="https://spirmedical-wep.vercel.app" style="color:#0E5C4D;text-decoration:none;font-weight:700;">spirmedical.iq</a>
+                <a href="https://spir-medical.com" style="color:#0E5C4D;text-decoration:none;font-weight:700;">spirmedical.iq</a>
                 <br />
                 <span style="color:#888780;font-size:10px;margin-top:8px;display:inline-block;">
                   © 2026 Spir Medical · جميع الحقوق محفوظة
@@ -205,7 +205,7 @@ function welcomePatientEmail(data: Record<string, string | number>): string {
       <li>👨‍👩‍👧 إضافة أفراد عائلتك</li>
     </ul>
     <div style="text-align:center;margin:24px 0;">
-      ${button('ابدأ الآن ←', 'https://spirmedical-wep.vercel.app/dashboard')}
+      ${button('ابدأ الآن ←', 'https://spir-medical.com/dashboard')}
     </div>
     <p style="margin:24px 0 0;color:#888780;font-size:12px;line-height:1.7;">
       📞 الدعم: <strong>122</strong> (24/7)<br />
@@ -231,7 +231,7 @@ function welcomeSpecialistEmail(data: Record<string, string | number>): string {
       <p style="margin:6px 0 0;color:#854F0B;font-size:13px;">سيتم مراجعة ملفك من قبل فريقنا خلال 24 ساعة قبل تفعيل حسابك.</p>
     </div>
     <div style="text-align:center;margin:24px 0;">
-      ${button('أكمل ملفي', 'https://spirmedical-wep.vercel.app/specialist/account/edit')}
+      ${button('أكمل ملفي', 'https://spir-medical.com/specialist/account/edit')}
     </div>
   `);
 }
@@ -269,7 +269,7 @@ function appointmentConfirmedEmail(data: Record<string, string | number>): strin
     </ul>
     
     <div style="text-align:center;margin:24px 0;">
-      ${button('تتبع طلبي', `https://spirmedical-wep.vercel.app/appointments/${data.id || ''}/track`)}
+      ${button('تتبع طلبي', `https://spir-medical.com/appointments/${data.id || ''}/track`)}
     </div>
   `);
 }
@@ -294,7 +294,7 @@ function appointmentReminderEmail(data: Record<string, string | number>): string
     </ul>
     
     <div style="text-align:center;margin:24px 0;">
-      ${button('عرض التفاصيل', `https://spirmedical-wep.vercel.app/appointments/${data.id || ''}`)}
+      ${button('عرض التفاصيل', `https://spir-medical.com/appointments/${data.id || ''}`)}
     </div>
   `);
 }
@@ -311,7 +311,7 @@ function ratingRequestEmail(data: Record<string, string | number>): string {
     </div>
     
     <div style="text-align:center;margin:24px 0;">
-      ${button('قيّم الآن (30 ثانية فقط)', `https://spirmedical-wep.vercel.app/appointments/${data.id || ''}/rate`)}
+      ${button('قيّم الآن (30 ثانية فقط)', `https://spir-medical.com/appointments/${data.id || ''}/rate`)}
     </div>
     
     <p style="margin:24px 0 0;color:#888780;font-size:11px;text-align:center;">شكراً لاختيارك سباير ميديكال 💚</p>
