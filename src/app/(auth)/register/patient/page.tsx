@@ -235,6 +235,21 @@ export default function PatientRegisterPage({
       <div className="auth-helper">
         لديك حساب؟ <Link href="/login">تسجيل الدخول</Link>
       </div>
+
+      {/* 🔧 V33: زر ثانوي صغير — التسجيل بالبريد الإلكتروني */}
+      <div style={{ textAlign: 'center', marginTop: 12 }}>
+        <Link
+          href="/register/email"
+          style={{
+            fontSize: 12,
+            color: 'var(--ink-3, #8a9a9c)',
+            textDecoration: 'underline',
+            opacity: 0.7,
+          }}
+        >
+          أو التسجيل بالبريد الإلكتروني
+        </Link>
+      </div>
     </main>
   );
 }
