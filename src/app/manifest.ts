@@ -35,7 +35,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Spir Medical · سباير ميديكال',
     short_name: 'Spir Medical',
-    description: 'منصة طبية رقمية متكاملة في العراق',
+    description: 'دليل الفرات الأوسط الطبي · منصة طبية رقمية متكاملة في العراق',
     // 📱 V26.12: PWA install دائماً يفتح التطبيق (/dashboard) وليس Landing/Marketing
     start_url: '/dashboard?source=pwa&utm_source=homescreen',
     display: 'standalone',
