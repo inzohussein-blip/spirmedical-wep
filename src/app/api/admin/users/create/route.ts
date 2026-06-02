@@ -260,7 +260,7 @@ export async function POST(request: Request) {
     });
 
     // ─── 8. Response ───
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://spirmedical-wep.vercel.app';
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://spir-medical.com';
 
     return NextResponse.json({
       success: true,
