@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = getArticleBySlug(params.slug);
   if (!article) return {};
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spirmedical-wep.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spir-medical.com';
   const url = `${baseUrl}/blog/${article.slug}`;
 
   return {
@@ -138,7 +138,7 @@ export default function ArticlePage({ params }: Props) {
   }
 
   const related = getRelatedArticles(params.slug);
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spirmedical-wep.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spir-medical.com';
 
   // Schema.org Article JSON-LD
   const articleSchema = {
