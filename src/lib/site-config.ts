@@ -4,8 +4,8 @@
  * ════════════════════════════════════════════════════════════════════
  *
  * يحدّد نوع الموقع الحالي:
- *   - 'app':       التطبيق فقط (spirmedical-app.vercel.app)
- *   - 'marketing': الموقع التسويقي فقط (spirmedical-web.vercel.app)
+ *   - 'app':       التطبيق فقط (spir-medical.com)
+ *   - 'marketing': الموقع التسويقي فقط (spir-medical.com)
  *   - 'all':       كل شيء (للـ development و legacy deployment)
  *
  * Usage:
@@ -123,10 +123,10 @@ export function getDefaultPath(siteType: SiteType = SITE_TYPE): string {
  *   - مع domain: spirmedical.com
  */
 export const APP_URL =
-  process.env.NEXT_PUBLIC_APP_URL || 'https://spirmedical-app.vercel.app';
+  process.env.NEXT_PUBLIC_APP_URL || 'https://spir-medical.com';
 
 export const MARKETING_URL =
-  process.env.NEXT_PUBLIC_MARKETING_URL || 'https://spirmedical-web.vercel.app';
+  process.env.NEXT_PUBLIC_MARKETING_URL || 'https://spir-medical.com';
 
 /**
  * يبني رابط للموقع الآخر
