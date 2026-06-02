@@ -7,7 +7,7 @@ import Script from 'next/script';
 // تطبق Schema.org/MedicalBusiness + Organization + WebSite
 // ============================================================
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spirmedical-wep.vercel.app';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spir-medical.com';
 
 // 1. Organization Schema
 const organizationSchema = {
