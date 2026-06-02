@@ -7,7 +7,7 @@ import { SITE_TYPE } from '@/lib/site-config';
 
 export default function robots(): MetadataRoute.Robots {
   const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spirmedical-wep.vercel.app';
+    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spir-medical.com';
 
   // 📱 على App site - منع كل البوتات (التطبيق ليس للجمهور)
   if (SITE_TYPE === 'app') {
