@@ -29,7 +29,7 @@ import './styles/shared.css';
 import './pwa.css';
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spirmedical-wep.vercel.app';
+  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spir-medical.com';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
