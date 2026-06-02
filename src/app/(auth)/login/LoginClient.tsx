@@ -469,6 +469,21 @@ export default function LoginClient() {
         ليس لديك حساب؟ <Link href="/register">إنشاء حساب جديد</Link>
       </div>
 
+      {/* 🔧 V33: رابط ثانوي صغير — الدخول بالبريد الإلكتروني */}
+      <div style={{ textAlign: 'center', marginTop: 10 }}>
+        <Link
+          href="/login/email"
+          style={{
+            fontSize: 12,
+            color: 'var(--ink-3, #8a9a9c)',
+            textDecoration: 'underline',
+            opacity: 0.7,
+          }}
+        >
+          أو الدخول بالبريد الإلكتروني
+        </Link>
+      </div>
+
       {/* ✨ V25.18: Biometric Login (يظهر فقط لو مُسجّل) */}
       <div style={{ marginTop: 16 }}>
         <BiometricLoginButton
