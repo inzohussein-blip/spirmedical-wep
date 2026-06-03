@@ -1,6 +1,6 @@
 'use server';
 
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { isSuperAdmin } from '@/lib/admin-types';
 import { logAuditEvent } from '@/lib/audit';
@@ -65,10 +65,11 @@ export async function requestAdminAccess(formData: FormData) {
 
     const userId = data.user!.id;
 
-    const sb = supabase as unknown as { from: (t: string) => any };
-    await sb.from('users').update({ full_name: fullName, approval_status: 'pending' }).eq('id', userId);
+    // 🔧 استخدم admin client (service_role) لتجاوز RLS — المستخدم الجديد بلا جلسة بعد
+    const admin = createAdminClient() as unknown as { from: (t: string) => any };
+    await admin.from('users').update({ full_name: fullName, approval_status: 'pending' }).eq('id', userId);
 
-    await sb.from('admin_requests').insert({
+    await admin.from('admin_requests').insert({
       user_id: userId,
       full_name: fullName,
       email,
