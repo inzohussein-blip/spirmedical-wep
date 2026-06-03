@@ -1,6 +1,6 @@
 'use server';
 
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { isAdminRole } from '@/lib/admin-types';
 import { logAuditEvent } from '@/lib/audit';
@@ -92,28 +92,31 @@ export async function adminCreate(formData: FormData) {
   const validRoles = ['super_admin', 'admin', 'manager', 'support'];
   const grantedRole = validRoles.includes(role) ? role : 'support';
 
-  const supabase = createClient();
+  const admin = createAdminClient();
 
   try {
-    // أنشئ الحساب في Supabase Auth (مع تأكيد تلقائي عبر admin API لو متاح)
-    const { data, error } = await supabase.auth.signUp({
+    // 🔧 أنشئ الحساب عبر admin API مع تأكيد فوري للإيميل (جاهز للدخول مباشرة)
+    const { data, error } = await admin.auth.admin.createUser({
       email,
       password,
-      options: { data: { full_name: fullName, role: grantedRole } },
+      email_confirm: true,
+      user_metadata: { full_name: fullName, role: grantedRole },
     });
 
     if (error || !data.user) {
-      const msg = error?.message.includes('already')
+      const msg = error?.message.includes('already') || error?.message.includes('exists')
         ? 'هذا البريد مُسجّل مسبقاً'
         : 'تعذّر إنشاء الحساب';
       redirect('/admin-login?tab=create&error=' + encodeURIComponent(msg));
     }
 
     const userId = data.user!.id;
-    const sb = supabase as unknown as { from: (t: string) => any };
+
+    // استخدم نفس admin client للكتابة (يتجاوز RLS)
+    const adminDb = admin as unknown as { from: (t: string) => any };
 
     // رقّ الحساب للرول المختار + موافقة فورية
-    await sb
+    await adminDb
       .from('users')
       .update({ full_name: fullName, role: grantedRole, approval_status: 'approved' })
       .eq('id', userId);
