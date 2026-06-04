@@ -256,6 +256,13 @@ export default function PrivacyPage() {
               </a>{' '}
               أو من إعدادات حسابك.
             </p>
+            <p>
+              لطلب <strong>حذف بياناتك</strong>، يمكنك استخدام{' '}
+              <Link href="/data-deletion" className="legal-inline-link">
+                صفحة طلب حذف البيانات
+              </Link>{' '}
+              التي توضّح الإجراءات الكاملة وآلية التحقّق من الهوية.
+            </p>
           </section>
 
           <section id="retention">
