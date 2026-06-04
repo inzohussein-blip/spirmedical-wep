@@ -949,6 +949,7 @@ export default async function HomePage({
                 <li><Link href="/legal/privacy">سياسة الخصوصية</Link></li>
                 <li><Link href="/legal/cookies">سياسة الكوكيز</Link></li>
                 <li><Link href="/legal/disclaimer">إخلاء المسؤولية الطبية</Link></li>
+                <li><Link href="/data-deletion">حذف البيانات</Link></li>
               </ul>
             </div>
             <div className="landing-footer-col">
