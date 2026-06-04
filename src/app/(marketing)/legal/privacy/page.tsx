@@ -251,8 +251,8 @@ export default function PrivacyPage() {
 
             <p>
               لممارسة أي من هذه الحقوق، راسلنا على{' '}
-              <a href="mailto:privacy@spirmedical.iq" className="legal-inline-link">
-                privacy@spirmedical.iq
+              <a href="mailto:privacy@spir-medical.com" className="legal-inline-link">
+                privacy@spir-medical.com
               </a>{' '}
               أو من إعدادات حسابك.
             </p>
@@ -297,11 +297,11 @@ export default function PrivacyPage() {
             <div className="legal-contact-card">
               <div>
                 <strong>📧 الأسئلة العامة</strong>
-                <a href="mailto:privacy@spirmedical.iq">privacy@spirmedical.iq</a>
+                <a href="mailto:privacy@spir-medical.com">privacy@spir-medical.com</a>
               </div>
               <div>
                 <strong>📧 شكاوى الخصوصية</strong>
-                <a href="mailto:dpo@spirmedical.iq">dpo@spirmedical.iq</a>
+                <a href="mailto:dpo@spir-medical.com">dpo@spir-medical.com</a>
               </div>
               <div>
                 <strong>⏱️ زمن الرد</strong>
