@@ -9,7 +9,7 @@
  *   1. Sign up at https://resend.com (مجاني 100/يوم)
  *   2. أنشئ API key
  *   3. أضف RESEND_API_KEY إلى .env.local
- *   4. أضف RESEND_FROM_EMAIL (مثلاً: noreply@spirmedical.iq)
+ *   4. أضف RESEND_FROM_EMAIL (مثلاً: noreply@spir-medical.com)
  * ════════════════════════════════════════════════════════════════════
  */
 
@@ -37,7 +37,7 @@ export async function sendEmail(payload: EmailPayload): Promise<{
   id?: string;
 }> {
   const apiKey = process.env.RESEND_API_KEY;
-  const fromEmail = process.env.RESEND_FROM_EMAIL || 'noreply@spirmedical.iq';
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'noreply@spir-medical.com';
 
   // إذا لم يكن Resend مفعّلاً، فقط سجّل (لا تفشل)
   if (!apiKey) {
