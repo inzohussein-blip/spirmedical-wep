@@ -187,15 +187,15 @@ export default function TermsPage() {
             <div className="legal-contact-card">
               <div>
                 <strong>📧 البريد الإلكتروني</strong>
-                <a href="mailto:legal@spirmedical.iq">legal@spirmedical.iq</a>
+                <a href="mailto:legal@spir-medical.com">legal@spir-medical.com</a>
               </div>
               <div>
                 <strong>📞 خدمة العملاء</strong>
-                <span>+٩٦٤ ٧٧٠ ١٢٣ ٤٥٦٧</span>
+                <span>+٩٦٤ ٧٨٠ ٣٩٩ ٣٥٨٥</span>
               </div>
               <div>
                 <strong>📍 العنوان</strong>
-                <span>بغداد - العراق</span>
+                <span>النجف - العراق</span>
               </div>
             </div>
           </section>
