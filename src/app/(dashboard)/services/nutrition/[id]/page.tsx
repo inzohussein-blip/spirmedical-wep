@@ -276,11 +276,11 @@ function PackageCard({ icon, title, subtitle, price, color, highlight }: {
     }}>
       <div style={{ fontSize: 18, marginBottom: 4 }}>{icon}</div>
       <div style={{ fontSize: 10, color: 'var(--ink-3)', fontWeight: 700 }}>{title}</div>
-      <div style={{ fontSize: 8, color: 'var(--ink-3)', marginBottom: 4 }}>{subtitle}</div>
+      <div style={{ fontSize: 10, color: 'var(--ink-3)', marginBottom: 4 }}>{subtitle}</div>
       <div style={{ fontSize: 13, fontWeight: 900, color }}>
         {price.toLocaleString('ar-IQ')}
       </div>
-      <div style={{ fontSize: 8, color: 'var(--ink-3)' }}>د.ع</div>
+      <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع</div>
     </div>
   );
 }
