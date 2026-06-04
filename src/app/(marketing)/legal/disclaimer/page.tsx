@@ -206,8 +206,8 @@ export default function DisclaimerPage() {
               لأي استفسار حول هذا الإخلاء أو الخدمات الطبية:
             </p>
             <ul>
-              <li>البريد الإلكتروني: <a href="mailto:medical@spirmedical.iq">medical@spirmedical.iq</a></li>
-              <li>الدعم الفني: <a href="mailto:support@spirmedical.iq">support@spirmedical.iq</a></li>
+              <li>البريد الإلكتروني: <a href="mailto:medical@spir-medical.com">medical@spir-medical.com</a></li>
+              <li>الدعم الفني: <a href="mailto:support@spir-medical.com">support@spir-medical.com</a></li>
               <li>صفحة <Link href="/legal/terms">الشروط والأحكام</Link></li>
               <li>صفحة <Link href="/legal/privacy">سياسة الخصوصية</Link></li>
             </ul>
