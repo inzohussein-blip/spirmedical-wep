@@ -120,7 +120,7 @@ export default function AboutPage() {
         {/* Footer */}
         <div className="account-footer" style={{ marginTop: 32 }}>
           <div>Spir Medical · سباير ميديكال</div>
-          <div>صُنع بعناية في بغداد 🇮🇶</div>
+          <div>صُنع بعناية في النجف 🇮🇶</div>
           <div style={{ marginTop: 8 }}>© 2026 جميع الحقوق محفوظة</div>
         </div>
 
