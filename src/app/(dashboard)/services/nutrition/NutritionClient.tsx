@@ -332,7 +332,7 @@ function PackageCard({ icon, title, price, color, highlight }: {
       <div style={{ fontSize: 11, fontWeight: 900, color }}>
         {price.toLocaleString('ar-IQ')}
       </div>
-      <div style={{ fontSize: 8, color: 'var(--ink-3)' }}>د.ع</div>
+      <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع</div>
     </div>
   );
 }
