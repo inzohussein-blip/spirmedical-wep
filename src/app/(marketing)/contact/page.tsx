@@ -64,8 +64,8 @@ export default function ContactPage() {
             color="var(--emerald)"
             title="اتصال هاتفي"
             subtitle="دعم سريع للحالات العاجلة"
-            value="07700000000"
-            href="tel:07700000000"
+            value="07803993585"
+            href="tel:+9647803993585"
             hours="٩ ص - ٩ م"
           />
 
@@ -74,8 +74,8 @@ export default function ContactPage() {
             color="#25D366"
             title="WhatsApp"
             subtitle="الأسرع للردود - اكتب لنا"
-            value="9647700000000"
-            href="https://wa.me/9647700000000"
+            value="9647803993585"
+            href="https://wa.me/9647803993585"
             hours="٩ ص - ١٢ م"
           />
 
@@ -84,8 +84,8 @@ export default function ContactPage() {
             color="var(--amber)"
             title="البريد الإلكتروني"
             subtitle="للاستفسارات الرسمية"
-            value="support@spirmedical.iq"
-            href="mailto:support@spirmedical.iq"
+            value="support@spir-medical.com"
+            href="mailto:support@spir-medical.com"
             hours="رد خلال ٢٤ ساعة"
           />
 
@@ -125,7 +125,7 @@ export default function ContactPage() {
           <div style={{ fontSize: 12, color: 'var(--ink-2)', lineHeight: 1.8 }}>
             <strong>سباير ميديكال</strong>
             <br />
-            بغداد، العراق
+            النجف، العراق
             <br />
             <span style={{ color: 'var(--ink-3)' }}>(العنوان التفصيلي يُرسل عند الطلب)</span>
           </div>
@@ -154,10 +154,10 @@ export default function ContactPage() {
           </h3>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
-            <DeptCard emoji="💼" label="المبيعات" email="sales@spirmedical.com" />
-            <DeptCard emoji="🤝" label="الشراكات" email="partnerships@spirmedical.com" />
-            <DeptCard emoji="⚖️" label="قانوني" email="legal@spirmedical.com" />
-            <DeptCard emoji="📰" label="صحافة" email="press@spirmedical.com" />
+            <DeptCard emoji="💼" label="المبيعات" email="sales@spir-medical.com" />
+            <DeptCard emoji="🤝" label="الشراكات" email="partnerships@spir-medical.com" />
+            <DeptCard emoji="⚖️" label="قانوني" email="legal@spir-medical.com" />
+            <DeptCard emoji="📰" label="صحافة" email="press@spir-medical.com" />
           </div>
         </div>
 
