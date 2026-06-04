@@ -41,7 +41,7 @@ export default async function RejectedPage() {
         )}
 
         <a
-          href={`https://wa.me/9647700000000?text=${encodeURIComponent(`السلام عليكم، أريد الاستفسار عن سبب رفض تسجيلي كاختصاصي. الاسم: ${profile?.full_name ?? '-'}`)}`}
+          href={`https://wa.me/9647803993585?text=${encodeURIComponent(`السلام عليكم، أريد الاستفسار عن سبب رفض تسجيلي كاختصاصي. الاسم: ${profile?.full_name ?? '-'}`)}`}
           target="_blank"
           rel="noopener noreferrer"
           style={{
