@@ -8,6 +8,7 @@ import {
   Pill, FlaskConical, ChevronLeft, Loader2, Search,
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
+import { useConfirm } from '@/components/ui';
 import EmptyStateV2, { type EmptyVariant } from '@/components/ui/EmptyStateV2';
 import PullToRefresh from '@/components/pwa/PullToRefresh';
 import { removeFavorite } from './actions';
@@ -71,6 +72,7 @@ const TYPE_META: Record<string, { label: string; emoji: string; color: string; h
 
 export default function FavoritesClient({ initialFavorites }: Props) {
   const router = useRouter();
+  const { confirm, ConfirmDialog } = useConfirm();
   const [favorites, setFavorites] = useState(initialFavorites);
   const [activeTab, setActiveTab] = useState<string>('all');
   const [isPending, startTransition] = useTransition();
@@ -88,8 +90,13 @@ export default function FavoritesClient({ initialFavorites }: Props) {
     medication: favorites.filter(f => f.favorite_type === 'medication').length,
   };
 
-  const handleRemove = (fav: Favorite) => {
-    if (!confirm(`إزالة "${fav.display_name}" من المفضّلة؟`)) return;
+  const handleRemove = async (fav: Favorite) => {
+    const ok = await confirm({
+      title: 'إزالة من المفضّلة',
+      message: `إزالة "${fav.display_name}" من المفضّلة؟`,
+      confirmText: 'إزالة',
+    });
+    if (!ok) return;
 
     startTransition(async () => {
       const result = await removeFavorite(fav.id);
@@ -305,6 +312,7 @@ export default function FavoritesClient({ initialFavorites }: Props) {
         <div style={{ height: 80 }} />
       </div>
       </PullToRefresh>
+      <ConfirmDialog />
     </main>
   );
 }
