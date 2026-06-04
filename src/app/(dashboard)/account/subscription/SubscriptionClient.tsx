@@ -202,7 +202,7 @@ export default function SubscriptionClient() {
                   </button>
                 ) : (
                   <a
-                    href={`https://wa.me/9647700000000?text=${encodeURIComponent(`السلام عليكم، أرغب بالاشتراك في باقة "${plan.name}" بسعر ${plan.price.toLocaleString('ar-IQ')} د.ع ${plan.period}.`)}`}
+                    href={`https://wa.me/9647803993585?text=${encodeURIComponent(`السلام عليكم، أرغب بالاشتراك في باقة "${plan.name}" بسعر ${plan.price.toLocaleString('ar-IQ')} د.ع ${plan.period}.`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`subscription-cta ${plan.highlight ? 'primary' : ''}`}
