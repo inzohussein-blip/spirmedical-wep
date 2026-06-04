@@ -9,6 +9,7 @@ import {
   ChevronDown, ChevronUp, CheckCircle2, Eye,
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
+import { useConfirm } from '@/components/ui';
 import { sendMessage, attachMedicalRecord, closeConsultation } from './actions';
 
 interface Consultation {
@@ -73,6 +74,7 @@ export default function ConsultationClient({
   currentUserId,
 }: Props) {
   const router = useRouter();
+  const { confirm, ConfirmDialog } = useConfirm();
   const [isPending, startTransition] = useTransition();
   const [messageText, setMessageText] = useState('');
   const [messages, setMessages] = useState<Message[]>(initialMessages);
@@ -134,8 +136,13 @@ export default function ConsultationClient({
     reader.readAsDataURL(file);
   };
 
-  const handleCloseConsultation = () => {
-    if (!confirm('هل تريد إغلاق هذه الاستشارة؟')) return;
+  const handleCloseConsultation = async () => {
+    const ok = await confirm({
+      title: 'إغلاق الاستشارة',
+      message: 'هل تريد إغلاق هذه الاستشارة؟',
+      confirmText: 'إغلاق',
+    });
+    if (!ok) return;
     startTransition(async () => {
       const result = await closeConsultation(consultation.id);
       if (result.success) {
@@ -550,6 +557,7 @@ export default function ConsultationClient({
       <style jsx>{`
         @keyframes spin { to { transform: rotate(360deg); } }
       `}</style>
+      <ConfirmDialog />
     </main>
   );
 }
