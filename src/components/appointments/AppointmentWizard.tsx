@@ -385,7 +385,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
                 <input type="checkbox" id="confirm-terms" defaultChecked />
                 <label htmlFor="confirm-terms">
                   أؤكّد أن المعلومات صحيحة وأوافق على
-                  <a href="/legal/terms" target="_blank"> شروط الخدمة</a>
+                  <a href="/legal/terms" target="_blank" rel="noopener noreferrer"> شروط الخدمة</a>
                 </label>
               </div>
             </>
