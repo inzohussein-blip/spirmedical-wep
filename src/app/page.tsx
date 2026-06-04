@@ -28,7 +28,7 @@ const TESTIMONIALS = [
   {
     id: 1,
     name: 'أم محمد',
-    location: 'بغداد · الكرادة',
+    location: 'النجف · حي السعد',
     rating: 5,
     text: 'احتجت سحب دم لوالدي المسن ووصل الفني خلال ساعة. الخدمة احترافية والأسعار معقولة. أنصح بها كل العائلات.',
     avatar: 'م',
@@ -37,7 +37,7 @@ const TESTIMONIALS = [
   {
     id: 2,
     name: 'د. علي الحسيني',
-    location: 'البصرة · طبيب باطنية',
+    location: 'كربلاء · طبيب باطنية',
     rating: 5,
     text: 'كأخصائي، سباير ميديكال غيّر طريقة تواصلي مع المرضى. أستطيع متابعة حالاتهم وكتابة الوصفات بسهولة.',
     avatar: 'ع',
@@ -92,7 +92,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'في كم محافظة تعملون؟',
-    a: 'نعمل حالياً في 18 محافظة عراقية، مع تغطية كاملة في بغداد، البصرة، أربيل، الموصل، النجف، كربلاء، السليمانية، وغيرها.',
+    a: 'نركّز على الفرات الأوسط: النجف، كربلاء، بابل، الديوانية، مع تغطية متنامية في بقية المحافظات العراقية.',
   },
   {
     q: 'كيف أحجز موعد فحص؟',
@@ -119,19 +119,19 @@ const FAQ_ITEMS = [
 const TRUST_BADGES = [
   { icon: '🔒', title: 'AES-256', desc: 'تشفير عسكري' },
   { icon: '🏥', title: 'معتمد طبياً', desc: 'وزارة الصحة العراقية' },
-  { icon: '🇮🇶', title: 'صناعة عراقية', desc: 'بُني في بغداد' },
+  { icon: '🇮🇶', title: 'صناعة عراقية', desc: 'بُني في النجف' },
   { icon: '🛡️', title: 'SSL Pinned', desc: 'حماية البيانات' },
 ];
 
 const ACTIVE_CITIES = [
+  { name: 'النجف', doctors: 32, labs: 14, lat: 31.9997, lng: 44.3296 },
+  { name: 'كربلاء', doctors: 24, labs: 10, lat: 32.6149, lng: 44.0245 },
+  { name: 'بابل', doctors: 20, labs: 8, lat: 32.4637, lng: 44.4209 },
+  { name: 'الديوانية', doctors: 15, labs: 6, lat: 31.9923, lng: 44.9249 },
   { name: 'بغداد', doctors: 85, labs: 24, lat: 33.3152, lng: 44.3661 },
   { name: 'البصرة', doctors: 32, labs: 12, lat: 30.5085, lng: 47.7804 },
-  { name: 'أربيل', doctors: 28, labs: 10, lat: 36.1901, lng: 44.0094 },
-  { name: 'الموصل', doctors: 22, labs: 8, lat: 36.3489, lng: 43.1577 },
-  { name: 'النجف', doctors: 18, labs: 7, lat: 31.9997, lng: 44.3296 },
-  { name: 'كربلاء', doctors: 15, labs: 6, lat: 32.6149, lng: 44.0245 },
-  { name: 'السليمانية', doctors: 14, labs: 5, lat: 35.5556, lng: 45.4351 },
   { name: 'كركوك', doctors: 12, labs: 4, lat: 35.4681, lng: 44.3923 },
+  { name: 'أربيل', doctors: 28, labs: 10, lat: 36.1901, lng: 44.0094 },
 ];
 
 // 🆕 V25.41: COVERAGE_MARKERS removed - الـ LandingCoverageMap الجديد يبني markers من cities داخلياً
@@ -728,7 +728,7 @@ export default async function HomePage({
             <div className="landing-feature">
               <div className="landing-feature-icon">⚡</div>
               <strong>سريع كالبرق</strong>
-              <span>الطلبات تصل خلال ساعتين في بغداد</span>
+              <span>الطلبات تصل خلال ساعتين في النجف</span>
             </div>
             <div className="landing-feature">
               <div className="landing-feature-icon">🇮🇶</div>
@@ -927,9 +927,9 @@ export default async function HomePage({
                 </div>
               </div>
               <p className="landing-footer-tagline">
-                صحة العراق، رقمياً.
+                دليل الفرات الأوسط الطبي.
                 <br />
-                بُني بعناية في بغداد 🇮🇶
+                بُني بعناية في النجف 🇮🇶
               </p>
             </div>
             <div className="landing-footer-col">
@@ -954,9 +954,9 @@ export default async function HomePage({
             <div className="landing-footer-col">
               <h4>تواصل</h4>
               <ul>
-                <li>info@spirmedical.iq</li>
+                <li>info@spir-medical.com</li>
                 <li>الدعم الفني</li>
-                <li>+٩٦٤ ٧٧٠ ١٢٣ ٤٥٦٧</li>
+                <li>+٩٦٤ ٧٨٠ ٣٩٩ ٣٥٨٥</li>
               </ul>
             </div>
           </div>
