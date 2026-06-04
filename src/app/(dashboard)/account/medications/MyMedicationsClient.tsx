@@ -5,6 +5,7 @@ import {
   Pill, Plus, Edit, Trash2, Power, X, Save, Bell, BellOff, 
   Clock, Calendar, AlertTriangle, CheckCircle2,
 } from 'lucide-react';
+import { useConfirm } from '@/components/ui';
 import { 
   addUserMedication, removeUserMedication, toggleUserMedicationActive,
   type UserMedicationInput,
@@ -39,6 +40,7 @@ const TIMING_LABELS: Record<string, string> = {
 };
 
 export default function MyMedicationsClient({ medications }: Props) {
+  const { confirm, ConfirmDialog } = useConfirm();
   const [showAdd, setShowAdd] = useState(false);
   const [feedback, setFeedback] = useState<{ ok: boolean; msg: string } | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -49,8 +51,14 @@ export default function MyMedicationsClient({ medications }: Props) {
     });
   }
 
-  function handleDelete(id: string, name: string) {
-    if (!confirm(`حذف "${name}" من قائمتك؟`)) return;
+  async function handleDelete(id: string, name: string) {
+    const ok = await confirm({
+      title: 'حذف الدواء',
+      message: `حذف "${name}" من قائمتك؟`,
+      variant: 'danger',
+      confirmText: 'حذف',
+    });
+    if (!ok) return;
     startTransition(async () => {
       const result = await removeUserMedication(id);
       if (result.ok) {
@@ -261,6 +269,7 @@ export default function MyMedicationsClient({ medications }: Props) {
           }}
         />
       )}
+      <ConfirmDialog />
     </div>
   );
 }
