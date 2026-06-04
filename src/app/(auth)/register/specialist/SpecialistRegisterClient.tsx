@@ -412,7 +412,7 @@ export default function SpecialistRegisterClient() {
               أوافق على{' '}
               <Link
                 href="/legal/terms"
-                target="_blank"
+                target="_blank" rel="noopener noreferrer"
                 className="auth-inline-link"
               >
                 الشروط والأحكام
@@ -420,7 +420,7 @@ export default function SpecialistRegisterClient() {
               {' '}و{' '}
               <Link
                 href="/legal/privacy"
-                target="_blank"
+                target="_blank" rel="noopener noreferrer"
                 className="auth-inline-link"
               >
                 سياسة الخصوصية
