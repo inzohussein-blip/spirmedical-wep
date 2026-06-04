@@ -172,7 +172,7 @@ export default function CookiesPage() {
               إذا كان لديك أي سؤال حول سياسة الكوكيز، تواصل معنا:
             </p>
             <ul>
-              <li>البريد الإلكتروني: <a href="mailto:privacy@spirmedical.iq">privacy@spirmedical.iq</a></li>
+              <li>البريد الإلكتروني: <a href="mailto:privacy@spir-medical.com">privacy@spir-medical.com</a></li>
               <li>صفحة <Link href="/legal/privacy">سياسة الخصوصية</Link></li>
               <li>صفحة <Link href="/legal/terms">الشروط والأحكام</Link></li>
             </ul>
