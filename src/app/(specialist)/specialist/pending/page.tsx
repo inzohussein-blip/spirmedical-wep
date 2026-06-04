@@ -51,7 +51,7 @@ export default async function PendingApprovalPage() {
         </div>
 
         <a
-          href={`https://wa.me/9647700000000?text=${encodeURIComponent(`السلام عليكم، أريد الاستفسار عن حالة تسجيلي كاختصاصي في Spir Medical. الاسم: ${profile?.full_name ?? '-'}`)}`}
+          href={`https://wa.me/9647803993585?text=${encodeURIComponent(`السلام عليكم، أريد الاستفسار عن حالة تسجيلي كاختصاصي في Spir Medical. الاسم: ${profile?.full_name ?? '-'}`)}`}
           target="_blank"
           rel="noopener noreferrer"
           style={{
