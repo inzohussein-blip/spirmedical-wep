@@ -287,7 +287,7 @@ export default async function AccountPage() {
           fontSize: 10, color: '#80868B', lineHeight: 1.6,
         }}>
           <div style={{ fontWeight: 700, marginBottom: 2 }}>Spir Medical · سباير ميديكال</div>
-          <div>الإصدار 1.0.0 · صنع بعناية في بغداد 🇮🇶</div>
+          <div>الإصدار 1.0.0 · صنع بعناية في النجف 🇮🇶</div>
         </div>
       </div>
     </main>
