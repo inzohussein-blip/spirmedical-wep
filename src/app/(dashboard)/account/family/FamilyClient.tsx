@@ -8,6 +8,7 @@ import {
   Phone, AlertCircle, Heart, Save, Loader2, ChevronLeft,
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
+import { useConfirm } from '@/components/ui';
 import { addFamilyMember, updateFamilyMember, deleteFamilyMember } from './actions';
 
 interface FamilyMember {
@@ -47,12 +48,19 @@ interface Props {
 
 export default function FamilyClient({ members, appointmentsCounts }: Props) {
   const router = useRouter();
+  const { confirm, ConfirmDialog } = useConfirm();
   const [isPending, startTransition] = useTransition();
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<FamilyMember | null>(null);
 
-  const handleDelete = (member: FamilyMember) => {
-    if (!confirm(`هل تريد حذف "${member.full_name}" من قائمة العائلة؟`)) return;
+  const handleDelete = async (member: FamilyMember) => {
+    const ok = await confirm({
+      title: 'حذف فرد العائلة',
+      message: `هل تريد حذف "${member.full_name}" من قائمة العائلة؟`,
+      variant: 'danger',
+      confirmText: 'حذف',
+    });
+    if (!ok) return;
     startTransition(async () => {
       const result = await deleteFamilyMember(member.id);
       if (result.success) {
@@ -313,6 +321,7 @@ export default function FamilyClient({ members, appointmentsCounts }: Props) {
           }}
         />
       )}
+      <ConfirmDialog />
     </main>
   );
 }
