@@ -162,7 +162,7 @@ export default function PatientRegisterPage({
               أوافق على{' '}
               <Link
                 href="/legal/terms"
-                target="_blank"
+                target="_blank" rel="noopener noreferrer"
                 className="auth-inline-link"
               >
                 الشروط والأحكام
@@ -170,7 +170,7 @@ export default function PatientRegisterPage({
               {' '}و{' '}
               <Link
                 href="/legal/privacy"
-                target="_blank"
+                target="_blank" rel="noopener noreferrer"
                 className="auth-inline-link"
               >
                 سياسة الخصوصية
