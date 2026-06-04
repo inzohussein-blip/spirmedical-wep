@@ -8,6 +8,7 @@ import {
   Pill, Package, TrendingUp, Eye, Save, ArrowRight, Filter,
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
+import { useConfirm } from '@/components/ui';
 import {
   toggleMedicationAvailability,
   addMedicationToInventory,
@@ -58,6 +59,7 @@ export default function PharmacyManagementClient({
   allMedications,
 }: Props) {
   const router = useRouter();
+  const { confirm, ConfirmDialog } = useConfirm();
   const [isPending, startTransition] = useTransition();
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -100,8 +102,14 @@ export default function PharmacyManagementClient({
     });
   };
 
-  const handleRemove = (item: InventoryItem) => {
-    if (!confirm(`هل تريد حذف "${item.medication?.name_ar}" من الكتالوج؟`)) return;
+  const handleRemove = async (item: InventoryItem) => {
+    const ok = await confirm({
+      title: 'حذف من الكتالوج',
+      message: `هل تريد حذف "${item.medication?.name_ar}" من الكتالوج؟`,
+      variant: 'danger',
+      confirmText: 'حذف',
+    });
+    if (!ok) return;
     startTransition(async () => {
       const result = await removeFromInventory(item.id);
       if (result.success) {
@@ -298,6 +306,7 @@ export default function PharmacyManagementClient({
           }}
         />
       )}
+      <ConfirmDialog />
     </main>
   );
 }
