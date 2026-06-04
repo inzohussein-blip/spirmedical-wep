@@ -30,7 +30,7 @@ import {
 } from '@/types/saved-locations';
 
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/reverse';
-const USER_AGENT = 'SpirMedical/1.0 (https://spirmedical.iq)';
+const USER_AGENT = 'SpirMedical/1.0 (https://spir-medical.com)';
 
 /**
  * يحوّل إحداثيات إلى عنوان عربي
