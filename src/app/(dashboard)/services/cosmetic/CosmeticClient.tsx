@@ -220,7 +220,7 @@ function ProductCard({ product, compact = false }: { product: Product; compact?:
           insetInlineStart: 8,
           background: 'var(--amber)',
           color: 'var(--paper-3)',
-          fontSize: 8,
+          fontSize: 10,
           fontWeight: 900,
           padding: '2px 6px',
           borderRadius: 4,
