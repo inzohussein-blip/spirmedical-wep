@@ -211,7 +211,7 @@ export default async function ServicesPage() {
             <span style={{
               position: 'absolute', top: 10, right: 10,
               background: '#FBBC04', color: '#202124',
-              fontSize: 8, fontWeight: 700,
+              fontSize: 10, fontWeight: 700,
               padding: '2px 7px', borderRadius: 9999, zIndex: 2,
             }}>
               الأكثر طلباً
