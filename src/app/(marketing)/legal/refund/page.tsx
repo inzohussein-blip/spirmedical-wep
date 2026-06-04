@@ -143,7 +143,7 @@ export default function RefundPage() {
             <h2>٦. النزاعات</h2>
             <p>
               في حال رفض طلب الاسترداد، يحقّ للمستخدم تقديم اعتراض رسمي
-              عبر البريد الإلكتروني <strong>legal@spirmedical.com</strong>.
+              عبر البريد الإلكتروني <strong>legal@spir-medical.com</strong>.
               سيُراجع الاعتراض من قِبَل مدير الخدمات خلال ٧ أيام عمل.
             </p>
             <p>
@@ -172,9 +172,9 @@ export default function RefundPage() {
               للاستفسار عن أي طلب استرداد أو شكوى:
             </p>
             <ul>
-              <li>📧 البريد: <strong>refunds@spirmedical.com</strong></li>
-              <li>📞 الهاتف: <strong>07700000000</strong></li>
-              <li>💬 WhatsApp: <strong>9647700000000</strong></li>
+              <li>📧 البريد: <strong>refunds@spir-medical.com</strong></li>
+              <li>📞 الهاتف: <strong>07803993585</strong></li>
+              <li>💬 WhatsApp: <strong>9647803993585</strong></li>
               <li>أو زر <Link href="/contact">صفحة الاتصال</Link></li>
             </ul>
 
