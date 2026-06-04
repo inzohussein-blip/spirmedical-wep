@@ -9,6 +9,7 @@ import {
   Sparkles, Loader2, Building2,
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
+import { useConfirm } from '@/components/ui';
 import { subscribeToDoctor, startConsultation } from './actions';
 import { track } from '@/lib/analytics';
 import ShareButton from '@/components/pwa/ShareButton';
@@ -70,20 +71,24 @@ const SPECIALTIES: Record<string, { label: string; emoji: string }> = {
 
 export default function DoctorDetailClient({ doctor, activeSubscription }: Props) {
   const router = useRouter();
+  const { confirm, ConfirmDialog } = useConfirm();
   const [isPending, startTransition] = useTransition();
   const [bookingModalType, setBookingModalType] = useState<'home_visit' | 'clinic_visit' | 'video' | null>(null);
   const specMeta = SPECIALTIES[doctor.specialty];
 
-  const handleSubscribe = (plan: 'monthly' | 'yearly') => {
+  const handleSubscribe = async (plan: 'monthly' | 'yearly') => {
     const price = plan === 'monthly'
       ? doctor.monthly_subscription_price
       : doctor.yearly_subscription_price;
 
     if (!price) return;
 
-    if (!confirm(
-      `تأكيد الاشتراك ${plan === 'monthly' ? 'الشهري' : 'السنوي'} مع ${doctor.title} ${doctor.full_name}\n\nالسعر: ${price.toLocaleString('ar-IQ')} د.ع\nالدفع: كاش عند الاستلام\n\nهل تريد المتابعة؟`
-    )) return;
+    const ok = await confirm({
+      title: `الاشتراك ${plan === 'monthly' ? 'الشهري' : 'السنوي'}`,
+      message: `الاشتراك مع ${doctor.title} ${doctor.full_name} — السعر: ${price.toLocaleString('ar-IQ')} د.ع · الدفع كاش عند الاستلام. هل تريد المتابعة؟`,
+      confirmText: 'تأكيد الاشتراك',
+    });
+    if (!ok) return;
 
     startTransition(async () => {
       const result = await subscribeToDoctor(doctor.id, plan);
@@ -690,6 +695,7 @@ export default function DoctorDetailClient({ doctor, activeSubscription }: Props
           onClose={() => setBookingModalType(null)}
         />
       )}
+      <ConfirmDialog />
     </main>
   );
 }
