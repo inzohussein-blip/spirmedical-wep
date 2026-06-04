@@ -25,7 +25,7 @@ export async function GET(request: Request) {
     const titleAr = searchParams.get('titleAr') ?? 'سباير ميديكال';
     const titleEn = searchParams.get('titleEn') ?? 'Spir Medical';
     const headline = searchParams.get('headline') ?? 'الرعاية الصحية بين يديك';
-    const meta = searchParams.get('meta') ?? 'خدمة طبية · 18 محافظة · 24/7';
+    const meta = searchParams.get('meta') ?? 'دليل الفرات الأوسط الطبي · النجف · 24/7';
 
     return new ImageResponse(
       (
