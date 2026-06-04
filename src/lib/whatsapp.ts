@@ -63,18 +63,20 @@ export function renderTemplate(
 // المزود 1: Meta Business API (الأفضل للحجم الكبير)
 // ═══════════════════════════════════════════════════════════════════
 async function sendViaMetaBusiness(params: SendWhatsAppParams): Promise<SendResult> {
-  const phoneNumberId = process.env.WHATSAPP_META_PHONE_ID;
-  const accessToken = process.env.WHATSAPP_META_TOKEN;
+  // 🔧 V33: متغيّرات موحّدة — META_* أولاً، مع دعم الأسماء القديمة للتوافق الخلفي
+  const phoneNumberId = process.env.META_PHONE_NUMBER_ID || process.env.WHATSAPP_META_PHONE_ID;
+  const accessToken = process.env.META_ACCESS_TOKEN || process.env.WHATSAPP_META_TOKEN;
+  const apiVersion = process.env.META_API_VERSION || 'v21.0';
 
   if (!phoneNumberId || !accessToken) {
-    return { ok: false, error: 'Meta credentials missing (WHATSAPP_META_PHONE_ID, WHATSAPP_META_TOKEN)', provider: 'meta' };
+    return { ok: false, error: 'Meta credentials missing (set META_PHONE_NUMBER_ID, META_ACCESS_TOKEN)', provider: 'meta' };
   }
 
   const to = normalizePhoneIQ(params.to).replace('+', '');
 
   try {
     const res = await fetch(
-      `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`,
+      `https://graph.facebook.com/${apiVersion}/${phoneNumberId}/messages`,
       {
         method: 'POST',
         headers: {
