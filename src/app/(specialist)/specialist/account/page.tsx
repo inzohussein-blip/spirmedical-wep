@@ -120,7 +120,7 @@ export default async function SpecialistAccountPage() {
             <div style={{ color: 'var(--ink-3)', fontSize: 18 }}>←</div>
           </Link>
           <a
-            href={`https://wa.me/9647700000000?text=${encodeURIComponent(`السلام عليكم، أحتاج مساعدة بخصوص حسابي كاختصاصي في Spir Medical.`)}`}
+            href={`https://wa.me/9647803993585?text=${encodeURIComponent(`السلام عليكم، أحتاج مساعدة بخصوص حسابي كاختصاصي في Spir Medical.`)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="scr-list-item scr-list-item-clickable"
