@@ -24,10 +24,10 @@ interface ContactMethod {
 }
 
 const CONTACT_METHODS: ContactMethod[] = [
-  { icon: Phone,         label: 'الاتصال الهاتفي',   value: '07901234567',         href: 'tel:07901234567' },
-  { icon: Mail,          label: 'البريد الإلكتروني', value: 'support@spirmedical.iq', href: 'mailto:support@spirmedical.iq' },
-  { icon: MessageCircle, label: 'واتساب',            value: '07901234567',         href: 'https://wa.me/9647901234567' },
-  { icon: MapPin,        label: 'العنوان',           value: 'بغداد · العراق',       href: null },
+  { icon: Phone,         label: 'الاتصال الهاتفي',   value: '07803993585',         href: 'tel:+9647803993585' },
+  { icon: Mail,          label: 'البريد الإلكتروني', value: 'support@spir-medical.com', href: 'mailto:support@spir-medical.com' },
+  { icon: MessageCircle, label: 'واتساب',            value: '07803993585',         href: 'https://wa.me/9647803993585' },
+  { icon: MapPin,        label: 'العنوان',           value: 'النجف · العراق',       href: null },
 ];
 
 export default function HelpPage() {
