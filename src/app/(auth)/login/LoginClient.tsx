@@ -211,11 +211,33 @@ function FieldWrapper({ children }: { children: React.ReactNode }) {
   );
 }
 
+// ─── ترجمة رموز أخطاء OTP لأسباب مفهومة (للتشخيص) ───
+const OTP_ERROR_HINTS: Record<string, string> = {
+  DB_42501: 'صلاحيات قاعدة البيانات (RLS) — يحتاج service_role',
+  DB_42P01: 'جدول الرموز غير موجود — شغّل migration',
+  DB_23502: 'حقل مطلوب فارغ في قاعدة البيانات',
+  DB_23514: 'قيمة مرفوضة (CHECK constraint)',
+  DB_22P02: 'صيغة بيانات خاطئة (مثل IP/تاريخ)',
+  DB_INSERT: 'فشل حفظ الرمز في قاعدة البيانات',
+  PHONE_INVALID: 'رقم الهاتف غير صالح',
+  RATE_LIMIT: 'تجاوز عدد المحاولات المسموح',
+  CHANNEL_UNSUPPORTED: 'قناة الإرسال غير مدعومة',
+  SEND_FAILED: 'فشل الإرسال عبر واتساب',
+  META_131030: 'الرقم غير مضاف كمستلم مسموح في Meta',
+  META_132000: 'قالب الرسالة غير معتمد',
+  META_132001: 'قالب الرسالة (spir_otp) غير موجود',
+  META_100: 'إعدادات Meta غير صحيحة (توكن/معرّف)',
+  META_190: 'توكن Meta منتهي أو غير صالح',
+  EXCEPTION: 'خطأ غير متوقّع أثناء الإرسال',
+  SMS_FAILED: 'فشل قناة SMS الاحتياطية',
+};
+
 export default function LoginClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const role: Role = (searchParams.get('role') as Role) || 'patient';
   const errorParam = searchParams.get('error');
+  const errorCode = searchParams.get('code');
 
   const [phone, setPhone] = useState('');
   const [phoneError, setPhoneError] = useState<string | undefined>();
@@ -340,7 +362,14 @@ export default function LoginClient() {
         {errorParam && (
           <div className="auth-error" role="alert">
             <div className="auth-error-icon">!</div>
-            <span>{errorParam}</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <span>{errorParam}</span>
+              {errorCode && (
+                <span style={{ fontSize: 11, opacity: 0.75 }}>
+                  {OTP_ERROR_HINTS[errorCode] || 'خطأ غير معروف'} ({errorCode})
+                </span>
+              )}
+            </div>
           </div>
         )}
 
