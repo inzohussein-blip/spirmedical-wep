@@ -3,7 +3,7 @@
  * يدعم 3 قنوات: WhatsApp, Telegram, SMS
  */
 
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/server';
 import { sendOtpMessage, normalizePhone } from './meta-client';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
@@ -60,7 +60,7 @@ async function checkRateLimit(phone: string): Promise<{
   allowed: boolean;
   retryAfter?: number;
 }> {
-  const supabase = createClient();
+  const supabase = createAdminClient();
   const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
 
   const { count, error } = await supabase
@@ -121,7 +121,7 @@ export async function sendOtp(params: {
   const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
 
   // ─── 4. حفظ في DB ───
-  const supabase = createClient();
+  const supabase = createAdminClient();
   const { data: otpRecord, error: dbError } = await supabase
     .from('whatsapp_otp')
     .insert({
@@ -203,7 +203,7 @@ export async function verifyOtp(params: {
     return { success: false, error: 'الرمز يجب أن يكون 6 أرقام' };
   }
 
-  const supabase = createClient();
+  const supabase = createAdminClient();
 
   // ─── 1. ابحث عن آخر OTP نشط ───
   const { data: otp, error: findError } = await supabase
