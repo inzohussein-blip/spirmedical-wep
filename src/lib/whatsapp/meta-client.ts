@@ -103,7 +103,8 @@ export async function sendOtpMessage(
   phone: string,
   otpCode: string
 ): Promise<MetaSendResult> {
-  return sendToMeta({
+  // ─── محاولة 1: Authentication template "spir_otp" (للإنتاج) ───
+  const templateResult = await sendToMeta({
     messaging_product: 'whatsapp',
     recipient_type: 'individual',
     to: normalizePhone(phone),
@@ -123,6 +124,36 @@ export async function sendOtpMessage(
           parameters: [{ type: 'text', text: otpCode }], // لزر النسخ التلقائي
         },
       ],
+    },
+  });
+
+  if (templateResult.success) {
+    return templateResult;
+  }
+
+  // ─── محاولة 2 (احتياطي): نصّ حرّ ───
+  // يعمل ضمن نافذة 24 ساعة (بعد تفاعل المستخدم) أو مع الأرقام التجريبية.
+  // مفيد قبل اعتماد الـ template أو توثيق النشاط التجاري.
+  // eslint-disable-next-line no-console
+  console.warn('[Meta] template "spir_otp" failed, trying free-text fallback:', templateResult.error);
+  return sendOtpText(phone, otpCode);
+}
+
+/**
+ * إرسال OTP كرسالة نصّية حرّة (بدون template).
+ * يعمل ضمن نافذة 24 ساعة أو مع الأرقام التجريبية.
+ */
+export async function sendOtpText(
+  phone: string,
+  otpCode: string
+): Promise<MetaSendResult> {
+  return sendToMeta({
+    messaging_product: 'whatsapp',
+    recipient_type: 'individual',
+    to: normalizePhone(phone),
+    type: 'text',
+    text: {
+      body: `*سباير ميديكال* 🌿\n\nرمز التحقق الخاص بك:\n*${otpCode}*\n\nصالح لمدة 5 دقائق.\nلا تشاركه مع أي شخص.`,
     },
   });
 }
