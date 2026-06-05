@@ -16,6 +16,7 @@ export interface SendOtpResult {
   otpId?: string;
   channel?: OtpChannel;
   error?: string;
+  code?: string;        // رمز فني مختصر للتشخيص (مثل DB_INSERT_42501)
   expiresAt?: string;
   retryAfter?: number;
 }
@@ -102,7 +103,7 @@ export async function sendOtp(params: {
   // ─── 1. تطبيع رقم الهاتف ───
   const normalized = normalizePhone(phone);
   if (normalized.length < 10) {
-    return { success: false, error: 'رقم الهاتف غير صحيح' };
+    return { success: false, error: 'رقم الهاتف غير صحيح', code: 'PHONE_INVALID' };
   }
 
   // ─── 2. Rate limiting ───
@@ -111,6 +112,7 @@ export async function sendOtp(params: {
     return {
       success: false,
       error: 'تجاوزت الحد الأقصى للمحاولات. حاول بعد ساعة.',
+      code: 'RATE_LIMIT',
       retryAfter: rateCheck.retryAfter,
     };
   }
@@ -141,11 +143,13 @@ export async function sendOtp(params: {
   if (dbError || !otpRecord) {
     // eslint-disable-next-line no-console
     console.error('[OTP] DB insert failed:', dbError);
-    return { success: false, error: 'فشل حفظ الرمز' };
+    // نمرّر رمز PostgreSQL الفعلي للتشخيص (42501=RLS, 42P01=جدول مفقود, 23502=NOT NULL)
+    const pgCode = dbError?.code ? `DB_${dbError.code}` : 'DB_INSERT';
+    return { success: false, error: 'فشل حفظ الرمز', code: pgCode };
   }
 
   // ─── 5. إرسال عبر القناة المطلوبة ───
-  let sendResult: { success: boolean; messageId?: string; error?: string };
+  let sendResult: { success: boolean; messageId?: string; error?: string; errorCode?: number };
 
   switch (channel) {
     case 'whatsapp':
@@ -163,7 +167,7 @@ export async function sendOtp(params: {
       break;
 
     default:
-      return { success: false, error: 'قناة غير مدعومة' };
+      return { success: false, error: 'قناة غير مدعومة', code: 'CHANNEL_UNSUPPORTED' };
   }
 
   // ─── 6. تحديث حالة OTP في DB ───
@@ -176,7 +180,7 @@ export async function sendOtp(params: {
     .eq('id', otpRecord.id);
 
   if (!sendResult.success) {
-    return { success: false, error: sendResult.error || 'فشل الإرسال' };
+    return { success: false, error: sendResult.error || 'فشل الإرسال', code: sendResult.errorCode ? `META_${sendResult.errorCode}` : 'SEND_FAILED' };
   }
 
   return {
