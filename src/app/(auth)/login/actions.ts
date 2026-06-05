@@ -144,6 +144,9 @@ export async function sendOtp(formData: FormData) {
   // 📤 إرسال OTP عبر القناة المختارة
   // ═══════════════════════════════════════════════════════════
 
+  // رمز آخر خطأ (للتشخيص في نافذة التسجيل)
+  let lastOtpErrorCode: string | undefined;
+
   if (channel === 'whatsapp' || channel === 'telegram') {
     // ─── WhatsApp / Telegram via Meta API ───
     try {
@@ -172,7 +175,10 @@ export async function sendOtp(formData: FormData) {
       logger.warn('WhatsApp OTP failed, falling back to SMS', {
         phone: normalizedPhone,
         error: result.error,
+        code: result.code,
       });
+      // نحتفظ برمز الخطأ لعرضه إن فشل الـ fallback أيضاً
+      lastOtpErrorCode = result.code;
     } catch (err) {
       // 🎯 mengyper next/navigation redirect → نُعيد إطلاقه
       if (isNextRedirect(err)) throw err;
@@ -180,6 +186,7 @@ export async function sendOtp(formData: FormData) {
         phone: normalizedPhone,
         error: err instanceof Error ? err.message : 'unknown',
       });
+      lastOtpErrorCode = 'EXCEPTION';
     }
     // ↓ يستمر للـ SMS fallback
   }
@@ -194,10 +201,14 @@ export async function sendOtp(formData: FormData) {
     logger.error('OTP send failed', {
       phone: normalizedPhone,
       error: error.message,
+      code: lastOtpErrorCode,
     });
+    // نعرض رسالة لطيفة + رمز فني مختصر للتشخيص (يفهمه المشرف)
+    const diagCode = lastOtpErrorCode || 'SMS_FAILED';
     redirect(
       '/login?error=' +
-        encodeURIComponent('فشل إرسال الرمز. حاول مرة أخرى')
+        encodeURIComponent('فشل إرسال الرمز. حاول مرة أخرى') +
+        '&code=' + encodeURIComponent(diagCode)
     );
   }
 
