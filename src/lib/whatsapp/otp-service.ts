@@ -123,10 +123,13 @@ export async function sendOtp(params: {
   const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
 
   // ─── 4. حفظ في DB ───
+  // نولّد UUID مسبقاً لتجنّب مشاكل insert().select().single()
+  const otpId = crypto.randomUUID();
   const supabase = createAdminClient();
-  const { data: otpRecord, error: dbError } = await supabase
+  const { error: dbError } = await supabase
     .from('whatsapp_otp')
     .insert({
+      id: otpId,
       phone: normalized,
       user_id: userId,
       otp_hash: otpHash,
@@ -136,17 +139,16 @@ export async function sendOtp(params: {
       ip_address: ipAddress,
       user_agent: userAgent,
       expires_at: expiresAt.toISOString(),
-    })
-    .select('id')
-    .single();
+    });
 
-  if (dbError || !otpRecord) {
+  if (dbError) {
     // eslint-disable-next-line no-console
     console.error('[OTP] DB insert failed:', dbError);
-    // نمرّر رمز PostgreSQL الفعلي للتشخيص (42501=RLS, 42P01=جدول مفقود, 23502=NOT NULL)
     const pgCode = dbError?.code ? `DB_${dbError.code}` : 'DB_INSERT';
     return { success: false, error: 'فشل حفظ الرمز', code: pgCode };
   }
+
+  const otpRecord = { id: otpId };
 
   // ─── 5. إرسال عبر القناة المطلوبة ───
   let sendResult: { success: boolean; messageId?: string; error?: string; errorCode?: number };
