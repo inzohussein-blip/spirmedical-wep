@@ -1,10 +1,11 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 
-export default function Error({
+export default function GlobalError({
   error,
   reset,
 }: {
@@ -12,12 +13,11 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.error('[global-error.tsx]', error);
-    // 🚀 V29: أرسل لـ Sentry (لو مُعرّف NEXT_PUBLIC_SENTRY_DSN)
-    void import('@/lib/error-tracking')
-      .then((m) => m.trackError(error, { action: 'global-error', extra: { digest: error.digest } }))
-      .catch(() => {});
+    // أرسل الخطأ لـ Sentry
+    Sentry.captureException(error, {
+      tags: { location: 'global-error' },
+      extra: { digest: error.digest },
+    });
   }, [error]);
 
   return (
