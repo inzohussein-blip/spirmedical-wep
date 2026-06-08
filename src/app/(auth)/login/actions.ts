@@ -10,6 +10,7 @@ import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
 import { getOtpMode, canSkipOtp } from '@/lib/flags';
+import { sendOtp as sendWhatsAppOtpDirect } from '@/lib/whatsapp/otp-service';
 
 // ═══════════════════════════════════════════════════════════
 // 🔐 نظام تسجيل الدخول مع 3 أوضاع OTP
@@ -150,8 +151,7 @@ export async function sendOtp(formData: FormData) {
   if (channel === 'whatsapp' || channel === 'telegram') {
     // ─── WhatsApp / Telegram via Meta API ───
     try {
-      const { sendOtp: sendWhatsAppOtp } = await import('@/lib/whatsapp/otp-service');
-      const result = await sendWhatsAppOtp({
+      const result = await sendWhatsAppOtpDirect({
         phone: normalizedPhone,
         channel,
         purpose: 'login',
