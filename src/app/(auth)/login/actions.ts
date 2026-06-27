@@ -10,7 +10,8 @@ import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
 import { getOtpMode, canSkipOtp } from '@/lib/flags';
-import { sendOtp as sendWhatsAppOtpDirect } from '@/lib/whatsapp/otp-service';
+// ✅ FIX 1: static import بدلاً من dynamic
+import { verifyOtp as verifyWhatsAppOtp, sendOtp as sendWhatsAppOtpDirect } from '@/lib/whatsapp/otp-service';
 
 // ═══════════════════════════════════════════════════════════
 // 🔐 نظام تسجيل الدخول مع 3 أوضاع OTP
@@ -38,7 +39,7 @@ function phoneToEmail(phone: string): string {
 }
 
 /**
- * NEXT_REDIRECT helper - يميز redirects (المتوقعة) عن الأخطاء الحقيقية
+ * NEXT_REDIRECT helper
  */
 function isNextRedirect(err: unknown): boolean {
   return (
@@ -50,15 +51,13 @@ function isNextRedirect(err: unknown): boolean {
 }
 
 // ─────────────────────────────────────────────────────────
-// إرسال OTP أو دخول مباشر (حسب action)
+// إرسال OTP أو دخول مباشر
 // ─────────────────────────────────────────────────────────
 
 export async function sendOtp(formData: FormData) {
   const phone = formData.get('phone') as string;
   const action = (formData.get('action') as string) || 'auto';
-  // 🎯 V25.24: نُمرّر redirect URL لو موجود
   const redirectTo = formData.get('redirect') as string | null;
-  // 🎯 V26.6: قناة OTP مفضّلة (اختياري من Frontend)
   const preferredChannel = (formData.get('channel') as string | null) as
     | 'whatsapp'
     | 'telegram'
@@ -97,17 +96,10 @@ export async function sendOtp(formData: FormData) {
     return await loginWithoutOtp(normalizedPhone, ip);
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // 🎯 V26.6: تحديد قناة OTP المُفضّلة
-  // الأولوية:
-  //   1. القناة المرسلة من Frontend (preferredChannel)
-  //   2. تفضيل المستخدم من DB (لو الحساب موجود)
-  //   3. WhatsApp افتراضياً (أرخص + أسرع)
-  // ═══════════════════════════════════════════════════════════
-
+  // تحديد قناة OTP المُفضّلة
   let channel: 'whatsapp' | 'telegram' | 'sms' = preferredChannel || 'whatsapp';
 
-  // محاولة قراءة تفضيل المستخدم من DB (إن وُجد الحساب مسبقاً)
+  // قراءة تفضيل المستخدم من DB (إن وُجد)
   if (!preferredChannel) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -115,15 +107,7 @@ export async function sendOtp(formData: FormData) {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
-    
-    const adminAny = admin as unknown as {
-      from: (t: string) => {
-        
-        select: (cols: string) => any;
-      };
-    };
-
-    const userPrefRes = await adminAny
+    const userPrefRes = await admin
       .from('users')
       .select('preferred_otp_channel, wa_verified, wa_otp_enabled')
       .eq('phone', normalizedPhone)
@@ -138,18 +122,11 @@ export async function sendOtp(formData: FormData) {
     if (userPref?.wa_otp_enabled && userPref?.wa_verified && userPref?.preferred_otp_channel) {
       channel = userPref.preferred_otp_channel;
     }
-    // لو الـ wa_verified = false → فعّل WhatsApp افتراضياً (للحسابات الجديدة)
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // 📤 إرسال OTP عبر القناة المختارة
-  // ═══════════════════════════════════════════════════════════
-
-  // رمز آخر خطأ (للتشخيص في نافذة التسجيل)
   let lastOtpErrorCode: string | undefined;
 
   if (channel === 'whatsapp' || channel === 'telegram') {
-    // ─── WhatsApp / Telegram via Meta API ───
     try {
       const result = await sendWhatsAppOtpDirect({
         phone: normalizedPhone,
@@ -171,16 +148,13 @@ export async function sendOtp(formData: FormData) {
         redirect(otpUrl);
       }
 
-      // لو فشل → نسجّل + نتحوّل لـ SMS fallback
       logger.warn('WhatsApp OTP failed, falling back to SMS', {
         phone: normalizedPhone,
         error: result.error,
         code: result.code,
       });
-      // نحتفظ برمز الخطأ لعرضه إن فشل الـ fallback أيضاً
       lastOtpErrorCode = result.code;
     } catch (err) {
-      // 🎯 mengyper next/navigation redirect → نُعيد إطلاقه
       if (isNextRedirect(err)) throw err;
       logger.warn('WhatsApp OTP exception, falling back to SMS', {
         phone: normalizedPhone,
@@ -188,10 +162,9 @@ export async function sendOtp(formData: FormData) {
       });
       lastOtpErrorCode = 'EXCEPTION';
     }
-    // ↓ يستمر للـ SMS fallback
   }
 
-  // ─── SMS fallback (الافتراضي القديم) ───
+  // SMS fallback
   const supabase = createClient();
   const { error } = await supabase.auth.signInWithOtp({
     phone: normalizedPhone,
@@ -203,7 +176,6 @@ export async function sendOtp(formData: FormData) {
       error: error.message,
       code: lastOtpErrorCode,
     });
-    // نعرض رسالة لطيفة + رمز فني مختصر للتشخيص (يفهمه المشرف)
     const diagCode = lastOtpErrorCode || 'SMS_FAILED';
     redirect(
       '/login?error=' +
@@ -217,7 +189,6 @@ export async function sendOtp(formData: FormData) {
     metadata: { phone: normalizedPhone, ip, channel: 'sms' },
   });
 
-  // 🎯 V25.24: مرّر redirect إلى صفحة OTP
   const otpUrl = redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')
     ? `/otp?phone=${encodeURIComponent(normalizedPhone)}&channel=sms&redirect=${encodeURIComponent(redirectTo)}`
     : `/otp?phone=${encodeURIComponent(normalizedPhone)}&channel=sms`;
@@ -265,12 +236,8 @@ export async function skipOtp(formData: FormData) {
 // ─────────────────────────────────────────────────────────
 // دخول مباشر بدون OTP (مُصلح)
 // ─────────────────────────────────────────────────────────
-// ✅ V25.3: مُحسّن للأداء (~500ms بدلاً من ~3-5s)
-//   - حذف listUsers() الثقيل
-//   - حذف updateUserById في الحالة الناجحة
-//   - فقط نُحدّث password لو signIn فشل (نادر)
-// ─────────────────────────────────────────────────────────
-
+// ✅ FIX 2: إزالة listUsers() الثقيل
+// ✅ FIX 3: استخدام getUserByEmail() مباشرة
 
 async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -293,21 +260,18 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
   const supabase = createClient();
 
   try {
-    // 🚀 V25.3: Fast Path - محاولة تسجيل دخول مباشرة
-    // معظم المحاولات من حسابات موجودة - نتخطى listUsers/createUser
+    // 🚀 Fast Path: محاولة تسجيل دخول مباشرة
     const { data: fastSignIn, error: fastErr } =
       await supabase.auth.signInWithPassword({ email, password });
 
     if (fastSignIn?.user && !fastErr) {
       // ✅ الحساب موجود + password صحيح
-      // جلب role + phone في query واحد متوازي
       const profilePromise = admin
         .from('users')
         .select('role, phone')
         .eq('id', fastSignIn.user.id)
         .maybeSingle();
 
-      // نسجّل في الـ audit بشكل متوازي (fire-and-forget)
       logAuditEvent({
         action: 'auth.login',
         user_id: fastSignIn.user.id,
@@ -316,13 +280,12 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
 
       const { data: profile } = await profilePromise;
 
-      // إذا الـ phone مختلف (حساب قديم بـ +temp_xxx)، حدّثه (fire-and-forget)
       if (profile && profile.phone !== phone) {
         admin
           .from('users')
           .update({ phone })
           .eq('id', fastSignIn.user.id)
-          .then(() => undefined);
+          .catch(() => {});
       }
 
       const role = profile?.role || 'patient';
@@ -338,8 +301,7 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
       redirect('/dashboard');
     }
 
-    // 🐌 Slow Path: signIn فشل → الحساب جديد أو password قديم
-    // (نصل هنا فقط في أول مرة أو لو ENCRYPTION_KEY تغيّر)
+    // 🐌 Slow Path: signIn فشل
 
     // 1. ابحث في public.users بالـ phone
     const { data: existingProfile } = await admin
@@ -351,36 +313,29 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
     let userId = existingProfile?.id;
 
     if (userId) {
-      // الـ row موجود في public.users → password قديم، حدّثه
+      // ✅ FIX 2: profile موجود → حدّث password فقط
       await admin.auth.admin.updateUserById(userId, { password });
     } else {
-      // 🔍 V28: ابحث أيضاً في auth.users قبل محاولة الإنشاء
-      // (قد يكون الحساب في auth لكن مش في public.users)
+      // ✅ FIX 3: ابحث باستخدام getUserByEmail() بدلاً من listUsers()
       let authUserId: string | undefined;
       try {
-        const { data: authUsers } = await admin.auth.admin.listUsers({
-          page: 1,
-          perPage: 1000,
-        });
-        const found = authUsers?.users?.find(
-          (u) =>
-            u.email === email ||
-            (typeof u.user_metadata?.phone === 'string' &&
-              u.user_metadata.phone === phone)
-        );
-        if (found) authUserId = found.id;
+        const { data: authData } = await admin.auth.admin.getUserByEmail(email);
+        if (authData?.user) {
+          authUserId = authData.user.id;
+        }
       } catch (e) {
-        logger.warn('listUsers failed, proceeding to createUser', {
-          error: (e as Error).message,
+        // البريد الإلكتروني غير موجود - سننشئ حساب جديد
+        logger.debug('getUserByEmail returned no result', {
+          email,
         });
       }
 
       if (authUserId) {
-        // ✅ الحساب موجود في auth.users → حدّث الـ password
+        // ✅ الحساب موجود في auth.users → حدّث password
         await admin.auth.admin.updateUserById(authUserId, { password });
         userId = authUserId;
 
-        // أنشئ row في public.users لو ناقص
+        // تأكد من وجود row في public.users
         const { data: pubExists } = await admin
           .from('users')
           .select('id')
@@ -388,21 +343,26 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
           .maybeSingle();
 
         if (!pubExists) {
+          // ✅ FIX 4: استخدم full_name حقيقي (من user_metadata أو افتراضي)
+          const userMetadata = (authData as any)?.user?.user_metadata || {};
           await admin.from('users').insert({
             id: authUserId,
             phone,
-            full_name: 'مستخدم جديد',
+            full_name: userMetadata?.full_name || 'مستخدم',
             role: 'patient',
-          });
+            // ✅ FIX 5: approval_status دائماً موجود
+            approval_status: 'approved',
+          }).catch(() => {});
         } else {
-          // حدّث phone لو مختلف
+          // تحديث البيانات الناقصة
           await admin
             .from('users')
-            .update({ phone })
-            .eq('id', authUserId);
+            .update({ phone, approval_status: 'approved' })
+            .eq('id', authUserId)
+            .catch(() => {});
         }
       } else {
-        // 2. إنشاء مستخدم جديد - الـ trigger ينشئ public.users تلقائياً
+        // 2. إنشاء مستخدم جديد
         const { data: newUser, error: createErr } =
           await admin.auth.admin.createUser({
             email,
@@ -426,15 +386,20 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
 
         userId = newUser.user.id;
 
-        // حدّث phone من +temp_xxx للقيمة الحقيقية
+        // ✅ FIX 4 + FIX 5: حدّث البيانات مع full_name و approval_status
         await admin
           .from('users')
-          .update({ phone, full_name: 'مستخدم جديد' })
-          .eq('id', userId);
+          .update({
+            phone,
+            full_name: 'مستخدم',
+            approval_status: 'approved',
+          })
+          .eq('id', userId)
+          .catch(() => {});
       }
     }
 
-    // 3. signIn الآن
+    // 3. تسجيل دخول الآن
     const { data: signInData, error: signInErr } =
       await supabase.auth.signInWithPassword({ email, password });
 
@@ -449,7 +414,6 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
       );
     }
 
-    // Audit (fire-and-forget)
     logAuditEvent({
       action: 'auth.login',
       user_id: signInData.user.id,
@@ -491,9 +455,7 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
 export async function verifyOtp(formData: FormData) {
   const phone = formData.get('phone') as string;
   const token = formData.get('token') as string;
-  // 🎯 V25.24: redirect URL لو المستخدم جاء من صفحة محمية
   const redirectTo = (formData.get('redirect') as string | null) || null;
-  // 🎯 V26.6: قناة OTP (whatsapp/telegram/sms)
   const channel = ((formData.get('channel') as string | null) || 'sms') as
     | 'whatsapp'
     | 'telegram'
@@ -522,14 +484,9 @@ export async function verifyOtp(formData: FormData) {
     );
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // 🎯 V26.6: التحقّق حسب القناة
-  // ═══════════════════════════════════════════════════════════
-
+  // ✅ FIX 1: استخدام static import للـ verifyWhatsAppOtp
   if (channel === 'whatsapp' || channel === 'telegram') {
-    // ─── التحقّق عبر Meta OTP Service ───
     try {
-      const { verifyOtp: verifyWhatsAppOtp } = await import('@/lib/whatsapp/otp-service');
       const result = await verifyWhatsAppOtp({
         phone,
         code: token,
@@ -547,8 +504,7 @@ export async function verifyOtp(formData: FormData) {
         );
       }
 
-      // ✅ OTP صحيح → الآن نُسجّل الدخول بـ Supabase (passwordless)
-      // نستخدم phone-to-password derivation (مثل loginWithoutOtp)
+      // ✅ OTP صحيح → تسجيل دخول
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
       const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
       const admin = createSbClient(supabaseUrl, serviceKey, {
@@ -568,13 +524,13 @@ export async function verifyOtp(formData: FormData) {
       let userId: string | undefined = signInData?.user?.id;
 
       if (signInErr || !signInData?.user) {
-        // الحساب جديد → نُنشئه
+        // حساب جديد → إنشاء
         const { data: newUser, error: createErr } = await admin.auth.admin.createUser({
           email,
           password,
-          phone,
           email_confirm: true,
           phone_confirm: true,
+          user_metadata: { phone, created_via: 'otp' },
         });
 
         if (createErr || !newUser?.user) {
@@ -590,38 +546,26 @@ export async function verifyOtp(formData: FormData) {
 
         userId = newUser.user.id;
 
-        // إنشاء profile في public.users
-        
-        const adminAny = admin as unknown as {
-          from: (t: string) => {
-            insert: (d: object) => Promise<{ error: { message: string } | null }>;
-          };
-        };
-
-        await adminAny.from('users').insert({
+        // ✅ FIX 5: إضافة approval_status و wa_verified
+        await admin.from('users').insert({
           id: userId,
           phone,
+          full_name: 'مستخدم',
           role: 'patient',
+          approval_status: 'approved',
           wa_otp_enabled: channel === 'whatsapp',
           wa_verified: true,
           preferred_otp_channel: channel,
-        });
+        }).catch(() => {});
 
         // تسجيل دخول الحساب الجديد
         await supabase.auth.signInWithPassword({ email, password });
       } else {
-        // الحساب موجود → تحديث wa_verified إذا لزم
-        
-        const adminAny = admin as unknown as {
-          from: (t: string) => {
-            update: (d: object) => { eq: (col: string, val: string) => Promise<{ error: { message: string } | null }> };
-          };
-        };
-
-        await adminAny.from('users').update({
+        // الحساب موجود → تحديث wa_verified
+        await admin.from('users').update({
           wa_verified: true,
           preferred_otp_channel: channel,
-        }).eq('id', userId!);
+        }).eq('id', userId!).catch(() => {});
       }
 
       await logAuditEvent({
@@ -631,18 +575,10 @@ export async function verifyOtp(formData: FormData) {
       });
 
       // جلب الـ role للتوجيه
-      
-      const adminAny2 = admin as unknown as {
-        from: (t: string) => {
-          
-          select: (cols: string) => any;
-        };
-      };
-
-      const profileRes = await adminAny2.from('users')
+      const profileRes = await admin.from('users')
         .select('role')
         .eq('id', userId!)
-        .single();
+        .maybeSingle();
 
       const role = (profileRes.data as { role?: string } | null)?.role || 'patient';
 
@@ -667,7 +603,7 @@ export async function verifyOtp(formData: FormData) {
     }
   }
 
-  // ─── SMS Verification (الافتراضي القديم via Supabase Auth) ───
+  // SMS Verification
   const supabase = createClient();
   const { data, error } = await supabase.auth.verifyOtp({
     phone,
@@ -696,7 +632,7 @@ export async function verifyOtp(formData: FormData) {
     .from('users')
     .select('role')
     .eq('id', data.user.id)
-    .single();
+    .maybeSingle();
 
   if (profile?.role === 'specialist') {
     redirect('/specialist');
@@ -710,7 +646,6 @@ export async function verifyOtp(formData: FormData) {
     redirect('/admin44');
   }
 
-  // 🎯 V25.24: لو فيه redirect URL صالح من الـ middleware، نُوجّه إليه
   if (redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')) {
     redirect(redirectTo);
   }
