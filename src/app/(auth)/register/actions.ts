@@ -16,6 +16,8 @@ import {
 } from '@/lib/validations/auth-forms';
 import { normalizePhone } from '@/lib/validations/auth';
 import { sendWelcomePatientEmail, sendWelcomeSpecialistEmail } from '@/lib/email/actions';
+// ✅ FIX 1: static import بدلاً من dynamic import
+import { sendOtp as sendWhatsAppOtp, verifyOtp as verifyWhatsAppOtp } from '@/lib/whatsapp/otp-service';
 
 // ═══════════════════════════════════════════════════════════
 // 📝 إنشاء حساب - يدعم 3 أوضاع OTP
@@ -60,7 +62,8 @@ export async function registerPatient(formData: FormData) {
     fullName: formData.get('fullName') as string,
     gender: formData.get('gender') as string,
     phone: formData.get('phone') as string,
-    password: formData.get('password') as string,
+    // ✅ FIX 2: نقرأ pin من الـ form لكن لا نمرره للـ schema (password مشتق من الهاتف)
+    // PIN محفوظ في user_metadata فقط للمرجع — لا يُستخدم كـ Supabase password
     acceptTerms: formData.get('acceptTerms') === 'on',
   };
   const action = (formData.get('action') as string) || 'auto';
@@ -80,7 +83,11 @@ export async function registerPatient(formData: FormData) {
     );
   }
 
-  const validation = patientRegisterSchema.safeParse(input);
+  // نتحقق بدون حقل password (password مشتق من الهاتف في الـ backend)
+  const validation = patientRegisterSchema
+    .omit({ password: true })
+    .safeParse(input);
+
   if (!validation.success) {
     redirect(
       '/register/patient?error=' +
@@ -125,7 +132,7 @@ export async function registerSpecialist(formData: FormData) {
     fullName: formData.get('fullName') as string,
     gender: formData.get('gender') as string,
     phone: formData.get('phone') as string,
-    password: formData.get('password') as string,
+    // ✅ FIX 2: نفس الإصلاح — PIN لا يُمرر للـ schema
     specialization: formData.get('specialization') as string,
     specializationDetails:
       (formData.get('specializationDetails') as string) || undefined,
@@ -148,7 +155,10 @@ export async function registerSpecialist(formData: FormData) {
     );
   }
 
-  const validation = specialistRegisterSchema.safeParse(input);
+  const validation = specialistRegisterSchema
+    .omit({ password: true })
+    .safeParse(input);
+
   if (!validation.success) {
     redirect(
       '/register/specialist?error=' +
@@ -159,7 +169,6 @@ export async function registerSpecialist(formData: FormData) {
   const { fullName, phone, specialization, specializationDetails } = validation.data;
   const normalizedPhone = normalizePhone(phone);
 
-  // 🔧 V30: تحويل specialization → specialist_type (DB format)
   const specialistType = mapSpecializationToDbType(specialization);
 
   try {
@@ -204,7 +213,7 @@ async function routeAfterRegister(
 
   if (!shouldUseOtp) {
     await signInDirectly(phone, role);
-    // 📧 إرسال إيميل ترحيب (fire-and-forget، لن يفشل التسجيل إذا فشل)
+    // 📧 إرسال إيميل ترحيب (fire-and-forget)
     try {
       const sup = createClient();
       const { data: { user: signedUser } } = await sup.auth.getUser();
@@ -216,30 +225,32 @@ async function routeAfterRegister(
         }
       }
     } catch {
-      // ignore - لا يفشل التسجيل إذا فشل الإيميل
+      // ignore
     }
     redirect(role === 'specialist' ? '/specialist' : '/dashboard');
   }
 
-  const supabase = createClient();
-  await supabase.auth.signInWithOtp({ phone });
-  redirect(`/otp?phone=${encodeURIComponent(phone)}`);
+  // ✅ FIX 1: استخدام static import مباشرة
+  await sendWhatsAppOtp({
+    phone,
+    channel: 'whatsapp',
+    purpose: 'register',
+  });
+
+  redirect(`/otp?phone=${encodeURIComponent(phone)}&channel=whatsapp`);
 }
 
 // ─────────────────────────────────────────────────────────
 // إنشاء أو الحصول على الحساب (مُصلح)
 // ─────────────────────────────────────────────────────────
-// ✅ لا يستخدم phone في createUser (Phone provider قد لا يكون مفعّلاً)
-// ✅ يستخدم email-only approach
-// ✅ يكتب في public.users يدوياً
-// ✅ idempotent (آمن للتشغيل عدة مرات)
+// ✅ FIX 3: إضافة approval_status للمريض (default: 'approved')
+// ✅ FIX 4: حذف listUsers() الثقيل — البحث مباشرة بالـ email
 
 async function createOrGetAccount(opts: {
   phone: string;
   fullName: string;
   role: 'patient' | 'specialist';
   ip: string;
-  // 🔧 V30: حقول المختص (اختيارية)
   specialistType?: 'lab_analyst' | 'nurse' | 'doctor' | 'pharmacist' | 'physio' | 'psychologist' | 'nutritionist';
   specializationDetails?: string;
 }): Promise<string> {
@@ -266,15 +277,16 @@ async function createOrGetAccount(opts: {
 
   let userId = existingProfile?.id;
 
-  // 2. إذا غير موجود، ابحث في auth.users أو أنشئ
+  // 2. إذا غير موجود
   if (!userId) {
-    const { data: existingAuth } = await admin.auth.admin.listUsers();
-    const authUser = existingAuth?.users?.find((u) => u.email === email);
+    // ✅ FIX 4: بحث بالـ email مباشرة بدلاً من listUsers() على كل المستخدمين
+    const { data: authUserData } = await admin.auth.admin.getUserByEmail(email);
+    const authUser = authUserData?.user;
 
     if (authUser) {
       userId = authUser.id;
     } else {
-      // أنشئ جديد - بدون phone في الـ payload
+      // أنشئ جديد
       const { data: newUser, error: createErr } =
         await admin.auth.admin.createUser({
           email,
@@ -300,25 +312,24 @@ async function createOrGetAccount(opts: {
     }
   }
 
-  // 3. upsert في public.users (يدوياً)
-  // المختصون الجدد: pending (يحتاجون موافقة)
+  // 3. upsert في public.users
+  // ✅ FIX 3: approval_status دائماً موجود
   const profileData: Record<string, unknown> = {
     id: userId,
     phone: opts.phone,
     full_name: opts.fullName,
     role: opts.role,
+    // المرضى: approved تلقائياً
+    // المختصون الجدد: pending (يحتاجون موافقة)
+    approval_status: opts.role === 'specialist' && !existingProfile?.id
+      ? 'pending'
+      : 'approved',
   };
 
   if (opts.role === 'specialist') {
-    // فقط لو ما عنده موافقة سابقة
-    if (!existingProfile?.id) {
-      profileData.approval_status = 'pending';
-    }
-    // 🔧 V30: حفظ specialist_type (مطلوب لربط المختص بالطلبات)
     if (opts.specialistType) {
       profileData.specialist_type = opts.specialistType;
     }
-    // ملاحظات اختصاص "other"
     if (opts.specializationDetails) {
       profileData.specialist_bio = opts.specializationDetails;
     }
@@ -334,7 +345,6 @@ async function createOrGetAccount(opts: {
       phone: opts.phone,
       error: profileErr.message,
     });
-    // إذا كان الخطأ unique constraint على phone، اكتب رسالة واضحة
     if (profileErr.message?.includes('users_phone_key')) {
       throw new Error('هذا الرقم مسجّل بالفعل');
     }
