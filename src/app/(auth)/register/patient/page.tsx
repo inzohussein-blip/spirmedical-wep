@@ -1,255 +1,270 @@
-// تعطيل pre-rendering — searchParams
-export const dynamic = 'force-dynamic';
+'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
-import { z } from 'zod';
-import { genderLabels } from '@/lib/validations/auth-forms';
-import { registerPatient } from '../actions';
+import { signUpWithEmail } from '@/lib/auth/email-auth';
+import { useRouter } from 'next/navigation';
 
-const searchParamsSchema = z.object({
-  error: z.string().max(500).optional(),
-});
+// ═══════════════════════════════════════════════════════════
+// 📝 تسجيل مريض جديد - بسيط وسريع
+// ═══════════════════════════════════════════════════════════
 
-export const metadata = {
-  title: 'تسجيل مراجع · سباير ميديكال',
-};
+export default function PatientRegisterPage() {
+  const router = useRouter();
+  const [step, setStep] = useState<'form' | 'verifying'>('form');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    gender: 'male' as 'male' | 'female',
+    agreeTerms: false,
+  });
 
-export default function PatientRegisterPage({
-  searchParams,
-}: {
-  searchParams: { error?: string };
-}) {
-  const params = searchParamsSchema.safeParse(searchParams);
-  const error = params.success ? params.data.error : undefined;
+  // ─────────────────────────────────────────────────────────
+  // معالجة التسجيل
+  // ─────────────────────────────────────────────────────────
 
-  // ⭐ OTP Mode (3 أوضاع)
-  const otpMode = (process.env.NEXT_PUBLIC_OTP_MODE ?? 'disabled') as
-    | 'disabled'
-    | 'optional'
-    | 'required';
+  async function handleSignUp(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
 
-  const isOtpRequired = otpMode === 'required';
-  const isOtpOptional = otpMode === 'optional';
-  const isOtpDisabled = otpMode === 'disabled';
+    // ✅ التحقق من الحقول
+    if (!formData.fullName.trim()) {
+      setError('الاسم الكامل مطلوب');
+      return;
+    }
+
+    if (!formData.email.includes('@')) {
+      setError('البريد الإلكتروني غير صحيح');
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      setError('كلمة المرور يجب أن تكون 8 أحرف على الأقل');
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('كلمات المرور غير متطابقة');
+      return;
+    }
+
+    if (!formData.agreeTerms) {
+      setError('يجب قبول الشروط والأحكام');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const result = await signUpWithEmail({
+        email: formData.email,
+        password: formData.password,
+        fullName: formData.fullName,
+        gender: formData.gender,
+        role: 'patient',
+      });
+
+      if (result.success) {
+        setStep('verifying');
+        // بعد 3 ثواني، أعد التوجيه
+        setTimeout(() => {
+          router.push(`/auth/verify-email?email=${encodeURIComponent(formData.email)}`);
+        }, 2000);
+      } else {
+        setError(result.error || 'فشل التسجيل');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'خطأ غير معروف');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // Step 1: نموذج التسجيل
+  // ─────────────────────────────────────────────────────────
+
+  if (step === 'form') {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+        <div className="max-w-md w-full">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-emerald-700 mb-2">حساب مريض جديد</h1>
+            <p className="text-gray-600">تسجيل سريع وآمن (2 دقيقة)</p>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSignUp} className="space-y-4 bg-white p-6 rounded-lg shadow">
+            {/* Error */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
+
+            {/* Full Name */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                الاسم الكامل
+              </label>
+              <input
+                type="text"
+                value={formData.fullName}
+                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                placeholder="أحمد محمد"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                disabled={loading}
+              />
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                البريد الإلكتروني
+              </label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="your@email.com"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                disabled={loading}
+              />
+            </div>
+
+            {/* Gender */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">الجنس</label>
+              <select
+                value={formData.gender}
+                onChange={(e) => setFormData({ ...formData, gender: e.target.value as 'male' | 'female' })}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                disabled={loading}
+              >
+                <option value="male">ذكر</option>
+                <option value="female">أنثى</option>
+              </select>
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                كلمة المرور
+              </label>
+              <input
+                type="password"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                placeholder="••••••••"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                disabled={loading}
+              />
+              <p className="text-xs text-gray-500 mt-1">8 أحرف على الأقل</p>
+            </div>
+
+            {/* Confirm Password */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                تأكيد كلمة المرور
+              </label>
+              <input
+                type="password"
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                placeholder="••••••••"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                disabled={loading}
+              />
+            </div>
+
+            {/* Terms */}
+            <div className="flex items-start gap-2">
+              <input
+                type="checkbox"
+                checked={formData.agreeTerms}
+                onChange={(e) => setFormData({ ...formData, agreeTerms: e.target.checked })}
+                className="mt-1"
+                disabled={loading}
+              />
+              <label className="text-sm text-gray-600">
+                أوافق على{' '}
+                <Link href="/legal/terms" className="text-emerald-600 hover:underline">
+                  الشروط والأحكام
+                </Link>{' '}
+                و{' '}
+                <Link href="/legal/privacy" className="text-emerald-600 hover:underline">
+                  سياسة الخصوصية
+                </Link>
+              </label>
+            </div>
+
+            {/* Sign Up Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-emerald-600 text-white py-3 rounded-lg hover:bg-emerald-700 transition disabled:opacity-50 font-medium"
+            >
+              {loading ? 'جاري الإنشاء...' : 'إنشاء حساب'}
+            </button>
+          </form>
+
+          {/* Already Have Account */}
+          <p className="text-center mt-6 text-gray-700">
+            لديك حساب بالفعل؟{' '}
+            <Link href="/auth/login" className="text-emerald-600 hover:underline font-medium">
+              سجّل الدخول
+            </Link>
+          </p>
+
+          {/* Back to Role Selection */}
+          <p className="text-center mt-4">
+            <Link href="/auth/register" className="text-sm text-gray-600 hover:underline">
+              ← العودة
+            </Link>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────
+  // Step 2: انتظار التحقق
+  // ─────────────────────────────────────────────────────────
 
   return (
-    <main className="auth-screen">
-      <Link href="/register" className="auth-back">
-        <span>←</span>
-        <span>العودة</span>
-      </Link>
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
+      <div className="max-w-md w-full text-center">
+        <div className="mb-6">
+          <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-3xl">✓</span>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900">تم إنشاء حسابك بنجاح!</h1>
+        </div>
 
-      <div className="auth-header">
-        <div className="auth-logo">س</div>
-        <h1 className="auth-brand">Spir Medical</h1>
-        <div className="auth-brand-sub">سباير ميديكال</div>
-      </div>
-
-      <div className="auth-role-badge">
-        <span aria-hidden="true">⊕</span>
-        <span>تسجيل كمراجع جديد</span>
-      </div>
-
-      <div className="auth-title-section">
-        <h2 className="auth-title">معلوماتك الأساسية</h2>
-        <p className="auth-subtitle">
-          سنحتاج هذه المعلومات لإنشاء حسابك. كلها إلزامية.
+        <p className="text-gray-600 mb-6">
+          تم إرسال رابط التفعيل إلى بريدك الإلكتروني <br />
+          <span className="font-medium">{formData.email}</span>
         </p>
+
+        <p className="text-sm text-gray-500 mb-6">جاري التحويل إلى صفحة التحقق...</p>
+
+        <div className="space-y-2">
+          <p className="text-sm text-gray-600">لم تستقبل الإيميل؟</p>
+          <button
+            onClick={() => {
+              setStep('form');
+            }}
+            className="text-emerald-600 hover:underline font-medium"
+          >
+            انقر هنا لإعادة الإرسال
+          </button>
+        </div>
       </div>
-
-      {error && (
-        <div className="auth-error" role="alert">
-          <div className="auth-error-icon">!</div>
-          <span>{error}</span>
-        </div>
-      )}
-
-      <form action={registerPatient} className="auth-form">
-        {/* الاسم الكامل */}
-        <div className="auth-field">
-          <label htmlFor="fullName" className="auth-field-label">
-            الاسم الكامل
-            <span className="auth-required">*</span>
-          </label>
-          <input
-            id="fullName"
-            name="fullName"
-            type="text"
-            placeholder="مثال: أحمد محمد علي"
-            autoComplete="name"
-            required
-            minLength={3}
-            maxLength={50}
-            className="auth-input"
-          />
-        </div>
-
-        {/* الجنس */}
-        <div className="auth-field">
-          <label className="auth-field-label">
-            الجنس
-            <span className="auth-required">*</span>
-          </label>
-          <div className="radio-group" role="radiogroup" aria-required="true">
-            {(['male', 'female'] as const).map((g) => (
-              <label key={g} className="radio-option">
-                <input type="radio" name="gender" value={g} required />
-                <span>{genderLabels[g]}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* رقم الهاتف */}
-        <div className="auth-field">
-          <label htmlFor="phone" className="auth-field-label">
-            رقم الهاتف
-            <span className="auth-required">*</span>
-          </label>
-          <div className="auth-phone-wrap">
-            <div className="auth-phone-prefix">
-              <span aria-hidden="true">🇮🇶</span>
-              <span>+964</span>
-            </div>
-            <input
-              id="phone"
-              name="phone"
-              type="tel"
-              inputMode="numeric"
-              placeholder="7XX XXX XXXX"
-              autoComplete="tel"
-              required
-              pattern="0?7[0-9]{9}"
-              maxLength={11}
-            />
-          </div>
-          <div className="auth-field-hint">
-            {isOtpRequired
-              ? 'مثال: 07712345678 - سنرسل لك رمز تحقق'
-              : 'مثال: 07712345678'}
-          </div>
-        </div>
-
-        {/* رمز الدخول */}
-        <div className="auth-field">
-          <label htmlFor="password" className="auth-field-label">
-            رمز الدخول (PIN)
-            <span className="auth-required">*</span>
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            inputMode="numeric"
-            placeholder="6 أرقام"
-            autoComplete="new-password"
-            required
-            pattern="\d{6}"
-            maxLength={6}
-            minLength={6}
-            className="auth-input"
-          />
-          <div className="auth-field-hint">
-            استخدم 6 أرقام تتذكّرها · لا تشاركها مع أحد
-          </div>
-        </div>
-
-        {/* الموافقة على الشروط */}
-        <div className="auth-field">
-          <label className="checkbox-option">
-            <input type="checkbox" name="acceptTerms" required />
-            <span className="checkbox-text">
-              أوافق على{' '}
-              <Link
-                href="/legal/terms"
-                target="_blank" rel="noopener noreferrer"
-                className="auth-inline-link"
-              >
-                الشروط والأحكام
-              </Link>
-              {' '}و{' '}
-              <Link
-                href="/legal/privacy"
-                target="_blank" rel="noopener noreferrer"
-                className="auth-inline-link"
-              >
-                سياسة الخصوصية
-              </Link>
-            </span>
-          </label>
-        </div>
-
-        {/* ─── الأزرار حسب OTP Mode ─── */}
-
-        {isOtpRequired && (
-          <>
-            <input type="hidden" name="action" value="otp" />
-            <button type="submit" className="auth-cta">
-              إنشاء الحساب وإرسال رمز ←
-            </button>
-          </>
-        )}
-
-        {isOtpDisabled && (
-          <>
-            <input type="hidden" name="action" value="skip" />
-            <button type="submit" className="auth-cta">
-              إنشاء الحساب والدخول ←
-            </button>
-          </>
-        )}
-
-        {isOtpOptional && (
-          <div className="auth-cta-group">
-            <button
-              type="submit"
-              className="auth-cta auth-cta-primary"
-              name="action"
-              value="otp"
-            >
-              <span aria-hidden="true">🔐</span>
-              <span>إنشاء + رمز تحقق</span>
-            </button>
-            <button
-              type="submit"
-              className="auth-cta auth-cta-secondary"
-              name="action"
-              value="skip"
-            >
-              <span aria-hidden="true">⚡</span>
-              <span>إنشاء سريع (بدون رمز)</span>
-            </button>
-          </div>
-        )}
-      </form>
-
-      {/* ملاحظة عن وضع OTP */}
-      {(isOtpDisabled || isOtpOptional) && (
-        <div className="auth-footer-note">
-          ℹ️ الدخول السريع متاح للتجربة الأولى.
-          <br />
-          سيُفعَّل التحقق بـ OTP قريباً لمزيد من الأمان.
-        </div>
-      )}
-
-      <div className="auth-helper">
-        لديك حساب؟ <Link href="/login">تسجيل الدخول</Link>
-      </div>
-
-      {/* 🔧 V33: زر ثانوي صغير — التسجيل بالبريد الإلكتروني */}
-      <div style={{ textAlign: 'center', marginTop: 12 }}>
-        <Link
-          href="/register/email"
-          style={{
-            fontSize: 12,
-            color: 'var(--ink-3, #8a9a9c)',
-            textDecoration: 'underline',
-            opacity: 0.7,
-          }}
-        >
-          أو التسجيل بالبريد الإلكتروني
-        </Link>
-      </div>
-    </main>
+    </div>
   );
 }
