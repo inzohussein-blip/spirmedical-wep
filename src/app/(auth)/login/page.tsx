@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { signInWithEmail, signOut } from '@/lib/auth/email-auth';
+import { signInWithEmail } from '@/lib/auth/email-auth';
 import { useRouter } from 'next/navigation';
 
 // ═══════════════════════════════════════════════════════════
@@ -55,7 +55,7 @@ export default function LoginPage() {
       //     redirectTo: `${window.location.origin}/auth/callback`,
       //   },
       // });
-      console.log('Google login clicked');
+      // Google OAuth - TODO: implement
     } catch (err) {
       setError('خطأ في الدخول');
     } finally {
