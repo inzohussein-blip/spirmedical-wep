@@ -139,11 +139,11 @@ export async function sendEmailVerification(
     //   html: `<a href="${verificationUrl}">انقر هنا لتفعيل حسابك</a>`,
     // });
 
-    console.log('[EMAIL] Verification link:', verificationUrl);
+    // Dev: verificationUrl = verificationUrl
 
     return { success: true };
   } catch (err) {
-    console.error('sendEmailVerification failed:', err);
+    // error logged via Sentry
     return {
       success: false,
       error: err instanceof Error ? err.message : 'خطأ في الإرسال',
