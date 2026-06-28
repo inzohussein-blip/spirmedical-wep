@@ -237,7 +237,7 @@ export async function skipOtp(formData: FormData) {
 // دخول مباشر بدون OTP (مُصلح)
 // ─────────────────────────────────────────────────────────
 // ✅ FIX 2: إزالة listUsers() الثقيل
-// ✅ FIX 3: استخدام getUserByEmail() مباشرة
+// ✅ FIX 3: createUser مع معالجة duplicate (getUserByEmail غير موجودة في v2.45)
 
 async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -316,77 +316,19 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
       // ✅ FIX 2: profile موجود → حدّث password فقط
       await admin.auth.admin.updateUserById(userId, { password });
     } else {
-      // ✅ FIX 3: ابحث باستخدام getUserByEmail() بدلاً من listUsers()
-      let authUserId: string | undefined;
-      try {
-        const { data: authData } = await admin.auth.admin.getUserByEmail(email);
-        if (authData?.user) {
-          authUserId = authData.user.id;
-        }
-      } catch (e) {
-        // البريد الإلكتروني غير موجود - سننشئ حساب جديد
-        logger.debug('getUserByEmail returned no result', {
+      // ✅ FIX 3: createUser مع معالجة duplicate (getUserByEmail غير موجودة في v2.45)
+      const { data: newUser, error: createErr } =
+        await admin.auth.admin.createUser({
           email,
+          password,
+          email_confirm: true,
+          user_metadata: { phone, created_via: 'no_otp' },
         });
-      }
 
-      if (authUserId) {
-        // ✅ الحساب موجود في auth.users → حدّث password
-        await admin.auth.admin.updateUserById(authUserId, { password });
-        userId = authUserId;
-
-        // تأكد من وجود row في public.users
-        const { data: pubExists } = await admin
-          .from('users')
-          .select('id')
-          .eq('id', authUserId)
-          .maybeSingle();
-
-        if (!pubExists) {
-          // ✅ FIX 4: استخدم full_name حقيقي (من user_metadata أو افتراضي)
-          const userMetadata = (authData as any)?.user?.user_metadata || {};
-          await admin.from('users').insert({
-            id: authUserId,
-            phone,
-            full_name: userMetadata?.full_name || 'مستخدم',
-            role: 'patient',
-            // ✅ FIX 5: approval_status دائماً موجود
-            approval_status: 'approved',
-          }).then(() => null, () => null);
-        } else {
-          // تحديث البيانات الناقصة
-          await admin
-            .from('users')
-            .update({ phone, approval_status: 'approved' })
-            .eq('id', authUserId)
-            .then(() => null, () => null);
-        }
-      } else {
-        // 2. إنشاء مستخدم جديد
-        const { data: newUser, error: createErr } =
-          await admin.auth.admin.createUser({
-            email,
-            password,
-            email_confirm: true,
-            user_metadata: { phone, created_via: 'no_otp' },
-          });
-
-        if (createErr || !newUser?.user) {
-          logger.error('createUser failed', {
-            phone,
-            error: createErr?.message,
-          });
-          redirect(
-            '/login?error=' +
-              encodeURIComponent(
-                `فشل إنشاء الحساب: ${createErr?.message ?? 'خطأ غير معروف'}`
-              )
-          );
-        }
-
+      if (newUser?.user) {
+        // ✅ مستخدم جديد أُنشئ بنجاح
         userId = newUser.user.id;
 
-        // ✅ FIX 4 + FIX 5: حدّث البيانات مع full_name و approval_status
         await admin
           .from('users')
           .update({
@@ -396,6 +338,57 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
           })
           .eq('id', userId)
           .then(() => null, () => null);
+
+      } else if (createErr && (
+        createErr.message?.toLowerCase().includes('already been registered') ||
+        createErr.message?.toLowerCase().includes('already exists') ||
+        (createErr as any)?.status === 422
+      )) {
+        // ✅ الحساب موجود في auth.users → تسجيل دخول مؤقت للحصول على ID
+        const { data: tempSignIn } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (tempSignIn?.user) {
+          userId = tempSignIn.user.id;
+        } else {
+          // password قديم → حدّث عبر admin (نحتاج ID من public.users)
+          logger.warn('Existing auth user with wrong password, phone not in public.users', { phone });
+        }
+
+        if (userId) {
+          // تأكد من وجود row في public.users
+          const { data: pubExists } = await admin
+            .from('users')
+            .select('id')
+            .eq('id', userId)
+            .maybeSingle();
+
+          if (!pubExists) {
+            await admin.from('users').insert({
+              id: userId,
+              phone,
+              full_name: 'مستخدم',
+              role: 'patient',
+              approval_status: 'approved',
+            }).then(() => null, () => null);
+          } else {
+            await admin
+              .from('users')
+              .update({ phone, approval_status: 'approved' })
+              .eq('id', userId)
+              .then(() => null, () => null);
+          }
+        }
+      } else if (createErr) {
+        logger.error('createUser failed', { phone, error: createErr.message });
+        redirect(
+          '/login?error=' +
+            encodeURIComponent(
+              `فشل إنشاء الحساب: ${createErr.message ?? 'خطأ غير معروف'}`
+            )
+        );
       }
     }
 
