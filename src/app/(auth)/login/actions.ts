@@ -281,11 +281,11 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
       const { data: profile } = await profilePromise;
 
       if (profile && profile.phone !== phone) {
-        admin
+        void admin
           .from('users')
           .update({ phone })
           .eq('id', fastSignIn.user.id)
-          .catch(() => {});
+          .then(() => null, () => null);
       }
 
       const role = profile?.role || 'patient';
@@ -352,14 +352,14 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
             role: 'patient',
             // ✅ FIX 5: approval_status دائماً موجود
             approval_status: 'approved',
-          }).catch(() => {});
+          }).then(() => null, () => null);
         } else {
           // تحديث البيانات الناقصة
           await admin
             .from('users')
             .update({ phone, approval_status: 'approved' })
             .eq('id', authUserId)
-            .catch(() => {});
+            .then(() => null, () => null);
         }
       } else {
         // 2. إنشاء مستخدم جديد
@@ -395,7 +395,7 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
             approval_status: 'approved',
           })
           .eq('id', userId)
-          .catch(() => {});
+          .then(() => null, () => null);
       }
     }
 
@@ -556,7 +556,7 @@ export async function verifyOtp(formData: FormData) {
           wa_otp_enabled: channel === 'whatsapp',
           wa_verified: true,
           preferred_otp_channel: channel,
-        }).catch(() => {});
+        }).then(() => null, () => null);
 
         // تسجيل دخول الحساب الجديد
         await supabase.auth.signInWithPassword({ email, password });
@@ -565,7 +565,7 @@ export async function verifyOtp(formData: FormData) {
         await admin.from('users').update({
           wa_verified: true,
           preferred_otp_channel: channel,
-        }).eq('id', userId!).catch(() => {});
+        }).eq('id', userId!).then(() => null, () => null);
       }
 
       await logAuditEvent({
