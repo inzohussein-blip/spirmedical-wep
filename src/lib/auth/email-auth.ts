@@ -68,7 +68,7 @@ export async function signUpWithEmail(input: {
 
     if (profileErr) {
       // احذف auth user إذا فشل profile
-      await admin.auth.admin.deleteUser(authUser.user.id).catch(() => null);
+      await admin.auth.admin.deleteUser(authUser.user.id).then(() => null, () => null);
       return { success: false, error: profileErr.message };
     }
 
@@ -81,7 +81,7 @@ export async function signUpWithEmail(input: {
           status: 'pending',
           step_1_completed_at: new Date().toISOString(),
         })
-        .catch(() => null);
+        .then(() => null, () => null);
     }
 
     // 5. أرسل إيميل التحقق
@@ -250,7 +250,7 @@ export async function signInWithEmail(
 
       if (!profile?.email_verified) {
         // أرسل إيميل تحقق جديد
-        await sendEmailVerification(userAuth.user.id, email).catch(() => null);
+        await sendEmailVerification(userAuth.user.id, email).then(() => null, () => null);
         return {
           success: false,
           error: 'يجب تحقق من بريدك أولاً',
@@ -283,19 +283,23 @@ export async function signInWithGoogle(
   });
 
   try {
-    // 1. ابحث عن user موجود
-    const { data: existingUser } = await admin.auth.admin.getUserByEmail(email);
+    // 1. ابحث عن user موجود عبر public.users (getUserByEmail غير موجودة في v2.45)
+    const { data: existingProfile } = await admin
+      .from('users')
+      .select('id')
+      .eq('email', email)
+      .maybeSingle();
 
     let userId: string;
 
-    if (existingUser?.user) {
-      userId = existingUser.user.id;
+    if (existingProfile?.id) {
+      userId = existingProfile.id;
       // حدّث email_verified
       await admin
         .from('users')
         .update({ email_verified: true })
         .eq('id', userId)
-        .catch(() => null);
+        .then(() => null, () => null);
     } else {
       // أنشئ user جديد
       const { data: newUser, error: createErr } =
@@ -325,7 +329,7 @@ export async function signInWithGoogle(
           approval_status: 'approved',
           profile_completed: true,
         })
-        .catch(() => null);
+        .then(() => null, () => null);
     }
 
     return { success: true, userId };
