@@ -58,14 +58,6 @@ function isNextRedirect(err: unknown): boolean {
 // ─────────────────────────────────────────────────────────
 
 export async function registerPatient(formData: FormData) {
-  const input = {
-    fullName: formData.get('fullName') as string,
-    gender: formData.get('gender') as string,
-    phone: formData.get('phone') as string,
-    // ✅ FIX 2: نقرأ pin من الـ form لكن لا نمرره للـ schema (password مشتق من الهاتف)
-    // PIN محفوظ في user_metadata فقط للمرجع — لا يُستخدم كـ Supabase password
-    acceptTerms: formData.get('acceptTerms') === 'on',
-  };
   const action = (formData.get('action') as string) || 'auto';
 
   const ip = getIp();
@@ -83,19 +75,28 @@ export async function registerPatient(formData: FormData) {
     );
   }
 
-  // نتحقق بدون حقل password (password مشتق من الهاتف في الـ backend)
-  const validation = patientRegisterSchema
-    .omit({ password: true })
-    .safeParse(input);
+  // ✅ FIX: تحقق يدوي (patientRegisterSchema هو ZodEffects بسبب refine → لا يدعم .omit())
+  const rawFullName  = (formData.get('fullName')  as string | null)?.trim() ?? '';
+  const rawGender    = (formData.get('gender')    as string | null)?.trim() ?? '';
+  const rawPhone     = (formData.get('phone')     as string | null)?.trim() ?? '';
+  const rawTerms     = formData.get('acceptTerms') === 'on';
 
-  if (!validation.success) {
-    redirect(
-      '/register/patient?error=' +
-        encodeURIComponent(validation.error.errors[0].message)
-    );
+  if (!rawFullName || rawFullName.length < 2) {
+    redirect('/register/patient?error=' + encodeURIComponent('الاسم الكامل مطلوب (حرفان على الأقل)'));
+  }
+  if (!['male', 'female'].includes(rawGender)) {
+    redirect('/register/patient?error=' + encodeURIComponent('يرجى اختيار الجنس'));
+  }
+  const phoneValidation = patientRegisterSchema.shape.phone.safeParse(rawPhone);
+  if (!phoneValidation.success) {
+    redirect('/register/patient?error=' + encodeURIComponent(phoneValidation.error.errors[0].message));
+  }
+  if (!rawTerms) {
+    redirect('/register/patient?error=' + encodeURIComponent('يجب الموافقة على الشروط والأحكام'));
   }
 
-  const { fullName, phone } = validation.data;
+  const fullName = rawFullName;
+  const phone    = phoneValidation.data as string;
   const normalizedPhone = normalizePhone(phone);
 
   try {
@@ -128,16 +129,6 @@ export async function registerPatient(formData: FormData) {
 // ─────────────────────────────────────────────────────────
 
 export async function registerSpecialist(formData: FormData) {
-  const input = {
-    fullName: formData.get('fullName') as string,
-    gender: formData.get('gender') as string,
-    phone: formData.get('phone') as string,
-    // ✅ FIX 2: نفس الإصلاح — PIN لا يُمرر للـ schema
-    specialization: formData.get('specialization') as string,
-    specializationDetails:
-      (formData.get('specializationDetails') as string) || undefined,
-    acceptTerms: formData.get('acceptTerms') === 'on',
-  };
   const action = (formData.get('action') as string) || 'auto';
 
   const ip = getIp();
@@ -155,18 +146,40 @@ export async function registerSpecialist(formData: FormData) {
     );
   }
 
-  const validation = specialistRegisterSchema
-    .omit({ password: true })
-    .safeParse(input);
+  // ✅ FIX: تحقق يدوي (specialistRegisterSchema هو ZodEffects بسبب refine → لا يدعم .omit())
+  const rawFullName            = (formData.get('fullName')            as string | null)?.trim() ?? '';
+  const rawGender              = (formData.get('gender')              as string | null)?.trim() ?? '';
+  const rawPhone               = (formData.get('phone')               as string | null)?.trim() ?? '';
+  const rawSpecialization      = (formData.get('specialization')      as string | null)?.trim() ?? '';
+  const rawSpecDetails         = (formData.get('specializationDetails') as string | null)?.trim() || undefined;
+  const rawTerms               = formData.get('acceptTerms') === 'on';
 
-  if (!validation.success) {
-    redirect(
-      '/register/specialist?error=' +
-        encodeURIComponent(validation.error.errors[0].message)
-    );
+  const validSpecializations = ['doctor','nurse','analyst','pharmacist','physiotherapist','dentist','lab_tech','radiologist','other'];
+
+  if (!rawFullName || rawFullName.length < 2) {
+    redirect('/register/specialist?error=' + encodeURIComponent('الاسم الكامل مطلوب (حرفان على الأقل)'));
+  }
+  if (!['male', 'female'].includes(rawGender)) {
+    redirect('/register/specialist?error=' + encodeURIComponent('يرجى اختيار الجنس'));
+  }
+  const phoneValidation = specialistRegisterSchema.shape.phone.safeParse(rawPhone);
+  if (!phoneValidation.success) {
+    redirect('/register/specialist?error=' + encodeURIComponent(phoneValidation.error.errors[0].message));
+  }
+  if (!validSpecializations.includes(rawSpecialization)) {
+    redirect('/register/specialist?error=' + encodeURIComponent('يرجى اختيار الاختصاص'));
+  }
+  if (rawSpecialization === 'other' && !rawSpecDetails) {
+    redirect('/register/specialist?error=' + encodeURIComponent('يرجى توضيح الاختصاص'));
+  }
+  if (!rawTerms) {
+    redirect('/register/specialist?error=' + encodeURIComponent('يجب الموافقة على الشروط والأحكام'));
   }
 
-  const { fullName, phone, specialization, specializationDetails } = validation.data;
+  const fullName             = rawFullName;
+  const phone                = phoneValidation.data as string;
+  const specialization       = rawSpecialization;
+  const specializationDetails = rawSpecDetails;
   const normalizedPhone = normalizePhone(phone);
 
   const specialistType = mapSpecializationToDbType(specialization);
@@ -279,13 +292,35 @@ async function createOrGetAccount(opts: {
 
   // 2. إذا غير موجود
   if (!userId) {
-    // ✅ FIX 4: بحث بالـ email مباشرة بدلاً من listUsers() على كل المستخدمين
-    const { data: authUserData } = await admin.auth.admin.getUserByEmail(email);
-    const authUser = authUserData?.user;
+    // ✅ FIX 4: createUser مع معالجة duplicate (getUserByEmail غير موجودة في v2.45)
+    const { data: tryCreate, error: tryCreateErr } =
+      await admin.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true,
+        user_metadata: {
+          phone: opts.phone,
+          full_name: opts.fullName,
+          created_via: canSkipOtp() ? 'no_otp' : 'otp',
+        },
+      });
 
-    if (authUser) {
-      userId = authUser.id;
-    } else {
+    if (tryCreate?.user) {
+      // مستخدم جديد أُنشئ
+      userId = tryCreate.user.id;
+    } else if (
+      tryCreateErr &&
+      (tryCreateErr.message?.toLowerCase().includes('already') ||
+        (tryCreateErr as any)?.status === 422)
+    ) {
+      // الحساب موجود → تسجيل دخول مؤقت للحصول على ID
+      const supabaseTmp = createClient();
+      const { data: tmpSignIn } = await supabaseTmp.auth.signInWithPassword({ email, password });
+      if (tmpSignIn?.user) {
+        userId = tmpSignIn.user.id;
+      }
+      // لو password تغيّر، سنكتشفه في الخطوة 4 (updateUserById)
+    } else if (tryCreateErr) {
       // أنشئ جديد
       const { data: newUser, error: createErr } =
         await admin.auth.admin.createUser({
@@ -299,16 +334,12 @@ async function createOrGetAccount(opts: {
           },
         });
 
-      if (createErr || !newUser?.user) {
-        const errMsg = createErr?.message ?? 'createUser returned no user';
-        logger.error('createUser failed', {
-          phone: opts.phone,
-          error: errMsg,
-        });
-        throw new Error(errMsg);
-      }
-
-      userId = newUser.user.id;
+      const errMsg = tryCreateErr.message ?? 'createUser returned no user';
+      logger.error('createUser failed', {
+        phone: opts.phone,
+        error: errMsg,
+      });
+      throw new Error(errMsg);
     }
   }
 
