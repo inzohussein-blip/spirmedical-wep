@@ -126,21 +126,26 @@ const nextConfig = {
 module.exports = withSentryConfig(nextConfig, {
   // ─── Source Maps ───
   org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT || 'spirmedical',
+  project: process.env.SENTRY_PROJECT || 'sentry-teal-pillar',
+  authToken: process.env.SENTRY_AUTH_TOKEN,
 
-  // ─── Silent mode (يمنع طباعة Sentry logs أثناء البناء) ───
+  // ─── Silent mode ───
   silent: !process.env.CI,
 
   // ─── Source Maps في الإنتاج ───
-  // يرفع source maps لـ Sentry ويحذفها من الـ bundle النهائي (أمان)
   widenClientFileUpload: true,
   hideSourceMaps: true,
-  disableLogger: true,
+
+  // ─── Tree-shaking (v10+: يحلّ محل disableLogger) ───
+  treeshake: {
+    removeDebugLogging: true,
+  },
 
   // ─── Tunnel Route ───
-  // يُوجّه طلبات Sentry عبر سيرفرك لتجنّب Ad blockers
   tunnelRoute: '/monitoring-tunnel',
 
-  // ─── Auto Instrumentation ───
-  automaticVercelMonitors: true,
+  // ─── Webpack options (v10+: يحلّ محل automaticVercelMonitors) ───
+  webpack: {
+    automaticVercelMonitors: true,
+  },
 });
