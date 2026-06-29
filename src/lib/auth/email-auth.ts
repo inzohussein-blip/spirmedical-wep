@@ -242,13 +242,15 @@ export async function signInWithEmail(
     // 2. تحقق من email_verified
     const { data: userAuth } = await supabase.auth.getUser();
     if (userAuth?.user) {
+      // email_verified حقل جديد — نستخدم as any حتى تُضاف للـ database types
       const { data: profile } = await supabase
         .from('users')
         .select('email_verified, role')
         .eq('id', userAuth.user.id)
-        .single();
+        .single() as any;
 
-      if (!profile?.email_verified) {
+      const profileData = profile?.data ?? profile;
+      if (!profileData?.email_verified) {
         // أرسل إيميل تحقق جديد
         await sendEmailVerification(userAuth.user.id, email).then(() => null, () => null);
         return {
