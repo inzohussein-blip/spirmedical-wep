@@ -13,6 +13,7 @@ import {
   patientRegisterSchema,
   specialistRegisterSchema,
   mapSpecializationToDbType,
+  phoneFieldSchema,
 } from '@/lib/validations/auth-forms';
 import { normalizePhone } from '@/lib/validations/auth';
 import { sendWelcomePatientEmail, sendWelcomeSpecialistEmail } from '@/lib/email/actions';
@@ -87,7 +88,7 @@ export async function registerPatient(formData: FormData) {
   if (!['male', 'female'].includes(rawGender)) {
     redirect('/register/patient?error=' + encodeURIComponent('يرجى اختيار الجنس'));
   }
-  const phoneValidation = patientRegisterSchema.shape.phone.safeParse(rawPhone);
+  const phoneValidation = phoneFieldSchema.safeParse(rawPhone);
   if (!phoneValidation.success) {
     redirect('/register/patient?error=' + encodeURIComponent(phoneValidation.error.errors[0].message));
   }
@@ -162,7 +163,7 @@ export async function registerSpecialist(formData: FormData) {
   if (!['male', 'female'].includes(rawGender)) {
     redirect('/register/specialist?error=' + encodeURIComponent('يرجى اختيار الجنس'));
   }
-  const phoneValidation = specialistRegisterSchema.shape.phone.safeParse(rawPhone);
+  const phoneValidation = phoneFieldSchema.safeParse(rawPhone);
   if (!phoneValidation.success) {
     redirect('/register/specialist?error=' + encodeURIComponent(phoneValidation.error.errors[0].message));
   }
