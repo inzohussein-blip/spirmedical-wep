@@ -30,6 +30,10 @@
 
 import { logger } from '@/lib/logger';
 
+// يدعم اسم متغير التكامل (بسابقة spirmedical_) مع fallback للاسم القياسي
+const SENTRY_DSN =
+  process.env.NEXT_PUBLIC_spirmedical_SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN;
+
 interface ErrorContext {
   user_id?: string;
   url?: string;
@@ -47,7 +51,7 @@ async function initSentry(): Promise<unknown | null> {
   if (typeof window === 'undefined') return null;
   if (sentryInitialized) return null;
 
-  const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
+  const dsn = SENTRY_DSN;
   if (!dsn) return null;
 
   try {
@@ -96,7 +100,7 @@ export async function trackError(
   });
 
   // 2. Sentry (لو مُفعّل)
-  if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_SENTRY_DSN) {
+  if (typeof window !== 'undefined' && SENTRY_DSN) {
     const sentry = await initSentry() as {
       captureException?: (e: unknown, ctx?: unknown) => void;
     } | null;
@@ -115,7 +119,7 @@ export async function trackInfo(
 ): Promise<void> {
   logger.info(message, context as Record<string, unknown>);
 
-  if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_SENTRY_DSN) {
+  if (typeof window !== 'undefined' && SENTRY_DSN) {
     const sentry = await initSentry() as {
       captureMessage?: (m: string, l?: string) => void;
     } | null;
@@ -130,7 +134,7 @@ export async function trackInfo(
  */
 export async function identifySentryUser(userId: string, email?: string): Promise<void> {
   if (typeof window === 'undefined') return;
-  if (!process.env.NEXT_PUBLIC_SENTRY_DSN) return;
+  if (!SENTRY_DSN) return;
 
   const sentry = await initSentry() as {
     setUser?: (u: unknown) => void;
