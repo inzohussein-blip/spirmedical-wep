@@ -49,7 +49,7 @@ export default function PhonePage({
         <p className="auth-subtitle">
           أدخل رقم هاتفك لنُرسل لك
           <br />
-          رمز التحقق برسالة نصية
+          رمز التحقق عبر WhatsApp
         </p>
       </div>
 

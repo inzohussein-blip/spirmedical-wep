@@ -1192,6 +1192,18 @@
 
 .auth-helper a, .auth-inline-link { color: var(--emerald); font-weight: 700; }
 
+.auth-resend-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  color: var(--emerald);
+  font-weight: 700;
+  text-decoration: underline;
+}
+.auth-resend-count { color: var(--emerald); font-family: 'JetBrains Mono', monospace; }
+
 .auth-expiry {
   text-align: center; font-size: 11px; color: var(--ink-3);
   margin-top: 8px; font-family: 'JetBrains Mono', monospace;
@@ -1912,7 +1924,7 @@
    📁 إضافات CSS - Header v2 + Pills
    ════════════════════════════════════════════════════════════════════
    أضف هذا في نهاية src/app/globals.css
-   ════════════════════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════════════════��� */
 
 /* ─────────────────────────────────────────────────────────
    1. HEADER v2 - متراص ومدمج
@@ -2145,7 +2157,7 @@ html {
    ════════════════════════════════════════════════════════════════════ */
 /* ════════════════════════════════════════════════════════════════════
    📁 SPECIALIST INTERFACE - CSS Additions
-   ════════════════════════════════════════════════════════════════════
+   ═══════════════════════════════════��════════════════════════════════
    أضف في نهاية src/app/globals.css
    ════════════════════════════════════════════════════════════════════ */
 

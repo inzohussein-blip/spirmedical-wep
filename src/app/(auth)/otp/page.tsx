@@ -9,7 +9,7 @@ export const metadata = {
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { verifyOtp } from '../login/actions';
+import OtpForm from './OtpForm';
 
 const searchParamsSchema = z.object({
   phone: z.string().min(10).max(20),
@@ -73,37 +73,8 @@ export default function OtpPage({
         </div>
       )}
 
-      <form action={verifyOtp} className="auth-form">
-        <input type="hidden" name="phone" value={phone} />
-        <input type="hidden" name="channel" value={channel} />
-        {redirectTo && <input type="hidden" name="redirect" value={redirectTo} />}
+      <OtpForm phone={phone} channel={channel} redirectTo={redirectTo} />
 
-        <label htmlFor="token" className="auth-field-label" style={{ position: 'absolute', left: '-9999px' }}>
-          رمز التحقق
-        </label>
-        <input
-          id="token"
-          type="text"
-          name="token"
-          className="auth-otp-input"
-          placeholder="000000"
-          inputMode="numeric"
-          maxLength={6}
-          minLength={6}
-          pattern="\d{6}"
-          required
-          autoComplete="one-time-code"
-          autoFocus
-        />
-
-        <button type="submit" className="auth-cta">
-          تحقّق وادخل ←
-        </button>
-      </form>
-
-      <div className="auth-helper">
-        لم يصلك الرمز؟ <Link href="/login/phone">إعادة الإرسال</Link>
-      </div>
       <div className="auth-expiry">⏱ ينتهي خلال ٥ دقائق</div>
     </main>
   );
