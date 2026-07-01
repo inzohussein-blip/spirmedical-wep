@@ -4,9 +4,18 @@
  * ═══════════════════════════════════════════════════════════════
  */
 
-import * as Sentry from '@sentry/nextjs';
-
 import '../sentry.client.config';
 
-// مطلوب في Sentry v10+ لتتبّع تنقّلات الراوتر (App Router navigation)
-export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
+// Sentry v10.62+ يتطلب هذا الـ export لتتبّع التنقل
+// نستخدم dynamic import بدل require (آمن مع ESLint)
+let _captureNav: ((href: string, nav: string) => void) | undefined;
+import('@sentry/nextjs').then((mod) => {
+  _captureNav = mod.captureRouterTransitionStart;
+}).catch(() => { /* no-op */ });
+
+export const onRouterTransitionStart = (
+  href: string,
+  navigationType: string
+): void => {
+  _captureNav?.(href, navigationType);
+};
