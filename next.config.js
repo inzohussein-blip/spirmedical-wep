@@ -123,19 +123,29 @@ const nextConfig = {
 };
 
 // ─── Sentry Configuration ───
+// يدعم env vars بالـ prefix الخاص بـ Vercel (spirmedical_) مع fallback للاسم القياسي
+const _sentryAuthToken =
+  process.env.spirmedical_SENTRY_AUTH_TOKEN || process.env.SENTRY_AUTH_TOKEN;
+const _sentryHasCredentials = Boolean(_sentryAuthToken);
+
 module.exports = withSentryConfig(nextConfig, {
   // ─── Source Maps ───
-  // يدعم env vars بالـ prefix الخاص بـ Vercel (spirmedical_) مع fallback للاسم القياسي
   org: process.env.spirmedical_SENTRY_ORG || process.env.SENTRY_ORG,
   project: process.env.spirmedical_SENTRY_PROJECT || process.env.SENTRY_PROJECT || 'spirmedical',
-  authToken: process.env.spirmedical_SENTRY_AUTH_TOKEN || process.env.SENTRY_AUTH_TOKEN,
+  authToken: _sentryAuthToken,
 
-  // ─── Silent mode ───
-  silent: !process.env.CI,
+  // ─── Source map upload: يُعطَّل تلقائياً إذا لم يكن الـ auth token موجوداً ───
+  // هذا يُزيل الـ 69 warning المتعلقة بـ "could not determine a source map reference"
+  sourcemaps: {
+    disable: !_sentryHasCredentials,
+  },
 
-  // ─── Source Maps في الإنتاج ───
-  widenClientFileUpload: true,
-  hideSourceMaps: true,
+  // ─── Silent: صامت عند غياب الـ credentials لتجنّب تحذيرات مُكرَّرة ───
+  silent: !process.env.CI || !_sentryHasCredentials,
+
+  // ─── Source Maps في الإنتاج (فعّال فقط عند توفّر credentials) ───
+  widenClientFileUpload: _sentryHasCredentials,
+  hideSourceMaps: _sentryHasCredentials,
 
   // ─── Tree-shaking (v10+: يحلّ محل disableLogger) ───
   treeshake: {
