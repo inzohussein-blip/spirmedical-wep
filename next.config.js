@@ -125,9 +125,10 @@ const nextConfig = {
 // ─── Sentry Configuration ───
 module.exports = withSentryConfig(nextConfig, {
   // ─── Source Maps ───
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT || 'sentry-teal-pillar',
-  authToken: process.env.SENTRY_AUTH_TOKEN,
+  // يدعم env vars بالـ prefix الخاص بـ Vercel (spirmedical_) مع fallback للاسم القياسي
+  org: process.env.spirmedical_SENTRY_ORG || process.env.SENTRY_ORG,
+  project: process.env.spirmedical_SENTRY_PROJECT || process.env.SENTRY_PROJECT || 'spirmedical',
+  authToken: process.env.spirmedical_SENTRY_AUTH_TOKEN || process.env.SENTRY_AUTH_TOKEN,
 
   // ─── Silent mode ───
   silent: !process.env.CI,
