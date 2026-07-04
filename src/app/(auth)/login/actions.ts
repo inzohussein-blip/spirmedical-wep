@@ -4,12 +4,12 @@ import { createClient } from '@/lib/supabase/server';
 import { phoneSchema, otpSchema, normalizePhone } from '@/lib/validations/auth';
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
-import { createHash } from 'crypto';
 import { createClient as createSbClient } from '@supabase/supabase-js';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
 import { getOtpMode, canSkipOtp, isPasswordlessLoginAllowed } from '@/lib/flags';
+import { derivePhonePassword as derivePassword, phoneToEmail } from '@/lib/auth/phone-credentials';
 // ✅ FIX 1: static import بدلاً من dynamic
 import { verifyOtp as verifyWhatsAppOtp, sendOtp as sendWhatsAppOtpDirect } from '@/lib/whatsapp/otp-service';
 
@@ -24,18 +24,6 @@ function getIp(): string {
     h.get('x-real-ip') ??
     'unknown'
   );
-}
-
-function derivePassword(phone: string): string {
-  const encryptionKey = process.env.ENCRYPTION_KEY!;
-  return createHash('sha256')
-    .update(phone + ':' + encryptionKey)
-    .digest('hex')
-    .slice(0, 32);
-}
-
-function phoneToEmail(phone: string): string {
-  return `${phone.replace(/\D/g, '')}@phone.spirmedical.local`;
 }
 
 /**
