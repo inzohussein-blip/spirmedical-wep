@@ -272,7 +272,7 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
         role === 'manager' ||
         role === 'support'
       ) {
-        redirect('/admin44');
+        redirect('/admin');
       }
       redirect('/dashboard');
     }
@@ -398,7 +398,7 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
       role === 'manager' ||
       role === 'support'
     ) {
-      redirect('/admin44');
+      redirect('/admin');
     }
     redirect('/dashboard');
   } catch (err) {
@@ -553,7 +553,7 @@ export async function verifyOtp(formData: FormData) {
 
       if (role === 'specialist') redirect('/specialist');
       if (role === 'admin' || role === 'super_admin' || role === 'manager' || role === 'support') {
-        redirect('/admin44');
+        redirect('/admin');
       }
       if (redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')) {
         redirect(redirectTo);
@@ -612,7 +612,7 @@ export async function verifyOtp(formData: FormData) {
     profile?.role === 'manager' ||
     profile?.role === 'support'
   ) {
-    redirect('/admin44');
+    redirect('/admin');
   }
 
   if (redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')) {

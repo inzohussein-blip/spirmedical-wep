@@ -40,8 +40,8 @@ export default function robots(): MetadataRoute.Robots {
     '/api/',
     '/dashboard/',
     '/specialist/',
-    '/admin44',     // ← V22 admin panel (hidden)
-    '/admin44/',
+    '/admin',     // ← V22 admin panel (hidden)
+    '/admin/',
     '/appointments/',
     '/account/',
     '/services/',

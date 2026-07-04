@@ -48,7 +48,7 @@ export default async function AppPage() {
     if (profile?.role === 'specialist') {
       redirect('/specialist');
     } else if (profile?.role === 'admin' || profile?.role === 'super_admin') {
-      redirect('/admin44');
+      redirect('/admin');
     } else {
       redirect('/dashboard');
     }

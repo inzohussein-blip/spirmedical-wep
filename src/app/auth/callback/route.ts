@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.redirect(`${origin}/specialist`);
       }
       if (['admin', 'super_admin', 'manager', 'support'].includes(role)) {
-        return NextResponse.redirect(`${origin}/admin44`);
+        return NextResponse.redirect(`${origin}/admin`);
       }
 
       // التوجيه لـ next أو dashboard

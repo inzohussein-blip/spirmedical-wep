@@ -57,7 +57,7 @@ function roleHomePath(role: string | null | undefined): string {
     role === 'manager' ||
     role === 'support'
   ) {
-    return '/admin44';
+    return '/admin';
   }
   return '/dashboard';
 }

@@ -22,6 +22,14 @@ const nextConfig = {
     ],
   },
 
+  async redirects() {
+    return [
+      // توافق رجعي: الروابط القديمة /admin44/* → /admin/* بعد إعادة التسمية
+      { source: '/admin44', destination: '/admin', permanent: true },
+      { source: '/admin44/:path*', destination: '/admin/:path*', permanent: true },
+    ];
+  },
+
   async headers() {
     return [
       {

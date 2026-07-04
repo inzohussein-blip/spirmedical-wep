@@ -38,7 +38,7 @@ const PERSONAL_HTML_PATHS = [
   '/consultations',
   '/specialist',
   '/admin',
-  '/admin44',
+  '/admin',
   '/sos',
   '/tools',
   '/family',

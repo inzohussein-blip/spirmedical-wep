@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { Bug, X, Send, Loader2, AlertTriangle } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
-import { reportBug } from '@/app/admin44/bugs/actions';
+import { reportBug } from '@/app/admin/bugs/actions';
 
 /**
  * ═══════════════════════════════════════════════════════════════

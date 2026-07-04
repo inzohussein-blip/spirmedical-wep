@@ -35,7 +35,7 @@ spirmedical-wep-main/
 │   │   ├── (dashboard)/         ← 59 ملف
 │   │   ├── (specialist)/        ← 31 ملف
 │   │   ├── about/               ← 1 ملف
-│   │   ├── admin44/
+│   │   ├── admin/
 │   │   ├── api/
 │   │   ├── blog/
 │   │   ├── guest/

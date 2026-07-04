@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
       await sendPushToUsers(adminIds, {
         title: '🚨 طوارئ ممرض - استجابة فورية',
         body: `${profile.full_name || 'ممرض'} يحتاج مساعدة عاجلة - ${body.trigger_reason}`,
-        url: `/admin44/emergencies/${logEntry.id}`,
+        url: `/admin/emergencies/${logEntry.id}`,
         tag: `emergency-${logEntry.id}`,
         data: { urgent: true },
       });

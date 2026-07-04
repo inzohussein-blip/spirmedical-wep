@@ -17,7 +17,7 @@ import { isPWAInstalled } from '@/lib/pwa';
  * 2. في باقي الصفحات:
  *    - back navigation طبيعي (يرجع للصفحة السابقة)
  */
-const HOME_PATHS = ['/', '/dashboard', '/login', '/gate', '/specialist', '/admin44'];
+const HOME_PATHS = ['/', '/dashboard', '/login', '/gate', '/specialist', '/admin'];
 
 export default function AppBackHandler() {
   const pathname = usePathname();

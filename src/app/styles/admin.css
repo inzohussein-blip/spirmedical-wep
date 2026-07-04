@@ -4,7 +4,7 @@
    
    CSS خاصّ بالأدمن فقط - overrides + admin-specific utilities
    
-   ⚠️ يُحمّل بعد shared.css في صفحات /admin44/*
+   ⚠️ يُحمّل بعد shared.css في صفحات /admin/*
    ⚠️ لا يحوي scr-* / landing-* / spec-* (موجودة في shared.css أو app.css)
    
    يحتوي على:
