@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/server-service';
 import { sendPushToUsers } from '@/lib/services/push';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
+
+const emergencySchema = z.object({
+  trigger_reason: z.string().trim().min(1, 'سبب الطوارئ مطلوب').max(200),
+  description: z.string().trim().max(2000).optional(),
+  orderId: z.string().uuid().optional().nullable(),
+  latitude: z.number().min(-90).max(90).optional(),
+  longitude: z.number().min(-180).max(180).optional(),
+  accuracy_m: z.number().min(0).max(100000).optional(),
+});
 
 /**
  * ═══════════════════════════════════════════════════════════════
@@ -59,18 +69,22 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // ─── 3. validate body ───
-  let body;
+  // ─── 3. validate body (Zod) ───
+  let raw;
   try {
-    body = await request.json();
+    raw = await request.json();
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
   }
 
-  // تحقّق أساسي من الحقول (تحقّق Zod الكامل في Phase 3)
-  if (!body || typeof body.trigger_reason !== 'string' || !body.trigger_reason.trim()) {
-    return NextResponse.json({ error: 'سبب الطوارئ مطلوب' }, { status: 400 });
+  const parsed = emergencySchema.safeParse(raw);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.errors[0]?.message || 'بيانات غير صالحة' },
+      { status: 400 }
+    );
   }
+  const body = parsed.data;
 
   // ─── 4. سجّل في nurse_emergency_logs ───
   const serviceClient = createServiceClient();
