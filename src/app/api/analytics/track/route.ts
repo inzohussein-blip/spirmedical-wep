@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
 import { checkRateLimit } from '@/lib/rate-limit';
 
@@ -8,13 +9,25 @@ import { checkRateLimit } from '@/lib/rate-limit';
  *
  * Body: { event: string, properties?: object, timestamp?: number }
  */
+const trackSchema = z.object({
+  event: z.string().trim().min(1).max(100),
+  // نحدّ حجم الخصائص (منع تخزين JSON ضخم من مصدر غير مُصادق)
+  properties: z.record(z.unknown()).optional(),
+});
+
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { event, properties } = body;
+    const raw = await request.json();
+    const parsed = trackSchema.safeParse(raw);
 
-    if (!event || typeof event !== 'string') {
-      return NextResponse.json({ error: 'event required' }, { status: 400 });
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'invalid payload' }, { status: 400 });
+    }
+    const { event, properties } = parsed.data;
+
+    // حدّ حجم الخصائص المسلسلة (≤ 8KB)
+    if (properties && JSON.stringify(properties).length > 8192) {
+      return NextResponse.json({ error: 'properties too large' }, { status: 400 });
     }
 
     // ─── Rate limit حسب الـ IP (منع إغراق DB — endpoint غير مُصادق) ───
