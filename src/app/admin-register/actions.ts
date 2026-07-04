@@ -101,7 +101,7 @@ export async function requestAdminAccess(formData: FormData) {
         <p><b>الاسم:</b> ${escapeHtml(fullName)}</p>
         <p><b>البريد:</b> ${escapeHtml(email)}</p>
         <p><b>السبب:</b> ${reason ? escapeHtml(reason) : '—'}</p>
-        <p><a href="https://spir-medical.com/admin44/admins/requests">مراجعة الطلبات</a></p>
+        <p><a href="https://spir-medical.com/admin/admins/requests">مراجعة الطلبات</a></p>
       </div>`
     );
   } catch (err) {
@@ -122,7 +122,7 @@ export async function approveAdminRequest(formData: FormData) {
   if (!user) redirect('/admin-login');
 
   const { data: me } = await supabase.from('users').select('role').eq('id', user!.id).single();
-  if (!isSuperAdmin(me?.role)) redirect('/admin44?error=' + encodeURIComponent('الموافقة تتطلّب صلاحية مدير عام'));
+  if (!isSuperAdmin(me?.role)) redirect('/admin?error=' + encodeURIComponent('الموافقة تتطلّب صلاحية مدير عام'));
 
   const sb = supabase as unknown as { from: (t: string) => any };
   const { data: req } = await sb
@@ -131,7 +131,7 @@ export async function approveAdminRequest(formData: FormData) {
     .eq('id', requestId)
     .single();
 
-  if (!req) redirect('/admin44/admins/requests?error=' + encodeURIComponent('الطلب غير موجود'));
+  if (!req) redirect('/admin/admins/requests?error=' + encodeURIComponent('الطلب غير موجود'));
 
   const validRole = ['support', 'manager', 'admin'].includes(grantedRole) ? grantedRole : 'support';
 
@@ -149,7 +149,7 @@ export async function approveAdminRequest(formData: FormData) {
     metadata: { granted_role: validRole, approved_email: req!.email },
   }).catch(() => {});
 
-  redirect('/admin44/admins/requests?approved=1');
+  redirect('/admin/admins/requests?approved=1');
 }
 
 export async function rejectAdminRequest(formData: FormData) {
@@ -160,7 +160,7 @@ export async function rejectAdminRequest(formData: FormData) {
   if (!user) redirect('/admin-login');
 
   const { data: me } = await supabase.from('users').select('role').eq('id', user!.id).single();
-  if (!isSuperAdmin(me?.role)) redirect('/admin44?error=' + encodeURIComponent('الرفض يتطلّب صلاحية مدير عام'));
+  if (!isSuperAdmin(me?.role)) redirect('/admin?error=' + encodeURIComponent('الرفض يتطلّب صلاحية مدير عام'));
 
   const sb = supabase as unknown as { from: (t: string) => any };
   await sb
@@ -168,5 +168,5 @@ export async function rejectAdminRequest(formData: FormData) {
     .update({ status: 'rejected', reviewed_by: user!.id, reviewed_at: new Date().toISOString() })
     .eq('id', requestId);
 
-  redirect('/admin44/admins/requests?rejected=1');
+  redirect('/admin/admins/requests?rejected=1');
 }

@@ -39,7 +39,7 @@ export default async function AuthLayout({
     if (profile?.role === 'specialist') {
       redirect('/specialist');
     } else if (['admin', 'super_admin', 'manager', 'support'].includes(profile?.role || '')) {
-      redirect('/admin44');
+      redirect('/admin');
     } else {
       redirect('/dashboard');
     }

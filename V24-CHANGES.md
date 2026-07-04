@@ -88,7 +88,7 @@ git push origin main
 
 ### 2. خارج النطاق (لمراحل قادمة)
 
-- ❌ **Phase 3:** Admin Panel + CRM في `app/admin44/` (لا يزال يحتوي emojis)
+- ❌ **Phase 3:** Admin Panel + CRM في `app/admin/` (لا يزال يحتوي emojis)
 - ❌ **Phase 4:** الصفحات العامة (landing, blog, legal)
 
 ### 3. التحذيرات (3 warnings)

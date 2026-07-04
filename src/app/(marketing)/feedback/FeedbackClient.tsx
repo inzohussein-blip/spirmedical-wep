@@ -8,7 +8,7 @@ import {
   ThumbsUp, ThumbsDown, Lightbulb, Heart,
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
-import { submitFeedback } from '@/app/admin44/feedback/actions';
+import { submitFeedback } from '@/app/admin/feedback/actions';
 
 const TYPES = [
   { id: 'praise' as const,          label: 'مدح',          emoji: '😊', icon: ThumbsUp,    color: 'var(--emerald)' },

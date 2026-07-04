@@ -45,7 +45,7 @@ export interface RequireSessionOptions {
  */
 function getDefaultPathForRole(role: UserRole): string {
   if (role === 'specialist') return '/specialist';
-  if (ADMIN_ROLES.includes(role)) return '/admin44';
+  if (ADMIN_ROLES.includes(role)) return '/admin';
   return '/dashboard';
 }
 

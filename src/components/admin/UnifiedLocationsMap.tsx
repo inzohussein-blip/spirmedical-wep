@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 import type { MapMarker } from '@/components/maps/SpirMapView';
 import type { ServiceMarkerType } from '@/lib/maps/markers';
-import type { UnifiedLocation } from '@/app/admin44/locations/types';
+import type { UnifiedLocation } from '@/app/admin/locations/types';
 
 const SpirMapView = dynamic(() => import('@/components/maps/SpirMapView'), {
   ssr: false,

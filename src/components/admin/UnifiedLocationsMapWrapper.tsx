@@ -1,7 +1,7 @@
 'use client';
 
 import UnifiedLocationsMap from './UnifiedLocationsMap';
-import type { UnifiedLocation } from '@/app/admin44/locations/types';
+import type { UnifiedLocation } from '@/app/admin/locations/types';
 
 interface Props {
   locations: UnifiedLocation[];

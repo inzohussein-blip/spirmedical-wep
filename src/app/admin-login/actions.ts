@@ -66,7 +66,7 @@ export async function adminLogin(formData: FormData) {
     metadata: { email },
   }).catch(() => {});
 
-  redirect('/admin44');
+  redirect('/admin');
 }
 
 /**

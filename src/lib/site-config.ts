@@ -78,7 +78,7 @@ export const SHARED_PATHS = [
   '/otp',
   '/forgot',
   '/gate',
-  '/admin44',
+  '/admin',
 ];
 
 /**

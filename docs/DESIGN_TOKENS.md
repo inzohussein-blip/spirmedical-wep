@@ -142,7 +142,7 @@
 | `--ink-3` (#6E7878) | متادايتا |
 | `--ink-4` (#A4ACAA) | disabled |
 
-⚠️ **مهم:** كل هذه قابلة للتعديل من `/admin44/settings/theme` (Dynamic Theme System).
+⚠️ **مهم:** كل هذه قابلة للتعديل من `/admin/settings/theme` (Dynamic Theme System).
 
 ---
 
@@ -237,7 +237,7 @@
 
 ## 🔄 التحديث (Theme System)
 
-أهم 5 ألوان قابلة للتعديل ديناميكياً من `/admin44/settings/theme`:
+أهم 5 ألوان قابلة للتعديل ديناميكياً من `/admin/settings/theme`:
 - `--emerald` (primary)
 - `--emerald-deep` (primary dark)
 - `--emerald-soft` (primary soft)

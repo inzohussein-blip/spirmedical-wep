@@ -7,7 +7,7 @@ import { isAdminRole } from '@/lib/admin-types';
  * يُحدّث الـ session في كل طلب — مهم للـ App Router مع Supabase Auth.
  *
  * يحمي أيضاً على مستوى الحافة: مسارات المستخدم (dashboard/appointments…)،
- * واجهة الأخصائي (/specialist)، ولوحة الأدمن (/admin44) بفحص الدور.
+ * واجهة الأخصائي (/specialist)، ولوحة الأدمن (/admin) بفحص الدور.
  */
 export async function updateSession(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -80,8 +80,10 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    // 🔒 حماية لوحة الأدمن على مستوى الحافة (لا الرابط المموّه/الـ layout فقط)
-    if (request.nextUrl.pathname.startsWith('/admin44')) {
+    // 🔒 حماية لوحة الأدمن على مستوى الحافة (بفحص الدور).
+    // تطابق دقيق لـ /admin و /admin/* فقط — لا تلتقط /admin-login أو /admin-register.
+    const adminPath = request.nextUrl.pathname;
+    if (adminPath === '/admin' || adminPath.startsWith('/admin/')) {
       if (!user) {
         const url = request.nextUrl.clone();
         url.pathname = '/admin-login';

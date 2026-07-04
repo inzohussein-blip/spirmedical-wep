@@ -16,7 +16,7 @@
 | الخدمة | الرابط |
 |---|---|
 | 🌐 الموقع الحيّ | [spir-medical.com](https://spir-medical.com) |
-| 🔧 لوحة الأدمن | [spir-medical.com/admin44](https://spir-medical.com/admin44) |
+| 🔧 لوحة الأدمن | [spir-medical.com/admin](https://spir-medical.com/admin) |
 | 📊 Vercel Dashboard | [vercel.com/inzohussein-blip/spirmedical-wep](https://vercel.com/inzohussein-blip/spirmedical-wep) |
 | 🗄️ Supabase | [supabase.com/dashboard/project/ioulxemokusfeykjcaxg](https://supabase.com/dashboard/project/ioulxemokusfeykjcaxg) |
 | 🐛 Sentry | [inzohussein-blip-ip.sentry.io](https://inzohussein-blip-ip.sentry.io/issues/?project=4511479851843664) |
@@ -53,7 +53,7 @@ spirmedical-wep/
 │   │   ├── (marketing)/     # الصفحات التسويقية
 │   │   ├── (specialist)/    # بوابة الأخصائيين
 │   │   ├── (app-utility)/   # أدوات التطبيق
-│   │   ├── admin44/         # لوحة الإدارة
+│   │   ├── admin/         # لوحة الإدارة
 │   │   ├── admin-login/     # تسجيل دخول الأدمن
 │   │   ├── api/             # API Routes
 │   │   ├── guest/           # صفحات الزائر
@@ -130,7 +130,7 @@ spirmedical-wep/
 | الصيدلية | `/specialist/pharmacy` | ✅ |
 | الإحصاءات | `/specialist/stats` | ✅ |
 
-### 🎛️ لوحة الإدارة (admin44) — 34 صفحة
+### 🎛️ لوحة الإدارة (admin) — 34 صفحة
 | القسم | الحالة |
 |---|---|
 | المرضى + الأطباء + المختصّون | ✅ |

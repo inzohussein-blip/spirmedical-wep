@@ -15,7 +15,7 @@ export const dynamic = 'force-dynamic';
  *
  * Roles المسموحة: patient فقط
  * - specialist يُحوّل لـ /specialist
- * - admin يُحوّل لـ /admin44
+ * - admin يُحوّل لـ /admin
  */
 export default async function DashboardLayout({
   children,
