@@ -2,9 +2,20 @@
 
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 import { isAdminRole } from '@/lib/admin-types';
+import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
+
+function getIp(): string {
+  const h = headers();
+  return (
+    h.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+    h.get('x-real-ip') ??
+    'unknown'
+  );
+}
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -22,6 +33,19 @@ export async function adminLogin(formData: FormData) {
 
   if (!email || !password) {
     redirect('/admin-login?error=' + encodeURIComponent('أدخل البريد وكلمة المرور'));
+  }
+
+  // 🔒 حدّ محاولات الدخول (منع تخمين كلمة السر)
+  const ip = getIp();
+  const rl = await checkRateLimit(`admin:login:${ip}`, {
+    max: 10,
+    windowSeconds: 900,
+  });
+  if (!rl.allowed) {
+    redirect(
+      '/admin-login?error=' +
+        encodeURIComponent(`محاولات كثيرة، حاول بعد ${rl.retryAfterSeconds} ثانية`)
+    );
   }
 
   const supabase = createClient();
@@ -71,11 +95,61 @@ export async function adminCreate(formData: FormData) {
   const role = String(formData.get('role') ?? 'support');
   const secretKey = String(formData.get('secretKey') ?? '');
 
-  // 🔐 تحقّق من المفتاح السرّي
-  const expectedKey = process.env.ADMIN_CREATE_KEY;
-  if (!expectedKey || secretKey !== expectedKey) {
-    logger.warn('admin create rejected — bad secret key', { email });
-    redirect('/admin-login?tab=create&error=' + encodeURIComponent('المفتاح السرّي غير صحيح'));
+  // 🔒 حدّ الإنشاء (منع تخمين المفتاح السرّي / الإساءة)
+  const ip = getIp();
+  const rl = await checkRateLimit(`admin:create:${ip}`, {
+    max: 5,
+    windowSeconds: 3600,
+  });
+  if (!rl.allowed) {
+    redirect(
+      '/admin-login?tab=create&error=' +
+        encodeURIComponent(`محاولات كثيرة، حاول بعد ${rl.retryAfterSeconds} ثانية`)
+    );
+  }
+
+  // من هو المُنشئ؟ (لو توجد جلسة أدمن قائمة)
+  const sessionClient = createClient();
+  const {
+    data: { user: caller },
+  } = await sessionClient.auth.getUser();
+  let callerRole: string | null = null;
+  if (caller) {
+    const { data: cp } = await sessionClient
+      .from('users')
+      .select('role')
+      .eq('id', caller.id)
+      .single();
+    callerRole = (cp as { role?: string } | null)?.role ?? null;
+  }
+  const callerIsSuperAdmin = callerRole === 'super_admin';
+
+  // 🔐 غير الـ super_admin المُصادق يحتاج مفتاحاً سرّياً قوياً
+  if (!callerIsSuperAdmin) {
+    const expectedKey = process.env.ADMIN_CREATE_KEY;
+    if (!expectedKey || expectedKey.length < 16) {
+      logger.error('admin create blocked — ADMIN_CREATE_KEY missing or too weak');
+      redirect(
+        '/admin-login?tab=create&error=' +
+          encodeURIComponent('إنشاء حساب الأدمن غير متاح حالياً')
+      );
+    }
+    if (secretKey !== expectedKey) {
+      logger.warn('admin create rejected — bad secret key', { email });
+      redirect('/admin-login?tab=create&error=' + encodeURIComponent('المفتاح السرّي غير صحيح'));
+    }
+  }
+
+  // قائمة السماح للبريد (اختيارية عبر ADMIN_ALLOWED_EMAILS)
+  const allowlist = (process.env.ADMIN_ALLOWED_EMAILS ?? '')
+    .split(',')
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean);
+  if (allowlist.length > 0 && !allowlist.includes(email)) {
+    logger.warn('admin create rejected — email not in allowlist', { email });
+    redirect(
+      '/admin-login?tab=create&error=' + encodeURIComponent('هذا البريد غير مُصرّح له')
+    );
   }
 
   // تحقّقات أساسية
@@ -90,7 +164,11 @@ export async function adminCreate(formData: FormData) {
   }
 
   const validRoles = ['super_admin', 'admin', 'manager', 'support'];
-  const grantedRole = validRoles.includes(role) ? role : 'support';
+  let grantedRole = validRoles.includes(role) ? role : 'support';
+  // 🔒 لا يُمنح super_admin إلا بواسطة super_admin مُصادق — المفتاح وحده يُنشئ admin كحدّ أقصى
+  if (grantedRole === 'super_admin' && !callerIsSuperAdmin) {
+    grantedRole = 'admin';
+  }
 
   const admin = createAdminClient();
 
@@ -124,7 +202,11 @@ export async function adminCreate(formData: FormData) {
     logAuditEvent({
       user_id: userId,
       action: 'admin_account_created',
-      metadata: { email, granted_role: grantedRole },
+      metadata: {
+        email,
+        granted_role: grantedRole,
+        created_by: caller?.id ?? 'secret_key',
+      },
     }).catch(() => {});
   } catch (err) {
     if (

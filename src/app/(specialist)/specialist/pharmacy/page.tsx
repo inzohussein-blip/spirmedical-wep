@@ -16,7 +16,7 @@ export default async function PharmacyManagementPage() {
   const supabase = createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect('/auth/login');
+  if (!user) redirect('/login');
 
   // تحقق أنه صيدلاني
   const { data: profile } = await supabase

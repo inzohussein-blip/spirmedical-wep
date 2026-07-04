@@ -41,13 +41,28 @@ export default async function SpecialistStatsPage() {
     .eq('specialist_id', user!.id)
     .eq('status', 'cancelled');
 
-  // Top services (mock)
+  // Top services — عدّ فعلي حسب اسم الخدمة (لا أرقام ملفّقة)
+  const { data: completedRows } = await supabase
+    .from('appointments')
+    .select('service_name')
+    .eq('specialist_id', user!.id)
+    .eq('status', 'completed');
+
+  const serviceTally = new Map<string, number>();
+  for (const row of (completedRows ?? []) as Array<{ service_name?: string | null }>) {
+    const name = row.service_name?.trim() || 'أخرى';
+    serviceTally.set(name, (serviceTally.get(name) ?? 0) + 1);
+  }
   const topServices: Array<{ name: string; count: number; icon: LucideIcon }> = [
-    { name: 'استشارة طبية', count: Math.floor((completedCount || 0) * 0.4), icon: MessageCircle },
-    { name: 'سحب دم منزلي', count: Math.floor((completedCount || 0) * 0.3), icon: Droplet },
-    { name: 'تمريض',        count: Math.floor((completedCount || 0) * 0.2), icon: Syringe },
-    { name: 'متابعة',        count: Math.floor((completedCount || 0) * 0.1), icon: ClipboardList },
-  ];
+    ...serviceTally.entries(),
+  ]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4)
+    .map(([name, count]) => ({
+      name,
+      count,
+      icon: SERVICE_ICONS[name] ?? ClipboardList,
+    }));
 
   const completionRate = totalAppointments && totalAppointments > 0
     ? Math.round(((completedCount || 0) / totalAppointments) * 100)

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/server-service';
 import { sendPushToUsers } from '@/lib/services/push';
+import { checkRateLimit } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
 
 /**
@@ -46,12 +47,29 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // ─── 2.5 حدّ المعدّل (منع إغراق التنبيهات) ───
+  const rl = await checkRateLimit(`nurse:emergency:${user.id}`, {
+    max: 10,
+    windowSeconds: 300,
+  });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: `طلبات كثيرة، حاول بعد ${rl.retryAfterSeconds} ثانية` },
+      { status: 429 }
+    );
+  }
+
   // ─── 3. validate body ───
   let body;
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
+
+  // تحقّق أساسي من الحقول (تحقّق Zod الكامل في Phase 3)
+  if (!body || typeof body.trigger_reason !== 'string' || !body.trigger_reason.trim()) {
+    return NextResponse.json({ error: 'سبب الطوارئ مطلوب' }, { status: 400 });
   }
 
   // ─── 4. سجّل في nurse_emergency_logs ───
@@ -124,6 +142,6 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     success: true,
     log_id: logEntry.id,
-    message: 'تم تفعيل بروتوكول الطوارئ - يتم التواصل معك الآن',
+    message: 'تم تفعيل بروتوكول الطوارئ وتنبيه مركز العمليات',
   });
 }

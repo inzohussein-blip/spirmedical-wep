@@ -20,7 +20,16 @@ export type EmailTemplate =
   | 'welcome_specialist'
   | 'appointment_confirmed'
   | 'appointment_reminder'
-  | 'rating_request';
+  | 'rating_request'
+  | 'email_verification';
+
+/**
+ * هل خدمة البريد مُهيّأة فعلاً؟ (لتقرير ما إذا كان يمكن الاعتماد على
+ * تأكيد البريد كبوابة دخول)
+ */
+export function isEmailConfigured(): boolean {
+  return !!process.env.RESEND_API_KEY;
+}
 
 interface EmailPayload {
   to: string;
@@ -115,6 +124,11 @@ function buildEmailContent(
       return {
         subject: '⭐ كيف كانت تجربتك معنا؟',
         html: ratingRequestEmail(data),
+      };
+    case 'email_verification':
+      return {
+        subject: 'تفعيل حسابك في سباير ميديكال',
+        html: emailVerificationEmail(data),
       };
     default:
       return { subject: 'إشعار من سباير ميديكال', html: '<p>إشعار</p>' };
@@ -296,6 +310,20 @@ function appointmentReminderEmail(data: Record<string, string | number>): string
     <div style="text-align:center;margin:24px 0;">
       ${button('عرض التفاصيل', `https://spir-medical.com/appointments/${data.id || ''}`)}
     </div>
+  `);
+}
+
+function emailVerificationEmail(data: Record<string, string | number>): string {
+  const url = String(data.url || 'https://spir-medical.com');
+  return emailWrapper(`
+    <h1 style="font-size:22px;font-weight:800;color:#0F1A1C;margin:0 0 16px;">فعّل حسابك ✉️</h1>
+    <p style="margin:0 0 16px;color:#1F2A2C;">مرحباً بك في <strong>سباير ميديكال</strong>. اضغط الزر أدناه لتفعيل بريدك وإكمال إنشاء حسابك.</p>
+    <div style="text-align:center;margin:24px 0;">
+      ${button('تفعيل الحساب ←', url)}
+    </div>
+    <p style="margin:16px 0 0;color:#888780;font-size:12px;line-height:1.7;">
+      إن لم تنشئ هذا الحساب، تجاهل هذا الإيميل. الرابط صالح لمدة 24 ساعة.
+    </p>
   `);
 }
 

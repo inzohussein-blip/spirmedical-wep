@@ -8,6 +8,8 @@
 import { NextResponse } from 'next/server';
 import { sendOtp, type OtpChannel, type OtpPurpose } from '@/lib/whatsapp/otp-service';
 import { createClient } from '@/lib/supabase/server';
+import { checkRateLimit } from '@/lib/rate-limit';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,6 +34,25 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { success: false, error: 'channel غير مدعوم' },
         { status: 400 }
+      );
+    }
+
+    // ─── Rate limit حسب الـ IP (فوق الحدّ لكل رقم داخل الخدمة) ───
+    const ip =
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      request.headers.get('x-real-ip') ||
+      'unknown';
+    const rl = await checkRateLimit(`otp:send:ip:${ip}`, {
+      max: 10,
+      windowSeconds: 900,
+    });
+    if (!rl.allowed) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `محاولات كثيرة، حاول بعد ${rl.retryAfterSeconds} ثانية`,
+        },
+        { status: 429 }
       );
     }
 
@@ -69,8 +90,9 @@ export async function POST(request: Request) {
       expiresAt: result.expiresAt,
     });
   } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error('[OTP/send] Error:', err);
+    logger.error('OTP send route error', {
+      error: err instanceof Error ? err.message : 'unknown',
+    });
     return NextResponse.json(
       { success: false, error: 'خطأ في النظام' },
       { status: 500 }

@@ -15,7 +15,7 @@ export default async function FamilyPage() {
   const supabase = createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect('/auth/login');
+  if (!user) redirect('/login');
 
   // جلب أفراد العائلة
   const { data: members } = await supabase

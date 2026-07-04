@@ -216,14 +216,14 @@ export default function PatientRegisterPage() {
           {/* Already Have Account */}
           <p className="text-center mt-6 text-gray-700">
             لديك حساب بالفعل؟{' '}
-            <Link href="/auth/login" className="text-emerald-600 hover:underline font-medium">
+            <Link href="/login" className="text-emerald-600 hover:underline font-medium">
               سجّل الدخول
             </Link>
           </p>
 
           {/* Back to Role Selection */}
           <p className="text-center mt-4">
-            <Link href="/auth/register" className="text-sm text-gray-600 hover:underline">
+            <Link href="/register" className="text-sm text-gray-600 hover:underline">
               ← العودة
             </Link>
           </p>

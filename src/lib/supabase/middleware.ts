@@ -1,12 +1,13 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import type { Database } from '@/types/database';
+import { isAdminRole } from '@/lib/admin-types';
 
 /**
  * يُحدّث الـ session في كل طلب — مهم للـ App Router مع Supabase Auth.
  *
- * ⚠️ ملاحظة: لوحة الإدارة (CRM) مشروع منفصل وليس جزءاً من هذا التطبيق.
- *    لذلك /admin غير مذكور هنا.
+ * يحمي أيضاً على مستوى الحافة: مسارات المستخدم (dashboard/appointments…)،
+ * واجهة الأخصائي (/specialist)، ولوحة الأدمن (/admin44) بفحص الدور.
  */
 export async function updateSession(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -77,6 +78,32 @@ export async function updateSession(request: NextRequest) {
       url.pathname = '/login';
       url.searchParams.set('redirect', request.nextUrl.pathname);
       return NextResponse.redirect(url);
+    }
+
+    // 🔒 حماية لوحة الأدمن على مستوى الحافة (لا الرابط المموّه/الـ layout فقط)
+    if (request.nextUrl.pathname.startsWith('/admin44')) {
+      if (!user) {
+        const url = request.nextUrl.clone();
+        url.pathname = '/admin-login';
+        return NextResponse.redirect(url);
+      }
+      try {
+        const { data: profile } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+
+        if (!isAdminRole(profile?.role)) {
+          const url = request.nextUrl.clone();
+          url.pathname = '/dashboard';
+          return NextResponse.redirect(url);
+        }
+      } catch (err) {
+        const url = request.nextUrl.clone();
+        url.pathname = '/admin-login';
+        return NextResponse.redirect(url);
+      }
     }
 
     // حماية واجهة الأخصائي

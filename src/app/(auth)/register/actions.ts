@@ -8,7 +8,7 @@ import { createClient as createSbClient } from '@supabase/supabase-js';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
-import { getOtpMode, canSkipOtp } from '@/lib/flags';
+import { getOtpMode, canSkipOtp, isPasswordlessLoginAllowed } from '@/lib/flags';
 import {
   patientRegisterSchema,
   specialistRegisterSchema,
@@ -223,7 +223,10 @@ async function routeAfterRegister(
 ): Promise<never> {
   const mode = getOtpMode();
   const shouldUseOtp =
-    mode === 'required' || (mode === 'optional' && action === 'otp');
+    mode === 'required' ||
+    (mode === 'optional' && action === 'otp') ||
+    // 🔒 حتى في disabled/optional: إن مُنع الدخول بدون رمز (إنتاج) نفرض OTP
+    !isPasswordlessLoginAllowed();
 
   if (!shouldUseOtp) {
     await signInDirectly(phone, role);

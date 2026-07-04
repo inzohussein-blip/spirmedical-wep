@@ -25,7 +25,7 @@ export default async function ConsultationsPage() {
   const supabase = createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect('/auth/login');
+  if (!user) redirect('/login');
 
   // جلب الاستشارات
   const { data: consultations } = await supabase

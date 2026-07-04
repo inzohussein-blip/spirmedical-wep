@@ -15,7 +15,8 @@ const envSchema = z.object({
   // Supabase
   NEXT_PUBLIC_SUPABASE_URL: z.string().url('NEXT_PUBLIC_SUPABASE_URL يجب أن يكون URL صالحاً'),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(20, 'NEXT_PUBLIC_SUPABASE_ANON_KEY قصير جداً'),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(20, 'SUPABASE_SERVICE_ROLE_KEY قصير جداً').optional(),
+  // مطلوب فعلياً لكل تدفّقات المصادقة/الأدمن — fail-fast بدل undefined صامت
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(20, 'SUPABASE_SERVICE_ROLE_KEY قصير جداً'),
 
   // التشفير - 32 bytes hex
   ENCRYPTION_KEY: z
@@ -32,12 +33,15 @@ const envSchema = z.object({
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).optional(),
 
   // ⭐ OTP Mode (3 أوضاع)
-  // - 'disabled': لا OTP إطلاقاً، دخول مباشر (الوضع الحالي - بدون Meta WhatsApp)
-  // - 'optional': المستخدم يختار - زر OTP + زر تخطي
-  // - 'required': OTP إجباري (للإنتاج بعد تفعيل Meta WhatsApp)
+  // - 'required': OTP إجباري — الأكثر أماناً (لا يمكن التخطي، لا دخول بدون رمز)
+  // - 'optional': المستخدم يختار - زر OTP + زر تخطي (الافتراضي الحالي مؤقتاً)
+  // - 'disabled': لا OTP، دخول مباشر (تطوير)
+  // ⚠️ الافتراضي optional مؤقّت لإبقاء الدخول شغّالاً بلا انقطاع على الموقع الحيّ.
+  //   بمجرد تفعيل قناة OTP (Meta WhatsApp/Supabase SMS) اضبط
+  //   NEXT_PUBLIC_OTP_MODE=required لإقفال الدخول بدون رمز نهائياً.
   NEXT_PUBLIC_OTP_MODE: z
     .enum(['disabled', 'optional', 'required'])
-    .default('disabled'),
+    .default('optional'),
 
   // Feature flags (اختياري)
   NEXT_PUBLIC_ENABLE_SPECIALIST_CHAT: z
@@ -60,6 +64,26 @@ const envSchema = z.object({
   // Upstash Redis (اختياري)
   UPSTASH_REDIS_REST_URL: z.string().url().optional(),
   UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
+
+  // ─── أسرار قنوات/أدمن (اختيارية، لكن موثّقة هنا لتفادي انحراف المخطط) ───
+  // الدخول بدون رمز (خطر — إنتاج): 'true' يسمح به صراحةً
+  ALLOW_PASSWORDLESS_LOGIN: z.enum(['true', 'false']).optional(),
+  // Meta WhatsApp Cloud API
+  META_ACCESS_TOKEN: z.string().optional(),
+  META_PHONE_NUMBER_ID: z.string().optional(),
+  META_WEBHOOK_VERIFY_TOKEN: z.string().optional(),
+  WHATSAPP_PROVIDER: z.enum(['meta', 'twilio', 'mock']).optional(),
+  // Resend (البريد)
+  RESEND_API_KEY: z.string().optional(),
+  RESEND_FROM_EMAIL: z.string().optional(),
+  // إنشاء/إشعار الأدمن
+  ADMIN_CREATE_KEY: z.string().optional(),
+  ADMIN_ALLOWED_EMAILS: z.string().optional(),
+  ADMIN_OWNER_EMAIL: z.string().optional(),
+  // تفعيل قناة Telegram في واجهة OTP
+  NEXT_PUBLIC_ENABLE_TELEGRAM_OTP: z.enum(['true', 'false']).optional(),
+  // عنوان التطبيق (لروابط التفعيل/إعادة التعيين)
+  NEXT_PUBLIC_APP_URL: z.string().url().optional(),
 });
 
 function parseEnv() {
@@ -92,5 +116,5 @@ export type Env = z.infer<typeof envSchema>;
 export type OtpMode = 'disabled' | 'optional' | 'required';
 
 export function getOtpMode(): OtpMode {
-  return env.NEXT_PUBLIC_OTP_MODE ?? 'disabled';
+  return env.NEXT_PUBLIC_OTP_MODE ?? 'optional';
 }
