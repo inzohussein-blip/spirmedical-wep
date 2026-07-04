@@ -177,6 +177,8 @@ export async function createAppointmentV2(input: CreateAppointmentInput) {
   }).catch(() => null);
 
   // ✨ V25.10: WhatsApp Business API (fire-and-forget)
+  // ملاحظة: هذه هي القناة الحقيقية الوحيدة لإرسال التأكيد (Meta template API)
+  let confirmationSent = false;
   if (isWhatsAppEnabled()) {
     const { data: userData } = await supabase
       .from('users')
@@ -185,6 +187,7 @@ export async function createAppointmentV2(input: CreateAppointmentInput) {
       .single();
 
     if (userData?.phone) {
+      confirmationSent = true;
       sendAppointmentConfirmedWA({
         phone: userData.phone,
         patientName: userData.full_name || 'عزيزي',
@@ -195,7 +198,12 @@ export async function createAppointmentV2(input: CreateAppointmentInput) {
           month: 'long',
           day: 'numeric',
         }),
-      }).catch(() => null);
+      }).catch((e) => {
+        logger.warn('WhatsApp confirmation failed', {
+          appointment_id: created.id,
+          error: e instanceof Error ? e.message : String(e),
+        });
+      });
     }
   }
 
@@ -203,52 +211,21 @@ export async function createAppointmentV2(input: CreateAppointmentInput) {
     user_id: user.id,
     appointment_id: created.id,
     service: input.service_id,
-  });
-
-  // إرسال تأكيد عبر القناة المختارة
-  await sendBookingConfirmation({
-    appointmentId: created.id,
-    userId: user.id,
-    channel: input.otp_channel,
-    serviceName: input.service_name,
-    scheduledAt: input.scheduled_at,
+    confirmation_channel: confirmationSent ? input.otp_channel : 'none',
   });
 
   revalidatePath('/dashboard');
   revalidatePath('/appointments');
 
+  // رسالة نجاح دقيقة: نَعِد بالإشعار فقط إن كان سيُرسل فعلاً
+  const channelLabel = input.otp_channel === 'whatsapp' ? 'WhatsApp' : 'Telegram';
   return {
     success: true,
     appointmentId: created.id,
-    message: `تم تأكيد الحجز · ستصلك التفاصيل عبر ${input.otp_channel === 'whatsapp' ? 'WhatsApp' : 'Telegram'}`,
+    message: confirmationSent
+      ? `تم تأكيد الحجز · ستصلك التفاصيل عبر ${channelLabel}`
+      : 'تم تأكيد الحجز بنجاح',
   };
-}
-
-async function sendBookingConfirmation(params: {
-  appointmentId: string;
-  userId: string;
-  channel: 'whatsapp' | 'telegram';
-  serviceName: string;
-  scheduledAt: string;
-}) {
-  const date = new Date(params.scheduledAt);
-  const message = `
-✅ *تم تأكيد حجزك في Spir Medical*
-
-📋 *الخدمة:* ${params.serviceName}
-📅 *الموعد:* ${date.toLocaleDateString('ar-IQ')}
-⏰ *الوقت:* ${date.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' })}
-🔢 *رقم الحجز:* ${params.appointmentId.slice(0, 8).toUpperCase()}
-
-سنُرسل لك تذكير قبل الموعد بساعة.
-للإلغاء أو التعديل: ادخل التطبيق
-`.trim();
-
-  if (params.channel === 'whatsapp') {
-    logger.info('WhatsApp confirmation queued', { userId: params.userId });
-  } else {
-    logger.info('Telegram confirmation queued', { userId: params.userId });
-  }
 }
 
 export async function sendOtpAction(phone: string, channel: 'whatsapp' | 'telegram') {
