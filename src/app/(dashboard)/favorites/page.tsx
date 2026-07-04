@@ -14,7 +14,7 @@ export const metadata = { title: 'المفضّلة - Spir Medical' };
 export default async function FavoritesPage() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect('/auth/login');
+  if (!user) redirect('/login');
 
   // جلب كل المفضّلات
   const { data: favorites } = await supabase

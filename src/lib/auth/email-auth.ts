@@ -405,7 +405,7 @@ export async function resetPassword(
   try {
     const { error } = await supabase.auth.updateUser(
       { password: newPassword },
-      { emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/login` }
+      { emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || ''}/login` }
     );
 
     if (error) {

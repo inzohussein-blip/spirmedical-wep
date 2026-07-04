@@ -13,7 +13,7 @@ export const metadata = { title: 'إدارة التغذية - Admin' };
 export default async function AdminNutritionPage() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect('/auth/login');
+  if (!user) redirect('/login');
 
   const { data: profile } = await supabase
     .from('users')

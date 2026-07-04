@@ -16,7 +16,7 @@ export const metadata = { title: 'القصص الترويجية - Admin' };
 export default async function AdminStoriesPage() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect('/auth/login');
+  if (!user) redirect('/login');
 
   const { data: profile } = await supabase
     .from('users')

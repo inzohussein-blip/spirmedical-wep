@@ -14,7 +14,7 @@ export const metadata = { title: 'المحفظة - Spir Medical' };
 export default async function WalletPage() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect('/auth/login');
+  if (!user) redirect('/login');
 
   // جلب بيانات المستخدم
   const { data: profile } = await supabase

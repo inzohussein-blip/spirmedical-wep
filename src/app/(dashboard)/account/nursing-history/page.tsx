@@ -15,7 +15,7 @@ export default async function NursingHistoryPage() {
   const supabase = createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect('/auth/login');
+  if (!user) redirect('/login');
 
   // ─── جلب السجل ───
   const { data: visits } = await supabase

@@ -33,7 +33,7 @@ export default function VerifyEmailPage() {
           setMessage('تم تفعيل بريدك بنجاح! جاري التحويل...');
           
           setTimeout(() => {
-            router.push('/auth/login');
+            router.push('/login');
           }, 2000);
         } else {
           setStatus('error');
@@ -89,13 +89,13 @@ export default function VerifyEmailPage() {
 
             <div className="mt-6 space-y-3">
               <button
-                onClick={() => router.push('/auth/login')}
+                onClick={() => router.push('/login')}
                 className="w-full bg-emerald-600 text-white py-3 rounded-lg hover:bg-emerald-700 transition font-medium"
               >
                 العودة للدخول
               </button>
               <button
-                onClick={() => router.push('/auth/register')}
+                onClick={() => router.push('/register')}
                 className="w-full border-2 border-emerald-600 text-emerald-600 py-3 rounded-lg hover:bg-emerald-50 transition font-medium"
               >
                 إنشاء حساب جديد

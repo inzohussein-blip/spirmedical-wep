@@ -119,7 +119,7 @@ export default function LoginPage() {
 
             {/* Forgot Password Link */}
             <Link
-              href="/auth/forgot-password"
+              href="/forgot"
               className="text-sm text-emerald-600 hover:underline"
             >
               هل نسيت كلمة المرور؟
@@ -201,7 +201,7 @@ export default function LoginPage() {
         {/* Sign Up Link */}
         <p className="text-center mt-6 text-gray-700">
           ليس لديك حساب؟{' '}
-          <Link href="/auth/register" className="text-emerald-600 hover:underline font-medium">
+          <Link href="/register" className="text-emerald-600 hover:underline font-medium">
             انضم الآن
           </Link>
         </p>
