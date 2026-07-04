@@ -2,7 +2,8 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { createClient as createSbClient } from '@supabase/supabase-js';
-import bcrypt from 'bcryptjs';
+import { sendEmail, isEmailConfigured } from '@/lib/email/send';
+import { logger } from '@/lib/logger';
 import crypto from 'crypto';
 import { redirect } from 'next/navigation';
 
@@ -106,7 +107,10 @@ export async function sendEmailVerification(
 ): Promise<{ success: boolean; error?: string }> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL!;
+  const appUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    'https://spir-medical.com';
 
   const admin = createSbClient(supabaseUrl, serviceKey, {
     auth: { autoRefreshToken: false, persistSession: false },
@@ -128,22 +132,27 @@ export async function sendEmailVerification(
 
     if (tokenErr) throw tokenErr;
 
-    // 3. أرسل إيميل (عبر Resend)
+    // 3. أرسل الإيميل فعلاً عبر Resend
     const verificationUrl = `${appUrl}/auth/verify-email?token=${token}`;
+    const sendRes = await sendEmail({
+      to: email,
+      template: 'email_verification',
+      data: { url: verificationUrl },
+    });
 
-    // TODO: استخدم Resend client
-    // const { error: emailErr } = await resend.emails.send({
-    //   from: 'noreply@spir-medical.com',
-    //   to: email,
-    //   subject: 'تفعيل حسابك في سباير ميديكال',
-    //   html: `<a href="${verificationUrl}">انقر هنا لتفعيل حسابك</a>`,
-    // });
-
-    // Dev: verificationUrl = verificationUrl
+    if (!sendRes.success) {
+      // لم يُرسَل (Resend غير مُهيّأ أو خطأ) — لا نُخفِق الإنشاء، لكن نُبلّغ
+      logger.warn('Email verification not delivered', {
+        reason: sendRes.error,
+      });
+      return { success: false, error: sendRes.error };
+    }
 
     return { success: true };
   } catch (err) {
-    // error logged via Sentry
+    logger.error('sendEmailVerification failed', {
+      error: err instanceof Error ? err.message : 'unknown',
+    });
     return {
       success: false,
       error: err instanceof Error ? err.message : 'خطأ في الإرسال',
@@ -250,12 +259,14 @@ export async function signInWithEmail(
         .single() as any;
 
       const profileData = profile?.data ?? profile;
-      if (!profileData?.email_verified) {
+      // نُطبّق بوابة تأكيد البريد فقط عندما يكون إرسال البريد مُهيّأً فعلاً،
+      // وإلا لأصبحت طريقاً مسدوداً (المستخدم لن يستلم رابط التفعيل أبداً).
+      if (!profileData?.email_verified && isEmailConfigured()) {
         // أرسل إيميل تحقق جديد
         await sendEmailVerification(userAuth.user.id, email).then(() => null, () => null);
         return {
           success: false,
-          error: 'يجب تحقق من بريدك أولاً',
+          error: 'يجب تأكيد بريدك أولاً — تحقّق من صندوق الوارد',
         };
       }
     }

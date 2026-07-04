@@ -118,7 +118,8 @@ export default function OtpChannelSelector({ phone, onVerified, onCancel }: Prop
             <div className="otp-channel-arrow">‹</div>
           </button>
 
-          {/* Telegram */}
+          {/* Telegram — مخفيّ حتى تفعيل القناة فعلاً (بوت + user_telegram_links) */}
+          {process.env.NEXT_PUBLIC_ENABLE_TELEGRAM_OTP === 'true' && (
           <button
             type="button"
             onClick={() => handleSendOtp('telegram')}
@@ -138,6 +139,7 @@ export default function OtpChannelSelector({ phone, onVerified, onCancel }: Prop
             </div>
             <div className="otp-channel-arrow">‹</div>
           </button>
+          )}
         </div>
 
         <div className="otp-info-box">

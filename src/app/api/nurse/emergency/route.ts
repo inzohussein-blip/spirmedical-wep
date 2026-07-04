@@ -142,6 +142,6 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     success: true,
     log_id: logEntry.id,
-    message: 'تم تفعيل بروتوكول الطوارئ - يتم التواصل معك الآن',
+    message: 'تم تفعيل بروتوكول الطوارئ وتنبيه مركز العمليات',
   });
 }

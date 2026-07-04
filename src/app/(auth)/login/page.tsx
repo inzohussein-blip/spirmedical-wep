@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { signInWithEmail } from '@/lib/auth/email-auth';
+import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 
 // ═══════════════════════════════════════════════════════════
@@ -47,18 +48,22 @@ export default function LoginPage() {
 
   async function handleGoogleLogin() {
     setLoading(true);
+    setError('');
     try {
-      // TODO: تطبيق Google OAuth
-      // const { data, error } = await supabase.auth.signInWithOAuth({
-      //   provider: 'google',
-      //   options: {
-      //     redirectTo: `${window.location.origin}/auth/callback`,
-      //   },
-      // });
-      // Google OAuth - TODO: implement
+      const supabase = createClient();
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      // عند النجاح يعيد التوجيه لجوجل؛ نصل هنا فقط عند خطأ
+      if (oauthError) {
+        setError('الدخول عبر Google غير متاح حالياً');
+        setLoading(false);
+      }
     } catch (err) {
-      setError('خطأ في الدخول');
-    } finally {
+      setError('الدخول عبر Google غير متاح حالياً');
       setLoading(false);
     }
   }

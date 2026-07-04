@@ -10,6 +10,8 @@
  *   وأضف credentials المطلوبة
  */
 
+import { logger } from '@/lib/logger';
+
 export interface SendWhatsAppParams {
   to: string;          // رقم هاتف عراقي 07XXXXXXXXX
   body: string;        // نص الرسالة (يدعم Markdown WhatsApp)
@@ -203,6 +205,16 @@ export async function sendWhatsApp(params: SendWhatsAppParams): Promise<SendResu
 
   if (provider === 'meta') return sendViaMetaBusiness(params);
   if (provider === 'twilio') return sendViaTwilio(params);
+
+  // 🔒 لا نسمح بمزوّد mock في الإنتاج — يمنع "إرسالاً وهمياً" ناجحاً كذباً
+  if (process.env.NODE_ENV === 'production') {
+    logger.error('WHATSAPP_PROVIDER not configured in production (mock disabled)');
+    return {
+      ok: false,
+      provider: 'mock',
+      error: 'WhatsApp provider not configured',
+    };
+  }
   return sendViaMock(params);
 }
 
