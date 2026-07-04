@@ -2,13 +2,13 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import { headers } from 'next/headers';
-import { createHash } from 'crypto';
 import { createClient as createSbClient } from '@supabase/supabase-js';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
 import { getOtpMode, canSkipOtp, isPasswordlessLoginAllowed } from '@/lib/flags';
+import { derivePhonePassword as derivePassword, phoneToEmail } from '@/lib/auth/phone-credentials';
+import { getClientIp as getIp, isNextRedirect } from '@/lib/auth/request-helpers';
 import {
   patientRegisterSchema,
   specialistRegisterSchema,
@@ -23,36 +23,6 @@ import { sendOtp as sendWhatsAppOtp, verifyOtp as verifyWhatsAppOtp } from '@/li
 // ═══════════════════════════════════════════════════════════
 // 📝 إنشاء حساب - يدعم 3 أوضاع OTP
 // ═══════════════════════════════════════════════════════════
-
-function getIp(): string {
-  const h = headers();
-  return (
-    h.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    h.get('x-real-ip') ??
-    'unknown'
-  );
-}
-
-function derivePassword(phone: string): string {
-  const encryptionKey = process.env.ENCRYPTION_KEY!;
-  return createHash('sha256')
-    .update(phone + ':' + encryptionKey)
-    .digest('hex')
-    .slice(0, 32);
-}
-
-function phoneToEmail(phone: string): string {
-  return `${phone.replace(/\D/g, '')}@phone.spirmedical.local`;
-}
-
-function isNextRedirect(err: unknown): boolean {
-  return (
-    err instanceof Error &&
-    'digest' in err &&
-    typeof (err as { digest?: string }).digest === 'string' &&
-    (err as { digest: string }).digest.includes('NEXT_REDIRECT')
-  );
-}
 
 // ─────────────────────────────────────────────────────────
 // إنشاء حساب مراجع

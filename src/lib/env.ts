@@ -66,6 +66,9 @@ const envSchema = z.object({
   UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
 
   // ─── أسرار قنوات/أدمن (اختيارية، لكن موثّقة هنا لتفادي انحراف المخطط) ───
+  // سرّ اشتقاق كلمات سر حسابات الهاتف — منفصل عن ENCRYPTION_KEY (64 hex مستحسن).
+  // عند غيابه يسقط النظام إلى ENCRYPTION_KEY (توافق رجعي).
+  AUTH_PASSWORD_SECRET: z.string().min(32).optional(),
   // الدخول بدون رمز (خطر — إنتاج): 'true' يسمح به صراحةً
   ALLOW_PASSWORDLESS_LOGIN: z.enum(['true', 'false']).optional(),
   // Meta WhatsApp Cloud API
