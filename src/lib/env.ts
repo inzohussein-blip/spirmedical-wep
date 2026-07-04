@@ -33,16 +33,15 @@ const envSchema = z.object({
   LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).optional(),
 
   // ⭐ OTP Mode (3 أوضاع)
-  // - 'required': OTP إجباري — الافتراضي الآمن (لا يمكن التخطي)
-  // - 'optional': المستخدم يختار - زر OTP + زر تخطي (غير آمن للإنتاج)
-  // - 'disabled': لا OTP، دخول مباشر (تطوير فقط — يُمنع في الإنتاج ما لم يُفعَّل
-  //   ALLOW_PASSWORDLESS_LOGIN صراحةً)
-  // ⚠️ الافتراضي required: يتطلب قناة OTP فعّالة (Meta WhatsApp أو Supabase SMS)
-  //   قبل النشر، وإلا تعذّر الدخول. للسماح بالدخول بدون رمز مؤقتاً استخدم
-  //   NEXT_PUBLIC_OTP_MODE=disabled مع ALLOW_PASSWORDLESS_LOGIN=true.
+  // - 'required': OTP إجباري — الأكثر أماناً (لا يمكن التخطي، لا دخول بدون رمز)
+  // - 'optional': المستخدم يختار - زر OTP + زر تخطي (الافتراضي الحالي مؤقتاً)
+  // - 'disabled': لا OTP، دخول مباشر (تطوير)
+  // ⚠️ الافتراضي optional مؤقّت لإبقاء الدخول شغّالاً بلا انقطاع على الموقع الحيّ.
+  //   بمجرد تفعيل قناة OTP (Meta WhatsApp/Supabase SMS) اضبط
+  //   NEXT_PUBLIC_OTP_MODE=required لإقفال الدخول بدون رمز نهائياً.
   NEXT_PUBLIC_OTP_MODE: z
     .enum(['disabled', 'optional', 'required'])
-    .default('required'),
+    .default('optional'),
 
   // Feature flags (اختياري)
   NEXT_PUBLIC_ENABLE_SPECIALIST_CHAT: z
@@ -117,5 +116,5 @@ export type Env = z.infer<typeof envSchema>;
 export type OtpMode = 'disabled' | 'optional' | 'required';
 
 export function getOtpMode(): OtpMode {
-  return env.NEXT_PUBLIC_OTP_MODE ?? 'required';
+  return env.NEXT_PUBLIC_OTP_MODE ?? 'optional';
 }

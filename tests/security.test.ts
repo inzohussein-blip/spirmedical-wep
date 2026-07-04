@@ -40,18 +40,27 @@ describe('Security: وحدة otp-channels بلا إرسال/تحقق على ال
   });
 });
 
-describe('Security: منع الدخول بدون رمز في الإنتاج', () => {
-  it('يُمنع في الإنتاج ما لم يُفعَّل ALLOW_PASSWORDLESS_LOGIN صراحةً', () => {
-    const origEnv = process.env.NODE_ENV;
+describe('Security: الدخول بدون رمز يُقفَل في وضع required', () => {
+  it('required يمنع، optional يسمح، والعلم الصريح يتجاوز', () => {
+    const origMode = process.env.NEXT_PUBLIC_OTP_MODE;
     const origFlag = process.env.ALLOW_PASSWORDLESS_LOGIN;
-    (process.env as Record<string, string>).NODE_ENV = 'production';
     delete process.env.ALLOW_PASSWORDLESS_LOGIN;
     try {
+      // required → ممنوع
+      process.env.NEXT_PUBLIC_OTP_MODE = 'required';
       expect(isPasswordlessLoginAllowed()).toBe(false);
+
+      // العلم الصريح يتجاوز حتى في required
       process.env.ALLOW_PASSWORDLESS_LOGIN = 'true';
       expect(isPasswordlessLoginAllowed()).toBe(true);
+      delete process.env.ALLOW_PASSWORDLESS_LOGIN;
+
+      // optional → مسموح
+      process.env.NEXT_PUBLIC_OTP_MODE = 'optional';
+      expect(isPasswordlessLoginAllowed()).toBe(true);
     } finally {
-      (process.env as Record<string, string | undefined>).NODE_ENV = origEnv;
+      if (origMode === undefined) delete process.env.NEXT_PUBLIC_OTP_MODE;
+      else process.env.NEXT_PUBLIC_OTP_MODE = origMode;
       if (origFlag === undefined) delete process.env.ALLOW_PASSWORDLESS_LOGIN;
       else process.env.ALLOW_PASSWORDLESS_LOGIN = origFlag;
     }
