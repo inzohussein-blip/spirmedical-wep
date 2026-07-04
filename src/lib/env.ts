@@ -15,7 +15,8 @@ const envSchema = z.object({
   // Supabase
   NEXT_PUBLIC_SUPABASE_URL: z.string().url('NEXT_PUBLIC_SUPABASE_URL يجب أن يكون URL صالحاً'),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(20, 'NEXT_PUBLIC_SUPABASE_ANON_KEY قصير جداً'),
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(20, 'SUPABASE_SERVICE_ROLE_KEY قصير جداً').optional(),
+  // مطلوب فعلياً لكل تدفّقات المصادقة/الأدمن — fail-fast بدل undefined صامت
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(20, 'SUPABASE_SERVICE_ROLE_KEY قصير جداً'),
 
   // التشفير - 32 bytes hex
   ENCRYPTION_KEY: z
@@ -64,6 +65,26 @@ const envSchema = z.object({
   // Upstash Redis (اختياري)
   UPSTASH_REDIS_REST_URL: z.string().url().optional(),
   UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
+
+  // ─── أسرار قنوات/أدمن (اختيارية، لكن موثّقة هنا لتفادي انحراف المخطط) ───
+  // الدخول بدون رمز (خطر — إنتاج): 'true' يسمح به صراحةً
+  ALLOW_PASSWORDLESS_LOGIN: z.enum(['true', 'false']).optional(),
+  // Meta WhatsApp Cloud API
+  META_ACCESS_TOKEN: z.string().optional(),
+  META_PHONE_NUMBER_ID: z.string().optional(),
+  META_WEBHOOK_VERIFY_TOKEN: z.string().optional(),
+  WHATSAPP_PROVIDER: z.enum(['meta', 'twilio', 'mock']).optional(),
+  // Resend (البريد)
+  RESEND_API_KEY: z.string().optional(),
+  RESEND_FROM_EMAIL: z.string().optional(),
+  // إنشاء/إشعار الأدمن
+  ADMIN_CREATE_KEY: z.string().optional(),
+  ADMIN_ALLOWED_EMAILS: z.string().optional(),
+  ADMIN_OWNER_EMAIL: z.string().optional(),
+  // تفعيل قناة Telegram في واجهة OTP
+  NEXT_PUBLIC_ENABLE_TELEGRAM_OTP: z.enum(['true', 'false']).optional(),
+  // عنوان التطبيق (لروابط التفعيل/إعادة التعيين)
+  NEXT_PUBLIC_APP_URL: z.string().url().optional(),
 });
 
 function parseEnv() {
