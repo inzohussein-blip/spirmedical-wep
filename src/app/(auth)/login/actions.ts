@@ -3,40 +3,19 @@
 import { createClient } from '@/lib/supabase/server';
 import { phoneSchema, otpSchema, normalizePhone } from '@/lib/validations/auth';
 import { redirect } from 'next/navigation';
-import { headers } from 'next/headers';
 import { createClient as createSbClient } from '@supabase/supabase-js';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
 import { getOtpMode, canSkipOtp, isPasswordlessLoginAllowed } from '@/lib/flags';
 import { derivePhonePassword as derivePassword, phoneToEmail } from '@/lib/auth/phone-credentials';
+import { getClientIp as getIp, isNextRedirect } from '@/lib/auth/request-helpers';
 // ✅ FIX 1: static import بدلاً من dynamic
 import { verifyOtp as verifyWhatsAppOtp, sendOtp as sendWhatsAppOtpDirect } from '@/lib/whatsapp/otp-service';
 
 // ═══════════════════════════════════════════════════════════
 // 🔐 نظام تسجيل الدخول مع 3 أوضاع OTP
 // ═══════════════════════════════════════════════════════════
-
-function getIp(): string {
-  const h = headers();
-  return (
-    h.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    h.get('x-real-ip') ??
-    'unknown'
-  );
-}
-
-/**
- * NEXT_REDIRECT helper
- */
-function isNextRedirect(err: unknown): boolean {
-  return (
-    err instanceof Error &&
-    'digest' in err &&
-    typeof (err as { digest?: string }).digest === 'string' &&
-    (err as { digest: string }).digest.includes('NEXT_REDIRECT')
-  );
-}
 
 // ─────────────────────────────────────────────────────────
 // إرسال OTP أو دخول مباشر

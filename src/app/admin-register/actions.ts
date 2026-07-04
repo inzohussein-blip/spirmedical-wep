@@ -2,22 +2,13 @@
 
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import { headers } from 'next/headers';
 import { isSuperAdmin } from '@/lib/admin-types';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
+import { getClientIp as getIp, isNextRedirect } from '@/lib/auth/request-helpers';
 
 const OWNER_EMAIL = process.env.ADMIN_OWNER_EMAIL || 'inzohussein@gmail.com';
-
-function getIp(): string {
-  const h = headers();
-  return (
-    h.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    h.get('x-real-ip') ??
-    'unknown'
-  );
-}
 
 /** تهريب HTML لمنع الحقن في بريد الإشعار */
 function escapeHtml(s: string): string {
@@ -27,14 +18,6 @@ function escapeHtml(s: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
-}
-
-function isNextRedirect(err: unknown): boolean {
-  return (
-    err instanceof Error &&
-    'digest' in err &&
-    String((err as { digest?: string }).digest).includes('NEXT_REDIRECT')
-  );
 }
 
 async function notifyOwner(subject: string, html: string): Promise<void> {
