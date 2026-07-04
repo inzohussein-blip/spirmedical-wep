@@ -5,6 +5,7 @@
 
 import { createAdminClient } from '@/lib/supabase/server';
 import { sendOtpMessage, normalizePhone } from './meta-client';
+import { logger } from '@/lib/logger';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 
@@ -71,9 +72,9 @@ async function checkRateLimit(phone: string): Promise<{
     .gte('created_at', oneHourAgo);
 
   if (error) {
-    // eslint-disable-next-line no-console
-    console.error('[OTP] Rate limit check failed:', error);
-    return { allowed: true }; // fail open في حالة خطأ DB
+    // fail closed: عند تعذّر التحقق من الحد لا نسمح بالإرسال (أمان قبل الراحة).
+    logger.error('OTP rate limit check failed', { code: error.code });
+    return { allowed: false, retryAfter: 60 };
   }
 
   if ((count || 0) >= MAX_OTPS_PER_HOUR) {
@@ -142,8 +143,7 @@ export async function sendOtp(params: {
     });
 
   if (dbError) {
-    // eslint-disable-next-line no-console
-    console.error('[OTP] DB insert failed:', dbError);
+    logger.error('OTP DB insert failed', { code: dbError?.code });
     const pgCode = dbError?.code ? `DB_${dbError.code}` : 'DB_INSERT';
     return { success: false, error: 'فشل حفظ الرمز', code: pgCode };
   }
@@ -296,22 +296,22 @@ export async function verifyOtp(params: {
 // ═══════════════════════════════════════════════════════════════════
 
 async function sendOtpViaTelegram(
-  phone: string,
-  otp: string
+  _phone: string,
+  _otp: string
 ): Promise<{ success: boolean; messageId?: string; error?: string }> {
   // TODO: تكامل مع Telegram bot الموجود
   // يحتاج user_telegram_links لربط الرقم بالحساب
-  // eslint-disable-next-line no-console
-  console.warn(`[Telegram] Would send OTP ${otp} to ${phone}`);
+  // ملاحظة أمنية: لا نُسجّل قيمة الـ OTP إطلاقاً.
+  logger.warn('Telegram OTP channel not enabled', { channel: 'telegram' });
   return { success: false, error: 'Telegram OTP غير مفعّل بعد' };
 }
 
 async function sendOtpViaSms(
-  phone: string,
-  otp: string
+  _phone: string,
+  _otp: string
 ): Promise<{ success: boolean; messageId?: string; error?: string }> {
   // TODO: تكامل مع مزود SMS عراقي (Asiacell/Zain/etc)
-  // eslint-disable-next-line no-console
-  console.warn(`[SMS] Would send OTP ${otp} to ${phone}`);
+  // ملاحظة أمنية: لا نُسجّل قيمة الـ OTP إطلاقاً.
+  logger.warn('SMS OTP channel not enabled', { channel: 'sms' });
   return { success: false, error: 'SMS غير مفعّل بعد' };
 }

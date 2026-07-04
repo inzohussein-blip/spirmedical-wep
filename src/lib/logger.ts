@@ -43,6 +43,9 @@ function sanitize(ctx: LogContext): LogContext {
     'api_key',
     'authorization',
     'cookie',
+    // PII/PHI في تطبيق طبي — لا تُسجَّل بالكامل
+    'phone',
+    'email',
   ];
   const cleaned: LogContext = {};
   for (const [key, value] of Object.entries(ctx)) {

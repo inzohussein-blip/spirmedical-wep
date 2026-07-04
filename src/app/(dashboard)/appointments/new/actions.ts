@@ -12,6 +12,10 @@ import { logger } from '@/lib/logger';
 import { sendAppointmentConfirmedEmail } from '@/lib/email/actions';
 import { notifyOrderConfirmed } from '@/lib/services/push-templates';
 import { sendAppointmentConfirmedWA, isWhatsAppEnabled } from '@/lib/services/whatsapp';
+import {
+  sendOtp as sendOtpService,
+  verifyOtp as verifyOtpService,
+} from '@/lib/whatsapp/otp-service';
 
 interface CreateAppointmentInput {
   service_id: string;
@@ -228,54 +232,72 @@ export async function createAppointmentV2(input: CreateAppointmentInput) {
   };
 }
 
-export async function sendOtpAction(phone: string, channel: 'whatsapp' | 'telegram') {
-  const limit = await checkRateLimit(`otp:send:${phone}`, {
-    max: 3,
+// ════════════════════════════════════════════════════════════════════
+// OTP تأكيد رقم الهاتف قبل الحجز — يستخدم الخدمة الحقيقية (Meta) لا محاكاة.
+// لا يوجد أي رمز خلفي؛ التوليد/التخزين/التحقق يتم في otp-service (bcrypt + DB).
+// ════════════════════════════════════════════════════════════════════
+
+const OTP_PURPOSE = 'verify_phone' as const;
+
+export async function sendOtpAction(
+  phone: string,
+  channel: 'whatsapp' | 'telegram'
+) {
+  const hdrs = headers();
+  const ip =
+    hdrs.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    hdrs.get('x-real-ip') ||
+    'unknown';
+
+  // حد إضافي حسب الـ IP (فوق الحد لكل رقم داخل الخدمة)
+  const ipLimit = await checkRateLimit(`otp:send:ip:${ip}`, {
+    max: 10,
     windowSeconds: 900,
   });
-
-  if (!limit.allowed) {
+  if (!ipLimit.allowed) {
     return {
       success: false,
-      error: `محاولات كثيرة. حاول بعد ${Math.ceil(limit.retryAfterSeconds / 60)} دقيقة`,
+      error: `محاولات كثيرة. حاول بعد ${Math.ceil(ipLimit.retryAfterSeconds / 60)} دقيقة`,
     };
   }
 
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  try {
-    if (channel === 'whatsapp') {
-      // WhatsApp Business API call here
-    } else {
-      // Telegram Bot API call here
-    }
+  const result = await sendOtpService({
+    phone,
+    channel,
+    userId: user?.id,
+    purpose: OTP_PURPOSE,
+    ipAddress: ip,
+    userAgent: hdrs.get('user-agent') ?? undefined,
+  });
 
-    logger.info('OTP sent', { phone: phone.slice(0, 5) + '***', channel });
-
-    return {
-      success: true,
-      message: `تم إرسال الرمز إلى ${channel === 'whatsapp' ? 'WhatsApp' : 'Telegram'}`,
-      expiresIn: 300,
-    };
-  } catch (e) {
-    logger.error('OTP send failed', { phone: phone.slice(0, 5) + '***', channel });
-    return {
-      success: false,
-      error: 'فشل إرسال الرمز. حاول مع قناة أخرى',
-    };
-  }
-}
-
-export async function verifyOtpAction(phone: string, code: string) {
-  // محاكاة (للتطوير فقط) - استبدل بـ Redis في الإنتاج
-  if (code === '123456') {
-    return { success: true };
+  if (!result.success) {
+    return { success: false, error: result.error || 'فشل إرسال الرمز' };
   }
 
   return {
-    success: false,
-    error: 'الرمز غير صحيح',
+    success: true,
+    message: `تم إرسال الرمز إلى ${channel === 'whatsapp' ? 'WhatsApp' : 'Telegram'}`,
+    expiresIn: 300,
   };
+}
+
+export async function verifyOtpAction(phone: string, code: string) {
+  const result = await verifyOtpService({
+    phone,
+    code,
+    purpose: OTP_PURPOSE,
+  });
+
+  if (!result.success) {
+    return { success: false, error: result.error || 'الرمز غير صحيح' };
+  }
+
+  return { success: true };
 }
 
 // النسخة القديمة - للتوافق مع الكود القديم إن وُجد

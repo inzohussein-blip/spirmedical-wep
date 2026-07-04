@@ -16,15 +16,15 @@ const IV_LENGTH = 12; // GCM standard
 const AUTH_TAG_LENGTH = 16;
 
 function getKey(): Buffer {
+  // ENCRYPTION_KEY مطلوب دائماً — بلا استثناء بيئة.
+  // لا يوجد مفتاح احتياطي: مفتاح ثابت معروف = بيانات PHI مكشوفة فعلياً.
+  // في التطوير ولّد مفتاحاً وضعه في .env.local:
+  //   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
   const keyHex = process.env.ENCRYPTION_KEY;
   if (!keyHex) {
-    // في التطوير: استخدم مفتاح مشتق ثابت (NOT FOR PRODUCTION)
-    if (process.env.NODE_ENV !== 'production') {
-      return createHash('sha256').update('dev-key-only-not-secure').digest();
-    }
     throw new Error('ENCRYPTION_KEY غير مُعرَّف في المتغيرات البيئية');
   }
-  if (keyHex.length !== 64) {
+  if (!/^[a-f0-9]{64}$/i.test(keyHex)) {
     throw new Error('ENCRYPTION_KEY يجب أن يكون 32 bytes (64 hex chars)');
   }
   return Buffer.from(keyHex, 'hex');

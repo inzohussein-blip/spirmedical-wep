@@ -82,8 +82,20 @@ export function isOtpDisabled(): boolean {
 }
 
 /**
- * هل يمكن التخطي؟ (في وضع disabled أو optional)
+ * هل يُسمح بالدخول بدون رمز (مسار اشتقاق كلمة السر)؟
+ *
+ * ⚠️ خطر أمني: هذا المسار يُنشئ/يُدخل حساباً اعتماداً على رقم الهاتف فقط،
+ * بلا عامل تحقّق (possession/knowledge). لذا يُمنع في الإنتاج افتراضياً،
+ * ولا يُفعَّل إلا صراحةً عبر ALLOW_PASSWORDLESS_LOGIN=true.
+ */
+export function isPasswordlessLoginAllowed(): boolean {
+  if (process.env.ALLOW_PASSWORDLESS_LOGIN === 'true') return true;
+  return process.env.NODE_ENV !== 'production';
+}
+
+/**
+ * هل يمكن التخطي؟ (وضع غير required + السماح بالدخول بدون رمز)
  */
 export function canSkipOtp(): boolean {
-  return !isOtpRequired();
+  return !isOtpRequired() && isPasswordlessLoginAllowed();
 }

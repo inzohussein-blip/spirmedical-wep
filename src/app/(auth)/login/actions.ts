@@ -9,7 +9,7 @@ import { createClient as createSbClient } from '@supabase/supabase-js';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
-import { getOtpMode, canSkipOtp } from '@/lib/flags';
+import { getOtpMode, canSkipOtp, isPasswordlessLoginAllowed } from '@/lib/flags';
 // ✅ FIX 1: static import بدلاً من dynamic
 import { verifyOtp as verifyWhatsAppOtp, sendOtp as sendWhatsAppOtpDirect } from '@/lib/whatsapp/otp-service';
 
@@ -240,6 +240,15 @@ export async function skipOtp(formData: FormData) {
 // ✅ FIX 3: createUser مع معالجة duplicate (getUserByEmail غير موجودة في v2.45)
 
 async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
+  // 🔒 حاجز أمني: الدخول بدون رمز ممنوع في الإنتاج (ما لم يُفعَّل صراحةً).
+  // يمنع الوصول لسجلّ مريض بمجرد معرفة رقم هاتفه.
+  if (!isPasswordlessLoginAllowed()) {
+    logger.warn('Passwordless login blocked', { ip });
+    redirect(
+      '/login?error=' + encodeURIComponent('التحقق عبر رمز OTP مطلوب لتسجيل الدخول')
+    );
+  }
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 

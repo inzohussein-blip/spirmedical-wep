@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 /**
  * POST /api/analytics/track
@@ -14,6 +15,20 @@ export async function POST(request: NextRequest) {
 
     if (!event || typeof event !== 'string') {
       return NextResponse.json({ error: 'event required' }, { status: 400 });
+    }
+
+    // ─── Rate limit حسب الـ IP (منع إغراق DB — endpoint غير مُصادق) ───
+    const forwardedForRl = request.headers.get('x-forwarded-for');
+    const rlIp = forwardedForRl
+      ? forwardedForRl.split(',')[0].trim()
+      : request.headers.get('x-real-ip') || 'unknown';
+    const rl = await checkRateLimit(`analytics:${rlIp}`, {
+      max: 120,
+      windowSeconds: 60,
+    });
+    if (!rl.allowed) {
+      // فشل صامت — لا نُعطّل التطبيق بسبب التحليلات
+      return NextResponse.json({ ok: false }, { status: 429 });
     }
 
     const supabase = createClient();

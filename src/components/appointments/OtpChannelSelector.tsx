@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { OtpChannel, OTP_CHANNELS, sendOtp, verifyOtp, savePreferredChannel } from '@/lib/services/otp-channels';
+import { OtpChannel, OTP_CHANNELS, savePreferredChannel } from '@/lib/services/otp-channels';
+import { sendOtpAction, verifyOtpAction } from '@/app/(dashboard)/appointments/new/actions';
 import {
   Shield, MessageCircle, Send, Zap, Lightbulb,
 } from 'lucide-react';
@@ -13,7 +14,7 @@ interface Props {
   onCancel?: () => void;
 }
 
-export default function OtpChannelSelector({ phone, purpose, onVerified, onCancel }: Props) {
+export default function OtpChannelSelector({ phone, onVerified, onCancel }: Props) {
   const [step, setStep] = useState<'choose' | 'verify'>('choose');
   const [selectedChannel, setSelectedChannel] = useState<OtpChannel>('whatsapp');
   const [code, setCode] = useState('');
@@ -33,7 +34,7 @@ export default function OtpChannelSelector({ phone, purpose, onVerified, onCance
     savePreferredChannel(channel);
 
     try {
-      const response = await sendOtp({ phone, channel, purpose });
+      const response = await sendOtpAction(phone, channel);
       if (response.success) {
         setStep('verify');
         setResendTimer(60);
@@ -69,11 +70,11 @@ export default function OtpChannelSelector({ phone, purpose, onVerified, onCance
     setError(null);
 
     try {
-      const result = await verifyOtp(phone, code);
-      if (result.valid) {
+      const result = await verifyOtpAction(phone, code);
+      if (result.success) {
         onVerified();
       } else {
-        setError(result.reason || 'الرمز غير صحيح');
+        setError(result.error || 'الرمز غير صحيح');
       }
     } catch (e) {
       setError('حدث خطأ. حاول مرة أخرى');

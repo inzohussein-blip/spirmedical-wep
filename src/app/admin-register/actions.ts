@@ -2,11 +2,32 @@
 
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 import { isSuperAdmin } from '@/lib/admin-types';
+import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
 
-const OWNER_EMAIL = 'inzohussein@gmail.com';
+const OWNER_EMAIL = process.env.ADMIN_OWNER_EMAIL || 'inzohussein@gmail.com';
+
+function getIp(): string {
+  const h = headers();
+  return (
+    h.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+    h.get('x-real-ip') ??
+    'unknown'
+  );
+}
+
+/** تهريب HTML لمنع الحقن في بريد الإشعار */
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 function isNextRedirect(err: unknown): boolean {
   return (
@@ -45,6 +66,18 @@ export async function requestAdminAccess(formData: FormData) {
   const password = String(formData.get('password') ?? '');
   const reason = String(formData.get('reason') ?? '').trim();
 
+  // 🔒 حدّ الطلبات (منع إغراق طلبات الأدمن — endpoint غير مُصادق)
+  const rl = await checkRateLimit(`admin:request:${getIp()}`, {
+    max: 5,
+    windowSeconds: 3600,
+  });
+  if (!rl.allowed) {
+    redirect(
+      '/admin-register?error=' +
+        encodeURIComponent(`محاولات كثيرة، حاول بعد ${rl.retryAfterSeconds} ثانية`)
+    );
+  }
+
   if (fullName.length < 3) redirect('/admin-register?error=' + encodeURIComponent('الاسم قصير جداً'));
   if (!email.includes('@')) redirect('/admin-register?error=' + encodeURIComponent('بريد إلكتروني غير صالح'));
   if (password.length < 8) redirect('/admin-register?error=' + encodeURIComponent('كلمة المرور 8 أحرف على الأقل'));
@@ -79,12 +112,12 @@ export async function requestAdminAccess(formData: FormData) {
     });
 
     await notifyOwner(
-      `👑 طلب صلاحية أدمن جديد — ${fullName}`,
+      `👑 طلب صلاحية أدمن جديد — ${escapeHtml(fullName)}`,
       `<div dir="rtl" style="font-family:sans-serif">
         <h2>طلب صلاحية أدمن جديد</h2>
-        <p><b>الاسم:</b> ${fullName}</p>
-        <p><b>البريد:</b> ${email}</p>
-        <p><b>السبب:</b> ${reason || '—'}</p>
+        <p><b>الاسم:</b> ${escapeHtml(fullName)}</p>
+        <p><b>البريد:</b> ${escapeHtml(email)}</p>
+        <p><b>السبب:</b> ${reason ? escapeHtml(reason) : '—'}</p>
         <p><a href="https://spir-medical.com/admin44/admins/requests">مراجعة الطلبات</a></p>
       </div>`
     );
