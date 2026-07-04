@@ -10,10 +10,57 @@ export const metadata = {
 export default function EmailRegisterPage({
   searchParams,
 }: {
-  searchParams: { error?: string };
+  searchParams: { error?: string; pending?: string; email?: string };
 }) {
   const error = searchParams.error;
+  const pending = searchParams.pending === '1';
+  const pendingEmail = searchParams.email;
 
+  // ─── حالة: تم التسجيل وينتظر تأكيد البريد ───────────────
+  if (pending) {
+    return (
+      <main className="auth-screen auth-screen--v">
+        <div className="auth-header">
+          <div className="auth-logo">س</div>
+          <h1 className="auth-brand">Spir Medical</h1>
+          <div className="auth-brand-sub">سباير ميديكال</div>
+        </div>
+
+        <div className="auth-title-section" style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '48px', marginBottom: '12px' }}>📧</div>
+          <h2 className="auth-title">تحقّق من بريدك</h2>
+          <p className="auth-subtitle">
+            أرسلنا رابط تفعيل إلى
+            {pendingEmail ? (
+              <>
+                {' '}
+                <strong style={{ direction: 'ltr', display: 'inline-block' }}>
+                  {pendingEmail}
+                </strong>
+              </>
+            ) : (
+              ' بريدك الإلكتروني'
+            )}
+            . افتح الرابط لتفعيل حسابك ثم سجّل الدخول.
+          </p>
+        </div>
+
+        <div className="auth-helper auth-helper--center">
+          <Link href="/login/email" className="auth-link">
+            الذهاب لصفحة الدخول
+          </Link>
+        </div>
+
+        <div className="auth-helper auth-helper--center">
+          <Link href="/register/email" className="auth-link auth-link--muted">
+            لم يصلك البريد؟ أعد المحاولة
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  // ─── حالة: نموذج التسجيل ────────────────────────────────
   return (
     <main className="auth-screen">
       <Link href="/register/patient" className="auth-back">
