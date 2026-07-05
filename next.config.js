@@ -148,8 +148,11 @@ module.exports = withSentryConfig(nextConfig, {
     disable: !_sentryHasCredentials,
   },
 
-  // ─── Silent: صامت عند غياب الـ credentials لتجنّب تحذيرات مُكرَّرة ───
-  silent: !process.env.CI || !_sentryHasCredentials,
+  // ─── Silent: نُسكِت سجلّات إضافة Sentry في البناء ───
+  // كانت تُظهر ~70 تحذير "could not determine a source map reference" على Vercel
+  // (عند توفّر الـ auth token). silent:true يُخفي ضجيج الإضافة مع إبقاء رفع الـ
+  // source maps فعّالاً (تتبّع الأخطاء يبقى مفيداً). لا يُخفي أخطاء البناء الحقيقية.
+  silent: true,
 
   // ─── Source Maps في الإنتاج (فعّال فقط عند توفّر credentials) ───
   widenClientFileUpload: _sentryHasCredentials,
