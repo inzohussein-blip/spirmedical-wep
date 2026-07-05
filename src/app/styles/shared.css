@@ -2,12 +2,8 @@
    🔄 SHARED.CSS — Spir Medical (V25.40)
    ═══════════════════════════════════════════════════════════════════ */
 
-/* 🔧 V31 FIX: كل @import يجب أن يسبق أيّ قاعدة (قاعدة CSS صارمة).
-   نقلنا Leaflet + MarkerCluster CSS للأعلى لضمان تحميلها (كانت
-   markercluster في وسط الملف = تُتجاهل تماماً → خرائط ناقصة). */
-@import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
-@import url('https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css');
-@import url('https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css');
+/* 🗺️ Leaflet/MarkerCluster CSS تُجمَّع محلياً من node_modules في src/app/layout.tsx
+   (بدل @import من unpkg الذي تحجبه CSP: style-src 'self' → خرائط مكسورة). */
 
 @tailwind base;
 @tailwind components;
