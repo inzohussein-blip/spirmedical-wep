@@ -1,8 +1,8 @@
 name: CI
 
 on:
+  # يعمل على دفع أي فرع (بوّابة مبكرة قبل الوصول لـ main) وعلى PRs إلى main
   push:
-    branches: [main]
   pull_request:
     branches: [main]
 
