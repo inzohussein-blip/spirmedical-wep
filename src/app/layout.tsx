@@ -25,6 +25,12 @@ import '@fontsource/tajawal/700.css';
 import '@fontsource/tajawal/800.css';
 import '@fontsource/jetbrains-mono/500.css';
 
+// خرائط Leaflet — نُجمّع الـ CSS محلياً (من node_modules) بدل @import من unpkg
+// الذي تحجبه سياسة CSP (style-src 'self') فتظهر الخرائط مكسورة.
+import 'leaflet/dist/leaflet.css';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+
 import './styles/shared.css';
 import './pwa.css';
 
