@@ -2,10 +2,24 @@
 
 تاريخ ترحيل مرتّب وغير مُدمِّر. يُطبَّق بالترتيب الرقمي.
 
+خط الأساس مقسّم إلى وحدات منطقية متوازنة (0001→0009)، ثم إضافات email-auth (0010).
+كلها `IF NOT EXISTS` / `CREATE OR REPLACE` / `DROP POLICY IF EXISTS` → **غير مُدمِّرة و idempotent**.
+
 | الملف | المحتوى |
 |---|---|
-| `0001_baseline_schema.sql` | خط الأساس الكامل: الامتدادات، الأنواع (ENUMs)، 88 جدولاً، RLS policies، الدوال، الـ triggers. كله `IF NOT EXISTS` / `CREATE OR REPLACE` / `DROP POLICY IF EXISTS` → **غير مُدمِّر و idempotent**. |
-| `0002_email_auth.sql` | يعمل **بعد** 0001: يضيف أعمدة البريد إلى `users` + جدولا `email_verification_tokens` و`specialist_applications` + سياساتهما ودوالهما. |
+| `0001_core_foundation.sql` | الامتدادات + الأنواع + الجداول الأساسية (users، appointments، audit، أدوار CRM، العائلة، الثيم، Realtime) |
+| `0002_communication.sql` | المحادثات، الرسائل، الإشعارات (WhatsApp/SMS/Push)، OTP واتساب |
+| `0003_health_records.sql` | الصحة الشخصية + السجل الطبي + إعدادات المستخدم |
+| `0004_services_catalog.sql` | كتالوج الخدمات والفئات الطبية |
+| `0005_specialists_ratings.sql` | نظام الاختصاصيين الموحّد + التقييمات |
+| `0006_locations.sql` | المواقع والإحداثيات الجغرافية |
+| `0007_engagement.sql` | الإدارة/CRM، الحملات، الكوبونات، الولاء، الإحالات |
+| `0008_storage_policies.sql` | سياسات تخزين `storage.*` |
+| `0009_seed_and_fixes.sql` | بيانات أولية وإصلاحات ختامية |
+| `0010_email_auth.sql` | يعمل **بعد** الأساس: أعمدة البريد في `users` + `email_verification_tokens` + `specialist_applications` |
+
+> التقسيم **لا يفقد ولا يعيد ترتيب أي عبارة**: تم التحقق أن دمج 0001→0009 يطابق الملف
+> المدمج الأصلي **بايت-ببايت**، فترتيب البناء (FK/dependencies) محفوظ بالكامل.
 
 ## نقاط مهمة
 
