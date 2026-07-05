@@ -20,8 +20,11 @@ export function createClient() {
         persistSession: true,
         detectSessionInUrl: true,
         flowType: 'pkce',
-        // 🔑 Custom storage key للـ PWA - يبقى بعد التحديث
-        storageKey: 'spir-medical-auth',
+        // ملاحظة: لا نُخصّص storageKey — @supabase/ssr يخزّن الجلسة و PKCE
+        // code-verifier في كوكيز باسم افتراضي (sb-<ref>-auth-token) يقرأه
+        // كل من الخادم والـ middleware. تخصيص المفتاح هنا فقط كان يكسر
+        // exchangeCodeForSession (الخادم لا يجد الـ verifier) ويمنع العميل
+        // من قراءة جلسات كتبها الخادم.
       },
       global: {
         // 🔄 Auto-retry على الـ network errors
