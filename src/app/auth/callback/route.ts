@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
   // ─── معالجة خطأ OAuth من المزوّد ───────────────────────
   if (errorParam) {
     const msg = encodeURIComponent(errorDesc ?? errorParam);
-    return NextResponse.redirect(`${origin}/auth/login?error=${msg}`);
+    return NextResponse.redirect(`${origin}/login?error=${msg}`);
   }
 
   // ─── تبديل code بـ session ──────────────────────────────
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       const msg = encodeURIComponent(error.message);
-      return NextResponse.redirect(`${origin}/auth/login?error=${msg}`);
+      return NextResponse.redirect(`${origin}/login?error=${msg}`);
     }
 
     const user = data?.user;
@@ -91,5 +91,5 @@ export async function GET(request: NextRequest) {
   }
 
   // ─── fallback ────────────────────────────────────────────
-  return NextResponse.redirect(`${origin}/auth/login?error=invalid_callback`);
+  return NextResponse.redirect(`${origin}/login?error=invalid_callback`);
 }

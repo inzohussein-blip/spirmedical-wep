@@ -20,6 +20,9 @@ export function createClient() {
   const cookieStore = cookies();
 
   return createServerClient<Database>(supabaseUrl, supabaseKey, {
+    // PKCE مطابق للعميل — يضمن أن exchangeCodeForSession يجد الـ code-verifier
+    // المخزّن في الكوكيز أثناء OAuth (Google).
+    auth: { flowType: 'pkce' },
     cookies: {
       getAll() {
         return cookieStore.getAll();
