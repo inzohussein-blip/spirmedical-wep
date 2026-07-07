@@ -1,5 +1,7 @@
 'use client';
 
+// أنماط Leaflet مفصولة (route-scoped) — تُحمَّل مع chunk الخريطة فقط.
+import '@/components/maps/leaflet-styles';
 import { useEffect, useRef, useState } from 'react';
 import type { Map as LeafletMap, LatLngExpression } from 'leaflet';
 import { IRAQ_CENTER } from '@/types/location';

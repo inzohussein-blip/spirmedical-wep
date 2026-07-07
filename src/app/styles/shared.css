@@ -2,8 +2,9 @@
    🔄 SHARED.CSS — Spir Medical (V25.40)
    ═══════════════════════════════════════════════════════════════════ */
 
-/* 🗺️ Leaflet/MarkerCluster CSS تُجمَّع محلياً من node_modules في src/app/layout.tsx
-   (بدل @import من unpkg الذي تحجبه CSP: style-src 'self' → خرائط مكسورة). */
+/* 🗺️ Leaflet/MarkerCluster CSS مفصولة route-scoped في
+   src/components/maps/leaflet-styles.ts (تُستورد من مكوّنات الخريطة الديناميكية
+   فتُحمَّل مع chunk الخريطة فقط — لا على كل صفحة). القواعد أدناه تخصيصات فوقها. */
 
 @tailwind base;
 @tailwind components;
@@ -4436,7 +4437,7 @@ html {
    🗺️ V25.37 D: Marker Cluster + tweaks
    ════════════════════════════════════════════════════════════════════ */
 
-/* (MarkerCluster CSS مُستورد في أعلى الملف — V31) */
+/* (MarkerCluster CSS مُستورد route-scoped في components/maps/leaflet-styles.ts) */
 
 /* استبدال الـ default cluster style بـ style خاصّ بنا */
 .spir-map-cluster {
