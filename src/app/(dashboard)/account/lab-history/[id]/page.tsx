@@ -6,6 +6,7 @@ import {
   CheckCircle2, Clock, AlertCircle, Phone, Lock, Download, AlertTriangle,
 } from 'lucide-react';
 import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
+import { SHOW_PRICES } from '@/lib/config/pricing';
 
 export const dynamic = 'force-dynamic';
 
@@ -332,7 +333,9 @@ export default async function LabOrderDetailPage({ params }: PageProps) {
           </>
         )}
 
-        {/* Pricing */}
+        {/* Pricing — يُخفى في واجهة المريض عبر SHOW_PRICES */}
+        {SHOW_PRICES && (
+        <>
         <div className="scr-section-head" style={{ marginTop: 16 }}>
           <div className="scr-section-title">
             <FileText size={16} strokeWidth={2} style={{ marginLeft: 6, verticalAlign: '-3px' }} aria-hidden />
@@ -360,9 +363,9 @@ export default async function LabOrderDetailPage({ params }: PageProps) {
               <span style={{ fontWeight: 600 }}>-{order.discount.toLocaleString('ar-IQ')} د.ع</span>
             </div>
           )}
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
             paddingTop: 10,
             marginTop: 4,
             borderTop: '1px solid var(--line)',
@@ -373,6 +376,8 @@ export default async function LabOrderDetailPage({ params }: PageProps) {
             <span style={{ color: '#0F6E56' }}>{order.total_price.toLocaleString('ar-IQ')} د.ع</span>
           </div>
         </div>
+        </>
+        )}
 
         {/* Footer */}
         <div className="scr-info-banner" style={{ marginTop: 16 }}>

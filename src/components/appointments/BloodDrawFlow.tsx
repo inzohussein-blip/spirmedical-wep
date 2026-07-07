@@ -32,13 +32,9 @@ import {
   calculateBundleDiscount,
 } from '@/lib/services/blood-tests-data';
 import { ALL_LABS, ANY_LAB, type Lab } from '@/lib/services/labs-data';
+import { SHOW_PRICES } from '@/lib/config/pricing';
 
 const BLOOD_DRAW_PRICE = 15000;
-
-// 💰 إخفاء الأسعار من واجهة المريض (قرار المالك).
-// البيانات والحساب تبقى داخلياً (تُرسَل لجدول lab_orders للإدارة). لإظهارها
-// مجدداً بدّل هذا العلم إلى true.
-const SHOW_PRICES = false;
 
 export interface BloodDrawSubmission {
   testIds: string[];
