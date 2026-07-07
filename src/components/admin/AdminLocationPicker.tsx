@@ -1,5 +1,7 @@
 'use client';
 
+// أنماط Leaflet مفصولة (route-scoped) — تُحمَّل مع chunk الخريطة فقط.
+import '@/components/maps/leaflet-styles';
 import { useEffect, useRef, useState } from 'react';
 import { Crosshair, Loader2, MapPin, Check } from 'lucide-react';
 import type { Map as LeafletMap, Marker as LeafletMarker } from 'leaflet';
