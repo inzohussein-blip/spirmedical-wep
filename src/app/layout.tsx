@@ -5,17 +5,14 @@ import { CookieConsent } from '@/components/legal/CookieConsent';
 import StructuredData from '@/components/seo/StructuredData';
 import PWAModeProvider from '@/components/pwa/PWAModeProvider';
 import ServiceWorkerRegistrar from '@/components/pwa/ServiceWorkerRegistrar';
-import NetworkStatusDetector from '@/components/ui/NetworkStatusDetector';
-import SWUpdateBanner from '@/components/ui/SWUpdateBanner';
-import WebVitalsReporter from '@/components/seo/WebVitalsReporter';
-import PerformanceMonitor from '@/components/dev/PerformanceMonitor';
 import { Toaster } from '@/components/ui/Toaster';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
-import SmartInstallPrompt from '@/components/pwa/SmartInstallPrompt';
-import IOSInstallPrompt from '@/components/pwa/IOSInstallPrompt';
 import IOSSplashScreens from '@/components/pwa/IOSSplashScreens';
 import AppBackHandler from '@/components/pwa/AppBackHandler';
-import SessionSync from '@/components/pwa/SessionSync';
+// مكوّنات JS العامة غير الحرجة (banner تحديث/حالة شبكة/طلب تثبيت/تقارير...)
+// مؤجَّلة عبر next/dynamic({ ssr:false }) داخل هذا الغلاف → تخرج من حزمة الدخول
+// الرئيسية وتُحمَّل بعد الـ hydration (أخفّ على كل صفحة).
+import DeferredGlobals from '@/components/pwa/DeferredGlobals';
 
 // خطوط — Tajawal فقط (وحّدنا الخط في V15)
 // JetBrains-Mono للأرقام والوقت فقط
@@ -276,17 +273,12 @@ export default function RootLayout({
           </ThemeProvider>
           <ServiceWorkerRegistrar />
           <Toaster />
-          <NetworkStatusDetector />
-          <SWUpdateBanner />
           <CookieConsent />
-          <SmartInstallPrompt />
-          <IOSInstallPrompt />
           <AppBackHandler />
-          <SessionSync />
-          <WebVitalsReporter />
           <Analytics />
           <SpeedInsights />
-          <PerformanceMonitor />
+          {/* مكوّنات غير حرجة مؤجَّلة (ssr:false) — خارج حزمة الدخول الرئيسية */}
+          <DeferredGlobals />
         </PWAModeProvider>
       </body>
     </html>
