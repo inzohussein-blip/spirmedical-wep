@@ -3,11 +3,11 @@
 import { useState, useRef, useEffect, useTransition } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
-import { sendMessage, markChatAsRead } from '@/app/(specialist)/specialist/inbox/actions';
+import { sendMessage, markChatAsRead, getSignedChatImageUrl } from '@/app/(specialist)/specialist/inbox/actions';
 import { toast } from '@/components/ui/Toaster';
 import {
   Phone, Video, MoreVertical, MessageCircle, Image as ImageIcon,
-  Paperclip, Mic, MapPin, Plus, X, FileText, Send, Loader2, Zap,
+  Mic, Plus, X, FileText, Send, Loader2, Zap,
 } from 'lucide-react';
 
 export interface Message {
@@ -57,6 +57,53 @@ function formatDate(iso: string): string {
   return date.toLocaleDateString('ar-IQ', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
+// عرض صورة داخل المحادثة: bucket خاص، فنطلب رابطاً موقّعاً مؤقّتاً عبر server action
+// يتحقّق من عضوية المحادثة. يدعم أيضاً روابط http القديمة مباشرةً.
+function ChatImage({ chatId, path, name }: { chatId: string; path: string; name?: string | null }) {
+  const [url, setUrl] = useState<string | null>(path.startsWith('http') ? path : null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    if (path.startsWith('http')) return;
+    let active = true;
+    getSignedChatImageUrl(chatId, path)
+      .then((res) => {
+        if (!active) return;
+        if ('url' in res && res.url) setUrl(res.url);
+        else setFailed(true);
+      })
+      .catch(() => { if (active) setFailed(true); });
+    return () => { active = false; };
+  }, [chatId, path]);
+
+  if (failed) {
+    return (
+      <div className="chat-msg-image" style={{ display: 'flex', alignItems: 'center', gap: 6, opacity: 0.7 }}>
+        <ImageIcon size={14} strokeWidth={2.2} aria-hidden />
+        <span>تعذّر تحميل الصورة</span>
+      </div>
+    );
+  }
+  if (!url) {
+    return (
+      <div className="chat-msg-image" style={{ display: 'flex', alignItems: 'center', gap: 6, opacity: 0.7 }}>
+        <Loader2 size={14} strokeWidth={2.2} aria-hidden />
+        <span>جارٍ التحميل…</span>
+      </div>
+    );
+  }
+  return (
+    <a href={url} target="_blank" rel="noopener noreferrer">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={url}
+        alt={name || 'صورة'}
+        style={{ maxWidth: 220, maxHeight: 260, borderRadius: 10, display: 'block' }}
+      />
+    </a>
+  );
+}
+
 export default function ChatWindow({
   chatId,
   participant,
@@ -71,8 +118,71 @@ export default function ChatWindow({
   const [showQuickReplies, setShowQuickReplies] = useState(false);
   const [showAttachMenu, setShowAttachMenu] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [isUploading, setIsUploading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // رفع صورة إلى bucket خاص تحت مجلد المرسِل (يحقّق سياسة الرفع)، ثم إرسال
+  // رسالة نوعها image يحمل المسار (يُوقَّع عند العرض). أخطاء واضحة، بلا نجاح كاذب.
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { toast.error('يُرجى اختيار صورة'); return; }
+    if (file.size > 10 * 1024 * 1024) { toast.error('حجم الصورة كبير (الحد 10MB)'); return; }
+
+    setShowAttachMenu(false);
+    setIsUploading(true);
+    try {
+      const supabase = createClient();
+      const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+      const path = `${viewerId}/chat-${chatId}-${Date.now()}.${ext}`;
+
+      const { error: upErr } = await supabase.storage
+        .from('consultation-images')
+        .upload(path, file, { cacheControl: '3600', upsert: false, contentType: file.type });
+
+      if (upErr) { toast.error('فشل رفع الصورة'); return; }
+
+      const optimistic: Message = {
+        id: `temp-${Date.now()}`,
+        senderId: viewerId,
+        type: 'image',
+        content: '',
+        attachmentUrl: path,
+        attachmentName: file.name,
+        isRead: false,
+        createdAt: new Date().toISOString(),
+      };
+      setMessages(prev => [...prev, optimistic]);
+
+      const result = await sendMessage(chatId, '', 'image', path, file.name);
+      if (result.error) {
+        setMessages(prev => prev.filter(m => m.id !== optimistic.id));
+        toast.error(`خطأ: ${result.error}`);
+      } else if (result.message) {
+        setMessages(prev => prev.map(m =>
+          m.id === optimistic.id
+            ? {
+                id: result.message!.id,
+                senderId: result.message!.sender_id,
+                type: 'image',
+                content: result.message!.content,
+                attachmentUrl: result.message!.attachment_url,
+                attachmentName: result.message!.attachment_name,
+                isRead: result.message!.is_read,
+                createdAt: result.message!.created_at,
+              }
+            : m
+        ));
+      }
+    } catch {
+      toast.error('تعذّر رفع الصورة');
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   // Auto-scroll
   useEffect(() => {
@@ -277,10 +387,7 @@ export default function ChatWindow({
                     <div className="chat-msg-bubble-wrap">
                       <div className={`chat-msg-bubble ${msg.type}`}>
                         {msg.type === 'image' && msg.attachmentUrl && (
-                          <div className="chat-msg-image" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                            <ImageIcon size={14} strokeWidth={2.2} aria-hidden />
-                            <span>صورة</span>
-                          </div>
+                          <ChatImage chatId={chatId} path={msg.attachmentUrl} name={msg.attachmentName} />
                         )}
                         {msg.type === 'file' && (
                           <div className="chat-msg-file">
@@ -337,27 +444,29 @@ export default function ChatWindow({
         </div>
       )}
 
-      {/* Attach Menu */}
+      {/* Attach Menu — الصور فقط (المتاح فعلياً) */}
       {showAttachMenu && (
         <div className="chat-attach-menu">
-          <button type="button" className="chat-attach-option" onClick={() => toast.info('رفع صورة قيد التطوير')}>
+          <button
+            type="button"
+            className="chat-attach-option"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isUploading}
+          >
             <ImageIcon size={18} strokeWidth={2.2} aria-hidden />
-            <span>صورة</span>
-          </button>
-          <button type="button" className="chat-attach-option" onClick={() => toast.info('رفع ملف قيد التطوير')}>
-            <Paperclip size={18} strokeWidth={2.2} aria-hidden />
-            <span>ملف</span>
-          </button>
-          <button type="button" className="chat-attach-option" onClick={() => toast.info('تسجيل صوتي قيد التطوير')}>
-            <Mic size={18} strokeWidth={2.2} aria-hidden />
-            <span>صوت</span>
-          </button>
-          <button type="button" className="chat-attach-option" onClick={() => toast.info('الموقع قيد التطوير')}>
-            <MapPin size={18} strokeWidth={2.2} aria-hidden />
-            <span>الموقع</span>
+            <span>{isUploading ? 'جارٍ الرفع…' : 'صورة'}</span>
           </button>
         </div>
       )}
+
+      {/* input مخفي لاختيار الصورة */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        hidden
+        onChange={handleImageSelect}
+      />
 
       {/* Input */}
       <div className="chat-input-bar">

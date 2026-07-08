@@ -1,8 +1,38 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/server-service';
 import { revalidatePath } from 'next/cache';
 import { notifyNewMessage } from '@/lib/services/push-templates';
+
+/**
+ * توليد رابط موقّع مؤقّت لصورة داخل محادثة (bucket خاص: consultation-images).
+ * يتحقق أنّ الطالب طرف في المحادثة، ثم يوقّع الرابط بصلاحية الخدمة (يتجاوز RLS
+ * الصارم الذي يمنع الطرف الآخر من القراءة مباشرةً). آمن: العضوية تُفحص أولاً.
+ */
+export async function getSignedChatImageUrl(chatId: string, path: string) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'يجب تسجيل الدخول' };
+
+  const { data: chat } = await supabase
+    .from('chats')
+    .select('patient_id, specialist_id')
+    .eq('id', chatId)
+    .single();
+
+  if (!chat || (chat.patient_id !== user.id && chat.specialist_id !== user.id)) {
+    return { error: 'غير مصرّح' };
+  }
+
+  const service = createServiceClient();
+  const { data, error } = await service.storage
+    .from('consultation-images')
+    .createSignedUrl(path, 60 * 60); // ساعة واحدة
+
+  if (error || !data) return { error: 'تعذّر تحميل الصورة' };
+  return { url: data.signedUrl };
+}
 
 /**
  * إنشاء محادثة جديدة بين مريض وأخصائي
