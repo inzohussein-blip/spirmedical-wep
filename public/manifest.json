@@ -2,7 +2,7 @@
   "name": "سباير ميديكال - Spir Medical",
   "short_name": "Spir Medical",
   "description": "منصة طبية رقمية متكاملة في العراق · 15 خدمة · 18 محافظة · 24/7 · صناعة عراقية",
-  "start_url": "/?source=pwa&utm_source=homescreen",
+  "start_url": "/app?source=pwa&utm_source=homescreen",
   "scope": "/",
   "display": "standalone",
   "display_override": [
