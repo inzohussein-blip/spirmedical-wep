@@ -261,7 +261,6 @@ export default function GuestClient() {
             onChange={(e) => setSearchQuery(e.target.value)}
             aria-label="البحث"
           />
-          <span className="scr-search-shortcut">صوت</span>
         </div>
 
         {/* Stories */}
@@ -280,17 +279,17 @@ export default function GuestClient() {
                 <div className="story-label">{story.label}</div>
               </LockedAction>
             ) : (
-              <button
+              <LockedAction
                 key={story.id}
+                isLocked={true}
+                message="سجّل الآن لمشاهدة القصص الطبية"
                 className="story"
-                type="button"
-                aria-label={`قصة: ${story.label}`}
               >
                 <div className="story-circle">
                   <div className="story-inner">{story.icon}</div>
                 </div>
                 <div className="story-label">{story.label}</div>
-              </button>
+              </LockedAction>
             )
           )}
         </div>

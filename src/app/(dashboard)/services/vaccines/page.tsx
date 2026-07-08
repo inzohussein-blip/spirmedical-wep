@@ -85,9 +85,9 @@ export default async function VaccinesPage() {
           backHref="/services"
           title="💉 اللقاحات"
           rightAction={
-            <Link 
-              href="/account/vaccinations" 
-              aria-label="سجل تطعيماتي"
+            <Link
+              href="/tools/vaccinations"
+              aria-label="جدول التطعيمات"
               style={{
                 width: 38, height: 38, borderRadius: '50%',
                 background: '#F1F3F4',
@@ -146,7 +146,7 @@ export default async function VaccinesPage() {
 
         {/* CTA - جدول التطعيمات */}
         <Link
-          href="/services/vaccines/schedule"
+          href="/tools/vaccinations"
           style={{
             display: 'flex',
             alignItems: 'center',

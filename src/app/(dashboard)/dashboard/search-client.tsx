@@ -24,13 +24,6 @@ export default function DashboardSearch() {
         onChange={(e) => setSearchQuery(e.target.value)}
         aria-label="البحث"
       />
-      <button
-        type="button"
-        className="scr-search-shortcut"
-        aria-label="بحث صوتي"
-      >
-        🎤
-      </button>
     </form>
   );
 }

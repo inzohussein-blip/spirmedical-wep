@@ -88,7 +88,6 @@ export default async function VaccineDetailPage({
   const completedDoses = records.length;
   const remainingDoses = Math.max(0, vaccine.doses_required - completedDoses);
   const isComplete = completedDoses >= vaccine.doses_required;
-  const nextDoseNumber = completedDoses + 1;
 
   return (
     <main className="app-screen" style={{ background: '#F8F9FA' }}>
@@ -369,26 +368,6 @@ export default async function VaccineDetailPage({
             >
               <IconBuildingHospital size={18} stroke={2.2} />
               ابحث عن مركز التطعيم
-            </Link>
-
-            <Link
-              href={`/account/vaccinations/add?vaccine=${vaccine.id}&dose=${nextDoseNumber}`}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 8,
-                padding: 12,
-                background: '#FFFFFF',
-                color: '#01875F',
-                border: '1px solid #01875F',
-                borderRadius: 12,
-                fontSize: 13,
-                fontWeight: 700,
-                textDecoration: 'none',
-              }}
-            >
-              سجّل جرعة سابقة يدوياً
             </Link>
           </div>
         )}
