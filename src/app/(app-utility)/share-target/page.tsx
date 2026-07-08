@@ -130,13 +130,13 @@ export default function ShareTargetPage({
                 icon="📋"
                 title="السجل الطبي"
                 description="احفظ كملف في سجلك الطبي"
-                href="/account/records?from=share"
+                href="/account/medical-record?from=share"
               />
               <SaveOption
                 icon="💬"
                 title="استشارة جديدة"
                 description="ابدأ استشارة مع طبيب وأرفق المحتوى"
-                href="/services/consultations?from=share"
+                href="/consultations?from=share"
               />
               <SaveOption
                 icon="📅"
