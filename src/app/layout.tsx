@@ -9,6 +9,7 @@ import { Toaster } from '@/components/ui/Toaster';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import IOSSplashScreens from '@/components/pwa/IOSSplashScreens';
 import AppBackHandler from '@/components/pwa/AppBackHandler';
+import StandaloneAppGuard from '@/components/pwa/StandaloneAppGuard';
 // مكوّنات JS العامة غير الحرجة (banner تحديث/حالة شبكة/طلب تثبيت/تقارير...)
 // مؤجَّلة عبر next/dynamic({ ssr:false }) داخل هذا الغلاف → تخرج من حزمة الدخول
 // الرئيسية وتُحمَّل بعد الـ hydration (أخفّ على كل صفحة).
@@ -262,6 +263,10 @@ export default function RootLayout({
         <IOSSplashScreens />
       </head>
       <body>
+        {/* 📲 فصل التطبيق عن التسويق في وضع التثبيت: إن كان يعمل standalone
+            وفُتحت صفحة تسويقية، يُعاد فوراً إلى /app (التطبيق فقط على الهاتف). */}
+        <StandaloneAppGuard />
+
         {/* ♿ Skip to content link (a11y) */}
         <a href="#main-content" className="skip-link">
           تخطّي إلى المحتوى
