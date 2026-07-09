@@ -6,36 +6,31 @@
  */
 
 import { NextResponse } from 'next/server';
-import { sendOtp, type OtpChannel, type OtpPurpose } from '@/lib/whatsapp/otp-service';
+import { z } from 'zod';
+import { sendOtp } from '@/lib/whatsapp/otp-service';
 import { createClient } from '@/lib/supabase/server';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
+// تحقّق مدخلات مُوحّد: رقم عراقي صحيح + قناة/غرض من مجموعة محدّدة (بدل cast يدوي).
+const sendSchema = z.object({
+  phone: z.string().regex(/^(\+964|0)?7[0-9]{9}$/, 'رقم هاتف عراقي غير صحيح'),
+  channel: z.enum(['whatsapp', 'telegram', 'sms']),
+  purpose: z.enum(['login', 'verify_phone', 'sensitive_action', 'register']).optional(),
+});
+
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { phone, channel, purpose } = body as {
-      phone: string;
-      channel: OtpChannel;
-      purpose?: OtpPurpose;
-    };
-
-    // ─── Validation ───
-    if (!phone || !channel) {
+    const parsed = sendSchema.safeParse(await request.json().catch(() => null));
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: 'phone و channel مطلوبان' },
+        { success: false, error: parsed.error.issues[0]?.message ?? 'مدخلات غير صحيحة' },
         { status: 400 }
       );
     }
-
-    if (!['whatsapp', 'telegram', 'sms'].includes(channel)) {
-      return NextResponse.json(
-        { success: false, error: 'channel غير مدعوم' },
-        { status: 400 }
-      );
-    }
+    const { phone, channel, purpose } = parsed.data;
 
     // ─── Rate limit حسب الـ IP (فوق الحدّ لكل رقم داخل الخدمة) ───
     const ip =

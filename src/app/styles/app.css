@@ -118,14 +118,7 @@
   font-size: 18px;
 }
 
-.app-shell {
-  width: 100%;
-  min-height: 100vh;
-  background: var(--paper);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
+/* (.app-shell مُعرّف بالكامل أدناه بنسخة التوكنز — أُزيلت النسخة المكرّرة هنا) */
 
 .app-icon-btn, .app-menu-toggle {
   width: 36px; height: 36px;
@@ -139,15 +132,8 @@
   background: var(--paper-3); transform: translateY(-1px);
 }
 
-/* Bottom Nav — V26.0 Design System V3 */
-.app-bottom-nav {
-  position: sticky; bottom: 0; z-index: 40;
-  background: #FFFFFF; border-top: 1px solid #E8EAED;
-  padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
-  display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;
-  margin-top: 0;
-}
-
+/* Bottom Nav — النسخة المعتمدة (بالتوكنز + backdrop) مُعرّفة أدناه؛
+   أُزيلت النسخة المكرّرة القديمة (hardcoded #FFFFFF/#E8EAED). */
 .app-bottom-item {
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;

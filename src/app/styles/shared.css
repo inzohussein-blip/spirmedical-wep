@@ -1632,11 +1632,9 @@
 
 .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
 
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-
 .animate-spin { animation: spin 1s linear infinite; }
 
-@keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+/* @keyframes pulse/spin مُعرّفة مرّة واحدة لاحقاً (أُزيلت التكرارات هنا). */
 
 /* ════════════════════════════════════════════════════════════════════
    📁 إضافات CSS لزرَي الدخول (OTP Optional Mode)
@@ -1923,18 +1921,8 @@
    أضف هذا في نهاية src/app/globals.css
    ═══════════════════════════════════════════════════════════════════��� */
 
-/* ─────────────────────────────────────────────────────────
-   1. HEADER v2 - متراص ومدمج
-   ───────────────────────────────────────────────────────── */
-
-.scr-header-v2 {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding: 0;
-}
+/* .scr-header-v2 كان مكرّراً هنا وفي app.css بقيمة padding مختلفة، وهو غير
+   مستعمل في أي مكوّن — أُزيل من shared.css العام (يبقى تعريف app.css). */
 
 /* ════════════════════════════════════════════════════════════════════
    انتهى
@@ -2185,9 +2173,7 @@ html {
   }
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+/* @keyframes spin مُعرّف مرّة واحدة (أُزيل التكرار). */
 
 @keyframes scale-in {
   from { transform: scale(0); }
@@ -2447,10 +2433,7 @@ html {
   display: inline-block;
 }
 
-@keyframes skeleton-shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
+/* @keyframes skeleton-shimmer مُعرّف مرّة واحدة أعلى الملف (أُزيل التكرار). */
 
 .skeleton-text {
   height: 12px;
@@ -3352,10 +3335,7 @@ html {
   animation: skeleton-shimmer 1.6s ease-in-out infinite;
 }
 
-@keyframes skeleton-shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
+/* @keyframes skeleton-shimmer مُعرّف مرّة واحدة أعلى الملف (أُزيل التكرار). */
 
 /* ── 6. Touch-friendly buttons (h-12+) ── */
 .btn-touch {

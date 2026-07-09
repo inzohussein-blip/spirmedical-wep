@@ -41,3 +41,21 @@
 الاعتماد عليها في بيئة جديدة، يُنصح بتطبيقها على فرع Supabase (Preview branch) أو
 Postgres محلّي متوافق مع Supabase (سكيمات `auth`/`storage`، أدوار `anon`/`authenticated`/
 `service_role`، دالة `auth.uid()`) للتأكد من صفر أخطاء.
+
+## جداول معرّفة لكنها غير مستعملة في الكود (توثيق — لا تُحذف الآن)
+
+كشف تدقيق البيانات 14 جدولاً موجوداً في الترحيلات لكنه غير مُشار إليه من كود
+التطبيق حالياً. تُترك كما هي (لا حذف DDL) لأنها إمّا مقصودة لميزات مستقبلية أو
+يعتمد عليها منطق مستقبلي. توثَّق هنا لتفادي الالتباس:
+
+- `rate_limit_buckets` — التحديد الحالي في الذاكرة/Upstash بدل جدول DB.
+- `otp_attempts` — تتبّع المحاولات يتم داخل `whatsapp_otp` مباشرةً.
+- `user_telegram_links` — قناة Telegram غير مربوطة بعد.
+- `chat_notes`، `notification_logs` — غير مستعملة (الطابور يحمل الحالة).
+- `vaccine_clinics`، `video_sessions` — ميزات غير موصولة بعد.
+- `payments`، `coupon_redemptions` — تتبّع الدفع/الكوبونات غير موصول بعد.
+- `doctor_ratings`، `mental_health_ratings`، `nutritionist_ratings`،
+  `physio_ratings`، `specialist_credentials_log` — التقييمات تُكتب في جدول
+  `ratings` العام؛ الجداول المتخصّصة غير مكتوبة (انظر إصلاح لوحة الممرضين).
+
+> قرار الإبقاء/الحذف مؤجَّل: أي حذف يتطلب ترحيلاً مُطبَّقاً على الإنتاج بتنسيق المالك.
