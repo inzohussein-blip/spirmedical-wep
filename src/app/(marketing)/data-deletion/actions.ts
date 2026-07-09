@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
+import { logAuditEvent } from '@/lib/audit';
 
 // 📧 إيميل الشركة الذي يستقبل طلبات حذف البيانات
 const COMPANY_EMAIL = 'inzohussein@gmail.com';
@@ -115,16 +116,16 @@ export async function submitDeletionRequest(formData: FormData) {
     logger.warn('RESEND_API_KEY missing — deletion request logged only', { requestId, email, phone });
   }
 
-  // سجّل دائماً (حتى لو فشل الإيميل) لضمان عدم ضياع الطلب
-  logger.info('data deletion request received', {
-    requestId,
-    fullName,
-    email,
-    phone,
-    reason,
-    ip,
-    submittedAt,
+  // احفظ الطلب بشكل دائم في سجلّ التدقيق (متاح للأدمن) — لا نكتفي بالإيميل/اللوج
+  // حتى لا يضيع الطلب لو غاب Resend (التزام امتثال).
+  await logAuditEvent({
+    action: 'data_deletion_requested',
+    entity_type: 'data_deletion_request',
+    entity_id: requestId,
+    metadata: { fullName, email, phone, reason, ip, submittedAt },
   });
+
+  logger.info('data deletion request received', { requestId, email, phone, ip, submittedAt });
 
   redirect('/data-deletion?success=' + encodeURIComponent(requestId));
 }

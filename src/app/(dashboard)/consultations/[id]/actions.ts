@@ -68,17 +68,15 @@ export async function sendMessage(input: SendMessageInput) {
         });
 
       if (uploadError) {
-        // bucket قد لا يكون موجوداً - استخدم data URL مباشرة (احتياطي)
-        imageUrl = input.imageDataUrl;
-      } else {
-        const { data: urlData } = supabase.storage
-          .from('consultation-images')
-          .getPublicUrl(uploadData.path);
-        imageUrl = urlData.publicUrl;
+        // فشل صريح بدل تخزين data URL كامل داخل صف DB (تضخيم/تجاوز حجم العمود).
+        return { success: false, error: 'فشل رفع الصورة — حاول مجدداً' };
       }
+      const { data: urlData } = supabase.storage
+        .from('consultation-images')
+        .getPublicUrl(uploadData.path);
+      imageUrl = urlData.publicUrl;
     } catch {
-      // احتياطي: استخدم data URL
-      imageUrl = input.imageDataUrl;
+      return { success: false, error: 'تعذّر رفع الصورة' };
     }
   }
 

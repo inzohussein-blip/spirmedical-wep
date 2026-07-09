@@ -245,18 +245,9 @@ self.addEventListener('fetch', (event) => {
 });
 
 // ────────────── Background Sync ──────────────
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-bookings') event.waitUntil(syncPendingBookings());
-  if (event.tag === 'sync-feedback') event.waitUntil(syncPendingFeedback());
-});
-
-async function syncPendingBookings() {
-  console.log('[SW] Syncing pending bookings...');
-}
-
-async function syncPendingFeedback() {
-  console.log('[SW] Syncing pending feedback...');
-}
+// ملاحظة: أُزيلت معالجات background-sync (sync-bookings/sync-feedback) لأنّها
+// كانت stubs تكتفي بـ console.log ولا تزامن شيئاً — وعد كاذب يُسقط الإجراءات
+// دون تنفيذ. تُعاد فقط عند بناء مزامنة فعلية للطابور دون اتصال.
 
 // ────────────── Push Notifications ──────────────
 self.addEventListener('push', (event) => {
