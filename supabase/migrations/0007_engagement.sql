@@ -411,19 +411,17 @@ CREATE POLICY users_admin_update ON public.users
 
 
 -- Admins يشوفون كل المواعيد
+-- 🛠️ إصلاح تكرار RLS: استعمال الدالة SECURITY DEFINER بدل EXISTS(SELECT FROM users)
+-- (انظر current_user_is_approved_specialist_type في 0005) لكسر الحلقة اللانهائية.
 DROP POLICY IF EXISTS appointments_admin_view ON public.appointments;
 CREATE POLICY appointments_admin_view ON public.appointments
   FOR SELECT USING (
     user_id = auth.uid()
     OR assigned_specialist_id = auth.uid()
     OR public.is_admin(auth.uid())
-    OR EXISTS (
-      SELECT 1 FROM public.users u
-      WHERE u.id = auth.uid()
-      AND u.role = 'specialist'
-      AND u.approval_status = 'approved'
-      AND u.specialist_type = appointments.required_specialist_type
-      AND appointments.assigned_specialist_id IS NULL
+    OR (
+      appointments.assigned_specialist_id IS NULL
+      AND public.current_user_is_approved_specialist_type(appointments.required_specialist_type::text)
     )
   );
 
@@ -433,13 +431,7 @@ CREATE POLICY appointments_admin_update ON public.appointments
     user_id = auth.uid()
     OR assigned_specialist_id = auth.uid()
     OR public.is_admin(auth.uid())
-    OR EXISTS (
-      SELECT 1 FROM public.users u
-      WHERE u.id = auth.uid()
-      AND u.role = 'specialist'
-      AND u.approval_status = 'approved'
-      AND u.specialist_type = appointments.required_specialist_type
-    )
+    OR public.current_user_is_approved_specialist_type(appointments.required_specialist_type::text)
   );
 
 

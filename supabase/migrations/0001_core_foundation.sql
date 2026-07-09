@@ -618,6 +618,10 @@ CREATE POLICY "family_members_delete_own"
 -- (حيث يُنشأ جدول nursing_visit_history).
 
 -- ─── 4. View: عرض الطلب مع معلومات الفرد ────────────────
+-- DROP قبل CREATE: العرض يستعمل a.* وتُضاف أعمدة لـ appointments في ترحيلات
+-- لاحقة (مثل lab_order_id)، فإعادة تشغيل CREATE OR REPLACE تفشل بتغيّر ترتيب
+-- الأعمدة. الحذف أولاً يجعل الترحيل قابلاً لإعادة التشغيل (idempotent).
+DROP VIEW IF EXISTS public.appointments_with_target CASCADE;
 CREATE OR REPLACE VIEW public.appointments_with_target AS
 SELECT
   a.*,

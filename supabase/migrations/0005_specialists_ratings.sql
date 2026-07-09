@@ -175,18 +175,35 @@ CREATE TRIGGER trg_auto_required_specialist
 -- ═══════════════════════════════════════════════════════════════════
 -- RLS Update: appointments — الاختصاصي يشوف بس طلبات نوعه
 -- ═══════════════════════════════════════════════════════════════════
+-- 🛠️ إصلاح تكرار RLS لا نهائي (infinite recursion):
+-- كان EXISTS(SELECT FROM users …) داخل سياسة appointments يُعيد تفعيل سياسات
+-- users (ومنها "Specialists can view patients" التي تستعلم appointments) → حلقة
+-- لا نهائية تكسر أي استعلام يمسّ users (ومنه رفع الطلبات). الحل: دالة
+-- SECURITY DEFINER تتجاوز RLS (كما is_admin) فتكسر الحلقة.
+CREATE OR REPLACE FUNCTION public.current_user_is_approved_specialist_type(req_type text)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.users u
+    WHERE u.id = auth.uid()
+      AND u.role = 'specialist'
+      AND u.approval_status = 'approved'
+      AND u.specialist_type::text = req_type
+  );
+$$;
+
 DROP POLICY IF EXISTS appointments_specialist_view ON public.appointments;
 CREATE POLICY appointments_specialist_view ON public.appointments
   FOR SELECT USING (
     user_id = auth.uid()  -- المريض يشوف طلباته
     OR assigned_specialist_id = auth.uid()  -- الاختصاصي المعيّن
-    OR EXISTS (  -- أي اختصاصي من نفس النوع المطلوب يشوفها لو لم تُعيّن
-      SELECT 1 FROM public.users u
-      WHERE u.id = auth.uid()
-      AND u.role = 'specialist'
-      AND u.approval_status = 'approved'
-      AND u.specialist_type = appointments.required_specialist_type
-      AND appointments.assigned_specialist_id IS NULL
+    OR (  -- أي اختصاصي من نفس النوع المطلوب يشوفها لو لم تُعيّن
+      appointments.assigned_specialist_id IS NULL
+      AND public.current_user_is_approved_specialist_type(appointments.required_specialist_type::text)
     )
   );
 
@@ -196,13 +213,7 @@ CREATE POLICY appointments_specialist_update ON public.appointments
   FOR UPDATE USING (
     user_id = auth.uid()
     OR assigned_specialist_id = auth.uid()
-    OR EXISTS (
-      SELECT 1 FROM public.users u
-      WHERE u.id = auth.uid()
-      AND u.role = 'specialist'
-      AND u.approval_status = 'approved'
-      AND u.specialist_type = appointments.required_specialist_type
-    )
+    OR public.current_user_is_approved_specialist_type(appointments.required_specialist_type::text)
   );
 
 
