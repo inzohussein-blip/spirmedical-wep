@@ -71,6 +71,49 @@ export default async function SpecialistStatsPage() {
     ? Math.round(((cancelledCount || 0) / totalAppointments) * 100)
     : 0;
 
+  // التقييمات الفعلية من جدول ratings (لا أرقام ملفّقة)
+  const { data: ratingRows } = await supabase
+    .from('ratings')
+    .select('overall_rating')
+    .eq('specialist_id', user!.id);
+  const ratings = (ratingRows ?? []) as Array<{ overall_rating: number | null }>;
+  const ratingCount = ratings.length;
+  const ratingAvg = ratingCount > 0
+    ? Math.round((ratings.reduce((s, r) => s + (r.overall_rating || 0), 0) / ratingCount) * 10) / 10
+    : 0;
+  const filledStars = Math.round(ratingAvg);
+  const starPcts = [5, 4, 3, 2, 1].map((s) => {
+    const c = ratings.filter((r) => Math.round(r.overall_rating || 0) === s).length;
+    return ratingCount > 0 ? Math.round((c / ratingCount) * 100) : 0;
+  });
+
+  // رؤى الأداء الحقيقية (مرضى فريدون/مكررون + النمو الشهري) — لا أرقام ملفّقة
+  const { data: apptRows } = await supabase
+    .from('appointments')
+    .select('user_id, created_at')
+    .eq('specialist_id', user!.id);
+  const appts = (apptRows ?? []) as Array<{ user_id: string | null; created_at: string }>;
+  const perPatient = new Map<string, number>();
+  for (const a of appts) {
+    if (a.user_id) perPatient.set(a.user_id, (perPatient.get(a.user_id) ?? 0) + 1);
+  }
+  const distinctPatients = perPatient.size;
+  const repeatPatients = [...perPatient.values()].filter((n) => n > 1).length;
+  const repeatRate = distinctPatients > 0 ? Math.round((repeatPatients / distinctPatients) * 100) : 0;
+  const now = new Date();
+  const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  let thisMonthCount = 0;
+  let lastMonthCount = 0;
+  for (const a of appts) {
+    const d = new Date(a.created_at);
+    if (d >= thisMonthStart) thisMonthCount++;
+    else if (d >= lastMonthStart) lastMonthCount++;
+  }
+  const monthlyGrowth = lastMonthCount > 0
+    ? Math.round(((thisMonthCount - lastMonthCount) / lastMonthCount) * 100)
+    : (thisMonthCount > 0 ? 100 : 0);
+
   return (
     <main className="app-screen">
       <div className="scr-content">
@@ -161,37 +204,46 @@ export default async function SpecialistStatsPage() {
         </div>
 
         <div className="spec-rating-card">
-          <div className="spec-rating-main">
-            <div className="spec-rating-big">4.8</div>
-            <div>
-              <div className="spec-rating-stars" aria-label="5 من 5 نجوم">
-                <Star size={16} strokeWidth={2.2} fill="currentColor" />
-                <Star size={16} strokeWidth={2.2} fill="currentColor" />
-                <Star size={16} strokeWidth={2.2} fill="currentColor" />
-                <Star size={16} strokeWidth={2.2} fill="currentColor" />
-                <Star size={16} strokeWidth={2.2} fill="currentColor" />
-              </div>
-              <div className="spec-rating-count">87 تقييم</div>
+          {ratingCount === 0 ? (
+            <div style={{ textAlign: 'center', padding: '16px 0', color: 'var(--ink-3)', fontSize: 13 }}>
+              لا توجد تقييمات بعد
             </div>
-          </div>
-
-          <div className="spec-rating-bars">
-            {[5, 4, 3, 2, 1].map((stars, idx) => {
-              const pcts = [85, 12, 2, 1, 0];
-              return (
-                <div key={stars} className="spec-rating-bar-row">
-                  <span className="spec-rating-bar-label" style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}>
-                    {stars}
-                    <Star size={11} strokeWidth={2.4} fill="currentColor" />
-                  </span>
-                  <div className="spec-rating-bar">
-                    <div className="spec-rating-bar-fill" style={{ width: `${pcts[idx]}%` }} />
+          ) : (
+            <>
+              <div className="spec-rating-main">
+                <div className="spec-rating-big">{ratingAvg.toFixed(1)}</div>
+                <div>
+                  <div className="spec-rating-stars" aria-label={`${ratingAvg} من 5 نجوم`}>
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <Star
+                        key={n}
+                        size={16}
+                        strokeWidth={2.2}
+                        fill={n <= filledStars ? 'currentColor' : 'none'}
+                        style={n <= filledStars ? undefined : { opacity: 0.35 }}
+                      />
+                    ))}
                   </div>
-                  <span className="spec-rating-bar-pct">{pcts[idx]}%</span>
+                  <div className="spec-rating-count">{ratingCount} تقييم</div>
                 </div>
-              );
-            })}
-          </div>
+              </div>
+
+              <div className="spec-rating-bars">
+                {[5, 4, 3, 2, 1].map((stars, idx) => (
+                  <div key={stars} className="spec-rating-bar-row">
+                    <span className="spec-rating-bar-label" style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}>
+                      {stars}
+                      <Star size={11} strokeWidth={2.4} fill="currentColor" />
+                    </span>
+                    <div className="spec-rating-bar">
+                      <div className="spec-rating-bar-fill" style={{ width: `${starPcts[idx]}%` }} />
+                    </div>
+                    <span className="spec-rating-bar-pct">{starPcts[idx]}%</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
 
         {/* رؤى الأداء */}
@@ -205,9 +257,9 @@ export default async function SpecialistStatsPage() {
               <Zap size={22} strokeWidth={2.2} />
             </div>
             <div>
-              <div className="spec-insight-title">متوسط وقت الرد</div>
-              <div className="spec-insight-value">12 دقيقة</div>
-              <div className="spec-insight-desc">سريع · ممتاز</div>
+              <div className="spec-insight-title">إجمالي المرضى</div>
+              <div className="spec-insight-value">{distinctPatients}</div>
+              <div className="spec-insight-desc">مرضى فريدون</div>
             </div>
           </div>
           <div className="spec-insight-card">
@@ -215,9 +267,9 @@ export default async function SpecialistStatsPage() {
               <CheckCircle2 size={22} strokeWidth={2.2} />
             </div>
             <div>
-              <div className="spec-insight-title">معدل القبول</div>
-              <div className="spec-insight-value">94%</div>
-              <div className="spec-insight-desc">+2% من الأسبوع الماضي</div>
+              <div className="spec-insight-title">معدل الإكمال</div>
+              <div className="spec-insight-value">{completionRate}%</div>
+              <div className="spec-insight-desc">من إجمالي الطلبات</div>
             </div>
           </div>
           <div className="spec-insight-card">
@@ -226,8 +278,8 @@ export default async function SpecialistStatsPage() {
             </div>
             <div>
               <div className="spec-insight-title">مرضى مكررون</div>
-              <div className="spec-insight-value">38%</div>
-              <div className="spec-insight-desc">عودة عالية · جيد</div>
+              <div className="spec-insight-value">{repeatRate}%</div>
+              <div className="spec-insight-desc">عادوا لخدمة أخرى</div>
             </div>
           </div>
           <div className="spec-insight-card">
@@ -236,7 +288,7 @@ export default async function SpecialistStatsPage() {
             </div>
             <div>
               <div className="spec-insight-title">النمو الشهري</div>
-              <div className="spec-insight-value">+24%</div>
+              <div className="spec-insight-value">{monthlyGrowth >= 0 ? '+' : ''}{monthlyGrowth}%</div>
               <div className="spec-insight-desc">مقارنة بالشهر الماضي</div>
             </div>
           </div>
