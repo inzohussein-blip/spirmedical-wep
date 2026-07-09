@@ -53,9 +53,7 @@ export async function POST(request: NextRequest) {
     const ipAddress = forwardedFor ? forwardedFor.split(',')[0].trim() : null;
 
     // ─── حفظ ───
-    await (supabase as unknown as {
-      from: (t: string) => { insert: (d: Record<string, unknown>) => Promise<unknown> }
-    })
+    await supabase
       .from('analytics_events')
       .insert({
         event_name: event,
