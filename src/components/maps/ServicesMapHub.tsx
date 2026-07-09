@@ -1,27 +1,40 @@
 'use client';
 
-// أنماط Leaflet مفصولة (route-scoped) — تُحمَّل مع chunk الخريطة فقط.
-import '@/components/maps/leaflet-styles';
+// أنماط MapLibre مفصولة (route-scoped) — تُحمَّل مع chunk الخريطة فقط.
+import '@/components/maps/maplibre-styles';
 import { useEffect, useRef, useState } from 'react';
-import { MapPin, Filter, Crosshair, ChevronUp, X } from 'lucide-react';
-import type { Map as LeafletMap, Marker as LeafletMarker, MarkerClusterGroup } from 'leaflet';
-import { MARKER_STYLES, buildMarkerSvg, buildClusterSvg, type ServiceMarkerType } from '@/lib/maps/markers';
+import { MapPin, Filter, Crosshair, X } from 'lucide-react';
+import type {
+  Map as MlMap,
+  Marker as MlMarker,
+  GeoJSONSource,
+  MapGeoJSONFeature,
+  ExpressionSpecification,
+} from 'maplibre-gl';
+import { MARKER_STYLES, buildMarkerSvg, type ServiceMarkerType } from '@/lib/maps/markers';
 import { distanceKm } from '@/types/location';
+import {
+  IRAQ_CENTER,
+  MAP_STYLE_STREETS,
+  loadMapLibre,
+  markerElement,
+  attachResizeFix,
+} from '@/lib/maps/maplibre-config';
 import ExternalMapButton from './ExternalMapButton';
 
 /**
  * ════════════════════════════════════════════════════════════════════
- * 🗺️ ServicesMapHub (V25.37)
+ * 🗺️ ServicesMapHub (V33 — MapLibre + OpenFreeMap)
  * ════════════════════════════════════════════════════════════════════
  *
- * الخريطة المركزية في /services
+ * الخريطة المركزية في /services — كل المواقع (288 موقع · 18 محافظة).
  *
  * Features:
- *   - عرض كل المواقع (288 موقع · 18 محافظة)
+ *   - تجميع (clustering) أصلي على GPU يمنع ازدحام المؤشّرات
+ *   - نقاط ملوّنة حسب نوع الخدمة (data-driven)
  *   - Filters: نوع الخدمة + المحافظة
- *   - Markers مخصّصة حسب الخدمة
- *   - Bottom card عند الضغط على marker
- *   - "موقعي الحالي" زرّ
+ *   - Bottom card عند الضغط على نقطة
+ *   - "موقعي الحالي" + شريط "الأقرب إليك"
  * ════════════════════════════════════════════════════════════════════
  */
 
@@ -57,8 +70,30 @@ const SERVICE_FILTERS: Array<{ id: ServiceMarkerType | 'all'; label: string; tab
   { id: 'doctor',        label: 'طبيب',         tablerIcon: '👨‍⚕️' },
 ];
 
-const IRAQ_CENTER: [number, number] = [33.3152, 44.3661]; // بغداد
-const DEFAULT_ZOOM = 6;
+const SOURCE_ID = 'spir-locations';
+const CLUSTER_LAYER = 'spir-clusters';
+const CLUSTER_COUNT_LAYER = 'spir-cluster-count';
+const POINT_LAYER = 'spir-unclustered';
+
+// تعبير لون النقطة حسب النوع (data-driven) — يُبنى من MARKER_STYLES
+function buildColorMatch(): ExpressionSpecification {
+  const pairs: string[] = [];
+  (Object.keys(MARKER_STYLES) as ServiceMarkerType[]).forEach((t) => {
+    pairs.push(t, MARKER_STYLES[t].color);
+  });
+  return ['match', ['get', 'type'], ...pairs, '#185FA5'] as unknown as ExpressionSpecification;
+}
+
+function toGeoJSON(locs: ServiceLocation[]) {
+  return {
+    type: 'FeatureCollection' as const,
+    features: locs.map((l) => ({
+      type: 'Feature' as const,
+      properties: { id: l.id, type: l.type },
+      geometry: { type: 'Point' as const, coordinates: [l.longitude, l.latitude] },
+    })),
+  };
+}
 
 export default function ServicesMapHub({
   locations,
@@ -66,10 +101,11 @@ export default function ServicesMapHub({
   defaultFilter = 'all',
 }: Props) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<LeafletMap | null>(null);
-  const resizeObserverRef = useRef<ResizeObserver | null>(null);
-  const clusterGroupRef = useRef<MarkerClusterGroup | null>(null);
-  const userMarkerRef = useRef<LeafletMarker | null>(null);
+  const mapRef = useRef<MlMap | null>(null);
+  const cleanupResizeRef = useRef<(() => void) | null>(null);
+  const userMarkerRef = useRef<MlMarker | null>(null);
+  const loadedRef = useRef(false);
+  const locationsByIdRef = useRef<Map<string, ServiceLocation>>(new Map());
 
   const [selectedFilter, setSelectedFilter] = useState<ServiceMarkerType | 'all'>(defaultFilter);
   const [selectedGovernorate, setSelectedGovernorate] = useState<string>('all');
@@ -88,7 +124,7 @@ export default function ServicesMapHub({
     return true;
   });
 
-  // 🆕 V31: أقرب 3 مواقع لموقع المستخدم (ضمن الفلتر الحالي)
+  // أقرب 3 مواقع لموقع المستخدم (ضمن الفلتر الحالي)
   const nearestLocations = userLocation
     ? [...filteredLocations]
         .map((loc) => ({
@@ -102,124 +138,168 @@ export default function ServicesMapHub({
         .slice(0, 3)
     : [];
 
-  // تهيئة الخريطة
+  // حدّث lookup النقاط لمعالج النقر (يعمل مع الفلتر الحالي)
+  locationsByIdRef.current = new Map(filteredLocations.map((l) => [l.id, l]));
+
+  // تهيئة الخريطة (مرّة واحدة)
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
 
     let cancelled = false;
 
     (async () => {
-      const L = (await import('leaflet')).default;
-      // تحميل markercluster
-      await import('leaflet.markercluster');
+      const maplibregl = await loadMapLibre();
       if (cancelled || !mapContainerRef.current) return;
 
-      const map = L.map(mapContainerRef.current, {
-        center: IRAQ_CENTER,
-        zoom: DEFAULT_ZOOM,
-        zoomControl: false,
+      const map = new maplibregl.Map({
+        container: mapContainerRef.current,
+        style: MAP_STYLE_STREETS,
+        center: [IRAQ_CENTER.lng, IRAQ_CENTER.lat],
+        zoom: 6,
         attributionControl: false,
       });
+      map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap',
-      }).addTo(map);
+      map.on('load', () => {
+        if (cancelled) return;
 
-      L.control.attribution({ position: 'bottomright', prefix: false }).addTo(map);
+        map.addSource(SOURCE_ID, {
+          type: 'geojson',
+          data: toGeoJSON([]),
+          cluster: true,
+          clusterRadius: 55,
+          clusterMaxZoom: 14,
+        });
 
-      // إنشاء cluster group
-      const LWithCluster = L as typeof L & {
-        markerClusterGroup: (options: Record<string, unknown>) => MarkerClusterGroup;
-      };
+        // طبقة التجميع (دوائر خضراء متدرّجة الحجم)
+        map.addLayer({
+          id: CLUSTER_LAYER,
+          type: 'circle',
+          source: SOURCE_ID,
+          filter: ['has', 'point_count'],
+          paint: {
+            'circle-color': '#0F6E56',
+            'circle-opacity': 0.9,
+            'circle-stroke-width': 3,
+            'circle-stroke-color': '#ffffff',
+            'circle-radius': [
+              'step', ['get', 'point_count'],
+              18, 20, 24, 50, 30, 100, 38,
+            ] as unknown as ExpressionSpecification,
+          },
+        });
 
-      const clusterGroup = LWithCluster.markerClusterGroup({
-        chunkedLoading: true,
-        spiderfyOnMaxZoom: true,
-        showCoverageOnHover: false,
-        zoomToBoundsOnClick: true,
-        maxClusterRadius: 60,
-        iconCreateFunction: (cluster: { getChildCount: () => number }) => {
-          const count = cluster.getChildCount();
-          return L.divIcon({
-            html: buildClusterSvg(count),
-            className: 'spir-map-cluster',
-            iconSize: [count >= 100 ? 52 : count >= 50 ? 46 : count >= 20 ? 42 : 36, count >= 100 ? 52 : count >= 50 ? 46 : count >= 20 ? 42 : 36],
-          });
-        },
+        // عدّاد التجميع
+        map.addLayer({
+          id: CLUSTER_COUNT_LAYER,
+          type: 'symbol',
+          source: SOURCE_ID,
+          filter: ['has', 'point_count'],
+          layout: {
+            'text-field': ['get', 'point_count_abbreviated'] as unknown as ExpressionSpecification,
+            'text-font': ['Noto Sans Regular'],
+            'text-size': 13,
+          },
+          paint: { 'text-color': '#ffffff' },
+        });
+
+        // النقاط المفردة (ملوّنة حسب النوع)
+        map.addLayer({
+          id: POINT_LAYER,
+          type: 'circle',
+          source: SOURCE_ID,
+          filter: ['!', ['has', 'point_count']],
+          paint: {
+            'circle-color': buildColorMatch(),
+            'circle-radius': 8,
+            'circle-stroke-width': 2.5,
+            'circle-stroke-color': '#ffffff',
+          },
+        });
+
+        // نقر على تجميع → تقريب
+        map.on('click', CLUSTER_LAYER, async (e) => {
+          const features = map.queryRenderedFeatures(e.point, { layers: [CLUSTER_LAYER] });
+          const clusterId = features[0]?.properties?.cluster_id;
+          if (clusterId == null) return;
+          const src = map.getSource(SOURCE_ID) as GeoJSONSource;
+          try {
+            const zoom = await src.getClusterExpansionZoom(clusterId);
+            const geom = features[0].geometry as unknown as { coordinates: [number, number] };
+            map.easeTo({ center: geom.coordinates, zoom });
+          } catch {
+            /* ignore */
+          }
+        });
+
+        // نقر على نقطة → بطاقة التفاصيل
+        map.on('click', POINT_LAYER, (e) => {
+          const f = e.features?.[0] as MapGeoJSONFeature | undefined;
+          const id = f?.properties?.id as string | undefined;
+          if (!id) return;
+          const loc = locationsByIdRef.current.get(id);
+          if (loc) {
+            setSelectedLocation(loc);
+            map.flyTo({ center: [loc.longitude, loc.latitude], zoom: Math.max(map.getZoom(), 13) });
+          }
+        });
+
+        // مؤشّر اليد فوق العناصر القابلة للنقر
+        [CLUSTER_LAYER, POINT_LAYER].forEach((layer) => {
+          map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
+          map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
+        });
+
+        loadedRef.current = true;
+        // تحميل أول دفعة بيانات
+        syncData();
       });
 
-      clusterGroup.addTo(map);
-      clusterGroupRef.current = clusterGroup;
-
       mapRef.current = map;
-
-      // 🔧 V31 FIX: إعادة حساب أبعاد الخريطة بعد الرسم (يمنع tiles الجزئية والانزياح)
-      const fixSize = () => { if (mapRef.current) mapRef.current.invalidateSize(); };
-      setTimeout(fixSize, 0);
-      setTimeout(fixSize, 150);
-      setTimeout(fixSize, 400);
-      requestAnimationFrame(fixSize);
-      if (typeof ResizeObserver !== 'undefined' && mapContainerRef.current) {
-        resizeObserverRef.current = new ResizeObserver(() => fixSize());
-        resizeObserverRef.current.observe(mapContainerRef.current);
-      }
+      cleanupResizeRef.current = attachResizeFix(map, mapContainerRef.current);
     })();
 
     return () => {
       cancelled = true;
-      if (resizeObserverRef.current) {
-        resizeObserverRef.current.disconnect();
-        resizeObserverRef.current = null;
+      if (cleanupResizeRef.current) {
+        cleanupResizeRef.current();
+        cleanupResizeRef.current = null;
       }
+      if (userMarkerRef.current) {
+        userMarkerRef.current.remove();
+        userMarkerRef.current = null;
+      }
+      loadedRef.current = false;
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // إضافة/تحديث الـ markers عند تغيير الـ filter
+  // مزامنة بيانات المصدر + ضبط الحدود
+  function syncData() {
+    const map = mapRef.current;
+    if (!map || !loadedRef.current) return;
+    const src = map.getSource(SOURCE_ID) as GeoJSONSource | undefined;
+    if (!src) return;
+    src.setData(toGeoJSON(filteredLocations));
+
+    if (filteredLocations.length > 0) {
+      (async () => {
+        const maplibregl = await loadMapLibre();
+        if (!mapRef.current) return;
+        const bounds = new maplibregl.LngLatBounds();
+        filteredLocations.forEach((l) => bounds.extend([l.longitude, l.latitude]));
+        mapRef.current.fitBounds(bounds, { padding: 48, maxZoom: 13, duration: 400 });
+      })();
+    }
+  }
+
+  // إعادة المزامنة عند تغيّر الفلتر
   useEffect(() => {
-    if (!mapRef.current || !clusterGroupRef.current) return;
-
-    let cancelled = false;
-
-    (async () => {
-      const L = (await import('leaflet')).default;
-      if (cancelled || !mapRef.current || !clusterGroupRef.current) return;
-
-      // حذف الـ markers القديمة من الـ cluster group
-      clusterGroupRef.current.clearLayers();
-
-      // إضافة الـ markers الجديدة
-      filteredLocations.forEach((loc) => {
-        const divIcon = L.divIcon({
-          html: buildMarkerSvg(loc.type, 40),
-          className: 'spir-map-marker',
-          iconSize: [40, 46],
-          iconAnchor: [20, 46],
-        });
-
-        const marker = L.marker([loc.latitude, loc.longitude], { icon: divIcon })
-          .on('click', () => {
-            setSelectedLocation(loc);
-            mapRef.current?.panTo([loc.latitude, loc.longitude]);
-          });
-
-        clusterGroupRef.current!.addLayer(marker);
-      });
-
-      // لو في markers، fit الخريطة عليها
-      if (filteredLocations.length > 0) {
-        const bounds = L.latLngBounds(filteredLocations.map((l) => [l.latitude, l.longitude]));
-        mapRef.current.fitBounds(bounds, { padding: [40, 40], maxZoom: 13 });
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
+    syncData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filteredLocations.length, selectedFilter, selectedGovernorate]);
 
@@ -231,25 +311,20 @@ export default function ServicesMapHub({
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         const { latitude, longitude } = pos.coords;
-        const newLoc = { lat: latitude, lng: longitude };
-        setUserLocation(newLoc);
+        setUserLocation({ lat: latitude, lng: longitude });
 
-        const L = (await import('leaflet')).default;
+        const maplibregl = await loadMapLibre();
+        if (!mapRef.current) return;
 
-        // حذف الـ marker القديم
         if (userMarkerRef.current) {
-          userMarkerRef.current.remove();
+          userMarkerRef.current.setLngLat([longitude, latitude]);
+        } else {
+          const el = markerElement(buildMarkerSvg('user', 32), 'spir-map-user-marker');
+          userMarkerRef.current = new maplibregl.Marker({ element: el, anchor: 'center' })
+            .setLngLat([longitude, latitude])
+            .addTo(mapRef.current);
         }
-
-        const userIcon = L.divIcon({
-          html: buildMarkerSvg('user', 32),
-          className: 'spir-map-user-marker',
-          iconSize: [32, 32],
-          iconAnchor: [16, 16],
-        });
-
-        userMarkerRef.current = L.marker([latitude, longitude], { icon: userIcon }).addTo(mapRef.current!);
-        mapRef.current?.setView([latitude, longitude], 14);
+        mapRef.current.flyTo({ center: [longitude, latitude], zoom: 14 });
         setLocating(false);
       },
       (err) => {
@@ -263,10 +338,10 @@ export default function ServicesMapHub({
   const handleZoomIn = () => mapRef.current?.zoomIn();
   const handleZoomOut = () => mapRef.current?.zoomOut();
 
-  // 🆕 V31: ركّز الخريطة على موقع محدّد (من شريط "الأقرب إليك")
+  // ركّز الخريطة على موقع محدّد (من شريط "الأقرب إليك")
   const focusLocation = (loc: ServiceLocation) => {
     setSelectedLocation(loc);
-    mapRef.current?.setView([loc.latitude, loc.longitude], 15);
+    mapRef.current?.flyTo({ center: [loc.longitude, loc.latitude], zoom: 15 });
   };
 
   return (
@@ -306,7 +381,7 @@ export default function ServicesMapHub({
         </div>
       </div>
 
-      {/* 🆕 V31: شريط "الأقرب إليك" — يظهر بعد تحديد الموقع */}
+      {/* شريط "الأقرب إليك" — يظهر بعد تحديد الموقع */}
       {nearestLocations.length > 0 && (
         <div
           style={{

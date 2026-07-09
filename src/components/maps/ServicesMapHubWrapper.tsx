@@ -10,7 +10,7 @@ import type { ServiceLocation } from './ServicesMapHub';
  *
  * SSR-safe wrapper للـ ServicesMapHub
  *
- * Leaflet لا يعمل في server-side (يستخدم window)
+ * MapLibre لا يعمل في server-side (يستخدم window/WebGL)
  * هذا الـ wrapper يضمن أنه يُحمّل فقط في الـ client
  * ════════════════════════════════════════════════════════════════════
  */

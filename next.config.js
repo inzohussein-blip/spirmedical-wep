@@ -56,7 +56,8 @@ const nextConfig = {
               "img-src 'self' data: blob: https: https://*.supabase.co",
               "font-src 'self' data:",
               // ✅ Sentry: يحتاج الاتصال بـ ingest.sentry.io
-              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://vitals.vercel-insights.com https://*.vercel-insights.com https://api.openrouteservice.org https://*.ingest.sentry.io https://graph.facebook.com",
+              // ✅ الخرائط: MapLibre يجلب الأنماط/الخطوط/الرموز/البلاط من OpenFreeMap عبر fetch
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://vitals.vercel-insights.com https://*.vercel-insights.com https://api.openrouteservice.org https://*.ingest.sentry.io https://graph.facebook.com https://tiles.openfreemap.org",
               "media-src 'self' blob:",
               "object-src 'none'",
               "base-uri 'self'",
@@ -100,7 +101,6 @@ const nextConfig = {
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**.supabase.co' },
-      { protocol: 'https', hostname: '*.tile.openstreetmap.org' },
     ],
     formats: ['image/webp'],
     minimumCacheTTL: 31536000,
