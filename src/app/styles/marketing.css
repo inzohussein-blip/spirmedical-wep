@@ -149,7 +149,7 @@
 
 .landing-flag-red { flex: 1; background: #CE1126; }
 
-.landing-flag-white { flex: 1; background: #FFFFFF; }
+.landing-flag-white { flex: 1; background: var(--white); }
 
 .landing-flag-black { flex: 1; background: #000000; }
 

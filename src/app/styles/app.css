@@ -133,25 +133,25 @@
 }
 
 /* Bottom Nav — النسخة المعتمدة (بالتوكنز + backdrop) مُعرّفة أدناه؛
-   أُزيلت النسخة المكرّرة القديمة (hardcoded #FFFFFF/#E8EAED). */
+   أُزيلت النسخة المكرّرة القديمة (hardcoded var(--white)/var(--line-2)). */
 .app-bottom-item {
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   gap: 4px; padding: 8px 4px;
   border-radius: 12px;
-  color: #5F6368;
+  color: var(--ink-3);
   font-size: 10px; font-weight: 500;
   min-height: 52px; transition: all 0.15s;
   text-decoration: none;
 }
 
 .app-bottom-item.active { 
-  color: #01875F; 
-  background: #E6F3EF; 
+  color: var(--spir-primary); 
+  background: var(--spir-primary-soft); 
 }
 
 .app-bottom-item:hover { 
-  background: #F1F3F4;
+  background: var(--paper-2);
 }
 
 .app-bottom-icon { 
@@ -247,35 +247,35 @@
 
 .story-circle {
   width: 64px; height: 64px; border-radius: 18px;
-  background: linear-gradient(135deg, #01875F 0%, #FBBC04 50%, #C71C56 100%);
+  background: linear-gradient(135deg, var(--spir-primary) 0%, var(--spir-yellow) 50%, var(--spir-pink) 100%);
   padding: 2.5px;
   display: flex; align-items: center; justify-content: center;
 }
 
 /* تنويعات ألوان الـ stories — gradient ملوّن للـ inner */
 .story:nth-child(1) .story-inner {
-  background: linear-gradient(135deg, #E6F3EF, #01875F);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--spir-primary-soft), var(--spir-primary));
+  color: var(--white);
 }
 
 .story:nth-child(2) .story-inner {
-  background: linear-gradient(135deg, #FEF7E0, #FBBC04);
-  color: #202124;
+  background: linear-gradient(135deg, var(--spir-yellow-soft), var(--spir-yellow));
+  color: var(--ink);
 }
 
 .story:nth-child(3) .story-inner {
-  background: linear-gradient(135deg, #FCE8E6, #C71C56);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--spir-pink-soft), var(--spir-pink));
+  color: var(--white);
 }
 
 .story:nth-child(4) .story-inner {
-  background: linear-gradient(135deg, #E8F0FE, #1A73E8);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--spir-blue-soft), var(--spir-blue));
+  color: var(--white);
 }
 
 .story:nth-child(5) .story-inner {
-  background: linear-gradient(135deg, #F3E8FD, #9334E6);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--spir-purple-soft), var(--spir-purple));
+  color: var(--white);
 }
 
 .story-inner {
@@ -286,7 +286,7 @@
 }
 
 .story-label {
-  font-size: 9px; color: #202124;
+  font-size: 9px; color: var(--ink);
   font-weight: 500; text-align: center;
 }
 
@@ -295,7 +295,7 @@
   position: absolute;
   bottom: 3px;
   left: 3px;
-  background: #FFFFFF;
+  background: var(--white);
   font-size: 7px;
   font-weight: 600;
   padding: 1px 4px;
@@ -303,13 +303,13 @@
 }
 
 .story-add .story-circle { 
-  background: linear-gradient(135deg, #DADCE0 0%, #9AA0A6 100%);
+  background: linear-gradient(135deg, var(--line) 0%, #9AA0A6 100%);
 }
 
 .story-add .story-inner {
   background: transparent;
-  border: 2px dashed #80868B;
-  color: #5F6368;
+  border: 2px dashed var(--ink-4);
+  color: var(--ink-3);
 }
 
 .scr-banner {
@@ -389,22 +389,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #F1F3F4;
+  background: var(--paper-2);
   border: 0;
   border-radius: 50%;
-  color: #202124;
+  color: var(--ink);
   font-size: 16px;
   font-weight: 700;
   flex-shrink: 0;
   transition: all 0.15s;
 }
 
-.scr-back-btn:hover { background: #E8EAED; transform: scale(1.05); }
+.scr-back-btn:hover { background: var(--line-2); transform: scale(1.05); }
 
 .scr-page-title {
   font-size: 16px;
   font-weight: 800;
-  color: #202124;
+  color: var(--ink);
   text-align: center;
   flex: 1;
 }
@@ -1300,7 +1300,7 @@
   height: 40px;
   border-radius: 50%;
   background: var(--btn-primary-bg);
-  color: #ffffff;
+  color: var(--white);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -5141,7 +5141,7 @@
   height: 38px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--emerald) 0%, var(--emerald-deep) 100%);
-  color: #ffffff;
+  color: var(--white);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -6154,8 +6154,8 @@
     flex-direction: column;
     width: 240px;
     flex-shrink: 0;
-    background: #FFFFFF;
-    border-inline-start: 1px solid #E8EAED;
+    background: var(--white);
+    border-inline-start: 1px solid var(--line-2);
     padding: 20px 16px;
     height: 100vh;
     position: sticky;
@@ -6169,7 +6169,7 @@
     align-items: center;
     gap: 12px;
     padding: 4px 8px 20px;
-    border-bottom: 1px solid #E8EAED;
+    border-bottom: 1px solid var(--line-2);
     margin-bottom: 16px;
     text-decoration: none;
     color: inherit;
@@ -6179,7 +6179,7 @@
     width: 40px;
     height: 40px;
     border-radius: 10px;
-    background: linear-gradient(135deg, #01875F, #073B30);
+    background: linear-gradient(135deg, var(--spir-primary), #073B30);
     color: white;
     font-weight: 800;
     font-size: 20px;
@@ -6230,13 +6230,13 @@
   }
 
   .app-sidebar-item:hover {
-    background: #F1F3F4;
+    background: var(--paper-2);
     color: var(--ink);
   }
 
   .app-sidebar-item.active {
-    background: #E6F3EF;
-    color: #01875F;
+    background: var(--spir-primary-soft);
+    color: var(--spir-primary);
     font-weight: 600;
   }
 
@@ -6250,7 +6250,7 @@
   .app-sidebar-footer {
     margin-top: auto;
     padding-top: 16px;
-    border-top: 1px solid #E8EAED;
+    border-top: 1px solid var(--line-2);
   }
 
   /* ─── الـ Header في الديسكتوب: يبقى لكن بدون مساحة كبيرة ─── */
