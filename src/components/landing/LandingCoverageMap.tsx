@@ -21,7 +21,7 @@ import type { MapMarker } from '@/types/location';
  *   ✓ Click → focus على المدينة + info card
  *
  * Performance:
- *   • التحميل: ~100KB (Leaflet) فقط عند الحاجة
+ *   • التحميل: MapLibre فقط عند الحاجة (dynamic import)
  *   • Initial render: <50ms (skeleton فقط)
  * ════════════════════════════════════════════════════════════════════
  */

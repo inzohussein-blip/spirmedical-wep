@@ -1,10 +1,16 @@
 'use client';
 
-// أنماط Leaflet مفصولة (route-scoped) — تُحمَّل مع chunk الخريطة فقط.
-import '@/components/maps/leaflet-styles';
+// أنماط MapLibre مفصولة (route-scoped) — تُحمَّل مع chunk الخريطة فقط.
+import '@/components/maps/maplibre-styles';
 import { useEffect, useRef } from 'react';
-import type { Map as LeafletMap } from 'leaflet';
+import type { Map as MlMap, Marker as MlMarker, Popup as MlPopup } from 'maplibre-gl';
 import type { MapMarker } from '@/types/location';
+import {
+  MAP_STYLE_STREETS,
+  loadMapLibre,
+  markerElement,
+  attachResizeFix,
+} from '@/lib/maps/maplibre-config';
 
 interface CityData {
   name: string;
@@ -22,14 +28,13 @@ interface Props {
 }
 
 /**
- * Inner Leaflet map - يُحمّل فقط عند ظهور الخريطة (lazy)
+ * Inner MapLibre map (V33) — يُحمّل فقط عند ظهور الخريطة (dynamic ssr:false).
  *
  * Features:
  *   ✓ Pulse animation على بغداد (الأكبر)
- *   ✓ Custom markers احترافية (SVG)
- *   ✓ Smooth zoom/pan
- *   ✓ Click → focus + emit event
- *   ✓ Mobile-friendly (no popups, uses bottom sheet)
+ *   ✓ Custom markers احترافية (CSS)
+ *   ✓ Smooth zoom/pan (flyTo)
+ *   ✓ Hover → tooltip · Click → focus + emit event
  */
 export default function LandingCoverageMapInner({
   markers,
@@ -38,8 +43,9 @@ export default function LandingCoverageMapInner({
   onSelectCity,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<LeafletMap | null>(null);
-  const resizeObserverRef = useRef<ResizeObserver | null>(null);
+  const mapRef = useRef<MlMap | null>(null);
+  const markersRef = useRef<MlMarker[]>([]);
+  const cleanupResizeRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -47,54 +53,33 @@ export default function LandingCoverageMapInner({
     let cancelled = false;
 
     (async () => {
-      const L = (await import('leaflet')).default;
+      const maplibregl = await loadMapLibre();
       if (cancelled || !containerRef.current) return;
 
-      // 🔧 V31 FIX: انتظر حتى يكون للـ container أبعاد فعلية قبل تهيئة Leaflet.
-      // المشكلة: مع lazy-load (IntersectionObserver) + fade-in animations،
-      // قد يُهيّأ Leaflet والـ container عرضه 0 → tiles في الزاوية فقط.
-      const el = containerRef.current;
-      const waitForSize = (): Promise<void> =>
-        new Promise((resolve) => {
-          let tries = 0;
-          const check = () => {
-            if (cancelled) return resolve();
-            if (el.offsetWidth > 0 && el.offsetHeight > 0) return resolve();
-            if (tries++ > 60) return resolve(); // أقصى ~1 ثانية، ثم نُكمل بأي حال
-            requestAnimationFrame(check);
-          };
-          check();
-        });
-      await waitForSize();
-      if (cancelled || !containerRef.current) return;
-
-      const map = L.map(containerRef.current, {
-        center: [33.3152, 44.3661],
+      const map = new maplibregl.Map({
+        container: containerRef.current,
+        style: MAP_STYLE_STREETS,
+        center: [44.3661, 33.3152],
         zoom: 6,
-        zoomControl: false,
         attributionControl: false,
-        scrollWheelZoom: false, // disable scroll zoom (يتداخل مع scroll الصفحة)
-        dragging: true,
+        scrollZoom: false, // لا يتداخل مع scroll الصفحة
       });
+      map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+      map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
 
-      // OpenStreetMap tile layer
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 12,
-        minZoom: 5,
-        attribution: '© OpenStreetMap',
-      }).addTo(map);
-
-      L.control.attribution({ position: 'bottomright', prefix: false }).addTo(map);
-
-      // Custom zoom control (top-right)
-      L.control.zoom({ position: 'topright' }).addTo(map);
+      // Tooltip واحد نعيد استخدامه (hover)
+      const tooltip: MlPopup = new maplibregl.Popup({
+        closeButton: false,
+        closeOnClick: false,
+        offset: 18,
+        className: 'landing-map-tooltip-wrapper',
+      });
 
       // إضافة markers
       markers.forEach((marker, i) => {
         const isBaghdad = i === 0;
         const city = cities[i];
 
-        // Custom SVG marker
         const markerHtml = isBaghdad
           ? `
             <div class="landing-map-marker landing-map-marker-primary">
@@ -108,82 +93,58 @@ export default function LandingCoverageMapInner({
             </div>
           `;
 
-        const icon = L.divIcon({
-          html: markerHtml,
-          className: '',
-          iconSize: isBaghdad ? [32, 32] : [20, 20],
-          iconAnchor: isBaghdad ? [16, 16] : [10, 10],
+        const el = markerElement(markerHtml);
+
+        const mlMarker = new maplibregl.Marker({ element: el, anchor: 'center' })
+          .setLngLat([marker.lng, marker.lat])
+          .addTo(map);
+        markersRef.current.push(mlMarker);
+
+        const tooltipHtml = `
+          <div class="landing-map-tooltip">
+            <div class="landing-map-tooltip-name">${marker.title ?? ''}</div>
+            <div class="landing-map-tooltip-stats">${marker.subtitle ?? ''}</div>
+          </div>
+        `;
+
+        el.addEventListener('mouseenter', () => {
+          el.style.zIndex = '1000';
+          tooltip.setLngLat([marker.lng, marker.lat]).setHTML(tooltipHtml).addTo(map);
+        });
+        el.addEventListener('mouseleave', () => {
+          el.style.zIndex = '';
+          tooltip.remove();
         });
 
-        const leafletMarker = L.marker([marker.lat, marker.lng], { icon }).addTo(map);
-
-        // Tooltip أنيق
-        leafletMarker.bindTooltip(
-          `
-          <div class="landing-map-tooltip">
-            <div class="landing-map-tooltip-name">${marker.title}</div>
-            <div class="landing-map-tooltip-stats">${marker.subtitle}</div>
-          </div>
-          `,
-          {
-            direction: 'top',
-            offset: [0, isBaghdad ? -16 : -10],
-            className: 'landing-map-tooltip-wrapper',
-            opacity: 1,
-          }
-        );
-
-        // Click → smooth pan + open info card
-        leafletMarker.on('click', () => {
+        el.addEventListener('click', () => {
           if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
             navigator.vibrate(10);
           }
-          map.flyTo([marker.lat, marker.lng], 9, {
-            duration: 0.8,
-          });
+          map.flyTo({ center: [marker.lng, marker.lat], zoom: 9, duration: 800 });
           onSelectCity(city);
-        });
-
-        // Hover effect
-        leafletMarker.on('mouseover', (e) => {
-          const target = e.target as { _icon?: HTMLElement };
-          if (target._icon) {
-            target._icon.style.zIndex = '1000';
-          }
         });
       });
 
       mapRef.current = map;
 
-      // 🔧 V31 FIX: invalidateSize أولاً (الحجم صحيح) ثم fitBounds (توسيط صحيح).
-      // الترتيب مهم: لو fitBounds قبل invalidateSize، يحسب على حجم خاطئ.
-      map.invalidateSize();
-      const bounds = L.latLngBounds(markers.map((m) => [m.lat, m.lng]));
-      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 7 });
+      // توسيط على كل المدن بعد التحميل
+      const bounds = new maplibregl.LngLatBounds();
+      markers.forEach((m) => bounds.extend([m.lng, m.lat]));
+      map.once('load', () =>
+        map.fitBounds(bounds, { padding: 48, maxZoom: 7, duration: 0 }),
+      );
 
-      // تأكيدات إضافية بعد الرسم/الـ animations
-      const fixSize = () => {
-        if (!mapRef.current) return;
-        mapRef.current.invalidateSize();
-        mapRef.current.fitBounds(bounds, { padding: [40, 40], maxZoom: 7 });
-      };
-      setTimeout(fixSize, 100);
-      setTimeout(fixSize, 350);
-      setTimeout(fixSize, 700);
-      if (typeof ResizeObserver !== 'undefined' && containerRef.current) {
-        resizeObserverRef.current = new ResizeObserver(() => {
-          if (mapRef.current) mapRef.current.invalidateSize();
-        });
-        resizeObserverRef.current.observe(containerRef.current);
-      }
+      cleanupResizeRef.current = attachResizeFix(map, containerRef.current);
     })();
 
     return () => {
       cancelled = true;
-      if (resizeObserverRef.current) {
-        resizeObserverRef.current.disconnect();
-        resizeObserverRef.current = null;
+      if (cleanupResizeRef.current) {
+        cleanupResizeRef.current();
+        cleanupResizeRef.current = null;
       }
+      markersRef.current.forEach((mk) => mk.remove());
+      markersRef.current = [];
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;

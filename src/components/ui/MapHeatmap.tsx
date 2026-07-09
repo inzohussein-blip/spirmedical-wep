@@ -1,24 +1,25 @@
 'use client';
 
-// أنماط Leaflet مفصولة (route-scoped) — تُحمَّل مع chunk الخريطة فقط.
-import '@/components/maps/leaflet-styles';
+// أنماط MapLibre مفصولة (route-scoped) — تُحمَّل مع chunk الخريطة فقط.
+import '@/components/maps/maplibre-styles';
 import { useEffect, useRef, useState } from 'react';
-import type { Map as LeafletMap, LatLngExpression } from 'leaflet';
+import type { Map as MlMap } from 'maplibre-gl';
 import { IRAQ_CENTER } from '@/types/location';
+import {
+  MAP_STYLE_LIGHT,
+  loadMapLibre,
+  attachResizeFix,
+} from '@/lib/maps/maplibre-config';
 
 /**
  * ═══════════════════════════════════════════════════════════════
- * MapHeatmap — خريطة حرارة الطلبات
+ * MapHeatmap (V33 — MapLibre heatmap layer)
  * ═══════════════════════════════════════════════════════════════
  *
- * يعرض كثافة الطلبات على الخريطة - المناطق الأكثر طلباً = أحمر
+ * يعرض كثافة الطلبات — المناطق الأكثر طلباً = أحمر.
+ * يستخدم طبقة heatmap الأصلية في MapLibre (GPU) بدل leaflet.heat.
  *
- * يستخدم leaflet.heat plugin (مجاني)
- *
- * استخدام:
- *   <MapHeatmap points={[[lat, lng, intensity], ...]} />
- *
- * مهم: لا تستورد مباشرة! استخدم MapHeatmapWrapper
+ * مهم: لا تستورد مباشرة! استخدم MapHeatmapWrapper (ssr:false).
  * ═══════════════════════════════════════════════════════════════
  */
 
@@ -31,17 +32,17 @@ export interface HeatmapPoint {
 
 export interface MapHeatmapProps {
   points: HeatmapPoint[];
-  /** مركز الخريطة */
   center?: { lat: number; lng: number };
-  /** zoom level */
   zoom?: number;
-  /** الارتفاع */
   height?: number;
   /** نصف قطر النقاط (افتراضي 25) */
   radius?: number;
   /** أقصى كثافة (للتدرّج اللوني) */
   maxIntensity?: number;
 }
+
+const SOURCE_ID = 'spir-heat-src';
+const LAYER_ID = 'spir-heat-layer';
 
 export default function MapHeatmap({
   points,
@@ -52,9 +53,9 @@ export default function MapHeatmap({
   maxIntensity,
 }: MapHeatmapProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<LeafletMap | null>(null);
-  const resizeObserverRef = useRef<ResizeObserver | null>(null);
-  const heatLayerRef = useRef<L.Layer | null>(null);
+  const mapRef = useRef<MlMap | null>(null);
+  const cleanupResizeRef = useRef<(() => void) | null>(null);
+  const loadedRef = useRef(false);
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -63,45 +64,28 @@ export default function MapHeatmap({
 
     async function initMap() {
       try {
-        const L = await import('leaflet');
-        // تحميل heat plugin
-        await import('leaflet.heat');
-
-        if (cancelled || !mapContainerRef.current) return;
-        if (mapRef.current) {
-          setIsReady(true);
-          return;
-        }
+        const maplibregl = await loadMapLibre();
+        if (cancelled || !mapContainerRef.current || mapRef.current) return;
 
         const startCenter = center ?? IRAQ_CENTER;
 
-        const map = L.map(mapContainerRef.current, {
-          center: [startCenter.lat, startCenter.lng] as LatLngExpression,
+        const map = new maplibregl.Map({
+          container: mapContainerRef.current,
+          style: MAP_STYLE_LIGHT,
+          center: [startCenter.lng, startCenter.lat],
           zoom,
-          scrollWheelZoom: true,
-          zoomControl: true,
+          attributionControl: false,
+        });
+        map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-left');
+        map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
+
+        map.on('load', () => {
+          loadedRef.current = true;
+          if (!cancelled) setIsReady(true);
         });
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-          maxZoom: 19,
-          minZoom: 5,
-        }).addTo(map);
-
         mapRef.current = map;
-        setIsReady(true);
-
-        // 🔧 V31 FIX: إعادة حساب أبعاد الخريطة بعد الرسم
-        const fixSize = () => { if (mapRef.current) mapRef.current.invalidateSize(); };
-        setTimeout(fixSize, 0);
-        setTimeout(fixSize, 150);
-        setTimeout(fixSize, 400);
-        requestAnimationFrame(fixSize);
-        if (typeof ResizeObserver !== 'undefined' && mapContainerRef.current) {
-          resizeObserverRef.current = new ResizeObserver(() => fixSize());
-          resizeObserverRef.current.observe(mapContainerRef.current);
-        }
+        cleanupResizeRef.current = attachResizeFix(map, mapContainerRef.current);
       } catch (err) {
         if (!cancelled) {
           setError('فشل تحميل الخريطة');
@@ -115,80 +99,83 @@ export default function MapHeatmap({
 
     return () => {
       cancelled = true;
-      if (resizeObserverRef.current) {
-        resizeObserverRef.current.disconnect();
-        resizeObserverRef.current = null;
+      if (cleanupResizeRef.current) {
+        cleanupResizeRef.current();
+        cleanupResizeRef.current = null;
       }
+      loadedRef.current = false;
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
       }
-      heatLayerRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /* ─── تحديث الـ heatmap عند تغيير points ─── */
   useEffect(() => {
-    if (!isReady || !mapRef.current || points.length === 0) return;
+    const map = mapRef.current;
+    if (!isReady || !map || !loadedRef.current || points.length === 0) return;
 
-    let cancelled = false;
+    const max = maxIntensity ?? 1.0;
+    const geojson = {
+      type: 'FeatureCollection' as const,
+      features: points.map((p) => ({
+        type: 'Feature' as const,
+        properties: { intensity: p.intensity ?? 0.5 },
+        geometry: { type: 'Point' as const, coordinates: [p.lng, p.lat] },
+      })),
+    };
 
-    async function updateHeatmap() {
-      const L = await import('leaflet');
-      const Lwithheat = L as unknown as {
-        heatLayer: (
-          points: Array<[number, number, number]>,
-          opts: Record<string, unknown>
-        ) => L.Layer;
-      };
+    const existing = map.getSource(SOURCE_ID) as
+      | { setData: (d: typeof geojson) => void }
+      | undefined;
 
-      if (cancelled || !mapRef.current) return;
-
-      // إزالة الطبقة القديمة
-      if (heatLayerRef.current) {
-        heatLayerRef.current.remove();
-      }
-
-      // بناء points للـ heat layer: [lat, lng, intensity]
-      const heatPoints: Array<[number, number, number]> = points.map((p) => [
-        p.lat,
-        p.lng,
-        p.intensity ?? 0.5,
-      ]);
-
-      // إنشاء الطبقة
-      const heatLayer = Lwithheat.heatLayer(heatPoints, {
-        radius,
-        blur: 20,
-        maxZoom: 17,
-        max: maxIntensity ?? 1.0,
-        gradient: {
-          0.0: 'blue',
-          0.3: 'cyan',
-          0.5: 'lime',
-          0.7: 'yellow',
-          1.0: 'red',
+    if (existing) {
+      existing.setData(geojson);
+    } else {
+      map.addSource(SOURCE_ID, { type: 'geojson', data: geojson });
+      map.addLayer({
+        id: LAYER_ID,
+        type: 'heatmap',
+        source: SOURCE_ID,
+        paint: {
+          'heatmap-weight': [
+            'interpolate', ['linear'], ['get', 'intensity'],
+            0, 0, max, 1,
+          ],
+          'heatmap-intensity': [
+            'interpolate', ['linear'], ['zoom'],
+            5, 1, 15, 3,
+          ],
+          'heatmap-color': [
+            'interpolate', ['linear'], ['heatmap-density'],
+            0.0, 'rgba(33,102,172,0)',
+            0.2, 'rgb(0,120,255)',
+            0.4, 'rgb(0,220,220)',
+            0.6, 'rgb(120,220,0)',
+            0.8, 'rgb(255,210,0)',
+            1.0, 'rgb(220,30,30)',
+          ],
+          'heatmap-radius': [
+            'interpolate', ['linear'], ['zoom'],
+            5, radius, 15, radius * 2.5,
+          ],
+          'heatmap-opacity': 0.75,
         },
       });
-
-      heatLayer.addTo(mapRef.current);
-      heatLayerRef.current = heatLayer;
-
-      // ضبط حدود الخريطة لتغطي كل النقاط
-      if (points.length > 1) {
-        const bounds = L.latLngBounds(
-          points.map((p) => [p.lat, p.lng] as LatLngExpression)
-        );
-        mapRef.current.fitBounds(bounds, { padding: [40, 40], maxZoom: 12 });
-      }
     }
 
-    updateHeatmap();
-
-    return () => {
-      cancelled = true;
-    };
+    // ضبط حدود الخريطة لتغطي كل النقاط
+    if (points.length > 1) {
+      (async () => {
+        const maplibregl = await loadMapLibre();
+        if (!mapRef.current) return;
+        const bounds = new maplibregl.LngLatBounds();
+        points.forEach((p) => bounds.extend([p.lng, p.lat]));
+        mapRef.current.fitBounds(bounds, { padding: 48, maxZoom: 12, duration: 0 });
+      })();
+    }
   }, [isReady, points, radius, maxIntensity]);
 
   /* ─── Render ─── */
@@ -265,15 +252,15 @@ export default function MapHeatmap({
       >
         <span style={{ color: 'var(--ink-3)' }}>الكثافة:</span>
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <span style={{ width: 12, height: 12, borderRadius: 2, background: 'blue' }} />
+          <span style={{ width: 12, height: 12, borderRadius: 2, background: 'rgb(0,120,255)' }} />
           <span>قليل</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <span style={{ width: 12, height: 12, borderRadius: 2, background: 'lime' }} />
+          <span style={{ width: 12, height: 12, borderRadius: 2, background: 'rgb(120,220,0)' }} />
           <span>متوسط</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <span style={{ width: 12, height: 12, borderRadius: 2, background: 'red' }} />
+          <span style={{ width: 12, height: 12, borderRadius: 2, background: 'rgb(220,30,30)' }} />
           <span>كثيف</span>
         </div>
         <span style={{ marginInlineStart: 'auto', color: 'var(--ink-3)' }}>

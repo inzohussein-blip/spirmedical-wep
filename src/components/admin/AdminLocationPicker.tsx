@@ -1,37 +1,31 @@
 'use client';
 
-// أنماط Leaflet مفصولة (route-scoped) — تُحمَّل مع chunk الخريطة فقط.
-import '@/components/maps/leaflet-styles';
+// أنماط MapLibre مفصولة (route-scoped) — تُحمَّل مع chunk الخريطة فقط.
+import '@/components/maps/maplibre-styles';
 import { useEffect, useRef, useState } from 'react';
 import { Crosshair, Loader2, MapPin, Check } from 'lucide-react';
-import type { Map as LeafletMap, Marker as LeafletMarker } from 'leaflet';
+import type { Map as MlMap, Marker as MlMarker } from 'maplibre-gl';
 import { buildMarkerSvg, type ServiceMarkerType } from '@/lib/maps/markers';
+import {
+  IRAQ_CENTER,
+  MAP_STYLE_LIGHT,
+  loadMapLibre,
+  markerElement,
+  attachResizeFix,
+} from '@/lib/maps/maplibre-config';
 import { reverseGeocode } from '@/lib/services/geocoding';
 
 /**
  * ════════════════════════════════════════════════════════════════════
- * 🗺️ AdminLocationPicker (V31)
+ * 🗺️ AdminLocationPicker (V33 — MapLibre + OpenFreeMap)
  * ════════════════════════════════════════════════════════════════════
  *
  * يسمح للأدمن باختيار موقع مقدّم خدمة (مستشفى/عيادة/صيدلية...) من خريطة
  * بدل كتابة الإحداثيات يدوياً.
  *
- * يدعم:
- *   - النقر على الخريطة لوضع الـ marker
- *   - زر "موقعي الحالي" (GPS)
- *   - reverse geocoding (يعرض العنوان المكتشف)
- *   - عرض الإحداثيات الحالية (قابلة للنسخ)
- *
- * الاستخدام في admin clients:
- *   <AdminLocationPicker
- *     initialLat={lat} initialLng={lng}
- *     markerType="hospital"
- *     onChange={(la, ln) => { setLat(String(la)); setLng(String(ln)); }}
- *   />
+ * يدعم: النقر على الخريطة · GPS · reverse geocoding · عرض الإحداثيات.
  * ════════════════════════════════════════════════════════════════════
  */
-
-const IRAQ_CENTER: [number, number] = [33.3152, 44.3661];
 
 interface Props {
   initialLat?: number | null;
@@ -52,9 +46,9 @@ export default function AdminLocationPicker({
   onAddressDetected,
 }: Props) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<LeafletMap | null>(null);
-  const markerRef = useRef<LeafletMarker | null>(null);
-  const resizeObserverRef = useRef<ResizeObserver | null>(null);
+  const mapRef = useRef<MlMap | null>(null);
+  const markerRef = useRef<MlMarker | null>(null);
+  const cleanupResizeRef = useRef<(() => void) | null>(null);
 
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
     initialLat != null && initialLng != null
@@ -83,22 +77,21 @@ export default function AdminLocationPicker({
     }
   }
 
-  const placeMarker = async (
-    L: typeof import('leaflet'),
+  function placeMarker(
+    maplibregl: Awaited<ReturnType<typeof loadMapLibre>>,
     c: { lat: number; lng: number }
-  ) => {
+  ) {
     if (!mapRef.current) return;
-    if (markerRef.current) markerRef.current.remove();
-
-    const icon = L.divIcon({
-      html: buildMarkerSvg(markerType, 38),
-      className: 'admin-location-marker',
-      iconSize: [38, 44],
-      iconAnchor: [19, 44],
-    });
-    markerRef.current = L.marker([c.lat, c.lng], { icon }).addTo(mapRef.current);
-    mapRef.current.panTo([c.lat, c.lng]);
-  };
+    if (markerRef.current) {
+      markerRef.current.setLngLat([c.lng, c.lat]);
+    } else {
+      const el = markerElement(buildMarkerSvg(markerType, 38), 'admin-location-marker');
+      markerRef.current = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+        .setLngLat([c.lng, c.lat])
+        .addTo(mapRef.current);
+    }
+    mapRef.current.panTo([c.lng, c.lat]);
+  }
 
   // تهيئة الخريطة
   useEffect(() => {
@@ -106,52 +99,47 @@ export default function AdminLocationPicker({
     let cancelled = false;
 
     (async () => {
-      const L = (await import('leaflet')).default;
+      const maplibregl = await loadMapLibre();
       if (cancelled || !mapContainerRef.current) return;
 
-      const center = coords ? [coords.lat, coords.lng] as [number, number] : IRAQ_CENTER;
+      const center: [number, number] = coords
+        ? [coords.lng, coords.lat]
+        : [IRAQ_CENTER.lng, IRAQ_CENTER.lat];
       const zoom = coords ? 14 : 6;
 
-      const map = L.map(mapContainerRef.current, {
+      const map = new maplibregl.Map({
+        container: mapContainerRef.current,
+        style: MAP_STYLE_LIGHT,
         center,
         zoom,
-        zoomControl: true,
         attributionControl: false,
       });
-
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap',
-      }).addTo(map);
+      map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-left');
+      map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
 
       map.on('click', (e) => {
-        const c = { lat: e.latlng.lat, lng: e.latlng.lng };
+        const c = { lat: e.lngLat.lat, lng: e.lngLat.lng };
         setCoords(c);
         onChange(c.lat, c.lng);
-        void placeMarker(L, c);
+        placeMarker(maplibregl, c);
         void fillAddress(c.lat, c.lng);
       });
 
       mapRef.current = map;
-      if (coords) void placeMarker(L, coords);
+      if (coords) placeMarker(maplibregl, coords);
 
-      // 🔧 V31 FIX: إعادة حساب أبعاد الخريطة بعد الرسم (داخل modal خصوصاً)
-      const fixSize = () => { if (mapRef.current) mapRef.current.invalidateSize(); };
-      setTimeout(fixSize, 0);
-      setTimeout(fixSize, 150);
-      setTimeout(fixSize, 400);
-      requestAnimationFrame(fixSize);
-      if (typeof ResizeObserver !== 'undefined' && mapContainerRef.current) {
-        resizeObserverRef.current = new ResizeObserver(() => fixSize());
-        resizeObserverRef.current.observe(mapContainerRef.current);
-      }
+      cleanupResizeRef.current = attachResizeFix(map, mapContainerRef.current);
     })();
 
     return () => {
       cancelled = true;
-      if (resizeObserverRef.current) {
-        resizeObserverRef.current.disconnect();
-        resizeObserverRef.current = null;
+      if (cleanupResizeRef.current) {
+        cleanupResizeRef.current();
+        cleanupResizeRef.current = null;
+      }
+      if (markerRef.current) {
+        markerRef.current.remove();
+        markerRef.current = null;
       }
       if (mapRef.current) {
         mapRef.current.remove();
@@ -173,9 +161,9 @@ export default function AdminLocationPicker({
         const c = { lat: pos.coords.latitude, lng: pos.coords.longitude };
         setCoords(c);
         onChange(c.lat, c.lng);
-        const L = (await import('leaflet')).default;
-        await placeMarker(L, c);
-        mapRef.current?.setView([c.lat, c.lng], 16);
+        const maplibregl = await loadMapLibre();
+        placeMarker(maplibregl, c);
+        mapRef.current?.flyTo({ center: [c.lng, c.lat], zoom: 16 });
         setLocating(false);
         void fillAddress(c.lat, c.lng);
       },
@@ -209,7 +197,7 @@ export default function AdminLocationPicker({
             position: 'absolute',
             top: 10,
             insetInlineEnd: 10,
-            zIndex: 1000,
+            zIndex: 2,
             display: 'inline-flex',
             alignItems: 'center',
             gap: 6,
@@ -237,7 +225,7 @@ export default function AdminLocationPicker({
             position: 'absolute',
             bottom: 10,
             insetInlineStart: 10,
-            zIndex: 1000,
+            zIndex: 2,
             display: 'inline-flex',
             alignItems: 'center',
             gap: 5,

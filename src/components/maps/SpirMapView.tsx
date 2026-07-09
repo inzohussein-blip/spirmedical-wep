@@ -1,32 +1,29 @@
 'use client';
 
-// أنماط Leaflet مفصولة (route-scoped) — تُحمَّل مع chunk الخريطة فقط.
-import '@/components/maps/leaflet-styles';
+// أنماط MapLibre مفصولة (route-scoped) — تُحمَّل مع chunk الخريطة فقط.
+import '@/components/maps/maplibre-styles';
 import { useEffect, useRef, useState } from 'react';
-import { ExternalLink, Crosshair, MapPin } from 'lucide-react';
-import type { Map as LeafletMap, Marker as LeafletMarker } from 'leaflet';
+import { Crosshair, MapPin } from 'lucide-react';
+import type { Map as MlMap, Marker as MlMarker } from 'maplibre-gl';
 import { buildMarkerSvg, type ServiceMarkerType } from '@/lib/maps/markers';
+import {
+  IRAQ_CENTER,
+  MAP_STYLE_STREETS,
+  loadMapLibre,
+  markerElement,
+  attachResizeFix,
+} from '@/lib/maps/maplibre-config';
 import ExternalMapButton from './ExternalMapButton';
 
 /**
  * ════════════════════════════════════════════════════════════════════
- * 🗺️ SpirMapView (V25.39)
+ * 🗺️ SpirMapView (V33 — MapLibre + OpenFreeMap)
  * ════════════════════════════════════════════════════════════════════
  *
- * View-only map component
- * Drop-in replacement لـ FreeMedicalMap القديم
- *
- * يستخدم نفس الـ MapMarker interface للتوافق مع الكود الحالي
- *
- * Features:
- *   ✓ marker واحد أو متعدّد
- *   ✓ Popup قابل للتخصيص
- *   ✓ زر "افتح الموقع" مع 4 providers
- *   ✓ زر "توسيط" لتركيز الخريطة
+ * خريطة عرض فقط (view-only) — مؤشّر واحد أو متعدّد + بطاقة تفاصيل + زر توسيط.
+ * تحافظ على نفس واجهة MapMarker للتوافق مع الكود الحالي.
  * ════════════════════════════════════════════════════════════════════
  */
-
-const IRAQ_CENTER = { lat: 33.3152, lng: 44.3661 };
 
 // متوافق مع types/location.ts الموجود
 export interface MapMarker {
@@ -66,9 +63,9 @@ export default function SpirMapView({
   className = '',
 }: Props) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<LeafletMap | null>(null);
-  const markersRef = useRef<LeafletMarker[]>([]);
-  const resizeObserverRef = useRef<ResizeObserver | null>(null);
+  const mapRef = useRef<MlMap | null>(null);
+  const markersRef = useRef<MlMarker[]>([]);
+  const cleanupResizeRef = useRef<(() => void) | null>(null);
 
   const [selected, setSelected] = useState<MapMarker | null>(null);
 
@@ -82,10 +79,10 @@ export default function SpirMapView({
 
   // Compute initial center
   const initialCenter: [number, number] = center
-    ? [center.lat, center.lng]
+    ? [center.lng, center.lat]
     : hasValidLocation
-    ? [allMarkers[0].lat, allMarkers[0].lng]
-    : [IRAQ_CENTER.lat, IRAQ_CENTER.lng];
+    ? [allMarkers[0].lng, allMarkers[0].lat]
+    : [IRAQ_CENTER.lng, IRAQ_CENTER.lat];
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
@@ -93,87 +90,67 @@ export default function SpirMapView({
     let cancelled = false;
 
     (async () => {
-      const L = (await import('leaflet')).default;
+      const maplibregl = await loadMapLibre();
       if (cancelled || !mapContainerRef.current) return;
 
-      const map = L.map(mapContainerRef.current, {
+      const map = new maplibregl.Map({
+        container: mapContainerRef.current,
+        style: MAP_STYLE_STREETS,
         center: initialCenter,
         zoom: hasValidLocation ? zoom : 6,
-        zoomControl: true,
         attributionControl: false,
       });
-
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap',
-      }).addTo(map);
-
-      L.control.attribution({ position: 'bottomright', prefix: false }).addTo(map);
-
+      map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-left');
+      map.addControl(
+        new maplibregl.AttributionControl({ compact: true }),
+        'bottom-right',
+      );
       mapRef.current = map;
 
-      // 🔧 V31 FIX: إجبار Leaflet على إعادة حساب الأبعاد بعد رسم الـ DOM.
-      // بدون هذا، الخريطة تُحمّل tiles جزئية وتنزاح (المشكلة المعروفة).
-      const fixSize = () => {
-        if (mapRef.current) mapRef.current.invalidateSize();
-      };
-      // عدّة محاولات لتغطية animations / flex layout / dynamic import
-      setTimeout(fixSize, 0);
-      setTimeout(fixSize, 150);
-      setTimeout(fixSize, 400);
-      requestAnimationFrame(fixSize);
-
-      // ResizeObserver: يُصلح الحجم عند أيّ تغيير في أبعاد الـ container
-      if (typeof ResizeObserver !== 'undefined' && mapContainerRef.current) {
-        resizeObserverRef.current = new ResizeObserver(() => fixSize());
-        resizeObserverRef.current.observe(mapContainerRef.current);
-      }
+      cleanupResizeRef.current = attachResizeFix(map, mapContainerRef.current);
 
       // Add markers
       allMarkers.forEach((m) => {
-        const divIcon = L.divIcon({
-          html: buildMarkerSvg(m.type || 'hospital', 40),
-          className: 'spir-map-marker',
-          iconSize: [40, 46],
-          iconAnchor: [20, 46],
-        });
+        const el = markerElement(buildMarkerSvg(m.type || 'hospital', 40), 'spir-map-marker');
+        if (m.title) el.title = m.title;
+        el.addEventListener('click', () => setSelected(m));
 
-        const leafletMarker = L.marker([m.lat, m.lng], { icon: divIcon })
-          .addTo(map)
-          .on('click', () => setSelected(m));
+        const mlMarker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+          .setLngLat([m.lng, m.lat])
+          .addTo(map);
 
-        if (m.title) {
-          leafletMarker.bindTooltip(m.title, { direction: 'top', offset: [0, -40] });
-        }
-
-        markersRef.current.push(leafletMarker);
+        markersRef.current.push(mlMarker);
       });
 
       // Fit to bounds if multiple markers
       if (allMarkers.length > 1) {
-        const bounds = L.latLngBounds(allMarkers.map((m) => [m.lat, m.lng]));
-        map.fitBounds(bounds, { padding: [40, 40], maxZoom: 13 });
+        const bounds = new maplibregl.LngLatBounds();
+        allMarkers.forEach((m) => bounds.extend([m.lng, m.lat]));
+        map.once('load', () =>
+          map.fitBounds(bounds, { padding: 48, maxZoom: 13, duration: 0 }),
+        );
       }
     })();
 
     return () => {
       cancelled = true;
-      if (resizeObserverRef.current) {
-        resizeObserverRef.current.disconnect();
-        resizeObserverRef.current = null;
+      if (cleanupResizeRef.current) {
+        cleanupResizeRef.current();
+        cleanupResizeRef.current = null;
       }
+      markersRef.current.forEach((mk) => mk.remove());
+      markersRef.current = [];
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
       }
-      markersRef.current = [];
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allMarkers.length]);
 
   const handleRecenter = () => {
     if (!mapRef.current || !hasValidLocation) return;
-    mapRef.current.setView([allMarkers[0].lat, allMarkers[0].lng], zoom);
+    mapRef.current.flyTo({ center: [allMarkers[0].lng, allMarkers[0].lat], zoom, duration: 600 });
   };
 
   if (!hasValidLocation) {
@@ -203,7 +180,7 @@ export default function SpirMapView({
       <div
         style={{
           position: 'relative',
-          // 🔧 V31: ارتفاع متجاوب — لا يتجاوز القيمة المطلوبة، يتقلّص على الشاشات الصغيرة
+          // ارتفاع متجاوب — لا يتجاوز القيمة المطلوبة، يتقلّص على الشاشات الصغيرة
           height: `clamp(280px, 45vh, ${height}px)`,
           borderRadius: 12,
           overflow: 'hidden',
