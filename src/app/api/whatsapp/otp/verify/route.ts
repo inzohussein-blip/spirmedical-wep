@@ -6,31 +6,39 @@
  */
 
 import { NextResponse } from 'next/server';
-import { verifyOtp, type OtpPurpose } from '@/lib/whatsapp/otp-service';
+import { z } from 'zod';
+import { verifyOtp } from '@/lib/whatsapp/otp-service';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
+const verifySchema = z.object({
+  phone: z.string().regex(/^(\+964|0)?7[0-9]{9}$/, 'رقم هاتف عراقي غير صحيح'),
+  code: z.string().regex(/^\d{6}$/, 'الرمز يجب أن يكون 6 أرقام'),
+  purpose: z.enum(['login', 'verify_phone', 'sensitive_action', 'register']).optional(),
+});
+
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { phone, code, purpose } = body as {
-      phone: string;
-      code: string;
-      purpose?: OtpPurpose;
-    };
-
-    // ─── Validation ───
-    if (!phone || !code) {
+    const parsed = verifySchema.safeParse(await request.json().catch(() => null));
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: 'phone و code مطلوبان' },
+        { success: false, error: parsed.error.issues[0]?.message ?? 'مدخلات غير صحيحة' },
         { status: 400 }
       );
     }
+    const { phone, code, purpose } = parsed.data;
 
-    if (!/^\d{6}$/.test(code)) {
+    // ─── Rate limit حسب الـ IP (دفاع ضد التخمين عبر أرقام/رموز مختلفة) ───
+    const ip =
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      request.headers.get('x-real-ip') ||
+      'unknown';
+    const rl = await checkRateLimit(`otp:verify:ip:${ip}`, { max: 20, windowSeconds: 900 });
+    if (!rl.allowed) {
       return NextResponse.json(
-        { success: false, error: 'الرمز يجب أن يكون 6 أرقام' },
-        { status: 400 }
+        { success: false, error: `محاولات كثيرة، حاول بعد ${rl.retryAfterSeconds} ثانية` },
+        { status: 429 }
       );
     }
 
