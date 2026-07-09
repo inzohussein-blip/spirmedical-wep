@@ -97,21 +97,26 @@ CREATE INDEX IF NOT EXISTS specialist_applications_created_at_idx
 -- Email verification tokens
 ALTER TABLE public.email_verification_tokens ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "anyone_can_create_token" ON public.email_verification_tokens;
 CREATE POLICY "anyone_can_create_token" ON public.email_verification_tokens
   FOR INSERT WITH CHECK (true);
 
+DROP POLICY IF EXISTS "token_owner_can_read" ON public.email_verification_tokens;
 CREATE POLICY "token_owner_can_read" ON public.email_verification_tokens
   FOR SELECT USING (user_id = auth.uid());
 
 -- Specialist applications
 ALTER TABLE public.specialist_applications ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "specialist_can_read_own_app" ON public.specialist_applications;
 CREATE POLICY "specialist_can_read_own_app" ON public.specialist_applications
   FOR SELECT USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "specialist_can_update_own_app" ON public.specialist_applications;
 CREATE POLICY "specialist_can_update_own_app" ON public.specialist_applications
   FOR UPDATE USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "admins_can_read_all_apps" ON public.specialist_applications;
 CREATE POLICY "admins_can_read_all_apps" ON public.specialist_applications
   FOR SELECT USING (
     EXISTS (
@@ -120,6 +125,7 @@ CREATE POLICY "admins_can_read_all_apps" ON public.specialist_applications
     )
   );
 
+DROP POLICY IF EXISTS "admins_can_update_apps" ON public.specialist_applications;
 CREATE POLICY "admins_can_update_apps" ON public.specialist_applications
   FOR UPDATE USING (
     EXISTS (
@@ -155,6 +161,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS specialist_applications_updated_at_trigger ON public.specialist_applications;
 CREATE TRIGGER specialist_applications_updated_at_trigger
   BEFORE UPDATE ON public.specialist_applications
   FOR EACH ROW
