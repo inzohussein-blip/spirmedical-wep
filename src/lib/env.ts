@@ -87,6 +87,22 @@ const envSchema = z.object({
   NEXT_PUBLIC_ENABLE_TELEGRAM_OTP: z.enum(['true', 'false']).optional(),
   // عنوان التطبيق (لروابط التفعيل/إعادة التعيين)
   NEXT_PUBLIC_APP_URL: z.string().url().optional(),
+
+  // ─── أسرار كانت غير موثّقة (تسبّب تعطّل صامت عند غيابها) ───
+  // سرّ تحقّق كرون Vercel — بدونه: مسار معالجة الطابور يرفض (fail-closed)
+  // والكرونات الأخرى صارت تفشل مغلقة أيضاً (لا endpoints عامة).
+  CRON_SECRET: z.string().min(16).optional(),
+  // توقيع webhook واتساب (Meta) — بدونه كل callbacks التسليم تُرفض 401.
+  META_APP_SECRET: z.string().optional(),
+  META_API_VERSION: z.string().optional(),
+  // Web Push (VAPID) — بدونه إشعارات الدفع معطّلة كلياً (no-op).
+  NEXT_PUBLIC_VAPID_PUBLIC_KEY: z.string().optional(),
+  VAPID_PRIVATE_KEY: z.string().optional(),
+  VAPID_SUBJECT: z.string().optional(),
+  // Twilio (مزوّد واتساب بديل) — يُستعمل فقط عند WHATSAPP_PROVIDER=twilio.
+  TWILIO_ACCOUNT_SID: z.string().optional(),
+  TWILIO_AUTH_TOKEN: z.string().optional(),
+  TWILIO_WHATSAPP_FROM: z.string().optional(),
 });
 
 function parseEnv() {

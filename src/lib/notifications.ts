@@ -1,9 +1,23 @@
 import { createClient } from '@/lib/supabase/server';
 import { renderTemplate } from '@/lib/whatsapp';
+import { sendQueuedNotification } from '@/lib/notifications-processor';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
 
 type DB = SupabaseClient<Database>;
+
+/**
+ * إدراج + إرسال فوري (best-effort) — لإشعارات المعاملات الحسّاسة للوقت.
+ * يتجنّب انتظار مكنسة الكرون اليومية. لا يُستعمل للحملات الجماعية.
+ */
+async function enqueueAndSend(
+  params: EnqueueParams,
+  client?: DB
+): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
+  const res = await enqueueNotification(params, client);
+  if (res.ok) await sendQueuedNotification(res.id);
+  return res;
+}
 
 export interface EnqueueParams {
   recipientUserId?: string;
@@ -137,7 +151,7 @@ export async function notifyAppointmentConfirmed(
 
   if (!patient) return;
 
-  await enqueueNotification({
+  await enqueueAndSend({
     recipientUserId: appointment.user_id,
     recipientPhone: patient.phone,
     channel: 'whatsapp',
@@ -177,7 +191,7 @@ export async function notifyOrderAssigned(
 
   if (!patient || !specialist) return;
 
-  await enqueueNotification({
+  await enqueueAndSend({
     recipientUserId: appointment.user_id,
     recipientPhone: patient.phone,
     channel: 'whatsapp',
@@ -220,7 +234,7 @@ export async function notifyOrderCancelled(
 
   if (!patient) return;
 
-  await enqueueNotification({
+  await enqueueAndSend({
     recipientUserId: appointment.user_id,
     recipientPhone: patient.phone,
     channel: 'whatsapp',
@@ -263,7 +277,7 @@ export async function notifySpecialistApproved(
     nutritionist: 'أخصائي تغذية',
   };
 
-  await enqueueNotification({
+  await enqueueAndSend({
     recipientUserId: specialistId,
     recipientPhone: specialist.phone,
     channel: 'whatsapp',
@@ -295,7 +309,7 @@ export async function notifySpecialistRejected(
 
   if (!specialist) return;
 
-  await enqueueNotification({
+  await enqueueAndSend({
     recipientUserId: specialistId,
     recipientPhone: specialist.phone,
     channel: 'whatsapp',
