@@ -113,9 +113,13 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
         for_family_member: !!data.family_member_id,
       });
       router.push(`/appointments/${result.appointment_id}?new=1`);
-    } else {
-      setError(result.error || 'حدث خطأ');
+      return;
     }
+
+    // فشل: banner عام + إرجاع أخطاء الحقول لتُبرز داخل النموذج
+    setError(result.error || 'حدث خطأ');
+    const fieldErrors = (result as { fieldErrors?: Record<string, string> }).fieldErrors;
+    return { ok: false as const, error: result.error, fieldErrors };
   }
 
   // ─── Handler لـ NursingFlow (V25.5) ───

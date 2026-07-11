@@ -11,7 +11,7 @@
 // 5. زر طلب الفحص
 // ═══════════════════════════════════════════════════════════════════
 
-import { useState, useMemo, useRef, useEffect } from 'react';
+import { useState, useMemo, useRef, useEffect, type RefObject } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { haptic } from '@/lib/haptic';
 import { toast } from '@/components/ui/Toaster';
@@ -33,8 +33,24 @@ import {
 } from '@/lib/services/blood-tests-data';
 import { ALL_LABS, ANY_LAB, type Lab } from '@/lib/services/labs-data';
 import { SHOW_PRICES } from '@/lib/config/pricing';
+import UserLocationPickerWrapper, { type LocationData } from '@/components/maps/UserLocationPickerWrapper';
+import {
+  validateBloodDraw,
+  BLOOD_DRAW_FIELD_LABELS,
+  type BloodDrawFieldErrors,
+} from '@/lib/validations/blood-draw';
 
 const BLOOD_DRAW_PRICE = 15000;
+
+/** نتيجة الإرسال التي يعيدها الأب — تسمح بعرض أخطاء الحقول القادمة من الخادم. */
+export interface BloodDrawSubmitResult {
+  ok: boolean;
+  error?: string;
+  fieldErrors?: BloodDrawFieldErrors;
+}
+
+// ترتيب الحقول للملخّص والتركيز على أوّل خطأ
+const FIELD_ORDER = ['tests', 'address', 'phone', 'date', 'time'] as const;
 
 export interface BloodDrawSubmission {
   testIds: string[];
@@ -61,7 +77,7 @@ export interface BloodDrawSubmission {
 interface Props {
   userPhone?: string;
   userAddress?: string;
-  onSubmit: (data: BloodDrawSubmission) => Promise<void>;
+  onSubmit: (data: BloodDrawSubmission) => Promise<BloodDrawSubmitResult | void>;
   /** ✨ V25.1: قائمة المواقع المحفوظة للمستخدم */
   savedLocations?: Array<{
     id: string;
@@ -128,8 +144,49 @@ export default function BloodDrawFlow({
 
   // UI state
   const [submitting, setSubmitting] = useState(false);
-  const [errors, setErrors] = useState<string[]>([]);
+  // ✨ أخطاء على مستوى الحقل (بدل قائمة نصّية غير مرتبطة بالحقول)
+  const [fieldErrors, setFieldErrors] = useState<BloodDrawFieldErrors>({});
   const searchRef = useRef<HTMLInputElement>(null);
+
+  // refs لكل حقل مطلوب — للتمرير/التركيز على أوّل خطأ
+  const testsRef = useRef<HTMLDivElement>(null);
+  const addressRef = useRef<HTMLDivElement>(null);
+  const phoneRef = useRef<HTMLInputElement>(null);
+  const dateRef = useRef<HTMLInputElement>(null);
+  const timeRef = useRef<HTMLInputElement>(null);
+
+  const fieldRefs: Record<string, RefObject<HTMLElement>> = {
+    tests: testsRef,
+    address: addressRef,
+    phone: phoneRef,
+    date: dateRef,
+    time: timeRef,
+  };
+
+  // يمسح خطأ حقل بمجرّد تعديله (تجربة مريحة)
+  const clearError = (field: string) =>
+    setFieldErrors((prev) => {
+      if (!prev[field]) return prev;
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+
+  // يمرّر ويركّز على أوّل حقل خاطئ حسب ترتيب الصفحة
+  const focusFirstError = (errs: BloodDrawFieldErrors) => {
+    const first = FIELD_ORDER.find((f) => errs[f]);
+    if (!first) return;
+    const el = fieldRefs[first]?.current;
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (typeof (el as HTMLElement & { focus?: () => void }).focus === 'function') {
+      // تأخير بسيط ليكتمل التمرير قبل التركيز
+      setTimeout(() => (el as HTMLInputElement).focus({ preventScroll: true }), 300);
+    }
+  };
+
+  // قائمة الحقول الناقصة مرتّبة (للملخّص)
+  const missingFields = FIELD_ORDER.filter((f) => fieldErrors[f]);
 
   // ─── Computed ───
   const filteredSuggestions = useMemo(() => {
@@ -166,16 +223,9 @@ export default function BloodDrawFlow({
     [labId]
   );
 
-  // ─── Validation ───
-  const canSubmit =
-    selectedTests.length > 0 &&
-    address.trim().length >= 15 &&
-    phone.trim().length >= 10 &&
-    date &&
-    time;
-
   // ─── Handlers ───
   const toggleTest = (testId: string) => {
+    clearError('tests');
     setSelectedTests((prev) =>
       prev.includes(testId)
         ? prev.filter((id) => id !== testId)
@@ -188,23 +238,30 @@ export default function BloodDrawFlow({
   };
 
   const handleSubmit = async () => {
-    const errs: string[] = [];
-    if (selectedTests.length === 0) errs.push('اختر تحليلاً واحداً على الأقل');
-    if (address.trim().length < 15) errs.push('أدخل عنواناً مفصّلاً (محافظة + منطقة + شارع)');
-    if (phone.trim().length < 10) errs.push('أدخل رقم هاتف صحيح');
-    if (!date) errs.push('اختر تاريخ سحب الدم');
-    if (!time) errs.push('اختر وقت سحب الدم');
-    setErrors(errs);
-    if (errs.length > 0) {
+    // ✨ تحقّق موحّد (نفس مخطّط الخادم) → أخطاء على مستوى الحقل
+    const { ok, fieldErrors: fe } = validateBloodDraw({
+      tests: selectedTests,
+      address,
+      phone,
+      date,
+      time,
+      age,
+      gender,
+      condition,
+    });
+    if (!ok) {
+      setFieldErrors(fe);
       haptic.error();
+      focusFirstError(fe);
       return;
     }
+    setFieldErrors({});
     haptic.medium();
 
     const scheduledAt = `${date}T${time}:00`;
     setSubmitting(true);
     try {
-      await onSubmit({
+      const res = await onSubmit({
         testIds: selectedTests,
         bundleId: null,
         labId,
@@ -225,39 +282,24 @@ export default function BloodDrawFlow({
         // ✨ V25.8: Family member
         family_member_id: familyMemberId,
       });
+      // ✨ لو رجع الخادم أخطاء حقول، اعرضها وركّز على أوّلها
+      if (res && res.ok === false && res.fieldErrors && Object.keys(res.fieldErrors).length > 0) {
+        setFieldErrors(res.fieldErrors);
+        focusFirstError(res.fieldErrors);
+      }
     } finally {
       setSubmitting(false);
     }
   };
 
-  // GPS للموقع
-  const handleUseGPS = () => {
-    if (!navigator.geolocation) {
-      toast.warning('متصفحك لا يدعم تحديد الموقع');
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const { latitude, longitude, accuracy } = pos.coords;
-        // ✨ V25: نحفظ الإحداثيات في state ليتم إرسالها لقاعدة البيانات
-        setGpsLocation({
-          lat: latitude,
-          lng: longitude,
-          accuracy: Math.round(accuracy),
-        });
-        // ونعرضها في العنوان أيضاً (لرؤية المستخدم)
-        setAddress((prev) =>
-          prev + (prev ? ' · ' : '') +
-          `📍 ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`
-        );
-      },
-      () => toast.warning('لم نستطع تحديد موقعك. أدخل العنوان يدوياً.'),
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0,
-      }
-    );
+  // ✨ منتقي الخريطة: يملأ العنوان + الإحداثيات (reverse geocoding داخل المكوّن)
+  const handleMapLocation = (loc: LocationData) => {
+    const text =
+      loc.address?.trim() ||
+      `📍 ${loc.latitude.toFixed(5)}, ${loc.longitude.toFixed(5)}`;
+    setAddress(text);
+    setGpsLocation({ lat: loc.latitude, lng: loc.longitude, accuracy: 10 });
+    clearError('address');
   };
 
   return (
@@ -274,7 +316,7 @@ export default function BloodDrawFlow({
       </div>
 
       {/* ═══ 1. شريط البحث + التحاليل ═══ */}
-      <div className="bd-card">
+      <div className={`bd-card ${fieldErrors.tests ? 'bd-card-error' : ''}`} ref={testsRef}>
         <div className="bd-search-wrap">
           <span className="bd-search-icon">
             <Search size={16} strokeWidth={2.4} aria-hidden />
@@ -426,6 +468,13 @@ export default function BloodDrawFlow({
             </div>
           </div>
         )}
+
+        {fieldErrors.tests && (
+          <div className="bd-field-error" role="alert">
+            <AlertTriangle size={13} strokeWidth={2.4} aria-hidden />
+            <span>{fieldErrors.tests}</span>
+          </div>
+        )}
       </div>
 
       {/* ✨ V25.8: Family Member Picker */}
@@ -494,7 +543,10 @@ export default function BloodDrawFlow({
         </div>
 
         {/* العنوان */}
-        <div className="bd-field">
+        <div
+          className={`bd-field ${fieldErrors.address ? 'error' : ''}`}
+          ref={addressRef}
+        >
           <label>
             عنوان السحب <span className="bd-required">*</span>
           </label>
@@ -519,6 +571,7 @@ export default function BloodDrawFlow({
                         lng: loc.lng,
                         accuracy: 10,
                       });
+                      clearError('address');
                       toast.success(`تم اختيار: ${loc.label}`);
                     }}
                     title={`${loc.address}`}
@@ -531,45 +584,74 @@ export default function BloodDrawFlow({
             </div>
           )}
 
+          {/* ✨ V33: منتقي الخريطة التفاعلي (MapLibre) — حدّد الموقع بدقّة */}
+          <UserLocationPickerWrapper
+            height={230}
+            showAddress={false}
+            showGovernorate={false}
+            label="حدّد موقعك على الخريطة"
+            description="حرّك الدبوس أو اضغط «موقعي الحالي» — سنملأ العنوان تلقائياً"
+            initialLocation={
+              gpsLocation
+                ? { latitude: gpsLocation.lat, longitude: gpsLocation.lng }
+                : undefined
+            }
+            onLocationChange={handleMapLocation}
+          />
+
+          {/* حقل نصّي — يبقى قابلاً للتعديل اليدوي (تفاصيل: عمارة/شقة/علامة) */}
           <textarea
             className="bd-textarea"
             rows={2}
-            placeholder="مثال: بغداد - الكرادة - شارع 14 - عمارة 8 - شقة 3"
+            placeholder="أضف تفاصيل: عمارة 8 - شقة 3 - قرب أقرب علامة مميّزة"
             value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            onChange={(e) => {
+              setAddress(e.target.value);
+              clearError('address');
+            }}
+            aria-invalid={!!fieldErrors.address}
             maxLength={300}
           />
-          <button
-            type="button"
-            className="bd-gps-btn"
-            onClick={handleUseGPS}
-          >
-            <MapPin size={14} strokeWidth={2.2} aria-hidden />
-            <span>استخدم موقعي الحالي (GPS)</span>
-          </button>
+
+          {fieldErrors.address && (
+            <div className="bd-field-error" role="alert">
+              <AlertTriangle size={13} strokeWidth={2.4} aria-hidden />
+              <span>{fieldErrors.address}</span>
+            </div>
+          )}
         </div>
 
         {/* رقم الموبايل */}
-        <div className="bd-field">
+        <div className={`bd-field ${fieldErrors.phone ? 'error' : ''}`}>
           <label>
             رقم الموبايل <span className="bd-required">*</span>
           </label>
-          <div className="bd-phone-wrap">
+          <div className={`bd-phone-wrap ${fieldErrors.phone ? 'error' : ''}`}>
             <span className="bd-phone-prefix">🇮🇶 +964</span>
             <input
+              ref={phoneRef}
               type="tel"
               className="bd-input bd-phone-input"
               placeholder="7XX XXX XXXX"
               value={phone}
-              onChange={(e) => setPhone(e.target.value.replace(/[^\d]/g, ''))}
+              onChange={(e) => {
+                setPhone(e.target.value.replace(/[^\d]/g, ''));
+                clearError('phone');
+              }}
+              aria-invalid={!!fieldErrors.phone}
               maxLength={11}
             />
           </div>
-          {userPhone && (
+          {fieldErrors.phone ? (
+            <div className="bd-field-error" role="alert">
+              <AlertTriangle size={13} strokeWidth={2.4} aria-hidden />
+              <span>{fieldErrors.phone}</span>
+            </div>
+          ) : userPhone ? (
             <div className="bd-hint">
               ✓ تم ملء الرقم تلقائياً من حسابك
             </div>
-          )}
+          ) : null}
         </div>
       </div>
 
@@ -627,32 +709,54 @@ export default function BloodDrawFlow({
         </h3>
 
         <div className="bd-row-2">
-          <div className="bd-field">
+          <div className={`bd-field ${fieldErrors.date ? 'error' : ''}`}>
             <label>
               التاريخ <span className="bd-required">*</span>
             </label>
             <input
+              ref={dateRef}
               type="date"
               className="bd-input bd-date-input"
               value={date}
               min={getMinDate()}
               max={getMaxDate()}
-              onChange={(e) => setDate(e.target.value)}
+              aria-invalid={!!fieldErrors.date}
+              onChange={(e) => {
+                setDate(e.target.value);
+                clearError('date');
+              }}
             />
+            {fieldErrors.date && (
+              <div className="bd-field-error" role="alert">
+                <AlertTriangle size={13} strokeWidth={2.4} aria-hidden />
+                <span>{fieldErrors.date}</span>
+              </div>
+            )}
           </div>
-          <div className="bd-field">
+          <div className={`bd-field ${fieldErrors.time ? 'error' : ''}`}>
             <label>
               الساعة <span className="bd-required">*</span>
             </label>
             <input
+              ref={timeRef}
               type="time"
               className="bd-input bd-time-input"
               value={time}
               min="07:00"
               max="20:00"
               step="1800"
-              onChange={(e) => setTime(e.target.value)}
+              aria-invalid={!!fieldErrors.time}
+              onChange={(e) => {
+                setTime(e.target.value);
+                clearError('time');
+              }}
             />
+            {fieldErrors.time && (
+              <div className="bd-field-error" role="alert">
+                <AlertTriangle size={13} strokeWidth={2.4} aria-hidden />
+                <span>{fieldErrors.time}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -678,21 +782,39 @@ export default function BloodDrawFlow({
         )}
       </div>
 
-      {/* ═══ أخطاء ═══ */}
-      {errors.length > 0 && (
-        <div className="bd-errors">
-          {errors.map((e, i) => (
-            <div key={i} className="bd-error">
-              <AlertTriangle size={13} strokeWidth={2.4} aria-hidden />
-              <span>{e}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
       {/* ═══ Sticky Footer للسعر والإرسال ═══ */}
-      <div className={`bd-sticky-footer ${!canSubmit ? 'bd-sticky-footer-compact' : ''}`}>
-        {selectedTests.length > 0 && canSubmit && (
+      <div className="bd-sticky-footer">
+        {/* ✨ صندوق «الحقول الناقصة» — يظهر عند محاولة إرسال ناقصة، وكل بند قابل للنقر */}
+        {missingFields.length > 0 && (
+          <div className="bd-missing-summary" role="alert">
+            <div className="bd-missing-head">
+              <AlertTriangle size={14} strokeWidth={2.6} aria-hidden />
+              <span>لإتمام الطلب، أكمل هذه الحقول:</span>
+            </div>
+            <div className="bd-missing-chips">
+              {missingFields.map((f) => (
+                <button
+                  key={f}
+                  type="button"
+                  className="bd-missing-chip"
+                  onClick={() => {
+                    const el = fieldRefs[f]?.current;
+                    el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    setTimeout(
+                      () => (el as HTMLInputElement | null)?.focus?.({ preventScroll: true }),
+                      300,
+                    );
+                  }}
+                >
+                  {BLOOD_DRAW_FIELD_LABELS[f] || f}
+                  <span className="bd-missing-chip-hint">{fieldErrors[f]}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {selectedTests.length > 0 && (
           <div className="bd-price-card">
             {SHOW_PRICES ? (
               <>
@@ -727,26 +849,22 @@ export default function BloodDrawFlow({
         <button
           type="button"
           className="bd-submit-btn"
-          disabled={!canSubmit || submitting}
+          disabled={submitting}
           onClick={handleSubmit}
         >
           {submitting ? (
             <><Loader2 size={16} strokeWidth={2.2} style={{ animation: 'spin-smooth 1s linear infinite' }} /> جارٍ إرسال الطلب...</>
-          ) : !canSubmit ? (
-            'أكمل البيانات أعلاه'
           ) : (
             <><CheckCircle2 size={16} strokeWidth={2.2} /> اطلب الفحص</>
           )}
         </button>
 
-        {canSubmit && (
-          <div className="bd-trust-row">
-            <Lock size={12} strokeWidth={2.2} aria-hidden />
-            <span>معلوماتك مشفّرة · صناعة عراقية ·</span>
-            <Star size={12} strokeWidth={2.4} fill="currentColor" aria-hidden />
-            <span>معتمد طبياً</span>
-          </div>
-        )}
+        <div className="bd-trust-row">
+          <Lock size={12} strokeWidth={2.2} aria-hidden />
+          <span>معلوماتك مشفّرة · صناعة عراقية ·</span>
+          <Star size={12} strokeWidth={2.4} fill="currentColor" aria-hidden />
+          <span>معتمد طبياً</span>
+        </div>
       </div>
 
       <style jsx>{`
@@ -1165,23 +1283,6 @@ export default function BloodDrawFlow({
           font-family: 'JetBrains Mono', monospace;
         }
 
-        /* ─── GPS BUTTON ─── */
-        .bd-gps-btn {
-          background: var(--paper-2, #EDE6D3);
-          border: 1px solid var(--line, rgba(15, 26, 28, 0.08));
-          border-radius: 10px;
-          padding: 9px 14px;
-          font-size: 12px;
-          font-weight: 700;
-          color: var(--ink-2, #1F2A2C);
-          cursor: pointer;
-          margin-top: 6px;
-          width: 100%;
-        }
-        .bd-gps-btn:hover {
-          background: var(--paper-3, #FAF6EB);
-        }
-
         /* ─── LABS (horizontal scroll) ─── */
         .bd-labs-scroll {
           display: flex;
@@ -1314,21 +1415,76 @@ export default function BloodDrawFlow({
           line-height: 1.5;
         }
 
-        /* ─── ERRORS ─── */
-        .bd-errors {
-          background: var(--rose-soft, #F0D7D8);
-          border-radius: 12px;
-          padding: 12px;
-          display: flex;
-          flex-direction: column;
-          gap: 5px;
+        /* ─── FIELD-LEVEL ERRORS (V33) ─── */
+        /* إطار أحمر للحقل الخاطئ */
+        .bd-field.error .bd-input,
+        .bd-field.error .bd-textarea,
+        .bd-phone-wrap.error {
+          border-color: var(--rose, #A82E3D) !important;
+          background: var(--rose-soft, #FCE8E6);
         }
-        .bd-error {
+        .bd-card-error {
+          box-shadow: 0 0 0 1.5px var(--rose, #A82E3D);
+        }
+        /* رسالة الخطأ تحت الحقل */
+        .bd-field-error {
           display: flex;
+          align-items: center;
+          gap: 5px;
+          color: var(--rose, #A82E3D);
+          font-size: 11.5px;
+          font-weight: 800;
+          margin-top: 5px;
+        }
+
+        /* ─── صندوق «الحقول الناقصة» (فوق زر الإرسال) ─── */
+        .bd-missing-summary {
+          background: var(--rose-soft, #FCE8E6);
+          border: 1px solid var(--rose, #A82E3D);
+          border-radius: 12px;
+          padding: 10px 12px;
+          margin-bottom: 10px;
+        }
+        .bd-missing-head {
+          display: flex;
+          align-items: center;
           gap: 6px;
           color: var(--rose, #A82E3D);
-          font-size: 11px;
-          font-weight: 700;
+          font-size: 12px;
+          font-weight: 800;
+          margin-bottom: 8px;
+        }
+        .bd-missing-chips {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+        }
+        .bd-missing-chip {
+          display: inline-flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1px;
+          padding: 6px 11px;
+          background: var(--white, #FFFFFF);
+          border: 1px solid var(--rose, #A82E3D);
+          border-radius: 10px;
+          font-size: 12px;
+          font-weight: 800;
+          color: var(--rose, #A82E3D);
+          cursor: pointer;
+          transition: all 0.15s;
+          font-family: inherit;
+          text-align: start;
+        }
+        .bd-missing-chip:hover {
+          background: var(--rose, #A82E3D);
+          color: var(--white, #FFFFFF);
+          transform: translateY(-1px);
+        }
+        .bd-missing-chip-hint {
+          font-size: 9px;
+          font-weight: 600;
+          opacity: 0.85;
         }
 
         /* ─── STICKY FOOTER (داخل حدود التطبيق 480px) ─── */
@@ -1346,13 +1502,6 @@ export default function BloodDrawFlow({
           box-sizing: border-box;
           border-top: 1px solid var(--line, rgba(15, 26, 28, 0.08));
           transition: all 0.2s ease;
-        }
-        /* الحالة المضغوطة: شريط نحيف ملتصق بالأسفل */
-        .bd-sticky-footer-compact {
-          padding: 6px 14px 8px;
-          background: var(--paper-2, #F4EFE2);
-          border-top: 1px solid var(--line, rgba(15, 26, 28, 0.06));
-          box-shadow: none;
         }
         .bd-price-card {
           background: var(--paper-3, #FAF6EB);
@@ -1412,15 +1561,9 @@ export default function BloodDrawFlow({
           transform: translateY(-1px);
         }
         .bd-submit-btn:disabled {
-          background: transparent;
-          color: var(--ink-3, #6E7878);
-          padding: 4px;
-          font-size: 11px;
-          font-weight: 600;
-          border-radius: 0;
-          box-shadow: none;
-          cursor: not-allowed;
           opacity: 0.7;
+          cursor: wait;
+          box-shadow: none;
         }
         .bd-trust-row {
           text-align: center;

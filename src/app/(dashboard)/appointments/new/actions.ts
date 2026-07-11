@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { appointmentSchema } from '@/lib/validations/appointment';
+import { validateBloodDrawServer } from '@/lib/validations/blood-draw';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
@@ -474,13 +475,17 @@ export async function createBloodDrawOrder(input: CreateBloodDrawInput) {
     };
   }
 
-  // Validation
-  if (!input.test_ids || input.test_ids.length === 0) {
-    return { success: false, error: 'يجب اختيار تحليل واحد على الأقل' };
-  }
-
-  if (!input.address || input.address.length < 10) {
-    return { success: false, error: 'يجب إدخال عنوان مفصّل' };
+  // Validation — نفس مخطّط العميل (مصدر واحد) + إرجاع أخطاء الحقول
+  const validation = validateBloodDrawServer({
+    tests: input.test_ids ?? [],
+    address: input.address ?? '',
+  });
+  if (!validation.ok) {
+    return {
+      success: false,
+      error: Object.values(validation.fieldErrors)[0] || 'تحقّق من البيانات',
+      fieldErrors: validation.fieldErrors,
+    };
   }
 
   // 🔧 V32 FIX: تطبيع scheduled_at لصيغة ISO كاملة (UTC مع Z).
