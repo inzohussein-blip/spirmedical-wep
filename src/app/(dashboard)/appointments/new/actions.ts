@@ -1,8 +1,9 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
-import { appointmentSchema } from '@/lib/validations/appointment';
+import { appointmentSchema, validateAppointmentV2Server } from '@/lib/validations/appointment';
 import { validateBloodDrawServer } from '@/lib/validations/blood-draw';
+import { validateNursingServer } from '@/lib/validations/nursing';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
@@ -74,25 +75,24 @@ export async function createAppointmentV2(input: CreateAppointmentInput) {
     ? input.address
     : 'خدمة عن بُعد · بدون عنوان';
 
-  // Validation
-  const validation = appointmentSchema.safeParse({
+  // Validation — يُرجع أخطاء الحقول (لتوحيد «رفع الطلبات»)
+  const v2Input = {
     service_type: input.service_name,
     scheduled_at: input.scheduled_at,
     address: finalAddress,
     notes: input.notes,
-  });
-
-  if (!validation.success) {
+  };
+  const v2 = validateAppointmentV2Server(v2Input);
+  if (!v2.ok) {
     return {
       success: false,
-      error: validation.error.errors[0].message,
+      error: Object.values(v2.fieldErrors)[0] || 'تحقّق من البيانات',
+      fieldErrors: v2.fieldErrors,
     };
   }
 
   // تشفير الملاحظات الطبية الحساسة
-  const notesEncrypted = validation.data.notes
-    ? encrypt(validation.data.notes)
-    : null;
+  const notesEncrypted = input.notes ? encrypt(input.notes) : null;
 
   // إنشاء الحجز
   // الأعمدة الجديدة (service_id/estimated_price/duration_minutes/otp_channel)
@@ -724,13 +724,17 @@ export async function createNursingAppointment(input: CreateNursingInput) {
     };
   }
 
-  // Validation
-  if (!input.address || input.address.length < 10) {
-    return { success: false, error: 'يجب إدخال عنوان مفصّل' };
-  }
-
-  if (!input.procedure_type) {
-    return { success: false, error: 'يجب اختيار نوع الإجراء' };
+  // Validation — نفس مخطّط العميل + إرجاع أخطاء الحقول
+  const nursingValidation = validateNursingServer({
+    procedure_type: input.procedure_type,
+    address: input.address,
+  });
+  if (!nursingValidation.ok) {
+    return {
+      success: false,
+      error: Object.values(nursingValidation.fieldErrors)[0] || 'تحقّق من البيانات',
+      fieldErrors: nursingValidation.fieldErrors,
+    };
   }
 
   try {

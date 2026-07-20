@@ -34,3 +34,33 @@ export const appointmentUpdateSchema = appointmentSchema.partial().extend({
 export type AppointmentInput = z.infer<typeof appointmentSchema>;
 export type AppointmentUpdate = z.infer<typeof appointmentUpdateSchema>;
 export type AppointmentStatus = z.infer<typeof appointmentStatusEnum>;
+
+// ─── أخطاء الحقول (لتوحيد «رفع الطلبات») ───
+export type AppointmentFieldErrors = Record<string, string>;
+
+/** تسميات عربية لحقول تدفّق الخدمات العامّة (Wizard). */
+export const APPOINTMENT_FIELD_LABELS: Record<string, string> = {
+  service: 'الخدمة',
+  slot: 'الموعد',
+  service_type: 'الخدمة',
+  scheduled_at: 'الموعد',
+  address: 'العنوان',
+};
+
+/**
+ * تحقّق خادمي يُرجع أخطاء الحقول من appointmentSchema (تعيين path→field)،
+ * بدل رسالة واحدة فقط. يُستعمل في createAppointmentV2.
+ */
+export function validateAppointmentV2Server(
+  input: unknown,
+): { ok: boolean; fieldErrors: AppointmentFieldErrors } {
+  const result = appointmentSchema.safeParse(input);
+  if (result.success) return { ok: true, fieldErrors: {} };
+
+  const fieldErrors: AppointmentFieldErrors = {};
+  for (const err of result.error.errors) {
+    const field = err.path[0] as string;
+    if (field && !fieldErrors[field]) fieldErrors[field] = err.message;
+  }
+  return { ok: false, fieldErrors };
+}
