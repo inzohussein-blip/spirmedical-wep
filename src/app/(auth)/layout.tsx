@@ -13,6 +13,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import { getRoleHomePath } from '@/lib/auth/home-path';
 
 // 📱 App-specific CSS (V25.40)
 // Auth pages تستخدم scr-* و gate-* + auth-* (auth-* في shared.css)
@@ -35,14 +36,7 @@ export default async function AuthLayout({
       .select('role')
       .eq('id', user.id)
       .single();
-
-    if (profile?.role === 'specialist') {
-      redirect('/specialist');
-    } else if (['admin', 'super_admin', 'manager', 'support'].includes(profile?.role || '')) {
-      redirect('/admin');
-    } else {
-      redirect('/dashboard');
-    }
+    redirect(getRoleHomePath(profile?.role));
   }
 
   return (

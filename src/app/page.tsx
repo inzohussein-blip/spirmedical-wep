@@ -8,6 +8,7 @@ import LandingCoverageMap from '@/components/landing/LandingCoverageMap';
 import LandingScrollEffects from '@/components/landing/LandingScrollEffects';
 import { ARTICLES } from '@/lib/data/blog-articles';
 import { SITE_TYPE, getAppUrl } from '@/lib/site-config';
+import { getRoleHomePath } from '@/lib/auth/home-path';
 
 // 🌐 Marketing CSS — الـ landing page يستخدم landing-* classes
 // (V25.40: لا يدخل في (marketing) group لأنه root /)
@@ -174,36 +175,29 @@ export default async function HomePage({
     redirect('/dashboard');
   }
 
-  // ─── 🎯 V25.23: Smart PWA Routing ───
-  // عند فتح PWA من home screen، نوجّه المستخدم مباشرة
-  const isPWA = searchParams.source === 'pwa' || searchParams.utm_source === 'homescreen';
+  // ─── 🎯 V33: أي مستخدم مُسجّل دخوله → واجهة التطبيق مباشرة (لا التسويق) ───
+  // سابقاً كان هذا الفحص داخل فرع PWA فقط، فكان المستخدم المُسجّل يرى صفحة
+  // التسويق في المتصفّح العادي. الآن الدخول يقود دائماً إلى التطبيق.
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (isPWA) {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (user) {
-      // مستخدم مُسجّل → /dashboard مباشرة
-      const { data: profile } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-
-      if (profile?.role === 'specialist') {
-        redirect('/specialist');
-      } else if (['admin', 'super_admin', 'manager', 'support'].includes(profile?.role || '')) {
-        redirect('/admin');
-      } else {
-        redirect('/dashboard');
-      }
-    } else {
-      // 🎯 V25.24: غير مُسجّل → /gate (يعرض خياري: تسجيل دخول / حساب جديد)
-      redirect('/gate');
-    }
+  if (user) {
+    const { data: profile } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+    redirect(getRoleHomePath(profile?.role));
   }
 
-  // غير PWA → الموقع التسويقي العادي
+  // ─── 🎯 V25.23: Smart PWA Routing (غير مُسجّل) ───
+  // عند فتح PWA من home screen بلا جلسة → /gate (خيارا الدخول/التسجيل داخل التطبيق)
+  const isPWA = searchParams.source === 'pwa' || searchParams.utm_source === 'homescreen';
+  if (isPWA) {
+    redirect('/gate');
+  }
+
+  // غير مُسجّل + متصفّح عادي → الموقع التسويقي العام
   return (
     <main className="landing">
       {/* ============ NAV (Sticky + Mobile Menu) ============ */}

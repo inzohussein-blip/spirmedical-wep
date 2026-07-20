@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import { getRoleHomePath } from '@/lib/auth/home-path';
 import AppRouter from './AppRouter';
 
 export const metadata = {
@@ -36,22 +37,14 @@ export default async function AppPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // ✅ مسجّل دخول → /dashboard مباشرة
+  // ✅ مسجّل دخول → واجهة التطبيق حسب الدور
   if (user) {
-    // تحقق من الدور لتوجيهه للمكان الصحيح
     const { data: profile } = await supabase
       .from('users')
       .select('role')
       .eq('id', user.id)
       .single();
-
-    if (profile?.role === 'specialist') {
-      redirect('/specialist');
-    } else if (profile?.role === 'admin' || profile?.role === 'super_admin') {
-      redirect('/admin');
-    } else {
-      redirect('/dashboard');
-    }
+    redirect(getRoleHomePath(profile?.role));
   }
 
   // ❌ غير مسجّل → نُظهر AppRouter (client-side للتحقق من localStorage)

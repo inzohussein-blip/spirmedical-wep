@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import { getRoleHomePath } from '@/lib/auth/home-path';
 import { createClient as createSbClient } from '@supabase/supabase-js';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
@@ -214,7 +215,7 @@ async function routeAfterRegister(
     } catch {
       // ignore
     }
-    redirect(role === 'specialist' ? '/specialist' : '/dashboard');
+    redirect(getRoleHomePath(role));
   }
 
   // ✅ FIX 1: استخدام static import مباشرة
