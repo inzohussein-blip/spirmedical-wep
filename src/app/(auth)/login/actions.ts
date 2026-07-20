@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { phoneSchema, otpSchema, normalizePhone } from '@/lib/validations/auth';
 import { redirect } from 'next/navigation';
+import { getRoleHomePath } from '@/lib/auth/home-path';
 import { createClient as createSbClient } from '@supabase/supabase-js';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
@@ -264,17 +265,7 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
           .then(() => null, () => null);
       }
 
-      const role = profile?.role || 'patient';
-      if (role === 'specialist') redirect('/specialist');
-      if (
-        role === 'admin' ||
-        role === 'super_admin' ||
-        role === 'manager' ||
-        role === 'support'
-      ) {
-        redirect('/admin');
-      }
-      redirect('/dashboard');
+      redirect(getRoleHomePath(profile?.role));
     }
 
     // 🐌 Slow Path: signIn فشل
@@ -390,17 +381,7 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
     }).catch(() => {});
 
     // 4. التوجيه
-    const role = existingProfile?.role || 'patient';
-    if (role === 'specialist') redirect('/specialist');
-    if (
-      role === 'admin' ||
-      role === 'super_admin' ||
-      role === 'manager' ||
-      role === 'support'
-    ) {
-      redirect('/admin');
-    }
-    redirect('/dashboard');
+    redirect(getRoleHomePath(existingProfile?.role));
   } catch (err) {
     if (isNextRedirect(err)) throw err;
 
@@ -551,10 +532,8 @@ export async function verifyOtp(formData: FormData) {
 
       const role = (profileRes.data as { role?: string } | null)?.role || 'patient';
 
-      if (role === 'specialist') redirect('/specialist');
-      if (role === 'admin' || role === 'super_admin' || role === 'manager' || role === 'support') {
-        redirect('/admin');
-      }
+      const home = getRoleHomePath(role);
+      if (home !== '/dashboard') redirect(home);
       if (redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')) {
         redirect(redirectTo);
       }
@@ -603,17 +582,8 @@ export async function verifyOtp(formData: FormData) {
     .eq('id', data.user.id)
     .maybeSingle();
 
-  if (profile?.role === 'specialist') {
-    redirect('/specialist');
-  }
-  if (
-    profile?.role === 'admin' ||
-    profile?.role === 'super_admin' ||
-    profile?.role === 'manager' ||
-    profile?.role === 'support'
-  ) {
-    redirect('/admin');
-  }
+  const home = getRoleHomePath(profile?.role);
+  if (home !== '/dashboard') redirect(home);
 
   if (redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')) {
     redirect(redirectTo);
