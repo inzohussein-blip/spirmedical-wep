@@ -21,6 +21,35 @@
 > التقسيم **لا يفقد ولا يعيد ترتيب أي عبارة**: تم التحقق أن دمج 0001→0009 يطابق الملف
 > المدمج الأصلي **بايت-ببايت**، فترتيب البناء (FK/dependencies) محفوظ بالكامل.
 
+## التطبيق التلقائي (بلا رفع يدوي) — Supabase CLI + GitHub Actions
+
+بعد إضافة `supabase/config.toml` وworkflow `.github/workflows/supabase-migrations.yml`،
+تُطبَّق أي ترحيلات جديدة على الإنتاج **تلقائياً عند الدفع إلى `main`** (لا لصق يدوي في
+SQL Editor).
+
+**التهيئة لمرّة واحدة (المالك):**
+1. أضِف GitHub Secrets:
+   - `SUPABASE_ACCESS_TOKEN` — من https://supabase.com/dashboard/account/tokens
+   - `SUPABASE_DB_PASSWORD` — كلمة مرور قاعدة المشروع (Project Settings → Database)
+2. سجّل خط الأساس كمُطبَّق (لأنّ الإنتاج بُني يدوياً) حتى لا يُعاد تطبيقه:
+   ```bash
+   npm run db:link        # supabase link --project-ref ioulxemokusfeykjcaxg
+   supabase migration repair --status applied 0001 0002 0003 0004 0005 \
+     0006 0007 0008 0009 0010
+   ```
+   (كل الترحيلات idempotent، فإعادة التطبيق آمنة أصلاً — لكن `repair` أنظف.)
+
+**بعدها:** كل ترحيل جديد (`0011_*.sql` …) يُدمج إلى `main` → الـworkflow يشغّل
+`supabase db push` فيُطبَّق فقط الجديد. للتطبيق اليدوي محلياً: `npm run db:push`.
+لتوليد ترحيل من تغييرات محلية: `npm run db:diff`.
+
+**بديل/إضافة — تكامل اللوحة:** يمكن أيضاً تفعيل تكامل Supabase↔GitHub من
+Dashboard → Integrations → GitHub (يقرأ `supabase/migrations` + `config.toml`)،
+فيُطبّق الترحيلات دون أي workflow. الاثنان متوافقان مع نفس الملفات.
+
+> السكربتات (`db:link`/`db:push`/`db:diff`/`db:pull`) تتطلّب Supabase CLI على PATH محلياً
+> (`brew install supabase/tap/supabase` أو scoop)؛ أمّا CI فيستخدم `supabase/setup-cli`.
+
 ## نقاط مهمة
 
 - **الإنتاج غير متأثّر.** قاعدة الإنتاج مبنيّة أصلاً من هذا المخطط، وهذه الملفات
