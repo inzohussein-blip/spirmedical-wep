@@ -1,0 +1,16 @@
+# ════════════════════════════════════════════════════════════════════
+# Supabase CLI config — https://supabase.com/docs/guides/cli/config
+# ════════════════════════════════════════════════════════════════════
+# يجعل مجلد supabase/ متوافقاً مع:
+#   • Supabase CLI (link / db push / db diff) — أتمتة الترحيلات.
+#   • تكامل Supabase↔GitHub من اللوحة (يقرأ supabase/migrations + هذا الملف).
+#
+# ملاحظة: project_id هنا اسم محلّي للمشروع (وليس project-ref الإنتاج).
+#   project-ref الإنتاج = ioulxemokusfeykjcaxg (يُمرَّر صراحةً في link / السكربتات).
+# ════════════════════════════════════════════════════════════════════
+
+project_id = "spirmedical-wep"
+
+[db]
+# نسخة Postgres للتطوير المحلّي (supabase start). لا تؤثّر على db push للإنتاج.
+major_version = 15

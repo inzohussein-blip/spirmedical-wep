@@ -25,9 +25,40 @@ export const MAP_STYLE_STREETS = 'https://tiles.openfreemap.org/styles/liberty';
 /** نمط فاتح نظيف — لمنتقيات الموقع (تباين أعلى للمؤشّر) */
 export const MAP_STYLE_LIGHT = 'https://tiles.openfreemap.org/styles/positron';
 
+// حارس: نُسجّل إضافة تشكيل RTL مرّة واحدة فقط (استدعاؤها مرّتين يرمي خطأ).
+let rtlPluginRegistered = false;
+
+/**
+ * يُسجّل إضافة نص RTL (تشكيل + اتّجاه) للتسميات العربية على البلاط المتّجه.
+ * بدونها تظهر الحروف العربية معكوسة وغير موصولة.
+ * الملف مُستضاف ذاتياً في public/vendor (نفس الأصل) → متوافق مع CSP، بلا CDN.
+ */
+function ensureRtlPlugin(maplibregl: typeof import('maplibre-gl')) {
+  if (rtlPluginRegistered) return;
+  try {
+    const status = maplibregl.getRTLTextPluginStatus?.();
+    // 'unavailable' فقط تعني لم تُسجَّل بعد
+    if (status && status !== 'unavailable') {
+      rtlPluginRegistered = true;
+      return;
+    }
+    // lazy=true: يُحمَّل عند أوّل نص RTL فقط. Promise fire-and-forget.
+    void maplibregl
+      .setRTLTextPlugin('/vendor/mapbox-gl-rtl-text.min.js', true)
+      .catch(() => {
+        /* لا نُفشل الخريطة إن تعذّر تحميل الإضافة */
+      });
+    rtlPluginRegistered = true;
+  } catch {
+    // إن كانت مُسجّلة مسبقاً أو تعذّر التسجيل — لا نُفشل الخريطة
+    rtlPluginRegistered = true;
+  }
+}
+
 /** تحميل مكتبة MapLibre ديناميكياً (client-only، تبقى خارج حزمة الخادم) */
 export async function loadMapLibre() {
   const mod = await import('maplibre-gl');
+  ensureRtlPlugin(mod);
   return mod.default;
 }
 

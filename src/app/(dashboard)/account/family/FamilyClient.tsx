@@ -9,7 +9,14 @@ import {
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
 import { useConfirm } from '@/components/ui';
+import { useFormErrors } from '@/lib/forms/useFormErrors';
+import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
+import FieldError from '@/components/forms/FieldError';
 import { addFamilyMember, updateFamilyMember, deleteFamilyMember } from './actions';
+
+const FAMILY_FIELD_LABELS: Record<string, string> = {
+  fullName: 'الاسم الكامل',
+};
 
 interface FamilyMember {
   id: string;
@@ -356,6 +363,7 @@ function MemberModal({
   );
   const [medications, setMedications] = useState(editing?.current_medications ?? '');
   const [notes, setNotes] = useState(editing?.notes ?? '');
+  const fe = useFormErrors(['fullName']);
 
   const selectedRelation = RELATIONS.find(r => r.id === relation);
 
@@ -364,9 +372,11 @@ function MemberModal({
 
   const handleSave = () => {
     if (!fullName.trim()) {
-      toast.error('الاسم مطلوب');
+      fe.setErrors({ fullName: 'أدخل الاسم الكامل' });
+      fe.focusFirst({ fullName: 'x' });
       return;
     }
+    fe.clearAll();
 
     startTransition(async () => {
       const data = {
@@ -483,14 +493,17 @@ function MemberModal({
           </div>
 
           {/* Name */}
-          <Label>الاسم الكامل *</Label>
-          <Input
-            type="text"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            placeholder="مثلاً: محمد علي حسين"
-            autoFocus
-          />
+          <div ref={fe.registerRef('fullName')}>
+            <Label>الاسم الكامل *</Label>
+            <Input
+              type="text"
+              value={fullName}
+              onChange={(e) => { setFullName(e.target.value); fe.clearError('fullName'); }}
+              placeholder="مثلاً: محمد علي حسين"
+              autoFocus
+            />
+            <FieldError message={fe.fieldErrors.fullName} />
+          </div>
 
           {/* Gender */}
           <Label>الجنس</Label>
@@ -633,6 +646,12 @@ function MemberModal({
           background: 'var(--paper)',
           borderTop: '1px solid var(--line)',
         }}>
+          <MissingFieldsSummary
+            fields={fe.missingFields}
+            labels={FAMILY_FIELD_LABELS}
+            errors={fe.fieldErrors}
+            onJump={fe.jumpTo}
+          />
           <button
             type="button"
             onClick={handleSave}

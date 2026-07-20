@@ -3,10 +3,17 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  X, Plus, Trash2, CheckCircle2, AlertTriangle, 
+  X, Plus, Trash2, CheckCircle2, AlertTriangle,
   Clock, Pill, FileText,
 } from 'lucide-react';
 import { createPharmacyReservation, type ReservationItem } from '@/app/(dashboard)/services/pharmacies/actions';
+import { useFormErrors } from '@/lib/forms/useFormErrors';
+import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
+import FieldError from '@/components/forms/FieldError';
+
+const PHARMACY_FIELD_LABELS: Record<string, string> = {
+  items: 'الأدوية المطلوبة',
+};
 
 interface Pharmacy {
   id: string;
@@ -44,11 +51,13 @@ export default function PharmacyReservationModal({
   const [expectedPickupTime, setExpectedPickupTime] = useState('');
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const fe = useFormErrors(['items']);
 
   function updateItem(i: number, field: keyof ReservationItem, value: string | number) {
     const next = [...items];
     next[i] = { ...next[i], [field]: value };
     setItems(next);
+    if (field === 'name' && typeof value === 'string' && value.trim()) fe.clearError('items');
   }
 
   function addItem() {
@@ -63,12 +72,14 @@ export default function PharmacyReservationModal({
   function handleSubmit() {
     setError(null);
 
-    // Validation
+    // Validation — خطأ على مستوى الحقل + تمرير/تركيز
     const validItems = items.filter((it) => it.name.trim().length > 0);
     if (validItems.length === 0) {
-      setError('يجب إدخال دواء واحد على الأقل');
+      fe.setErrors({ items: 'أدخل اسم دواء واحد على الأقل' });
+      fe.focusFirst({ items: 'x' });
       return;
     }
+    fe.clearAll();
 
     let expectedPickupAt: string | undefined;
     if (expectedPickupDate && expectedPickupTime) {
@@ -150,7 +161,7 @@ export default function PharmacyReservationModal({
         </div>
 
         {/* الأدوية */}
-        <div style={{ marginBottom: 16 }}>
+        <div style={{ marginBottom: 16 }} ref={fe.registerRef('items')}>
           <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-2)', display: 'block', marginBottom: 8 }}>
             الأدوية المطلوبة *
           </label>
@@ -255,6 +266,7 @@ export default function PharmacyReservationModal({
             <Plus size={14} strokeWidth={2.5} />
             إضافة دواء آخر
           </button>
+          <FieldError message={fe.fieldErrors.items} />
         </div>
 
         {/* وقت الاستلام */}
@@ -334,6 +346,13 @@ export default function PharmacyReservationModal({
             {error}
           </div>
         )}
+
+        <MissingFieldsSummary
+          fields={fe.missingFields}
+          labels={PHARMACY_FIELD_LABELS}
+          errors={fe.fieldErrors}
+          onJump={fe.jumpTo}
+        />
 
         {/* Submit */}
         <button

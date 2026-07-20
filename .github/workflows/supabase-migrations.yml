@@ -1,0 +1,75 @@
+# ═══════════════════════════════════════════════════════════════
+# 🗄️ Supabase Migrations — تطبيق تلقائي عند الدفع (بلا رفع يدوي)
+# ═══════════════════════════════════════════════════════════════
+# يشغّل `supabase db push` عند دمج ترحيلات جديدة إلى main، فتُطبَّق على
+# قاعدة الإنتاج مباشرة عبر Supabase CLI — لا لصق يدوي في SQL Editor.
+#
+# ─── يحتاج GitHub Secrets ───
+# • SUPABASE_ACCESS_TOKEN  — من https://supabase.com/dashboard/account/tokens
+# • SUPABASE_DB_PASSWORD   — كلمة مرور قاعدة المشروع (Project Settings → Database)
+#   (project-ref مضمّن أدناه: ioulxemokusfeykjcaxg — ليس سرّاً؛ ظاهر في رابط المشروع)
+#
+# ─── خطوة لمرّة واحدة (لأنّ الإنتاج بُني يدوياً) ───
+# سجّل خط الأساس كمُطبَّق حتى لا يعيد push تطبيقه:
+#   supabase link --project-ref ioulxemokusfeykjcaxg
+#   supabase migration repair --status applied 0001 0002 0003 0004 0005 \
+#     0006 0007 0008 0009 0010
+# (كل الترحيلات idempotent أصلاً، فإعادة التطبيق آمنة — لكن repair أنظف.)
+# ═══════════════════════════════════════════════════════════════
+
+name: Supabase Migrations
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/config.toml'
+  workflow_dispatch:
+
+concurrency:
+  group: supabase-migrations
+  cancel-in-progress: false
+
+jobs:
+  push:
+    name: Apply migrations (db push)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Guard — required secrets present
+        id: guard
+        env:
+          ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          if [ -z "$ACCESS_TOKEN" ] || [ -z "$DB_PASSWORD" ]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::تخطّي — SUPABASE_ACCESS_TOKEN أو SUPABASE_DB_PASSWORD غير مضبوط."
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Supabase CLI
+        if: steps.guard.outputs.run == 'true'
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Link project
+        if: steps.guard.outputs.run == 'true'
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: supabase link --project-ref ioulxemokusfeykjcaxg
+
+      - name: Push migrations
+        if: steps.guard.outputs.run == 'true'
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: supabase db push

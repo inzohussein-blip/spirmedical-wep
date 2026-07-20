@@ -3,9 +3,17 @@
 import { useState, useTransition } from 'react';
 import { createPrescription, deletePrescription } from './actions';
 import { useConfirm } from '@/components/ui';
+import { useFormErrors } from '@/lib/forms/useFormErrors';
+import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
+import FieldError from '@/components/forms/FieldError';
 import {
   AlertTriangle, ClipboardList, Pill, Calendar, FileText, Trash2,
 } from 'lucide-react';
+
+const RX_FIELD_LABELS: Record<string, string> = {
+  doctorName: 'الطبيب',
+  medication: 'الدواء',
+};
 
 interface Prescription {
   id: string;
@@ -24,6 +32,7 @@ export default function PrescriptionsClient({ prescriptions }: { prescriptions: 
   const [showForm, setShowForm] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState('');
+  const fe = useFormErrors(['doctorName', 'medication']);
 
   const [doctorName, setDoctorName] = useState('');
   const [specialty, setSpecialty] = useState('');
@@ -37,12 +46,21 @@ export default function PrescriptionsClient({ prescriptions }: { prescriptions: 
     setDoctorName(''); setSpecialty(''); setMedication('');
     setDosage(''); setFreq(''); setDuration(''); setNotes('');
     setError('');
+    fe.clearAll();
   }
 
   function handleSubmit() {
     setError('');
-    if (!doctorName.trim()) { setError('أدخل اسم الطبيب'); return; }
-    if (!medication.trim()) { setError('أدخل اسم الدواء'); return; }
+    // ✨ تحقّق لكل حقل (بدل بانر متسلسل)
+    const errs: Record<string, string> = {};
+    if (!doctorName.trim()) errs.doctorName = 'أدخل اسم الطبيب';
+    if (!medication.trim()) errs.medication = 'أدخل اسم الدواء';
+    if (Object.keys(errs).length > 0) {
+      fe.setErrors(errs);
+      fe.focusFirst(errs);
+      return;
+    }
+    fe.clearAll();
 
     startTransition(async () => {
       const result = await createPrescription({
@@ -92,15 +110,17 @@ export default function PrescriptionsClient({ prescriptions }: { prescriptions: 
           <div className="scr-section-title" style={{ marginBottom: 12 }}>وصفة جديدة</div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
-            <div>
+            <div ref={fe.registerRef('doctorName')}>
               <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>الطبيب *</label>
               <input
                 type="text"
                 value={doctorName}
-                onChange={(e) => setDoctorName(e.target.value)}
+                onChange={(e) => { setDoctorName(e.target.value); fe.clearError('doctorName'); }}
                 placeholder="د. أحمد"
-                style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--line)', borderRadius: 10, fontSize: 13, fontFamily: 'inherit' }}
+                aria-invalid={fe.hasError('doctorName')}
+                style={{ width: '100%', padding: '10px 12px', border: `1px solid ${fe.hasError('doctorName') ? 'var(--rose)' : 'var(--line)'}`, borderRadius: 10, fontSize: 13, fontFamily: 'inherit' }}
               />
+              <FieldError message={fe.fieldErrors.doctorName} />
             </div>
             <div>
               <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>الاختصاص</label>
@@ -114,15 +134,17 @@ export default function PrescriptionsClient({ prescriptions }: { prescriptions: 
             </div>
           </div>
 
-          <div style={{ marginBottom: 12 }}>
+          <div style={{ marginBottom: 12 }} ref={fe.registerRef('medication')}>
             <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>الدواء *</label>
             <input
               type="text"
               value={medication}
-              onChange={(e) => setMedication(e.target.value)}
+              onChange={(e) => { setMedication(e.target.value); fe.clearError('medication'); }}
               placeholder="مثال: Panadol 500mg"
-              style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--line)', borderRadius: 10, fontSize: 13, fontFamily: 'inherit' }}
+              aria-invalid={fe.hasError('medication')}
+              style={{ width: '100%', padding: '10px 12px', border: `1px solid ${fe.hasError('medication') ? 'var(--rose)' : 'var(--line)'}`, borderRadius: 10, fontSize: 13, fontFamily: 'inherit' }}
             />
+            <FieldError message={fe.fieldErrors.medication} />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 12 }}>
@@ -175,6 +197,13 @@ export default function PrescriptionsClient({ prescriptions }: { prescriptions: 
               {error}
             </div>
           )}
+
+          <MissingFieldsSummary
+            fields={fe.missingFields}
+            labels={RX_FIELD_LABELS}
+            errors={fe.fieldErrors}
+            onJump={fe.jumpTo}
+          />
 
           <div style={{ display: 'flex', gap: 8 }}>
             <button type="button" onClick={handleSubmit} disabled={isPending} className="scr-empty-cta" style={{ flex: 1 }}>

@@ -4,10 +4,19 @@ import { useState, useTransition } from 'react';
 import { createReminder, toggleReminder, deleteReminder, type ReminderType, type ReminderFrequency } from './actions';
 import type { LucideIcon } from 'lucide-react';
 import { useConfirm } from '@/components/ui';
+import { useFormErrors } from '@/lib/forms/useFormErrors';
+import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
+import FieldError from '@/components/forms/FieldError';
 import {
   Pill, Calendar, TestTube, Syringe, AlertTriangle, Clock,
   Pause, Play, Trash2,
 } from 'lucide-react';
+
+const REMINDER_FIELD_LABELS: Record<string, string> = {
+  title: 'العنوان',
+  date: 'التاريخ',
+  time: 'الوقت',
+};
 
 interface Reminder {
   id: string;
@@ -39,6 +48,7 @@ export default function RemindersClient({ reminders }: { reminders: Reminder[] }
   const [showForm, setShowForm] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState('');
+  const fe = useFormErrors(['title', 'date', 'time']);
 
   // Form state
   const [type, setType] = useState<ReminderType>('medication');
@@ -56,12 +66,22 @@ export default function RemindersClient({ reminders }: { reminders: Reminder[] }
     setType('medication');
     setFrequency('daily');
     setError('');
+    fe.clearAll();
   }
 
   function handleSubmit() {
     setError('');
-    if (!title.trim()) { setError('أدخل عنوان التذكير'); return; }
-    if (!date || !time) { setError('حدّد تاريخاً ووقتاً'); return; }
+    // ✨ تحقّق لكل حقل (بدل بانر متسلسل يُظهر خطأً واحداً)
+    const errs: Record<string, string> = {};
+    if (!title.trim()) errs.title = 'أدخل عنوان التذكير';
+    if (!date) errs.date = 'اختر التاريخ';
+    if (!time) errs.time = 'اختر الوقت';
+    if (Object.keys(errs).length > 0) {
+      fe.setErrors(errs);
+      fe.focusFirst(errs);
+      return;
+    }
+    fe.clearAll();
 
     const scheduled_at = new Date(`${date}T${time}:00`).toISOString();
 
@@ -139,39 +159,45 @@ export default function RemindersClient({ reminders }: { reminders: Reminder[] }
           </div>
 
           {/* Title */}
-          <div style={{ marginBottom: 12 }}>
+          <div style={{ marginBottom: 12 }} ref={fe.registerRef('title')}>
             <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>العنوان</label>
             <input
               type="text"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => { setTitle(e.target.value); fe.clearError('title'); }}
               placeholder="مثال: حبة ضغط الدم"
               className="scr-input"
-              style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--line)', borderRadius: 10, fontSize: 13, fontFamily: 'inherit' }}
+              aria-invalid={fe.hasError('title')}
+              style={{ width: '100%', padding: '10px 12px', border: `1px solid ${fe.hasError('title') ? 'var(--rose)' : 'var(--line)'}`, borderRadius: 10, fontSize: 13, fontFamily: 'inherit' }}
             />
+            <FieldError message={fe.fieldErrors.title} />
           </div>
 
           {/* Date + Time */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
-            <div>
+            <div ref={fe.registerRef('date')}>
               <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>التاريخ</label>
               <input
                 type="date"
                 value={date}
-                onChange={(e) => setDate(e.target.value)}
+                onChange={(e) => { setDate(e.target.value); fe.clearError('date'); }}
                 className="scr-input"
-                style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--line)', borderRadius: 10, fontSize: 13, fontFamily: 'inherit' }}
+                aria-invalid={fe.hasError('date')}
+                style={{ width: '100%', padding: '10px 12px', border: `1px solid ${fe.hasError('date') ? 'var(--rose)' : 'var(--line)'}`, borderRadius: 10, fontSize: 13, fontFamily: 'inherit' }}
               />
+              <FieldError message={fe.fieldErrors.date} />
             </div>
-            <div>
+            <div ref={fe.registerRef('time')}>
               <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>الوقت</label>
               <input
                 type="time"
                 value={time}
-                onChange={(e) => setTime(e.target.value)}
+                onChange={(e) => { setTime(e.target.value); fe.clearError('time'); }}
                 className="scr-input"
-                style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--line)', borderRadius: 10, fontSize: 13, fontFamily: 'inherit' }}
+                aria-invalid={fe.hasError('time')}
+                style={{ width: '100%', padding: '10px 12px', border: `1px solid ${fe.hasError('time') ? 'var(--rose)' : 'var(--line)'}`, borderRadius: 10, fontSize: 13, fontFamily: 'inherit' }}
               />
+              <FieldError message={fe.fieldErrors.time} />
             </div>
           </div>
 
@@ -208,6 +234,13 @@ export default function RemindersClient({ reminders }: { reminders: Reminder[] }
               {error}
             </div>
           )}
+
+          <MissingFieldsSummary
+            fields={fe.missingFields}
+            labels={REMINDER_FIELD_LABELS}
+            errors={fe.fieldErrors}
+            onJump={fe.jumpTo}
+          />
 
           <div style={{ display: 'flex', gap: 8 }}>
             <button
