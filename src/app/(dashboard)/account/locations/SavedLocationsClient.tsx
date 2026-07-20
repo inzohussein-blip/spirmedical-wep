@@ -5,11 +5,20 @@ import { useRouter } from 'next/navigation';
 import { MapPin, Plus, Trash2, Star, Edit3, X, Save, Crosshair } from 'lucide-react';
 import UserLocationPickerWrapper from '@/components/maps/UserLocationPickerWrapper';
 import { Card, CardHeader, CardTitle, EmptyState, Badge, useConfirm } from '@/components/ui';
+import { useFormErrors } from '@/lib/forms/useFormErrors';
+import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
+import FieldError from '@/components/forms/FieldError';
 import {
   saveLocation,
   updateSavedLocation,
   deleteSavedLocation,
 } from './actions';
+
+const LOC_FIELD_LABELS: Record<string, string> = {
+  label: 'اسم الموقع',
+  address: 'العنوان',
+  coords: 'تحديد على الخريطة',
+};
 import type { SavedLocation } from '@/types/saved-locations';
 import { SAVED_LOCATION_ICONS } from '@/types/saved-locations';
 
@@ -31,6 +40,7 @@ export default function SavedLocationsClient({ initialLocations }: Props) {
   const [icon, setIcon] = useState('🏠');
   const [address, setAddress] = useState('');
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const fe = useFormErrors(['label', 'address', 'coords']);
 
   const resetForm = () => {
     setLabel('');
@@ -38,6 +48,7 @@ export default function SavedLocationsClient({ initialLocations }: Props) {
     setAddress('');
     setCoords(null);
     setError(null);
+    fe.clearAll();
     setEditingId(null);
     setShowForm(false);
   };
@@ -54,18 +65,18 @@ export default function SavedLocationsClient({ initialLocations }: Props) {
   const handleSubmit = () => {
     setError(null);
 
-    if (!label.trim()) {
-      setError('اسم الموقع مطلوب');
+    // ✨ تحقّق لكل حقل (بدل بانر متسلسل يُظهر خطأً واحداً)
+    const errs: Record<string, string> = {};
+    if (!label.trim()) errs.label = 'أدخل اسم الموقع';
+    if (!address.trim()) errs.address = 'أدخل العنوان';
+    if (!coords) errs.coords = 'حدّد الموقع على الخريطة';
+    if (Object.keys(errs).length > 0) {
+      fe.setErrors(errs);
+      fe.focusFirst(errs);
       return;
     }
-    if (!address.trim()) {
-      setError('العنوان مطلوب');
-      return;
-    }
-    if (!coords) {
-      setError('حدّد الموقع على الخريطة');
-      return;
-    }
+    fe.clearAll();
+    if (!coords) return; // تضييق النوع (تم التحقّق أعلاه)
 
     startTransition(async () => {
       if (editingId) {
@@ -226,21 +237,25 @@ export default function SavedLocationsClient({ initialLocations }: Props) {
               >
                 اسم الموقع
               </label>
-              <input
-                type="text"
-                value={label}
-                onChange={(e) => setLabel(e.target.value)}
-                placeholder="مثل: البيت، العمل، بيت الجدّة"
-                maxLength={50}
-                style={{
-                  width: '100%',
-                  padding: '12px 12px',
-                  border: '1px solid var(--line)',
-                  borderRadius: 10,
-                  fontSize: 13,
-                  fontFamily: 'inherit',
-                }}
-              />
+              <div ref={fe.registerRef('label')}>
+                <input
+                  type="text"
+                  value={label}
+                  onChange={(e) => { setLabel(e.target.value); fe.clearError('label'); }}
+                  placeholder="مثل: البيت، العمل، بيت الجدّة"
+                  maxLength={50}
+                  aria-invalid={fe.hasError('label')}
+                  style={{
+                    width: '100%',
+                    padding: '12px 12px',
+                    border: `1px solid ${fe.hasError('label') ? 'var(--rose)' : 'var(--line)'}`,
+                    borderRadius: 10,
+                    fontSize: 13,
+                    fontFamily: 'inherit',
+                  }}
+                />
+                <FieldError message={fe.fieldErrors.label} />
+              </div>
             </div>
 
             {/* الأيقونة */}
@@ -293,24 +308,28 @@ export default function SavedLocationsClient({ initialLocations }: Props) {
               >
                 العنوان النصي
               </label>
-              <input
-                type="text"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="حي، شارع، رقم البيت..."
-                style={{
-                  width: '100%',
-                  padding: '12px 12px',
-                  border: '1px solid var(--line)',
-                  borderRadius: 10,
-                  fontSize: 13,
-                  fontFamily: 'inherit',
-                }}
-              />
+              <div ref={fe.registerRef('address')}>
+                <input
+                  type="text"
+                  value={address}
+                  onChange={(e) => { setAddress(e.target.value); fe.clearError('address'); }}
+                  placeholder="حي، شارع، رقم البيت..."
+                  aria-invalid={fe.hasError('address')}
+                  style={{
+                    width: '100%',
+                    padding: '12px 12px',
+                    border: `1px solid ${fe.hasError('address') ? 'var(--rose)' : 'var(--line)'}`,
+                    borderRadius: 10,
+                    fontSize: 13,
+                    fontFamily: 'inherit',
+                  }}
+                />
+                <FieldError message={fe.fieldErrors.address} />
+              </div>
             </div>
 
             {/* الخريطة */}
-            <div style={{ marginBottom: 12 }}>
+            <div style={{ marginBottom: 12 }} ref={fe.registerRef('coords')}>
               <label
                 style={{
                   fontSize: 11,
@@ -326,16 +345,18 @@ export default function SavedLocationsClient({ initialLocations }: Props) {
                 initialLocation={coords ? { latitude: coords.lat, longitude: coords.lng, address, governorate: '' } : undefined}
                 onLocationChange={(loc) => {
                   setCoords({ lat: loc.latitude, lng: loc.longitude });
-                  if (loc.address) setAddress(loc.address);
+                  fe.clearError('coords');
+                  if (loc.address) { setAddress(loc.address); fe.clearError('address'); }
                 }}
                 height={320}
                 showAddress={true}
                 showGovernorate={false}
                 label="الموقع"
               />
+              <FieldError message={fe.fieldErrors.coords} />
             </div>
 
-            {/* الأخطاء */}
+            {/* الأخطاء (الخادم) */}
             {error && (
               <div
                 style={{
@@ -351,6 +372,13 @@ export default function SavedLocationsClient({ initialLocations }: Props) {
                 ⚠️ {error}
               </div>
             )}
+
+            <MissingFieldsSummary
+              fields={fe.missingFields}
+              labels={LOC_FIELD_LABELS}
+              errors={fe.fieldErrors}
+              onJump={fe.jumpTo}
+            />
 
             {/* الأزرار */}
             <div style={{ display: 'flex', gap: 8 }}>
