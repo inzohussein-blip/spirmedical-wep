@@ -8,6 +8,18 @@ import UserLocationPickerWrapper from '@/components/maps/UserLocationPickerWrapp
 import {
   Calendar, MapPin, Lightbulb, Monitor, Clock, FileText, ChevronUp,
 } from 'lucide-react';
+import { haptic } from '@/lib/haptic';
+import { useFormErrors, type FieldErrors } from '@/lib/forms/useFormErrors';
+import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
+import FieldError from '@/components/forms/FieldError';
+import { APPOINTMENT_FIELD_LABELS } from '@/lib/validations/appointment';
+
+/** نتيجة الإرسال — تسمح بعرض أخطاء الحقول القادمة من الخادم. */
+export interface WizardSubmitResult {
+  ok: boolean;
+  error?: string;
+  fieldErrors?: Record<string, string>;
+}
 
 // ملاحظة: الـ Wizard هذا للخدمات العامة فقط (تمريض، مغذي، استشارات، إلخ)
 // لسحب الدم والتحاليل: استخدم BloodDrawFlow بدلاً منه
@@ -28,7 +40,7 @@ interface BookingData {
 
 interface Props {
   userPhone?: string; // الرقم المُسجّل (إن وجد)
-  onSubmit: (data: BookingData) => Promise<void>;
+  onSubmit: (data: BookingData) => Promise<WizardSubmitResult | void>;
 }
 
 export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
@@ -51,23 +63,39 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const availableDates = generateAvailableDates(7);
 
-  // التنقّل بين الخطوات
-  const canGoNext = (() => {
-    if (step === 1) return data.service !== null;
-    if (step === 2) return data.slot !== null;
-    if (step === 3) {
-      if (data.service?.needsAddress) return data.address.length >= 10;
-      return true;
+  // ✨ أخطاء الحقول (بدل زرّ «التالي» المُعطَّل الصامت)
+  const fe = useFormErrors(['service', 'slot', 'address', 'phone']);
+
+  // يتحقّق من حقول الخطوة الحالية عند «التالي»
+  const validateStep = (s: Step): FieldErrors => {
+    const errs: FieldErrors = {};
+    if (s === 1 && !data.service) errs.service = 'اختر خدمة للمتابعة';
+    if (s === 2 && !data.slot) errs.slot = 'اختر موعداً متاحاً';
+    if (s === 3) {
+      if (data.service?.needsAddress && data.address.trim().length < 10) {
+        errs.address = 'أدخل عنواناً مفصّلاً (محافظة + منطقة + شارع)';
+      }
+      if (!data.service?.needsAddress && data.phone === '' && userPhone === '') {
+        errs.phone = 'أدخل رقم هاتف للتواصل';
+      }
     }
-    return false;
-  })();
+    return errs;
+  };
 
   const goNext = () => {
-    if (!canGoNext) return;
+    const errs = validateStep(step);
+    if (Object.keys(errs).length > 0) {
+      fe.setErrors(errs);
+      fe.focusFirst(errs);
+      haptic.error();
+      return;
+    }
+    fe.clearAll();
     if (step < 4) setStep((step + 1) as Step);
   };
 
   const goBack = () => {
+    fe.clearAll();
     if (step > 1) setStep((step - 1) as Step);
   };
 
@@ -75,7 +103,14 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
     if (!otpVerified) return;
     setSubmitting(true);
     try {
-      await onSubmit(data);
+      const res = await onSubmit(data);
+      if (res && res.ok === false && res.fieldErrors && Object.keys(res.fieldErrors).length > 0) {
+        fe.setErrors(res.fieldErrors);
+        // ارجع لخطوة العنوان/الخدمة إن كان الخطأ هناك
+        if (res.fieldErrors.service) setStep(1);
+        else if (res.fieldErrors.slot) setStep(2);
+        else if (res.fieldErrors.address) setStep(3);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -130,7 +165,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           </div>
 
           {/* قائمة الخدمات */}
-          <div className="services-list">
+          <div className="services-list" ref={fe.registerRef('service')}>
             {SERVICES
               .filter((s) => !selectedCategory || s.category === selectedCategory)
               .filter((s) => s.available)
@@ -138,7 +173,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
                 <button
                   key={service.id}
                   type="button"
-                  onClick={() => setData({ ...data, service })}
+                  onClick={() => { setData({ ...data, service }); fe.clearError('service'); }}
                   className={`service-card ${data.service?.id === service.id ? 'selected' : ''}`}
                 >
                   <div className="service-icon">{service.emoji}</div>
@@ -166,12 +201,13 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
                 </button>
               ))}
           </div>
+          <FieldError message={fe.fieldErrors.service} />
         </div>
       )}
 
       {/* === STEP 2: اختيار الوقت === */}
       {step === 2 && (
-        <div className="step-content">
+        <div className="step-content" ref={fe.registerRef('slot')}>
           <div className="info-banner">
             <Calendar size={16} strokeWidth={2.2} aria-hidden />
             <span>{data.service?.nameAr} · مدة الجلسة {formatDuration(data.service?.duration || 60)}</span>
@@ -212,7 +248,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
                           key={slot.id}
                           type="button"
                           disabled={!slot.available}
-                          onClick={() => setData({ ...data, slot })}
+                          onClick={() => { setData({ ...data, slot }); fe.clearError('slot'); }}
                           className={`time-slot ${isSelected ? 'active' : ''} ${!slot.available ? 'disabled' : ''} ${slot.isPopular ? 'popular' : ''}`}
                         >
                           {slot.displayTime}
@@ -232,6 +268,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
               اختر يوماً من الأيام أعلاه
             </div>
           )}
+          <FieldError message={fe.fieldErrors.slot} />
         </div>
       )}
 
@@ -239,7 +276,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
       {step === 3 && (
         <div className="step-content">
           {data.service?.needsAddress ? (
-            <>
+            <div ref={fe.registerRef('address')}>
               <UserLocationPickerWrapper
                 initialLocation={{
                   latitude: data.latitude ?? undefined,
@@ -255,6 +292,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
                     address: loc.address,
                     governorate: loc.governorate,
                   }));
+                  if (loc.address && loc.address.trim().length >= 10) fe.clearError('address');
                 }}
                 height={280}
                 label="عنوان الخدمة"
@@ -262,7 +300,8 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
                 showAddress
                 showGovernorate
               />
-            </>
+              <FieldError message={fe.fieldErrors.address} />
+            </div>
           ) : (
             <div className="online-banner">
               <div className="online-icon">
@@ -288,18 +327,19 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           </div>
 
           {!data.service?.needsAddress && data.phone === '' && (
-            <div className="field-group">
+            <div className="field-group" ref={fe.registerRef('phone')}>
               <label>رقم الهاتف للتواصل *</label>
               <div className="phone-input-wrap">
                 <span className="phone-prefix">🇮🇶 +964</span>
                 <input
                   type="tel"
                   value={data.phone}
-                  onChange={(e) => setData({ ...data, phone: e.target.value.replace(/\D/g, '') })}
+                  onChange={(e) => { setData({ ...data, phone: e.target.value.replace(/\D/g, '') }); fe.clearError('phone'); }}
                   placeholder="7XX XXX XXXX"
                   maxLength={11}
                 />
               </div>
+              <FieldError message={fe.fieldErrors.phone} />
             </div>
           )}
         </div>
@@ -393,6 +433,16 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
         </div>
       )}
 
+      {/* صندوق «الحقول الناقصة» */}
+      {(step !== 4 || otpVerified) && (
+        <MissingFieldsSummary
+          fields={fe.missingFields}
+          labels={APPOINTMENT_FIELD_LABELS}
+          errors={fe.fieldErrors}
+          onJump={fe.jumpTo}
+        />
+      )}
+
       {/* أزرار التنقّل */}
       {(step !== 4 || otpVerified) && (
         <div className="wizard-actions">
@@ -405,7 +455,6 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
             <button
               type="button"
               onClick={goNext}
-              disabled={!canGoNext}
               className="btn-primary"
             >
               التالي ←

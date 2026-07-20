@@ -179,9 +179,13 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
         has_recurring: !!data.recurring_schedule?.enabled,
       });
       router.push(`/appointments/${result.appointment_id}?new=1`);
-    } else {
-      setError(result.error || 'حدث خطأ');
+      return;
     }
+
+    // فشل: banner عام + إرجاع أخطاء الحقول لتُبرز داخل النموذج
+    setError(result.error || 'حدث خطأ');
+    const fieldErrors = (result as { fieldErrors?: Record<string, string> }).fieldErrors;
+    return { ok: false as const, error: result.error, fieldErrors };
   }
 
   // ─── Handler للخدمات الأخرى (الـ wizard التقليدي) ───
@@ -211,9 +215,21 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
 
     if (result.success) {
       router.push(`/appointments?new=${result.appointmentId}`);
-    } else {
-      setError(result.error || 'حدث خطأ');
+      return;
     }
+
+    // فشل: banner عام + إعادة تعيين مفاتيح أخطاء الخادم لمفاتيح حقول الـ wizard
+    setError(result.error || 'حدث خطأ');
+    const raw = (result as { fieldErrors?: Record<string, string> }).fieldErrors;
+    let fieldErrors: Record<string, string> | undefined;
+    if (raw) {
+      fieldErrors = {};
+      for (const [k, v] of Object.entries(raw)) {
+        const mapped = k === 'service_type' ? 'service' : k === 'scheduled_at' ? 'slot' : k;
+        fieldErrors[mapped] = v;
+      }
+    }
+    return { ok: false as const, error: result.error, fieldErrors };
   }
 
   return (

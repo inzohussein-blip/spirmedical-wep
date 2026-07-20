@@ -17,14 +17,33 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { toast } from '@/components/ui/Toaster';
+import { haptic } from '@/lib/haptic';
 import FamilyMemberPicker from '@/components/family/FamilyMemberPicker';
 import CameraCapture from '@/components/pwa/CameraCapture';
+import UserLocationPickerWrapper, { type LocationData } from '@/components/maps/UserLocationPickerWrapper';
+import { useFormErrors } from '@/lib/forms/useFormErrors';
+import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
+import FieldError from '@/components/forms/FieldError';
+import {
+  validateNursing,
+  validateNursingFields,
+  NURSING_STEP_FIELDS,
+  NURSING_FIELD_LABELS,
+  NURSING_FIELD_ORDER,
+} from '@/lib/validations/nursing';
 import {
   Syringe, Droplet, Bandage, Stethoscope, Activity, Footprints,
   AlertTriangle, FileImage, ShieldCheck, Calendar, MapPin, Phone,
   CheckCircle2, ChevronLeft, ChevronRight, X, Upload, Pill, Repeat,
   User, UserCircle, Users, Clock, Loader2,
 } from 'lucide-react';
+
+/** نتيجة الإرسال — تسمح بعرض أخطاء الحقول القادمة من الخادم. */
+export interface NursingSubmitResult {
+  ok: boolean;
+  error?: string;
+  fieldErrors?: Record<string, string>;
+}
 
 const NURSING_BASE_PRICE = 25000;
 
@@ -92,7 +111,7 @@ interface Props {
   userPhone?: string;
   userAddress?: string;
   userGender?: 'male' | 'female' | null;
-  onSubmit: (data: NursingSubmission) => Promise<void>;
+  onSubmit: (data: NursingSubmission) => Promise<NursingSubmitResult | void>;
   savedLocations?: Array<{
     id: string;
     label: string;
@@ -238,6 +257,8 @@ export default function NursingFlow({
   const [address, setAddress] = useState(userAddress);
   const [phone, setPhone] = useState(userPhone);
   const [notes, setNotes] = useState('');
+  // ✨ V33: إحداثيات GPS من منتقي الخريطة
+  const [gpsLocation, setGpsLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   // ✨ V25.8: Family member
   const searchParams = useSearchParams();
@@ -246,17 +267,40 @@ export default function NursingFlow({
 
   const procedure = PROCEDURES.find((p) => p.id === procedureId);
 
-  // ─── Step validation ────────────────────────
-  const canProceed = () => {
-    switch (step) {
-      case 1: return procedureId !== null;
-      case 2: return allergyConfirmed; // يجب التأكيد على ملء الاستمارة
-      case 3: return prescriptionImage !== null || prescriptionSkipped;
-      case 4: return true; // الجنس اختياري (default any)
-      case 5: return !!scheduledDate && !!scheduledTime;
-      case 6: return address.trim().length > 5 && phone.trim().length >= 10;
-      default: return false;
+  // ✨ أخطاء الحقول + التمرير/التركيز (بدل زرّ «التالي» المُعطَّل الصامت)
+  const fe = useFormErrors(NURSING_FIELD_ORDER);
+  const validationInput = {
+    procedureId,
+    allergyConfirmed,
+    prescriptionImage,
+    prescriptionSkipped,
+    scheduledDate,
+    scheduledTime,
+    address,
+    phone,
+  };
+
+  // منتقي الخريطة: يملأ العنوان + الإحداثيات
+  const handleMapLocation = (loc: LocationData) => {
+    const text =
+      loc.address?.trim() || `📍 ${loc.latitude.toFixed(5)}, ${loc.longitude.toFixed(5)}`;
+    setAddress(text);
+    setGpsLocation({ lat: loc.latitude, lng: loc.longitude });
+    if (text.trim().length >= 10) fe.clearError('address');
+  };
+
+  // التحقّق من الخطوة الحالية عند «التالي»
+  const handleNext = () => {
+    const fields = NURSING_STEP_FIELDS[step] || [];
+    const { ok, fieldErrors } = validateNursingFields(fields, validationInput);
+    if (!ok) {
+      fe.setErrors(fieldErrors);
+      fe.focusFirst(fieldErrors);
+      haptic.error();
+      return;
     }
+    fe.clearAll();
+    setStep((s) => (s + 1) as typeof step);
   };
 
   // ─── Image upload handler ─────────────────────
@@ -272,12 +316,27 @@ export default function NursingFlow({
     const reader = new FileReader();
     reader.onload = (ev) => {
       setPrescriptionImage(ev.target?.result as string);
+      fe.clearError('prescription');
     };
     reader.readAsDataURL(file);
   };
 
   // ─── Submit ─────────────────────────────────
   const handleSubmit = async () => {
+    // ✨ تحقّق كامل قبل الإرسال — يُظهر الحقول الناقصة ويقفز للخطوة المناسبة
+    const { ok, fieldErrors } = validateNursing(validationInput);
+    if (!ok) {
+      fe.setErrors(fieldErrors);
+      const firstBadStep = Object.keys(NURSING_STEP_FIELDS)
+        .map(Number)
+        .find((s) => (NURSING_STEP_FIELDS[s] || []).some((f) => fieldErrors[f]));
+      if (firstBadStep && firstBadStep !== step) {
+        setStep(firstBadStep as typeof step);
+      }
+      fe.focusFirst(fieldErrors);
+      haptic.error();
+      return;
+    }
     if (!procedure) return;
 
     setIsSubmitting(true);
@@ -285,7 +344,7 @@ export default function NursingFlow({
     try {
       const scheduledAt = new Date(`${scheduledDate}T${scheduledTime}:00`).toISOString();
 
-      await onSubmit({
+      const res = await onSubmit({
         procedure_type: procedure.id,
         procedure_label: procedure.label,
         allergy_form: {
@@ -308,7 +367,17 @@ export default function NursingFlow({
         notes: notes.trim() || undefined,
         family_member_id: familyMemberId,
         totalPrice: procedure.price,
+        location_lat: gpsLocation?.lat,
+        location_lng: gpsLocation?.lng,
       });
+      // أخطاء حقول من الخادم
+      if (res && res.ok === false && res.fieldErrors && Object.keys(res.fieldErrors).length > 0) {
+        fe.setErrors(res.fieldErrors);
+        if (res.fieldErrors.address || res.fieldErrors.phone) setStep(6);
+        else if (res.fieldErrors.procedure) setStep(1);
+        fe.focusFirst(res.fieldErrors);
+        setIsSubmitting(false);
+      }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'فشل الحجز');
       setIsSubmitting(false);
@@ -357,7 +426,7 @@ export default function NursingFlow({
 
       {/* ════════ STEP 1: اختيار الإجراء ════════ */}
       {step === 1 && (
-        <section>
+        <section ref={fe.registerRef('procedure')}>
           <h2 style={{ fontSize: 18, fontWeight: 900, margin: '0 0 4px' }}>
             ما هو الإجراء التمريضي المطلوب؟
           </h2>
@@ -373,7 +442,7 @@ export default function NursingFlow({
                 <button
                   key={proc.id}
                   type="button"
-                  onClick={() => setProcedureId(proc.id)}
+                  onClick={() => { setProcedureId(proc.id); fe.clearError('procedure'); }}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -435,12 +504,13 @@ export default function NursingFlow({
               );
             })}
           </div>
+          <FieldError message={fe.fieldErrors.procedure} />
         </section>
       )}
 
       {/* ════════ STEP 2: التحسس الدوائي ════════ */}
       {step === 2 && (
-        <section>
+        <section ref={fe.registerRef('allergy')}>
           <h2 style={{ fontSize: 18, fontWeight: 900, margin: '0 0 4px' }}>
             استمارة التحسس الدوائي
           </h2>
@@ -527,7 +597,7 @@ export default function NursingFlow({
             <input
               type="checkbox"
               checked={allergyConfirmed}
-              onChange={(e) => setAllergyConfirmed(e.target.checked)}
+              onChange={(e) => { setAllergyConfirmed(e.target.checked); if (e.target.checked) fe.clearError('allergy'); }}
               style={{ width: 20, height: 20, accentColor: 'var(--emerald)' }}
             />
             <div style={{ flex: 1 }}>
@@ -539,12 +609,13 @@ export default function NursingFlow({
               </div>
             </div>
           </label>
+          <FieldError message={fe.fieldErrors.allergy} />
         </section>
       )}
 
       {/* ════════ STEP 3: الوصفة + المعدية ════════ */}
       {step === 3 && (
-        <section>
+        <section ref={fe.registerRef('prescription')}>
           <h2 style={{ fontSize: 18, fontWeight: 900, margin: '0 0 4px' }}>
             الوصفة الطبية والحالة الصحية
           </h2>
@@ -614,6 +685,7 @@ export default function NursingFlow({
                     const reader = new FileReader();
                     reader.onloadend = () => {
                       setPrescriptionImage(reader.result as string);
+                      fe.clearError('prescription');
                       toast.success('تم رفع الصورة');
                     };
                     reader.readAsDataURL(file);
@@ -640,7 +712,7 @@ export default function NursingFlow({
               <input
                 type="checkbox"
                 checked={prescriptionSkipped}
-                onChange={(e) => setPrescriptionSkipped(e.target.checked)}
+                onChange={(e) => { setPrescriptionSkipped(e.target.checked); if (e.target.checked) fe.clearError('prescription'); }}
                 style={{ width: 16, height: 16, accentColor: 'var(--amber)' }}
               />
               <div style={{ flex: 1, fontSize: 12 }}>
@@ -711,6 +783,7 @@ export default function NursingFlow({
               fontFamily: 'inherit',
             }}
           />
+          <FieldError message={fe.fieldErrors.prescription} />
         </section>
       )}
 
@@ -819,46 +892,55 @@ export default function NursingFlow({
           </p>
 
           {/* Date */}
-          <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6 }}>
-            التاريخ
-          </label>
-          <input
-            type="date"
-            value={scheduledDate}
-            onChange={(e) => setScheduledDate(e.target.value)}
-            min={getMinDate()}
-            max={getMaxDate()}
-            style={{
-              width: '100%',
-              padding: '12px 14px',
-              background: 'var(--white)',
-              border: '1px solid var(--line)',
-              borderRadius: 12,
-              fontSize: 14,
-              fontFamily: 'inherit',
-              marginBottom: 12,
-            }}
-          />
+          <div ref={fe.registerRef('date')}>
+            <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6 }}>
+              التاريخ
+            </label>
+            <input
+              type="date"
+              value={scheduledDate}
+              onChange={(e) => { setScheduledDate(e.target.value); fe.clearError('date'); }}
+              min={getMinDate()}
+              max={getMaxDate()}
+              aria-invalid={fe.hasError('date')}
+              style={{
+                width: '100%',
+                padding: '12px 14px',
+                background: 'var(--white)',
+                border: `1px solid ${fe.hasError('date') ? 'var(--rose)' : 'var(--line)'}`,
+                borderRadius: 12,
+                fontSize: 14,
+                fontFamily: 'inherit',
+                marginBottom: 4,
+              }}
+            />
+            <FieldError message={fe.fieldErrors.date} />
+          </div>
 
           {/* Time */}
-          <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6 }}>
-            الوقت
-          </label>
-          <input
-            type="time"
-            value={scheduledTime}
-            onChange={(e) => setScheduledTime(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '12px 14px',
-              background: 'var(--white)',
-              border: '1px solid var(--line)',
-              borderRadius: 12,
-              fontSize: 14,
-              fontFamily: 'inherit',
-              marginBottom: 16,
-            }}
-          />
+          <div ref={fe.registerRef('time')} style={{ marginTop: 12 }}>
+            <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6 }}>
+              الوقت
+            </label>
+            <input
+              type="time"
+              value={scheduledTime}
+              onChange={(e) => { setScheduledTime(e.target.value); fe.clearError('time'); }}
+              aria-invalid={fe.hasError('time')}
+              style={{
+                width: '100%',
+                padding: '12px 14px',
+                background: 'var(--white)',
+                border: `1px solid ${fe.hasError('time') ? 'var(--rose)' : 'var(--line)'}`,
+                borderRadius: 12,
+                fontSize: 14,
+                fontFamily: 'inherit',
+                marginBottom: 4,
+              }}
+            />
+            <FieldError message={fe.fieldErrors.time} />
+          </div>
+          <div style={{ marginBottom: 12 }} />
 
           {/* Recurring */}
           <div style={{
@@ -980,7 +1062,11 @@ export default function NursingFlow({
                   <button
                     key={loc.id}
                     type="button"
-                    onClick={() => setAddress(loc.address)}
+                    onClick={() => {
+                      setAddress(loc.address);
+                      setGpsLocation({ lat: loc.lat, lng: loc.lng });
+                      fe.clearError('address');
+                    }}
                     style={{
                       padding: '8px 12px',
                       background: 'var(--paper-3)',
@@ -1000,47 +1086,74 @@ export default function NursingFlow({
           )}
 
           {/* Address */}
-          <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6 }}>
-            <MapPin size={12} style={{ display: 'inline', verticalAlign: -2 }} /> العنوان
-          </label>
-          <textarea
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            placeholder="الحي، الشارع، رقم الدار، علامة مميزة..."
-            rows={2}
-            style={{
-              width: '100%',
-              padding: '12px 14px',
-              background: 'var(--white)',
-              border: '1px solid var(--line)',
-              borderRadius: 12,
-              fontSize: 13,
-              fontFamily: 'inherit',
-              marginBottom: 12,
-              resize: 'vertical',
-            }}
-          />
+          <div ref={fe.registerRef('address')}>
+            <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6 }}>
+              <MapPin size={12} style={{ display: 'inline', verticalAlign: -2 }} /> العنوان
+            </label>
+
+            {/* ✨ V33: منتقي الخريطة التفاعلي (MapLibre) */}
+            <div style={{ marginBottom: 10 }}>
+              <UserLocationPickerWrapper
+                height={220}
+                showAddress={false}
+                showGovernorate={false}
+                label="حدّد موقعك على الخريطة"
+                description="حرّك الدبوس أو اضغط «موقعي الحالي» — سنملأ العنوان تلقائياً"
+                initialLocation={
+                  gpsLocation
+                    ? { latitude: gpsLocation.lat, longitude: gpsLocation.lng }
+                    : undefined
+                }
+                onLocationChange={handleMapLocation}
+              />
+            </div>
+
+            <textarea
+              value={address}
+              onChange={(e) => { setAddress(e.target.value); fe.clearError('address'); }}
+              placeholder="أضف تفاصيل: الحي، الشارع، رقم الدار، علامة مميزة..."
+              rows={2}
+              aria-invalid={fe.hasError('address')}
+              style={{
+                width: '100%',
+                padding: '12px 14px',
+                background: 'var(--white)',
+                border: `1px solid ${fe.hasError('address') ? 'var(--rose)' : 'var(--line)'}`,
+                borderRadius: 12,
+                fontSize: 13,
+                fontFamily: 'inherit',
+                marginBottom: 4,
+                resize: 'vertical',
+              }}
+            />
+            <FieldError message={fe.fieldErrors.address} />
+          </div>
 
           {/* Phone */}
-          <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6 }}>
-            <Phone size={12} style={{ display: 'inline', verticalAlign: -2 }} /> رقم التواصل
-          </label>
-          <input
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="07XXXXXXXXX"
-            style={{
-              width: '100%',
-              padding: '12px 14px',
-              background: 'var(--white)',
-              border: '1px solid var(--line)',
-              borderRadius: 12,
-              fontSize: 13,
-              fontFamily: 'inherit',
-              marginBottom: 12,
-            }}
-          />
+          <div ref={fe.registerRef('phone')} style={{ marginTop: 12 }}>
+            <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6 }}>
+              <Phone size={12} style={{ display: 'inline', verticalAlign: -2 }} /> رقم التواصل
+            </label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => { setPhone(e.target.value.replace(/[^\d]/g, '')); fe.clearError('phone'); }}
+              placeholder="07XXXXXXXXX"
+              maxLength={11}
+              aria-invalid={fe.hasError('phone')}
+              style={{
+                width: '100%',
+                padding: '12px 14px',
+                background: 'var(--white)',
+                border: `1px solid ${fe.hasError('phone') ? 'var(--rose)' : 'var(--line)'}`,
+                borderRadius: 12,
+                fontSize: 13,
+                fontFamily: 'inherit',
+                marginBottom: 4,
+              }}
+            />
+            <FieldError message={fe.fieldErrors.phone} />
+          </div>
 
           {/* Notes */}
           <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6 }}>
@@ -1118,9 +1231,19 @@ export default function NursingFlow({
         borderTop: '1px solid var(--line)',
         padding: '12px 16px',
         display: 'flex',
+        flexDirection: 'column',
         gap: 8,
         zIndex: 100,
       }}>
+        {/* ✨ صندوق «الحقول الناقصة» */}
+        <MissingFieldsSummary
+          fields={fe.missingFields}
+          labels={NURSING_FIELD_LABELS}
+          errors={fe.fieldErrors}
+          onJump={fe.jumpTo}
+        />
+
+        <div style={{ display: 'flex', gap: 8 }}>
         {step > 1 && (
           <button
             type="button"
@@ -1150,34 +1273,7 @@ export default function NursingFlow({
         {step < 6 ? (
           <button
             type="button"
-            onClick={() => canProceed() ? setStep((s) => (s + 1) as typeof step) : null}
-            disabled={!canProceed()}
-            style={{
-              flex: 2,
-              padding: 14,
-              background: canProceed() ? 'var(--emerald)' : 'var(--ink-4)',
-              color: 'var(--paper-3)',
-              border: 'none',
-              borderRadius: 12,
-              cursor: canProceed() ? 'pointer' : 'not-allowed',
-              fontFamily: 'inherit',
-              fontSize: 13,
-              fontWeight: 800,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 6,
-              opacity: canProceed() ? 1 : 0.5,
-            }}
-          >
-            التالي
-            <ChevronLeft size={16} />
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={!canProceed() || isSubmitting}
+            onClick={handleNext}
             style={{
               flex: 2,
               padding: 14,
@@ -1187,13 +1283,38 @@ export default function NursingFlow({
               borderRadius: 12,
               cursor: 'pointer',
               fontFamily: 'inherit',
+              fontSize: 13,
+              fontWeight: 800,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
+            }}
+          >
+            التالي
+            <ChevronLeft size={16} />
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            style={{
+              flex: 2,
+              padding: 14,
+              background: 'var(--emerald)',
+              color: 'var(--paper-3)',
+              border: 'none',
+              borderRadius: 12,
+              cursor: isSubmitting ? 'wait' : 'pointer',
+              fontFamily: 'inherit',
               fontSize: 14,
               fontWeight: 900,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: 6,
-              opacity: (!canProceed() || isSubmitting) ? 0.6 : 1,
+              opacity: isSubmitting ? 0.6 : 1,
             }}
           >
             {isSubmitting ? (
@@ -1203,6 +1324,7 @@ export default function NursingFlow({
             )}
           </button>
         )}
+        </div>
       </div>
     </div>
   );
