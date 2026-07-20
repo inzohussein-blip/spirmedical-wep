@@ -2,7 +2,12 @@
 
 import { useState, useTransition } from 'react';
 import { updateProfile } from './actions';
+import { useFormErrors } from '@/lib/forms/useFormErrors';
+import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
+import FieldError from '@/components/forms/FieldError';
 import { AlertTriangle, CheckCircle2 } from 'lucide-react';
+
+const PROFILE_FIELD_LABELS: Record<string, string> = { fullName: 'الاسم الكامل' };
 
 const GOVERNORATES = [
   'بغداد', 'البصرة', 'أربيل', 'الموصل', 'النجف', 'كربلاء',
@@ -24,10 +29,18 @@ export default function EditProfileClient({ initialFullName, initialPhone, initi
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const fe = useFormErrors(['fullName']);
 
   function handleSubmit() {
     setError('');
     setSuccess(false);
+    // ✨ تحقّق على مستوى الحقل
+    if (fullName.trim().length < 2) {
+      fe.setErrors({ fullName: 'أدخل الاسم الكامل (حرفان على الأقل)' });
+      fe.focusFirst({ fullName: 'x' });
+      return;
+    }
+    fe.clearAll();
     startTransition(async () => {
       const result = await updateProfile({
         full_name: fullName,
@@ -45,16 +58,18 @@ export default function EditProfileClient({ initialFullName, initialPhone, initi
 
   return (
     <form className="auth-form" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} style={{ marginTop: 16 }}>
-      <div className="auth-field">
+      <div className="auth-field" ref={fe.registerRef('fullName')}>
         <label className="auth-field-label">الاسم الكامل *</label>
         <input
           type="text"
           value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          className="auth-input"
+          onChange={(e) => { setFullName(e.target.value); fe.clearError('fullName'); }}
+          className={`auth-input ${fe.hasError('fullName') ? 'error' : ''}`}
+          aria-invalid={fe.hasError('fullName')}
           required
           minLength={2}
         />
+        <FieldError message={fe.fieldErrors.fullName} />
       </div>
 
       <div className="auth-field">
@@ -96,6 +111,13 @@ export default function EditProfileClient({ initialFullName, initialPhone, initi
           تم حفظ التعديلات بنجاح
         </div>
       )}
+
+      <MissingFieldsSummary
+        fields={fe.missingFields}
+        labels={PROFILE_FIELD_LABELS}
+        errors={fe.fieldErrors}
+        onJump={fe.jumpTo}
+      />
 
       <button type="submit" className="auth-cta" disabled={isPending}>
         {isPending ? 'جارٍ الحفظ...' : 'حفظ التغييرات'}

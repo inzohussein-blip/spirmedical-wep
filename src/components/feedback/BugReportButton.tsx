@@ -3,7 +3,12 @@
 import { useState, useTransition } from 'react';
 import { Bug, X, Send, Loader2, AlertTriangle } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
+import { useFormErrors } from '@/lib/forms/useFormErrors';
+import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
+import FieldError from '@/components/forms/FieldError';
 import { reportBug } from '@/app/admin/bugs/actions';
+
+const BUG_FIELD_LABELS: Record<string, string> = { title: 'العنوان', description: 'الوصف' };
 
 /**
  * ═══════════════════════════════════════════════════════════════
@@ -24,12 +29,19 @@ export default function BugReportButton() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [severity, setSeverity] = useState<'critical' | 'high' | 'medium' | 'low'>('medium');
+  const fe = useFormErrors(['title', 'description']);
 
   const handleSubmit = () => {
-    if (!title.trim() || !description.trim()) {
-      toast.error('العنوان والوصف مطلوبان');
+    // ✨ تحقّق لكل حقل (بدل توست + زر مُعطَّل صامت)
+    const errs: Record<string, string> = {};
+    if (!title.trim()) errs.title = 'أدخل عنواناً مختصراً';
+    if (!description.trim()) errs.description = 'صف العطل بالتفصيل';
+    if (Object.keys(errs).length > 0) {
+      fe.setErrors(errs);
+      fe.focusFirst(errs);
       return;
     }
+    fe.clearAll();
 
     startTransition(async () => {
       const r = await reportBug({
@@ -171,32 +183,36 @@ export default function BugReportButton() {
             </div>
 
             {/* Title */}
-            <div style={{ marginBottom: 12 }}>
+            <div style={{ marginBottom: 12 }} ref={fe.registerRef('title')}>
               <label style={labelStyle}>عنوان مختصر *</label>
               <input
                 type="text"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => { setTitle(e.target.value); fe.clearError('title'); }}
                 placeholder="مثلاً: زر الحجز لا يعمل"
-                style={inputStyle}
+                aria-invalid={fe.hasError('title')}
+                style={{ ...inputStyle, borderColor: fe.hasError('title') ? 'var(--rose)' : undefined }}
                 maxLength={100}
               />
+              <FieldError message={fe.fieldErrors.title} />
             </div>
 
             {/* Description */}
-            <div style={{ marginBottom: 14 }}>
+            <div style={{ marginBottom: 14 }} ref={fe.registerRef('description')}>
               <label style={labelStyle}>الوصف التفصيلي *</label>
               <textarea
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={(e) => { setDescription(e.target.value); fe.clearError('description'); }}
                 placeholder="ماذا حدث؟ ما الذي توقّعته؟ متى يحدث؟"
                 rows={4}
-                style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit' }}
+                aria-invalid={fe.hasError('description')}
+                style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit', borderColor: fe.hasError('description') ? 'var(--rose)' : undefined }}
                 maxLength={500}
               />
               <div style={{ fontSize: 9, color: 'var(--ink-3)', marginTop: 2, textAlign: 'end' }}>
                 {description.length}/500
               </div>
+              <FieldError message={fe.fieldErrors.description} />
             </div>
 
             {/* Info */}
@@ -218,6 +234,13 @@ export default function BugReportButton() {
               </span>
             </div>
 
+            <MissingFieldsSummary
+              fields={fe.missingFields}
+              labels={BUG_FIELD_LABELS}
+              errors={fe.fieldErrors}
+              onJump={fe.jumpTo}
+            />
+
             {/* Buttons */}
             <div style={{ display: 'flex', gap: 8 }}>
               <button
@@ -234,13 +257,13 @@ export default function BugReportButton() {
               <button
                 type="button"
                 onClick={handleSubmit}
-                disabled={isPending || !title.trim() || !description.trim()}
+                disabled={isPending}
                 style={{
                   flex: 2, padding: 12,
-                  background: (title.trim() && description.trim()) ? 'var(--rose)' : 'var(--paper-3)',
-                  color: (title.trim() && description.trim()) ? 'var(--paper-3)' : 'var(--ink-3)',
+                  background: 'var(--rose)',
+                  color: 'var(--paper-3)',
                   border: 'none', borderRadius: 10,
-                  cursor: isPending || !title.trim() || !description.trim() ? 'not-allowed' : 'pointer',
+                  cursor: isPending ? 'wait' : 'pointer',
                   fontFamily: 'inherit', fontSize: 13, fontWeight: 900,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                 }}

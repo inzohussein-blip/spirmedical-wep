@@ -8,7 +8,12 @@ import {
   ThumbsUp, ThumbsDown, Lightbulb, Heart,
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
+import { useFormErrors } from '@/lib/forms/useFormErrors';
+import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
+import FieldError from '@/components/forms/FieldError';
 import { submitFeedback } from '@/app/admin/feedback/actions';
+
+const FEEDBACK_FIELD_LABELS: Record<string, string> = { message: 'الرسالة' };
 
 const TYPES = [
   { id: 'praise' as const,          label: 'مدح',          emoji: '😊', icon: ThumbsUp,    color: 'var(--emerald)' },
@@ -39,16 +44,21 @@ export default function FeedbackClient() {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [email, setEmail] = useState('');
+  const fe = useFormErrors(['message']);
 
   const handleSubmit = () => {
+    // ✨ تحقّق على مستوى الحقل (بدل توست + زر مُعطَّل صامت)
     if (!message.trim()) {
-      toast.error('الرسالة مطلوبة');
+      fe.setErrors({ message: 'أدخل رسالتك' });
+      fe.focusFirst({ message: 'x' });
       return;
     }
-    if (message.length < 10) {
-      toast.error('الرسالة قصيرة جداً (10 أحرف على الأقل)');
+    if (message.trim().length < 10) {
+      fe.setErrors({ message: 'الرسالة قصيرة جداً (10 أحرف على الأقل)' });
+      fe.focusFirst({ message: 'x' });
       return;
     }
+    fe.clearAll();
 
     startTransition(async () => {
       const r = await submitFeedback({
@@ -200,19 +210,21 @@ export default function FeedbackClient() {
         </div>
 
         {/* Message */}
-        <div style={{ marginBottom: 12 }}>
+        <div style={{ marginBottom: 12 }} ref={fe.registerRef('message')}>
           <label style={fieldLabel}>الرسالة * (10 أحرف على الأقل)</label>
           <textarea
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => { setMessage(e.target.value); fe.clearError('message'); }}
             placeholder="اكتب رأيك بحرّية..."
             rows={6}
-            style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit', minHeight: 100 }}
+            aria-invalid={fe.hasError('message')}
+            style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit', minHeight: 100, borderColor: fe.hasError('message') ? 'var(--rose)' : undefined }}
             maxLength={1000}
           />
           <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 4, textAlign: 'end' }}>
             {message.length}/1000
           </div>
+          <FieldError message={fe.fieldErrors.message} />
         </div>
 
         {/* Optional contact */}
@@ -232,19 +244,26 @@ export default function FeedbackClient() {
           </div>
         </div>
 
+        <MissingFieldsSummary
+          fields={fe.missingFields}
+          labels={FEEDBACK_FIELD_LABELS}
+          errors={fe.fieldErrors}
+          onJump={fe.jumpTo}
+        />
+
         {/* Submit */}
         <button
           type="button"
           onClick={handleSubmit}
-          disabled={isPending || !message.trim()}
+          disabled={isPending}
           style={{
             width: '100%',
             padding: 14,
-            background: message.trim() ? 'var(--emerald)' : 'var(--paper-3)',
-            color: message.trim() ? 'var(--paper-3)' : 'var(--ink-3)',
+            background: 'var(--emerald)',
+            color: 'var(--paper-3)',
             border: 'none',
             borderRadius: 12,
-            cursor: !message.trim() || isPending ? 'not-allowed' : 'pointer',
+            cursor: isPending ? 'wait' : 'pointer',
             fontFamily: 'inherit',
             fontSize: 14,
             fontWeight: 900,
