@@ -6,10 +6,15 @@ import {
   Clock, Calendar, AlertTriangle, CheckCircle2,
 } from 'lucide-react';
 import { useConfirm } from '@/components/ui';
-import { 
+import { useFormErrors } from '@/lib/forms/useFormErrors';
+import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
+import FieldError from '@/components/forms/FieldError';
+import {
   addUserMedication, removeUserMedication, toggleUserMedicationActive,
   type UserMedicationInput,
 } from '@/app/(dashboard)/services/pharmacies/actions';
+
+const MED_FIELD_LABELS: Record<string, string> = { custom_name: 'اسم الدواء' };
 
 interface Medication {
   id: string;
@@ -286,6 +291,7 @@ function AddMedicationModal({ onClose, onSaved }: { onClose: () => void; onSaved
   });
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const fe = useFormErrors(['custom_name']);
 
   function toggleTiming(t: string) {
     const current = formData.timing || [];
@@ -297,11 +303,13 @@ function AddMedicationModal({ onClose, onSaved }: { onClose: () => void; onSaved
 
   function handleSave() {
     if (!formData.custom_name?.trim()) {
-      setError('يرجى إدخال اسم الدواء');
+      fe.setErrors({ custom_name: 'أدخل اسم الدواء' });
+      fe.focusFirst({ custom_name: 'x' });
       return;
     }
+    fe.clearAll();
     setError(null);
-    
+
     startTransition(async () => {
       const result = await addUserMedication(formData);
       if (result.ok) {
@@ -346,15 +354,17 @@ function AddMedicationModal({ onClose, onSaved }: { onClose: () => void; onSaved
         </div>
 
         <div style={{ display: 'grid', gap: 12 }}>
-          <div>
+          <div ref={fe.registerRef('custom_name')}>
             <label style={inputLabelStyle}>اسم الدواء *</label>
             <input
               type="text"
               value={formData.custom_name || ''}
-              onChange={(e) => setFormData({ ...formData, custom_name: e.target.value })}
+              onChange={(e) => { setFormData({ ...formData, custom_name: e.target.value }); fe.clearError('custom_name'); }}
               placeholder="مثال: بنادول 500mg"
-              style={inputStyle}
+              aria-invalid={fe.hasError('custom_name')}
+              style={{ ...inputStyle, ...(fe.hasError('custom_name') ? { borderColor: 'var(--rose)' } : {}) }}
             />
+            <FieldError message={fe.fieldErrors.custom_name} />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -457,6 +467,15 @@ function AddMedicationModal({ onClose, onSaved }: { onClose: () => void; onSaved
             {error}
           </div>
         )}
+
+        <div style={{ marginTop: 12 }}>
+          <MissingFieldsSummary
+            fields={fe.missingFields}
+            labels={MED_FIELD_LABELS}
+            errors={fe.fieldErrors}
+            onJump={fe.jumpTo}
+          />
+        </div>
 
         <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
           <button

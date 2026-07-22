@@ -4,7 +4,12 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { submitRating } from './actions';
+import { useFormErrors } from '@/lib/forms/useFormErrors';
+import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
+import FieldError from '@/components/forms/FieldError';
 import type { LucideIcon } from 'lucide-react';
+
+const RATE_FIELD_LABELS: Record<string, string> = { overall: 'التقييم العام' };
 import {
   GraduationCap, Clock, Smile, Sparkles, Leaf, Stethoscope, Zap, Target,
   Timer, Wind, HelpCircle,
@@ -43,6 +48,7 @@ export default function RateClient() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
+  const fe = useFormErrors(['overall']);
 
   const toggleTag = (tagId: string) => {
     setSelectedTags(prev =>
@@ -54,9 +60,11 @@ export default function RateClient() {
     setError('');
 
     if (overallRating === 0) {
-      setError('يرجى اختيار التقييم العام أولاً');
+      fe.setErrors({ overall: 'اختر عدد النجوم للتقييم العام' });
+      fe.focusFirst({ overall: 'x' });
       return;
     }
+    fe.clearAll();
 
     // وضع المعاينة: تخطي DB
     if (orderId === 'preview') {
@@ -137,12 +145,12 @@ export default function RateClient() {
 
           <div className="rate-question">كيف كانت تجربتك؟</div>
 
-          <div className="rate-stars-big">
+          <div className="rate-stars-big" ref={fe.registerRef('overall')}>
             {[1, 2, 3, 4, 5].map(star => (
               <button
                 key={star}
                 type="button"
-                onClick={() => setOverallRating(star)}
+                onClick={() => { setOverallRating(star); fe.clearError('overall'); }}
                 className={`rate-star-big ${overallRating >= star ? 'active' : ''}`}
                 aria-label={`${star} نجوم`}
               >
@@ -150,6 +158,7 @@ export default function RateClient() {
               </button>
             ))}
           </div>
+          <FieldError message={fe.fieldErrors.overall} />
 
           {overallRating > 0 && (
             <div className="rate-feedback">
@@ -301,6 +310,13 @@ export default function RateClient() {
                 <span>{error}</span>
               </div>
             )}
+
+            <MissingFieldsSummary
+              fields={fe.missingFields}
+              labels={RATE_FIELD_LABELS}
+              errors={fe.fieldErrors}
+              onJump={fe.jumpTo}
+            />
 
             {/* زر الإرسال */}
             <button
