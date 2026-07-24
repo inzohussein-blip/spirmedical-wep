@@ -41,7 +41,7 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
       .eq('role', 'specialist')
       .eq('approval_status', 'approved')
       .eq('is_suspended', false)
-      .eq('specialist_type', (order as any).required_specialist_type ?? 'doctor'),
+      .eq('specialist_type', order.required_specialist_type ?? 'doctor'),
     getOrderLocation(params.id),
     getAssignedSpecialistLocation(params.id),
   ]);
@@ -116,7 +116,7 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
               <InfoRow icon="🆔" label="رقم الطلب" value={order.id.slice(0, 8) + '...'} dir="ltr" />
               <InfoRow icon="📅" label="تاريخ الإنشاء" value={new Date(order.created_at).toLocaleDateString('ar-IQ')} />
               {order.address && <InfoRow icon="📍" label="العنوان" value={order.address} />}
-              {(order as any).duration_minutes && <InfoRow icon="⏱" label="المدة" value={`${(order as any).duration_minutes} دقيقة`} />}
+              {order.duration_minutes && <InfoRow icon="⏱" label="المدة" value={`${order.duration_minutes} دقيقة`} />}
             </div>
 
             {notesText && (

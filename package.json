@@ -15,7 +15,8 @@
     "db:link": "supabase link --project-ref ioulxemokusfeykjcaxg",
     "db:push": "supabase db push",
     "db:diff": "supabase db diff -f new_migration",
-    "db:pull": "supabase db pull"
+    "db:pull": "supabase db pull",
+    "db:types": "supabase gen types typescript --linked > src/types/database.ts"
   },
   "dependencies": {
     "@fontsource/fraunces": "^5.0.20",
