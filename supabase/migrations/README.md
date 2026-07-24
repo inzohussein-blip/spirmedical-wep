@@ -40,8 +40,10 @@ SQL Editor).
    (كل الترحيلات idempotent، فإعادة التطبيق آمنة أصلاً — لكن `repair` أنظف.)
 
 **بعدها:** كل ترحيل جديد (`0011_*.sql` …) يُدمج إلى `main` → الـworkflow يشغّل
-`supabase db push` فيُطبَّق فقط الجديد. للتطبيق اليدوي محلياً: `npm run db:push`.
-لتوليد ترحيل من تغييرات محلية: `npm run db:diff`.
+`supabase db push` فيُطبَّق فقط الجديد، **ثم يُعيد توليد `src/types/database.ts`
+من المخطّط الحيّ ويلتزمه تلقائياً** (`[skip ci]`) — فلا كتابة أنواع يدوية بعد الآن.
+للتطبيق اليدوي محلياً: `npm run db:push` · توليد الأنواع: `npm run db:types` ·
+توليد ترحيل من تغييرات محلية: `npm run db:diff`.
 
 **بديل/إضافة — تكامل اللوحة:** يمكن أيضاً تفعيل تكامل Supabase↔GitHub من
 Dashboard → Integrations → GitHub (يقرأ `supabase/migrations` + `config.toml`)،

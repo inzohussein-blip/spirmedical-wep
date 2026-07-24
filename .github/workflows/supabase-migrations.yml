@@ -36,6 +36,8 @@ jobs:
     name: Apply migrations (db push)
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: write   # لالتزام أنواع Database المُعاد توليدها
 
     steps:
       - name: Checkout
@@ -73,3 +75,24 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
         run: supabase db push
+
+      # ─── إغلاق الحلقة: بعد تطبيق الترحيلات، أعِد توليد أنواع Database ───
+      # من المخطّط الحيّ والتزمها تلقائياً → لا كتابة أنواع يدوية بعد الآن.
+      - name: Regenerate DB types
+        if: steps.guard.outputs.run == 'true'
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase gen types typescript --linked > src/types/database.ts
+
+      - name: Commit regenerated types (if changed)
+        if: steps.guard.outputs.run == 'true'
+        run: |
+          if git diff --quiet -- src/types/database.ts; then
+            echo "لا تغيّر في الأنواع."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add src/types/database.ts
+            git commit -m "chore(types): regenerate database.ts from live schema [skip ci]"
+            git push
+          fi

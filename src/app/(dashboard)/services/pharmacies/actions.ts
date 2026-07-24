@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import type { Json } from '@/types/database';
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -56,23 +57,18 @@ export async function createPharmacyReservation(input: CreateReservationInput) {
   }
 
   
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      insert: (d: object) => { select: () => { single: () => Promise<{ data: { id: string } | null; error: { message: string } | null }> } };
-    };
-  };
-
   // expires_at = 24 ساعة من الآن
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
 
-  const { data: reservation, error } = await supabaseAny
+  const { data: reservation, error } = await supabase
     .from('pharmacy_reservations')
     .insert({
       user_id: user.id,
       pharmacy_id: input.pharmacy_id,
       prescription_id: input.prescription_id || null,
       family_member_id: input.family_member_id || null,
-      items: input.items,
+      // JSONB — ReservationItem[] صالحة كـ JSON وقت التشغيل (cast حدّي)
+      items: input.items as unknown as Json,
       prescription_image_url: input.prescription_image_url || null,
       customer_notes: input.customer_notes || null,
       expected_pickup_at: input.expected_pickup_at || null,
@@ -99,13 +95,7 @@ export async function cancelPharmacyReservation(reservationId: string, reason?: 
   if (!user) return { ok: false, error: 'unauthorized' };
 
   
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      update: (d: object) => { eq: (col: string, val: string) => { eq: (col: string, val: string) => Promise<{ error: { message: string } | null }> } };
-    };
-  };
-
-  const { error } = await supabaseAny
+  const { error } = await supabase
     .from('pharmacy_reservations')
     .update({
       status: 'cancelled',
@@ -245,13 +235,7 @@ export async function addUserMedication(input: UserMedicationInput) {
   }
 
   
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      insert: (d: object) => { select: () => { single: () => Promise<{ data: { id: string } | null; error: { message: string } | null }> } };
-    };
-  };
-
-  const { data, error } = await supabaseAny
+  const { data, error } = await supabase
     .from('user_medications')
     .insert({
       user_id: user.id,
@@ -286,13 +270,7 @@ export async function removeUserMedication(medicationId: string) {
   if (!user) return { ok: false, error: 'unauthorized' };
 
   
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      delete: () => { eq: (col: string, val: string) => { eq: (col: string, val: string) => Promise<{ error: { message: string } | null }> } };
-    };
-  };
-
-  const { error } = await supabaseAny
+  const { error } = await supabase
     .from('user_medications')
     .delete()
     .eq('id', medicationId)
@@ -310,14 +288,7 @@ export async function toggleUserMedicationActive(medicationId: string) {
   if (!user) return { ok: false, error: 'unauthorized' };
 
   
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      select: (cols: string) => { eq: (col: string, val: string) => { eq: (col: string, val: string) => { single: () => Promise<{ data: { is_active: boolean } | null }> } } };
-      update: (d: object) => { eq: (col: string, val: string) => Promise<{ error: unknown }> };
-    };
-  };
-
-  const { data: med } = await supabaseAny
+  const { data: med } = await supabase
     .from('user_medications')
     .select('is_active')
     .eq('id', medicationId)
@@ -326,7 +297,7 @@ export async function toggleUserMedicationActive(medicationId: string) {
 
   if (!med) return { ok: false, error: 'الدواء غير موجود' };
 
-  await supabaseAny
+  await supabase
     .from('user_medications')
     .update({ is_active: !med.is_active })
     .eq('id', medicationId);
