@@ -64,11 +64,12 @@ export default async function SpecialistOrderDetailPage({
     .single();
 
   // ─── V25.43: جلب lab_order + lab_results لو موجودة ───
-  const orderAny = order as Record<string, unknown>;
-  const labOrderId = orderAny.lab_order_id as string | null | undefined;
-  
-    const supabaseAny = supabase as any;
-  
+  // lab_order_id مُعرّف الآن في أنواع appointments (لا حاجة لـ cast).
+  const labOrderId = order.lab_order_id;
+
+  // lab_results لم يُضَف بعد لأنواع Database → يبقى cast لهذا المسار.
+  const supabaseAny = supabase as any;
+
   let labOrderData: { test_ids: string[] } | null = null;
   let existingLabResults: Array<{
     test_id: string;
@@ -144,17 +145,17 @@ export default async function SpecialistOrderDetailPage({
           />
         );
       case 'nurse':
-        return <NursingActions {...commonProps} initialData={(orderAny.nursing_actions ?? null) as never} />;
+        return <NursingActions {...commonProps} initialData={(order.nursing_actions ?? null) as never} />;
       case 'doctor':
-        return <PrescriptionForm {...commonProps} initialData={(orderAny.prescription_data ?? null) as never} patientId={order.user_id} />;
+        return <PrescriptionForm {...commonProps} initialData={(order.prescription_data ?? null) as never} patientId={order.user_id} />;
       case 'pharmacist':
-        return <DrugConsultation {...commonProps} initialData={(orderAny.prescription_data ?? null) as never} />;
+        return <DrugConsultation {...commonProps} initialData={(order.prescription_data ?? null) as never} />;
       case 'physio':
-        return <SessionPlan {...commonProps} initialData={(orderAny.session_plan ?? null) as never} />;
+        return <SessionPlan {...commonProps} initialData={(order.session_plan ?? null) as never} />;
       case 'psychologist':
-        return <SessionNotes {...commonProps} initialData={(orderAny.session_plan ?? null) as never} />;
+        return <SessionNotes {...commonProps} initialData={(order.session_plan ?? null) as never} />;
       case 'nutritionist':
-        return <MealPlan {...commonProps} initialData={(orderAny.session_plan ?? null) as never} />;
+        return <MealPlan {...commonProps} initialData={(order.session_plan ?? null) as never} />;
       default:
         return null;
     }

@@ -174,7 +174,7 @@ export default async function AppointmentDetailsPage({ params }: Props) {
               <span style={{ fontSize: '12px', fontWeight: 700 }}>{formatDateArabic(appointment.scheduled_at)}</span>
             </div>
 
-            {(appointment as any).duration_minutes && (
+            {appointment.duration_minutes && (
               <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -187,12 +187,12 @@ export default async function AppointmentDetailsPage({ params }: Props) {
                   المدة
                 </span>
                 <span style={{ fontSize: '12px', fontWeight: 700 }}>
-                  {formatDuration((appointment as any).duration_minutes)}
+                  {formatDuration(appointment.duration_minutes)}
                 </span>
               </div>
             )}
 
-            {(appointment as any).otp_channel && (
+            {appointment.otp_channel && (
               <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -205,7 +205,7 @@ export default async function AppointmentDetailsPage({ params }: Props) {
                   قناة التواصل
                 </span>
                 <span style={{ fontSize: '12px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                  {(appointment as any).otp_channel === 'whatsapp' ? (
+                  {appointment.otp_channel === 'whatsapp' ? (
                     <><MessageCircle size={13} strokeWidth={2.2} /> WhatsApp</>
                   ) : (
                     <><Send size={13} strokeWidth={2.2} /> Telegram</>
@@ -304,12 +304,12 @@ export default async function AppointmentDetailsPage({ params }: Props) {
         <AppointmentTimeline
           currentStatus={appointment.status}
           createdAt={appointment.created_at}
-          confirmedAt={(appointment as any).confirmed_at}
+          confirmedAt={appointment.confirmed_at}
           scheduledAt={appointment.scheduled_at}
-          completedAt={(appointment as any).completed_at}
-          cancelledAt={(appointment as any).cancelled_at}
-          cancellationReason={(appointment as any).cancellation_reason}
-          isBloodDraw={(appointment as any).service_id === 'blood-draw'}
+          completedAt={appointment.completed_at}
+          cancelledAt={appointment.cancelled_at}
+          cancellationReason={appointment.cancellation_reason}
+          isBloodDraw={appointment.service_id === 'blood-draw'}
         />
       </div>
     </div>
