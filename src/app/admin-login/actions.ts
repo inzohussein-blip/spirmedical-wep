@@ -181,13 +181,10 @@ export async function adminCreate(formData: FormData) {
 
     const userId = data.user!.id;
 
-    // استخدم نفس admin client للكتابة (يتجاوز RLS)
-    const adminDb = admin as unknown as { from: (t: string) => any };
-
-    // رقّ الحساب للرول المختار + موافقة فورية
-    await adminDb
+    // رقّ الحساب للرول المختار + موافقة فورية (admin client مُعرَّف بالنوع)
+    await admin
       .from('users')
-      .update({ full_name: fullName, role: grantedRole, approval_status: 'approved' })
+      .update({ full_name: fullName, role: grantedRole, approval_status: 'approved' } as never)
       .eq('id', userId);
 
     logAuditEvent({

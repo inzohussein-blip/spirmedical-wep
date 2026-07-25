@@ -23,22 +23,13 @@ export default async function AdminNursesPage() {
   }
 
   // جلب كل الـ specialists من نوع nurse
-  
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      
-      select: (cols: string) => any;
-    };
-  };
-
-  
-  const nursesQuery = await supabaseAny
+  const nursesQuery = await supabase
     .from('users')
     .select('id, full_name, phone, governorate, approval_status, created_at')
     .eq('specialist_type', 'nurse')
     .order('created_at', { ascending: false });
 
-  const allNurses = (nursesQuery.data as Array<{
+  const allNurses = (nursesQuery.data as unknown as Array<{
     id: string;
     full_name: string | null;
     phone: string | null;
@@ -50,19 +41,19 @@ export default async function AdminNursesPage() {
   // جلب الـ ratings + visit counts
   // التقييمات تُكتب في جدول `ratings` العام (specialist_id + overall_rating)،
   // وليس في `nurse_ratings` الذي لا يُكتب إطلاقاً — فكانت اللوحة فارغة دائماً.
-  const ratingsRes = await supabaseAny
+  const ratingsRes = await supabase
     .from('ratings')
     .select('specialist_id, overall_rating');
 
-  const ratings = ((ratingsRes.data as Array<{ specialist_id: string | null; overall_rating: number }>) ?? [])
+  const ratings = ((ratingsRes.data as unknown as Array<{ specialist_id: string | null; overall_rating: number }>) ?? [])
     .filter((r): r is { specialist_id: string; overall_rating: number } => r.specialist_id != null)
     .map((r) => ({ specialist_id: r.specialist_id, rating: r.overall_rating }));
   
-  const visitsRes = await supabaseAny
+  const visitsRes = await supabase
     .from('nursing_visit_history')
     .select('specialist_id');
-  
-  const visits = (visitsRes.data as Array<{ specialist_id: string }>) ?? [];
+
+  const visits = (visitsRes.data as unknown as Array<{ specialist_id: string }>) ?? [];
 
   // حساب الإحصاءات لكل ممرض
   const stats = new Map<string, { ratingAvg: number; ratingCount: number; visits: number }>();
