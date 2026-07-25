@@ -250,10 +250,8 @@ export async function saveLabResults(
     return { ok: false, error: 'permission_denied' };
   }
 
-    const supabaseAny = supabase as any;
-
-  // جلب الـ appointment + lab_order (نستخدم supabaseAny لأن lab_order_id جديد)
-  const { data: appointment } = await supabaseAny
+  // جلب الـ appointment + lab_order
+  const { data: appointment } = await supabase
     .from('appointments')
     .select('id, user_id, lab_order_id, assigned_specialist_id, specialist_id')
     .eq('id', appointmentId)
@@ -275,7 +273,7 @@ export async function saveLabResults(
   }
 
   // حذف النتائج القديمة (لو في) وإضافة الجديدة
-  await supabaseAny
+  await supabase
     .from('lab_results')
     .delete()
     .eq('lab_order_id', labOrderId);
@@ -299,21 +297,21 @@ export async function saveLabResults(
     entered_by: user.id,
   }));
 
-  const { error: insertError } = await supabaseAny
+  const { error: insertError } = await supabase
     .from('lab_results')
-    .insert(resultsToInsert);
+    .insert(resultsToInsert as never);
 
   if (insertError) {
     return { ok: false, error: insertError.message };
   }
 
   // تحديث lab_order status
-  await supabaseAny
+  await supabase
     .from('lab_orders')
-    .update({ 
+    .update({
       status: 'results_ready',
       updated_at: new Date().toISOString(),
-    })
+    } as never)
     .eq('id', labOrderId);
 
   // تحديث appointment status
@@ -336,9 +334,7 @@ export async function updateLabOrderStatus(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 
-    const supabaseAny = supabase as any;
-
-  const { data: appointment } = await supabaseAny
+  const { data: appointment } = await supabase
     .from('appointments')
     .select('id, lab_order_id, assigned_specialist_id, specialist_id')
     .eq('id', appointmentId)
@@ -349,9 +345,9 @@ export async function updateLabOrderStatus(
   const labOrderId = appointment.lab_order_id;
   if (!labOrderId) return { ok: false, error: 'no_lab_order' };
 
-  await supabaseAny
+  await supabase
     .from('lab_orders')
-    .update({ status: newStatus })
+    .update({ status: newStatus } as never)
     .eq('id', labOrderId);
 
   revalidatePath(`/specialist/orders/${appointmentId}`);
