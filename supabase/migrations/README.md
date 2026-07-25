@@ -100,3 +100,11 @@ Postgres محلّي متوافق مع Supabase (سكيمات `auth`/`storage`، 
   `user_id`/`notification_type`/`payload`، بينما النوع المكتوب من الترحيل يعرّف
   `recipient_phone`/`channel`/`body`. إمّا النوع قديم أو الإدراج يستهدف أعمدة غير
   موجودة (bug كامن). أُبقي هناك cast مُضيَّق حتى يتأكّد المالك من المخطّط الحيّ.
+
+- **جداول يستعملها الكود لكنها غائبة عن `database.ts` المكتوب يدوياً** —
+  `notifications`، `service_favorites`، `pharmacy_favorites`، `pharmacy_ratings`،
+  `cosmetic_wishlist`، `cosmetic_product_reviews`، `admin_requests`،
+  `vaccines`/`vaccination_records`، `idempotency_keys`، وجداول التقييم المتخصّصة
+  (`hospital_ratings`/`dental_ratings`/`optical_ratings`…). تُبقى استعلاماتها
+  بـ cast مُضيَّق حتى يولّد `npm run db:types` أنواعها من المخطّط الحيّ، فتُزال
+  الـ casts آلياً حينها.
