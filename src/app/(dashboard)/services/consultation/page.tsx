@@ -29,20 +29,6 @@ export default async function ConsultationPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 
-  
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      select: (cols: string) => unknown;
-    };
-  };
-
-  
-  const doctorsRes = await (supabaseAny.from('doctors')
-    .select('id, specialty, available_for_video, available_for_clinic, full_name') as Promise<{ data: unknown }> & {
-      eq: (col: string, val: boolean) => Promise<{ data: unknown }>;
-    });
-
-  
   const allDoctorsRaw = (await supabase
     .from('doctors')
     .select('id, specialty, available_for_video, available_for_clinic, full_name')
@@ -58,9 +44,8 @@ export default async function ConsultationPage() {
   }>;
 
   // طبيبي المختار - الأطباء اللي تعامل معاهم قبلاً
-  
-  const previousRes = await (supabaseAny.from('appointments').select('doctor_id') as Promise<{ data: unknown }>);
-  const previousData = (previousRes as { data: Array<{ doctor_id: string | null }> | null }).data ?? [];
+  const previousRes = await supabase.from('appointments').select('doctor_id');
+  const previousData = (previousRes.data as Array<{ doctor_id: string | null }> | null) ?? [];
   
   const previousDoctorIds = new Set(
     previousData
@@ -74,9 +59,6 @@ export default async function ConsultationPage() {
   
   const totalDoctors = allDoctors.length;
   const videoAvailable = allDoctors.filter((d) => d.available_for_video).length;
-  
-  // suppress unused warning
-  void doctorsRes;
 
   return (
     <main className="app-screen">

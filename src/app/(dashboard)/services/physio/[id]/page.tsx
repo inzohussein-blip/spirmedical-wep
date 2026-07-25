@@ -67,21 +67,12 @@ export default async function PhysioSpecialistPage({
   if (!specialist) notFound();
 
   // جلب أنواع الخدمات
-  
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      select: (cols: string) => {
-        eq: (col: string, val: boolean) => Promise<{ data: ServiceType[] | null }>;
-      };
-    };
-  };
-
-  const { data: serviceTypes } = await supabaseAny
+  const { data: serviceTypes } = await supabase
     .from('physio_service_types')
     .select('id, slug, name_ar, description, icon, base_price')
     .eq('is_active', true);
 
-  const types = serviceTypes ?? [];
+  const types = (serviceTypes ?? []) as unknown as ServiceType[];
   const isFavorite = await checkIsFavorite('physio' as never, specialist.id);
 
   return (
