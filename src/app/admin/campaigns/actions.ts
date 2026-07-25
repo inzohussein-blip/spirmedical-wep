@@ -101,6 +101,12 @@ export async function sendCampaign(id: string) {
   if (!campaign) return { success: false, error: 'الحملة غير موجودة' };
   if (campaign.status === 'sent') return { success: false, error: 'مُرسلة بالفعل' };
 
+  // notification_queue.channel يقبل whatsapp/sms/push فقط (CHECK) — لا email.
+  // حملات البريد تحتاج مسار Resend منفصلاً (غير موصول بعد).
+  if (campaign.type === 'email') {
+    return { success: false, error: 'حملات البريد غير مدعومة عبر هذا المسار بعد (تحتاج تكامل Resend)' };
+  }
+
   let query = auth.supabase.from('users').select('id, phone').eq('role', 'user');
 
   const segment = campaign.target_segment as Record<string, unknown>;
@@ -123,25 +129,36 @@ export async function sendCampaign(id: string) {
     recipients_count: targetUsers.length,
   }).eq('id', id);
 
-  const queueRecords = targetUsers.map((u) => ({
-    user_id: u.id,
-    notification_type: campaign.type,
-    payload: {
-      title: campaign.name,
-      body: campaign.message_content,
-      campaign_id: id,
-    },
+  // recipient_phone هو NOT NULL في notification_queue — نتجاهل من لا هاتف له
+  const eligible = targetUsers.filter(
+    (u): u is { id: string; phone: string } => Boolean(u.phone)
+  );
+
+  if (eligible.length === 0) {
+    await auth.supabase.from('campaigns').update({
+      status: 'failed',
+      recipients_count: 0,
+    }).eq('id', id);
+    return { success: false, error: 'لا يوجد مستلمون بأرقام هواتف صالحة' };
+  }
+
+  const queueRecords = eligible.map((u) => ({
+    recipient_user_id: u.id,
+    recipient_phone: u.phone,
+    channel: campaign.type as 'whatsapp' | 'sms' | 'push',
+    body: campaign.message_content,
+    related_type: 'campaign',
+    related_id: id,
     status: 'pending' as const,
     scheduled_for: new Date().toISOString(),
+    created_by: auth.userId,
   }));
 
   const batchSize = 100;
   let successCount = 0;
   for (let i = 0; i < queueRecords.length; i += batchSize) {
     const batch = queueRecords.slice(i, i + batchSize);
-    const { error } = await (auth.supabase as unknown as {
-      from: (t: string) => { insert: (d: unknown[]) => Promise<{ error: { message: string } | null }> };
-    }).from('notification_queue').insert(batch);
+    const { error } = await auth.supabase.from('notification_queue').insert(batch);
     if (!error) successCount += batch.length;
   }
 
