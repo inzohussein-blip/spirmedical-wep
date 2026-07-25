@@ -16,15 +16,7 @@ export default async function MyMedicationsPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 
-  
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-            select: (cols: string) => any;
-    };
-  };
-
-  
-  const result = await supabaseAny
+  const result = await supabase
     .from('user_medications')
     .select(`
       *,
@@ -34,7 +26,8 @@ export default async function MyMedicationsPage() {
     .order('is_active', { ascending: false })
     .order('created_at', { ascending: false });
 
-  const medications = (result.data as Array<{
+  // join دواء؛ نعرضه بشكل View model (cast حدّي)
+  const medications = (result.data as unknown as Array<{
     id: string;
     medication_id: string | null;
     custom_name: string | null;

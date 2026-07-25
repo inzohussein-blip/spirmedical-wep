@@ -63,15 +63,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 
-  
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-            select: (cols: string) => any;
-    };
-  };
-
-  
-  const result = await supabaseAny
+  const result = await supabase
     .from('pharmacy_reservations')
     .select(`
       *,
@@ -85,8 +77,8 @@ export default async function ReservationDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  
-  const reservation = result.data as {
+  // items مخزَّن كـ JSONB + join صيدلية؛ نعرضه بشكل View model (cast حدّي)
+  const reservation = result.data as unknown as {
     id: string;
     items: Array<{ name: string; quantity: number; notes?: string }>;
     status: string;
