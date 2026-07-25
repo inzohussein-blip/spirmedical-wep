@@ -39,13 +39,7 @@ export async function upsertLab(labId: string | undefined, data: LabFormData) {
   const check = await ensureAdmin();
   if (!check.ok || !check.supabase) return { ok: false, error: check.error };
 
-  
-  const supabaseAny = check.supabase as unknown as {
-    from: (t: string) => {
-      insert: (d: object) => Promise<{ error: { message: string } | null }>;
-      update: (d: object) => { eq: (col: string, val: string) => Promise<{ error: { message: string } | null }> };
-    };
-  };
+  const supabase = check.supabase;
 
   const labData = {
     name_ar: data.name_ar.trim(),
@@ -59,17 +53,17 @@ export async function upsertLab(labId: string | undefined, data: LabFormData) {
   };
 
   if (labId) {
-    const { error } = await supabaseAny
+    const { error } = await supabase
       .from('partner_labs')
       .update(labData)
       .eq('id', labId);
-    
+
     if (error) return { ok: false, error: error.message };
   } else {
-    const { error } = await supabaseAny
+    const { error } = await supabase
       .from('partner_labs')
       .insert(labData);
-    
+
     if (error) return { ok: false, error: error.message };
   }
 
@@ -81,15 +75,9 @@ export async function toggleLabActive(labId: string) {
   const check = await ensureAdmin();
   if (!check.ok || !check.supabase) return { ok: false, error: check.error };
 
-  
-  const supabaseAny = check.supabase as unknown as {
-    from: (t: string) => {
-      select: (cols: string) => { eq: (col: string, val: string) => { single: () => Promise<{ data: { is_active: boolean } | null }> } };
-      update: (d: object) => { eq: (col: string, val: string) => Promise<{ error: unknown }> };
-    };
-  };
+  const supabase = check.supabase;
 
-  const { data: lab } = await supabaseAny
+  const { data: lab } = await supabase
     .from('partner_labs')
     .select('is_active')
     .eq('id', labId)
@@ -97,7 +85,7 @@ export async function toggleLabActive(labId: string) {
 
   if (!lab) return { ok: false, error: 'not_found' };
 
-  await supabaseAny
+  await supabase
     .from('partner_labs')
     .update({ is_active: !lab.is_active })
     .eq('id', labId);
@@ -110,15 +98,9 @@ export async function toggleLabFeatured(labId: string) {
   const check = await ensureAdmin();
   if (!check.ok || !check.supabase) return { ok: false, error: check.error };
 
-  
-  const supabaseAny = check.supabase as unknown as {
-    from: (t: string) => {
-      select: (cols: string) => { eq: (col: string, val: string) => { single: () => Promise<{ data: { is_featured: boolean } | null }> } };
-      update: (d: object) => { eq: (col: string, val: string) => Promise<{ error: unknown }> };
-    };
-  };
+  const supabase = check.supabase;
 
-  const { data: lab } = await supabaseAny
+  const { data: lab } = await supabase
     .from('partner_labs')
     .select('is_featured')
     .eq('id', labId)
@@ -126,7 +108,7 @@ export async function toggleLabFeatured(labId: string) {
 
   if (!lab) return { ok: false, error: 'not_found' };
 
-  await supabaseAny
+  await supabase
     .from('partner_labs')
     .update({ is_featured: !lab.is_featured })
     .eq('id', labId);
@@ -139,14 +121,9 @@ export async function deleteLab(labId: string) {
   const check = await ensureAdmin();
   if (!check.ok || !check.supabase) return { ok: false, error: check.error };
 
-  
-  const supabaseAny = check.supabase as unknown as {
-    from: (t: string) => {
-      delete: () => { eq: (col: string, val: string) => Promise<{ error: { message: string } | null }> };
-    };
-  };
+  const supabase = check.supabase;
 
-  const { error } = await supabaseAny
+  const { error } = await supabase
     .from('partner_labs')
     .delete()
     .eq('id', labId);

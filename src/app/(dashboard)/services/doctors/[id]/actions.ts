@@ -225,13 +225,6 @@ export async function createDoctorAppointment(input: CreateDoctorAppointmentInpu
   }
 
   try {
-    
-    const supabaseAny = supabase as unknown as {
-      from: (t: string) => {
-        insert: (d: object) => { select: () => { single: () => Promise<{ data: { id: string } | null; error: { message: string } | null }> } };
-      };
-    };
-
     const appointmentData = {
       user_id: user.id,
       service_type: serviceTypeArabic,
@@ -254,9 +247,9 @@ export async function createDoctorAppointment(input: CreateDoctorAppointmentInpu
       location_lng: input.location_lng || null,
     };
 
-    const { data: appointment, error } = await supabaseAny
+    const { data: appointment, error } = await supabase
       .from('appointments')
-      .insert(appointmentData)
+      .insert(appointmentData as never)
       .select()
       .single();
 
