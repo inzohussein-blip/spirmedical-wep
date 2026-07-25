@@ -26,6 +26,7 @@
 
 import { NextResponse } from 'next/server';
 import { createClient as createSbClient } from '@supabase/supabase-js';
+import type { Database } from '@/types/database';
 import { createClient } from '@/lib/supabase/server';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
@@ -140,18 +141,11 @@ export async function POST(request: Request) {
     // ─── 4. تحقّق من عدم وجود الرقم سابقاً ───
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-    const admin = createSbClient(supabaseUrl, serviceKey, {
+    const admin = createSbClient<Database>(supabaseUrl, serviceKey, {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
-    const adminAny = admin as unknown as {
-      from: (t: string) => {
-        
-        select: (cols: string) => any;
-      };
-    };
-
-    const existingRes = await adminAny.from('users')
+    const existingRes = await admin.from('users')
       .select('id, phone, role')
       .eq('phone', normalizedPhone)
       .maybeSingle();
@@ -219,13 +213,8 @@ export async function POST(request: Request) {
       profileData.approval_status = 'approved';
     }
 
-    const adminAnyInsert = admin as unknown as {
-      from: (t: string) => {
-        insert: (d: object) => Promise<{ error: { message: string } | null }>;
-      };
-    };
-
-    const insertRes = await adminAnyInsert.from('users').insert(profileData);
+    // profileData حمولة ديناميكية (حقول تختلف حسب الدور)؛ cast حدّي على generics الـ Insert
+    const insertRes = await admin.from('users').insert(profileData as never);
 
     if (insertRes.error) {
       // rollback - حذف auth user

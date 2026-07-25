@@ -27,14 +27,7 @@ export async function toggleVerifyPhysio(id: string, verified: boolean) {
   const supabase = await requireAdmin();
   if (!supabase) return { ok: false, error: 'unauthorized' };
 
-  
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      update: (d: object) => { eq: (col: string, val: string) => Promise<{ error: { message: string } | null }> };
-    };
-  };
-
-  const { error } = await supabaseAny
+  const { error } = await supabase
     .from('physio_specialists')
     .update({ is_verified: verified })
     .eq('id', id);
@@ -49,14 +42,7 @@ export async function toggleActivePhysio(id: string, active: boolean) {
   const supabase = await requireAdmin();
   if (!supabase) return { ok: false, error: 'unauthorized' };
 
-  
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      update: (d: object) => { eq: (col: string, val: string) => Promise<{ error: { message: string } | null }> };
-    };
-  };
-
-  const { error } = await supabaseAny
+  const { error } = await supabase
     .from('physio_specialists')
     .update({ is_active: active })
     .eq('id', id);

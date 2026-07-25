@@ -62,15 +62,6 @@ export async function createServiceBooking(input: BookingInput) {
   // notes اختياري - فقط ملاحظات المريض
   const encryptedNotes = input.notes ? encrypt(input.notes) : null;
 
-  
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      insert: (d: object) => {
-        select: (cols: string) => { single: () => Promise<{ data: { id: string } | null; error: { message: string } | null }> };
-      };
-    };
-  };
-
   // Build structured appointment data
   const appointmentData: Record<string, unknown> = {
     user_id: user.id,
@@ -113,9 +104,10 @@ export async function createServiceBooking(input: BookingInput) {
       break;
   }
 
-  const { data, error } = await supabaseAny
+  // appointmentData حمولة ديناميكية (أعمدة تختلف حسب نوع الخدمة)؛ cast حدّي على generics الـ Insert
+  const { data, error } = await supabase
     .from('appointments')
-    .insert(appointmentData)
+    .insert(appointmentData as never)
     .select('id')
     .single();
 

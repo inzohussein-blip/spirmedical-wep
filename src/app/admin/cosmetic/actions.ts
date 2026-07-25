@@ -27,16 +27,10 @@ async function updateProduct(id: string, updates: object) {
   const supabase = await requireAdmin();
   if (!supabase) return { ok: false, error: 'unauthorized' };
 
-  
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      update: (d: object) => { eq: (col: string, val: string) => Promise<{ error: { message: string } | null }> };
-    };
-  };
-
-  const { error } = await supabaseAny
+  // updates حمولة عامّة (object)؛ cast حدّي على generics الـ Update
+  const { error } = await supabase
     .from('cosmetic_products')
-    .update(updates)
+    .update(updates as never)
     .eq('id', id);
 
   if (error) return { ok: false, error: error.message };
