@@ -43,33 +43,26 @@ export default async function DashboardPage() {
   const firstName = fullName.split(' ')[0];
 
   // ─── إحصاءات للـ Hero ───
-  
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      select: (cols: string, opts?: { count?: 'exact'; head?: boolean }) => {
-        eq: (col: string, val: string | boolean) => Promise<{ count: number | null }> & {
-          eq: (col: string, val: string | boolean) => Promise<{ count: number | null }>;
-        };
-      };
-    };
-  };
-
-  
-  const testsCountRes = await supabaseAny
+  const testsCountRes = await supabase
     .from('appointments')
     .select('id', { count: 'exact', head: true })
     .eq('user_id', user.id);
   const testsCount = testsCountRes.count ?? 0;
 
-  
-  const rxCountRes = await supabaseAny
+  const rxCountRes = await supabase
     .from('prescriptions')
     .select('id', { count: 'exact', head: true })
     .eq('user_id', user.id);
   const prescriptionsCount = rxCountRes.count ?? 0;
 
-  
-  const notifRes = await supabaseAny
+  // `notifications` غير مُعرّف في database.ts بعد (يُحسم بـ db:types) — cast مُضيَّق
+  const notifRes = await (supabase as unknown as {
+    from: (t: string) => {
+      select: (c: string, o: { count: 'exact'; head: boolean }) => {
+        eq: (c: string, v: string) => { eq: (c: string, v: boolean) => Promise<{ count: number | null }> };
+      };
+    };
+  })
     .from('notifications')
     .select('id', { count: 'exact', head: true })
     .eq('user_id', user.id)

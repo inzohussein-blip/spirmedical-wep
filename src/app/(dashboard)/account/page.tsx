@@ -88,23 +88,19 @@ export default async function AccountPage() {
     : '';
 
   // Stats
-  
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      select: (cols: string, opts?: { count?: 'exact'; head?: boolean }) => {
-        eq: (col: string, val: string) => Promise<{ count: number | null }>;
-      };
-    };
-  };
-
-  
-  const apptsRes = await supabaseAny.from('appointments')
+  const apptsRes = await supabase.from('appointments')
     .select('id', { count: 'exact', head: true })
     .eq('user_id', user.id);
   const apptsCount = apptsRes.count ?? 0;
 
-  
-  const favsRes = await supabaseAny.from('service_favorites')
+  // `service_favorites` غير مُعرّف في database.ts بعد (يُحسم بـ db:types) — cast مُضيَّق
+  const favsRes = await (supabase as unknown as {
+    from: (t: string) => {
+      select: (c: string, o: { count: 'exact'; head: boolean }) => {
+        eq: (c: string, v: string) => Promise<{ count: number | null }>;
+      };
+    };
+  }).from('service_favorites')
     .select('id', { count: 'exact', head: true })
     .eq('user_id', user.id);
   const favsCount = favsRes.count ?? 0;
