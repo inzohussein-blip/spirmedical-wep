@@ -72,9 +72,7 @@ export default async function LabHistoryPage() {
   if (!user) redirect('/login');
 
   // ─── جلب lab_orders مع التفاصيل ───
-    const supabaseAny = supabase as any;
-  
-  const { data: labOrders } = await supabaseAny
+  const { data: labOrders } = await supabase
     .from('lab_orders')
     .select(`
       *,
@@ -113,7 +111,8 @@ export default async function LabHistoryPage() {
     fallbackAppointments = (oldAppointments ?? []) as typeof fallbackAppointments;
   }
 
-  const orders = (labOrders ?? []) as LabOrderWithDetails[];
+  // join عميق (appointments + lab_results)؛ نعرضه بشكل View model (cast حدّي)
+  const orders = (labOrders ?? []) as unknown as LabOrderWithDetails[];
   
   // ─── إحصاءات ───
   const totalOrders = orders.length + fallbackAppointments.length;

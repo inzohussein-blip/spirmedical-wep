@@ -17,25 +17,14 @@ export default async function LabTrendsPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 
-  
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      select: (cols: string) => {
-        eq: (col: string, val: string) => {
-          order: (col: string, opts: { ascending: boolean }) => Promise<{ data: unknown }>;
-        };
-      };
-    };
-  };
-
   // جلب كل النتائج للمستخدم مرتّبة زمنياً
-  const result = await supabaseAny
+  const result = await supabase
     .from('lab_results')
     .select('test_id, test_name, result_value, result_numeric, unit, normal_range_min, normal_range_max, normal_range_text, status, results_at')
     .eq('user_id', user.id)
     .order('results_at', { ascending: true });
 
-  const allResults = (result.data as Array<{
+  const allResults = (result.data as unknown as Array<{
     test_id: string;
     test_name: string;
     result_value: string;

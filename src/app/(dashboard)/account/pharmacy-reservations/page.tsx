@@ -41,15 +41,7 @@ export default async function PharmacyReservationsPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 
-  
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-            select: (cols: string) => any;
-    };
-  };
-
-  
-  const result = await supabaseAny
+  const result = await supabase
     .from('pharmacy_reservations')
     .select(`
       *,
@@ -58,7 +50,8 @@ export default async function PharmacyReservationsPage() {
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
-  const reservations = (result.data as Reservation[]) ?? [];
+  // items مخزَّن كـ JSONB؛ نعرضه بشكل View model (cast حدّي)
+  const reservations = (result.data as unknown as Reservation[]) ?? [];
 
   // إحصاءات
   const active = reservations.filter(r => 
