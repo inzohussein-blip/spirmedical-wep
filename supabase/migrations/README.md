@@ -96,10 +96,13 @@ Postgres محلّي متوافق مع Supabase (سكيمات `auth`/`storage`، 
 أثناء تصليب الأنواع ظهر تعارض بين ما يُدرجه الكود وما تُعرّفه أنواع `database.ts`
 المكتوبة يدوياً — يُحسم نهائياً بتشغيل `npm run db:types` مقابل الإنتاج:
 
-- **`notification_queue`** — يُدرج `admin/campaigns/actions.ts` أعمدة
-  `user_id`/`notification_type`/`payload`، بينما النوع المكتوب من الترحيل يعرّف
-  `recipient_phone`/`channel`/`body`. إمّا النوع قديم أو الإدراج يستهدف أعمدة غير
-  موجودة (bug كامن). أُبقي هناك cast مُضيَّق حتى يتأكّد المالك من المخطّط الحيّ.
+- **`notification_queue` — ✅ صُحِّح (كان bug حقيقياً في الإنتاج).** كان
+  `admin/campaigns/actions.ts` يُدرج أعمدة `user_id`/`notification_type`/`payload`
+  غير الموجودة أصلاً، ويُغفل أعمدة `recipient_phone`/`channel`/`body` وهي `NOT NULL`
+  — فكل إدراج يفشل بصمت (`if (!error)`) والحملة تُوسَم «مُرسَلة» بينما لا تصل أحداً.
+  طابَقتُ الإدراج مع DDL الترحيل (`0002_communication.sql`)؛ فصار يستخدم العميل
+  المُعرَّف **بلا cast** (دليلٌ أنّ الشكل صحيح). حملات `email` تُرفض صراحةً الآن
+  (القناة تقبل whatsapp/sms/push فقط)، ومن لا هاتف له يُتجاوَز (احترام `NOT NULL`).
 
 - **جداول يستعملها الكود لكنها غائبة عن `database.ts` المكتوب يدوياً** —
   `notifications`، `service_favorites`، `pharmacy_favorites`، `pharmacy_ratings`،
