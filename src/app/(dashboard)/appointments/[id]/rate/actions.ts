@@ -110,8 +110,9 @@ export async function submitRating(input: RatingInput) {
         dental_clinic_id: dentalClinicId,
         appointment_id: input.appointment_id,
         rating: input.overall_rating,
-        cleanliness_rating: input.cleanliness_rating || null,
-        skill_rating: input.professionalism_rating || null,
+        // أسماء أعمدة dental_ratings (0005): hygiene_rating / expertise_rating
+        hygiene_rating: input.cleanliness_rating || null,
+        expertise_rating: input.professionalism_rating || null,
         price_rating: null,
         comment: input.review_text?.trim() || null,
         is_public: !input.is_anonymous,
@@ -122,7 +123,8 @@ export async function submitRating(input: RatingInput) {
         optical_store_id: opticalStoreId,
         appointment_id: input.appointment_id,
         rating: input.overall_rating,
-        product_quality_rating: input.cleanliness_rating || null,
+        // اسم عمود optical_ratings (0005): quality_rating (لا product_quality_rating)
+        quality_rating: input.cleanliness_rating || null,
         service_rating: input.professionalism_rating || null,
         price_rating: null,
         comment: input.review_text?.trim() || null,
