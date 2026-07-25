@@ -504,15 +504,11 @@ export async function createBloodDrawOrder(input: CreateBloodDrawInput) {
 
   try {
     // ─── 1. أنشئ lab_order أولاً ───
-    // ملاحظة: lab_orders, lab_results, partner_labs ستُضاف لـ Database types
-    // بعد تشغيل migration 38. حالياً نستخدم `as any` للالتفاف على types.
-        const supabaseAny = supabase as any;
-
     // 🆕 V31: حُلّ partner_lab_id الحقيقي من الـ slug (migration 47)
     // لو الـ UI مرّر slug ('medcare', 'al-hayat'...) نبحث عن الـ UUID في DB.
     let resolvedLabId: string | null = input.partner_lab_id;
     if (!resolvedLabId && input.lab_slug && input.lab_slug !== 'any') {
-      const { data: labRow } = await supabaseAny
+      const { data: labRow } = await supabase
         .from('partner_labs')
         .select('id')
         .eq('slug', input.lab_slug)
@@ -520,7 +516,7 @@ export async function createBloodDrawOrder(input: CreateBloodDrawInput) {
       if (labRow?.id) resolvedLabId = labRow.id as string;
     }
 
-    const { data: labOrder, error: labOrderError } = await supabaseAny
+    const { data: labOrder, error: labOrderError } = await supabase
       .from('lab_orders')
       .insert({
         user_id: user.id,
@@ -541,7 +537,7 @@ export async function createBloodDrawOrder(input: CreateBloodDrawInput) {
         expected_result_at: input.expected_result_at || null,
         notes: input.notes || null,
         status: 'pending',
-      })
+      } as never)
       .select()
       .single();
 
@@ -574,23 +570,24 @@ export async function createBloodDrawOrder(input: CreateBloodDrawInput) {
       appointmentData.location_accuracy_m = input.location_accuracy_m || null;
     }
 
-    const { data: appointment, error: appointmentError } = await supabaseAny
+    // appointmentData حمولة ديناميكية؛ cast حدّي على generics الـ Insert
+    const { data: appointment, error: appointmentError } = await supabase
       .from('appointments')
-      .insert(appointmentData)
+      .insert(appointmentData as never)
       .select()
       .single();
 
     if (appointmentError || !appointment) {
       // تراجع: احذف lab_order الذي أنشأناه
-      await supabaseAny.from('lab_orders').delete().eq('id', labOrder.id);
+      await supabase.from('lab_orders').delete().eq('id', labOrder.id);
       logger.error('Failed to create appointment', { error: appointmentError });
       return { success: false, error: 'فشل إنشاء الموعد. حاول مرة أخرى.' };
     }
 
     // ─── 3. ربط الموعد بـ lab_order ───
-    await supabaseAny
+    await supabase
       .from('lab_orders')
-      .update({ appointment_id: appointment.id })
+      .update({ appointment_id: appointment.id } as never)
       .eq('id', labOrder.id);
 
     // ─── 4. Audit log ───
@@ -741,13 +738,6 @@ export async function createNursingAppointment(input: CreateNursingInput) {
     // ─── حفظ في appointments بـ structured columns ───
     const encryptedNotes = input.notes ? encrypt(input.notes) : null;
 
-    
-    const supabaseAny = supabase as unknown as {
-      from: (t: string) => {
-        insert: (d: object) => { select: () => { single: () => Promise<{ data: { id: string } | null; error: { message: string } | null }> } };
-      };
-    };
-
     const appointmentData = {
       user_id: user.id,
       service_type: input.procedure_label,
@@ -779,9 +769,10 @@ export async function createNursingAppointment(input: CreateNursingInput) {
       location_accuracy_m: input.location_accuracy_m || null,
     };
 
-    const { data: appointment, error: appointmentError } = await supabaseAny
+    // appointmentData حمولة منظّمة؛ cast حدّي على generics الـ Insert
+    const { data: appointment, error: appointmentError } = await supabase
       .from('appointments')
-      .insert(appointmentData)
+      .insert(appointmentData as never)
       .select()
       .single();
 
