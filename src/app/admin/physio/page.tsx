@@ -23,21 +23,12 @@ export default async function AdminPhysioPage() {
   }
 
   // جلب كل أخصائيي العلاج الطبيعي
-  
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      
-      select: (cols: string) => any;
-    };
-  };
-
-  
-  const physiosQuery = await supabaseAny
+  const physiosQuery = await supabase
     .from('physio_specialists')
     .select('*')
     .order('created_at', { ascending: false });
 
-  const physios = (physiosQuery.data as Array<{
+  const physios = (physiosQuery.data as unknown as Array<{
     id: string;
     full_name: string;
     title: string;

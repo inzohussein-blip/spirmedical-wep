@@ -23,15 +23,7 @@ export default async function WhatsAppOtpPage() {
   if (!user) redirect('/login');
 
   // جلب الإعدادات (Migration 12 columns)
-  
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      
-      select: (cols: string) => any;
-    };
-  };
-
-  const res = await supabaseAny
+  const res = await supabase
     .from('users')
     .select('phone, wa_otp_enabled, wa_verified, preferred_otp_channel')
     .eq('id', user.id)

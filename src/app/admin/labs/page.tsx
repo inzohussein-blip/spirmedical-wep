@@ -22,21 +22,13 @@ export default async function AdminLabsPage() {
     redirect('/dashboard');
   }
 
-  
-  const supabaseAny = supabase as unknown as { 
-    from: (table: string) => {
-      
-      select: (cols: string) => any;
-    };
-  };
-  
-  const result = await supabaseAny
+  const result = await supabase
     .from('partner_labs')
     .select('*')
     .order('city')
     .order('name_ar');
-  
-  const labs = (result.data as Array<{
+
+  const labs = (result.data as unknown as Array<{
     id: string;
     name_ar: string;
     name_en: string | null;

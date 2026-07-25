@@ -22,21 +22,12 @@ export default async function AdminCosmeticPage() {
     redirect('/dashboard');
   }
 
-  
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      
-      select: (cols: string) => any;
-    };
-  };
-
-  
-  const productsQuery = await supabaseAny
+  const productsQuery = await supabase
     .from('cosmetic_products')
     .select('*')
     .order('created_at', { ascending: false });
 
-  const products = (productsQuery.data as Array<{
+  const products = (productsQuery.data as unknown as Array<{
     id: string;
     name: string;
     name_en: string | null;
