@@ -127,6 +127,81 @@ const FILTER_METHODS = new Set([
 ]);
 
 /**
+ * تحليل صيغة الفلترة المركّبة `or`:
+ *   'a.eq.1,b.ilike.%x%'  ·  'not.a.is.null'
+ * يتخطّى المجموعات المتداخلة `and(...)`/`or(...)` احتياطاً.
+ */
+export function parseOrFilter(spec: string): string[] {
+  // احذف تعبيرات القوالب `${...}` كي لا تشوّش على الفصل
+  const cleaned = spec.replace(/\$\{[^}]*\}/g, '');
+  const cols: string[] = [];
+  let depth = 0;
+  let buf = '';
+
+  const flush = () => {
+    let clause = buf.trim();
+    buf = '';
+    if (!clause) return;
+    if (/^(and|or)\s*\(/i.test(clause)) return; // مجموعة متداخلة — تخطَّ
+    if (clause.startsWith('not.')) clause = clause.slice(4);
+    const col = clause.split('.')[0].trim();
+    if (/^[a-z_][a-z0-9_]*$/i.test(col)) cols.push(col);
+  };
+
+  for (const ch of cleaned) {
+    if (ch === '(') { depth++; buf += ch; }
+    else if (ch === ')') { depth--; buf += ch; }
+    else if (ch === ',' && depth === 0) flush();
+    else buf += ch;
+  }
+  flush();
+
+  return cols;
+}
+
+/**
+ * استعلامات مبنيّة على متغيّر (`const q = supabase.from('t')…` ثم `q = q.or(…)`).
+ * محلّل السلسلة لا يراها لأنّها منفصلة عن `.from()`، فنتتبّع المتغيّر → الجدول.
+ */
+export function extractDetachedFilterSites(code: string, file: string): WriteSite[] {
+  const varTable = new Map<string, string>();
+  const declRe = /(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*[\s\S]{0,200}?\.from\(\s*['"]([a-z_][a-z0-9_]*)['"]\s*\)/g;
+  let m: RegExpExecArray | null;
+  while ((m = declRe.exec(code)) !== null) varTable.set(m[1], m[2]);
+
+  const sites: WriteSite[] = [];
+  for (const [variable, table] of varTable) {
+    const useRe = new RegExp(
+      `\\b${variable}\\s*(?:=\\s*${variable}\\s*)?\\.([a-zA-Z_][\\w]*)\\s*\\(`,
+      'g'
+    );
+    const columns: string[] = [];
+    let u: RegExpExecArray | null;
+    while ((u = useRe.exec(code)) !== null) {
+      const method = u[1];
+      const chain = parseChain(code, u.index + u[0].lastIndexOf('.'));
+      const call = chain[0];
+      if (!call || call.method !== method) continue;
+      if (method === 'or') {
+        const lit = /^\s*[`'"]([\s\S]*?)[`'"]/.exec(call.args);
+        if (lit) columns.push(...parseOrFilter(lit[1]));
+      } else if (FILTER_METHODS.has(method)) {
+        const lit = /^\s*['"]([^'"]*)['"]/.exec(call.args);
+        if (lit) {
+          const col = lit[1].trim();
+          if (col && !col.includes('.') && /^[a-z_][a-z0-9_]*$/i.test(col)) columns.push(col);
+        }
+      }
+    }
+    if (columns.length > 0) {
+      sites.push({ file, table, op: 'update', columns: Array.from(new Set(columns)) });
+    }
+  }
+
+  return sites;
+}
+
+/**
  * استخراج أعمدة القراءة (`select`) والفلترة (`eq`/`order`/…) لكل `.from('t')`.
  * محافظ: يتخطّى الأعمدة المضمّنة (`a.b`)، ومسارات JSON (`->`)، والصيغ المركّبة
  * (`or`/`filter`)، والعلاقات المُضمَّنة داخل الأقواس.
@@ -163,6 +238,9 @@ export function extractReadSites(code: string, file: string): WriteSite[] {
           if (!/^[a-z_][a-z0-9_]*$/i.test(part)) continue;
           columns.push(part);
         }
+      } else if (call.method === 'or') {
+        const lit = /^\s*[`'"]([\s\S]*?)[`'"]/.exec(call.args);
+        if (lit) columns.push(...parseOrFilter(lit[1]));
       } else if (FILTER_METHODS.has(call.method)) {
         const lit = /^\s*['"]([^'"]*)['"]/.exec(call.args);
         if (!lit) continue;
@@ -302,13 +380,30 @@ describe('🛡️ تطابق المخطّط — أعمدة الكتابة موج
 describe('🛡️ تطابق المخطّط — أعمدة القراءة/الفلترة موجودة فعلاً في الـ DDL', () => {
   const schema = parseMigrationSchema(readSqlFiles());
 
+  it('كل جدول يشير إليه الكود موجود في الترحيلات', () => {
+    const files = walkSource(SRC_DIR);
+    const unknown = new Set<string>();
+
+    for (const file of files) {
+      const code = readFileSync(file, 'utf8');
+      const re = /\.from\(\s*['"]([a-z_][a-z0-9_]*)['"]\s*\)/g;
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(code)) !== null) {
+        if (!schema.has(m[1])) unknown.add(`${m[1]} (${file.replace(process.cwd() + '/', '')})`);
+      }
+    }
+
+    // يمسك أخطاء اسم الجدول المطبعية ومراجع الجداول التي لم تُرحَّل أبداً
+    expect(Array.from(unknown).sort()).toEqual([]);
+  });
+
   it('لا يقرأ/يفلتر أيّ ملف على عمود غير موجود', () => {
     const files = walkSource(SRC_DIR);
     const violations: string[] = [];
 
     for (const file of files) {
       const code = readFileSync(file, 'utf8');
-      for (const site of extractReadSites(code, file)) {
+      for (const site of [...extractReadSites(code, file), ...extractDetachedFilterSites(code, file)]) {
         const cols = schema.get(site.table);
         if (!cols) continue; // جدول خارج الترحيلات — لا حكم
         for (const col of site.columns) {
@@ -382,6 +477,28 @@ describe('🛡️ الحارس نفسه يكشف الأخطاء الثلاثة �
         user_id: user.id, rating: 5, quality_rating: 4,
       });`;
     expect(check(fixed)).toEqual([]);
+  });
+
+  it('يحلّل الفلترة المركّبة `or` ويستخرج أعمدتها', () => {
+    expect(parseOrFilter('service_id.eq.blood-draw,service_type.eq.blood-draw'))
+      .toEqual(['service_id', 'service_type']);
+    expect(parseOrFilter('assigned_specialist_id.is.null,assigned_specialist_id.eq.${user.id}'))
+      .toEqual(['assigned_specialist_id', 'assigned_specialist_id']);
+    expect(parseOrFilter('full_name.ilike.%${q}%,phone.ilike.%${q}%'))
+      .toEqual(['full_name', 'phone']);
+    expect(parseOrFilter('not.starts_at.is.null')).toEqual(['starts_at']);
+  });
+
+  it('يلتقط الاستعلامات المنفصلة عن from (نمط `q = q.or(…)`)', () => {
+    const detached = `
+      let query = supabase.from('users').select('id');
+      if (x) {
+        query = query.or(\`full_name.ilike.%\${q}%,nope_col.ilike.%\${q}%\`);
+      }`;
+    const sites = extractDetachedFilterSites(detached, 'x.ts');
+    expect(sites).toHaveLength(1);
+    expect(sites[0].table).toBe('users');
+    expect(sites[0].columns).toContain('nope_col');
   });
 
   it('يتخطّى الحمولات غير القابلة للتحليل الساكن (spread / مفاتيح محسوبة)', () => {
