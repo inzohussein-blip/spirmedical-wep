@@ -44,13 +44,14 @@ export default async function SpecialistStatsPage() {
   // Top services — عدّ فعلي حسب اسم الخدمة (لا أرقام ملفّقة)
   const { data: completedRows } = await supabase
     .from('appointments')
-    .select('service_name')
+    // اسم العمود في appointments هو service_type (لا service_name)
+    .select('service_type')
     .eq('specialist_id', user!.id)
     .eq('status', 'completed');
 
   const serviceTally = new Map<string, number>();
-  for (const row of (completedRows ?? []) as Array<{ service_name?: string | null }>) {
-    const name = row.service_name?.trim() || 'أخرى';
+  for (const row of (completedRows ?? []) as Array<{ service_type?: string | null }>) {
+    const name = row.service_type?.trim() || 'أخرى';
     serviceTally.set(name, (serviceTally.get(name) ?? 0) + 1);
   }
   const topServices: Array<{ name: string; count: number; icon: LucideIcon }> = [
