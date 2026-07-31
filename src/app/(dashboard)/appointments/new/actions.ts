@@ -578,17 +578,33 @@ export async function createBloodDrawOrder(input: CreateBloodDrawInput) {
       .single();
 
     if (appointmentError || !appointment) {
-      // تراجع: احذف lab_order الذي أنشأناه
-      await supabase.from('lab_orders').delete().eq('id', labOrder.id);
+      // تراجع: احذف lab_order الذي أنشأناه (فشل التراجع يترك طلباً يتيماً)
+      const { error: rollbackError } = await supabase
+        .from('lab_orders').delete().eq('id', labOrder.id);
+      if (rollbackError) {
+        logger.error('Rollback failed — orphaned lab_order left behind', {
+          lab_order_id: labOrder.id,
+          error: rollbackError.message,
+        });
+      }
       logger.error('Failed to create appointment', { error: appointmentError });
       return { success: false, error: 'فشل إنشاء الموعد. حاول مرة أخرى.' };
     }
 
     // ─── 3. ربط الموعد بـ lab_order ───
-    await supabase
+    // فشل الربط يعني أنّ الطلب لا يظهر في سجلّ التحاليل — لا نبتلعه.
+    const { error: linkError } = await supabase
       .from('lab_orders')
       .update({ appointment_id: appointment.id } as never)
       .eq('id', labOrder.id);
+
+    if (linkError) {
+      logger.error('Failed to link appointment to lab_order', {
+        lab_order_id: labOrder.id,
+        appointment_id: appointment.id,
+        error: linkError.message,
+      });
+    }
 
     // ─── 4. Audit log ───
     await logAuditEvent({
