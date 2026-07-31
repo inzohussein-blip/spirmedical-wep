@@ -83,6 +83,104 @@ export interface WriteSite {
   columns: string[];
 }
 
+export interface ChainCall {
+  method: string;
+  args: string;
+}
+
+/**
+ * يقرأ سلسلة الاستدعاءات `.m(...)` التي تلي `.from('t')` مباشرةً،
+ * بتوازن الأقواس، ويتوقّف عند أوّل شيء ليس استدعاءً متسلسلاً.
+ */
+export function parseChain(code: string, startIndex: number): ChainCall[] {
+  const calls: ChainCall[] = [];
+  let i = startIndex;
+
+  for (;;) {
+    const rest = code.slice(i);
+    const m = /^[\s\r\n]*\.([a-zA-Z_][a-zA-Z0-9_]*)\s*\(/.exec(rest);
+    if (!m) break;
+
+    const openIdx = i + m[0].length - 1;
+    let depth = 0;
+    let end = -1;
+    for (let j = openIdx; j < code.length; j++) {
+      const ch = code[j];
+      if (ch === '(') depth++;
+      else if (ch === ')') {
+        depth--;
+        if (depth === 0) { end = j; break; }
+      }
+    }
+    if (end === -1) break;
+
+    calls.push({ method: m[1], args: code.slice(openIdx + 1, end) });
+    i = end + 1;
+  }
+
+  return calls;
+}
+
+/** أعمدة الفلترة/الترتيب: الوسيط الأول نصّ حرفي */
+const FILTER_METHODS = new Set([
+  'eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'like', 'ilike', 'is', 'in', 'order', 'not',
+]);
+
+/**
+ * استخراج أعمدة القراءة (`select`) والفلترة (`eq`/`order`/…) لكل `.from('t')`.
+ * محافظ: يتخطّى الأعمدة المضمّنة (`a.b`)، ومسارات JSON (`->`)، والصيغ المركّبة
+ * (`or`/`filter`)، والعلاقات المُضمَّنة داخل الأقواس.
+ */
+export function extractReadSites(code: string, file: string): WriteSite[] {
+  const sites: WriteSite[] = [];
+  const fromRe = /\.from\(\s*['"]([a-z_][a-z0-9_]*)['"]\s*\)/g;
+  let m: RegExpExecArray | null;
+
+  while ((m = fromRe.exec(code)) !== null) {
+    const table = m[1];
+    const chain = parseChain(code, m.index + m[0].length);
+    const columns: string[] = [];
+
+    for (const call of chain) {
+      if (call.method === 'select') {
+        const lit = /^\s*['"`]([\s\S]*?)['"`]/.exec(call.args);
+        if (!lit) continue;
+        let spec = lit[1];
+        if (spec.includes('$') || spec.includes('->')) continue; // قوالب/JSON
+        // احذف العلاقات المُضمَّنة مع اسم العلاقة الذي يسبقها
+        let prev: string;
+        do {
+          prev = spec;
+          spec = spec.replace(/[a-zA-Z_][a-zA-Z0-9_]*\s*(?:!\s*[a-zA-Z_]+)?\s*\([^()]*\)/g, '');
+        } while (spec !== prev);
+
+        for (const rawPart of spec.split(',')) {
+          let part = rawPart.trim();
+          if (!part || part === '*') continue;
+          if (part.includes('.') || part.includes('(') || part.includes(')')) continue;
+          if (part.includes(':')) part = part.split(':').pop()!.trim(); // alias:col
+          part = part.split('!')[0].trim(); // col!inner
+          if (!/^[a-z_][a-z0-9_]*$/i.test(part)) continue;
+          columns.push(part);
+        }
+      } else if (FILTER_METHODS.has(call.method)) {
+        const lit = /^\s*['"]([^'"]*)['"]/.exec(call.args);
+        if (!lit) continue;
+        const col = lit[1].trim();
+        if (!col || col.includes('.') || col.includes('->')) continue;
+        if (!/^[a-z_][a-z0-9_]*$/i.test(col)) continue;
+        columns.push(col);
+      }
+    }
+
+    if (columns.length > 0) {
+      sites.push({ file, table, op: 'update', columns: Array.from(new Set(columns)) });
+    }
+  }
+
+  return sites;
+}
+
 /**
  * استخراج مواضع الكتابة `.from('t').insert({...})` / `.update({...})`.
  * محافظ عمداً: يتخطّى الكائنات التي تحوي spread (`...x`) أو مفاتيح محسوبة
@@ -191,6 +289,33 @@ describe('🛡️ تطابق المخطّط — أعمدة الكتابة موج
             violations.push(
               `${file.replace(process.cwd() + '/', '')}: ` +
               `${site.op} في «${site.table}» يستخدم عموداً غير موجود «${col}»`
+            );
+          }
+        }
+      }
+    }
+
+    expect(violations).toEqual([]);
+  });
+});
+
+describe('🛡️ تطابق المخطّط — أعمدة القراءة/الفلترة موجودة فعلاً في الـ DDL', () => {
+  const schema = parseMigrationSchema(readSqlFiles());
+
+  it('لا يقرأ/يفلتر أيّ ملف على عمود غير موجود', () => {
+    const files = walkSource(SRC_DIR);
+    const violations: string[] = [];
+
+    for (const file of files) {
+      const code = readFileSync(file, 'utf8');
+      for (const site of extractReadSites(code, file)) {
+        const cols = schema.get(site.table);
+        if (!cols) continue; // جدول خارج الترحيلات — لا حكم
+        for (const col of site.columns) {
+          if (!cols.has(col.toLowerCase())) {
+            violations.push(
+              `${file.replace(process.cwd() + '/', '')}: ` +
+              `قراءة/فلترة «${site.table}» تستخدم عموداً غير موجود «${col}»`
             );
           }
         }

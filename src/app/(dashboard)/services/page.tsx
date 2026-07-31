@@ -53,9 +53,12 @@ export default async function ServicesPage() {
     supabase.from('pharmacies').select('id, name, city, latitude, longitude').eq('is_active', true).not('latitude', 'is', null).not('longitude', 'is', null),
     supabase.from('dental_clinics').select('id, name, city, latitude, longitude').eq('is_active', true).not('latitude', 'is', null).not('longitude', 'is', null),
     supabase.from('optical_stores').select('id, name, city, latitude, longitude').eq('is_active', true).not('latitude', 'is', null).not('longitude', 'is', null),
-    supabase.from('mental_health_specialists').select('id, full_name, city, latitude, longitude').eq('is_active', true).not('latitude', 'is', null).not('longitude', 'is', null),
-    supabase.from('nutritionists').select('id, full_name, city, latitude, longitude').eq('is_active', true).not('latitude', 'is', null).not('longitude', 'is', null),
-    supabase.from('users').select('id, full_name, governorate, latitude, longitude').eq('role', 'specialist').eq('specialist_type', 'doctor').eq('is_active', true).not('latitude', 'is', null).not('longitude', 'is', null),
+    // ملاحظة: هذه الجداول تسمّي المدينة `clinic_city` — نستخدم alias للإبقاء على `city`
+    supabase.from('mental_health_specialists').select('id, full_name, city:clinic_city, latitude, longitude').eq('is_active', true).not('latitude', 'is', null).not('longitude', 'is', null),
+    supabase.from('nutritionists').select('id, full_name, city:clinic_city, latitude, longitude').eq('is_active', true).not('latitude', 'is', null).not('longitude', 'is', null),
+    // الأطباء مصدرهم جدول `doctors` (إحداثياته clinic_lat/clinic_lng)، لا `users`
+    // الذي لا يملك latitude/longitude/is_active أصلاً.
+    supabase.from('doctors').select('id, full_name, governorate:clinic_city, latitude:clinic_lat, longitude:clinic_lng').eq('is_active', true).not('clinic_lat', 'is', null).not('clinic_lng', 'is', null),
   ]);
 
   // Safely extract data (تجاهل أي errors)
