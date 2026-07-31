@@ -308,7 +308,7 @@ export default async function AppointmentDetailsPage({ params }: Props) {
           scheduledAt={appointment.scheduled_at}
           completedAt={appointment.completed_at}
           cancelledAt={appointment.cancelled_at}
-          cancellationReason={appointment.cancellation_reason}
+          cancellationReason={appointment.cancelled_reason}
           isBloodDraw={appointment.service_id === 'blood-draw'}
         />
       </div>
