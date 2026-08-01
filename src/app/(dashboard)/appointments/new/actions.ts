@@ -11,6 +11,7 @@ import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
 import { encrypt } from '@/lib/encryption';
 import { logger } from '@/lib/logger';
+import { getServiceById } from '@/lib/services/services-data';
 import { sendAppointmentConfirmedEmail } from '@/lib/email/actions';
 import { notifyOrderConfirmed } from '@/lib/services/push-templates';
 import { sendAppointmentConfirmedWA, isWhatsAppEnabled } from '@/lib/services/whatsapp';
@@ -110,6 +111,19 @@ export async function createAppointmentV2(input: CreateAppointmentInput) {
   if (input.service_id) insertData.service_id = input.service_id;
   if (input.duration) insertData.duration_minutes = input.duration;
   if (input.otp_channel) insertData.otp_channel = input.otp_channel;
+
+  // 🔑 ظهور الطلب لدى المختصّين: طابور المختصّ يفلتر على
+  // `required_specialist_type`، فبدونه لا يرى الطلبَ أيُّ مختصّ إطلاقاً.
+  // نشتقّه من كتالوج الخدمات (المصدر الموحّد) بدل تركه فارغاً.
+  const serviceMeta = input.service_id ? getServiceById(input.service_id) : undefined;
+  if (serviceMeta?.specialistType) {
+    insertData.required_specialist_type = serviceMeta.specialistType;
+  } else if (input.service_id) {
+    // خدمة بلا مختصّ مُرسَل (تُنفَّذ في منشأة) — نُسجّلها كي لا يكون الغياب صامتاً
+    logger.info('Appointment created without required_specialist_type', {
+      service_id: input.service_id,
+    });
+  }
 
   // ✨ V25: حفظ إحداثيات GPS لو المريض التقطها
   if (
