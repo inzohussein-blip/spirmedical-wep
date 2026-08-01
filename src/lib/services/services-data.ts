@@ -1,6 +1,16 @@
 // قائمة الخدمات الكاملة مع التفاصيل والأسعار
 export type ServiceCategory = 'home' | 'lab' | 'consult' | 'pharmacy' | 'hospital' | 'family';
 
+/** أنواع الاختصاص المسموح بها في `users.specialist_type` و`appointments.required_specialist_type` */
+export type ServiceSpecialistType =
+  | 'lab_analyst'
+  | 'nurse'
+  | 'doctor'
+  | 'pharmacist'
+  | 'physio'
+  | 'psychologist'
+  | 'nutritionist';
+
 export interface Service {
   id: string;
   name: string;
@@ -16,6 +26,13 @@ export interface Service {
   needsAddress: boolean; // يحتاج عنوان (منزلي) أم لا (online)
   badge?: string; // مثل "الأكثر طلباً"
   badgeColor?: 'emerald' | 'amber' | 'rose';
+  /**
+   * نوع المختصّ الذي ينفّذ الخدمة — **يحدّد ظهور الطلب في طابور المختصّين**
+   * (`appointments.required_specialist_type`). بدونه لا يرى الطلبَ أيُّ مختصّ.
+   * يُترك فارغاً عمداً للخدمات التي تُنفَّذ في منشأة لا بمختصّ مُرسَل
+   * (مثل حجز موعد مستشفى).
+   */
+  specialistType?: ServiceSpecialistType;
 }
 
 export const SERVICES: Service[] = [
@@ -32,6 +49,7 @@ export const SERVICES: Service[] = [
     duration: 30,
     available: true,
     needsAddress: true,
+    specialistType: 'lab_analyst',
     badge: 'الأكثر طلباً',
     badgeColor: 'emerald',
   },
@@ -47,6 +65,7 @@ export const SERVICES: Service[] = [
     duration: 60,
     available: true,
     needsAddress: true,
+    specialistType: 'nurse',
   },
   {
     id: 'iv-fluid',
@@ -60,6 +79,7 @@ export const SERVICES: Service[] = [
     duration: 90,
     available: true,
     needsAddress: true,
+    specialistType: 'nurse',
   },
 
   // === فحوصات مختبرية متخصّصة ===
@@ -75,6 +95,7 @@ export const SERVICES: Service[] = [
     duration: 20,
     available: true,
     needsAddress: true,
+    specialistType: 'lab_analyst',
   },
 
   // === استشارات ===
@@ -90,6 +111,7 @@ export const SERVICES: Service[] = [
     duration: 20,
     available: true,
     needsAddress: false,
+    specialistType: 'doctor',
     badge: 'فوري',
     badgeColor: 'amber',
   },
@@ -105,6 +127,7 @@ export const SERVICES: Service[] = [
     duration: 15,
     available: true,
     needsAddress: false,
+    specialistType: 'doctor',
   },
   {
     id: 'chat-consult',
@@ -118,6 +141,7 @@ export const SERVICES: Service[] = [
     duration: 60,
     available: true,
     needsAddress: false,
+    specialistType: 'doctor',
   },
 
   // === صيدلية ===
@@ -133,6 +157,7 @@ export const SERVICES: Service[] = [
     duration: 120,
     available: true,
     needsAddress: true,
+    specialistType: 'pharmacist',
   },
 
   // === حجوزات مستشفيات ===
@@ -163,6 +188,7 @@ export const SERVICES: Service[] = [
     duration: 0,
     available: true,
     needsAddress: false,
+    specialistType: 'doctor',
     badge: 'حصري',
     badgeColor: 'amber',
   },
