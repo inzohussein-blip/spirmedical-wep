@@ -28,30 +28,30 @@ export async function getAllLocations(): Promise<{
   if (!auth.ok) return { ok: false, locations: [], error: auth.error };
 
   const supabase = auth.supabase as any;
-  const all: UnifiedLocation[] = [];
 
-  for (const cfg of Object.values(SOURCE_MAP)) {
-    const cols = `id, ${cfg.nameCol}, ${cfg.cityCol}, ${cfg.latCol}, ${cfg.lngCol}, is_active`;
-    const { data, error } = await supabase.from(cfg.table).select(cols).limit(500);
-    if (error || !data) continue;
+  // المصادر السبعة مستقلّة — نجلبها **بالتوازي** بدل 7 رحلات متتالية للقاعدة.
+  const perSource = await Promise.all(
+    Object.values(SOURCE_MAP).map(async (cfg) => {
+      const cols = `id, ${cfg.nameCol}, ${cfg.cityCol}, ${cfg.latCol}, ${cfg.lngCol}, is_active`;
+      const { data, error } = await supabase.from(cfg.table).select(cols).limit(500);
+      if (error || !data) return [] as UnifiedLocation[];
 
-    for (const row of data) {
-      all.push({
-        id: row.id,
+      return (data as Record<string, unknown>[]).map((row): UnifiedLocation => ({
+        id: row.id as string,
         source: cfg.table,
-        name: row[cfg.nameCol] ?? '—',
-        city: row[cfg.cityCol] ?? null,
-        latitude: row[cfg.latCol] ?? null,
-        longitude: row[cfg.lngCol] ?? null,
-        is_active: row.is_active ?? false,
+        name: (row[cfg.nameCol] as string) ?? '—',
+        city: (row[cfg.cityCol] as string | null) ?? null,
+        latitude: (row[cfg.latCol] as number | null) ?? null,
+        longitude: (row[cfg.lngCol] as number | null) ?? null,
+        is_active: (row.is_active as boolean) ?? false,
         label: cfg.label,
         emoji: cfg.emoji,
         markerType: cfg.markerType,
-      });
-    }
-  }
+      }));
+    })
+  );
 
-  return { ok: true, locations: all };
+  return { ok: true, locations: perSource.flat() };
 }
 
 export async function toggleLocationActive(source: LocationSource, id: string, next: boolean) {
