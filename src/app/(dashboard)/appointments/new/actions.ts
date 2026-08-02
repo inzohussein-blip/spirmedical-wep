@@ -12,6 +12,7 @@ import { logAuditEvent } from '@/lib/audit';
 import { encrypt } from '@/lib/encryption';
 import { logger } from '@/lib/logger';
 import { getServiceById } from '@/lib/services/services-data';
+import { withIdempotency, generateKey } from '@/lib/idempotency';
 import { sendAppointmentConfirmedEmail } from '@/lib/email/actions';
 import {
   notifyOrderConfirmed,
@@ -41,7 +42,25 @@ interface CreateAppointmentInput {
   family_member_id?: string | null;
 }
 
+/**
+ * غلاف حماية الإرسال المزدوج: ضغطتان سريعتان على «تأكيد» تُنتجان نفس المفتاح،
+ * فتُنفَّذ العملية مرّة واحدة وتُعاد نتيجتها. الفشل لا يُخزَّن (انظر `withIdempotency`).
+ */
 export async function createAppointmentV2(input: CreateAppointmentInput) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  // فوّض للدالة الأصلية كي تبقى رسالة «غير مسجّل» في مكان واحد وتتطابق الأنواع
+  if (!user) return createAppointmentV2Impl(input);
+
+  const key = generateKey([
+    'generic', user.id,
+    input.service_id, input.scheduled_at, input.address, input.family_member_id,
+  ]);
+
+  return withIdempotency(key, () => createAppointmentV2Impl(input));
+}
+
+async function createAppointmentV2Impl(input: CreateAppointmentInput) {
   const supabase = createClient();
   const {
     data: { user },
@@ -468,7 +487,26 @@ export interface CreateBloodDrawInput {
   duration: number;
 }
 
+/**
+ * غلاف حماية الإرسال المزدوج: ضغطتان سريعتان على «تأكيد» تُنتجان نفس المفتاح،
+ * فتُنفَّذ العملية مرّة واحدة وتُعاد نتيجتها. الفشل لا يُخزَّن (انظر `withIdempotency`).
+ */
 export async function createBloodDrawOrder(input: CreateBloodDrawInput) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  // فوّض للدالة الأصلية كي تبقى رسالة «غير مسجّل» في مكان واحد وتتطابق الأنواع
+  if (!user) return createBloodDrawOrderImpl(input);
+
+  const key = generateKey([
+    'blood-draw', user.id,
+    input.scheduled_at, input.address, input.family_member_id,
+    (input.test_ids ?? []).join(','), input.bundle_id,
+  ]);
+
+  return withIdempotency(key, () => createBloodDrawOrderImpl(input));
+}
+
+async function createBloodDrawOrderImpl(input: CreateBloodDrawInput) {
   const supabase = createClient();
   const {
     data: { user },
@@ -748,7 +786,26 @@ export interface CreateNursingInput {
   location_accuracy_m?: number;
 }
 
+/**
+ * غلاف حماية الإرسال المزدوج: ضغطتان سريعتان على «تأكيد» تُنتجان نفس المفتاح،
+ * فتُنفَّذ العملية مرّة واحدة وتُعاد نتيجتها. الفشل لا يُخزَّن (انظر `withIdempotency`).
+ */
 export async function createNursingAppointment(input: CreateNursingInput) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  // فوّض للدالة الأصلية كي تبقى رسالة «غير مسجّل» في مكان واحد وتتطابق الأنواع
+  if (!user) return createNursingAppointmentImpl(input);
+
+  const key = generateKey([
+    'home-nursing', user.id,
+    input.scheduled_at, input.address, input.family_member_id,
+    input.procedure_type,
+  ]);
+
+  return withIdempotency(key, () => createNursingAppointmentImpl(input));
+}
+
+async function createNursingAppointmentImpl(input: CreateNursingInput) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
