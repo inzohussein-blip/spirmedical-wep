@@ -71,6 +71,9 @@ export default function UserLocationPicker({
   const [address, setAddress] = useState(initialLocation?.address || '');
   const [locating, setLocating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // حالة الخريطة نفسها: قد تفشل (شبكة ضعيفة/حجب) — يجب ألّا يمنع ذلك رفع الطلب،
+  // فالعنوان اليدوي أدناه بديل كامل. الصمت هنا يعني مربّعاً رمادياً بلا تفسير.
+  const [mapState, setMapState] = useState<'loading' | 'ready' | 'failed'>('loading');
   // reverse geocoding (إحداثيات → عنوان تلقائياً)
   const [geocoding, setGeocoding] = useState(false);
 
@@ -123,36 +126,49 @@ export default function UserLocationPicker({
     let cancelled = false;
 
     (async () => {
-      const maplibregl = await loadMapLibre();
-      if (cancelled || !mapContainerRef.current) return;
+      try {
+        const maplibregl = await loadMapLibre();
+        if (cancelled || !mapContainerRef.current) return;
 
-      const initialCenter: [number, number] = coords
-        ? [coords.lng, coords.lat]
-        : [IRAQ_CENTER.lng, IRAQ_CENTER.lat];
-      const initialZoom = coords ? 14 : 6;
+        const initialCenter: [number, number] = coords
+          ? [coords.lng, coords.lat]
+          : [IRAQ_CENTER.lng, IRAQ_CENTER.lat];
+        const initialZoom = coords ? 14 : 6;
 
-      const map = new maplibregl.Map({
-        container: mapContainerRef.current,
-        style: MAP_STYLE_LIGHT,
-        center: initialCenter,
-        zoom: initialZoom,
-        attributionControl: false,
-      });
-      map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
+        const map = new maplibregl.Map({
+          container: mapContainerRef.current,
+          style: MAP_STYLE_LIGHT,
+          center: initialCenter,
+          zoom: initialZoom,
+          attributionControl: false,
+        });
+        map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
 
-      // الضغط على الخريطة → موقع جديد
-      map.on('click', (e) => {
-        const newCoords = { lat: e.lngLat.lat, lng: e.lngLat.lng };
-        setCoords(newCoords);
-        placeMarker(maplibregl, newCoords);
-        void fillFromCoords(newCoords.lat, newCoords.lng);
-      });
+        // فشل تحميل النمط/البلاط (شبكة) — لا نترك المربّع رمادياً بلا تفسير
+        map.on('error', () => {
+          if (!cancelled) setMapState((s) => (s === 'ready' ? s : 'failed'));
+        });
+        map.on('load', () => {
+          if (!cancelled) setMapState('ready');
+        });
 
-      mapRef.current = map;
-      cleanupResizeRef.current = attachResizeFix(map, mapContainerRef.current);
+        // الضغط على الخريطة → موقع جديد
+        map.on('click', (e) => {
+          const newCoords = { lat: e.lngLat.lat, lng: e.lngLat.lng };
+          setCoords(newCoords);
+          placeMarker(maplibregl, newCoords);
+          void fillFromCoords(newCoords.lat, newCoords.lng);
+        });
 
-      // marker مبدئي لو موجود
-      if (coords) placeMarker(maplibregl, coords);
+        mapRef.current = map;
+        cleanupResizeRef.current = attachResizeFix(map, mapContainerRef.current);
+
+        // marker مبدئي لو موجود
+        if (coords) placeMarker(maplibregl, coords);
+      } catch {
+        // فشل تحميل مكتبة الخرائط نفسها — الطلب يجب أن يبقى ممكناً
+        if (!cancelled) setMapState('failed');
+      }
     })();
 
     return () => {
@@ -226,6 +242,32 @@ export default function UserLocationPicker({
       {/* Map */}
       <div style={{ position: 'relative', height, borderRadius: 12, overflow: 'hidden', marginBottom: 12 }}>
         <div ref={mapContainerRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', background: '#E8EEF1' }} />
+
+        {/* حالة الخريطة: تحميل / فشل — الفشل يوجّه للعنوان اليدوي بدل مربّع صامت */}
+        {mapState !== 'ready' && (
+          <div
+            style={{
+              position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center', gap: 6, textAlign: 'center',
+              padding: 16, background: 'rgba(232,238,241,0.94)', pointerEvents: 'none',
+            }}
+          >
+            {mapState === 'loading' ? (
+              <div style={{ fontSize: 13, color: 'var(--ink-3)', fontWeight: 700 }}>
+                جارٍ تحميل الخريطة…
+              </div>
+            ) : (
+              <>
+                <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--ink-2)' }}>
+                  تعذّر تحميل الخريطة
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--ink-3)', lineHeight: 1.7, maxWidth: 260 }}>
+                  قد يكون الاتصال ضعيفاً. يمكنك إكمال الطلب بكتابة العنوان يدوياً في الحقل أدناه.
+                </div>
+              </>
+            )}
+          </div>
+        )}
 
         {/* "موقعي الحالي" button */}
         <button

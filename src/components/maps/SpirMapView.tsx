@@ -68,6 +68,8 @@ export default function SpirMapView({
   const cleanupResizeRef = useRef<(() => void) | null>(null);
 
   const [selected, setSelected] = useState<MapMarker | null>(null);
+  // فشل الخريطة (شبكة/حجب) — يُعرض صراحةً بدل مربّع رمادي بلا تفسير
+  const [mapFailed, setMapFailed] = useState(false);
 
   // Normalize markers: combine `marker` (single) + `markers` (array)
   const allMarkers: MapMarker[] = [
@@ -90,6 +92,7 @@ export default function SpirMapView({
     let cancelled = false;
 
     (async () => {
+      try {
       const maplibregl = await loadMapLibre();
       if (cancelled || !mapContainerRef.current) return;
 
@@ -129,6 +132,13 @@ export default function SpirMapView({
         map.once('load', () =>
           map.fitBounds(bounds, { padding: 48, maxZoom: 13, duration: 0 }),
         );
+      }
+
+      map.on('load', () => { if (!cancelled) setMapFailed(false); });
+      map.on('error', () => { if (!cancelled) setMapFailed(true); });
+      } catch {
+        // فشل تحميل مكتبة/بلاط الخرائط — نُظهر رسالة بدل مربّع رمادي صامت
+        if (!cancelled) setMapFailed(true);
       }
     })();
 
@@ -190,6 +200,23 @@ export default function SpirMapView({
           ref={mapContainerRef}
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', background: '#E8EEF1' }}
         />
+
+        {mapFailed && (
+          <div
+            style={{
+              position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center', gap: 4, textAlign: 'center',
+              padding: 16, background: 'rgba(232,238,241,0.94)', pointerEvents: 'none',
+            }}
+          >
+            <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--ink-2)' }}>
+              تعذّر تحميل الخريطة
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--ink-3)' }}>
+              تحقّق من الاتصال وأعد المحاولة
+            </div>
+          </div>
+        )}
 
         {/* Recenter button */}
         {allMarkers.length === 1 && (
