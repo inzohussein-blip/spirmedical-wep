@@ -13,7 +13,10 @@ import { encrypt } from '@/lib/encryption';
 import { logger } from '@/lib/logger';
 import { getServiceById } from '@/lib/services/services-data';
 import { sendAppointmentConfirmedEmail } from '@/lib/email/actions';
-import { notifyOrderConfirmed } from '@/lib/services/push-templates';
+import {
+  notifyOrderConfirmed,
+  notifyEligibleSpecialistsOfNewOrder,
+} from '@/lib/services/push-templates';
 import { sendAppointmentConfirmedWA, isWhatsAppEnabled } from '@/lib/services/whatsapp';
 import {
   sendOtp as sendOtpService,
@@ -192,6 +195,15 @@ export async function createAppointmentV2(input: CreateAppointmentInput) {
   notifyOrderConfirmed(user.id, {
     orderId: created.id,
     serviceName: input.service_name,
+    scheduledAt: input.scheduled_at,
+  }).catch(() => null);
+
+  // 🔔 إشعار المختصّين المؤهّلين بوصول الطلب لطابورهم (fire-and-forget)
+  notifyEligibleSpecialistsOfNewOrder({
+    orderId: created.id,
+    requiredSpecialistType: insertData.required_specialist_type,
+    serviceName: input.service_name,
+    patientId: user.id,
     scheduledAt: input.scheduled_at,
   }).catch(() => null);
 
@@ -640,6 +652,15 @@ export async function createBloodDrawOrder(input: CreateBloodDrawInput) {
       scheduledAt: input.scheduled_at,
     }).catch(() => null);
 
+    // 🔔 إشعار فنّيي المختبر المعتمَدين بطلب جديد في طابورهم
+    notifyEligibleSpecialistsOfNewOrder({
+      orderId: appointment.id,
+      requiredSpecialistType: 'lab_analyst',
+      serviceName: 'سحب دم + تحاليل',
+      patientId: user.id,
+      scheduledAt: input.scheduled_at,
+    }).catch(() => null);
+
     // ملاحظة: WhatsApp notification متروك لـ trigger في DB أو background job
     // (الـ signature يتطلّب phone + patientName اللي مش متاح هنا مباشرة)
 
@@ -831,6 +852,15 @@ export async function createNursingAppointment(input: CreateNursingInput) {
     notifyOrderConfirmed(user.id, {
       orderId: appointment.id,
       serviceName: input.procedure_label,
+      scheduledAt: input.scheduled_at,
+    }).catch(() => null);
+
+    // 🔔 إشعار الممرّضين المعتمَدين بطلب جديد في طابورهم
+    notifyEligibleSpecialistsOfNewOrder({
+      orderId: appointment.id,
+      requiredSpecialistType: 'nurse',
+      serviceName: input.procedure_label,
+      patientId: user.id,
       scheduledAt: input.scheduled_at,
     }).catch(() => null);
 
