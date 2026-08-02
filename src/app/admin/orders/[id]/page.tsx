@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { SPECIALIST_META, type SpecialistType } from '@/lib/specialist-types';
 import { decrypt } from '@/lib/encryption';
 import OrderAdminActions from './OrderAdminActions';
+import OrderClinicalDetails from '@/components/orders/OrderClinicalDetails';
 import FreeMedicalMapWrapper from '@/components/maps/SpirMapViewWrapper';
 import { getOrderLocation, getAssignedSpecialistLocation } from './actions';
 import type { MapMarker } from '@/types/location';
@@ -125,6 +126,9 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
                 <p style={{ fontSize: 13, margin: 0 }}>{notesText}</p>
               </div>
             )}
+
+            {/* 🩺 التفاصيل السريرية — يحتاجها الأدمن للتنسيق والإسناد */}
+            <OrderClinicalDetails order={order} />
           </div>
 
           {/* 🗺️ Map */}
