@@ -70,6 +70,32 @@ describe('📋 مسار الإنشاء يضبط required_specialist_type فعل�
   });
 });
 
+describe('📋 كل مسار إنشاء يُشعر المختصّين المؤهّلين', () => {
+  /**
+   * الطلب يصل الطابور صحيحاً، لكن إن لم يُشعَر أحد فهو ينتظر حتى يفتح مختصٌّ
+   * التطبيق صدفةً. القالب كان موجوداً لكنّه يُستدعى فقط عند إسناد الأدمن يدوياً.
+   */
+  const CREATE_PATHS = [
+    'src/app/(dashboard)/appointments/new/actions.ts',
+    'src/app/(dashboard)/services/doctors/[id]/actions.ts',
+  ];
+
+  it.each(CREATE_PATHS)('%s يستدعي notifyEligibleSpecialistsOfNewOrder', (rel) => {
+    const code = readFileSync(join(process.cwd(), rel), 'utf8');
+    expect(code).toContain('notifyEligibleSpecialistsOfNewOrder');
+  });
+
+  it('الدالة تفلتر على المختصّين المعتمَدين فقط', () => {
+    const tpl = readFileSync(
+      join(process.cwd(), 'src/lib/services/push-templates.ts'),
+      'utf8'
+    );
+    expect(tpl).toContain('notifyEligibleSpecialistsOfNewOrder');
+    expect(tpl).toMatch(/\.eq\(\s*['"]approval_status['"]\s*,\s*['"]approved['"]/);
+    expect(tpl).toMatch(/\.eq\(\s*['"]role['"]\s*,\s*['"]specialist['"]/);
+  });
+});
+
 describe('📋 طابور المختصّ ما زال يفلتر على العمود نفسه', () => {
   // لو تغيّر الفلتر مستقبلاً، يجب مراجعة هذه الحارسات كلّها
   const queue = readFileSync(

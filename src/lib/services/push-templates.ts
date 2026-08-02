@@ -1,6 +1,7 @@
 'use server';
 
-import { sendPushToUser } from './push';
+import { sendPushToUser, sendPushToUsers } from './push';
+import { createAdminClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/logger';
 
 /**
@@ -286,6 +287,86 @@ export async function notifyNewOrderForSpecialist(
   } catch (err) {
     logger.warn('notifyNewOrderForSpecialist failed', {
       specialistUserId,
+      orderId: data.orderId,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
+/* ─── 8.ب إشعار المختصّين المؤهّلين بطلب جديد (بلا إسناد مسبق) ─── */
+
+/**
+ * يُشعر كل مختصّ **معتمَد** من النوع المطلوب بوصول طلب جديد إلى طابوره.
+ *
+ * لماذا: عند إنشاء الطلب لا يكون مُسنَداً لأحد بعد — يظهر في طابور نوعه
+ * (`required_specialist_type`) بانتظار من يقبله. وكان القالب أعلاه يُستدعى
+ * **فقط** عند إسناد الأدمن يدوياً، فالطلبات التي يرفعها المرضى كانت تنتظر
+ * صامتةً حتى يفتح مختصٌّ التطبيق صدفةً.
+ *
+ * fail-safe: لا يُلقي خطأً أبداً — الإشعار مكمّل لا شرط لنجاح الطلب.
+ */
+export async function notifyEligibleSpecialistsOfNewOrder(data: {
+  orderId: string;
+  requiredSpecialistType: string | null | undefined;
+  serviceName: string;
+  /** يُحلّ الاسم داخلياً بعميل الخدمة، فلا يحتاج موضعُ النداء جلبه */
+  patientId: string;
+  scheduledAt: string;
+}): Promise<void> {
+  try {
+    if (!data.requiredSpecialistType) return;
+
+    // عميل خدمة: المريض لا يملك صلاحية قراءة قائمة المختصّين
+    const supabase = createAdminClient();
+
+    const [{ data: specialists, error }, { data: patient }] = await Promise.all([
+      supabase
+        .from('users')
+        .select('id')
+        .eq('role', 'specialist')
+        .eq('specialist_type', data.requiredSpecialistType)
+        .eq('approval_status', 'approved')
+        .limit(100),
+      supabase.from('users').select('full_name').eq('id', data.patientId).single(),
+    ]);
+
+    if (error) {
+      logger.warn('notifyEligibleSpecialistsOfNewOrder lookup failed', {
+        orderId: data.orderId,
+        error: error.message,
+      });
+      return;
+    }
+
+    const ids = (specialists ?? []).map((s) => s.id);
+    if (ids.length === 0) {
+      // لا مختصّ معتمد لهذا النوع — إشارة تشغيلية مهمّة للمالك
+      logger.warn('New order has no approved specialist to notify', {
+        orderId: data.orderId,
+        requiredSpecialistType: data.requiredSpecialistType,
+      });
+      return;
+    }
+
+    const date = new Date(data.scheduledAt);
+    const dateStr = date.toLocaleDateString('ar-IQ', { day: 'numeric', month: 'short' });
+    const timeStr = date.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' });
+
+    const patientName = patient?.full_name || 'مريض';
+
+    await sendPushToUsers(
+      ids,
+      {
+        title: '📋 طلب جديد متاح',
+        body: `${data.serviceName} · ${patientName} · ${dateStr} ${timeStr}`,
+        url: `/specialist/orders/${data.orderId}`,
+        tag: `specialist-order-${data.orderId}`,
+        data: { orderId: data.orderId, type: 'new_order_available' },
+      },
+      'system_updates'
+    );
+  } catch (err) {
+    logger.warn('notifyEligibleSpecialistsOfNewOrder failed', {
       orderId: data.orderId,
       error: err instanceof Error ? err.message : String(err),
     });

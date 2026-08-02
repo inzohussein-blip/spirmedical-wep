@@ -3,6 +3,10 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { encrypt } from '@/lib/encryption';
+import {
+  notifyOrderConfirmed,
+  notifyEligibleSpecialistsOfNewOrder,
+} from '@/lib/services/push-templates';
 
 /**
  * اشتراك بطبيب عائلة
@@ -256,6 +260,21 @@ export async function createDoctorAppointment(input: CreateDoctorAppointmentInpu
     if (error || !appointment) {
       return { success: false, error: 'فشل إنشاء الموعد. حاول مرة أخرى.' };
     }
+
+    // 🔔 إشعارات (fire-and-forget) — لم يكن هذا المسار يُشعر أحداً إطلاقاً
+    notifyOrderConfirmed(user.id, {
+      orderId: appointment.id,
+      serviceName: serviceTypeArabic,
+      scheduledAt: input.scheduled_at,
+    }).catch(() => null);
+
+    notifyEligibleSpecialistsOfNewOrder({
+      orderId: appointment.id,
+      requiredSpecialistType: 'doctor',
+      serviceName: serviceTypeArabic,
+      patientId: user.id,
+      scheduledAt: input.scheduled_at,
+    }).catch(() => null);
 
     revalidatePath('/appointments');
     revalidatePath('/dashboard');
