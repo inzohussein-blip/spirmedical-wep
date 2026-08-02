@@ -6,6 +6,7 @@ import AppointmentStatusCard from '@/components/appointments/AppointmentStatusCa
 import AppointmentTimeline from '@/components/appointments/AppointmentTimeline';
 import AppointmentActions from '@/components/appointments/AppointmentActions';
 import ExternalMapButton from '@/components/maps/ExternalMapButton';
+import OrderClinicalDetails from '@/components/orders/OrderClinicalDetails';
 import {
   Stethoscope, Calendar, Clock, Smartphone, MessageCircle, Send,
   MapPin, FileText, Lock,
@@ -290,6 +291,10 @@ export default async function AppointmentDetailsPage({ params }: Props) {
             </div>
           </div>
         )}
+
+        {/* 🩺 ما أرسلتَه مع الطلب (حساسية/صيام/مستلزمات/وصفة…) — شفافية للمريض.
+            المكوّن يُخفي نفسه تماماً إن لم توجد بيانات، فلا يظهر صندوق فارغ. */}
+        <OrderClinicalDetails order={appointment} />
 
         {/* Actions */}
         <AppointmentActions

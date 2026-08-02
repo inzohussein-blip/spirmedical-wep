@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
 import { SPECIALIST_META, type SpecialistType } from '@/lib/specialist-types';
+import OrderClinicalDetails from '@/components/orders/OrderClinicalDetails';
 import { decrypt } from '@/lib/encryption';
 import OrderActionsBar from './OrderActionsBar';
 import LabResultsForm from './role-forms/LabResultsForm';
@@ -262,6 +263,9 @@ export default async function SpecialistOrderDetailPage({
             </div>
           )}
         </div>
+
+        {/* 🩺 التفاصيل السريرية (حساسية/عدوى/صيام/وصفة/GPS…) */}
+        <OrderClinicalDetails order={order} />
 
         {/* السجل الطبي (للطبيب فقط) */}
         {specialistType === 'doctor' && patient?.medical_info && (
