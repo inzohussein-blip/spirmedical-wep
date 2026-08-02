@@ -3,6 +3,7 @@ import { createServiceClient } from '@/lib/supabase/server-service';
 import { enqueueRawNotification } from '@/lib/notifications';
 import { sendQueuedNotification } from '@/lib/notifications-processor';
 import { logger } from '@/lib/logger';
+import { cleanupExpiredKeys } from '@/lib/idempotency';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -112,6 +113,9 @@ export async function GET(req: NextRequest) {
       .eq('id', r.id);
   }
 
-  logger.info('Reminders cron processed', { due: due.length, sent });
-  return NextResponse.json({ processed: due.length, sent });
+  // 🔁 كنس مفاتيح الإرسال المزدوج المنتهية (تُخزَّن 24 ساعة) — لا تتراكم بلا حدّ
+  const purgedKeys = await cleanupExpiredKeys();
+
+  logger.info('Reminders cron processed', { due: due.length, sent, purgedKeys });
+  return NextResponse.json({ processed: due.length, sent, purgedKeys });
 }
