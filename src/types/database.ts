@@ -545,7 +545,7 @@ export type Database = {
           confirmed_at: string | null;
           completed_at: string | null;
           cancelled_at: string | null;
-          cancellation_reason: string | null;
+          cancelled_reason: string | null;
           specialist_id: string | null;
           // ✨ أعمدة Specialist System (V21):
           required_specialist_type: 'lab_analyst' | 'nurse' | 'doctor' | 'pharmacist' | 'physio' | 'psychologist' | 'nutritionist' | null;
@@ -623,7 +623,7 @@ export type Database = {
           confirmed_at?: string | null;
           completed_at?: string | null;
           cancelled_at?: string | null;
-          cancellation_reason?: string | null;
+          cancelled_reason?: string | null;
           specialist_id?: string | null;
           // ✨ أعمدة Specialist System (V21):
           required_specialist_type?: 'lab_analyst' | 'nurse' | 'doctor' | 'pharmacist' | 'physio' | 'psychologist' | 'nutritionist' | null;
@@ -674,7 +674,7 @@ export type Database = {
           confirmed_at?: string | null;
           completed_at?: string | null;
           cancelled_at?: string | null;
-          cancellation_reason?: string | null;
+          cancelled_reason?: string | null;
           specialist_id?: string | null;
           // ✨ أعمدة Specialist System (V21):
           required_specialist_type?: 'lab_analyst' | 'nurse' | 'doctor' | 'pharmacist' | 'physio' | 'psychologist' | 'nutritionist' | null;

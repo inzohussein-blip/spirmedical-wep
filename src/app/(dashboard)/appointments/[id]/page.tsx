@@ -6,9 +6,10 @@ import AppointmentStatusCard from '@/components/appointments/AppointmentStatusCa
 import AppointmentTimeline from '@/components/appointments/AppointmentTimeline';
 import AppointmentActions from '@/components/appointments/AppointmentActions';
 import ExternalMapButton from '@/components/maps/ExternalMapButton';
+import OrderClinicalDetails from '@/components/orders/OrderClinicalDetails';
 import {
   Stethoscope, Calendar, Clock, Smartphone, MessageCircle, Send,
-  MapPin, FileText, Lock,
+  MapPin, FileText, Lock, CheckCircle2,
 } from 'lucide-react';
 
 export const metadata = {
@@ -19,6 +20,8 @@ export const dynamic = 'force-dynamic';
 
 interface Props {
   params: { id: string };
+  /** `?new=1` يصل بعد رفع الطلب مباشرةً — يُستعمل لعرض تأكيد النجاح */
+  searchParams?: { new?: string };
 }
 
 function formatDateArabic(iso: string): string {
@@ -40,7 +43,8 @@ function formatDuration(minutes: number | null): string {
   return mins === 0 ? `${hours} ساعة` : `${hours}س ${mins}د`;
 }
 
-export default async function AppointmentDetailsPage({ params }: Props) {
+export default async function AppointmentDetailsPage({ params, searchParams }: Props) {
+  const justCreated = searchParams?.new === '1';
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -122,6 +126,35 @@ export default async function AppointmentDetailsPage({ params }: Props) {
         flexDirection: 'column',
         gap: '16px',
       }}>
+        {/* ✅ تأكيد نجاح الرفع — يصل المريض هنا مباشرةً بعد إرسال الطلب.
+            كان `?new=1` يُمرَّر ولا يُقرأ، فلا يرى المريض أيّ تأكيد. */}
+        {justCreated && (
+          <div
+            role="status"
+            style={{
+              background: 'var(--emerald-soft, #D9E5DF)',
+              border: '1px solid var(--emerald, #0F6E56)',
+              borderRadius: '14px',
+              padding: '14px 16px',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: 10,
+            }}
+          >
+            <CheckCircle2 size={20} strokeWidth={2.2} aria-hidden
+              style={{ color: 'var(--emerald-deep, #073B30)', flexShrink: 0, marginTop: 1 }} />
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--emerald-deep, #073B30)' }}>
+                تمّ استلام طلبك بنجاح
+              </div>
+              <div style={{ fontSize: 12.5, color: 'var(--ink-2)', lineHeight: 1.7, marginTop: 2 }}>
+                سنُبلغ المختصّين المتاحين الآن، وستصلك رسالة عند قبول الطلب. يمكنك متابعة
+                الحالة من هذه الصفحة.
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Status Card */}
         <AppointmentStatusCard
           status={appointment.status}
@@ -291,6 +324,10 @@ export default async function AppointmentDetailsPage({ params }: Props) {
           </div>
         )}
 
+        {/* 🩺 ما أرسلتَه مع الطلب (حساسية/صيام/مستلزمات/وصفة…) — شفافية للمريض.
+            المكوّن يُخفي نفسه تماماً إن لم توجد بيانات، فلا يظهر صندوق فارغ. */}
+        <OrderClinicalDetails order={appointment} />
+
         {/* Actions */}
         <AppointmentActions
           appointmentId={appointment.id}
@@ -308,7 +345,7 @@ export default async function AppointmentDetailsPage({ params }: Props) {
           scheduledAt={appointment.scheduled_at}
           completedAt={appointment.completed_at}
           cancelledAt={appointment.cancelled_at}
-          cancellationReason={appointment.cancellation_reason}
+          cancellationReason={appointment.cancelled_reason}
           isBloodDraw={appointment.service_id === 'blood-draw'}
         />
       </div>

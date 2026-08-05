@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { logger } from '@/lib/logger';
 
 interface RatingInput {
   appointment_id: string;
@@ -92,8 +93,20 @@ export async function submitRating(input: RatingInput) {
     const dentalClinicId = fullAppt.dental_clinic_id as string | null;
     const opticalStoreId = fullAppt.optical_store_id as string | null;
 
+    // التقييم العام حُفظ في `ratings` أعلاه؛ النسخة المتخصّصة إضافية.
+    // نُسجّل فشلها بدل ابتلاعه — فالصمت هنا هو ما أخفى خلل أسماء الأعمدة سابقاً.
+    const logFacilityFailure = (table: string, err: unknown) => {
+      if (!err) return;
+      const message = (err as { message?: string })?.message ?? String(err);
+      logger.error('Facility rating insert failed', {
+        table,
+        appointment_id: input.appointment_id,
+        error: message,
+      });
+    };
+
     if (hospitalId) {
-      await supabaseAny.from('hospital_ratings').insert({
+      const { error: facilityError } = await supabaseAny.from('hospital_ratings').insert({
         user_id: user.id,
         hospital_id: hospitalId,
         appointment_id: input.appointment_id,
@@ -104,8 +117,9 @@ export async function submitRating(input: RatingInput) {
         comment: input.review_text?.trim() || null,
         is_public: !input.is_anonymous,
       });
+      logFacilityFailure('hospital_ratings', facilityError);
     } else if (dentalClinicId) {
-      await supabaseAny.from('dental_ratings').insert({
+      const { error: facilityError } = await supabaseAny.from('dental_ratings').insert({
         user_id: user.id,
         dental_clinic_id: dentalClinicId,
         appointment_id: input.appointment_id,
@@ -117,8 +131,9 @@ export async function submitRating(input: RatingInput) {
         comment: input.review_text?.trim() || null,
         is_public: !input.is_anonymous,
       });
+      logFacilityFailure('dental_ratings', facilityError);
     } else if (opticalStoreId) {
-      await supabaseAny.from('optical_ratings').insert({
+      const { error: facilityError } = await supabaseAny.from('optical_ratings').insert({
         user_id: user.id,
         optical_store_id: opticalStoreId,
         appointment_id: input.appointment_id,
@@ -130,6 +145,7 @@ export async function submitRating(input: RatingInput) {
         comment: input.review_text?.trim() || null,
         is_public: !input.is_anonymous,
       });
+      logFacilityFailure('optical_ratings', facilityError);
     }
   }
 

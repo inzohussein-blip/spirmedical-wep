@@ -214,7 +214,8 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
     });
 
     if (result.success) {
-      router.push(`/appointments?new=${result.appointmentId}`);
+      // نفس وجهة تدفّقَي سحب الدم والتمريض: صفحة الطلب مع تأكيد النجاح
+      router.push(`/appointments/${result.appointmentId}?new=1`);
       return;
     }
 

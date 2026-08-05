@@ -77,72 +77,41 @@ export default async function FavoritesPage() {
     favoritesByType.get(f.service_type)!.push(f.service_id);
   });
 
+  // أنواع المفضّلات مستقلّة عن بعضها — نجلب تفاصيلها **بالتوازي** بدل خمس
+  // رحلات متتالية للقاعدة، ولا نستعلم إلا عن الأنواع الموجودة فعلاً.
+  const SOURCES: Array<{
+    type: string;
+    table: string;
+    cols: string;
+    map?: (row: Record<string, unknown>) => Record<string, unknown>;
+  }> = [
+    { type: 'hospital', table: 'hospitals', cols: 'id, name, city, district, rating_avg, rating_count' },
+    { type: 'dental', table: 'dental_clinics', cols: 'id, name, city, district, rating_avg, rating_count' },
+    { type: 'optical', table: 'optical_stores', cols: 'id, name, city, district, rating_avg, rating_count' },
+    { type: 'pharmacy', table: 'pharmacies', cols: 'id, name, city, district, rating_avg, rating_count' },
+    {
+      type: 'doctor',
+      table: 'doctors',
+      cols: 'id, full_name, specialty, rating_avg, rating_count',
+      map: (d) => ({ ...d, name: d.full_name, city: d.specialty }),
+    },
+  ];
+
   const detailsMap = new Map<string, Record<string, unknown>>();
 
-  // Hospitals
-  if (favoritesByType.has('hospital')) {
-    const ids = favoritesByType.get('hospital')!;
-    
-    const res = await supabaseAny
-      .from('hospitals')
-      .select('id, name, city, district, rating_avg, rating_count')
-      .in('id', ids);
-    
-    ((res.data as Array<Record<string, unknown>>) ?? []).forEach((h) => {
-      detailsMap.set(`hospital:${h.id}`, h);
-    });
-  }
+  const fetched = await Promise.all(
+    SOURCES.filter((s) => favoritesByType.has(s.type)).map(async (s) => {
+      const res = await supabaseAny
+        .from(s.table)
+        .select(s.cols)
+        .in('id', favoritesByType.get(s.type)!);
+      const rows = (res.data as Array<Record<string, unknown>>) ?? [];
+      return { type: s.type, rows: rows.map((r) => (s.map ? s.map(r) : r)) };
+    })
+  );
 
-  // Dental
-  if (favoritesByType.has('dental')) {
-    const ids = favoritesByType.get('dental')!;
-    const res = await supabaseAny
-      .from('dental_clinics')
-      .select('id, name, city, district, rating_avg, rating_count')
-      .in('id', ids);
-    
-    ((res.data as Array<Record<string, unknown>>) ?? []).forEach((d) => {
-      detailsMap.set(`dental:${d.id}`, d);
-    });
-  }
-
-  // Optical
-  if (favoritesByType.has('optical')) {
-    const ids = favoritesByType.get('optical')!;
-    const res = await supabaseAny
-      .from('optical_stores')
-      .select('id, name, city, district, rating_avg, rating_count')
-      .in('id', ids);
-    
-    ((res.data as Array<Record<string, unknown>>) ?? []).forEach((o) => {
-      detailsMap.set(`optical:${o.id}`, o);
-    });
-  }
-
-  // Pharmacies
-  if (favoritesByType.has('pharmacy')) {
-    const ids = favoritesByType.get('pharmacy')!;
-    const res = await supabaseAny
-      .from('pharmacies')
-      .select('id, name, city, district, rating_avg, rating_count')
-      .in('id', ids);
-    
-    ((res.data as Array<Record<string, unknown>>) ?? []).forEach((p) => {
-      detailsMap.set(`pharmacy:${p.id}`, p);
-    });
-  }
-
-  // Doctors
-  if (favoritesByType.has('doctor')) {
-    const ids = favoritesByType.get('doctor')!;
-    const res = await supabaseAny
-      .from('doctors')
-      .select('id, full_name, specialty, rating_avg, rating_count')
-      .in('id', ids);
-    
-    ((res.data as Array<Record<string, unknown>>) ?? []).forEach((d) => {
-      detailsMap.set(`doctor:${d.id}`, { ...d, name: d.full_name, city: d.specialty });
-    });
+  for (const { type, rows } of fetched) {
+    for (const row of rows) detailsMap.set(`${type}:${row.id}`, row);
   }
 
   // دمج البيانات

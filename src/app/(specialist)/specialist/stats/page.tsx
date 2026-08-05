@@ -23,34 +23,39 @@ export default async function SpecialistStatsPage() {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  // إحصاءات
-  const { count: totalAppointments } = await supabase
-    .from('appointments')
-    .select('*', { count: 'exact', head: true })
-    .eq('specialist_id', user!.id);
-
-  const { count: completedCount } = await supabase
-    .from('appointments')
-    .select('*', { count: 'exact', head: true })
-    .eq('specialist_id', user!.id)
-    .eq('status', 'completed');
-
-  const { count: cancelledCount } = await supabase
-    .from('appointments')
-    .select('*', { count: 'exact', head: true })
-    .eq('specialist_id', user!.id)
-    .eq('status', 'cancelled');
-
-  // Top services — عدّ فعلي حسب اسم الخدمة (لا أرقام ملفّقة)
-  const { data: completedRows } = await supabase
-    .from('appointments')
-    .select('service_name')
-    .eq('specialist_id', user!.id)
-    .eq('status', 'completed');
+  // إحصاءات — الاستعلامات الأربعة مستقلّة، فنجلبها بالتوازي (رحلة واحدة بدل أربع)
+  const [
+    { count: totalAppointments },
+    { count: completedCount },
+    { count: cancelledCount },
+    // Top services — عدّ فعلي حسب اسم الخدمة (لا أرقام ملفّقة)
+    { data: completedRows },
+  ] = await Promise.all([
+    supabase
+      .from('appointments')
+      .select('*', { count: 'exact', head: true })
+      .eq('specialist_id', user!.id),
+    supabase
+      .from('appointments')
+      .select('*', { count: 'exact', head: true })
+      .eq('specialist_id', user!.id)
+      .eq('status', 'completed'),
+    supabase
+      .from('appointments')
+      .select('*', { count: 'exact', head: true })
+      .eq('specialist_id', user!.id)
+      .eq('status', 'cancelled'),
+    supabase
+      .from('appointments')
+      // اسم العمود في appointments هو service_type (لا service_name)
+      .select('service_type')
+      .eq('specialist_id', user!.id)
+      .eq('status', 'completed'),
+  ]);
 
   const serviceTally = new Map<string, number>();
-  for (const row of (completedRows ?? []) as Array<{ service_name?: string | null }>) {
-    const name = row.service_name?.trim() || 'أخرى';
+  for (const row of (completedRows ?? []) as Array<{ service_type?: string | null }>) {
+    const name = row.service_type?.trim() || 'أخرى';
     serviceTally.set(name, (serviceTally.get(name) ?? 0) + 1);
   }
   const topServices: Array<{ name: string; count: number; icon: LucideIcon }> = [

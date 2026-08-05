@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { notifyTestResultsReady, notifySpecialistAssigned } from '@/lib/services/push-templates';
 import { logAuditEvent } from '@/lib/audit';
+import { logger } from '@/lib/logger';
 
 /**
  * قبول طلب: تعيين الاختصاصي للطلب
@@ -272,11 +273,20 @@ export async function saveLabResults(
     return { ok: false, error: 'no_lab_order' };
   }
 
-  // حذف النتائج القديمة (لو في) وإضافة الجديدة
-  await supabase
+  // حذف النتائج القديمة (لو في) وإضافة الجديدة.
+  // لو فشل الحذف نتوقّف: المتابعة تُنتج نتائج مُكرَّرة يراها المريض.
+  const { error: deleteError } = await supabase
     .from('lab_results')
     .delete()
     .eq('lab_order_id', labOrderId);
+
+  if (deleteError) {
+    logger.error('Failed to clear previous lab results', {
+      lab_order_id: labOrderId,
+      error: deleteError.message,
+    });
+    return { ok: false, error: 'تعذّر استبدال النتائج السابقة. حاول مرة أخرى.' };
+  }
 
   const resultsToInsert = results.map((r) => ({
     lab_order_id: labOrderId,
@@ -305,8 +315,9 @@ export async function saveLabResults(
     return { ok: false, error: insertError.message };
   }
 
-  // تحديث lab_order status
-  await supabase
+  // النتائج حُفظت. تحديثا الحالة أدناه لا يُلغيان الحفظ عند الفشل، لكن فشلهما
+  // الصامت يعني أنّ المريض لا يرى «النتائج جاهزة» أبداً — فنُسجّلهما صراحةً.
+  const { error: labOrderError } = await supabase
     .from('lab_orders')
     .update({
       status: 'results_ready',
@@ -314,11 +325,25 @@ export async function saveLabResults(
     } as never)
     .eq('id', labOrderId);
 
+  if (labOrderError) {
+    logger.error('Lab results saved but lab_order status update failed', {
+      lab_order_id: labOrderId,
+      error: labOrderError.message,
+    });
+  }
+
   // تحديث appointment status
-  await supabase
+  const { error: apptError } = await supabase
     .from('appointments')
     .update({ status: 'completed', completed_at: new Date().toISOString() } as never)
     .eq('id', appointmentId);
+
+  if (apptError) {
+    logger.error('Lab results saved but appointment status update failed', {
+      appointment_id: appointmentId,
+      error: apptError.message,
+    });
+  }
 
   revalidatePath(`/specialist/orders/${appointmentId}`);
   revalidatePath(`/account/lab-history`);

@@ -119,7 +119,9 @@ export async function adminCancelOrder(orderId: string, reason: string) {
     .from('appointments')
     .update({
       status: 'cancelled',
-      cancellation_reason: `[إدارة] ${reason.trim()}`,
+      // اسم العمود في appointments هو cancelled_reason (لا cancellation_reason،
+      // فذاك يخصّ pharmacy_reservations) — انظر 0001_core_foundation.sql
+      cancelled_reason: `[إدارة] ${reason.trim()}`,
       cancelled_at: new Date().toISOString(),
     })
     .eq('id', orderId);

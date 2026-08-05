@@ -1,0 +1,187 @@
+import { readFileSync, readdirSync } from 'fs';
+import { join, relative } from 'path';
+
+/**
+ * 🔗 حارس الروابط والمسارات
+ *
+ * الخلفية: التدقيق السابق كشف 7 روابط ميتة تقود إلى 404 (منها البحث الرئيسي).
+ * أُصلحت في المرحلة 1، وهذا الحارس يمنع عودتها: يبني خريطة مسارات App Router
+ * الفعلية من الملفات، ثم يتحقّق أنّ كل رابط داخلي (`href` / `router.push` /
+ * `redirect`) وكل نداء `fetch('/api/…')` يطابق مساراً موجوداً.
+ *
+ * يفهم: مجموعات المسارات `(group)` (لا تظهر في الـURL)، والمقاطع الديناميكية
+ * `[id]`، والشاملة `[...slug]`، وتعبيرات القوالب داخل الروابط.
+ */
+
+const APP_DIR = join(process.cwd(), 'src', 'app');
+const SRC_DIR = join(process.cwd(), 'src');
+
+function walk(dir: string, out: string[] = []): string[] {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const p = join(dir, entry.name);
+    if (entry.isDirectory()) walk(p, out);
+    else out.push(p);
+  }
+  return out;
+}
+
+/** يحوّل مسار ملف داخل app/ إلى مسار URL (يُسقط مجموعات المسارات) */
+function fileToRoute(file: string, endpoint: 'page' | 'route'): string | null {
+  const rel = '/' + relative(APP_DIR, file).replace(/\\/g, '/');
+  const re = endpoint === 'page' ? /\/page\.tsx?$/ : /\/route\.tsx?$/;
+  if (!re.test(rel)) return null;
+  const segments = rel
+    .replace(re, '')
+    .split('/')
+    .filter((s) => s && !/^\(.*\)$/.test(s));
+  return '/' + segments.join('/');
+}
+
+export function collectRoutes(endpoint: 'page' | 'route'): string[] {
+  const routes = walk(APP_DIR)
+    .map((f) => fileToRoute(f, endpoint))
+    .filter((r): r is string => r !== null);
+  return Array.from(new Set(routes)).sort();
+}
+
+/**
+ * يبني مُطابِقاً: `[id]` → مقطع واحد، `[...slug]` → بقية المسار.
+ * نعالج كل مقطع على حدة بدل تهريب المسار كاملاً، لأنّ التهريب الشامل كان يحوّل
+ * `[id]` إلى فئة محارف (تطابق «i» أو «d» فقط) بدل مقطع ديناميكي.
+ */
+export function buildMatcher(routes: string[]): (path: string) => boolean {
+  const patterns = routes.map((r) => {
+    const source = r
+      .split('/')
+      .map((seg) => {
+        if (/^\[\.\.\..+\]$/.test(seg)) return '.+';       // [...slug]
+        if (/^\[.+\]$/.test(seg)) return '[^/]+';            // [id]
+        return seg.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      })
+      .join('/');
+    return new RegExp('^' + source + '$');
+  });
+  return (path: string) => patterns.some((p) => p.test(path));
+}
+
+function sourceFiles(): string[] {
+  return walk(SRC_DIR).filter((f) => /\.(ts|tsx)$/.test(f));
+}
+
+/** يطبّع الرابط: يحذف الاستعلام/المرساة ويستبدل `${…}` بمقطع نائب */
+function normalize(href: string): string {
+  const cleaned = href.replace(/\$\{[^}]*\}/g, 'X').replace(/[?#].*$/, '');
+  const trimmed = cleaned.replace(/\/+$/, '');
+  return trimmed === '' ? '/' : trimmed;
+}
+
+export function collectInternalLinks(): Map<string, Set<string>> {
+  const links = new Map<string, Set<string>>();
+  const extractors = [
+    /href=["'](\/[^"']*)["']/g,
+    /href=\{`(\/[^`]*)`\}/g,
+    /(?:router\.(?:push|replace)|redirect)\(\s*["'`](\/[^"'`]*)["'`]/g,
+  ];
+
+  for (const file of sourceFiles()) {
+    const code = readFileSync(file, 'utf8');
+    for (const re of extractors) {
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(code)) !== null) {
+        const href = normalize(m[1]);
+        if (href.startsWith('/api')) continue; // تُفحص على حدة
+        if (!links.has(href)) links.set(href, new Set());
+        links.get(href)!.add(relative(process.cwd(), file));
+      }
+    }
+  }
+  return links;
+}
+
+export function collectApiCalls(): Map<string, Set<string>> {
+  const calls = new Map<string, Set<string>>();
+  const re = /fetch\(\s*[`'"](\/api\/[^`'"]*)[`'"]/g;
+
+  for (const file of sourceFiles()) {
+    const code = readFileSync(file, 'utf8');
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(code)) !== null) {
+      const url = normalize(m[1]);
+      if (!calls.has(url)) calls.set(url, new Set());
+      calls.get(url)!.add(relative(process.cwd(), file));
+    }
+  }
+  return calls;
+}
+
+describe('🔗 كل رابط داخلي يقابله مسار موجود', () => {
+  const pages = collectRoutes('page');
+  const matches = buildMatcher(pages);
+
+  it('يجد صفحات App Router', () => {
+    expect(pages.length).toBeGreaterThan(100);
+    expect(pages).toContain('/dashboard');
+    expect(pages).toContain('/search'); // كان 404 قبل المرحلة 1
+  });
+
+  it('لا يوجد رابط داخلي ميت (404)', () => {
+    const dead: string[] = [];
+    for (const [href, files] of collectInternalLinks()) {
+      if (!matches(href)) {
+        dead.push(`${href}  ←  ${Array.from(files).slice(0, 3).join(', ')}`);
+      }
+    }
+    expect(dead.sort()).toEqual([]);
+  });
+});
+
+describe('🔗 كل نداء fetch لـ /api يقابله route handler', () => {
+  const apis = collectRoutes('route');
+  const matches = buildMatcher(apis);
+
+  it('يجد مسارات API', () => {
+    expect(apis.length).toBeGreaterThan(10);
+    // معظمها تحت /api عدا معالج OAuth (/auth/callback)
+    expect(apis.filter((r) => r.startsWith('/api')).length).toBeGreaterThan(10);
+    expect(apis).toContain('/auth/callback');
+  });
+
+  it('لا يوجد نداء fetch لمسار API غير موجود', () => {
+    const dead: string[] = [];
+    for (const [url, files] of collectApiCalls()) {
+      if (!matches(url)) {
+        dead.push(`${url}  ←  ${Array.from(files).slice(0, 3).join(', ')}`);
+      }
+    }
+    expect(dead.sort()).toEqual([]);
+  });
+});
+
+describe('🔗 المُطابِق نفسه صحيح (لا يمرّر كل شيء)', () => {
+  const matches = buildMatcher([
+    '/dashboard',
+    '/appointments/[id]',
+    '/appointments/[id]/track',
+    '/blog/[...slug]',
+  ]);
+
+  it('يقبل المسارات الثابتة والديناميكية', () => {
+    expect(matches('/dashboard')).toBe(true);
+    expect(matches('/appointments/X')).toBe(true);
+    expect(matches('/appointments/X/track')).toBe(true);
+    expect(matches('/blog/a/b/c')).toBe(true);
+  });
+
+  it('يرفض المسارات غير الموجودة', () => {
+    expect(matches('/dashboardz')).toBe(false);
+    expect(matches('/nope')).toBe(false);
+    expect(matches('/appointments')).toBe(false);
+    expect(matches('/appointments/X/nope')).toBe(false);
+  });
+
+  it('يُسقط مجموعات المسارات من الـURL', () => {
+    // ملف (dashboard)/account/page.tsx يخدم /account لا /(dashboard)/account
+    const route = fileToRoute(join(APP_DIR, '(dashboard)', 'account', 'page.tsx'), 'page');
+    expect(route).toBe('/account');
+  });
+});
