@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { phoneSchema, otpSchema, normalizePhone } from '@/lib/validations/auth';
 import { redirect } from 'next/navigation';
 import { getRoleHomePath } from '@/lib/auth/home-path';
+import { isSafeInternalPath } from '@/lib/auth/safe-redirect';
 import { createClient as createSbClient } from '@supabase/supabase-js';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
@@ -109,7 +110,7 @@ export async function sendOtp(formData: FormData) {
           metadata: { phone: normalizedPhone, ip, channel },
         });
 
-        const otpUrl = redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')
+        const otpUrl = isSafeInternalPath(redirectTo)
           ? `/otp?phone=${encodeURIComponent(normalizedPhone)}&channel=${channel}&redirect=${encodeURIComponent(redirectTo)}`
           : `/otp?phone=${encodeURIComponent(normalizedPhone)}&channel=${channel}`;
 
@@ -157,7 +158,7 @@ export async function sendOtp(formData: FormData) {
     metadata: { phone: normalizedPhone, ip, channel: 'sms' },
   });
 
-  const otpUrl = redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')
+  const otpUrl = isSafeInternalPath(redirectTo)
     ? `/otp?phone=${encodeURIComponent(normalizedPhone)}&channel=sms&redirect=${encodeURIComponent(redirectTo)}`
     : `/otp?phone=${encodeURIComponent(normalizedPhone)}&channel=sms`;
 
@@ -534,7 +535,7 @@ export async function verifyOtp(formData: FormData) {
 
       const home = getRoleHomePath(role);
       if (home !== '/dashboard') redirect(home);
-      if (redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')) {
+      if (isSafeInternalPath(redirectTo)) {
         redirect(redirectTo);
       }
       redirect('/dashboard');
@@ -585,7 +586,7 @@ export async function verifyOtp(formData: FormData) {
   const home = getRoleHomePath(profile?.role);
   if (home !== '/dashboard') redirect(home);
 
-  if (redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')) {
+  if (isSafeInternalPath(redirectTo)) {
     redirect(redirectTo);
   }
 

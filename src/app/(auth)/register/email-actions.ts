@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { safeInternalPath } from '@/lib/auth/safe-redirect';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
 
@@ -39,15 +40,6 @@ function isNextRedirect(err: unknown): boolean {
   );
 }
 
-/**
- * توجيه آمن حسب الدور بعد نجاح المصادقة.
- * يمنع open-redirect: أي مسار خارجي أو // يُتجاهل.
- */
-function safeInternalPath(path: string | null, fallback: string): string {
-  if (!path) return fallback;
-  if (path.startsWith('/') && !path.startsWith('//')) return path;
-  return fallback;
-}
 
 function roleHomePath(role: string | null | undefined): string {
   if (role === 'specialist') return '/specialist';
