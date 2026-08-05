@@ -15,6 +15,7 @@ import { useState, useMemo, useRef, useEffect, type RefObject } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { haptic } from '@/lib/haptic';
 import { toast } from '@/components/ui/Toaster';
+import { submitErrorMessage } from '@/lib/forms/submit-error';
 import FamilyMemberPicker from '@/components/family/FamilyMemberPicker';
 import {
   Droplet, Search, Star, User, MapPin, Building2, Calendar,
@@ -287,6 +288,11 @@ export default function BloodDrawFlow({
         setFieldErrors(res.fieldErrors);
         focusFirstError(res.fieldErrors);
       }
+    } catch (err) {
+      // انقطاع الشبكة يرمي استثناءً من فعل الخادم؛ بدون هذا الالتقاط كان
+      // المريض لا يرى شيئاً بعد ملء النموذج كاملاً.
+      toast.error(submitErrorMessage(err), 'تعذّر الإرسال');
+      haptic.error();
     } finally {
       setSubmitting(false);
     }

@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { signInWithEmail } from '@/lib/auth/email-auth';
+import { getRoleHomePath } from '@/lib/auth/home-path';
+import { submitErrorMessage } from '@/lib/forms/submit-error';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 
@@ -31,12 +33,15 @@ export default function LoginPage() {
       const result = await signInWithEmail(email, password);
 
       if (result.success) {
-        router.push('/dashboard');
+        // بيت الدور الصحيح مباشرةً (كان ثابتاً على /dashboard، فيقفز المختصّ
+        // والأدمن قفزةً زائدة قبل أن يُعيدهما التخطيط)
+        router.push(getRoleHomePath(result.role));
       } else {
         setError(result.error || 'فشل الدخول');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'خطأ غير معروف');
+      // كان يعرض «Failed to fetch» عند الانقطاع
+      setError(submitErrorMessage(err));
     } finally {
       setLoading(false);
     }

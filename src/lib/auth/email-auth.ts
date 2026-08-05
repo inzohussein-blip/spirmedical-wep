@@ -104,7 +104,7 @@ export async function signUpWithEmail(input: {
 export async function sendEmailVerification(
   userId: string,
   email: string
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; error?: string; role?: string | null }> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
   const appUrl =
@@ -231,7 +231,7 @@ export async function verifyEmailToken(token: string): Promise<{
 export async function signInWithEmail(
   email: string,
   password: string
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; error?: string; role?: string | null }> {
   const supabase = createClient();
 
   try {
@@ -249,6 +249,7 @@ export async function signInWithEmail(
     }
 
     // 2. تحقق من email_verified
+    let signedInRole: string | null = null;
     const { data: userAuth } = await supabase.auth.getUser();
     if (userAuth?.user) {
       // email_verified حقل جديد — نستخدم as any حتى تُضاف للـ database types
@@ -259,6 +260,7 @@ export async function signInWithEmail(
         .single() as any;
 
       const profileData = profile?.data ?? profile;
+      signedInRole = profileData?.role ?? null;
       // نُطبّق بوابة تأكيد البريد فقط عندما يكون إرسال البريد مُهيّأً فعلاً،
       // وإلا لأصبحت طريقاً مسدوداً (المستخدم لن يستلم رابط التفعيل أبداً).
       if (!profileData?.email_verified && isEmailConfigured()) {
@@ -271,7 +273,9 @@ export async function signInWithEmail(
       }
     }
 
-    return { success: true };
+    // الدور مُستخرَج أعلاه أصلاً — نُعيده كي توجّه صفحةُ الدخول المستخدمَ إلى
+    // بيته الصحيح مباشرةً بدل قفزة زائدة عبر /dashboard ثم إعادة توجيه.
+    return { success: true, role: signedInRole };
   } catch (err) {
     return {
       success: false,
