@@ -9,6 +9,8 @@ import {
   Calendar, MapPin, Lightbulb, Monitor, Clock, FileText, ChevronUp,
 } from 'lucide-react';
 import { haptic } from '@/lib/haptic';
+import { toast } from '@/components/ui/Toaster';
+import { submitErrorMessage } from '@/lib/forms/submit-error';
 import { useFormErrors, type FieldErrors } from '@/lib/forms/useFormErrors';
 import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
 import FieldError from '@/components/forms/FieldError';
@@ -111,6 +113,10 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
         else if (res.fieldErrors.slot) setStep(2);
         else if (res.fieldErrors.address) setStep(3);
       }
+    } catch (err) {
+      // انقطاع الشبكة يرمي من فعل الخادم — بدون التقاطه لا يرى المستخدم شيئاً
+      toast.error(submitErrorMessage(err), 'تعذّر الإرسال');
+      haptic.error();
     } finally {
       setSubmitting(false);
     }

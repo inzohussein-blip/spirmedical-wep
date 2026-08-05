@@ -17,6 +17,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { toast } from '@/components/ui/Toaster';
+import { submitErrorMessage } from '@/lib/forms/submit-error';
 import { haptic } from '@/lib/haptic';
 import FamilyMemberPicker from '@/components/family/FamilyMemberPicker';
 import CameraCapture from '@/components/pwa/CameraCapture';
@@ -379,7 +380,8 @@ export default function NursingFlow({
         setIsSubmitting(false);
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'فشل الحجز');
+      // كان يعرض رسالة تقنية إنجليزية («Failed to fetch») لمريض عربي
+      toast.error(submitErrorMessage(err), 'تعذّر الإرسال');
       setIsSubmitting(false);
     }
   };
