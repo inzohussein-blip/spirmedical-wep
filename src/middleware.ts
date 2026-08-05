@@ -52,7 +52,13 @@ export async function middleware(request: NextRequest) {
   }
 
   // ✓ بعد التوجيه، نمرّر للـ session update العادي
-  return await updateSession(request);
+  const response = await updateSession(request);
+
+  // 🔑 المسار الحالي كترويسة: التخطيطات في App Router لا تتلقّى pathname،
+  // ويحتاجه تخطيط المختصّ ليستثني صفحتَي «قيد المراجعة/مرفوض» من بوّابة
+  // الاعتماد (وإلّا وقع تحويل لا نهائي).
+  response.headers.set('x-pathname', pathname);
+  return response;
 }
 
 export const config = {

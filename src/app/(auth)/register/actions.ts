@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { getRoleHomePath } from '@/lib/auth/home-path';
+import { resolveApprovalStatus } from '@/lib/auth/approval';
 import { createClient as createSbClient } from '@supabase/supabase-js';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
@@ -257,9 +258,10 @@ async function createOrGetAccount(opts: {
   const email = phoneToEmail(opts.phone);
 
   // 1. ابحث في public.users بالرقم
+  // نقرأ الدور والاعتماد أيضاً: يحدّدان هل يجوز الإبقاء على اعتماد سابق.
   const { data: existingProfile } = await admin
     .from('users')
-    .select('id')
+    .select('id, role, approval_status')
     .eq('phone', opts.phone)
     .maybeSingle();
 
@@ -320,16 +322,13 @@ async function createOrGetAccount(opts: {
 
   // 3. upsert في public.users
   // ✅ FIX 3: approval_status دائماً موجود
+  // 🔒 اعتماد المختصّ من الإدارة حصراً — انظر `lib/auth/approval.ts` للتفصيل
   const profileData: Record<string, unknown> = {
     id: userId,
     phone: opts.phone,
     full_name: opts.fullName,
     role: opts.role,
-    // المرضى: approved تلقائياً
-    // المختصون الجدد: pending (يحتاجون موافقة)
-    approval_status: opts.role === 'specialist' && !existingProfile?.id
-      ? 'pending'
-      : 'approved',
+    approval_status: resolveApprovalStatus(opts.role, existingProfile),
   };
 
   if (opts.role === 'specialist') {
