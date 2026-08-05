@@ -250,10 +250,19 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
         .eq('id', fastSignIn.user.id)
         .maybeSingle();
 
+      // ⚠️ هذا دخولٌ **بلا رمز تحقّق** (مسار `skipOtp`): يعتمد على معرفة الرقم
+      // وحده. نُميّزه في سجلّ التدقيق كي يكون قابلاً للتتبّع والمراجعة، ونُحذّر
+      // في السجلّات ما دام مفعّلاً — فهو أضعف حلقة حتى يُضبط
+      // `NEXT_PUBLIC_OTP_MODE=required` بعد تفعيل قناة OTP.
+      logger.warn('Passwordless login succeeded (OTP not required)', {
+        ip,
+        user_id: fastSignIn.user.id,
+      });
+
       logAuditEvent({
         action: 'auth.login',
         user_id: fastSignIn.user.id,
-        metadata: { ip, phone, method: 'fast' },
+        metadata: { ip, phone, method: 'passwordless_no_otp' },
       }).catch(() => {});
 
       const { data: profile } = await profilePromise;
