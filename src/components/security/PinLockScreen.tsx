@@ -117,7 +117,9 @@ export default function PinLockScreen({ onUnlock }: Props) {
           marginBottom: 16,
           fontWeight: 700,
         }}>
-          ⚠️ {error} {!isLocked && attempts > 0 && `(${MAX_ATTEMPTS - attempts} محاولات متبقية)`}
+          {/* العدد يأتي ضمن رسالة الخادم: هو الحقيقة الوحيدة، بينما عدّاد العميل
+              يُصفَّر بإعادة تحميل الصفحة فيعطي رقماً مضلّلاً (وكان يتكرّر مرّتين). */}
+          ⚠️ {error}
         </div>
       )}
 

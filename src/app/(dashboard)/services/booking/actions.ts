@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { checkRateLimit } from '@/lib/rate-limit';
 import { encrypt } from '@/lib/encryption';
 
 /**
@@ -43,6 +44,20 @@ export async function createServiceBooking(input: BookingInput) {
 
   if (!user) {
     return { ok: false, error: 'يجب تسجيل الدخول' };
+  }
+
+  // 🔒 حدّ الإنشاء: نفس حدّ بقية مسارات الطلبات (10/ساعة). غيابه هنا كان يسمح
+  // بإغراق طابور المختصّين — وأثره تضاعف بعد وصل الإشعارات: كل طلب يُطلق دفعة
+  // إشعارات لكل مختصّ معتمَد من نوعه.
+  const limit = await checkRateLimit(`appointment:create:${user.id}`, {
+    max: 10,
+    windowSeconds: 3600,
+  });
+  if (!limit.allowed) {
+    return {
+      ok: false,
+      error: `عدد كبير من الحجوزات. حاول بعد ${Math.ceil(limit.retryAfterSeconds / 60)} دقيقة`,
+    };
   }
 
   // service map

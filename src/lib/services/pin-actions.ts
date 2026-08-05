@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { createHash, timingSafeEqual } from 'crypto';
 import bcrypt from 'bcryptjs';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { logger } from '@/lib/logger';
 import type { UserSettings } from '@/lib/services/user-settings-types';
 
 /**
@@ -126,10 +127,19 @@ export async function verifyPin(pin: string) {
   // تحقّق ناجح، فلا يحتاج المستخدم إعادة تعيينه.
   if (!isBcryptHash(expected)) {
     const upgraded = await hashPin(pin, user.id);
-    await supabase
+    const { error: upgradeError } = await supabase
       .from('users')
       .update({ user_settings: { ...settings, pin_hash: upgraded } } as never)
       .eq('id', user.id);
+
+    // الفتح نجح ولا نُفشله بسبب الترقية، لكن الصمت هنا يعني بقاء التجزئة
+    // الضعيفة إلى الأبد بلا أن يعلم أحد.
+    if (upgradeError) {
+      logger.warn('PIN hash upgrade to bcrypt failed', {
+        user_id: user.id,
+        error: upgradeError.message,
+      });
+    }
   }
 
   return { ok: true };

@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { encrypt } from '@/lib/encryption';
+import { checkRateLimit } from '@/lib/rate-limit';
 import {
   notifyOrderConfirmed,
   notifyEligibleSpecialistsOfNewOrder,
@@ -163,6 +164,19 @@ export async function createDoctorAppointment(input: CreateDoctorAppointmentInpu
   
   if (!user) {
     return { success: false, error: 'يجب تسجيل الدخول' };
+  }
+
+  // 🔒 حدّ الإنشاء: نفس حدّ بقية مسارات الطلبات (10/ساعة). غيابه كان يسمح
+  // بإغراق طابور الأطباء — ومعه دفعة إشعارات لكل طبيب معتمَد عن كل طلب.
+  const limit = await checkRateLimit(`appointment:create:${user.id}`, {
+    max: 10,
+    windowSeconds: 3600,
+  });
+  if (!limit.allowed) {
+    return {
+      success: false,
+      error: `عدد كبير من الحجوزات. حاول بعد ${Math.ceil(limit.retryAfterSeconds / 60)} دقيقة`,
+    };
   }
 
   // Validation
