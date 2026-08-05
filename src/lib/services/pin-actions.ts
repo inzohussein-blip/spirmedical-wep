@@ -2,15 +2,40 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { createHash } from 'crypto';
+import { createHash, timingSafeEqual } from 'crypto';
+import bcrypt from 'bcryptjs';
+import { checkRateLimit } from '@/lib/rate-limit';
 import type { UserSettings } from '@/lib/services/user-settings-types';
 
 /**
- * Hash PIN using SHA-256 + salt (user_id).
- * نستخدم user_id كـ salt حتى لو شخصين اختاروا نفس الـ PIN يكون الـ hash مختلف.
+ * 🔒 تجزئة الـ PIN
+ *
+ * كان الاعتماد على SHA-256 (سريعة جداً): PIN من ٤ أرقام = 10٬000 احتمال فقط،
+ * فمن يصل إلى الجدول يستخرجه فوراً بالقوة الغاشمة. نستعمل bcrypt (موجودة أصلاً
+ * كاعتمادية) — بطيئة عمداً — مع الإبقاء على `user_id` في المدخل كتمييز إضافي.
  */
-function hashPin(pin: string, userId: string): string {
+async function hashPin(pin: string, userId: string): Promise<string> {
+  return bcrypt.hash(`${userId}:${pin}`, 10);
+}
+
+/** الصيغة القديمة (SHA-256) — للتحقّق من الـ PINs المخزّنة قبل الترقية */
+function legacyHashPin(pin: string, userId: string): string {
   return createHash('sha256').update(`${userId}:${pin}`).digest('hex');
+}
+
+function isBcryptHash(hash: string): boolean {
+  return /^\$2[aby]\$/.test(hash);
+}
+
+/** يقارن الـ PIN مع الصيغتين (bcrypt للجديد، SHA-256 مقارنةً ثابتة الزمن للقديم) */
+async function matchesPin(pin: string, userId: string, stored: string): Promise<boolean> {
+  if (isBcryptHash(stored)) {
+    return bcrypt.compare(`${userId}:${pin}`, stored);
+  }
+  const incoming = Buffer.from(legacyHashPin(pin, userId));
+  const expected = Buffer.from(stored);
+  if (incoming.length !== expected.length) return false;
+  return timingSafeEqual(incoming, expected);
 }
 
 export async function setPin(pin: string) {
@@ -22,7 +47,7 @@ export async function setPin(pin: string) {
     return { ok: false, error: 'الـ PIN يجب أن يكون ٤ أرقام' };
   }
 
-  const hash = hashPin(pin, user.id);
+  const hash = await hashPin(pin, user.id);
 
   // اجلب الإعدادات الحالية للدمج
   const { data: profile } = await supabase
@@ -58,6 +83,20 @@ export async function verifyPin(pin: string) {
     return { ok: false, error: 'PIN غير صالح' };
   }
 
+  // 🔒 حدّ المحاولات: PIN من ٤ أرقام = 10٬000 احتمال فقط، وبلا حدٍّ كان قفل
+  // التطبيق يُكسر بالقوة الغاشمة في ثوانٍ. الحدّ لكل مستخدم (لا لكل IP) كي لا
+  // يُتجاوَز بتبديل الشبكة.
+  const limit = await checkRateLimit(`pin:verify:${user.id}`, {
+    max: 5,
+    windowSeconds: 900,
+  });
+  if (!limit.allowed) {
+    return {
+      ok: false,
+      error: `محاولات كثيرة · حاول بعد ${Math.ceil(limit.retryAfterSeconds / 60)} دقيقة`,
+    };
+  }
+
   const { data: profile } = await supabase
     .from('users')
     .select('user_settings')
@@ -71,10 +110,26 @@ export async function verifyPin(pin: string) {
     return { ok: false, error: 'لم يتم تعيين PIN' };
   }
 
-  const incoming = hashPin(pin, user.id);
+  const match = await matchesPin(pin, user.id, expected);
 
-  if (incoming !== expected) {
-    return { ok: false, error: 'PIN غير صحيح' };
+  if (!match) {
+    const remaining = Math.max(0, limit.remaining ?? 0);
+    return {
+      ok: false,
+      error: remaining > 0
+        ? `PIN غير صحيح · ${remaining} محاولة متبقّية`
+        : 'PIN غير صحيح',
+    };
+  }
+
+  // ترقية شفّافة: PIN قديم مخزّن بـ SHA-256 → يُعاد تخزينه بـ bcrypt عند أوّل
+  // تحقّق ناجح، فلا يحتاج المستخدم إعادة تعيينه.
+  if (!isBcryptHash(expected)) {
+    const upgraded = await hashPin(pin, user.id);
+    await supabase
+      .from('users')
+      .update({ user_settings: { ...settings, pin_hash: upgraded } } as never)
+      .eq('id', user.id);
   }
 
   return { ok: true };
