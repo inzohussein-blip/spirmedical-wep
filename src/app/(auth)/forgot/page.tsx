@@ -9,6 +9,7 @@ export const metadata = {
 import Link from 'next/link';
 import { z } from 'zod';
 import { sendOtp } from '../login/actions';
+import EmailResetForm from './EmailResetForm';
 
 const searchParamsSchema = z.object({
   error: z.string().max(500).optional(),
@@ -81,9 +82,45 @@ export default function ForgotPage({
         </button>
       </form>
 
+      <div className="auth-divider-text">أو</div>
+
+      <details className="auth-alt-method">
+        <summary>سجّلت ببريد إلكتروني؟</summary>
+        <p className="auth-alt-hint">
+          استعادة الهاتف تُرسل رمزاً برسالة، وهي لا تنفع من سجّل ببريد
+          وكلمة مرور. أدخل بريدك ليصلك رابط تعيين كلمة مرور جديدة.
+        </p>
+        <EmailResetForm />
+      </details>
+
       <div className="auth-helper">
         تذكّرت رمزك؟ <Link href="/login">العودة لتسجيل الدخول</Link>
       </div>
+
+      <style>{`
+        .auth-divider-text {
+          text-align: center;
+          color: var(--muted, #64748b);
+          font-size: 13px;
+          margin: 18px 0 6px;
+        }
+        .auth-alt-method {
+          border: 1px solid rgba(148, 163, 184, 0.3);
+          border-radius: 12px;
+          padding: 12px 14px;
+        }
+        .auth-alt-method > summary {
+          cursor: pointer;
+          font-size: 14px;
+          font-weight: 600;
+        }
+        .auth-alt-hint {
+          font-size: 13px;
+          line-height: 1.7;
+          color: var(--muted, #64748b);
+          margin: 10px 0 0;
+        }
+      `}</style>
     </main>
   );
 }
