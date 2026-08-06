@@ -315,9 +315,17 @@ export async function requestPasswordReset(email: string): Promise<{
 }> {
   const supabase = createClient();
 
+  // ⚠️ كان يُركّب الرابط من `NEXT_PUBLIC_APP_URL` وحده؛ فحين لا يكون مضبوطاً
+  // يصير الرابط `undefined/auth/reset-password`. نستعمل سلسلة الاحتياط نفسها
+  // المستعملة في تحقّق البريد.
+  const appUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    'https://spir-medical.com';
+
   try {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password`,
+      redirectTo: `${appUrl}/auth/reset-password`,
     });
 
     if (error) {
@@ -337,17 +345,23 @@ export async function requestPasswordReset(email: string): Promise<{
 // 8. إعادة تعيين كلمة المرور
 // ─────────────────────────────────────────────────────────
 
+// الجلسة تُنشأ في صفحة `/auth/reset-password` من رابط الاستعادة، فلا حاجة
+// لتمرير رمز هنا — الوسيط `token` القديم كان مُهمَلاً تماماً ومُضلِّلاً.
 export async function resetPassword(
-  token: string,
   newPassword: string
 ): Promise<{ success: boolean; error?: string }> {
   const supabase = createClient();
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: 'انتهت صلاحية الجلسة. اطلب رابط استعادة جديداً.' };
+  }
+
   try {
-    const { error } = await supabase.auth.updateUser(
-      { password: newPassword },
-      { emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SITE_URL || ''}/login` }
-    );
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
 
     if (error) {
       return { success: false, error: error.message };

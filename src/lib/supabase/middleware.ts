@@ -3,11 +3,70 @@ import { NextResponse, type NextRequest } from 'next/server';
 import type { Database } from '@/types/database';
 import { isAdminRole } from '@/lib/admin-types';
 
+/** مسارات تتطلّب جلسة */
+const PROTECTED_PATHS = [
+  '/dashboard',
+  '/appointments',
+  '/specialist',
+  '/account',
+  '/favorites',
+  '/services',
+  '/consultations',
+  '/messages',
+  '/sos',
+  '/tools',
+];
+
+/** سقف زمني لكل نداء شبكي داخل الوسيط (بالمللي ثانية) */
+const AUTH_TIMEOUT_MS = 3000;
+const ROLE_TIMEOUT_MS = 2500;
+
+/**
+ * يمنع نداءً بطيئاً من تعليق الوسيط كلّه.
+ *
+ * مهلة Vercel للوسيط تُنهي الطلب بـ504 `MIDDLEWARE_INVOCATION_TIMEOUT`،
+ * وحينها **لا تُخدَم أي صفحة** — لا العامّة ولا المحميّة. سقفٌ قصيرٌ هنا
+ * يحوّل تباطؤ Supabase من انقطاعٍ شاملٍ للموقع إلى تدهورٍ محدود.
+ */
+async function withTimeout<T>(promise: PromiseLike<T>, ms: number): Promise<T | null> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      Promise.resolve(promise),
+      new Promise<null>((resolve) => {
+        timer = setTimeout(() => resolve(null), ms);
+      }),
+    ]);
+  } catch {
+    return null;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
+/**
+ * هل يحمل الطلب كوكي جلسة أصلاً؟
+ *
+ * الزائر المجهول لا يملك ما يُحدَّث، ومع ذلك كان الوسيط ينادي `getUser()`
+ * عبر الشبكة في **كل** طلبٍ له — بما فيه الصفحة الرئيسية. هذا هو الحمل
+ * الذي أسقط `spir-medical.com` بـ504: زيارةٌ عاديةٌ بلا تسجيل دخول كانت
+ * تنتظر ردّ Supabase قبل أن تُخدَم أي بايت.
+ */
+function hasAuthCookie(request: NextRequest): boolean {
+  return request.cookies
+    .getAll()
+    .some((c) => c.name.startsWith('sb-') && c.name.includes('auth-token'));
+}
+
 /**
  * يُحدّث الـ session في كل طلب — مهم للـ App Router مع Supabase Auth.
  *
  * يحمي أيضاً على مستوى الحافة: مسارات المستخدم (dashboard/appointments…)،
  * واجهة الأخصائي (/specialist)، ولوحة الأدمن (/admin) بفحص الدور.
+ *
+ * سياسة الفشل: عند انتهاء المهلة نفشل **بأمان** على المسارات المحميّة
+ * (تحويل إلى تسجيل الدخول)، و**بانفتاح** على المسارات العامّة — فطبقات
+ * الحماية في التخطيطات والـRLS ما زالت قائمة خلفنا.
  */
 export async function updateSession(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -19,6 +78,23 @@ export async function updateSession(request: NextRequest) {
       '[middleware] Supabase environment variables not configured. ' +
         'Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Vercel.'
     );
+    return NextResponse.next({ request });
+  }
+
+  const pathname = request.nextUrl.pathname;
+  const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
+  const isAdminPath = pathname === '/admin' || pathname.startsWith('/admin/');
+
+  // ⚡ مسار الزائر المجهول: لا كوكي جلسة ⇒ لا شيء يُحدَّث ولا دور يُفحص.
+  // نردّ فوراً بلا أي نداء شبكي — وهذا يشمل الصفحة الرئيسية وكل الصفحات
+  // العامّة، أي الغالبية العظمى من الزيارات.
+  if (!hasAuthCookie(request)) {
+    if (isProtected || isAdminPath) {
+      const url = request.nextUrl.clone();
+      url.pathname = isAdminPath ? '/admin-login' : '/login';
+      if (!isAdminPath) url.searchParams.set('redirect', pathname);
+      return NextResponse.redirect(url);
+    }
     return NextResponse.next({ request });
   }
 
@@ -51,27 +127,19 @@ export async function updateSession(request: NextRequest) {
     });
 
     // مهم: لا تضع كود بين createServerClient و auth.getUser()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const authResult = await withTimeout(supabase.auth.getUser(), AUTH_TIMEOUT_MS);
 
-    // حماية المسارات: إعادة توجيه غير المُصادَقين
-    const protectedPaths = [
-      '/dashboard',
-      '/appointments',
-      '/specialist',
-      '/account',
-      '/favorites',
-      // 🎯 V25.26: مسارات إضافية تحتاج auth (تسريع redirect)
-      '/services',
-      '/consultations',
-      '/messages',
-      '/sos',
-      '/tools',
-    ];
-    const isProtected = protectedPaths.some((path) =>
-      request.nextUrl.pathname.startsWith(path)
-    );
+    if (authResult === null) {
+      // تعذّر التحقّق ضمن المهلة — لا نُعلّق الطلب حتى يقتلَه Vercel بـ504.
+      if (isProtected || isAdminPath) {
+        const url = request.nextUrl.clone();
+        url.pathname = isAdminPath ? '/admin-login' : '/login';
+        return NextResponse.redirect(url);
+      }
+      return NextResponse.next({ request });
+    }
+
+    const user = authResult.data.user;
 
     if (!user && isProtected) {
       const url = request.nextUrl.clone();
@@ -80,74 +148,50 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    // 🔒 حماية لوحة الأدمن على مستوى الحافة (بفحص الدور).
-    // تطابق دقيق لـ /admin و /admin/* فقط — لا تلتقط /admin-login أو /admin-register.
-    const adminPath = request.nextUrl.pathname;
-    if (adminPath === '/admin' || adminPath.startsWith('/admin/')) {
-      if (!user) {
+    // 🔒 فحص الدور — نداءٌ **واحد** يخدم الفروع الثلاثة.
+    // كان كل فرع يستعلم عن الدور بنفسه، فمسار مثل /dashboard يدفع ثمن
+    // رحلتين شبكيتين متتاليتين في الوسيط قبل أن تُخدَم الصفحة.
+    const needsRole =
+      isAdminPath ||
+      pathname.startsWith('/specialist') ||
+      pathname.startsWith('/dashboard');
+
+    if (!user || !needsRole) return supabaseResponse;
+
+    const roleResult = await withTimeout(
+      supabase.from('users').select('role').eq('id', user.id).single(),
+      ROLE_TIMEOUT_MS
+    );
+    const role = roleResult?.data?.role;
+
+    // تعذّر معرفة الدور ضمن المهلة → نفشل بأمان على لوحة الأدمن فقط،
+    // وندع بقيّة المسارات للتخطيطات وسياسات RLS خلفنا.
+    if (roleResult === null) {
+      if (isAdminPath) {
         const url = request.nextUrl.clone();
         url.pathname = '/admin-login';
         return NextResponse.redirect(url);
       }
-      try {
-        const { data: profile } = await supabase
-          .from('users')
-          .select('role')
-          .eq('id', user.id)
-          .single();
-
-        if (!isAdminRole(profile?.role)) {
-          const url = request.nextUrl.clone();
-          url.pathname = '/dashboard';
-          return NextResponse.redirect(url);
-        }
-      } catch (err) {
-        const url = request.nextUrl.clone();
-        url.pathname = '/admin-login';
-        return NextResponse.redirect(url);
-      }
+      return supabaseResponse;
     }
 
-    // حماية واجهة الأخصائي
-    if (user && request.nextUrl.pathname.startsWith('/specialist')) {
-      try {
-        const { data: profile } = await supabase
-          .from('users')
-          .select('role')
-          .eq('id', user.id)
-          .single();
-
-        if (profile?.role !== 'specialist') {
-          const url = request.nextUrl.clone();
-          url.pathname = '/dashboard';
-          return NextResponse.redirect(url);
-        }
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.error('[middleware] Failed to check specialist role:', err);
-        const url = request.nextUrl.clone();
-        url.pathname = '/dashboard';
-        return NextResponse.redirect(url);
-      }
+    if (isAdminPath && !isAdminRole(role)) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/dashboard';
+      return NextResponse.redirect(url);
     }
 
-    // إذا الأخصائي حاول الدخول لـ /dashboard → وجّهه لـ /specialist
-    if (user && request.nextUrl.pathname.startsWith('/dashboard')) {
-      try {
-        const { data: profile } = await supabase
-          .from('users')
-          .select('role')
-          .eq('id', user.id)
-          .single();
+    if (pathname.startsWith('/specialist') && role !== 'specialist') {
+      const url = request.nextUrl.clone();
+      url.pathname = '/dashboard';
+      return NextResponse.redirect(url);
+    }
 
-        if (profile?.role === 'specialist') {
-          const url = request.nextUrl.clone();
-          url.pathname = '/specialist';
-          return NextResponse.redirect(url);
-        }
-      } catch (err) {
-        // تجاهل
-      }
+    // الأخصائي يحاول الدخول لـ /dashboard → وجّهه لواجهته
+    if (pathname.startsWith('/dashboard') && role === 'specialist') {
+      const url = request.nextUrl.clone();
+      url.pathname = '/specialist';
+      return NextResponse.redirect(url);
     }
 
     return supabaseResponse;
