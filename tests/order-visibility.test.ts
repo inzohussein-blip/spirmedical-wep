@@ -175,6 +175,57 @@ describe('📋 كل إدراج في appointments يشتقّ النوع (فحص �
   });
 });
 
+describe('📋 شبكة الأمان في قاعدة البيانات متوائمة مع الكتالوج', () => {
+  /**
+   * `determine_specialist_type` هي ما يعتمد عليه المشغّل
+   * `trg_auto_required_specialist` حين لا يضبط التطبيق العمود. كانت تعرف
+   * معرّفات خدماتٍ قديمة فقط، فتُرجع `'doctor'` لخدماتٍ ينفّذها ممرّض أو
+   * محلّل مختبر أو صيدلي — أي توجيهٌ خاطئ صامت.
+   */
+  const sql = readFileSync(
+    join(process.cwd(), 'supabase/migrations/0011_fix_specialist_type_fallback.sql'),
+    'utf8'
+  );
+
+  /** يستخرج من دالة SQL: معرّف الخدمة → النوع المُعاد */
+  function sqlMapping(): Map<string, string> {
+    const out = new Map<string, string>();
+    const re = /WHEN service_id IN \(([\s\S]*?)\) THEN\s+(?:'([a-z_]+)'|NULL)/gi;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(sql)) !== null) {
+      const type = m[2] ?? null;
+      for (const id of m[1].matchAll(/'([^']+)'/g)) {
+        out.set(id[1], type as string);
+      }
+    }
+    return out;
+  }
+
+  it('كل خدمة في الكتالوج معروفة للدالة وبالنوع نفسه', () => {
+    const mapping = sqlMapping();
+    const mismatches: string[] = [];
+
+    for (const svc of SERVICES) {
+      if (!svc.available) continue;
+      const fromSql = mapping.get(svc.id);
+      if (fromSql === undefined) {
+        mismatches.push(`${svc.id}: غير معروفة للدالة`);
+      } else if ((svc.specialistType ?? null) !== (fromSql ?? null)) {
+        mismatches.push(
+          `${svc.id}: الكتالوج=${svc.specialistType ?? 'NULL'} / SQL=${fromSql ?? 'NULL'}`
+        );
+      }
+    }
+
+    expect(mismatches).toEqual([]);
+  });
+
+  it('الخدمة غير المعروفة تبقى مرئية (ELSE doctor لا NULL)', () => {
+    // NULL يعني اختفاء الطلب عن كل المختصّين — أسوأ من نوعٍ خاطئ قابل للتصحيح
+    expect(/ELSE\s+'doctor'/i.test(sql)).toBe(true);
+  });
+});
+
 describe('📋 كل مسار إنشاء يُشعر المختصّين المؤهّلين', () => {
   /**
    * الطلب يصل الطابور صحيحاً، لكن إن لم يُشعَر أحد فهو ينتظر حتى يفتح مختصٌّ
