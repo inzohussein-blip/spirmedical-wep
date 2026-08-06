@@ -1,6 +1,8 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { appointmentSchema } from '@/lib/validations/appointment';
+import { getServiceById } from '@/lib/services/services-data';
+import { logger } from '@/lib/logger';
 
 /**
  * GET /api/appointments
@@ -79,12 +81,35 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // 🔑 ظهور الطلب لدى المختصّين: طابور المختصّ يفلتر على
+  // `required_specialist_type`. هذا المسار كان لا يضبطه **ولا يضبط
+  // `service_id`**، فحتى المشغّل `trg_auto_required_specialist` لا يعمل
+  // (شرطه `service_id IS NOT NULL`) — فيبقى العمود فارغاً والطلب **لا يراه
+  // أيّ مختصّ إطلاقاً**. نشتقّه من الكتالوج تماماً كـ`createAppointmentV2`.
+  const { service_id: serviceId, ...appointmentFields } = validation.data;
+  const specialistType = serviceId
+    ? getServiceById(serviceId)?.specialistType
+    : undefined;
+
+  if (!serviceId) {
+    logger.info('Appointment created without service_id', {
+      service_type: appointmentFields.service_type,
+    });
+  } else if (!specialistType) {
+    // خدمة تُنفَّذ في منشأة — نُسجّلها كي لا يكون الغياب صامتاً
+    logger.info('Appointment created without required_specialist_type', {
+      service_id: serviceId,
+    });
+  }
+
   const { data, error } = await supabase
     .from('appointments')
     .insert({
-      ...validation.data,
+      ...appointmentFields,
       user_id: user.id,
-      status: 'pending',
+      status: 'pending' as const,
+      ...(serviceId ? { service_id: serviceId } : {}),
+      ...(specialistType ? { required_specialist_type: specialistType } : {}),
     })
     .select()
     .single();

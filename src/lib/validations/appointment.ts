@@ -25,6 +25,9 @@ export const appointmentSchema = z.object({
     .min(10, 'العنوان قصير جداً')
     .max(500, 'العنوان طويل جداً'),
   notes: z.string().max(1000, 'الملاحظات طويلة جداً').optional(),
+  // معرّف الخدمة من الكتالوج — منه يُشتقّ `required_specialist_type` الذي
+  // يفلتر عليه طابور المختصّين. بدونه لا يظهر الطلب لأيّ مختصّ.
+  service_id: z.string().max(60).optional(),
 });
 
 export const appointmentUpdateSchema = appointmentSchema.partial().extend({
