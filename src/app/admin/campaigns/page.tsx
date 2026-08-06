@@ -29,7 +29,8 @@ export default async function CampaignsPage() {
   const { count: totalUsers } = await supabase
     .from('users')
     .select('*', { count: 'exact', head: true })
-    .eq('role', 'user');
+    // 'patient' لا 'user': الأخير ليس قيمة صالحة في user_role، فكان العدّاد صفراً دائماً
+    .eq('role', 'patient');
 
   return (
     <>

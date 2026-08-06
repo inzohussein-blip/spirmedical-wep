@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/logger';
 import LiveStatusCard, { type LiveStatus } from './LiveStatusCard';
 
 /**
@@ -38,14 +39,25 @@ export default async function ActiveAppointmentCard() {
   if (!user) return null;
 
   // اجلب الطلب النشط الحالي
-  const { data: appt } = await supabase
+  //
+  // ⚠️ كان الفلتر يتضمّن 'on_the_way' وهي **ليست** قيمة في نوع
+  // `appointment_status` (pending|confirmed|in_progress|completed|cancelled)؛
+  // إنّما هي مفهوم عرضٍ تربطه الواجهة بـ`in_progress`. وتمرير قيمة enum غير
+  // صالحة يجعل Postgres يرفض الاستعلام كلّه (22P02)، فتُهمَل النتيجة ولا تظهر
+  // البطاقة **لأي مريض** حتى مع وجود طلب معلّق فعلاً.
+  const { data: appt, error } = await supabase
     .from('appointments')
     .select('id, service_type, status, scheduled_at, specialist_id')
     .eq('user_id', user.id)
-    .in('status', ['pending', 'confirmed', 'on_the_way', 'in_progress'])
+    .in('status', ['pending', 'confirmed', 'in_progress'])
     .order('scheduled_at', { ascending: true })
     .limit(1)
     .maybeSingle();
+
+  if (error) {
+    logger.warn('ActiveAppointmentCard query failed', { error: error.message });
+    return null;
+  }
 
   if (!appt) return null;
 
