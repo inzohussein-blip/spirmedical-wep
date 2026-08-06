@@ -3847,6 +3847,38 @@ html {
   cursor: not-allowed;
 }
 
+/* رسالة فشل تحديد الموقع — كانت تُكتب في console فقط بلا أي أثر مرئي */
+.services-map-locate-error {
+  position: absolute;
+  top: 12px;
+  inset-inline-start: 12px;
+  inset-inline-end: 60px;
+  z-index: 101;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #FEF2F2;
+  border: 0.5px solid #FECACA;
+  color: #B91C1C;
+  font-size: 13px;
+  line-height: 1.5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.services-map-locate-error button {
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 4px;
+  flex-shrink: 0;
+}
+
 /* Selected card (bottom of map) */
 .services-map-selected-card {
   position: absolute;

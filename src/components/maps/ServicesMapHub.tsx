@@ -112,6 +112,9 @@ export default function ServicesMapHub({
   const [selectedLocation, setSelectedLocation] = useState<ServiceLocation | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [locating, setLocating] = useState(false);
+  // فشل تحديد الموقع كان يُكتب في console فقط: يضغط المستخدم «موقعي الحالي»
+  // فتتوقّف الحركة ولا يحدث شيء ولا يُقال له لماذا.
+  const [locateError, setLocateError] = useState<string | null>(null);
 
   const governorates = Array.from(
     new Set(locations.map((l) => l.governorate).filter(Boolean))
@@ -305,9 +308,17 @@ export default function ServicesMapHub({
 
   // زر "موقعي الحالي"
   const handleLocateMe = () => {
-    if (!navigator.geolocation || !mapRef.current) return;
+    if (!navigator.geolocation) {
+      setLocateError('GPS غير متوفّر في هذا المتصفّح');
+      return;
+    }
+    if (!mapRef.current) {
+      setLocateError('الخريطة لم تُحمَّل بعد. حاول بعد لحظة');
+      return;
+    }
 
     setLocating(true);
+    setLocateError(null);
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         const { latitude, longitude } = pos.coords;
@@ -328,8 +339,11 @@ export default function ServicesMapHub({
         setLocating(false);
       },
       (err) => {
-        console.warn('Geolocation error:', err);
         setLocating(false);
+        // نفس رسائل UserLocationPicker — لا تترك المستخدم بلا تفسير
+        if (err.code === 1) setLocateError('يجب السماح للموقع من إعدادات المتصفّح');
+        else if (err.code === 2) setLocateError('تعذّر تحديد موقعك. تأكّد من GPS');
+        else setLocateError('انتهت مهلة تحديد الموقع');
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
@@ -442,6 +456,19 @@ export default function ServicesMapHub({
           ref={mapContainerRef}
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', background: '#E8EEF1' }}
         />
+
+        {locateError && (
+          <div className="services-map-locate-error" role="status">
+            {locateError}
+            <button
+              type="button"
+              onClick={() => setLocateError(null)}
+              aria-label="إغلاق"
+            >
+              ✕
+            </button>
+          </div>
+        )}
 
         {/* Floating controls */}
         <div className="services-map-floating-controls">
