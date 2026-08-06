@@ -103,7 +103,15 @@ export async function saveLocation(
     });
 
     // معالجة أخطاء معروفة
-    if (error.message.includes('check_saved_locations_limit')) {
+    //
+    // ⚠️ حدّ المواقع يُفرَض بـ`RAISE EXCEPTION 'لا يمكن حفظ أكثر من 10 مواقع'`
+    // داخل الدالة `check_saved_locations_limit`. لكنّ PostgREST يُعيد **نصّ
+    // الاستثناء** فقط (مع SQLSTATE = P0001)؛ اسم الدالة يبقى في CONTEXT ولا
+    // يُمرَّر. فكان المطابَقة على اسم الدالة لا تتحقّق أبداً، ويرى المستخدم
+    // «فشل حفظ الموقع» العامّة بدل الرسالة القابلة للتنفيذ.
+    // (بخلاف الفرع التالي: `saved_location_max_per_user` قيد UNIQUE حقيقي،
+    //  واسمه يظهر فعلاً في رسالة انتهاك التفرّد.)
+    if (error.code === 'P0001' || error.message.includes('10 مواقع')) {
       return {
         success: false,
         message: 'لا يمكن حفظ أكثر من 10 مواقع. احذف موقع قديم أولاً.',
