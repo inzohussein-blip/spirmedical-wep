@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createClient as createSbClient } from '@supabase/supabase-js';
 import { sendEmail, isEmailConfigured } from '@/lib/email/send';
 import { logger } from '@/lib/logger';
+import { resolveApprovalStatus } from '@/lib/auth/approval';
 import crypto from 'crypto';
 import { redirect } from 'next/navigation';
 
@@ -54,18 +55,28 @@ export async function signUpWithEmail(input: {
       return { success: false, error: authErr?.message || 'خطأ في الإنشاء' };
     }
 
-    // 3. أنشئ profile في public.users
-    const { error: profileErr } = await admin.from('users').insert({
-      id: authUser.user.id,
-      email,
-      full_name: fullName,
-      gender,
-      role,
-      signup_method: 'email',
-      email_verified: false,
-      profile_completed: false,
-      approval_status: role === 'specialist' ? 'pending' : 'approved',
-    });
+    // 3. أكمل profile في public.users
+    //
+    // ⚠️ الصفّ **موجود سلفاً**: المشغّل `on_auth_user_created` يعمل
+    // `AFTER INSERT ON auth.users` فيُنشئ الصفّ فور `createUser` أعلاه
+    // (بهاتف مؤقّت `+temp_…` لأنّ `users.phone` هو NOT NULL UNIQUE).
+    // لذا كان `insert` العادي يصطدم بالمفتاح الأساسي (23505)، فيدخل فرع
+    // التراجع ويحذف مستخدم auth ويُرجع خطأ Postgres خاماً — أي أنّ
+    // **تسجيل المريض بالبريد كان يفشل في كل مرّة**. الصواب upsert على id.
+    const { error: profileErr } = await admin.from('users').upsert(
+      {
+        id: authUser.user.id,
+        email,
+        full_name: fullName,
+        gender,
+        role,
+        signup_method: 'email',
+        email_verified: false,
+        profile_completed: false,
+        approval_status: resolveApprovalStatus(role),
+      },
+      { onConflict: 'id' }
+    );
 
     if (profileErr) {
       // احذف auth user إذا فشل profile
