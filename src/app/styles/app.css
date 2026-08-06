@@ -411,6 +411,18 @@
 
 .scr-page-spacer { width: 38px; flex-shrink: 0; }
 
+/* رسالة خطأ ضمن الصفحة (مثل تعذّر فتح محادثة عن طلب) */
+.scr-inline-error {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #B91C1C;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 13px;
+  line-height: 1.6;
+  margin-top: 12px;
+}
+
 /* Empty State */
 .scr-empty {
   background: var(--white);

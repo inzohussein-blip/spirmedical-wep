@@ -15,6 +15,7 @@ import { track } from '@/lib/analytics';
 import ShareButton from '@/components/pwa/ShareButton';
 import LazyImage from '@/components/ui/LazyImage';
 import DoctorBookingModal from '@/components/doctors/DoctorBookingModal';
+import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 
 interface Doctor {
   id: string;
@@ -55,6 +56,7 @@ interface Subscription {
 interface Props {
   doctor: Doctor;
   activeSubscription: Subscription | null;
+  initialIsFavorite: boolean;
 }
 
 const SPECIALTIES: Record<string, { label: string; emoji: string }> = {
@@ -69,7 +71,7 @@ const SPECIALTIES: Record<string, { label: string; emoji: string }> = {
   general: { label: 'طب عام', emoji: '⚕️' },
 };
 
-export default function DoctorDetailClient({ doctor, activeSubscription }: Props) {
+export default function DoctorDetailClient({ doctor, activeSubscription, initialIsFavorite }: Props) {
   const router = useRouter();
   const { confirm, ConfirmDialog } = useConfirm();
   const [isPending, startTransition] = useTransition();
@@ -132,6 +134,12 @@ export default function DoctorDetailClient({ doctor, activeSubscription }: Props
           <h1 className="scr-page-title" style={{ fontSize: 15 }}>
             {doctor.title} {doctor.full_name.split(' ').slice(0, 2).join(' ')}
           </h1>
+          <ServiceFavoriteButton
+            serviceType="doctor"
+            serviceId={doctor.id}
+            initialIsFavorite={initialIsFavorite}
+            size="sm"
+          />
           <ShareButton
             variant="icon"
             size="sm"

@@ -5,6 +5,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import DoctorDetailClient from './DoctorDetailClient';
+import { checkIsFavorite } from '@/components/services/favorites-actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,6 +44,7 @@ export default async function DoctorDetailPage({
     <DoctorDetailClient
       doctor={doctor}
       activeSubscription={activeSubscription}
+      initialIsFavorite={await checkIsFavorite('doctor', params.id)}
     />
   );
 }

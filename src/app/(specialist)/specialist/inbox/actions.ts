@@ -37,54 +37,11 @@ export async function getSignedChatImageUrl(chatId: string, path: string) {
 /**
  * إنشاء محادثة جديدة بين مريض وأخصائي
  */
-export async function createChat(specialistId: string, appointmentId?: string) {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) return { error: 'يجب تسجيل الدخول' };
-
-  // تحقق إذا كانت المحادثة موجودة
-  const { data: existing } = await supabase
-    .from('chats')
-    .select('id')
-    .eq('patient_id', user.id)
-    .eq('specialist_id', specialistId)
-    .maybeSingle();
-
-  if (existing) {
-    return { chatId: existing.id };
-  }
-
-  // إنشاء محادثة جديدة
-  const { data: newChat, error } = await supabase
-    .from('chats')
-    .insert({
-      patient_id: user.id,
-      specialist_id: specialistId,
-      appointment_id: appointmentId,
-      status: 'open',
-      priority: 'normal',
-      tags: [],
-    })
-    .select('id')
-    .single();
-
-  if (error) return { error: error.message };
-
-  // رسالة نظام للبدء
-  await supabase.from('messages').insert({
-    chat_id: newChat.id,
-    sender_id: user.id,
-    type: 'system',
-    content: 'بدأت المحادثة',
-    is_read: true,
-  });
-
-  revalidatePath('/messages');
-  revalidatePath('/specialist/inbox');
-
-  return { chatId: newChat.id };
-}
+// ⚠️ أُزيلت `createChat` من هنا: لم تكن مستدعاة من أي مكان، وكانت تفترض أنّ
+// المستخدم الحالي هو المريض (`patient_id: user.id`) رغم موقعها في مسار
+// **المختصّ** — فتوصيلها من جهة المختصّ كان سيُنتج صفّاً مقلوب الطرفين.
+// بديلها الصحيح: `openChatForAppointment` في `src/lib/chat/open-chat.ts`،
+// وهي موصولة بمدخل `/messages?appointment=<id>`.
 
 /**
  * إرسال رسالة

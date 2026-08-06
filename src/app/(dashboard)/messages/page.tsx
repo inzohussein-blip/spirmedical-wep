@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import ChatList, { type ChatPreview } from '@/components/chat/ChatList';
 import { MessageCircle } from 'lucide-react';
+import { redirect } from 'next/navigation';
+import { openChatForAppointment } from '@/lib/chat/open-chat';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,11 +11,26 @@ export const metadata = {
   title: 'الرسائل · سباير ميديكال',
 };
 
-export default async function PatientMessagesPage() {
+export default async function PatientMessagesPage({
+  searchParams,
+}: {
+  searchParams: { appointment?: string; error?: string };
+}) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) return null;
+
+  // 🔑 `?appointment=` هو مدخل بدء المحادثة (يستعمله `LiveStatusCard`
+  // و`OrderTrackClient`). كان يُتجاهَل تماماً، فيهبط المريض على قائمةٍ
+  // فارغة أبداً — إذ لم يكن في المشروع أيّ مسارٍ يُنشئ محادثة أصلاً.
+  if (searchParams.appointment) {
+    const result = await openChatForAppointment(searchParams.appointment);
+    if ('chatId' in result) {
+      redirect(`/messages/${result.chatId}`);
+    }
+    redirect(`/messages?error=${encodeURIComponent(result.error)}`);
+  }
 
   // جلب المحادثات
   const { data: chatsRaw } = await supabase
@@ -73,6 +90,12 @@ export default async function PatientMessagesPage() {
         <p className="scr-page-subtitle">
           محادثاتك مع الأطباء · رسائل مشفّرة
         </p>
+
+        {searchParams.error && (
+          <div className="scr-inline-error" role="status">
+            {searchParams.error}
+          </div>
+        )}
 
         {chats.length === 0 ? (
           <div className="scr-empty">
