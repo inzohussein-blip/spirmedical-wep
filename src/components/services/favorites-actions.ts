@@ -11,6 +11,26 @@ import { revalidatePath } from 'next/cache';
 
 export type ServiceType = 'hospital' | 'dental' | 'optical' | 'pharmacy' | 'doctor' | 'mental_health' | 'nutritionist' | 'physio';
 
+/**
+ * مقطع المسار الفعلي لكل نوع.
+ *
+ * ⚠️ كان يُشتقّ بإضافة حرف `s` (`${serviceType}s`)، وهو صحيحٌ لنوعين فقط
+ * (hospital/doctor) وخاطئ للستّة الباقية: `pharmacys` و`mental_healths`
+ * و`nutritionists` و`dentals` و`opticals` و`physios` — لا وجود لأيٍّ منها.
+ * فكان `revalidatePath` يُبطِل ذاكرة مسارٍ غير موجود، وتبقى صفحة التفاصيل
+ * على حالتها القديمة بعد التبديل.
+ */
+const SERVICE_PATH_SEGMENT: Record<ServiceType, string> = {
+  hospital: 'hospitals',
+  dental: 'dental',
+  optical: 'optical',
+  pharmacy: 'pharmacies',
+  doctor: 'doctors',
+  mental_health: 'mental-health',
+  nutritionist: 'nutrition',
+  physio: 'physio',
+};
+
 export async function toggleServiceFavorite(serviceType: ServiceType, serviceId: string) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -50,7 +70,7 @@ export async function toggleServiceFavorite(serviceType: ServiceType, serviceId:
       .eq('id', existing.id);
     
     revalidatePath('/account/favorites');
-    revalidatePath(`/services/${serviceType}s/${serviceId}`);
+    revalidatePath(`/services/${SERVICE_PATH_SEGMENT[serviceType]}/${serviceId}`);
     return { ok: true, favorited: false };
   } else {
     // أضف
@@ -65,7 +85,7 @@ export async function toggleServiceFavorite(serviceType: ServiceType, serviceId:
     if (error) return { ok: false, error: error.message };
     
     revalidatePath('/account/favorites');
-    revalidatePath(`/services/${serviceType}s/${serviceId}`);
+    revalidatePath(`/services/${SERVICE_PATH_SEGMENT[serviceType]}/${serviceId}`);
     return { ok: true, favorited: true };
   }
 }

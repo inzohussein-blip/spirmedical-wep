@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 import ShareButton from '@/components/pwa/ShareButton';
 import PharmacyReservationModal from '@/components/pharmacies/PharmacyReservationModal';
+import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
+import PharmacyRatingCard from './PharmacyRatingCard';
 
 interface Pharmacy {
   id: string;
@@ -55,6 +57,10 @@ interface InventoryItem {
 interface Props {
   pharmacy: Pharmacy;
   inventory: InventoryItem[];
+  initialIsFavorite: boolean;
+  /** حجزٌ مُستلَم لم يُقيَّم بعد — التقييم مربوطٌ به (انظر PharmacyRatingCard) */
+  ratableReservationId: string | null;
+  existingRating: number | null;
 }
 
 const CATEGORIES: Record<string, { label: string; emoji: string }> = {
@@ -73,7 +79,13 @@ const CATEGORIES: Record<string, { label: string; emoji: string }> = {
   other:            { label: 'أخرى', emoji: '📦' },
 };
 
-export default function PharmacyDetailClient({ pharmacy, inventory }: Props) {
+export default function PharmacyDetailClient({
+  pharmacy,
+  inventory,
+  initialIsFavorite,
+  ratableReservationId,
+  existingRating,
+}: Props) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [availabilityFilter, setAvailabilityFilter] = useState<'all' | 'available' | 'unavailable'>('all');
@@ -125,6 +137,12 @@ export default function PharmacyDetailClient({ pharmacy, inventory }: Props) {
           <h1 className="scr-page-title" style={{ fontSize: 16 }}>
             {pharmacy.name}
           </h1>
+          <ServiceFavoriteButton
+            serviceType="pharmacy"
+            serviceId={pharmacy.id}
+            initialIsFavorite={initialIsFavorite}
+            size="sm"
+          />
           <ShareButton
             variant="icon"
             size="sm"
@@ -668,9 +686,18 @@ export default function PharmacyDetailClient({ pharmacy, inventory }: Props) {
           </div>
         </div>
 
+        {/* تقييم الصيدلية — يظهر فقط لمن استلم حجزاً منها */}
+        {ratableReservationId && (
+          <PharmacyRatingCard
+            pharmacyId={pharmacy.id}
+            reservationId={ratableReservationId}
+            existingRating={existingRating}
+          />
+        )}
+
         <div style={{ height: 80 }} />
       </div>
-      
+
       {/* Reservation Modal - V25.46 */}
       {showReservation && (
         <PharmacyReservationModal

@@ -204,7 +204,9 @@ export default function OrderTrackClient({ id, initialStatus, estimatedPrice }: 
         </div>
 
         <div className="order-actions">
-          <Link href={`/messages`} className="order-action-btn primary">
+          {/* بلا معرّف الطلب كان الرابط يفتح قائمة المحادثات فقط بدل محادثة
+              مختصّ هذا الطلب — ولا محادثة تُنشأ إطلاقاً. */}
+          <Link href={`/messages?appointment=${id}`} className="order-action-btn primary">
             <MessageCircle size={18} strokeWidth={2.2} aria-hidden />
             <span>محادثة الأخصائي</span>
           </Link>

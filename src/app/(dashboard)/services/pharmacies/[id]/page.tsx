@@ -5,6 +5,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import PharmacyDetailClient from './PharmacyDetailClient';
+import { checkIsFavorite } from '@/components/services/favorites-actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -54,8 +55,62 @@ export default async function PharmacyDetailPage({
     .order('is_available', { ascending: false })
     .limit(200);
 
+  // ─── حالة المفضّلة + أهليّة التقييم ───
+  // التقييم مربوط بحجزٍ **مُستلَم** (`picked_up`): يمنع تقييم من لم يتعامل مع
+  // الصيدلية، ويجعل قيد `UNIQUE (user_id, reservation_id)` فعّالاً — إذ لو كان
+  // `reservation_id` فارغاً لسمحت Postgres بصفوفٍ مكرّرة (NULL متمايز).
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let ratableReservationId: string | null = null;
+  let existingRating: number | null = null;
+
+  if (user) {
+    const { data: reservation } = await supabase
+      .from('pharmacy_reservations')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('pharmacy_id', params.id)
+      .eq('status', 'picked_up')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (reservation) {
+      ratableReservationId = reservation.id;
+
+      // `pharmacy_ratings` موجود في الترحيلات وغائب عن `src/types/database.ts`
+      // (الأنواع مكتوبة يدوياً ومتأخّرة عن المخطّط). قالبٌ ضيّق محصور في هذا
+      // الاستعلام وحده — يزول عند إعادة توليد الأنواع من المشروع الحيّ.
+      const ratingsTable = supabase as unknown as {
+        from: (t: 'pharmacy_ratings') => {
+          select: (cols: string) => {
+            eq: (c: string, v: string) => {
+              eq: (c: string, v: string) => {
+                maybeSingle: () => Promise<{ data: { rating: number } | null }>;
+              };
+            };
+          };
+        };
+      };
+
+      const { data: rating } = await ratingsTable
+        .from('pharmacy_ratings')
+        .select('rating')
+        .eq('user_id', user.id)
+        .eq('reservation_id', reservation.id)
+        .maybeSingle();
+
+      existingRating = rating?.rating ?? null;
+    }
+  }
+
   return (
     <PharmacyDetailClient
+      initialIsFavorite={await checkIsFavorite('pharmacy', params.id)}
+      ratableReservationId={ratableReservationId}
+      existingRating={existingRating}
       pharmacy={pharmacy}
       inventory={(inventory || []) as unknown as Array<{
         id: string;
