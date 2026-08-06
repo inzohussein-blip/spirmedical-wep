@@ -107,7 +107,9 @@ export async function sendCampaign(id: string) {
     return { success: false, error: 'حملات البريد غير مدعومة عبر هذا المسار بعد (تحتاج تكامل Resend)' };
   }
 
-  let query = auth.supabase.from('users').select('id, phone').eq('role', 'user');
+  // دور المرضى في `user_role` هو 'patient' — لا وجود لدور 'user' إطلاقاً،
+  // فكان هذا الاستعلام يُرجع **صفر** مستلمين دائماً مهما بلغ عدد المرضى.
+  let query = auth.supabase.from('users').select('id, phone').eq('role', 'patient');
 
   const segment = campaign.target_segment as Record<string, unknown>;
   if (segment.governorate) {
