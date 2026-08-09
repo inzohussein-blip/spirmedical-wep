@@ -376,42 +376,5 @@ export async function resetPassword(
   }
 }
 
-// ─────────────────────────────────────────────────────────
-// 9. تحديث البيانات الأساسية
-// ─────────────────────────────────────────────────────────
-
-export async function updateUserProfile(input: {
-  fullName?: string;
-  gender?: 'male' | 'female';
-  phone?: string;
-}): Promise<{ success: boolean; error?: string }> {
-  const supabase = createClient();
-
-  try {
-    const { data: user } = await supabase.auth.getUser();
-    if (!user?.user) {
-      return { success: false, error: 'لم يتم تسجيل الدخول' };
-    }
-
-    const updateData: Record<string, unknown> = {};
-    if (input.fullName) updateData.full_name = input.fullName;
-    if (input.gender) updateData.gender = input.gender;
-    if (input.phone) updateData.phone = input.phone;
-
-    const { error } = await supabase
-      .from('users')
-      .update(updateData)
-      .eq('id', user.user.id);
-
-    if (error) {
-      return { success: false, error: error.message };
-    }
-
-    return { success: true };
-  } catch (err) {
-    return {
-      success: false,
-      error: err instanceof Error ? err.message : 'خطأ في التحديث',
-    };
-  }
-}
+// ملاحظة: أُزيلت `updateUserProfile` — لم تكن مستدعاة، وتحديث الملف يتمّ
+// عبر `src/app/(dashboard)/account/edit/actions.ts: updateProfile` الموصولة.
