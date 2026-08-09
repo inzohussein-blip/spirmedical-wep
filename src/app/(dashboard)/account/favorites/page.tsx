@@ -7,16 +7,25 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import {
   ArrowRight, Heart, Building2, Stethoscope, Eye, Pill, UserCircle,
-  MapPin, Star,
+  Brain, Apple, Activity, MapPin, Star,
 } from 'lucide-react';
+import type { ServiceType } from '@/components/services/favorites-actions';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'مفضّلتي · سباير ميديكال' };
 
-const SERVICE_META: Record<string, { 
-  label: string; 
-  icon: typeof Building2; 
-  color: string; 
+/**
+ * ⚠️ هذه الخريطة يجب أن تغطّي **كل** قيمة في `ServiceType` — وإلّا اختفى
+ * المفضَّل بصمت: الصفّ يُكتب في القاعدة والقلب يمتلئ في صفحة التفاصيل،
+ * ثمّ لا يظهر هنا أبداً لأنّ `SERVICE_META[type]` غير معرّف فيُرجع `null`.
+ * كانت ثلاثة أنواع من الثمانية بهذا الحال: الصحّة النفسية، التغذية،
+ * العلاج الطبيعي. النوع `Record<ServiceType, …>` يجعل إغفال نوعٍ جديد
+ * خطأً في البناء لا خللاً صامتاً. يحرسه `tests/favorites-integrity.test.ts`.
+ */
+const SERVICE_META: Record<ServiceType, {
+  label: string;
+  icon: typeof Building2;
+  color: string;
   bg: string;
   baseUrl: string;
 }> = {
@@ -25,7 +34,21 @@ const SERVICE_META: Record<string, {
   optical: { label: 'محل نظارات', icon: Eye, color: '#A57100', bg: '#FAEEDA', baseUrl: '/services/optical' },
   pharmacy: { label: 'صيدلية', icon: Pill, color: '#1D9E75', bg: '#E1F5EE', baseUrl: '/services/pharmacies' },
   doctor: { label: 'طبيب', icon: UserCircle, color: '#0F6E56', bg: '#E1F5EE', baseUrl: '/services/doctors' },
+  // الألوان مطابقة لبطاقات هذه الخدمات في `/services` كي لا يتغيّر تمثيلها
+  // البصريّ بين الصفحتين.
+  mental_health: { label: 'أخصائي نفسي', icon: Brain, color: '#7C4DFF', bg: '#EDE7F6', baseUrl: '/services/mental-health' },
+  nutritionist: { label: 'أخصائي تغذية', icon: Apple, color: '#34A853', bg: '#E8F5E9', baseUrl: '/services/nutrition' },
+  physio: { label: 'علاج طبيعي', icon: Activity, color: '#1A73E8', bg: '#E8F0FE', baseUrl: '/services/physio' },
 };
+
+/**
+ * `service_type` يصل من القاعدة كنصّ حرّ، فقد يحمل نوعاً لا يعرفه هذا
+ * الإصدار (صفٌّ قديم، أو نشرٌ متأخّر). نبحث بأمان ونتحمّل الغياب بدل
+ * الانهيار — مع بقاء `SERVICE_META` نفسها كاملةً بحكم نوعها.
+ */
+function metaFor(type: string) {
+  return SERVICE_META[type as ServiceType] as (typeof SERVICE_META)[ServiceType] | undefined;
+}
 
 interface FavoriteWithDetails {
   id: string;
@@ -34,6 +57,8 @@ interface FavoriteWithDetails {
   created_at: string;
   // Joined data (manual)
   name?: string;
+  /** وصفٌ مهنيّ (تخصّص/لقب) — ليس موقعاً، فلا تُرسم بجانبه أيقونة الدبّوس */
+  subtitle?: string;
   city?: string;
   district?: string;
   rating_avg?: number;
@@ -79,8 +104,16 @@ export default async function FavoritesPage() {
 
   // أنواع المفضّلات مستقلّة عن بعضها — نجلب تفاصيلها **بالتوازي** بدل خمس
   // رحلات متتالية للقاعدة، ولا نستعلم إلا عن الأنواع الموجودة فعلاً.
+  //
+  // ⚠️ كما في `SERVICE_META`: نوعٌ بلا مصدرٍ هنا لا تُجلَب تفاصيله، فيسقط
+  // في `.filter((f) => f.name)` أدناه ويختفي بلا أثر. لذلك المفتاح
+  // `ServiceType` لا `string` — إغفال نوعٍ جديد يصير خطأ بناء.
+  //
+  // جداول المختصّين الثلاثة (نفسي/تغذية/علاج طبيعي) لا تحمل `city`
+  // و`district` بل `title` و`clinic_name`، فتُعرَض وصفاً مهنيّاً في
+  // `subtitle` بدل موقعٍ زائف بجانب دبّوس الخريطة.
   const SOURCES: Array<{
-    type: string;
+    type: ServiceType;
     table: string;
     cols: string;
     map?: (row: Record<string, unknown>) => Record<string, unknown>;
@@ -93,7 +126,25 @@ export default async function FavoritesPage() {
       type: 'doctor',
       table: 'doctors',
       cols: 'id, full_name, specialty, rating_avg, rating_count',
-      map: (d) => ({ ...d, name: d.full_name, city: d.specialty }),
+      map: (d) => ({ ...d, name: d.full_name, subtitle: d.specialty }),
+    },
+    {
+      type: 'mental_health',
+      table: 'mental_health_specialists',
+      cols: 'id, full_name, title, clinic_name, rating_avg, rating_count',
+      map: (d) => ({ ...d, name: d.full_name, subtitle: d.title ?? d.clinic_name }),
+    },
+    {
+      type: 'nutritionist',
+      table: 'nutritionists',
+      cols: 'id, full_name, title, clinic_name, rating_avg, rating_count',
+      map: (d) => ({ ...d, name: d.full_name, subtitle: d.title ?? d.clinic_name }),
+    },
+    {
+      type: 'physio',
+      table: 'physio_specialists',
+      cols: 'id, full_name, title, clinic_name, rating_avg, rating_count',
+      map: (d) => ({ ...d, name: d.full_name, subtitle: d.title ?? d.clinic_name }),
     },
   ];
 
@@ -120,6 +171,7 @@ export default async function FavoritesPage() {
     return {
       ...f,
       name: details.name as string | undefined,
+      subtitle: details.subtitle as string | undefined,
       city: details.city as string | undefined,
       district: details.district as string | undefined,
       rating_avg: details.rating_avg as number | undefined,
@@ -154,7 +206,7 @@ export default async function FavoritesPage() {
             marginTop: 8,
           }}>
             {Object.entries(counts).map(([type, count]) => {
-              const meta = SERVICE_META[type];
+              const meta = metaFor(type);
               if (!meta) return null;
               const Icon = meta.icon;
               return (
@@ -197,7 +249,7 @@ export default async function FavoritesPage() {
 
             <div className="scr-list-stack">
               {favoritesWithDetails.map((fav) => {
-                const meta = SERVICE_META[fav.service_type];
+                const meta = metaFor(fav.service_type);
                 if (!meta) return null;
                 const Icon = meta.icon;
                 
@@ -220,6 +272,8 @@ export default async function FavoritesPage() {
                       </div>
                       <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                         {meta.label}
+                        {/* وصفٌ مهنيّ — بلا دبّوس، فهو ليس موقعاً */}
+                        {fav.subtitle && ` · ${fav.subtitle}`}
                         {fav.city && ` · `}
                         {fav.city && (
                           <>
