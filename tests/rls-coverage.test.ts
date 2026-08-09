@@ -211,3 +211,50 @@ describe('🛡️ كل دالّة جديدة تُثبّت search_path', () => {
     expect(/FOR fn IN[\s\S]{0,600}nspname = 'public'/.test(sql)).toBe(true);
   });
 });
+
+describe('🔑 البوّابة الأولى: صلاحيات الجداول', () => {
+  /**
+   * 🚨 في Postgres بوّابتان مستقلّتان: `GRANT` (هل للدور حقّ العملية؟)
+   * ثمّ `RLS` (أيّ الصفوف يرى؟). المشروع بنى الثانية بعناية — ٩١ جدولاً
+   * و٢٤٦ سياسة — وترك الأولى مغلقة تماماً: لم يمنح أيّ جدول لـ`anon` أو
+   * `authenticated`. فكان كل استعلام من التطبيق يُردّ بـ
+   * `42501: permission denied`، والسياسات الـ٢٤٦ لا تُقيَّم أصلاً.
+   *
+   * التوزيع المعتمَد أضيق من افتراضي Supabase:
+   *   authenticated → SELECT/INSERT/UPDATE/DELETE
+   *   anon          → SELECT فقط
+   */
+  const grantMigration = readFileSync(
+    join(MIGRATIONS_DIR, '0016_grant_table_privileges.sql'),
+    'utf8'
+  );
+
+  it('الترحيل يمنح القراءة لـ anon والكتابة لـ authenticated', () => {
+    expect(grantMigration).toMatch(/GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon/);
+    expect(grantMigration).toMatch(
+      /GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO authenticated/
+    );
+  });
+
+  it('🚨 anon لا يُمنح كتابة إطلاقاً', () => {
+    const anonGrants = grantMigration
+      .split('\n')
+      .filter((l) => !l.trim().startsWith('--') && /TO[^;]*\banon\b/.test(l));
+
+    expect(anonGrants.length).toBeGreaterThan(0);
+    for (const line of anonGrants) {
+      expect(/\b(INSERT|UPDATE|DELETE|TRUNCATE)\b/.test(line)).toBe(false);
+    }
+  });
+
+  it('الجداول المستقبلية مشمولة (لا يتكرّر الخلل مع كل ترحيل)', () => {
+    expect(grantMigration).toContain('ALTER DEFAULT PRIVILEGES');
+  });
+
+  it('المنح لا يُغني عن RLS — الحارس أعلاه يشترطها على كل جدول', () => {
+    // توثيقٌ للعلاقة: الفتح هنا آمن فقط لأنّ RLS مُفعّلة على كل جدول
+    const tables = definedTables();
+    const rlsOn = tablesWithRlsEnabled();
+    expect([...tables].filter((t) => !rlsOn.has(t))).toEqual([]);
+  });
+});
