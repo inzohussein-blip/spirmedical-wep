@@ -92,6 +92,75 @@ describe('🛡️ كل جدول حسّاس محميّ بـ RLS', () => {
   });
 });
 
+describe('🛡️ المنظورات الممنوحة لا تتجاوز RLS', () => {
+  /**
+   * 🚨 ثغرة كشفها فحص القاعدة الحيّة ولم يكشفها هذا الحارس نفسه:
+   * كان يفحص **الجداول** فقط. والمنظور في Postgres يُنفَّذ افتراضياً
+   * بصلاحيات مالكه (`SECURITY DEFINER`)، فيتجاوز RLS على الجداول الأساسية.
+   *
+   * `vitals_trends` و`admin_lab_orders_summary` كانا ممنوحَين لـ
+   * `authenticated` بلا شرطٍ يقصر النتائج على صاحبها — فأيّ مريض مسجَّل
+   * يقرأ العلامات الحيوية وأسماء وهواتف كل المرضى. التعليق كان يقول
+   * «للـadmin» لكنّ `authenticated` تعني كل من سجّل الدخول.
+   *
+   * القاعدة: كل منظور يُمنح لـ`authenticated`/`anon` يجب أن يكون
+   * `security_invoker = on` كي تُطبَّق سياسات المستعلِم.
+   */
+
+  /** منظورات مُنِحت لأدوار العملاء */
+  function grantedViews(): Map<string, string[]> {
+    const out = new Map<string, string[]>();
+    const re = /GRANT\s+[A-Z, ]*\s+ON\s+(?:TABLE\s+)?public\.([a-z_]+)\s+TO\s+([a-z_, ]+);/gi;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(sql)) !== null) {
+      const roles = m[2].split(',').map((r) => r.trim().toLowerCase());
+      if (!roles.some((r) => r === 'authenticated' || r === 'anon')) continue;
+      out.set(m[1], roles);
+    }
+    return out;
+  }
+
+  function definedViews(): Set<string> {
+    const out = new Set<string>();
+    const re = /CREATE\s+(?:OR\s+REPLACE\s+)?VIEW\s+public\.([a-z_]+)/gi;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(sql)) !== null) out.add(m[1]);
+    return out;
+  }
+
+  /** منظورات ضُبطت على security_invoker */
+  function invokerViews(): Set<string> {
+    const out = new Set<string>();
+    const re = /ALTER\s+VIEW\s+public\.([a-z_]+)\s+SET\s*\(\s*security_invoker\s*=\s*on\s*\)/gi;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(sql)) !== null) out.add(m[1]);
+    return out;
+  }
+
+  it('يقرأ المنظورات والمنح فعلاً (الحارس ليس فارغاً)', () => {
+    expect(definedViews().size).toBeGreaterThan(3);
+    expect(grantedViews().size).toBeGreaterThan(0);
+  });
+
+  it('🚨 كل منظور ممنوح لـ authenticated/anon هو security_invoker', () => {
+    const views = definedViews();
+    const invoker = invokerViews();
+
+    const leaking = [...grantedViews().entries()]
+      .filter(([name]) => views.has(name))
+      .filter(([name]) => !invoker.has(name))
+      .map(([name, roles]) => `${name} → ${roles.join('/')}`);
+
+    expect(leaking.sort()).toEqual([]);
+  });
+
+  it('المنظوران اللذان سرّبا بيانات المرضى مُصلَحان تحديداً', () => {
+    const invoker = invokerViews();
+    expect(invoker.has('vitals_trends')).toBe(true);
+    expect(invoker.has('admin_lab_orders_summary')).toBe(true);
+  });
+});
+
 describe('🛡️ لا سياسة تفتح جدولاً حسّاساً للجميع', () => {
   const sensitive = new Set(SENSITIVE_TABLES);
 
