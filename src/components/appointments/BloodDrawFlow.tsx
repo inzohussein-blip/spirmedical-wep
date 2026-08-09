@@ -15,6 +15,7 @@ import { useState, useMemo, useRef, useEffect, type RefObject } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { haptic } from '@/lib/haptic';
 import { toast } from '@/components/ui/Toaster';
+import { markLocationUsed } from '@/app/(dashboard)/account/locations/actions';
 import { submitErrorMessage } from '@/lib/forms/submit-error';
 import FamilyMemberPicker from '@/components/family/FamilyMemberPicker';
 import {
@@ -578,6 +579,9 @@ export default function BloodDrawFlow({
                         accuracy: 10,
                       });
                       clearError('address');
+                      // ترتيب المواقع بالأكثر استعمالاً كان معطّلاً: `use_count`
+                      // يبقى صفراً أبداً لأنّ لا أحد يستدعي `markLocationUsed`.
+                      void markLocationUsed(loc.id).catch(() => null);
                       toast.success(`تم اختيار: ${loc.label}`);
                     }}
                     title={`${loc.address}`}

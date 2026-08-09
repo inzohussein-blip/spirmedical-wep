@@ -7,7 +7,7 @@ import {
   Wrench, Shield, CheckCircle2, Circle, Loader2,
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
-import { toggleChecklistItem } from './actions';
+import { toggleChecklistItem, updateChecklistNotes } from './actions';
 
 interface ChecklistItem {
   id: string;
@@ -39,6 +39,60 @@ const PRIORITY_META = {
   medium:   { label: 'متوسط',   color: 'var(--ink-2)',   bg: 'var(--paper-3)' },
   low:      { label: 'منخفض',   color: 'var(--ink-3)',   bg: 'var(--paper-3)' },
 };
+
+/** محرّر ملاحظات المهمّة — يحفظ عند الخروج من الحقل إن تغيّر النصّ */
+function ChecklistNotes({ id, initialNotes }: { id: string; initialNotes: string | null }) {
+  const [notes, setNotes] = useState(initialNotes ?? '');
+  const [saved, setSaved] = useState(initialNotes ?? '');
+  const [pending, startTransition] = useTransition();
+
+  function handleBlur() {
+    const next = notes.trim();
+    if (next === saved.trim()) return;
+
+    startTransition(async () => {
+      try {
+        const result = await updateChecklistNotes(id, next);
+        if (result.success) {
+          setSaved(next);
+          toast.success('حُفظت الملاحظة');
+        } else {
+          setNotes(saved);
+          toast.error(result.error || 'تعذّر الحفظ');
+        }
+      } catch {
+        // إجراءات الخادم ترمي عند انقطاع الشبكة ولا تُرجع { success:false }
+        setNotes(saved);
+        toast.error('تعذّر الاتصال. حاول مرة أخرى.');
+      }
+    });
+  }
+
+  return (
+    <input
+      type="text"
+      value={notes}
+      onChange={(e) => setNotes(e.target.value)}
+      onBlur={handleBlur}
+      disabled={pending}
+      placeholder="أضف ملاحظة..."
+      maxLength={500}
+      aria-label="ملاحظة المهمّة"
+      style={{
+        width: '100%',
+        marginTop: 6,
+        padding: '6px 9px',
+        border: '1px solid var(--line)',
+        borderRadius: 7,
+        background: 'var(--paper-2)',
+        fontFamily: 'inherit',
+        fontSize: 11,
+        color: 'var(--ink)',
+        opacity: pending ? 0.6 : 1,
+      }}
+    />
+  );
+}
 
 export default function LaunchChecklistClient({ items }: Props) {
   const router = useRouter();
@@ -317,6 +371,9 @@ export default function LaunchChecklistClient({ items }: Props) {
                           {item.description}
                         </p>
                       )}
+                      {/* الملاحظات كانت ضمن نوع العنصر ولا تُعرض ولا تُحرَّر
+                          إطلاقاً، و`updateChecklistNotes` بلا أي مستدعٍ. */}
+                      <ChecklistNotes id={item.id} initialNotes={item.notes} />
                     </div>
                   </div>
                 );

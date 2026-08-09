@@ -17,6 +17,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { toast } from '@/components/ui/Toaster';
+import { markLocationUsed } from '@/app/(dashboard)/account/locations/actions';
 import { submitErrorMessage } from '@/lib/forms/submit-error';
 import { haptic } from '@/lib/haptic';
 import FamilyMemberPicker from '@/components/family/FamilyMemberPicker';
@@ -1068,6 +1069,8 @@ export default function NursingFlow({
                       setAddress(loc.address);
                       setGpsLocation({ lat: loc.lat, lng: loc.lng });
                       fe.clearError('address');
+                      // انظر التعليق في BloodDrawFlow: `use_count` لم يكن يزيد أبداً
+                      void markLocationUsed(loc.id).catch(() => null);
                     }}
                     style={{
                       padding: '8px 12px',
