@@ -51,6 +51,19 @@ export function baghdadDayWindow(now: Date = new Date()): DayWindow {
 }
 
 /**
+ * الوقت بصيغة `HH:MM:SS` بتوقيت بغداد.
+ *
+ * يُقارَن بأعمدة `time` مثل `quiet_hours_start` / `quiet_hours_end`. كان
+ * الحساب يستعمل `new Date().toTimeString()` أي توقيت الخادم (UTC)، فساعات
+ * الهدوء «٢٣:٠٠ → ٠٧:٠٠» كانت تُطبَّق فعلياً من ٠٢:٠٠ إلى ١٠:٠٠ بغداد:
+ * إشعارات تصل في منتصف الليل، وتُكتم في ساعات الصباح المفيدة.
+ */
+export function baghdadTimeString(now: Date = new Date()): string {
+  const shifted = new Date(now.getTime() + BAGHDAD_UTC_OFFSET_HOURS * HOUR_MS);
+  return shifted.toISOString().slice(11, 19);
+}
+
+/**
  * التاريخ بصيغة `YYYY-MM-DD` بتوقيت بغداد.
  * يُستعمل للمقارنة مع أعمدة `date` (مثل `end_date` في الجداول الدورية).
  */

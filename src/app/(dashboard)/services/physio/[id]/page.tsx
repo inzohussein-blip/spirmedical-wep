@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import { checkIsFavorite } from '@/components/services/favorites-actions';
+import { formatPrice, count, formatRating, formatNumber } from '@/lib/format/price';
 
 export const dynamic = 'force-dynamic';
 
@@ -153,7 +154,7 @@ export default async function PhysioSpecialistPage({
             />
             <Stat 
               icon={<Star size={14} fill="currentColor" />} 
-              value={specialist.rating_avg > 0 ? specialist.rating_avg.toFixed(1) : '—'} 
+              value={count(specialist.rating_avg) > 0 ? formatRating(specialist.rating_avg) : '—'} 
               label={`${specialist.rating_count} تقييم`} 
             />
             <Stat 
@@ -256,7 +257,7 @@ export default async function PhysioSpecialistPage({
               </div>
               <div style={{ textAlign: 'end' }}>
                 <div style={{ fontSize: 14, fontWeight: 900, color: 'var(--emerald)' }}>
-                  {specialist.home_visit_price.toLocaleString('ar-IQ')}
+                  {formatNumber(specialist.home_visit_price) ?? '—'}
                 </div>
                 <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
               </div>
@@ -298,14 +299,14 @@ export default async function PhysioSpecialistPage({
               </div>
               <div style={{ textAlign: 'end' }}>
                 <div style={{ fontSize: 14, fontWeight: 900, color: '#A57100' }}>
-                  {specialist.clinic_visit_price.toLocaleString('ar-IQ')}
+                  {formatNumber(specialist.clinic_visit_price) ?? '—'}
                 </div>
                 <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
               </div>
             </Link>
           )}
 
-          {specialist.package_discount_pct > 0 && (
+          {count(specialist.package_discount_pct) > 0 && (
             <div style={{
               marginTop: 8,
               padding: 10,

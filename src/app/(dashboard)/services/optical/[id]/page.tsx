@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import { checkIsFavorite } from '@/components/services/favorites-actions';
+import { formatPrice, formatPriceRange, count, formatRating } from '@/lib/format/price';
 
 export const dynamic = 'force-dynamic';
 
@@ -107,10 +108,10 @@ export default async function OpticalDetailPage({
             <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
               <MapPin size={12} />{store.city}{store.district ? ` · ${store.district}` : ''}
             </span>
-            {store.rating_count > 0 && (
+            {count(store.rating_count) > 0 && (
               <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
                 <Star size={12} fill="var(--amber)" color="var(--amber)" />
-                <strong style={{ color: 'var(--amber)' }}>{store.rating_avg.toFixed(1)}</strong>
+                <strong style={{ color: 'var(--amber)' }}>{formatRating(store.rating_avg)}</strong>
                 ({store.rating_count})
               </span>
             )}
@@ -163,7 +164,7 @@ export default async function OpticalDetailPage({
             display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6,
           }}>
             {[
-              store.offers_eye_exam && { icon: '👁️', label: `فحص نظر - ${store.exam_price.toLocaleString('ar-IQ')} د.ع` },
+              store.offers_eye_exam && { icon: '👁️', label: `فحص نظر - ${formatPrice(store.exam_price)}` },
               store.offers_prescription_lenses && { icon: '🔍', label: 'عدسات طبية' },
               store.offers_sunglasses && { icon: '🕶️', label: 'نظارات شمسية' },
               store.offers_contact_lenses && { icon: '👁️‍🗨️', label: 'عدسات لاصقة' },
@@ -202,13 +203,13 @@ export default async function OpticalDetailPage({
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
               <span style={{ fontWeight: 600 }}>🖼️ إطارات</span>
               <span style={{ fontWeight: 700, color: 'var(--amber)' }}>
-                {store.frame_price_min.toLocaleString('ar-IQ')} - {store.frame_price_max.toLocaleString('ar-IQ')} د.ع
+                {formatPriceRange(store.frame_price_min, store.frame_price_max)}
               </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}>
               <span style={{ fontWeight: 600 }}>🔍 عدسات</span>
               <span style={{ fontWeight: 700, color: 'var(--amber)' }}>
-                {store.lens_price_min.toLocaleString('ar-IQ')} - {store.lens_price_max.toLocaleString('ar-IQ')} د.ع
+                {formatPriceRange(store.lens_price_min, store.lens_price_max)}
               </span>
             </div>
           </div>

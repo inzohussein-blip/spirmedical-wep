@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import { checkIsFavorite } from '@/components/services/favorites-actions';
+import { formatPrice, count, formatRating, formatNumber } from '@/lib/format/price';
 
 export const dynamic = 'force-dynamic';
 
@@ -135,11 +136,11 @@ export default async function MentalDetailPage({
             <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
               <Award size={12} />{s.years_experience} سنة خبرة
             </span>
-            <span>📊 {s.total_sessions.toLocaleString('ar-IQ')} جلسة</span>
-            {s.rating_count > 0 && (
+            <span>📊 {count(s.total_sessions).toLocaleString('ar-IQ')} جلسة</span>
+            {count(s.rating_count) > 0 && (
               <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
                 <Star size={12} fill="var(--amber)" color="var(--amber)" />
-                <strong style={{ color: 'var(--amber)' }}>{s.rating_avg.toFixed(1)}</strong>
+                <strong style={{ color: 'var(--amber)' }}>{formatRating(s.rating_avg)}</strong>
                 ({s.rating_count})
               </span>
             )}
@@ -237,7 +238,7 @@ export default async function MentalDetailPage({
               }}>
                 <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 4 }}>💻 أونلاين</div>
                 <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--emerald)' }}>
-                  {s.online_session_price.toLocaleString('ar-IQ')}
+                  {formatNumber(s.online_session_price) ?? '—'}
                 </div>
                 <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع / جلسة</div>
               </div>
@@ -251,7 +252,7 @@ export default async function MentalDetailPage({
               }}>
                 <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 4 }}>🏢 عيادة</div>
                 <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--amber)' }}>
-                  {s.clinic_session_price.toLocaleString('ar-IQ')}
+                  {formatNumber(s.clinic_session_price) ?? '—'}
                 </div>
                 <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع / جلسة</div>
               </div>
@@ -266,7 +267,7 @@ export default async function MentalDetailPage({
               href={`/services/booking?service=mental-health&id=${s.id}&package=online`}
               style={primaryButton}
             >
-              💻 احجز جلسة أونلاين - {s.online_session_price.toLocaleString('ar-IQ')} د.ع
+              💻 احجز جلسة أونلاين - {formatPrice(s.online_session_price)}
             </Link>
           )}
           {s.available_in_clinic && (
@@ -274,7 +275,7 @@ export default async function MentalDetailPage({
               href={`/services/booking?service=mental-health&id=${s.id}&package=clinic`}
               style={{...primaryButton, background: 'var(--amber)'}}
             >
-              🏢 احجز جلسة في العيادة - {s.clinic_session_price.toLocaleString('ar-IQ')} د.ع
+              🏢 احجز جلسة في العيادة - {formatPrice(s.clinic_session_price)}
             </Link>
           )}
         </div>
