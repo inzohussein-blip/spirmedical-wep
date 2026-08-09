@@ -15,6 +15,7 @@ import ShareButton from '@/components/pwa/ShareButton';
 import HospitalBookingButton from '@/components/hospitals/HospitalBookingButton';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import { checkIsFavorite } from '@/components/services/favorites-actions';
+import { count, formatRating } from '@/lib/format/price';
 
 export const dynamic = 'force-dynamic';
 
@@ -174,10 +175,10 @@ export default async function HospitalDetailPage({
             {hospital.icu_beds_count && (
               <StatBox icon={<Activity size={14} />} value={String(hospital.icu_beds_count)} label="عناية" />
             )}
-            {hospital.rating_count > 0 && (
+            {count(hospital.rating_count) > 0 && (
               <StatBox
                 icon={<Star size={14} fill="currentColor" />}
-                value={hospital.rating_avg.toFixed(1)}
+                value={formatRating(hospital.rating_avg)}
                 label={`${hospital.rating_count} تقييم`}
               />
             )}
@@ -390,7 +391,7 @@ function StatBox({ icon, value, label }: { icon: React.ReactNode; value: string;
   );
 }
 
-function Feature({ has, label, emoji }: { has: boolean; label: string; emoji: string }) {
+function Feature({ has, label, emoji }: { has: boolean | null; label: string; emoji: string }) {
   return (
     <div
       style={{

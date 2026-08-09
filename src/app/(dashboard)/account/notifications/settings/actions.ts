@@ -49,15 +49,17 @@ export async function getNotificationPreferences(): Promise<NotificationPreferen
 
   if (!data) return DEFAULT_PREFS;
 
+  // أعمدة التفضيلات كلّها NULL-able في القاعدة؛ الغائب يعود إلى الافتراضي
+  // بدل تسريب `null` إلى واجهةٍ تتوقّع boolean/نصّاً.
   return {
-    appointment_reminders: data.appointment_reminders,
-    test_results: data.test_results,
-    messages: data.messages,
-    promotions: data.promotions,
-    system_updates: data.system_updates,
-    quiet_hours_enabled: data.quiet_hours_enabled,
-    quiet_hours_start: data.quiet_hours_start,
-    quiet_hours_end: data.quiet_hours_end,
+    appointment_reminders: data.appointment_reminders ?? DEFAULT_PREFS.appointment_reminders,
+    test_results: data.test_results ?? DEFAULT_PREFS.test_results,
+    messages: data.messages ?? DEFAULT_PREFS.messages,
+    promotions: data.promotions ?? DEFAULT_PREFS.promotions,
+    system_updates: data.system_updates ?? DEFAULT_PREFS.system_updates,
+    quiet_hours_enabled: data.quiet_hours_enabled ?? DEFAULT_PREFS.quiet_hours_enabled,
+    quiet_hours_start: data.quiet_hours_start ?? DEFAULT_PREFS.quiet_hours_start,
+    quiet_hours_end: data.quiet_hours_end ?? DEFAULT_PREFS.quiet_hours_end,
   };
 }
 

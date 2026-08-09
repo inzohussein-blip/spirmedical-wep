@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import { checkIsFavorite } from '@/components/services/favorites-actions';
+import { formatPrice, count, formatRating, formatNumber } from '@/lib/format/price';
 
 export const dynamic = 'force-dynamic';
 
@@ -115,17 +116,17 @@ export default async function NutritionDetailPage({
               <Award size={12} />{n.years_experience} سنة
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-              <Users size={12} />{n.total_clients.toLocaleString('ar-IQ')} عميل
+              <Users size={12} />{count(n.total_clients).toLocaleString('ar-IQ')} عميل
             </span>
-            {n.success_rate > 0 && (
+            {count(n.success_rate) > 0 && (
               <span style={{ display: 'flex', alignItems: 'center', gap: 3, color: 'var(--emerald)', fontWeight: 700 }}>
                 <TrendingUp size={12} />{n.success_rate}% نجاح
               </span>
             )}
-            {n.rating_count > 0 && (
+            {count(n.rating_count) > 0 && (
               <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
                 <Star size={12} fill="var(--amber)" color="var(--amber)" />
-                <strong style={{ color: 'var(--amber)' }}>{n.rating_avg.toFixed(1)}</strong>
+                <strong style={{ color: 'var(--amber)' }}>{formatRating(n.rating_avg)}</strong>
                 ({n.rating_count})
               </span>
             )}
@@ -249,13 +250,13 @@ export default async function NutritionDetailPage({
               background: 'var(--emerald)',
             }}
           >
-            📅 احجز خطة شهرية - {n.monthly_plan_price.toLocaleString('ar-IQ')} د.ع
+            📅 احجز خطة شهرية - {formatPrice(n.monthly_plan_price)}
           </Link>
           <Link
             href={`/services/booking?service=nutrition&id=${n.id}&package=initial`}
             style={{...primaryButton, background: 'var(--white)', color: 'var(--emerald)', border: '1px solid var(--emerald)', boxShadow: 'none'}}
           >
-            💬 استشارة أولى - {n.initial_consultation_price.toLocaleString('ar-IQ')} د.ع
+            💬 استشارة أولى - {formatPrice(n.initial_consultation_price)}
           </Link>
         </div>
       </div>
@@ -264,7 +265,7 @@ export default async function NutritionDetailPage({
 }
 
 function PackageCard({ icon, title, subtitle, price, color, highlight }: {
-  icon: string; title: string; subtitle: string; price: number; color: string; highlight?: boolean;
+  icon: string; title: string; subtitle: string; price: number | null; color: string; highlight?: boolean;
 }) {
   return (
     <div style={{
@@ -278,7 +279,7 @@ function PackageCard({ icon, title, subtitle, price, color, highlight }: {
       <div style={{ fontSize: 10, color: 'var(--ink-3)', fontWeight: 700 }}>{title}</div>
       <div style={{ fontSize: 10, color: 'var(--ink-3)', marginBottom: 4 }}>{subtitle}</div>
       <div style={{ fontSize: 13, fontWeight: 900, color }}>
-        {price.toLocaleString('ar-IQ')}
+        {formatNumber(price) ?? '—'}
       </div>
       <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع</div>
     </div>

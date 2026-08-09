@@ -1,6 +1,7 @@
 import webpush from 'web-push';
 import { createServiceClient } from '@/lib/supabase/server-service';
 import { logger } from '@/lib/logger';
+import { baghdadTimeString } from '@/lib/time/baghdad-day';
 
 /**
  * ═══════════════════════════════════════════════════════════════
@@ -225,11 +226,15 @@ async function isInQuietHours(userId: string): Promise<boolean> {
 
   if (!prefs || !prefs.quiet_hours_enabled) return false;
 
-  const now = new Date();
-  const currentTime = now.toTimeString().slice(0, 8); // HH:MM:SS
+  // ⚠️ بتوقيت بغداد لا بتوقيت الخادم: `toTimeString()` على Vercel يعطي UTC،
+  // فساعات الهدوء «٢٣:٠٠ → ٠٧:٠٠» كانت تُطبَّق من ٠٢:٠٠ إلى ١٠:٠٠ بغداد.
+  const currentTime = baghdadTimeString();
 
   const start = prefs.quiet_hours_start;
   const end = prefs.quiet_hours_end;
+
+  // العمودان NULL-able: بلا حدَّين واضحين لا معنى لساعات الهدوء
+  if (!start || !end) return false;
 
   // مثلاً: 23:00 → 07:00 (يعبر منتصف الليل)
   if (start > end) {

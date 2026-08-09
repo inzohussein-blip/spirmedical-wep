@@ -15,6 +15,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
 import BookingClient from './BookingClient';
+import { formatPriceRange } from '@/lib/format/price';
 
 export const dynamic = 'force-dynamic';
 export const metadata = {
@@ -72,8 +73,8 @@ export default async function BookingPage({
       whatsapp: data.whatsapp,
       workingHours: data.working_hours,
       meta: {
-        doctorCount: data.doctor_count,
-        priceRange: `${data.cleaning_price_min.toLocaleString('ar-IQ')} - ${data.cleaning_price_max.toLocaleString('ar-IQ')} د.ع (تنظيف)`,
+        doctorCount: data.doctor_count ?? undefined,
+        priceRange: `${formatPriceRange(data.cleaning_price_min, data.cleaning_price_max)} (تنظيف)`,
         services: [
           data.offers_implants && 'زراعة',
           data.offers_orthodontics && 'تقويم',
@@ -102,8 +103,8 @@ export default async function BookingPage({
       whatsapp: data.phone,
       workingHours: data.working_hours,
       meta: {
-        brands: data.brands.slice(0, 4),
-        priceRange: `${data.frame_price_min.toLocaleString('ar-IQ')} - ${data.frame_price_max.toLocaleString('ar-IQ')} د.ع (إطارات)`,
+        brands: data.brands?.slice(0, 4),
+        priceRange: `${formatPriceRange(data.frame_price_min, data.frame_price_max)} (إطارات)`,
         services: [
           data.offers_eye_exam && 'فحص نظر',
           data.offers_contact_lenses && 'عدسات لاصقة',
@@ -131,14 +132,14 @@ export default async function BookingPage({
       whatsapp: data.clinic_phone || null,
       workingHours: null,
       packageType: isOnline ? 'online' : 'clinic',
-      packagePrice: isOnline ? data.online_session_price : data.clinic_session_price,
+      packagePrice: (isOnline ? data.online_session_price : data.clinic_session_price) ?? undefined,
       packageLabel: isOnline ? '💻 جلسة أونلاين' : '🏢 جلسة في العيادة',
       meta: {
-        experience: data.years_experience,
+        experience: data.years_experience ?? undefined,
         specialist_type: data.specialist_type,
         bio: data.bio,
-        duration: data.session_duration_minutes,
-        services: data.specialties.slice(0, 3),
+        duration: data.session_duration_minutes ?? undefined,
+        services: data.specialties?.slice(0, 3),
       },
     };
     serviceLabel = '🧠 الصحة النفسية';
@@ -172,13 +173,13 @@ export default async function BookingPage({
       whatsapp: null,
       workingHours: null,
       packageType: pkgType || 'initial',
-      packagePrice: pkgPrice,
+      packagePrice: pkgPrice ?? undefined,
       packageLabel: pkgLabel,
       meta: {
-        experience: data.years_experience,
+        experience: data.years_experience ?? undefined,
         bio: data.bio,
-        successRate: data.success_rate,
-        services: data.specialties.slice(0, 3),
+        successRate: data.success_rate ?? undefined,
+        services: data.specialties?.slice(0, 3),
       },
     };
     serviceLabel = '🥗 التغذية والحمية';

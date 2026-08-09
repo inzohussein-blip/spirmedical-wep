@@ -134,16 +134,16 @@ export default async function DentalDetailPage({
               <MapPin size={12} />
               {clinic.city}{clinic.district ? ` · ${clinic.district}` : ''}
             </span>
-            {clinic.doctor_count > 0 && (
+            {(clinic.doctor_count ?? 0) > 0 && (
               <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
                 <Users size={12} />
                 {clinic.doctor_count} طبيب
               </span>
             )}
-            {clinic.rating_count > 0 && (
+            {(clinic.rating_count ?? 0) > 0 && (
               <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
                 <Star size={12} fill="var(--amber)" color="var(--amber)" />
-                <strong style={{ color: 'var(--amber)' }}>{clinic.rating_avg.toFixed(1)}</strong>
+                <strong style={{ color: 'var(--amber)' }}>{(clinic.rating_avg ?? 0).toFixed(1)}</strong>
                 ({clinic.rating_count} تقييم)
               </span>
             )}
@@ -350,8 +350,18 @@ export default async function DentalDetailPage({
   );
 }
 
-function PriceRow({ label, min, max, show }: { label: string; min: number; max: number; show: boolean }) {
-  if (!show || (!min && !max)) return null;
+// الأعمدة السعرية تقبل NULL في قاعدة البيانات. كان النوع يدّعي `number`،
+// فتمرّ عيادةٌ لها حدٌّ واحد فقط ويُرمى `min.toLocaleString()` — عطلٌ يُسقط
+// الصفحة. نقبل NULL صراحةً ونعرض المتوفّر منهما.
+function PriceRow({ label, min, max, show }: {
+  label: string; min: number | null; max: number | null; show: boolean | null;
+}) {
+  if (!show || (min == null && max == null)) return null;
+  const fmt = (n: number) => n.toLocaleString('ar-IQ');
+  const text =
+    min != null && max != null ? `${fmt(min)} - ${fmt(max)}`
+    : min != null ? `من ${fmt(min)}`
+    : `حتى ${fmt(max as number)}`;
   return (
     <div style={{
       display: 'flex',
@@ -361,7 +371,7 @@ function PriceRow({ label, min, max, show }: { label: string; min: number; max: 
     }}>
       <span style={{ fontWeight: 600 }}>{label}</span>
       <span style={{ fontWeight: 700, color: 'var(--emerald)' }}>
-        {min.toLocaleString('ar-IQ')} - {max.toLocaleString('ar-IQ')} د.ع
+        {text} د.ع
       </span>
     </div>
   );
