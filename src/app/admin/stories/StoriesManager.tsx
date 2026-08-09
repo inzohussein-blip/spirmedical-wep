@@ -11,7 +11,8 @@ import {
   X,
   AlertCircle,
   Check,
-  GripVertical,
+  ChevronUp,
+  ChevronDown,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import {
@@ -19,6 +20,7 @@ import {
   updateStory,
   toggleStoryActive,
   deleteStory,
+  reorderStories,
 } from './actions';
 import type { Story, StoryColorTheme, StoryInput } from '@/types/story';
 import { COLOR_THEMES } from '@/types/story';
@@ -99,6 +101,32 @@ export default function StoriesManager({ initialStories }: Props) {
       });
       if (result.success) {
         setTimeout(() => window.location.reload(), 800);
+      }
+    });
+  };
+
+  /** يبدّل قصّتين ويحفظ الترتيب الجديد كاملاً (الإجراء يأخذ المصفوفة مرتّبة) */
+  const handleMove = (index: number, dir: -1 | 1) => {
+    const target = index + dir;
+    if (target < 0 || target >= stories.length) return;
+
+    const previous = stories;
+    const next = [...stories];
+    [next[index], next[target]] = [next[target], next[index]];
+    setStories(next);  // تفاؤلياً
+
+    startTransition(async () => {
+      try {
+        const result = await reorderStories(next.map((s) => s.id));
+        if (!result.success) setStories(previous);
+        setFeedback({
+          type: result.success ? 'success' : 'error',
+          message: result.message,
+        });
+      } catch {
+        // إجراءات الخادم ترمي عند انقطاع الشبكة ولا تُرجع { success:false }
+        setStories(previous);
+        setFeedback({ type: 'error', message: 'تعذّر الاتصال. حاول مرة أخرى.' });
       }
     });
   };
@@ -323,13 +351,16 @@ export default function StoriesManager({ initialStories }: Props) {
             <p>اضغط &laquo;قصة جديدة&raquo; لإضافة أول قصة</p>
           </div>
         ) : (
-          stories.map((story) => (
+          stories.map((story, index) => (
             <StoryRow
               key={story.id}
               story={story}
               onEdit={handleEdit}
               onToggle={handleToggleActive}
               onDelete={handleDelete}
+              onMove={(dir) => handleMove(index, dir)}
+              canMoveUp={index > 0}
+              canMoveDown={index < stories.length - 1}
               disabled={isPending}
             />
           ))
@@ -416,6 +447,9 @@ export default function StoriesManager({ initialStories }: Props) {
 /* ─── Story Row Component ──────────────────────────────────── */
 
 interface StoryRowProps {
+  onMove: (dir: -1 | 1) => void;
+  canMoveUp: boolean;
+  canMoveDown: boolean;
   story: Story;
   onEdit: (s: Story) => void;
   onToggle: (id: string, current: boolean) => void;
@@ -423,13 +457,33 @@ interface StoryRowProps {
   disabled?: boolean;
 }
 
-function StoryRow({ story, onEdit, onToggle, onDelete, disabled }: StoryRowProps) {
+function StoryRow({ story, onEdit, onToggle, onDelete, onMove, canMoveUp, canMoveDown, disabled }: StoryRowProps) {
   const colorConfig = COLOR_THEMES.find((c) => c.value === story.color_theme);
 
   return (
     <div className={`story-row ${!story.is_active ? 'story-row-inactive' : ''}`}>
-      <div className="story-row-drag" aria-hidden>
-        <GripVertical size={16} />
+      {/* كان هنا مقبض سحب زخرفي (`aria-hidden` بلا أي معالج) يوحي بإمكان
+          إعادة الترتيب، بينما `reorderStories` بلا مستدعٍ. أزرارٌ صريحة
+          تعمل باللمس ومتاحة للقارئ الشاشي. */}
+      <div className="story-row-reorder">
+        <button
+          type="button"
+          onClick={() => onMove(-1)}
+          disabled={disabled || !canMoveUp}
+          aria-label="تحريك لأعلى"
+          title="تحريك لأعلى"
+        >
+          <ChevronUp size={14} />
+        </button>
+        <button
+          type="button"
+          onClick={() => onMove(1)}
+          disabled={disabled || !canMoveDown}
+          aria-label="تحريك لأسفل"
+          title="تحريك لأسفل"
+        >
+          <ChevronDown size={14} />
+        </button>
       </div>
 
       <div
@@ -490,8 +544,17 @@ function StoryRow({ story, onEdit, onToggle, onDelete, disabled }: StoryRowProps
         }
         .story-row:hover { border-color: var(--line-2); }
         .story-row-inactive { opacity: 0.55; }
-        .story-row-drag {
-          color: var(--ink-4); cursor: grab; flex-shrink: 0;
+        .story-row-reorder {
+          display: flex; flex-direction: column; gap: 2px; flex-shrink: 0;
+        }
+        .story-row-reorder button {
+          display: inline-flex; align-items: center; justify-content: center;
+          width: 24px; height: 20px; padding: 0;
+          border: 1px solid var(--line); border-radius: 6px;
+          background: var(--white); color: var(--ink-3); cursor: pointer;
+        }
+        .story-row-reorder button:disabled {
+          opacity: 0.4; cursor: not-allowed;
         }
         .story-row-preview {
           width: 48px; height: 48px; border-radius: 50%;

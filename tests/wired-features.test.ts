@@ -111,6 +111,40 @@ describe('🔌 لوحة الإدارة: ما تُظهره اللوحة يمكن 
   });
 });
 
+describe('🔌 بقيّة الإجراءات المبنيّة صارت لها مداخل', () => {
+  it('🚨 ملاحظات قائمة الإطلاق تُحرَّر لا تُعرض فقط', () => {
+    const code = strip(read('app/admin/launch-checklist/LaunchChecklistClient.tsx'));
+    expect(code).toContain('updateChecklistNotes');
+    expect(code).toContain('ChecklistNotes');
+  });
+
+  it('🚨 ترتيب القصص موصول (لا مقبض سحب زخرفي)', () => {
+    const code = strip(read('app/admin/stories/StoriesManager.tsx'));
+    expect(code).toContain('reorderStories');
+    expect(code).toContain('handleMove');
+    // المقبض الزخرفي `aria-hidden` أُزيل
+    expect(code).not.toContain('story-row-drag');
+    expect(code).not.toContain('GripVertical');
+  });
+
+  it('🚨 موقع الطلب قابل للضبط من لوحة الإدارة', () => {
+    const editor = strip(read('app/admin/orders/[id]/OrderLocationEditor.tsx'));
+    expect(editor).toContain('updateOrderLocation');
+
+    const page = strip(read('app/admin/orders/[id]/page.tsx'));
+    expect(page).toContain('OrderLocationEditor');
+  });
+
+  it('🚨 اختيار موقع محفوظ يزيد عدّاد الاستعمال', () => {
+    for (const rel of [
+      'components/appointments/BloodDrawFlow.tsx',
+      'components/appointments/NursingFlow.tsx',
+    ]) {
+      expect(strip(read(rel))).toContain('markLocationUsed');
+    }
+  });
+});
+
 describe('🔌 صندوق المختصّ: ما يُفرَز به يمكن تغييره', () => {
   it('🚨 الحالة والأولوية والتثبيت موصولة', () => {
     const controls = strip(

@@ -6,6 +6,7 @@ import { decrypt } from '@/lib/encryption';
 import OrderAdminActions from './OrderAdminActions';
 import OrderClinicalDetails from '@/components/orders/OrderClinicalDetails';
 import FreeMedicalMapWrapper from '@/components/maps/SpirMapViewWrapper';
+import OrderLocationEditor from './OrderLocationEditor';
 import { getOrderLocation, getAssignedSpecialistLocation } from './actions';
 import type { MapMarker } from '@/types/location';
 
@@ -161,6 +162,11 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
                 ℹ️ المريض لم يلتقط موقعه عند إنشاء الطلب. يمكن العمل بالعنوان النصي فقط.
               </div>
             )}
+            <OrderLocationEditor
+              orderId={params.id}
+              currentLat={orderLocation?.lat ?? null}
+              currentLng={orderLocation?.lng ?? null}
+            />
           </div>
 
           {/* Patient Card */}
