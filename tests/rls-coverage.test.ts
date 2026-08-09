@@ -128,36 +128,121 @@ describe('🛡️ المنظورات الممنوحة لا تتجاوز RLS', ()
     return out;
   }
 
+  /**
+   * الترحيلات تكتب هذه العمليات بأسلوبين: نداءً مباشراً باسم المنظور،
+   * أو حلقة `DO $$ … FOREACH v IN ARRAY views … format('… public.%I …')`.
+   * الحارس يجب أن يفهم الاثنين، وإلّا فاته ما يُكتب بالأسلوب الثاني —
+   * وهو بالضبط أسلوب الترحيل 0018.
+   *
+   * لكل حلقة: نلتقط أسماء المصفوفة، ثمّ ننسب إليها كل عملية تظهر في
+   * جسم الحلقة نفسها.
+   */
+  interface LoopBlock { names: string[]; body: string }
+
+  function loopBlocks(): LoopBlock[] {
+    const out: LoopBlock[] = [];
+    for (const m of sql.matchAll(/DO \$\$([\s\S]*?)\$\$;/g)) {
+      const body = m[1];
+      const arr = /ARRAY\[([\s\S]*?)\]/.exec(body)?.[1];
+      if (!arr) continue;
+      const names = [...arr.matchAll(/'([a-z_]+)'/g)].map((n) => n[1]);
+      if (names.length) out.push({ names, body });
+    }
+    return out;
+  }
+
+  /** أسماءٌ خضعت لعمليةٍ ما — مباشرةً أو عبر حلقة */
+  function viewsWith(direct: RegExp, inLoop: RegExp): Set<string> {
+    const out = new Set<string>();
+    for (const m of sql.matchAll(direct)) if (m[1]) out.add(m[1]);
+    for (const { names, body } of loopBlocks()) {
+      if (inLoop.test(body)) for (const n of names) out.add(n);
+    }
+    return out;
+  }
+
   /** منظورات ضُبطت على security_invoker */
   function invokerViews(): Set<string> {
-    const out = new Set<string>();
-    const re = /ALTER\s+VIEW\s+public\.([a-z_]+)\s+SET\s*\(\s*security_invoker\s*=\s*on\s*\)/gi;
-    let m: RegExpExecArray | null;
-    while ((m = re.exec(sql)) !== null) out.add(m[1]);
-    return out;
+    return viewsWith(
+      /ALTER\s+VIEW\s+public\.([a-z_]+)\s+SET\s*\(\s*security_invoker\s*=\s*on\s*\)/gi,
+      /ALTER VIEW public\.%I SET \(security_invoker = on\)/i
+    );
+  }
+
+  /**
+   * ⚠️ المِنحة الشاملة — وهي ثغرة هذا الحارس نفسه سابقاً.
+   *
+   * كان يعدّ المنظور «ممنوحاً» فقط إن وجد له `GRANT` **صريحاً**. لكنّ
+   * الترحيل 0016 منح `SELECT ON ALL TABLES IN SCHEMA public TO anon`،
+   * وهي في Postgres تشمل المنظورات أيضاً. فستّة منظورات لم تُذكر بالاسم
+   * في أيّ `GRANT` نجحت في الحارس **بالفراغ**، وهي طوال الوقت مقروءة
+   * لـ`anon`. أحدها `appointments_with_target`: كل المواعيد مع أسماء
+   * أفراد العائلة وأمراضهم المزمنة وحساسيّاتهم وعناوين البيوت.
+   *
+   * لذا: متى وُجدت مِنحة شاملة، **كل** منظور معرَّف يُعدّ ممنوحاً.
+   */
+  function hasBlanketGrant(): boolean {
+    return /GRANT\s+[A-Z, ]*\s+ON\s+ALL\s+TABLES\s+IN\s+SCHEMA\s+public\s+TO\s+[a-z_, ]*\b(anon|authenticated)\b/i.test(sql);
+  }
+
+  /** منظورات سُحبت صراحةً من **كلا** الدورين */
+  function revokedViews(): Set<string> {
+    const anon = viewsWith(
+      /REVOKE\s+ALL\s+ON\s+public\.([a-z_]+)\s+FROM\s+anon/gi,
+      /REVOKE ALL ON public\.%I FROM anon/i
+    );
+    const auth = viewsWith(
+      /REVOKE\s+ALL\s+ON\s+public\.([a-z_]+)\s+FROM\s+authenticated/gi,
+      /REVOKE ALL ON public\.%I FROM authenticated/i
+    );
+    return new Set([...anon].filter((v) => auth.has(v)));
   }
 
   it('يقرأ المنظورات والمنح فعلاً (الحارس ليس فارغاً)', () => {
     expect(definedViews().size).toBeGreaterThan(3);
     expect(grantedViews().size).toBeGreaterThan(0);
+    // لو اختفت المِنحة الشاملة يوماً فهذا تغيّرٌ جوهري يستحقّ الانتباه
+    expect(hasBlanketGrant()).toBe(true);
   });
 
-  it('🚨 كل منظور ممنوح لـ authenticated/anon هو security_invoker', () => {
-    const views = definedViews();
+  it('🚨 كل منظور مكشوف إمّا security_invoker أو مسحوب صراحةً', () => {
     const invoker = invokerViews();
+    const revoked = revokedViews();
+    const explicit = grantedViews();
 
-    const leaking = [...grantedViews().entries()]
-      .filter(([name]) => views.has(name))
-      .filter(([name]) => !invoker.has(name))
-      .map(([name, roles]) => `${name} → ${roles.join('/')}`);
+    const exposed = [...definedViews()].filter(
+      (name) => hasBlanketGrant() || explicit.has(name)
+    );
 
-    expect(leaking.sort()).toEqual([]);
+    const leaking = exposed
+      .filter((name) => !invoker.has(name) && !revoked.has(name))
+      .sort();
+
+    expect(leaking).toEqual([]);
   });
 
   it('المنظوران اللذان سرّبا بيانات المرضى مُصلَحان تحديداً', () => {
     const invoker = invokerViews();
     expect(invoker.has('vitals_trends')).toBe(true);
     expect(invoker.has('admin_lab_orders_summary')).toBe(true);
+  });
+
+  it('🚨 الستّة التي فاتت 0012 مُغلقة — سحبٌ **و**invoker', () => {
+    // `appointments_with_target` أُثبت عملياً أنّه كان يُعيد اسم طفلٍ
+    // مريض وتشخيصه وحساسيّته وعنوانه لدور `anon` قبل الترحيل 0018.
+    const invoker = invokerViews();
+    const revoked = revokedViews();
+    for (const v of [
+      'appointments_with_target',
+      'expiring_credentials',
+      'analytics_summary',
+      'doctors_with_stats',
+      'medications_with_availability',
+      'pharmacy_inventory_stats',
+    ]) {
+      expect({ view: v, invoker: invoker.has(v) }).toEqual({ view: v, invoker: true });
+      expect({ view: v, revoked: revoked.has(v) }).toEqual({ view: v, revoked: true });
+    }
   });
 });
 
