@@ -28,12 +28,23 @@ interface WhatsAppConfig {
   enabled: boolean;
 }
 
+/**
+ * ⚠️ في المشروع مساران لواتساب: هذا (تأكيدات المواعيد والاستشارات مباشرةً)
+ * و`src/lib/whatsapp.ts` (طابور الإشعارات). وكانا يقرآن **أسماء متغيّرات
+ * مختلفة لنفس الاعتماديات**: هذا `WHATSAPP_API_TOKEN` وذاك
+ * `META_ACCESS_TOKEN`. فضبط اعتماديات Meta بالاسم الرسمي يُشغّل الطابور
+ * ويترك تأكيدات المواعيد معطّلة **بصمت** (`isWhatsAppEnabled` تُرجع false).
+ *
+ * الآن الأسماء الرسمية (`META_*`) هي الأساس، والقديمة تبقى احتياطاً
+ * توافقياً — فضبطٌ واحد يُشغّل المسارين.
+ */
 function getConfig(): WhatsAppConfig {
-  return {
-    apiToken: process.env.WHATSAPP_API_TOKEN || '',
-    phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID || '',
-    enabled: !!(process.env.WHATSAPP_API_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID),
-  };
+  const apiToken =
+    process.env.META_ACCESS_TOKEN || process.env.WHATSAPP_API_TOKEN || '';
+  const phoneNumberId =
+    process.env.META_PHONE_NUMBER_ID || process.env.WHATSAPP_PHONE_NUMBER_ID || '';
+
+  return { apiToken, phoneNumberId, enabled: !!(apiToken && phoneNumberId) };
 }
 
 export function isWhatsAppEnabled(): boolean {

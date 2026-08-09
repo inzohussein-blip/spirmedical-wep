@@ -143,17 +143,9 @@ export async function reverseGeocode(
   }
 }
 
-/**
- * يحوّل إحداثيات لـ عنوان قصير (للعرض في UI)
- */
-export async function reverseGeocodeShort(
-  lat: number,
-  lng: number
-): Promise<string | null> {
-  const result = await reverseGeocode(lat, lng);
-  if (!result) return null;
-  return buildShortAddress(result);
-}
+// ملاحظة: أُزيلت `reverseGeocodeShort` — لم تكن مستدعاة، و`reverseGeocode`
+// هي المستعملة في منتقيَي الموقع.
+
 
 /* ─── Helpers ────────────────────────────────────────────── */
 

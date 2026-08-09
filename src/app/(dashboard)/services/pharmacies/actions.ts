@@ -111,52 +111,8 @@ export async function cancelPharmacyReservation(reservationId: string, reason?: 
   return { ok: true };
 }
 
-// ─── 3. Favorites ───
-export async function togglePharmacyFavorite(pharmacyId: string) {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { ok: false, error: 'unauthorized' };
-
-  
-  const supabaseAny = supabase as unknown as {
-    from: (t: string) => {
-      select: (cols: string) => { eq: (col: string, val: string) => { eq: (col: string, val: string) => { single: () => Promise<{ data: { id: string } | null }> } } };
-      delete: () => { eq: (col: string, val: string) => Promise<{ error: unknown }> };
-      insert: (d: object) => Promise<{ error: { message: string } | null }>;
-    };
-  };
-
-  // هل موجود؟
-  const { data: existing } = await supabaseAny
-    .from('pharmacy_favorites')
-    .select('id')
-    .eq('user_id', user.id)
-    .eq('pharmacy_id', pharmacyId)
-    .single();
-
-  if (existing) {
-    // احذف
-    await supabaseAny
-      .from('pharmacy_favorites')
-      .delete()
-      .eq('id', existing.id);
-    
-    revalidatePath('/account/pharmacies');
-    revalidatePath(`/services/pharmacies/${pharmacyId}`);
-    return { ok: true, favorited: false };
-  } else {
-    // أضف
-    const { error } = await supabaseAny
-      .from('pharmacy_favorites')
-      .insert({ user_id: user.id, pharmacy_id: pharmacyId });
-    
-    if (error) return { ok: false, error: error.message };
-    
-    revalidatePath('/account/pharmacies');
-    revalidatePath(`/services/pharmacies/${pharmacyId}`);
-    return { ok: true, favorited: true };
-  }
-}
+// ملاحظة: أُزيلت `togglePharmacyFavorite` — لم تكن مستدعاة، ونظام المفضّلة
+// العامل هو `service_favorites` عبر `ServiceFavoriteButton`.
 
 // ─── 4. Rating ───
 interface PharmacyRatingInput {
