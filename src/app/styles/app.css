@@ -3824,6 +3824,31 @@
   margin-bottom: 4px;
 }
 
+/* تحكّم المختصّ بحالة المحادثة وأولويّتها */
+.chat-meta-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-3);
+  margin-top: 2px;
+}
+
+.chat-meta-select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--white);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.chat-meta-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .chat-patient-row {
   display: flex;
   align-items: center;

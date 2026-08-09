@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import ChatWindow, { type Message, type ChatParticipant } from '@/components/chat/ChatWindow';
+import ChatMetaControls from './ChatMetaControls';
 import {
   Phone, MapPin, Tag, Calendar, ClipboardList, FileText,
 } from 'lucide-react';
@@ -127,6 +128,13 @@ export default async function SpecialistChatDetailPage({ params }: { params: { c
               ))}
             </div>
           )}
+
+          <ChatMetaControls
+            chatId={params.chatId}
+            initialStatus={chat.status}
+            initialPriority={chat.priority || 'normal'}
+            initialIsPinned={chat.is_pinned || false}
+          />
 
           <div className="chat-patient-actions">
             <button type="button" className="chat-patient-action primary">
