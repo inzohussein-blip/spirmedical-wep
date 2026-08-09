@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { Plus, Edit, Trash2, CheckCircle2, XCircle, Search, Shield, TrendingUp } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
+import { formatNumber } from '@/lib/format/price';
 import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWrapper';
 import {
   createNutritionist,
@@ -24,9 +25,9 @@ interface Nutritionist {
   cities: string[];
   available_online: boolean;
   available_in_clinic: boolean;
-  initial_consultation_price: number;
-  follow_up_price: number;
-  monthly_plan_price: number;
+  initial_consultation_price: number | null;
+  follow_up_price: number | null;
+  monthly_plan_price: number | null;
   // 🆕 V31: إحداثيات العيادة (للظهور على الخريطة)
   latitude?: number | null;
   longitude?: number | null;
@@ -50,9 +51,9 @@ const EMPTY: Partial<Nutritionist> = {
   cities: ['بغداد'],
   available_online: true,
   available_in_clinic: true,
-  initial_consultation_price: 30000,
-  follow_up_price: 15000,
-  monthly_plan_price: 100000,
+  initial_consultation_price: null,
+  follow_up_price: null,
+  monthly_plan_price: null,
   success_rate: 85,
   is_active: true,
   is_verified: false,
@@ -121,8 +122,8 @@ export default function NutritionAdminClient({ initialNutritionists }: { initial
                 <td style={tdStyle}>{n.years_experience} سنة</td>
                 <td style={tdStyle}>{n.cities.slice(0, 2).join(', ')}</td>
                 <td style={tdStyle}>
-                  <div style={{ fontSize: 9 }}>💬 {n.initial_consultation_price.toLocaleString('ar-IQ')}</div>
-                  <div style={{ fontSize: 9 }}>📅 {n.monthly_plan_price.toLocaleString('ar-IQ')}</div>
+                  {formatNumber(n.initial_consultation_price) && <div style={{ fontSize: 9 }}>💬 {formatNumber(n.initial_consultation_price)}</div>}
+                  {formatNumber(n.monthly_plan_price) && <div style={{ fontSize: 9 }}>📅 {formatNumber(n.monthly_plan_price)}</div>}
                 </td>
                 <td style={tdStyle}>{n.total_clients}</td>
                 <td style={tdStyle}>
@@ -255,13 +256,13 @@ function NutritionistModal({ nutritionist, onClose }: { nutritionist: Nutritioni
             <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>💰 الباقات (د.ع)</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
               <Field label="استشارة">
-                <input type="number" value={form.initial_consultation_price || 0} onChange={(e) => setForm({ ...form, initial_consultation_price: parseInt(e.target.value) || 0 })} style={inputStyle} />
+                <input type="number" value={form.initial_consultation_price ?? ''} onChange={(e) => setForm({ ...form, initial_consultation_price: e.target.value === '' ? null : (parseInt(e.target.value) || null) })} style={inputStyle} />
               </Field>
               <Field label="متابعة">
-                <input type="number" value={form.follow_up_price || 0} onChange={(e) => setForm({ ...form, follow_up_price: parseInt(e.target.value) || 0 })} style={inputStyle} />
+                <input type="number" value={form.follow_up_price ?? ''} onChange={(e) => setForm({ ...form, follow_up_price: e.target.value === '' ? null : (parseInt(e.target.value) || null) })} style={inputStyle} />
               </Field>
               <Field label="شهرية">
-                <input type="number" value={form.monthly_plan_price || 0} onChange={(e) => setForm({ ...form, monthly_plan_price: parseInt(e.target.value) || 0 })} style={inputStyle} />
+                <input type="number" value={form.monthly_plan_price ?? ''} onChange={(e) => setForm({ ...form, monthly_plan_price: e.target.value === '' ? null : (parseInt(e.target.value) || null) })} style={inputStyle} />
               </Field>
             </div>
           </div>

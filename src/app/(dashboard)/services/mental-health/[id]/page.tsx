@@ -63,6 +63,10 @@ export default async function MentalDetailPage({
 
   if (!s) notFound();
 
+  // الأسعار اختيارية على الأخصّائي — الغائب لا يُعرض ولا يُخترَع
+  const onlinePrice = formatNumber(s.online_session_price);
+  const clinicPrice = formatNumber(s.clinic_session_price);
+
   const typeMeta = TYPE_LABELS[s.specialist_type];
   const isFavorite = await checkIsFavorite('mental_health', s.id);
 
@@ -237,10 +241,14 @@ export default async function MentalDetailPage({
                 border: '2px solid var(--emerald)',
               }}>
                 <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 4 }}>💻 أونلاين</div>
-                <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--emerald)' }}>
-                  {formatNumber(s.online_session_price) ?? '—'}
-                </div>
-                <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع / جلسة</div>
+                {onlinePrice ? (
+                  <>
+                    <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--emerald)' }}>{onlinePrice}</div>
+                    <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع / جلسة</div>
+                  </>
+                ) : (
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>السعر عند التواصل</div>
+                )}
               </div>
             )}
             {s.available_in_clinic && (
@@ -251,10 +259,14 @@ export default async function MentalDetailPage({
                 border: '1px solid var(--line)',
               }}>
                 <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 4 }}>🏢 عيادة</div>
-                <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--amber)' }}>
-                  {formatNumber(s.clinic_session_price) ?? '—'}
-                </div>
-                <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع / جلسة</div>
+                {clinicPrice ? (
+                  <>
+                    <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--amber)' }}>{clinicPrice}</div>
+                    <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع / جلسة</div>
+                  </>
+                ) : (
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>السعر عند التواصل</div>
+                )}
               </div>
             )}
           </div>
@@ -267,7 +279,7 @@ export default async function MentalDetailPage({
               href={`/services/booking?service=mental-health&id=${s.id}&package=online`}
               style={primaryButton}
             >
-              💻 احجز جلسة أونلاين - {formatPrice(s.online_session_price)}
+              💻 احجز جلسة أونلاين{onlinePrice ? ` - ${onlinePrice} د.ع` : ''}
             </Link>
           )}
           {s.available_in_clinic && (
@@ -275,7 +287,7 @@ export default async function MentalDetailPage({
               href={`/services/booking?service=mental-health&id=${s.id}&package=clinic`}
               style={{...primaryButton, background: 'var(--amber)'}}
             >
-              🏢 احجز جلسة في العيادة - {formatPrice(s.clinic_session_price)}
+              🏢 احجز جلسة في العيادة{clinicPrice ? ` - ${clinicPrice} د.ع` : ''}
             </Link>
           )}
         </div>

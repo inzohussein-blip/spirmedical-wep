@@ -195,8 +195,11 @@ export async function createDoctorAppointment(input: CreateDoctorAppointmentInpu
     return { success: false, error: 'الطبيب غير متاح' };
   }
 
-  // تحديد السعر حسب النوع
-  let price = 0;
+  // تحديد السعر حسب النوع.
+  // السعر **اختياري على الطبيب**: `null` تعني «لم يُحدَّد» ولا تُعرض للمريض،
+  // بخلاف `0` التي تعني «مجّاني». كانت زيارة العيادة والمتابعة تحملان سعرين
+  // مثبَّتين في الكود (25,000 و10,000) تُنسبان إلى الطبيب وهو لم يضعهما.
+  let price: number | null = null;
   let duration = 30;
   let needsAddress = false;
   let serviceTypeArabic = 'استشارة طبيب';
@@ -206,7 +209,7 @@ export async function createDoctorAppointment(input: CreateDoctorAppointmentInpu
       if (!doctor.available_for_home_visit) {
         return { success: false, error: 'الطبيب لا يقدّم زيارات منزلية' };
       }
-      price = doctor.home_visit_price || 0;
+      price = doctor.home_visit_price ?? null;
       duration = 60;
       needsAddress = true;
       serviceTypeArabic = 'زيارة منزلية - طبيب';
@@ -219,7 +222,8 @@ export async function createDoctorAppointment(input: CreateDoctorAppointmentInpu
       if (!doctor.available_for_clinic) {
         return { success: false, error: 'الطبيب لا يستقبل في عيادة' };
       }
-      price = 25000; // سعر ثابت لزيارة العيادة
+      // لا عمود مخصّص لسعر زيارة العيادة؛ يبقى غير محدَّد حتى يضيفه الطبيب
+      price = null;
       duration = 30;
       needsAddress = false;
       serviceTypeArabic = 'زيارة عيادة';
@@ -229,14 +233,14 @@ export async function createDoctorAppointment(input: CreateDoctorAppointmentInpu
       if (!doctor.available_for_video) {
         return { success: false, error: 'الطبيب لا يقدّم استشارات فيديو' };
       }
-      price = doctor.video_consult_price || 0;
+      price = doctor.video_consult_price ?? null;
       duration = 20;
       needsAddress = false;
       serviceTypeArabic = 'استشارة بالفيديو';
       break;
     
     case 'follow_up':
-      price = 10000;
+      price = null;
       duration = 15;
       serviceTypeArabic = 'متابعة';
       break;

@@ -67,6 +67,10 @@ export default async function PhysioSpecialistPage({
 
   if (!specialist) notFound();
 
+  // الأسعار اختيارية على الأخصّائي — الغائب لا يُعرض
+  const homePrice = formatNumber(specialist.home_visit_price);
+  const clinicPrice = formatNumber(specialist.clinic_visit_price);
+
   // جلب أنواع الخدمات
   const { data: serviceTypes } = await supabase
     .from('physio_service_types')
@@ -255,12 +259,12 @@ export default async function PhysioSpecialistPage({
                   الأخصائي يأتي لمنزلك · 45-60 دقيقة
                 </div>
               </div>
-              <div style={{ textAlign: 'end' }}>
-                <div style={{ fontSize: 14, fontWeight: 900, color: 'var(--emerald)' }}>
-                  {formatNumber(specialist.home_visit_price) ?? '—'}
+              {homePrice && (
+                <div style={{ textAlign: 'end' }}>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: 'var(--emerald)' }}>{homePrice}</div>
+                  <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
                 </div>
-                <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
-              </div>
+              )}
             </Link>
           )}
 
@@ -297,12 +301,12 @@ export default async function PhysioSpecialistPage({
                   تزور الأخصائي في عيادته · 30-45 دقيقة
                 </div>
               </div>
-              <div style={{ textAlign: 'end' }}>
-                <div style={{ fontSize: 14, fontWeight: 900, color: '#A57100' }}>
-                  {formatNumber(specialist.clinic_visit_price) ?? '—'}
+              {clinicPrice && (
+                <div style={{ textAlign: 'end' }}>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: '#A57100' }}>{clinicPrice}</div>
+                  <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
                 </div>
-                <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
-              </div>
+              )}
             </Link>
           )}
 
