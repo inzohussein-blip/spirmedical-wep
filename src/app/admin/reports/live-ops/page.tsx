@@ -5,6 +5,7 @@ import { isAdminRole } from '@/lib/admin-types';
 import FreeMedicalMapWrapper from '@/components/maps/SpirMapViewWrapper';
 import { Card, EmptyState, StatusBadge } from '@/components/ui';
 import AutoRefresh from '@/components/admin/AutoRefresh';
+import { baghdadDayWindow } from '@/lib/time/baghdad-day';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,7 +30,9 @@ export default async function LiveOpsPage() {
   if (!isAdminRole(profile?.role)) redirect('/dashboard');
 
   // جلب الطلبات النشطة اليوم (pending + confirmed + in_progress)
-  const today = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
+  // «اليوم» بتوقيت بغداد لا بتوقيت الخادم (UTC على Vercel) — وإلّا بدأ اليوم
+  // الساعة ٠٣:٠٠ بغداد وسقطت طلبات ما بعد منتصف الليل في حصيلة الأمس.
+  const today = baghdadDayWindow().start.toISOString();
   const tomorrow = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
 
   const { data: activeOrders } = await supabase

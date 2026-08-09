@@ -9,6 +9,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import EmergenciesClient from './EmergenciesClient';
+import { baghdadDayWindow } from '@/lib/time/baghdad-day';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'الطوارئ الأمنية - Spir Medical' };
@@ -64,8 +65,9 @@ export default async function AdminEmergenciesPage({
     .from('nurse_emergency_logs')
     .select('status, created_at');
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  // «اليوم» بتوقيت بغداد لا بتوقيت الخادم (UTC على Vercel) — وإلّا بدأ اليوم
+  // الساعة ٠٣:٠٠ بغداد وسقطت طلبات ما بعد منتصف الليل في حصيلة الأمس.
+  const { start: today } = baghdadDayWindow();
 
   const stats24h = (stats || []).filter(s =>
     new Date(s.created_at) >= today

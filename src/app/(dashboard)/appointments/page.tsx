@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import RefreshWrapper from '@/components/pwa/RefreshWrapper';
 import EnhancedEmptyState from '@/components/ui/EnhancedEmptyState';
+import { baghdadDayWindow } from '@/lib/time/baghdad-day';
 
 export const metadata = {
   title: 'مواعيدي · سباير ميديكال',
@@ -77,9 +78,9 @@ export default async function AppointmentsPage({ searchParams }: Props) {
   const filter = searchParams.filter || 'all';
   // 🔧 V32 FIX: نستخدم بداية اليوم (وليس اللحظة الحالية) لفلتر "القادمة".
   // المشكلة: طلب أُنشئ لوقت اليوم لكنه مضى بساعات كان يختفي من "القادمة".
-  const startOfToday = new Date();
-  startOfToday.setHours(0, 0, 0, 0);
-  const upcomingFrom = startOfToday.toISOString();
+  // «اليوم» بتوقيت بغداد لا بتوقيت الخادم (UTC على Vercel) — وإلّا بدأ اليوم
+  // الساعة ٠٣:٠٠ بغداد وسقطت مواعيد ما بعد منتصف الليل.
+  const upcomingFrom = baghdadDayWindow().start.toISOString();
 
   let query = supabase
     .from('appointments')

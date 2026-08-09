@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { isAdminRole } from '@/lib/admin-types';
 import { EmptyState, Avatar, StatusBadge } from '@/components/ui';
+import { baghdadDayWindow } from '@/lib/time/baghdad-day';
 
 export const dynamic = 'force-dynamic';
 
@@ -58,8 +59,11 @@ export default async function AdminDashboard() {
   if (!isAdminRole(profile?.role)) redirect('/dashboard');
 
   // === جمع الإحصائيات ===
-  const todayStart = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
-  const yesterdayStart = new Date(new Date().setHours(0, 0, 0, 0) - 86400000).toISOString();
+  // «اليوم» بتوقيت بغداد لا بتوقيت الخادم (UTC على Vercel) — وإلّا بدأ اليوم
+  // الساعة ٠٣:٠٠ بغداد وسقطت طلبات ما بعد منتصف الليل في حصيلة الأمس.
+  const todayStartDate = baghdadDayWindow().start;
+  const todayStart = todayStartDate.toISOString();
+  const yesterdayStart = new Date(todayStartDate.getTime() - 86400000).toISOString();
   const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
   const monthAgo = new Date(Date.now() - 30 * 86400000).toISOString();
 
