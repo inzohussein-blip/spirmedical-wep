@@ -69,6 +69,48 @@ describe('🔌 تقييم الصيدلية: للواجهة مدخل حقيقي',
   });
 });
 
+describe('🔌 لوحة الإدارة: ما تُظهره اللوحة يمكن إصلاحه منها', () => {
+  it('🚨 تصحيح الإحداثيات موصول (اللوحة كانت تُظهر «بدون إحداثيات» بلا علاج)', () => {
+    const code = strip(read('app/admin/locations/LocationsAdminClient.tsx'));
+    expect(code).toContain('updateLocationCoords');
+    expect(code).toContain('EditCoordsModal');
+    // يبدأ من الإحداثيات الحالية عند وجودها
+    expect(code).toContain('initialLat');
+  });
+
+  it('🚨 إعادة/إلغاء الإشعار موصولان بجدول الطابور', () => {
+    const actions = strip(read('app/admin/notifications/NotificationRowActions.tsx'));
+    expect(actions).toContain('retryNotification');
+    expect(actions).toContain('cancelNotification');
+
+    const page = strip(read('app/admin/notifications/page.tsx'));
+    expect(page).toContain('NotificationRowActions');
+  });
+
+  it('الإتاحة تطابق ما يفرضه الإجراء نفسه', () => {
+    const actions = strip(read('app/admin/notifications/NotificationRowActions.tsx'));
+    // الإلغاء مقيَّد بـ pending داخل الإجراء، وإعادة المحاولة تخصّ الفاشلة
+    expect(actions).toContain("status === 'failed'");
+    expect(actions).toContain("status === 'pending'");
+
+    const server = strip(read('app/admin/notifications/actions.ts'));
+    expect(/cancelNotification[\s\S]*?eq\(\s*'status'\s*,\s*'pending'\s*\)/.test(server)).toBe(true);
+  });
+
+  it('قيم الحالة المستعملة موجودة في قيد قاعدة البيانات', () => {
+    const sql = readFileSync(
+      join(process.cwd(), 'supabase/migrations/0002_communication.sql'),
+      'utf8'
+    );
+    const check = /status\s+text DEFAULT 'pending' CHECK \(status IN \(([^)]*)\)\)/.exec(sql);
+    expect(check).not.toBeNull();
+    const allowed = [...check![1].matchAll(/'([^']+)'/g)].map((m) => m[1]);
+    for (const v of ['pending', 'failed', 'cancelled']) {
+      expect(allowed).toContain(v);
+    }
+  });
+});
+
 describe('🔌 المفضّلة: نظامٌ واحد موصول', () => {
   const DETAIL_PAGES_WITH_FAVORITE = [
     'app/(dashboard)/services/hospitals/[id]/page.tsx',
