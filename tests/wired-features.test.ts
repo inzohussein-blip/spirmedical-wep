@@ -111,6 +111,43 @@ describe('🔌 لوحة الإدارة: ما تُظهره اللوحة يمكن 
   });
 });
 
+describe('🔌 صندوق المختصّ: ما يُفرَز به يمكن تغييره', () => {
+  it('🚨 الحالة والأولوية والتثبيت موصولة', () => {
+    const controls = strip(
+      read('app/(specialist)/specialist/inbox/[chatId]/ChatMetaControls.tsx')
+    );
+    for (const fn of ['updateChatStatus', 'updateChatPriority', 'toggleChatPin']) {
+      expect(controls).toContain(fn);
+    }
+
+    const page = strip(read('app/(specialist)/specialist/inbox/[chatId]/page.tsx'));
+    expect(page).toContain('ChatMetaControls');
+  });
+
+  it('الخيارات المعروضة مطابقة لقيود قاعدة البيانات', () => {
+    const sql = readFileSync(
+      join(process.cwd(), 'supabase/migrations/0002_communication.sql'),
+      'utf8'
+    );
+    const controls = read('app/(specialist)/specialist/inbox/[chatId]/ChatMetaControls.tsx');
+
+    for (const col of ['status', 'priority']) {
+      const re = new RegExp(`${col}\\s+TEXT NOT NULL DEFAULT '[a-z]+' CHECK \\(${col} IN \\(([^)]*)\\)\\)`, 'i');
+      const m = re.exec(sql);
+      expect(m).not.toBeNull();
+      const allowed = [...m![1].matchAll(/'([^']+)'/g)].map((x) => x[1]);
+
+      // كل قيمة معروضة في الواجهة يجب أن تكون ضمن المسموح
+      const block = new RegExp(`const ${col === 'status' ? 'STATUSES' : 'PRIORITIES'}[\\s\\S]*?\\] as const;`, 'i');
+      const uiBlock = block.exec(controls)?.[0] ?? '';
+      const uiValues = [...uiBlock.matchAll(/value: '([a-z_]+)'/g)].map((x) => x[1]);
+
+      expect(uiValues.length).toBeGreaterThan(0);
+      for (const v of uiValues) expect(allowed).toContain(v);
+    }
+  });
+});
+
 describe('🔌 المفضّلة: نظامٌ واحد موصول', () => {
   const DETAIL_PAGES_WITH_FAVORITE = [
     'app/(dashboard)/services/hospitals/[id]/page.tsx',
