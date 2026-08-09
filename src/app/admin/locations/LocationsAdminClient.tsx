@@ -14,6 +14,7 @@ import {
   toggleLocationActive,
   deleteLocation,
   createQuickLocation,
+  updateLocationCoords,
 } from './actions';
 import type { UnifiedLocation, LocationSource } from './types';
 
@@ -42,6 +43,7 @@ export default function LocationsAdminClient({ initialLocations }: Props) {
   const [sourceFilter, setSourceFilter] = useState<LocationSource | 'all'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'hidden' | 'no-coords'>('all');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingCoords, setEditingCoords] = useState<UnifiedLocation | null>(null);
 
   // ─── الإحصاءات ───
   const stats = useMemo(() => {
@@ -189,9 +191,19 @@ export default function LocationsAdminClient({ initialLocations }: Props) {
               isPending={isPending}
               onToggle={() => handleToggle(loc)}
               onDelete={() => handleDelete(loc)}
+              onEditCoords={() => setEditingCoords(loc)}
             />
           ))}
         </div>
+      )}
+
+      {/* ─── Modal تعديل الإحداثيات ─── */}
+      {editingCoords && (
+        <EditCoordsModal
+          loc={editingCoords}
+          onClose={() => setEditingCoords(null)}
+          onSuccess={() => { setEditingCoords(null); router.refresh(); }}
+        />
       )}
 
       {/* ─── Modal إضافة موقع ─── */}
@@ -245,8 +257,9 @@ function FilterPill({ active, onClick, children, small }: {
   );
 }
 
-function LocationRow({ loc, isPending, onToggle, onDelete }: {
+function LocationRow({ loc, isPending, onToggle, onDelete, onEditCoords }: {
   loc: UnifiedLocation; isPending: boolean; onToggle: () => void; onDelete: () => void;
+  onEditCoords: () => void;
 }) {
   const hasCoords = loc.latitude != null && loc.longitude != null;
   return (
@@ -285,6 +298,17 @@ function LocationRow({ loc, isPending, onToggle, onDelete }: {
       </span>
 
       {/* أزرار */}
+      {/* تعديل الإحداثيات: كانت اللوحة تُظهر «بدون إحداثيات» وفلتراً لها
+          وعدّاداً في الأعلى — بلا أي وسيلة لتصحيحها. */}
+      <button
+        type="button"
+        onClick={onEditCoords}
+        disabled={isPending}
+        title={hasCoords ? 'تعديل الإحداثيات' : 'تحديد الإحداثيات'}
+        style={iconBtnStyle(hasCoords ? '#185FA5' : '#B06000')}
+      >
+        <MapPin size={16} aria-hidden />
+      </button>
       <button
         type="button"
         onClick={onToggle}
@@ -303,6 +327,93 @@ function LocationRow({ loc, isPending, onToggle, onDelete }: {
       >
         <Trash2 size={16} aria-hidden />
       </button>
+    </div>
+  );
+}
+
+/** خريطة نوع المصدر → نوع المؤشّر على الخريطة (مشتركة بين الإضافة والتعديل) */
+function markerTypeFor(source: LocationSource) {
+  return source === 'doctors' ? 'doctor'
+    : source === 'mental_health_specialists' ? 'mental-health'
+    : source === 'nutritionists' ? 'nutrition'
+    : source === 'dental_clinics' ? 'dental'
+    : source === 'optical_stores' ? 'optical'
+    : source === 'pharmacies' ? 'pharmacy'
+    : 'hospital';
+}
+
+function EditCoordsModal({ loc, onClose, onSuccess }: {
+  loc: UnifiedLocation; onClose: () => void; onSuccess: () => void;
+}) {
+  const [lat, setLat] = useState<number | null>(loc.latitude ?? null);
+  const [lng, setLng] = useState<number | null>(loc.longitude ?? null);
+  const [saving, setSaving] = useState(false);
+
+  async function handleSave() {
+    if (lat == null || lng == null) {
+      toast.error('حدّد الموقع على الخريطة');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const res = await updateLocationCoords(loc.source, loc.id, lat, lng);
+      if (res.ok) {
+        toast.success('تم حفظ الإحداثيات');
+        onSuccess();
+      } else {
+        toast.error(res.error || 'تعذّر الحفظ');
+      }
+    } catch {
+      // إجراءات الخادم ترمي عند انقطاع الشبكة ولا تُرجع { ok:false }
+      toast.error('تعذّر الاتصال. حاول مرة أخرى.');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div style={modalOverlayStyle} role="dialog" aria-modal="true" aria-label="تعديل الإحداثيات">
+      <div style={modalCardStyle}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+          <h2 style={{ fontSize: 16, fontWeight: 800, color: '#2C2C2A', margin: 0 }}>
+            {loc.latitude != null ? 'تعديل الإحداثيات' : 'تحديد الإحداثيات'}
+          </h2>
+          <button type="button" onClick={onClose} aria-label="إغلاق" style={iconBtnStyle('#5F5E5A')}>
+            <X size={18} aria-hidden />
+          </button>
+        </div>
+
+        <div style={{ fontSize: 13, color: '#5F5E5A', marginBottom: 12 }}>
+          {loc.emoji} {loc.name}
+          {loc.city && <span style={{ color: '#888780' }}> · {loc.city}</span>}
+        </div>
+
+        <AdminLocationPickerWrapper
+          initialLat={loc.latitude}
+          initialLng={loc.longitude}
+          markerType={markerTypeFor(loc.source)}
+          onChange={(la, ln) => { setLat(la); setLng(ln); }}
+        />
+
+        <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
+          <button
+            type="button"
+            onClick={onClose}
+            style={{ flex: 1, padding: 12, borderRadius: 10, border: '1px solid #E8E6DE', background: '#fff', color: '#5F5E5A', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
+          >
+            إلغاء
+          </button>
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={saving}
+            style={{ flex: 1, padding: 12, borderRadius: 10, border: 0, background: '#185FA5', color: '#fff', fontSize: 14, fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.6 : 1 }}
+          >
+            {saving ? 'جاري الحفظ...' : 'حفظ'}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -396,7 +507,7 @@ function AddLocationModal({ onClose, onSuccess }: { onClose: () => void; onSucce
         {/* الخريطة */}
         <label style={labelStyle}>📍 حدّد الموقع على الخريطة *</label>
         <AdminLocationPickerWrapper
-          markerType={cfg.value === 'doctors' ? 'doctor' : cfg.value === 'mental_health_specialists' ? 'mental-health' : cfg.value === 'nutritionists' ? 'nutrition' : cfg.value === 'dental_clinics' ? 'dental' : cfg.value === 'optical_stores' ? 'optical' : cfg.value === 'pharmacies' ? 'pharmacy' : 'hospital'}
+          markerType={markerTypeFor(cfg.value)}
           onChange={(la, ln) => { setLat(la); setLng(ln); }}
         />
 
@@ -427,6 +538,18 @@ function AddLocationModal({ onClose, onSuccess }: { onClose: () => void; onSucce
     </div>
   );
 }
+
+// أنماط النوافذ — مشتركة بين نافذتَي الإضافة وتعديل الإحداثيات
+const modalOverlayStyle: React.CSSProperties = {
+  position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 9999,
+  display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+  padding: 16, overflowY: 'auto',
+};
+
+const modalCardStyle: React.CSSProperties = {
+  background: '#fff', borderRadius: 16, maxWidth: 520, width: '100%',
+  marginTop: 24, padding: 20, maxHeight: '90vh', overflowY: 'auto',
+};
 
 const iconBtnStyle = (color: string): React.CSSProperties => ({
   display: 'inline-flex', alignItems: 'center', justifyContent: 'center',

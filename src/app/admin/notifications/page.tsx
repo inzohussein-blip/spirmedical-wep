@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import NotificationsClient from './NotificationsClient';
+import NotificationRowActions from './NotificationRowActions';
 import { EmptyState } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
@@ -101,6 +102,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
                 <th style={th}>المحتوى</th>
                 <th style={th}>الحالة</th>
                 <th style={th}>الوقت</th>
+                <th style={th}>إجراءات</th>
               </tr>
             </thead>
             <tbody>
@@ -147,6 +149,9 @@ export default async function NotificationsPage({ searchParams }: { searchParams
                           ✅ {new Date(m.sent_at).toLocaleTimeString('ar-IQ', { timeStyle: 'short' })}
                         </div>
                       )}
+                    </td>
+                    <td style={td}>
+                      <NotificationRowActions id={m.id} status={m.status} />
                     </td>
                   </tr>
                 );
