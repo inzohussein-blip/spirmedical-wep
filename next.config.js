@@ -27,6 +27,13 @@ const nextConfig = {
       // توافق رجعي: الروابط القديمة /admin44/* → /admin/* بعد إعادة التسمية
       { source: '/admin44', destination: '/admin', permanent: true },
       { source: '/admin44/:path*', destination: '/admin/:path*', permanent: true },
+
+      // نظاما مفضّلات متوازيان كانا يتعايشان: `/favorites` على جدول
+      // `user_favorites` (لا مُستدعي لإجرائه ولا رابط إليه — فرعٌ يتيم لا
+      // يمكن أن يكتسب صفّاً)، و`/account/favorites` على `service_favorites`
+      // وهو الحيّ الموصول من صفحة الحساب وأزرار القلب. أُزيل اليتيم وبقي
+      // هذا التحويل لأيّ إشارةٍ مرجعية أو اختصار PWA قديم.
+      { source: '/favorites', destination: '/account/favorites', permanent: true },
     ];
   },
 

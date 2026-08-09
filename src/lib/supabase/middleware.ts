@@ -9,6 +9,9 @@ const PROTECTED_PATHS = [
   '/appointments',
   '/specialist',
   '/account',
+  // الصفحة أُزيلت (فرعٌ يتيم على `user_favorites`) و`next.config.js` يحوّلها
+  // إلى `/account/favorites`. تُترك هنا احتياطاً: لو سقط التحويل يوماً فلا
+  // ينكشف المسار بلا جلسة.
   '/favorites',
   '/services',
   '/consultations',

@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { Heart } from 'lucide-react';
 import { toggleServiceFavorite, type ServiceType } from './favorites-actions';
+import { toast } from '@/components/ui/Toaster';
 
 interface Props {
   serviceType: ServiceType;
@@ -16,7 +17,7 @@ interface Props {
  * ════════════════════════════════════════════════════════════════════
  * ❤️ V25.47: Favorite Button Component
  * ════════════════════════════════════════════════════════════════════
- * يستخدم في detail pages لـ hospital/dental/optical/pharmacy/doctor
+ * يستخدم في صفحات التفاصيل الثماني — انظر `ServiceType` في `favorites-actions`.
  * ════════════════════════════════════════════════════════════════════
  */
 
@@ -30,11 +31,31 @@ export default function ServiceFavoriteButton({
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
   const [isPending, startTransition] = useTransition();
 
+  /**
+   * ⚠️ كان الفشل يُبتلع كلّياً: `if (result.ok)` بلا فرعٍ آخر. فحين رفضت
+   * القاعدة نوعَي `mental_health` و`nutritionist` (قيدُ CHECK كان يحمل
+   * `mental`/`nutrition`) كان المستخدم يضغط القلب فلا يحدث **شيء** — لا
+   * تغيّر ولا رسالة. الخطأ نفسه أُصلح في الترحيل 0017، لكنّ ابتلاع
+   * الفشل هو ما أخفاه؛ فهذا هو الإصلاح الأهمّ.
+   *
+   * `toggleServiceFavorite` إجراءُ خادم: يرمي عند انقطاع الشبكة بدل أن
+   * يُرجع `{ok:false}` — لذا نلتقط الحالتين معاً.
+   */
   function handleClick() {
     startTransition(async () => {
-      const result = await toggleServiceFavorite(serviceType, serviceId);
-      if (result.ok) {
-        setIsFavorite(result.favorited ?? false);
+      try {
+        const result = await toggleServiceFavorite(serviceType, serviceId);
+        if (result.ok) {
+          setIsFavorite(result.favorited ?? false);
+          return;
+        }
+        toast.error(
+          result.error === 'unauthorized'
+            ? 'سجّل دخولك لحفظ المفضّلة'
+            : 'تعذّر حفظ المفضّلة — حاول مجدداً'
+        );
+      } catch {
+        toast.error('تعذّر الاتصال — تحقّق من الإنترنت');
       }
     });
   }

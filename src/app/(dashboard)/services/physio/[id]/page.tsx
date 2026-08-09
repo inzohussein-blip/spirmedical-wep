@@ -89,7 +89,7 @@ export default async function PhysioSpecialistPage({
           </Link>
           <h1 className="scr-page-title" style={{ fontSize: 14 }}>🏃 تفاصيل الأخصائي</h1>
           <ServiceFavoriteButton
-            serviceType={'physio' as never}
+            serviceType="physio"
             serviceId={specialist.id}
             initialIsFavorite={isFavorite}
             size="sm"
