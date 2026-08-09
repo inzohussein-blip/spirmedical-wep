@@ -49,6 +49,10 @@ export default async function OpticalDetailPage({
 
   const isFavorite = await checkIsFavorite('optical', store.id);
 
+  // الأسعار اختيارية على المتجر — نحسبها مرّة ونُخفي ما لم يُحدَّد
+  const framePrice = formatPriceRange(store.frame_price_min, store.frame_price_max);
+  const lensPrice = formatPriceRange(store.lens_price_min, store.lens_price_max);
+
   return (
     <main className="app-screen">
       <div className="scr-content">
@@ -164,7 +168,13 @@ export default async function OpticalDetailPage({
             display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6,
           }}>
             {[
-              store.offers_eye_exam && { icon: '👁️', label: `فحص نظر - ${formatPrice(store.exam_price)}` },
+              store.offers_eye_exam && {
+                icon: '👁️',
+                // السعر اختياري: يُضاف إلى التسمية فقط إن أدخله المتجر
+                label: formatPrice(store.exam_price)
+                  ? `فحص نظر - ${formatPrice(store.exam_price)}`
+                  : 'فحص نظر',
+              },
               store.offers_prescription_lenses && { icon: '🔍', label: 'عدسات طبية' },
               store.offers_sunglasses && { icon: '🕶️', label: 'نظارات شمسية' },
               store.offers_contact_lenses && { icon: '👁️‍🗨️', label: 'عدسات لاصقة' },
@@ -189,31 +199,33 @@ export default async function OpticalDetailPage({
           </div>
         </div>
 
-        {/* Pricing */}
-        <div style={{
-          background: 'var(--amber-soft)',
-          borderRadius: 12,
-          padding: 14,
-          marginBottom: 14,
-        }}>
-          <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 10, color: 'var(--amber)' }}>
-            💰 الأسعار
-          </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 12 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-              <span style={{ fontWeight: 600 }}>🖼️ إطارات</span>
-              <span style={{ fontWeight: 700, color: 'var(--amber)' }}>
-                {formatPriceRange(store.frame_price_min, store.frame_price_max)}
-              </span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}>
-              <span style={{ fontWeight: 600 }}>🔍 عدسات</span>
-              <span style={{ fontWeight: 700, color: 'var(--amber)' }}>
-                {formatPriceRange(store.lens_price_min, store.lens_price_max)}
-              </span>
+        {/* Pricing — الأسعار اختيارية: تُخفى الكتلة كلّها إن لم يُدخل المتجر أيّاً منها */}
+        {(framePrice || lensPrice) && (
+          <div style={{
+            background: 'var(--amber-soft)',
+            borderRadius: 12,
+            padding: 14,
+            marginBottom: 14,
+          }}>
+            <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 10, color: 'var(--amber)' }}>
+              💰 الأسعار
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 12 }}>
+              {framePrice && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: lensPrice ? '1px solid rgba(0,0,0,0.05)' : undefined }}>
+                  <span style={{ fontWeight: 600 }}>🖼️ إطارات</span>
+                  <span style={{ fontWeight: 700, color: 'var(--amber)' }}>{framePrice}</span>
+                </div>
+              )}
+              {lensPrice && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}>
+                  <span style={{ fontWeight: 600 }}>🔍 عدسات</span>
+                  <span style={{ fontWeight: 700, color: 'var(--amber)' }}>{lensPrice}</span>
+                </div>
+              )}
             </div>
           </div>
-        </div>
+        )}
 
         {/* CTAs */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingBottom: 20 }}>

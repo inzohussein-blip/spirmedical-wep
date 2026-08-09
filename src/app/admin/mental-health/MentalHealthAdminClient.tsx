@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { Plus, Edit, Trash2, CheckCircle2, XCircle, Search, Shield } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
+import { formatNumber } from '@/lib/format/price';
 import { useConfirm } from '@/components/ui';
 import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWrapper';
 import {
@@ -26,8 +27,8 @@ interface Specialist {
   cities: string[];
   available_online: boolean;
   available_in_clinic: boolean;
-  online_session_price: number;
-  clinic_session_price: number;
+  online_session_price: number | null;
+  clinic_session_price: number | null;
   session_duration_minutes: number;
   // 🆕 V31: إحداثيات العيادة (للظهور على الخريطة)
   latitude?: number | null;
@@ -61,8 +62,8 @@ const EMPTY: Partial<Specialist> = {
   cities: ['بغداد'],
   available_online: true,
   available_in_clinic: true,
-  online_session_price: 50000,
-  clinic_session_price: 75000,
+  online_session_price: null,
+  clinic_session_price: null,
   session_duration_minutes: 50,
   is_active: true,
   is_verified: false,
@@ -141,8 +142,8 @@ export default function MentalHealthAdminClient({ initialSpecialists }: { initia
                 <td style={tdStyle}>{s.years_experience} سنة</td>
                 <td style={tdStyle}>{s.cities.slice(0, 2).join(', ')}{s.cities.length > 2 && `+${s.cities.length - 2}`}</td>
                 <td style={tdStyle}>
-                  {s.available_online && <div style={{ fontSize: 10 }}>💻 {s.online_session_price.toLocaleString('ar-IQ')}</div>}
-                  {s.available_in_clinic && <div style={{ fontSize: 10 }}>🏢 {s.clinic_session_price.toLocaleString('ar-IQ')}</div>}
+                  {s.available_online && formatNumber(s.online_session_price) && <div style={{ fontSize: 10 }}>💻 {formatNumber(s.online_session_price)}</div>}
+                  {s.available_in_clinic && formatNumber(s.clinic_session_price) && <div style={{ fontSize: 10 }}>🏢 {formatNumber(s.clinic_session_price)}</div>}
                 </td>
                 <td style={tdStyle}>{s.total_sessions}</td>
                 <td style={tdStyle}>
@@ -277,10 +278,10 @@ function SpecialistModal({ specialist, onClose }: { specialist: Specialist | nul
             <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>💰 الأسعار (د.ع)</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
               <Field label="جلسة أونلاين">
-                <input type="number" value={form.online_session_price || 0} onChange={(e) => setForm({ ...form, online_session_price: parseInt(e.target.value) || 0 })} style={inputStyle} />
+                <input type="number" value={form.online_session_price ?? ''} onChange={(e) => setForm({ ...form, online_session_price: e.target.value === '' ? null : (parseInt(e.target.value) || null) })} style={inputStyle} />
               </Field>
               <Field label="جلسة عيادة">
-                <input type="number" value={form.clinic_session_price || 0} onChange={(e) => setForm({ ...form, clinic_session_price: parseInt(e.target.value) || 0 })} style={inputStyle} />
+                <input type="number" value={form.clinic_session_price ?? ''} onChange={(e) => setForm({ ...form, clinic_session_price: e.target.value === '' ? null : (parseInt(e.target.value) || null) })} style={inputStyle} />
               </Field>
             </div>
           </div>

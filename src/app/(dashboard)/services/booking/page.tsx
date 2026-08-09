@@ -74,7 +74,10 @@ export default async function BookingPage({
       workingHours: data.working_hours,
       meta: {
         doctorCount: data.doctor_count ?? undefined,
-        priceRange: `${formatPriceRange(data.cleaning_price_min, data.cleaning_price_max)} (تنظيف)`,
+        // السعر اختياري: الحقل يغيب كلّياً إن لم تُدخله العيادة
+        priceRange: formatPriceRange(data.cleaning_price_min, data.cleaning_price_max)
+          ? `${formatPriceRange(data.cleaning_price_min, data.cleaning_price_max)} (تنظيف)`
+          : undefined,
         services: [
           data.offers_implants && 'زراعة',
           data.offers_orthodontics && 'تقويم',
@@ -104,7 +107,9 @@ export default async function BookingPage({
       workingHours: data.working_hours,
       meta: {
         brands: data.brands?.slice(0, 4),
-        priceRange: `${formatPriceRange(data.frame_price_min, data.frame_price_max)} (إطارات)`,
+        priceRange: formatPriceRange(data.frame_price_min, data.frame_price_max)
+          ? `${formatPriceRange(data.frame_price_min, data.frame_price_max)} (إطارات)`
+          : undefined,
         services: [
           data.offers_eye_exam && 'فحص نظر',
           data.offers_contact_lenses && 'عدسات لاصقة',

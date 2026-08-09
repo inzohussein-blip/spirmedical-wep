@@ -250,13 +250,13 @@ export default async function NutritionDetailPage({
               background: 'var(--emerald)',
             }}
           >
-            📅 احجز خطة شهرية - {formatPrice(n.monthly_plan_price)}
+            📅 احجز خطة شهرية{formatPrice(n.monthly_plan_price) ? ` - ${formatPrice(n.monthly_plan_price)}` : ''}
           </Link>
           <Link
             href={`/services/booking?service=nutrition&id=${n.id}&package=initial`}
             style={{...primaryButton, background: 'var(--white)', color: 'var(--emerald)', border: '1px solid var(--emerald)', boxShadow: 'none'}}
           >
-            💬 استشارة أولى - {formatPrice(n.initial_consultation_price)}
+            💬 استشارة أولى{formatPrice(n.initial_consultation_price) ? ` - ${formatPrice(n.initial_consultation_price)}` : ''}
           </Link>
         </div>
       </div>
@@ -278,10 +278,14 @@ function PackageCard({ icon, title, subtitle, price, color, highlight }: {
       <div style={{ fontSize: 18, marginBottom: 4 }}>{icon}</div>
       <div style={{ fontSize: 10, color: 'var(--ink-3)', fontWeight: 700 }}>{title}</div>
       <div style={{ fontSize: 10, color: 'var(--ink-3)', marginBottom: 4 }}>{subtitle}</div>
-      <div style={{ fontSize: 13, fontWeight: 900, color }}>
-        {formatNumber(price) ?? '—'}
-      </div>
-      <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع</div>
+      {formatNumber(price) ? (
+        <>
+          <div style={{ fontSize: 13, fontWeight: 900, color }}>{formatNumber(price)}</div>
+          <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع</div>
+        </>
+      ) : (
+        <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>عند التواصل</div>
+      )}
     </div>
   );
 }

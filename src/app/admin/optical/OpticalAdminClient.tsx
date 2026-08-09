@@ -24,13 +24,13 @@ interface OpticalStore {
   longitude: number | null;
   phone: string | null;
   brands: string[];
-  exam_price: number;
+  exam_price: number | null;
   offers_eye_exam: boolean;
   offers_contact_lenses: boolean;
-  frame_price_min: number;
-  frame_price_max: number;
-  lens_price_min: number;
-  lens_price_max: number;
+  frame_price_min: number | null;
+  frame_price_max: number | null;
+  lens_price_min: number | null;
+  lens_price_max: number | null;
   rating_avg: number;
   rating_count: number;
   is_active: boolean;
@@ -43,13 +43,13 @@ const EMPTY: Partial<OpticalStore> = {
   name: '',
   city: 'بغداد',
   brands: [],
-  exam_price: 10000,
+  exam_price: null,
   offers_eye_exam: true,
   offers_contact_lenses: false,
-  frame_price_min: 25000,
-  frame_price_max: 500000,
-  lens_price_min: 30000,
-  lens_price_max: 200000,
+  frame_price_min: null,
+  frame_price_max: null,
+  lens_price_min: null,
+  lens_price_max: null,
   is_active: true,
   is_verified: false,
   is_featured: false,
@@ -254,22 +254,22 @@ function StoreModal({ store, onClose }: { store: OpticalStore | null; onClose: (
           <div style={{ background: 'var(--paper-3)', padding: 12, borderRadius: 8 }}>
             <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>💰 الأسعار (د.ع)</div>
             <Field label="سعر فحص النظر">
-              <input type="number" value={form.exam_price || 0} onChange={(e) => setForm({ ...form, exam_price: parseInt(e.target.value) || 0 })} style={inputStyle} />
+              <input type="number" value={form.exam_price ?? ''} onChange={(e) => setForm({ ...form, exam_price: e.target.value === '' ? null : (parseInt(e.target.value) || null) })} style={inputStyle} />
             </Field>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 8 }}>
               <Field label="إطارات (من)">
-                <input type="number" value={form.frame_price_min || 0} onChange={(e) => setForm({ ...form, frame_price_min: parseInt(e.target.value) || 0 })} style={inputStyle} />
+                <input type="number" value={form.frame_price_min ?? ''} onChange={(e) => setForm({ ...form, frame_price_min: e.target.value === '' ? null : (parseInt(e.target.value) || null) })} style={inputStyle} />
               </Field>
               <Field label="إطارات (إلى)">
-                <input type="number" value={form.frame_price_max || 0} onChange={(e) => setForm({ ...form, frame_price_max: parseInt(e.target.value) || 0 })} style={inputStyle} />
+                <input type="number" value={form.frame_price_max ?? ''} onChange={(e) => setForm({ ...form, frame_price_max: e.target.value === '' ? null : (parseInt(e.target.value) || null) })} style={inputStyle} />
               </Field>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 8 }}>
               <Field label="عدسات (من)">
-                <input type="number" value={form.lens_price_min || 0} onChange={(e) => setForm({ ...form, lens_price_min: parseInt(e.target.value) || 0 })} style={inputStyle} />
+                <input type="number" value={form.lens_price_min ?? ''} onChange={(e) => setForm({ ...form, lens_price_min: e.target.value === '' ? null : (parseInt(e.target.value) || null) })} style={inputStyle} />
               </Field>
               <Field label="عدسات (إلى)">
-                <input type="number" value={form.lens_price_max || 0} onChange={(e) => setForm({ ...form, lens_price_max: parseInt(e.target.value) || 0 })} style={inputStyle} />
+                <input type="number" value={form.lens_price_max ?? ''} onChange={(e) => setForm({ ...form, lens_price_max: e.target.value === '' ? null : (parseInt(e.target.value) || null) })} style={inputStyle} />
               </Field>
             </div>
           </div>
