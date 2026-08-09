@@ -6,7 +6,8 @@ import {
   Menu, X, Stethoscope, Settings, MessageCircle, HelpCircle, UserCog,
 } from 'lucide-react';
 
-export default function LandingMobileMenu() {
+/** `appHomePath` غير فارغ ⇒ الزائر مُسجّل، فتُبدَّل دعوة الدخول بدعوة الفتح */
+export default function LandingMobileMenu({ appHomePath }: { appHomePath?: string | null }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -79,11 +80,13 @@ export default function LandingMobileMenu() {
             </nav>
 
             <div className="landing-mobile-menu-cta">
-              <Link href="/login" onClick={close} className="landing-cta-secondary">
-                تسجيل دخول
-              </Link>
-              <Link href="/gate" onClick={close} className="landing-cta-primary">
-                ابدأ الآن ←
+              {!appHomePath && (
+                <Link href="/login" onClick={close} className="landing-cta-secondary">
+                  تسجيل دخول
+                </Link>
+              )}
+              <Link href={appHomePath ?? '/gate'} onClick={close} className="landing-cta-primary">
+                {appHomePath ? 'ادخل التطبيق ←' : 'ابدأ الآن ←'}
               </Link>
             </div>
 
