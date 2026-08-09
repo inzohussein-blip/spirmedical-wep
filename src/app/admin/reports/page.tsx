@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { SPECIALIST_META, type SpecialistType } from '@/lib/specialist-types';
 import ReportsClient from './ReportsClient';
 import { EmptyState } from '@/components/ui';
+import { baghdadDayWindow } from '@/lib/time/baghdad-day';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,7 +18,9 @@ interface SearchParams {
 
 function getDateRange(params: SearchParams): { from: string; to: string; label: string } {
   const now = new Date();
-  const today = new Date(now.setHours(0, 0, 0, 0));
+  // «اليوم» بتوقيت بغداد لا بتوقيت الخادم (UTC على Vercel) — وإلّا بدأ اليوم
+  // الساعة ٠٣:٠٠ بغداد وسقطت طلبات ما بعد منتصف الليل في حصيلة الأمس.
+  const today = baghdadDayWindow(now).start;
 
   if (params.period === 'custom' && params.from && params.to) {
     return { from: params.from, to: params.to, label: `${params.from} → ${params.to}` };

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { SPECIALIST_META, type SpecialistType } from '@/lib/specialist-types';
+import { baghdadDayWindow } from '@/lib/time/baghdad-day';
 
 export const metadata = {
   title: 'لوحة الاختصاصي · سباير ميديكال',
@@ -66,7 +67,7 @@ export default async function SpecialistDashboard() {
       .select('*', { count: 'exact', head: true })
       .eq('assigned_specialist_id', user.id)
       .eq('status', 'completed')
-      .gte('updated_at', new Date(new Date().setHours(0, 0, 0, 0)).toISOString()),
+      .gte('updated_at', baghdadDayWindow().start.toISOString()),
 
     supabase
       .from('ratings')

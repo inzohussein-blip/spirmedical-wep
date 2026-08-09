@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import NotificationsClient from './NotificationsClient';
 import NotificationRowActions from './NotificationRowActions';
 import { EmptyState } from '@/components/ui';
+import { baghdadDayWindow } from '@/lib/time/baghdad-day';
 
 export const dynamic = 'force-dynamic';
 
@@ -48,7 +49,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
     supabase.from('notification_queue').select('*', { count: 'exact', head: true }).eq('status', 'sent'),
     supabase.from('notification_queue').select('*', { count: 'exact', head: true }).eq('status', 'failed'),
     supabase.from('notification_queue').select('*', { count: 'exact', head: true })
-      .gte('created_at', new Date(new Date().setHours(0, 0, 0, 0)).toISOString()),
+      .gte('created_at', baghdadDayWindow().start.toISOString()),
   ]);
 
   // قائمة المزود الحالي (info فقط - من ENV variable)

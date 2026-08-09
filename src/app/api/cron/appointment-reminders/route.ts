@@ -24,6 +24,8 @@ import { logger } from '@/lib/logger';
  * ═══════════════════════════════════════════════════════════════
  */
 
+import { baghdadDayWindow } from '@/lib/time/baghdad-day';
+
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
@@ -40,13 +42,13 @@ export async function GET(request: NextRequest) {
     const supabase = createServiceClient();
 
     // ✨ V25.5: تكييف للـ Hobby plan (cron يومي فقط)
-    // ─── نبحث عن كل مواعيد اليوم (00:00 → 23:59) ──────
+    // ─── مواعيد اليوم (00:00 → 23:59) **بتوقيت بغداد** ──────
+    // كان الحساب يستعمل `setHours` على توقيت الخادم (UTC على Vercel)، فتمتدّ
+    // النافذة من ٠٣:٠٠ بغداد اليوم إلى ٠٢:٥٩ بغداد غداً. النتيجة أنّ موعد
+    // الغد باكراً يُصنَّف «اليوم» فيصل صاحبَه إشعار «📅 موعدك اليوم» قبل
+    // يومٍ كامل تقريباً — خطأٌ مُكلف في منصّة طبّية.
     const now = new Date();
-    const startOfDay = new Date(now);
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const endOfDay = new Date(now);
-    endOfDay.setHours(23, 59, 59, 999);
+    const { start: startOfDay, end: endOfDay } = baghdadDayWindow(now);
 
     const { data: appointments, error } = await supabase
       .from('appointments')
