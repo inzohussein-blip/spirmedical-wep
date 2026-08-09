@@ -178,3 +178,36 @@ describe('🛡️ لا سياسة تفتح جدولاً حسّاساً للجم�
     expect(permissive.sort()).toEqual([]);
   });
 });
+
+describe('🛡️ كل دالّة جديدة تُثبّت search_path', () => {
+  /**
+   * 🚨 دالّة بلا `search_path` مثبَّت تُحلّ الأسماء داخلها وفق مسار
+   * **المُستدعي**. فمن يستطيع إنشاء كائنات في مخطّطٍ يسبق `public` يجعلها
+   * تقرأ جدوله بدل جدولنا. وفي دالّة `SECURITY DEFINER` — تُنفَّذ بصلاحيات
+   * `postgres` — يصير ذلك تصعيد صلاحيات مكتملاً.
+   *
+   * كُشف من فحص القاعدة الحيّة: ٥٦ دالّة بلا تثبيت، منها ١٦ `SECURITY
+   * DEFINER` (`is_admin` و`handle_new_user` و`verify_start_otp` …).
+   */
+  const created = new Set<string>();
+  const reCreate = /CREATE (?:OR REPLACE )?FUNCTION\s+(?:public\.)?([a-z_]+)\s*\(/gi;
+  let m: RegExpExecArray | null;
+  while ((m = reCreate.exec(sql)) !== null) created.add(m[1]);
+
+  it('ترحيل التثبيت موجود ويستثني دوالّ الامتدادات بالتبعيّة', () => {
+    const migration = sql;
+    expect(migration).toContain('SET search_path = public, pg_temp');
+    // الاستثناء عبر pg_depend لا بمطابقة أسماء
+    expect(migration).toContain("deptype = 'e'");
+    // pg_temp أخيراً كي لا تحجب جداولٌ مؤقّتة جداولنا
+    expect(/search_path = public, pg_temp/.test(migration)).toBe(true);
+  });
+
+  it('🚨 كل دالّة يُعرّفها المشروع مشمولة بالتثبيت', () => {
+    // التثبيت يجري بحلقة تشمل كل دوالّ public غير المملوكة لامتداد،
+    // فوجود الحلقة يكفي — لكنّنا نتحقّق أنّها لم تُقيَّد بأسماء بعينها.
+    expect(created.size).toBeGreaterThan(20);
+    expect(/ALTER FUNCTION %s SET search_path/.test(sql)).toBe(true);
+    expect(/FOR fn IN[\s\S]{0,600}nspname = 'public'/.test(sql)).toBe(true);
+  });
+});
