@@ -175,26 +175,31 @@ export default async function HomePage({
     redirect('/dashboard');
   }
 
-  // ─── 🎯 V33: أي مستخدم مُسجّل دخوله → واجهة التطبيق مباشرة (لا التسويق) ───
-  // سابقاً كان هذا الفحص داخل فرع PWA فقط، فكان المستخدم المُسجّل يرى صفحة
-  // التسويق في المتصفّح العادي. الآن الدخول يقود دائماً إلى التطبيق.
+  // ─── 🎯 الجذر `/` هو **الموقع التسويقي** لكل زائر ───
+  // كان أي مستخدم مُسجّل يُحوَّل من `/` إلى التطبيق فوراً، فيتعذّر عليه
+  // الوصول إلى صفحة التسويق من نطاقه أصلاً — حتى حين يقصدها. الصفحة
+  // العامّة (الخدمات، التغطية، الأسئلة) جمهورها يشمل المسجّلين أيضاً.
+  //
+  // بدل التحويل: تتكيّف أزرار الدعوة — «ادخل التطبيق» بدل «تسجيل دخول».
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  let appHomePath: string | null = null;
   if (user) {
     const { data: profile } = await supabase
       .from('users')
       .select('role')
       .eq('id', user.id)
       .single();
-    redirect(getRoleHomePath(profile?.role));
+    appHomePath = getRoleHomePath(profile?.role);
   }
 
-  // ─── 🎯 V25.23: Smart PWA Routing (غير مُسجّل) ───
-  // عند فتح PWA من home screen بلا جلسة → /gate (خيارا الدخول/التسجيل داخل التطبيق)
+  // ─── 🎯 V25.23: Smart PWA Routing ───
+  // فتح التطبيق المثبَّت من الشاشة الرئيسية يقصد التطبيق لا التسويق،
+  // فيبقى التحويل هنا وحده.
   const isPWA = searchParams.source === 'pwa' || searchParams.utm_source === 'homescreen';
   if (isPWA) {
-    redirect('/gate');
+    redirect(appHomePath ?? '/gate');
   }
 
   // غير مُسجّل + متصفّح عادي → الموقع التسويقي العام
@@ -248,14 +253,16 @@ export default async function HomePage({
               </div>
             </div>
 
-            <Link href="/login" className="landing-nav-link">
-              تسجيل دخول
-            </Link>
-            <Link href="/gate" className="landing-nav-cta">
+            {!appHomePath && (
+              <Link href="/login" className="landing-nav-link">
+                تسجيل دخول
+              </Link>
+            )}
+            <Link href={appHomePath ?? '/gate'} className="landing-nav-cta">
               ادخل التطبيق ←
             </Link>
 
-            <LandingMobileMenu />
+            <LandingMobileMenu appHomePath={appHomePath} />
           </div>
         </div>
       </nav>
@@ -290,8 +297,8 @@ export default async function HomePage({
                 واحد.
               </p>
               <div className="landing-hero-ctas">
-                <Link href="/gate" className="landing-cta-primary">
-                  ابدأ الآن ←
+                <Link href={appHomePath ?? '/gate'} className="landing-cta-primary">
+                  {appHomePath ? 'ادخل التطبيق ←' : 'ابدأ الآن ←'}
                 </Link>
                 <Link href="/guest" className="landing-cta-secondary">
                   ▷ شاهد كيف يعمل
@@ -832,7 +839,7 @@ export default async function HomePage({
                   </li>
                 ))}
               </ul>
-              <Link href="/gate" className="landing-coverage-cta">
+              <Link href={appHomePath ?? '/gate'} className="landing-coverage-cta">
                 <span>ابدأ من مدينتك</span>
                 <span aria-hidden="true">←</span>
               </Link>
@@ -854,7 +861,7 @@ export default async function HomePage({
                 مجاناً تماماً للتسجيل · بدون التزامات · ادخل عبر هاتفك في ٣٠ ثانية
               </p>
               <div className="landing-cta-buttons">
-                <Link href="/gate" className="landing-cta-primary big">
+                <Link href={appHomePath ?? '/gate'} className="landing-cta-primary big">
                   ابدأ الآن ←
                 </Link>
                 <Link href="/guest" className="landing-cta-secondary on-dark">
