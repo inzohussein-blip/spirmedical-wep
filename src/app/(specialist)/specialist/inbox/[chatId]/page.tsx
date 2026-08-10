@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { oneOfOr } from '@/lib/format/vocabulary';
 import { notFound } from 'next/navigation';
 import ChatWindow, { type Message, type ChatParticipant } from '@/components/chat/ChatWindow';
 import ChatMetaControls from './ChatMetaControls';
@@ -11,6 +12,8 @@ export const dynamic = 'force-dynamic';
 export const metadata = {
   title: 'محادثة · لوحة الأخصائي',
 };
+
+const MESSAGE_TYPES = ['text', 'image', 'file', 'audio', 'system'] as const;
 
 export default async function SpecialistChatDetailPage({ params }: { params: { chatId: string } }) {
   const supabase = createClient();
@@ -66,7 +69,7 @@ export default async function SpecialistChatDetailPage({ params }: { params: { c
   const messages: Message[] = (messagesRaw || []).map((m) => ({
     id: m.id,
     senderId: m.sender_id,
-    type: m.type,
+    type: oneOfOr(MESSAGE_TYPES, m.type, 'text'),
     content: m.content,
     attachmentUrl: m.attachment_url,
     attachmentName: m.attachment_name,

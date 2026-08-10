@@ -6,6 +6,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { oneOfOr } from '@/lib/format/vocabulary';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import EmergenciesClient from './EmergenciesClient';
@@ -13,6 +14,8 @@ import { baghdadDayWindow } from '@/lib/time/baghdad-day';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'الطوارئ الأمنية - Spir Medical' };
+
+const EMERGENCY_STATUS = ['open', 'responding', 'resolved', 'false_alarm'] as const;
 
 export default async function AdminEmergenciesPage({
   searchParams,
@@ -70,7 +73,7 @@ export default async function AdminEmergenciesPage({
   const { start: today } = baghdadDayWindow();
 
   const stats24h = (stats || []).filter(s =>
-    new Date(s.created_at) >= today
+    new Date(s.created_at ?? 0) >= today
   ).length;
 
   const openCount = (stats || []).filter(s => s.status === 'open').length;
@@ -145,7 +148,11 @@ export default async function AdminEmergenciesPage({
       </div>
 
       <EmergenciesClient
-        emergencies={emergencies || []}
+        emergencies={(emergencies ?? []).map((e) => ({
+          ...e,
+          status: oneOfOr(EMERGENCY_STATUS, e.status, 'open'),
+          created_at: e.created_at ?? '',
+        }))}
         specialistsMap={Object.fromEntries(specialistsMap)}
         currentFilter={status}
       />

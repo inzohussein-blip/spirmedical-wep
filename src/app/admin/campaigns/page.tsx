@@ -3,12 +3,17 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { oneOfOr } from '@/lib/format/vocabulary';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import CampaignsClient from './CampaignsClient';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'الحملات · إدارة' };
+
+const CAMPAIGN_TYPE = ['whatsapp', 'sms', 'push', 'email'] as const;
+
+const CAMPAIGN_STATUS = ['draft', 'scheduled', 'sending', 'sent', 'failed'] as const;
 
 export default async function CampaignsPage() {
   const supabase = createClient();
@@ -53,7 +58,12 @@ export default async function CampaignsPage() {
       </div>
 
       <CampaignsClient
-        campaigns={campaigns || []}
+        campaigns={(campaigns ?? []).map((c) => ({
+          ...c,
+          created_at: c.created_at ?? '',
+          type: oneOfOr(CAMPAIGN_TYPE, c.type, 'whatsapp'),
+          status: oneOfOr(CAMPAIGN_STATUS, c.status, 'draft'),
+        }))}
         totalUsers={totalUsers ?? 0}
       />
     </>

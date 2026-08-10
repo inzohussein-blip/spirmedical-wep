@@ -3,12 +3,17 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { oneOfOr } from '@/lib/format/vocabulary';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import FeedbackClient from './FeedbackClient';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'الملاحظات - Admin' };
+
+const FEEDBACK_TYPE = ['suggestion', 'complaint', 'praise', 'feature_request', 'other'] as const;
+
+const FEEDBACK_STATUS = ['new', 'reviewed', 'in_progress', 'resolved', 'archived'] as const;
 
 export default async function FeedbackPage() {
   const supabase = createClient();
@@ -49,7 +54,12 @@ export default async function FeedbackPage() {
       </div>
 
       <FeedbackClient
-        feedbackList={feedbackList || []}
+        feedbackList={(feedbackList ?? []).map((f) => ({
+          ...f,
+          type: oneOfOr(FEEDBACK_TYPE, f.type, 'other'),
+          status: oneOfOr(FEEDBACK_STATUS, f.status, 'new'),
+          created_at: f.created_at ?? '',
+        }))}
         usersMap={usersMap}
       />
     </>

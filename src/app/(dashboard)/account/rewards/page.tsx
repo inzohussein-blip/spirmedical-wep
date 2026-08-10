@@ -3,6 +3,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { oneOfOr } from '@/lib/format/vocabulary';
 import { redirect } from 'next/navigation';
 import RewardsClient from './RewardsClient';
 
@@ -11,6 +12,8 @@ export const metadata = {
   title: 'المكافآت والإحالات - Spir Medical',
   description: 'برنامج الولاء + كود الإحالة الخاص بك',
 };
+
+const TIERS = ['silver', 'gold', 'platinum', 'diamond'] as const;
 
 export default async function RewardsPage() {
   const supabase = createClient();
@@ -53,9 +56,14 @@ export default async function RewardsPage() {
       loyaltyPoints={profile?.loyalty_points || 0}
       currentTier={profile?.loyalty_tier || 'silver'}
       walletBalance={profile?.wallet_balance || 0}
-      milestones={milestones || []}
+      milestones={(milestones ?? []).map((m) => ({
+        ...m,
+        tier: oneOfOr(TIERS, m.tier, 'silver'),
+        badge_color: m.badge_color ?? '',
+        badge_icon: m.badge_icon ?? '',
+      }))}
       referralCode={referralCode?.code || null}
-      referrals={referrals || []}
+      referrals={(referrals ?? []).map((r) => ({ ...r, created_at: r.created_at ?? '' }))}
       referralCount={referralCount || 0}
     />
   );

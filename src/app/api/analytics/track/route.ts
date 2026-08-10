@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+import type { Json } from '@/types/database';
 import { createClient } from '@/lib/supabase/server';
 import { checkRateLimit } from '@/lib/rate-limit';
 
@@ -59,7 +60,9 @@ export async function POST(request: NextRequest) {
         event_name: event,
         user_id: user?.id ?? null,
         session_id: (properties?.session_id as string) ?? null,
-        properties: properties ?? null,
+        // جاء من JSON.parse للجسم الوارد، فهو Json بحكم البناء —
+        // والسطر أعلاه يُثبته بـJSON.stringify لفحص الحجم
+        properties: (properties ?? null) as Json | null,
         user_agent: userAgent,
         ip_address: ipAddress,
       });

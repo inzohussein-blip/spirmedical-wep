@@ -104,7 +104,7 @@ export default async function ConsultationsPage() {
             {consultations.map((c) => {
               const doctor = c.doctor_id ? doctorsMap[c.doctor_id] : null;
               const statusMeta = STATUS_META[c.status] || STATUS_META.open;
-              const date = new Date(c.created_at);
+              const date = new Date(c.created_at ?? Date.now());
 
               return (
                 <Link

@@ -54,7 +54,13 @@ export default async function AdminDentalPage() {
         </h1>
       </div>
 
-      <DentalAdminClient initialClinics={clinics || []} />
+      <DentalAdminClient
+        initialClinics={(clinics ?? []).map((c) => ({
+          ...c,
+          doctor_names: c.doctor_names ?? [],
+          specialties: c.specialties ?? [],
+        }))}
+      />
     </div>
   );
 }

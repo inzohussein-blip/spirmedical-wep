@@ -5,6 +5,8 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { toGender } from '@/lib/format/gender';
+import { oneOfOr, jsonObject } from '@/lib/format/vocabulary';
 import { redirect, notFound } from 'next/navigation';
 import ConsultationClient from './ConsultationClient';
 
@@ -15,6 +17,10 @@ export const metadata = {
 
 
 export const dynamic = 'force-dynamic';
+
+const CONSULTATION_STATUS = ['open', 'awaiting_doctor', 'awaiting_patient', 'closed'] as const;
+const SENDER_ROLES = ['patient', 'doctor', 'system'] as const;
+const MESSAGE_TYPES = ['text', 'image', 'medical_record', 'voice'] as const;
 
 export default async function ConsultationDetailPage({
   params,
@@ -78,11 +84,30 @@ export default async function ConsultationDetailPage({
 
   return (
     <ConsultationClient
-      consultation={consultation}
-      messages={messages || []}
-      doctor={doctor}
+      consultation={{
+        ...consultation,
+        // مفردات محروسة بقيود CHECK لا يقرأها مولّد الأنواع
+        status: oneOfOr(CONSULTATION_STATUS, consultation.status, 'open'),
+        created_at: consultation.created_at ?? '',
+        shared_medical_data: jsonObject<Record<string, unknown>>(consultation.shared_medical_data),
+      }}
+      messages={(messages ?? []).map((m) => ({
+        ...m,
+        sender_role: oneOfOr(SENDER_ROLES, m.sender_role, 'system'),
+        message_type: oneOfOr(MESSAGE_TYPES, m.message_type, 'text'),
+        created_at: m.created_at ?? '',
+      }))}
+      doctor={doctor ? { ...doctor, title: doctor.title ?? '', gender: toGender(doctor.gender) } : null}
       patient={patient}
-      familyMember={familyMember}
+      familyMember={
+        familyMember
+          ? {
+              ...familyMember,
+              avatar_emoji: familyMember.avatar_emoji ?? '',
+              gender: toGender(familyMember.gender),
+            }
+          : null
+      }
       userRole={userRole}
       currentUserId={user.id}
     />

@@ -3,12 +3,15 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { oneOfOr } from '@/lib/format/vocabulary';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import HospitalsAdminClient from './HospitalsAdminClient';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'إدارة المستشفيات - Admin' };
+
+const HOSPITAL_TYPE = ['government', 'private', 'health_center', 'specialized'] as const;
 
 export default async function AdminHospitalsPage() {
   const supabase = createClient();
@@ -49,7 +52,12 @@ export default async function AdminHospitalsPage() {
         </div>
       </div>
 
-      <HospitalsAdminClient hospitals={hospitals || []} />
+      <HospitalsAdminClient
+        hospitals={(hospitals ?? []).map((h) => ({
+          ...h,
+          type: oneOfOr(HOSPITAL_TYPE, h.type, 'private'),
+        }))}
+      />
     </div>
   );
 }

@@ -53,7 +53,7 @@ export async function GET() {
         id: v.id,
         type: 'nursing_visit',
         title: getNursingLabel(v.procedure_type),
-        date: v.performed_at,
+        date: v.performed_at ?? '',
         summary: v.notes ? v.notes.slice(0, 60) : undefined,
       });
     }

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { SPECIALIST_META } from '@/lib/specialist-types';
+import { toSpecialistType, SPECIALIST_META } from '@/lib/specialist-types';
 import { EmptyState } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
@@ -38,7 +38,8 @@ export default async function PendingSpecialistsPage() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {pending.map((s) => {
-            const meta = s.specialist_type ? SPECIALIST_META[s.specialist_type] : null;
+            const type = toSpecialistType(s.specialist_type);
+            const meta = type ? SPECIALIST_META[type] : null;
             const daysAgo = Math.floor((Date.now() - new Date(s.created_at).getTime()) / 86400000);
 
             return (

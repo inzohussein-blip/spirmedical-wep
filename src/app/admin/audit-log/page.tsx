@@ -84,7 +84,7 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Sea
             </thead>
             <tbody>
               {actions.map((a) => {
-                const admin = adminsMap.get(a.admin_id);
+                const admin = a.admin_id ? adminsMap.get(a.admin_id) : undefined;
                 const meta = ACTION_TYPE_LABELS[a.action_type] ?? { label: a.action_type, icon: '⚙️' };
 
                 return (

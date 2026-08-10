@@ -6,6 +6,7 @@ import {
   ArrowRight, Search, MapPin, Phone, Star,
   CheckCircle2, Sparkles, Award, Users,
 } from 'lucide-react';
+import { formatPriceRange } from '@/lib/format/price';
 import { haptic } from '@/lib/haptic';
 import ExternalMapButton from '@/components/maps/ExternalMapButton';
 
@@ -19,10 +20,10 @@ interface DentalClinic {
   phone: string | null;
   specialties: string[];
   doctor_count: number;
-  cleaning_price_min: number;
-  cleaning_price_max: number;
-  implant_price_min: number;
-  implant_price_max: number;
+  cleaning_price_min: number | null;
+  cleaning_price_max: number | null;
+  implant_price_min: number | null;
+  implant_price_max: number | null;
   offers_implants: boolean;
   offers_orthodontics: boolean;
   offers_whitening: boolean;
@@ -319,11 +320,13 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
         color: 'var(--ink-2)',
         lineHeight: 1.6,
       }}>
-        💰 <strong>تنظيف:</strong> {clinic.cleaning_price_min.toLocaleString('ar-IQ')} - {clinic.cleaning_price_max.toLocaleString('ar-IQ')} د.ع
-        {clinic.offers_implants && (
+        {formatPriceRange(clinic.cleaning_price_min, clinic.cleaning_price_max) && (
+          <>💰 <strong>تنظيف:</strong> {formatPriceRange(clinic.cleaning_price_min, clinic.cleaning_price_max)}</>
+        )}
+        {clinic.offers_implants && formatPriceRange(clinic.implant_price_min, clinic.implant_price_max) && (
           <>
             <br />
-            🔩 <strong>زراعة:</strong> {clinic.implant_price_min.toLocaleString('ar-IQ')} - {clinic.implant_price_max.toLocaleString('ar-IQ')} د.ع
+            🔩 <strong>زراعة:</strong> {formatPriceRange(clinic.implant_price_min, clinic.implant_price_max)}
           </>
         )}
       </div>

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { oneOfOr } from '@/lib/format/vocabulary';
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import PatientCRMClient from './PatientCRMClient';
@@ -9,6 +10,8 @@ export const dynamic = 'force-dynamic';
 export const metadata = {
   title: 'ملف المريض · إدارة CRM',
 };
+
+const NOTE_TYPE = ['general', 'warning', 'vip', 'follow_up'] as const;
 
 export default async function PatientDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient();
@@ -152,13 +155,13 @@ export default async function PatientDetailPage({ params }: { params: { id: stri
         <div style={{ position: 'sticky', top: 24 }}>
           <PatientCRMClient
             patientId={patient.id}
-            tags={(tags ?? []).map((t) => ({ id: t.id, tag: t.tag, color: t.color }))}
+            tags={(tags ?? []).map((t) => ({ id: t.id, tag: t.tag, color: t.color ?? '' }))}
             notes={(notes ?? []).map((n) => ({
               id: n.id,
               note: n.note,
-              note_type: n.note_type,
+              note_type: oneOfOr(NOTE_TYPE, n.note_type, 'general'),
+              created_at: n.created_at ?? '',
               is_pinned: n.is_pinned,
-              created_at: n.created_at,
               admin_name: n.admin_id ? (adminsMap.get(n.admin_id) ?? 'مدير') : 'النظام',
             }))}
             isSuspended={patient.is_suspended ?? false}

@@ -31,7 +31,9 @@ export default async function TemplatesPage() {
         </div>
         <p className="scr-page-subtitle">ردود سريعة لتسريع المحادثات</p>
 
-        <TemplatesClient templates={templates ?? []} />
+        <TemplatesClient
+          templates={(templates ?? []).map((t) => ({ ...t, category: t.category ?? '' }))}
+        />
       </div>
     </main>
   );

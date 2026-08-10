@@ -1,6 +1,8 @@
 // نظام الاختصاصيين الموحّد
 // كل المعلومات الخاصة بكل دور في مكان واحد
 
+import { oneOf } from '@/lib/format/vocabulary';
+
 export type SpecialistType =
   | 'lab_analyst'
   | 'nurse'
@@ -106,4 +108,15 @@ export function getSpecialistTypeForService(serviceId: string): SpecialistType {
     }
   }
   return 'doctor'; // default
+}
+
+/**
+ * يُضيّق `specialist_type` القادم من القاعدة إلى الاتّحاد المعتمَد.
+ *
+ * العمود محروس بقيد CHECK بالمفردات السبع نفسها، لكنّ مولّد أنواع
+ * Supabase لا يقرأ قيود CHECK فيُخرج `string`. الفحص هنا يجعل الاتّحاد
+ * مكسوباً لا مُدّعىً — انظر `src/lib/format/vocabulary.ts`.
+ */
+export function toSpecialistType(value: string | null | undefined): SpecialistType | null {
+  return oneOf(SPECIALIST_TYPES, value);
 }

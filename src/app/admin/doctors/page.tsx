@@ -3,6 +3,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { toGender } from '@/lib/format/gender';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import DoctorsAdminClient from './DoctorsAdminClient';
@@ -58,7 +59,15 @@ export default async function AdminDoctorsPage() {
         </div>
       </div>
 
-      <DoctorsAdminClient doctors={doctors || []} />
+      <DoctorsAdminClient
+        doctors={(doctors ?? []).map((d) => ({
+          ...d,
+          title: d.title ?? '',
+          gender: toGender(d.gender),
+          languages: d.languages ?? [],
+          created_at: d.created_at ?? '',
+        }))}
+      />
     </div>
   );
 }

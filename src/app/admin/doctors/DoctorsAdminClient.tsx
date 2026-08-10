@@ -21,8 +21,8 @@ interface Doctor {
   specialty: string;
   sub_specialty: string | null;
   years_experience: number;
-  home_visit_price: number;
-  video_consult_price: number;
+  home_visit_price: number | null;
+  video_consult_price: number | null;
   monthly_subscription_price: number | null;
   yearly_subscription_price: number | null;
   clinic_city: string | null;

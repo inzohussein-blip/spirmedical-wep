@@ -44,7 +44,9 @@ export default async function AdminOpticalPage() {
           👓 إدارة متاجر النظارات
         </h1>
       </div>
-      <OpticalAdminClient initialStores={stores || []} />
+      <OpticalAdminClient
+        initialStores={(stores ?? []).map((s) => ({ ...s, brands: s.brands ?? [] }))}
+      />
     </div>
   );
 }

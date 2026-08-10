@@ -186,7 +186,7 @@ export async function updateOrderRoleData(
 
       if (order?.user_id) {
         // تحويل vitals من string لـ numbers
-        const vital_signs: Record<string, unknown> = {};
+        const vital_signs: Record<string, string | number> = {};
         if (nursingData.vitals?.bp) vital_signs.bp = nursingData.vitals.bp;
         if (nursingData.vitals?.pulse) vital_signs.pulse = parseFloat(nursingData.vitals.pulse);
         if (nursingData.vitals?.temp) vital_signs.temp = parseFloat(nursingData.vitals.temp);

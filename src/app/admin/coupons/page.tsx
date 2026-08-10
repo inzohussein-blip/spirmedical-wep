@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { oneOfOr } from '@/lib/format/vocabulary';
 import CouponsClient from './CouponsClient';
 
 export const dynamic = 'force-dynamic';
@@ -6,6 +7,8 @@ export const dynamic = 'force-dynamic';
 export const metadata = {
   title: 'الكوبونات · إدارة',
 };
+
+const DISCOUNT_TYPE = ['percentage', 'fixed'] as const;
 
 export default async function CouponsPage() {
   const supabase = createClient();
@@ -27,13 +30,13 @@ export default async function CouponsPage() {
           id: c.id,
           code: c.code,
           description: c.description,
-          discountType: c.discount_type,
+          discountType: oneOfOr(DISCOUNT_TYPE, c.discount_type, 'fixed'),
+          createdAt: c.created_at ?? '',
           discountValue: c.discount_value,
           validUntil: c.valid_until,
           maxUses: c.max_uses,
           usedCount: c.used_count,
           isActive: c.is_active,
-          createdAt: c.created_at,
         }))}
       />
     </>

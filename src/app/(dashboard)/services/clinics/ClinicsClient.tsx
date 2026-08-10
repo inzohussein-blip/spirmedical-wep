@@ -21,7 +21,7 @@ interface Doctor {
   clinic_address: string | null;
   clinic_city: string | null;
   clinic_phone: string | null;
-  home_visit_price: number;
+  home_visit_price: number | null;
   languages: string[];
   rating_avg: number;
   rating_count: number;

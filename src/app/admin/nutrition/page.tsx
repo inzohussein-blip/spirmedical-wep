@@ -3,6 +3,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { toGender } from '@/lib/format/gender';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import NutritionAdminClient from './NutritionAdminClient';
@@ -43,7 +44,16 @@ export default async function AdminNutritionPage() {
           🥗 إدارة أخصائيي التغذية
         </h1>
       </div>
-      <NutritionAdminClient initialNutritionists={nutritionists || []} />
+      <NutritionAdminClient
+        initialNutritionists={(nutritionists ?? []).map((n) => ({
+          ...n,
+          gender: toGender(n.gender),
+          specialties: n.specialties ?? [],
+          certifications: n.certifications ?? [],
+          languages: n.languages ?? [],
+          cities: n.cities ?? [],
+        }))}
+      />
     </div>
   );
 }
