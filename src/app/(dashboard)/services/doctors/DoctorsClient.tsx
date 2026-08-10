@@ -7,6 +7,7 @@ import {
   ArrowRight, Search, MapPin, Star, Stethoscope, Video,
   Home, Building2, Languages, Award, CheckCircle2, Clock,
 } from 'lucide-react';
+import { formatPrice, formatNumber } from '@/lib/format/price';
 
 interface Doctor {
   id: string;
@@ -19,8 +20,8 @@ interface Doctor {
   available_for_home_visit: boolean;
   available_for_video: boolean;
   available_for_clinic: boolean;
-  home_visit_price: number;
-  video_consult_price: number;
+  home_visit_price: number | null;
+  video_consult_price: number | null;
   monthly_subscription_price: number | null;
   clinic_city: string | null;
   languages: string[];
@@ -309,16 +310,16 @@ export default function DoctorsClient({ doctors }: Props) {
                         borderTop: '1px solid var(--line)',
                       }}
                     >
-                      {d.available_for_home_visit && (
+                      {d.available_for_home_visit && formatPrice(d.home_visit_price) && (
                         <div style={serviceTag()}>
                           <Home size={12} />
-                          <span>{d.home_visit_price.toLocaleString('ar-IQ')} د.ع</span>
+                          <span>{formatPrice(d.home_visit_price)}</span>
                         </div>
                       )}
-                      {d.available_for_video && (
+                      {d.available_for_video && formatPrice(d.video_consult_price) && (
                         <div style={serviceTag()}>
                           <Video size={12} />
-                          <span>{d.video_consult_price.toLocaleString('ar-IQ')} د.ع</span>
+                          <span>{formatPrice(d.video_consult_price)}</span>
                         </div>
                       )}
                       {d.monthly_subscription_price && (
@@ -330,7 +331,7 @@ export default function DoctorsClient({ doctors }: Props) {
                           }}
                         >
                           <Star size={12} fill="currentColor" />
-                          <span>اشتراك {d.monthly_subscription_price.toLocaleString('ar-IQ')}/شهر</span>
+                          <span>اشتراك {formatNumber(d.monthly_subscription_price)}/شهر</span>
                         </div>
                       )}
                     </div>

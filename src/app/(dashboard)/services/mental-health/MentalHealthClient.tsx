@@ -7,6 +7,7 @@ import {
   CheckCircle2, Award, Home, Building2, Heart,
   AlertCircle,
 } from 'lucide-react';
+import { formatPrice } from '@/lib/format/price';
 import { haptic } from '@/lib/haptic';
 
 interface Specialist {
@@ -23,8 +24,8 @@ interface Specialist {
   cities: string[];
   available_online: boolean;
   available_in_clinic: boolean;
-  online_session_price: number;
-  clinic_session_price: number;
+  online_session_price: number | null;
+  clinic_session_price: number | null;
   session_duration_minutes: number;
   rating_avg: number;
   rating_count: number;
@@ -340,9 +341,11 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
             <div style={{ fontSize: 9, color: 'var(--ink-3)', marginBottom: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
               💻 أونلاين
             </div>
-            <div style={{ fontSize: 13, fontWeight: 900, color: 'var(--emerald)' }}>
-              {specialist.online_session_price.toLocaleString('ar-IQ')} د.ع
-            </div>
+            {formatPrice(specialist.online_session_price) && (
+              <div style={{ fontSize: 13, fontWeight: 900, color: 'var(--emerald)' }}>
+                {formatPrice(specialist.online_session_price)}
+              </div>
+            )}
           </div>
         )}
         {specialist.available_in_clinic && (
@@ -356,9 +359,11 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
             <div style={{ fontSize: 9, color: 'var(--ink-3)', marginBottom: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
               🏢 عيادة
             </div>
-            <div style={{ fontSize: 13, fontWeight: 900, color: 'var(--amber)' }}>
-              {specialist.clinic_session_price.toLocaleString('ar-IQ')} د.ع
-            </div>
+            {formatPrice(specialist.clinic_session_price) && (
+              <div style={{ fontSize: 13, fontWeight: 900, color: 'var(--amber)' }}>
+                {formatPrice(specialist.clinic_session_price)}
+              </div>
+            )}
           </div>
         )}
       </div>

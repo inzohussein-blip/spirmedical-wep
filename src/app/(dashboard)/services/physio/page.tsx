@@ -3,6 +3,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { toGender } from '@/lib/format/gender';
 import PhysioClient from './PhysioClient';
 
 export const dynamic = 'force-dynamic';
@@ -25,10 +26,24 @@ export default async function PhysioPage() {
       .limit(50),
   ]);
 
+  // القوائم الفارغة في القاعدة تصل NULL؛ نُسوّيها هنا عند الحدّ كي لا
+  // يتسرّب الفراغ إلى العرض (`.includes` و`.join` تنهار عليه).
+  // الأسعار لا تُسوّى: لا قيمة افتراضية صادقة لسعرٍ لم يُدخله مقدّم الخدمة.
   return (
     <PhysioClient
-      serviceTypes={serviceTypes || []}
-      specialists={specialists || []}
+      serviceTypes={(serviceTypes ?? []).map((t) => ({
+        ...t,
+        icon: t.icon ?? '',
+        conditions: t.conditions ?? [],
+      }))}
+      specialists={(specialists ?? []).map((s) => ({
+        ...s,
+        specialties: s.specialties ?? [],
+        gender: toGender(s.gender),
+        certifications: s.certifications ?? [],
+        languages: s.languages ?? [],
+        cities: s.cities ?? [],
+      }))}
     />
   );
 }

@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { formatPrice } from '@/lib/format/price';
 import {
   ArrowRight, Search, MapPin, Star, Activity,
   Clock, CheckCircle2, Award, Home, Building2, Phone,
@@ -30,8 +31,9 @@ interface Specialist {
   certifications: string[];
   languages: string[];
   cities: string[];
-  home_visit_price: number;
-  clinic_visit_price: number;
+  // الأسعار اختيارية على مقدّم الخدمة — انظر src/lib/format/price.ts
+  home_visit_price: number | null;
+  clinic_visit_price: number | null;
   rating_avg: number;
   rating_count: number;
   total_sessions: number;
@@ -462,9 +464,11 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
               <Home size={10} />
               زيارة منزلية
             </div>
-            <div style={{ fontSize: 13, fontWeight: 900, color: 'var(--emerald)' }}>
-              {specialist.home_visit_price.toLocaleString('ar-IQ')} د.ع
-            </div>
+            {formatPrice(specialist.home_visit_price) && (
+              <div style={{ fontSize: 13, fontWeight: 900, color: 'var(--emerald)' }}>
+                {formatPrice(specialist.home_visit_price)}
+              </div>
+            )}
           </div>
         )}
         {specialist.available_for_clinic && (
@@ -479,9 +483,11 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
               <Building2 size={10} />
               عيادة
             </div>
-            <div style={{ fontSize: 13, fontWeight: 900, color: 'var(--amber)' }}>
-              {specialist.clinic_visit_price.toLocaleString('ar-IQ')} د.ع
-            </div>
+            {formatPrice(specialist.clinic_visit_price) && (
+              <div style={{ fontSize: 13, fontWeight: 900, color: 'var(--amber)' }}>
+                {formatPrice(specialist.clinic_visit_price)}
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -22,5 +22,10 @@ export default async function OpticalPage() {
     .order('rating_avg', { ascending: false })
     .limit(100);
 
-  return <OpticalClient stores={stores || []} />;
+  // قائمة الماركات الفارغة تصل NULL؛ نُسوّيها عند الحدّ (`.length` تنهار عليها)
+  return (
+    <OpticalClient
+      stores={(stores ?? []).map((s) => ({ ...s, brands: s.brands ?? [] }))}
+    />
+  );
 }
