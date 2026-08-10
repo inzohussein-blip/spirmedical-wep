@@ -7,6 +7,7 @@ import {
   CheckCircle2, Eye,
 } from 'lucide-react';
 import { haptic } from '@/lib/haptic';
+import { formatPrice, formatPriceRange } from '@/lib/format/price';
 import ExternalMapButton from '@/components/maps/ExternalMapButton';
 
 interface Store {
@@ -18,13 +19,13 @@ interface Store {
   address: string | null;
   phone: string | null;
   brands: string[];
-  exam_price: number;
+  exam_price: number | null;
   offers_eye_exam: boolean;
   offers_contact_lenses: boolean;
-  frame_price_min: number;
-  frame_price_max: number;
-  lens_price_min: number;
-  lens_price_max: number;
+  frame_price_min: number | null;
+  frame_price_max: number | null;
+  lens_price_min: number | null;
+  lens_price_max: number | null;
   rating_avg: number;
   rating_count: number;
   is_verified: boolean;
@@ -240,12 +241,15 @@ function StoreCard({ store }: { store: Store }) {
         color: 'var(--ink-2)',
         lineHeight: 1.7,
       }}>
-        {store.offers_eye_exam && (
-          <>👁️ <strong>فحص نظر:</strong> {store.exam_price.toLocaleString('ar-IQ')} د.ع<br /></>
+        {store.offers_eye_exam && formatPrice(store.exam_price) && (
+          <>👁️ <strong>فحص نظر:</strong> {formatPrice(store.exam_price)}<br /></>
         )}
-        🖼️ <strong>إطارات:</strong> {store.frame_price_min.toLocaleString('ar-IQ')} - {store.frame_price_max.toLocaleString('ar-IQ')} د.ع
-        <br />
-        🔍 <strong>عدسات:</strong> {store.lens_price_min.toLocaleString('ar-IQ')} - {store.lens_price_max.toLocaleString('ar-IQ')} د.ع
+        {formatPriceRange(store.frame_price_min, store.frame_price_max) && (
+          <>🖼️ <strong>إطارات:</strong> {formatPriceRange(store.frame_price_min, store.frame_price_max)}<br /></>
+        )}
+        {formatPriceRange(store.lens_price_min, store.lens_price_max) && (
+          <>🔍 <strong>عدسات:</strong> {formatPriceRange(store.lens_price_min, store.lens_price_max)}</>
+        )}
       </div>
 
       {/* Actions */}

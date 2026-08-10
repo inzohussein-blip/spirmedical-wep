@@ -8,6 +8,7 @@ import {
   Award, Languages, CheckCircle2, Calendar, MessageCircle,
   Sparkles, Loader2, Building2,
 } from 'lucide-react';
+import { formatNumber } from '@/lib/format/price';
 import { toast } from '@/components/ui/Toaster';
 import { useConfirm } from '@/components/ui';
 import { subscribeToDoctor, startConsultation } from './actions';
@@ -29,8 +30,8 @@ interface Doctor {
   available_for_home_visit: boolean;
   available_for_video: boolean;
   available_for_clinic: boolean;
-  home_visit_price: number;
-  video_consult_price: number;
+  home_visit_price: number | null;
+  video_consult_price: number | null;
   monthly_subscription_price: number | null;
   yearly_subscription_price: number | null;
   clinic_name: string | null;
@@ -417,10 +418,14 @@ export default function DoctorDetailClient({ doctor, activeSubscription, initial
                 <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>الطبيب يأتي لمنزلك · 60 دقيقة</div>
               </div>
               <div style={{ textAlign: 'end' }}>
-                <div style={{ fontSize: 14, fontWeight: 900, color: 'var(--emerald)' }}>
-                  {doctor.home_visit_price.toLocaleString('ar-IQ')}
-                </div>
-                <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
+                {formatNumber(doctor.home_visit_price) && (
+                  <>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: 'var(--emerald)' }}>
+                    {formatNumber(doctor.home_visit_price)}
+                  </div>
+                  <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
+                  </>
+                )}
               </div>
             </button>
           )}
@@ -513,10 +518,14 @@ export default function DoctorDetailClient({ doctor, activeSubscription, initial
                 </div>
               </div>
               <div style={{ textAlign: 'end' }}>
-                <div style={{ fontSize: 14, fontWeight: 900, color: '#1D9E75' }}>
-                  {doctor.video_consult_price.toLocaleString('ar-IQ')}
-                </div>
-                <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
+                {formatNumber(doctor.video_consult_price) && (
+                  <>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: '#1D9E75' }}>
+                    {formatNumber(doctor.video_consult_price)}
+                  </div>
+                  <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
+                  </>
+                )}
               </div>
             </button>
           )}
@@ -562,7 +571,7 @@ export default function DoctorDetailClient({ doctor, activeSubscription, initial
             </div>
             <div style={{ textAlign: 'end' }}>
               <div style={{ fontSize: 14, fontWeight: 900, color: 'var(--emerald)' }}>
-                {activeSubscription ? 'مجاناً' : doctor.video_consult_price.toLocaleString('ar-IQ')}
+                {activeSubscription ? 'مجاناً' : formatNumber(doctor.video_consult_price)}
               </div>
               <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>
                 {activeSubscription ? 'ضمن الاشتراك' : 'د.ع · كاش'}
@@ -621,10 +630,14 @@ export default function DoctorDetailClient({ doctor, activeSubscription, initial
                     </div>
                   </div>
                   <div style={{ textAlign: 'end' }}>
-                    <div style={{ fontSize: 16, fontWeight: 900, color: 'var(--emerald)' }}>
-                      {doctor.monthly_subscription_price.toLocaleString('ar-IQ')}
-                    </div>
-                    <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع</div>
+                    {formatNumber(doctor.monthly_subscription_price) && (
+                      <>
+                      <div style={{ fontSize: 16, fontWeight: 900, color: 'var(--emerald)' }}>
+                        {formatNumber(doctor.monthly_subscription_price)}
+                      </div>
+                      <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع</div>
+                      </>
+                    )}
                   </div>
                 </button>
               )}
@@ -683,10 +696,14 @@ export default function DoctorDetailClient({ doctor, activeSubscription, initial
                     </div>
                   </div>
                   <div style={{ textAlign: 'end' }}>
-                    <div style={{ fontSize: 16, fontWeight: 900 }}>
-                      {doctor.yearly_subscription_price.toLocaleString('ar-IQ')}
-                    </div>
-                    <div style={{ fontSize: 10, opacity: 0.85 }}>د.ع/سنة</div>
+                    {formatNumber(doctor.yearly_subscription_price) && (
+                      <>
+                      <div style={{ fontSize: 16, fontWeight: 900 }}>
+                        {formatNumber(doctor.yearly_subscription_price)}
+                      </div>
+                      <div style={{ fontSize: 10, opacity: 0.85 }}>د.ع/سنة</div>
+                      </>
+                    )}
                   </div>
                 </button>
               )}

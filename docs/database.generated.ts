@@ -1,15 +1,3 @@
-// ════════════════════════════════════════════════════════════════════
-// 🗄️  أنواع قاعدة البيانات — مولَّدة من المخطّط الحيّ
-// ════════════════════════════════════════════════════════════════════
-// مصدرها مشروع Supabase نفسه (`generate_typescript_types`)، لا كتابة يدوية.
-// كانت النسخة السابقة مكتوبة يدوياً ومتأخّرة عن المخطّط، فغابت عنها جداول
-// موجودة فعلاً (مثل `pharmacy_ratings`) واضطرّ الكود إلى قوالب `as unknown`
-// للوصول إليها — وهي القوالب التي تُخفي فئة «اسم عمود خاطئ» عن المترجم.
-//
-// لإعادة التوليد بعد أي تغيير في المخطّط:
-//   npm run db:types
-// ════════════════════════════════════════════════════════════════════
-
 export type Json =
   | string
   | number
@@ -324,7 +312,7 @@ export type Database = {
           physio_specialist_id: string | null
           prescription_data: Json | null
           prescription_image_url: string | null
-          prescription_required: boolean | null
+          prescription_required: boolean
           recurring_schedule: Json | null
           reminder_sent_at: string | null
           required_specialist_type: string | null
@@ -336,7 +324,7 @@ export type Database = {
           specialist_notes: string | null
           status: Database["public"]["Enums"]["appointment_status"]
           supplies_request: Json | null
-          supplies_total: number | null
+          supplies_total: number
           updated_at: string
           user_id: string
           vaccine_clinic_id: string | null
@@ -384,7 +372,7 @@ export type Database = {
           physio_specialist_id?: string | null
           prescription_data?: Json | null
           prescription_image_url?: string | null
-          prescription_required?: boolean | null
+          prescription_required?: boolean
           recurring_schedule?: Json | null
           reminder_sent_at?: string | null
           required_specialist_type?: string | null
@@ -396,7 +384,7 @@ export type Database = {
           specialist_notes?: string | null
           status?: Database["public"]["Enums"]["appointment_status"]
           supplies_request?: Json | null
-          supplies_total?: number | null
+          supplies_total?: number
           updated_at?: string
           user_id: string
           vaccine_clinic_id?: string | null
@@ -444,7 +432,7 @@ export type Database = {
           physio_specialist_id?: string | null
           prescription_data?: Json | null
           prescription_image_url?: string | null
-          prescription_required?: boolean | null
+          prescription_required?: boolean
           recurring_schedule?: Json | null
           reminder_sent_at?: string | null
           required_specialist_type?: string | null
@@ -456,7 +444,7 @@ export type Database = {
           specialist_notes?: string | null
           status?: Database["public"]["Enums"]["appointment_status"]
           supplies_request?: Json | null
-          supplies_total?: number | null
+          supplies_total?: number
           updated_at?: string
           user_id?: string
           vaccine_clinic_id?: string | null
@@ -689,10 +677,10 @@ export type Database = {
           description: string | null
           expires_at: string | null
           id: string
-          is_active: boolean | null
-          max_uses: number | null
+          is_active: boolean
+          max_uses: number
           used_by: string[] | null
-          used_count: number | null
+          used_count: number
         }
         Insert: {
           code: string
@@ -701,10 +689,10 @@ export type Database = {
           description?: string | null
           expires_at?: string | null
           id?: string
-          is_active?: boolean | null
-          max_uses?: number | null
+          is_active?: boolean
+          max_uses?: number
           used_by?: string[] | null
-          used_count?: number | null
+          used_count?: number
         }
         Update: {
           code?: string
@@ -713,10 +701,10 @@ export type Database = {
           description?: string | null
           expires_at?: string | null
           id?: string
-          is_active?: boolean | null
-          max_uses?: number | null
+          is_active?: boolean
+          max_uses?: number
           used_by?: string[] | null
-          used_count?: number | null
+          used_count?: number
         }
         Relationships: [
           {
@@ -838,11 +826,11 @@ export type Database = {
           id: string
           message_content: string
           name: string
-          recipients_count: number | null
+          recipients_count: number
           scheduled_for: string | null
           sent_at: string | null
           status: string | null
-          success_count: number | null
+          success_count: number
           target_segment: Json | null
           type: string
           updated_at: string | null
@@ -854,11 +842,11 @@ export type Database = {
           id?: string
           message_content: string
           name: string
-          recipients_count?: number | null
+          recipients_count?: number
           scheduled_for?: string | null
           sent_at?: string | null
           status?: string | null
-          success_count?: number | null
+          success_count?: number
           target_segment?: Json | null
           type: string
           updated_at?: string | null
@@ -870,11 +858,11 @@ export type Database = {
           id?: string
           message_content?: string
           name?: string
-          recipients_count?: number | null
+          recipients_count?: number
           scheduled_for?: string | null
           sent_at?: string | null
           status?: string | null
-          success_count?: number | null
+          success_count?: number
           target_segment?: Json | null
           type?: string
           updated_at?: string | null
@@ -912,7 +900,7 @@ export type Database = {
           fixes: string[] | null
           id: string
           improvements: string[] | null
-          is_published: boolean | null
+          is_published: boolean
           release_date: string
           summary: string | null
           title: string
@@ -926,7 +914,7 @@ export type Database = {
           fixes?: string[] | null
           id?: string
           improvements?: string[] | null
-          is_published?: boolean | null
+          is_published?: boolean
           release_date: string
           summary?: string | null
           title: string
@@ -940,7 +928,7 @@ export type Database = {
           fixes?: string[] | null
           id?: string
           improvements?: string[] | null
-          is_published?: boolean | null
+          is_published?: boolean
           release_date?: string
           summary?: string | null
           title?: string
@@ -1029,19 +1017,19 @@ export type Database = {
           closed_at: string | null
           created_at: string
           id: string
-          is_archived: boolean | null
-          is_pinned: boolean | null
+          is_archived: boolean
+          is_pinned: boolean
           last_message: string | null
           last_message_at: string | null
           last_message_by: string | null
           patient_id: string
-          patient_unread_count: number | null
+          patient_unread_count: number
           priority: string
           specialist_id: string
-          specialist_unread_count: number | null
+          specialist_unread_count: number
           status: string
           tags: string[] | null
-          total_messages: number | null
+          total_messages: number
           updated_at: string
         }
         Insert: {
@@ -1049,19 +1037,19 @@ export type Database = {
           closed_at?: string | null
           created_at?: string
           id?: string
-          is_archived?: boolean | null
-          is_pinned?: boolean | null
+          is_archived?: boolean
+          is_pinned?: boolean
           last_message?: string | null
           last_message_at?: string | null
           last_message_by?: string | null
           patient_id: string
-          patient_unread_count?: number | null
+          patient_unread_count?: number
           priority?: string
           specialist_id: string
-          specialist_unread_count?: number | null
+          specialist_unread_count?: number
           status?: string
           tags?: string[] | null
-          total_messages?: number | null
+          total_messages?: number
           updated_at?: string
         }
         Update: {
@@ -1069,19 +1057,19 @@ export type Database = {
           closed_at?: string | null
           created_at?: string
           id?: string
-          is_archived?: boolean | null
-          is_pinned?: boolean | null
+          is_archived?: boolean
+          is_pinned?: boolean
           last_message?: string | null
           last_message_at?: string | null
           last_message_by?: string | null
           patient_id?: string
-          patient_unread_count?: number | null
+          patient_unread_count?: number
           priority?: string
           specialist_id?: string
-          specialist_unread_count?: number | null
+          specialist_unread_count?: number
           status?: string
           tags?: string[] | null
-          total_messages?: number | null
+          total_messages?: number
           updated_at?: string
         }
         Relationships: [
@@ -1187,7 +1175,7 @@ export type Database = {
           created_at: string | null
           id: string
           image_url: string | null
-          is_read: boolean | null
+          is_read: boolean
           message_type: string
           read_at: string | null
           sender_id: string
@@ -1201,7 +1189,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           image_url?: string | null
-          is_read?: boolean | null
+          is_read?: boolean
           message_type?: string
           read_at?: string | null
           sender_id: string
@@ -1215,7 +1203,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           image_url?: string | null
-          is_read?: boolean | null
+          is_read?: boolean
           message_type?: string
           read_at?: string | null
           sender_id?: string
@@ -1260,12 +1248,12 @@ export type Database = {
           created_at: string | null
           doctor_id: string | null
           doctor_user_id: string | null
-          expected_response_hours: number | null
+          expected_response_hours: number
           family_member_id: string | null
           id: string
-          is_free: boolean | null
+          is_free: boolean
           patient_user_id: string
-          price: number | null
+          price: number
           responded_at: string | null
           shared_medical_data: Json | null
           status: string
@@ -1280,12 +1268,12 @@ export type Database = {
           created_at?: string | null
           doctor_id?: string | null
           doctor_user_id?: string | null
-          expected_response_hours?: number | null
+          expected_response_hours?: number
           family_member_id?: string | null
           id?: string
-          is_free?: boolean | null
+          is_free?: boolean
           patient_user_id: string
-          price?: number | null
+          price?: number
           responded_at?: string | null
           shared_medical_data?: Json | null
           status?: string
@@ -1300,12 +1288,12 @@ export type Database = {
           created_at?: string | null
           doctor_id?: string | null
           doctor_user_id?: string | null
-          expected_response_hours?: number | null
+          expected_response_hours?: number
           family_member_id?: string | null
           id?: string
-          is_free?: boolean | null
+          is_free?: boolean
           patient_user_id?: string
-          price?: number | null
+          price?: number
           responded_at?: string | null
           shared_medical_data?: Json | null
           status?: string
@@ -1391,52 +1379,52 @@ export type Database = {
           comment: string | null
           created_at: string
           effectiveness_rating: number | null
-          helpful_count: number | null
+          helpful_count: number
           id: string
           image_url: string | null
           is_public: boolean
-          is_verified_purchase: boolean | null
+          is_verified_purchase: boolean
           product_id: string
           rating: number
           scent_rating: number | null
           title: string | null
           user_id: string
           value_rating: number | null
-          would_recommend: boolean | null
+          would_recommend: boolean
         }
         Insert: {
           comment?: string | null
           created_at?: string
           effectiveness_rating?: number | null
-          helpful_count?: number | null
+          helpful_count?: number
           id?: string
           image_url?: string | null
           is_public?: boolean
-          is_verified_purchase?: boolean | null
+          is_verified_purchase?: boolean
           product_id: string
           rating: number
           scent_rating?: number | null
           title?: string | null
           user_id: string
           value_rating?: number | null
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Update: {
           comment?: string | null
           created_at?: string
           effectiveness_rating?: number | null
-          helpful_count?: number | null
+          helpful_count?: number
           id?: string
           image_url?: string | null
           is_public?: boolean
-          is_verified_purchase?: boolean | null
+          is_verified_purchase?: boolean
           product_id?: string
           rating?: number
           scent_rating?: number | null
           title?: string | null
           user_id?: string
           value_rating?: number | null
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Relationships: [
           {
@@ -1482,14 +1470,14 @@ export type Database = {
           image_emoji: string | null
           image_url: string | null
           ingredients: string | null
-          is_active: boolean | null
-          is_in_stock: boolean | null
-          is_recommended: boolean | null
+          is_active: boolean
+          is_in_stock: boolean
+          is_recommended: boolean
           name: string
           name_en: string | null
           price: number
-          rating_avg: number | null
-          rating_count: number | null
+          rating_avg: number
+          rating_count: number
           recommendation_note: string | null
           stock_quantity: number | null
           updated_at: string | null
@@ -1507,14 +1495,14 @@ export type Database = {
           image_emoji?: string | null
           image_url?: string | null
           ingredients?: string | null
-          is_active?: boolean | null
-          is_in_stock?: boolean | null
-          is_recommended?: boolean | null
+          is_active?: boolean
+          is_in_stock?: boolean
+          is_recommended?: boolean
           name: string
           name_en?: string | null
           price?: number
-          rating_avg?: number | null
-          rating_count?: number | null
+          rating_avg?: number
+          rating_count?: number
           recommendation_note?: string | null
           stock_quantity?: number | null
           updated_at?: string | null
@@ -1532,14 +1520,14 @@ export type Database = {
           image_emoji?: string | null
           image_url?: string | null
           ingredients?: string | null
-          is_active?: boolean | null
-          is_in_stock?: boolean | null
-          is_recommended?: boolean | null
+          is_active?: boolean
+          is_in_stock?: boolean
+          is_recommended?: boolean
           name?: string
           name_en?: string | null
           price?: number
-          rating_avg?: number | null
-          rating_count?: number | null
+          rating_avg?: number
+          rating_count?: number
           recommendation_note?: string | null
           stock_quantity?: number | null
           updated_at?: string | null
@@ -1697,14 +1685,14 @@ export type Database = {
           description: string | null
           discount_type: string
           discount_value: number
-          first_order_only: boolean | null
+          first_order_only: boolean
           id: string
-          is_active: boolean | null
+          is_active: boolean
           max_discount_amount: number | null
           max_uses: number | null
-          min_order_amount: number | null
-          per_user_limit: number | null
-          used_count: number | null
+          min_order_amount: number
+          per_user_limit: number
+          used_count: number
           valid_from: string | null
           valid_until: string | null
         }
@@ -1717,14 +1705,14 @@ export type Database = {
           description?: string | null
           discount_type: string
           discount_value: number
-          first_order_only?: boolean | null
+          first_order_only?: boolean
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           max_discount_amount?: number | null
           max_uses?: number | null
-          min_order_amount?: number | null
-          per_user_limit?: number | null
-          used_count?: number | null
+          min_order_amount?: number
+          per_user_limit?: number
+          used_count?: number
           valid_from?: string | null
           valid_until?: string | null
         }
@@ -1737,14 +1725,14 @@ export type Database = {
           description?: string | null
           discount_type?: string
           discount_value?: number
-          first_order_only?: boolean | null
+          first_order_only?: boolean
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           max_discount_amount?: number | null
           max_uses?: number | null
-          min_order_amount?: number | null
-          per_user_limit?: number | null
-          used_count?: number | null
+          min_order_amount?: number
+          per_user_limit?: number
+          used_count?: number
           valid_from?: string | null
           valid_until?: string | null
         }
@@ -1774,7 +1762,7 @@ export type Database = {
       }
       dental_clinics: {
         Row: {
-          accepts_insurance: boolean | null
+          accepts_insurance: boolean
           address: string | null
           city: string
           cleaning_price_max: number | null
@@ -1782,7 +1770,7 @@ export type Database = {
           created_at: string | null
           description: string | null
           district: string | null
-          doctor_count: number | null
+          doctor_count: number
           doctor_names: string[] | null
           extraction_price_max: number | null
           extraction_price_min: number | null
@@ -1792,32 +1780,32 @@ export type Database = {
           implant_price_max: number | null
           implant_price_min: number | null
           insurance_providers: string[] | null
-          is_active: boolean | null
-          is_featured: boolean | null
-          is_open_24h: boolean | null
-          is_verified: boolean | null
+          is_active: boolean
+          is_featured: boolean
+          is_open_24h: boolean
+          is_verified: boolean
           latitude: number | null
           longitude: number | null
           name: string
-          offers_cleaning: boolean | null
-          offers_cosmetic: boolean | null
-          offers_emergency: boolean | null
-          offers_extraction: boolean | null
-          offers_fillings: boolean | null
-          offers_implants: boolean | null
-          offers_orthodontics: boolean | null
-          offers_pediatric: boolean | null
-          offers_whitening: boolean | null
+          offers_cleaning: boolean
+          offers_cosmetic: boolean
+          offers_emergency: boolean
+          offers_extraction: boolean
+          offers_fillings: boolean
+          offers_implants: boolean
+          offers_orthodontics: boolean
+          offers_pediatric: boolean
+          offers_whitening: boolean
           phone: string | null
-          rating_avg: number | null
-          rating_count: number | null
+          rating_avg: number
+          rating_count: number
           specialties: string[] | null
           updated_at: string | null
           whatsapp: string | null
           working_hours: string | null
         }
         Insert: {
-          accepts_insurance?: boolean | null
+          accepts_insurance?: boolean
           address?: string | null
           city: string
           cleaning_price_max?: number | null
@@ -1825,7 +1813,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           district?: string | null
-          doctor_count?: number | null
+          doctor_count?: number
           doctor_names?: string[] | null
           extraction_price_max?: number | null
           extraction_price_min?: number | null
@@ -1835,32 +1823,32 @@ export type Database = {
           implant_price_max?: number | null
           implant_price_min?: number | null
           insurance_providers?: string[] | null
-          is_active?: boolean | null
-          is_featured?: boolean | null
-          is_open_24h?: boolean | null
-          is_verified?: boolean | null
+          is_active?: boolean
+          is_featured?: boolean
+          is_open_24h?: boolean
+          is_verified?: boolean
           latitude?: number | null
           longitude?: number | null
           name: string
-          offers_cleaning?: boolean | null
-          offers_cosmetic?: boolean | null
-          offers_emergency?: boolean | null
-          offers_extraction?: boolean | null
-          offers_fillings?: boolean | null
-          offers_implants?: boolean | null
-          offers_orthodontics?: boolean | null
-          offers_pediatric?: boolean | null
-          offers_whitening?: boolean | null
+          offers_cleaning?: boolean
+          offers_cosmetic?: boolean
+          offers_emergency?: boolean
+          offers_extraction?: boolean
+          offers_fillings?: boolean
+          offers_implants?: boolean
+          offers_orthodontics?: boolean
+          offers_pediatric?: boolean
+          offers_whitening?: boolean
           phone?: string | null
-          rating_avg?: number | null
-          rating_count?: number | null
+          rating_avg?: number
+          rating_count?: number
           specialties?: string[] | null
           updated_at?: string | null
           whatsapp?: string | null
           working_hours?: string | null
         }
         Update: {
-          accepts_insurance?: boolean | null
+          accepts_insurance?: boolean
           address?: string | null
           city?: string
           cleaning_price_max?: number | null
@@ -1868,7 +1856,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           district?: string | null
-          doctor_count?: number | null
+          doctor_count?: number
           doctor_names?: string[] | null
           extraction_price_max?: number | null
           extraction_price_min?: number | null
@@ -1878,25 +1866,25 @@ export type Database = {
           implant_price_max?: number | null
           implant_price_min?: number | null
           insurance_providers?: string[] | null
-          is_active?: boolean | null
-          is_featured?: boolean | null
-          is_open_24h?: boolean | null
-          is_verified?: boolean | null
+          is_active?: boolean
+          is_featured?: boolean
+          is_open_24h?: boolean
+          is_verified?: boolean
           latitude?: number | null
           longitude?: number | null
           name?: string
-          offers_cleaning?: boolean | null
-          offers_cosmetic?: boolean | null
-          offers_emergency?: boolean | null
-          offers_extraction?: boolean | null
-          offers_fillings?: boolean | null
-          offers_implants?: boolean | null
-          offers_orthodontics?: boolean | null
-          offers_pediatric?: boolean | null
-          offers_whitening?: boolean | null
+          offers_cleaning?: boolean
+          offers_cosmetic?: boolean
+          offers_emergency?: boolean
+          offers_extraction?: boolean
+          offers_fillings?: boolean
+          offers_implants?: boolean
+          offers_orthodontics?: boolean
+          offers_pediatric?: boolean
+          offers_whitening?: boolean
           phone?: string | null
-          rating_avg?: number | null
-          rating_count?: number | null
+          rating_avg?: number
+          rating_count?: number
           specialties?: string[] | null
           updated_at?: string | null
           whatsapp?: string | null
@@ -1919,7 +1907,7 @@ export type Database = {
           procedure_type: string | null
           rating: number
           user_id: string
-          would_recommend: boolean | null
+          would_recommend: boolean
         }
         Insert: {
           appointment_id?: string | null
@@ -1935,7 +1923,7 @@ export type Database = {
           procedure_type?: string | null
           rating: number
           user_id: string
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Update: {
           appointment_id?: string | null
@@ -1951,7 +1939,7 @@ export type Database = {
           procedure_type?: string | null
           rating?: number
           user_id?: string
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Relationships: [
           {
@@ -2029,7 +2017,7 @@ export type Database = {
           punctuality_rating: number | null
           rating: number
           user_id: string
-          would_recommend: boolean | null
+          would_recommend: boolean
         }
         Insert: {
           appointment_id?: string | null
@@ -2047,7 +2035,7 @@ export type Database = {
           punctuality_rating?: number | null
           rating: number
           user_id: string
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Update: {
           appointment_id?: string | null
@@ -2065,7 +2053,7 @@ export type Database = {
           punctuality_rating?: number | null
           rating?: number
           user_id?: string
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Relationships: [
           {
@@ -2143,7 +2131,7 @@ export type Database = {
       doctor_subscriptions: {
         Row: {
           cancelled_at: string | null
-          consultations_used: number | null
+          consultations_used: number
           created_at: string | null
           doctor_id: string
           expires_at: string
@@ -2155,11 +2143,11 @@ export type Database = {
           status: string
           updated_at: string | null
           user_id: string
-          visits_used: number | null
+          visits_used: number
         }
         Insert: {
           cancelled_at?: string | null
-          consultations_used?: number | null
+          consultations_used?: number
           created_at?: string | null
           doctor_id: string
           expires_at: string
@@ -2171,11 +2159,11 @@ export type Database = {
           status?: string
           updated_at?: string | null
           user_id: string
-          visits_used?: number | null
+          visits_used?: number
         }
         Update: {
           cancelled_at?: string | null
-          consultations_used?: number | null
+          consultations_used?: number
           created_at?: string | null
           doctor_id?: string
           expires_at?: string
@@ -2187,7 +2175,7 @@ export type Database = {
           status?: string
           updated_at?: string | null
           user_id?: string
-          visits_used?: number | null
+          visits_used?: number
         }
         Relationships: [
           {
@@ -2236,9 +2224,9 @@ export type Database = {
       }
       doctors: {
         Row: {
-          available_for_clinic: boolean | null
-          available_for_home_visit: boolean | null
-          available_for_video: boolean | null
+          available_for_clinic: boolean
+          available_for_home_visit: boolean
+          available_for_video: boolean
           avatar_url: string | null
           bio: string | null
           certifications_url: string | null
@@ -2254,13 +2242,13 @@ export type Database = {
           gender: string | null
           home_visit_price: number | null
           id: string
-          is_active: boolean | null
-          is_verified: boolean | null
+          is_active: boolean
+          is_verified: boolean
           languages: string[] | null
           monthly_subscription_price: number | null
           qualifications: string[] | null
-          rating_avg: number | null
-          rating_count: number | null
+          rating_avg: number
+          rating_count: number
           specialty: string
           sub_specialty: string | null
           title: string | null
@@ -2269,12 +2257,12 @@ export type Database = {
           verified_at: string | null
           video_consult_price: number | null
           yearly_subscription_price: number | null
-          years_experience: number | null
+          years_experience: number
         }
         Insert: {
-          available_for_clinic?: boolean | null
-          available_for_home_visit?: boolean | null
-          available_for_video?: boolean | null
+          available_for_clinic?: boolean
+          available_for_home_visit?: boolean
+          available_for_video?: boolean
           avatar_url?: string | null
           bio?: string | null
           certifications_url?: string | null
@@ -2290,13 +2278,13 @@ export type Database = {
           gender?: string | null
           home_visit_price?: number | null
           id?: string
-          is_active?: boolean | null
-          is_verified?: boolean | null
+          is_active?: boolean
+          is_verified?: boolean
           languages?: string[] | null
           monthly_subscription_price?: number | null
           qualifications?: string[] | null
-          rating_avg?: number | null
-          rating_count?: number | null
+          rating_avg?: number
+          rating_count?: number
           specialty: string
           sub_specialty?: string | null
           title?: string | null
@@ -2305,12 +2293,12 @@ export type Database = {
           verified_at?: string | null
           video_consult_price?: number | null
           yearly_subscription_price?: number | null
-          years_experience?: number | null
+          years_experience?: number
         }
         Update: {
-          available_for_clinic?: boolean | null
-          available_for_home_visit?: boolean | null
-          available_for_video?: boolean | null
+          available_for_clinic?: boolean
+          available_for_home_visit?: boolean
+          available_for_video?: boolean
           avatar_url?: string | null
           bio?: string | null
           certifications_url?: string | null
@@ -2326,13 +2314,13 @@ export type Database = {
           gender?: string | null
           home_visit_price?: number | null
           id?: string
-          is_active?: boolean | null
-          is_verified?: boolean | null
+          is_active?: boolean
+          is_verified?: boolean
           languages?: string[] | null
           monthly_subscription_price?: number | null
           qualifications?: string[] | null
-          rating_avg?: number | null
-          rating_count?: number | null
+          rating_avg?: number
+          rating_count?: number
           specialty?: string
           sub_specialty?: string | null
           title?: string | null
@@ -2341,7 +2329,7 @@ export type Database = {
           verified_at?: string | null
           video_consult_price?: number | null
           yearly_subscription_price?: number | null
-          years_experience?: number | null
+          years_experience?: number
         }
         Relationships: [
           {
@@ -2429,7 +2417,7 @@ export type Database = {
           gender: string | null
           height_cm: number | null
           id: string
-          is_active: boolean | null
+          is_active: boolean
           notes: string | null
           owner_user_id: string
           phone: string | null
@@ -2449,7 +2437,7 @@ export type Database = {
           gender?: string | null
           height_cm?: number | null
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           notes?: string | null
           owner_user_id: string
           phone?: string | null
@@ -2469,7 +2457,7 @@ export type Database = {
           gender?: string | null
           height_cm?: number | null
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           notes?: string | null
           owner_user_id?: string
           phone?: string | null
@@ -2508,7 +2496,7 @@ export type Database = {
           created_at: string | null
           display_name: string
           governorate: string | null
-          hit_count: number | null
+          hit_count: number
           id: string
           last_used_at: string | null
           lat_rounded: number
@@ -2523,7 +2511,7 @@ export type Database = {
           created_at?: string | null
           display_name: string
           governorate?: string | null
-          hit_count?: number | null
+          hit_count?: number
           id?: string
           last_used_at?: string | null
           lat_rounded: number
@@ -2538,7 +2526,7 @@ export type Database = {
           created_at?: string | null
           display_name?: string
           governorate?: string | null
-          hit_count?: number | null
+          hit_count?: number
           id?: string
           last_used_at?: string | null
           lat_rounded?: number
@@ -2619,7 +2607,7 @@ export type Database = {
           staff_rating: number | null
           user_id: string
           wait_time_rating: number | null
-          would_recommend: boolean | null
+          would_recommend: boolean
         }
         Insert: {
           appointment_id?: string | null
@@ -2635,7 +2623,7 @@ export type Database = {
           staff_rating?: number | null
           user_id: string
           wait_time_rating?: number | null
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Update: {
           appointment_id?: string | null
@@ -2651,7 +2639,7 @@ export type Database = {
           staff_rating?: number | null
           user_id?: string
           wait_time_rating?: number | null
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Relationships: [
           {
@@ -2723,16 +2711,16 @@ export type Database = {
           description: string | null
           district: string | null
           email: string | null
-          has_ambulance: boolean | null
-          has_emergency: boolean | null
-          has_lab: boolean | null
-          has_pharmacy: boolean | null
-          has_radiology: boolean | null
+          has_ambulance: boolean
+          has_emergency: boolean
+          has_lab: boolean
+          has_pharmacy: boolean
+          has_radiology: boolean
           icu_beds_count: number | null
           id: string
-          is_24h: boolean | null
-          is_active: boolean | null
-          is_verified: boolean | null
+          is_24h: boolean
+          is_active: boolean
+          is_verified: boolean
           latitude: number | null
           logo_url: string | null
           longitude: number | null
@@ -2740,8 +2728,8 @@ export type Database = {
           name_en: string | null
           phone: string | null
           phone_emergency: string | null
-          rating_avg: number | null
-          rating_count: number | null
+          rating_avg: number
+          rating_count: number
           type: string
           updated_at: string | null
           visiting_hours: string | null
@@ -2758,16 +2746,16 @@ export type Database = {
           description?: string | null
           district?: string | null
           email?: string | null
-          has_ambulance?: boolean | null
-          has_emergency?: boolean | null
-          has_lab?: boolean | null
-          has_pharmacy?: boolean | null
-          has_radiology?: boolean | null
+          has_ambulance?: boolean
+          has_emergency?: boolean
+          has_lab?: boolean
+          has_pharmacy?: boolean
+          has_radiology?: boolean
           icu_beds_count?: number | null
           id?: string
-          is_24h?: boolean | null
-          is_active?: boolean | null
-          is_verified?: boolean | null
+          is_24h?: boolean
+          is_active?: boolean
+          is_verified?: boolean
           latitude?: number | null
           logo_url?: string | null
           longitude?: number | null
@@ -2775,8 +2763,8 @@ export type Database = {
           name_en?: string | null
           phone?: string | null
           phone_emergency?: string | null
-          rating_avg?: number | null
-          rating_count?: number | null
+          rating_avg?: number
+          rating_count?: number
           type: string
           updated_at?: string | null
           visiting_hours?: string | null
@@ -2793,16 +2781,16 @@ export type Database = {
           description?: string | null
           district?: string | null
           email?: string | null
-          has_ambulance?: boolean | null
-          has_emergency?: boolean | null
-          has_lab?: boolean | null
-          has_pharmacy?: boolean | null
-          has_radiology?: boolean | null
+          has_ambulance?: boolean
+          has_emergency?: boolean
+          has_lab?: boolean
+          has_pharmacy?: boolean
+          has_radiology?: boolean
           icu_beds_count?: number | null
           id?: string
-          is_24h?: boolean | null
-          is_active?: boolean | null
-          is_verified?: boolean | null
+          is_24h?: boolean
+          is_active?: boolean
+          is_verified?: boolean
           latitude?: number | null
           logo_url?: string | null
           longitude?: number | null
@@ -2810,8 +2798,8 @@ export type Database = {
           name_en?: string | null
           phone?: string | null
           phone_emergency?: string | null
-          rating_avg?: number | null
-          rating_count?: number | null
+          rating_avg?: number
+          rating_count?: number
           type?: string
           updated_at?: string | null
           visiting_hours?: string | null
@@ -2879,7 +2867,7 @@ export type Database = {
           expected_result_at: string | null
           family_member_id: string | null
           fasting_confirmed: boolean
-          fasting_hours: number | null
+          fasting_hours: number
           id: string
           internal_notes: string | null
           lab_name_snapshot: string | null
@@ -2905,7 +2893,7 @@ export type Database = {
           expected_result_at?: string | null
           family_member_id?: string | null
           fasting_confirmed?: boolean
-          fasting_hours?: number | null
+          fasting_hours?: number
           id?: string
           internal_notes?: string | null
           lab_name_snapshot?: string | null
@@ -2931,7 +2919,7 @@ export type Database = {
           expected_result_at?: string | null
           family_member_id?: string | null
           fasting_confirmed?: boolean
-          fasting_hours?: number | null
+          fasting_hours?: number
           id?: string
           internal_notes?: string | null
           lab_name_snapshot?: string | null
@@ -3181,9 +3169,9 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: string
-          is_completed: boolean | null
+          is_completed: boolean
           notes: string | null
-          order_index: number | null
+          order_index: number
           priority: string
           title: string
           updated_at: string | null
@@ -3195,9 +3183,9 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
-          is_completed?: boolean | null
+          is_completed?: boolean
           notes?: string | null
-          order_index?: number | null
+          order_index?: number
           priority?: string
           title: string
           updated_at?: string | null
@@ -3209,9 +3197,9 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
-          is_completed?: boolean | null
+          is_completed?: boolean
           notes?: string | null
-          order_index?: number | null
+          order_index?: number
           priority?: string
           title?: string
           updated_at?: string | null
@@ -3246,14 +3234,14 @@ export type Database = {
           badge_icon: string | null
           created_at: string | null
           description_ar: string | null
-          discount_percent: number | null
-          free_consultations_per_month: number | null
-          free_delivery: boolean | null
+          discount_percent: number
+          free_consultations_per_month: number
+          free_delivery: boolean
           id: string
-          is_active: boolean | null
+          is_active: boolean
           min_points: number
           name_ar: string
-          priority_support: boolean | null
+          priority_support: boolean
           tier: string
         }
         Insert: {
@@ -3261,14 +3249,14 @@ export type Database = {
           badge_icon?: string | null
           created_at?: string | null
           description_ar?: string | null
-          discount_percent?: number | null
-          free_consultations_per_month?: number | null
-          free_delivery?: boolean | null
+          discount_percent?: number
+          free_consultations_per_month?: number
+          free_delivery?: boolean
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           min_points: number
           name_ar: string
-          priority_support?: boolean | null
+          priority_support?: boolean
           tier: string
         }
         Update: {
@@ -3276,14 +3264,14 @@ export type Database = {
           badge_icon?: string | null
           created_at?: string | null
           description_ar?: string | null
-          discount_percent?: number | null
-          free_consultations_per_month?: number | null
-          free_delivery?: boolean | null
+          discount_percent?: number
+          free_consultations_per_month?: number
+          free_delivery?: boolean
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           min_points?: number
           name_ar?: string
-          priority_support?: boolean | null
+          priority_support?: boolean
           tier?: string
         }
         Relationships: []
@@ -3292,33 +3280,33 @@ export type Database = {
         Row: {
           city_filter: string | null
           created_at: string | null
-          found_any_available: boolean | null
+          found_any_available: boolean
           id: string
           ip_country: string | null
           medication_id: string | null
-          results_count: number | null
+          results_count: number
           search_query: string
           user_id: string | null
         }
         Insert: {
           city_filter?: string | null
           created_at?: string | null
-          found_any_available?: boolean | null
+          found_any_available?: boolean
           id?: string
           ip_country?: string | null
           medication_id?: string | null
-          results_count?: number | null
+          results_count?: number
           search_query: string
           user_id?: string | null
         }
         Update: {
           city_filter?: string | null
           created_at?: string | null
-          found_any_available?: boolean | null
+          found_any_available?: boolean
           id?: string
           ip_country?: string | null
           medication_id?: string | null
-          results_count?: number | null
+          results_count?: number
           search_query?: string
           user_id?: string | null
         }
@@ -3370,12 +3358,12 @@ export type Database = {
           generic_name: string | null
           id: string
           image_url: string | null
-          is_controlled: boolean | null
+          is_controlled: boolean
           manufacturer: string | null
           name_ar: string
           name_en: string | null
           package_size: string | null
-          requires_prescription: boolean | null
+          requires_prescription: boolean
           search_keywords: string[] | null
           side_effects: string | null
           storage_notes: string | null
@@ -3392,12 +3380,12 @@ export type Database = {
           generic_name?: string | null
           id?: string
           image_url?: string | null
-          is_controlled?: boolean | null
+          is_controlled?: boolean
           manufacturer?: string | null
           name_ar: string
           name_en?: string | null
           package_size?: string | null
-          requires_prescription?: boolean | null
+          requires_prescription?: boolean
           search_keywords?: string[] | null
           side_effects?: string | null
           storage_notes?: string | null
@@ -3414,12 +3402,12 @@ export type Database = {
           generic_name?: string | null
           id?: string
           image_url?: string | null
-          is_controlled?: boolean | null
+          is_controlled?: boolean
           manufacturer?: string | null
           name_ar?: string
           name_en?: string | null
           package_size?: string | null
-          requires_prescription?: boolean | null
+          requires_prescription?: boolean
           search_keywords?: string[] | null
           side_effects?: string | null
           storage_notes?: string | null
@@ -3444,7 +3432,7 @@ export type Database = {
           session_type: string | null
           specialist_id: string
           user_id: string
-          would_recommend: boolean | null
+          would_recommend: boolean
         }
         Insert: {
           appointment_id?: string | null
@@ -3460,7 +3448,7 @@ export type Database = {
           session_type?: string | null
           specialist_id: string
           user_id: string
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Update: {
           appointment_id?: string | null
@@ -3476,7 +3464,7 @@ export type Database = {
           session_type?: string | null
           specialist_id?: string
           user_id?: string
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Relationships: [
           {
@@ -3539,10 +3527,10 @@ export type Database = {
       }
       mental_health_specialists: {
         Row: {
-          accepts_emergency: boolean | null
+          accepts_emergency: boolean
           address: string | null
-          available_in_clinic: boolean | null
-          available_online: boolean | null
+          available_in_clinic: boolean
+          available_online: boolean
           bio: string | null
           certifications: string[] | null
           cities: string[] | null
@@ -3555,29 +3543,29 @@ export type Database = {
           full_name: string
           gender: string | null
           id: string
-          is_active: boolean | null
-          is_verified: boolean | null
+          is_active: boolean
+          is_verified: boolean
           languages: string[] | null
           latitude: number | null
           longitude: number | null
           online_session_price: number | null
           photo_url: string | null
-          rating_avg: number | null
-          rating_count: number | null
-          session_duration_minutes: number | null
+          rating_avg: number
+          rating_count: number
+          session_duration_minutes: number
           specialist_type: string
           specialties: string[] | null
           title: string
-          total_sessions: number | null
+          total_sessions: number
           updated_at: string | null
           user_id: string | null
-          years_experience: number | null
+          years_experience: number
         }
         Insert: {
-          accepts_emergency?: boolean | null
+          accepts_emergency?: boolean
           address?: string | null
-          available_in_clinic?: boolean | null
-          available_online?: boolean | null
+          available_in_clinic?: boolean
+          available_online?: boolean
           bio?: string | null
           certifications?: string[] | null
           cities?: string[] | null
@@ -3590,29 +3578,29 @@ export type Database = {
           full_name: string
           gender?: string | null
           id?: string
-          is_active?: boolean | null
-          is_verified?: boolean | null
+          is_active?: boolean
+          is_verified?: boolean
           languages?: string[] | null
           latitude?: number | null
           longitude?: number | null
           online_session_price?: number | null
           photo_url?: string | null
-          rating_avg?: number | null
-          rating_count?: number | null
-          session_duration_minutes?: number | null
+          rating_avg?: number
+          rating_count?: number
+          session_duration_minutes?: number
           specialist_type: string
           specialties?: string[] | null
           title?: string
-          total_sessions?: number | null
+          total_sessions?: number
           updated_at?: string | null
           user_id?: string | null
-          years_experience?: number | null
+          years_experience?: number
         }
         Update: {
-          accepts_emergency?: boolean | null
+          accepts_emergency?: boolean
           address?: string | null
-          available_in_clinic?: boolean | null
-          available_online?: boolean | null
+          available_in_clinic?: boolean
+          available_online?: boolean
           bio?: string | null
           certifications?: string[] | null
           cities?: string[] | null
@@ -3625,23 +3613,23 @@ export type Database = {
           full_name?: string
           gender?: string | null
           id?: string
-          is_active?: boolean | null
-          is_verified?: boolean | null
+          is_active?: boolean
+          is_verified?: boolean
           languages?: string[] | null
           latitude?: number | null
           longitude?: number | null
           online_session_price?: number | null
           photo_url?: string | null
-          rating_avg?: number | null
-          rating_count?: number | null
-          session_duration_minutes?: number | null
+          rating_avg?: number
+          rating_count?: number
+          session_duration_minutes?: number
           specialist_type?: string
           specialties?: string[] | null
           title?: string
-          total_sessions?: number | null
+          total_sessions?: number
           updated_at?: string | null
           user_id?: string | null
-          years_experience?: number | null
+          years_experience?: number
         }
         Relationships: [
           {
@@ -3677,9 +3665,9 @@ export type Database = {
           created_at: string
           edited_at: string | null
           id: string
-          is_deleted: boolean | null
-          is_edited: boolean | null
-          is_read: boolean | null
+          is_deleted: boolean
+          is_edited: boolean
+          is_read: boolean
           read_at: string | null
           reply_to_id: string | null
           sender_id: string
@@ -3694,9 +3682,9 @@ export type Database = {
           created_at?: string
           edited_at?: string | null
           id?: string
-          is_deleted?: boolean | null
-          is_edited?: boolean | null
-          is_read?: boolean | null
+          is_deleted?: boolean
+          is_edited?: boolean
+          is_read?: boolean
           read_at?: string | null
           reply_to_id?: string | null
           sender_id: string
@@ -3711,9 +3699,9 @@ export type Database = {
           created_at?: string
           edited_at?: string | null
           id?: string
-          is_deleted?: boolean | null
-          is_edited?: boolean | null
-          is_read?: boolean | null
+          is_deleted?: boolean
+          is_edited?: boolean
+          is_read?: boolean
           read_at?: string | null
           reply_to_id?: string | null
           sender_id?: string
@@ -3798,38 +3786,38 @@ export type Database = {
       }
       notification_preferences: {
         Row: {
-          appointment_reminders: boolean | null
-          messages: boolean | null
-          promotions: boolean | null
-          quiet_hours_enabled: boolean | null
+          appointment_reminders: boolean
+          messages: boolean
+          promotions: boolean
+          quiet_hours_enabled: boolean
           quiet_hours_end: string | null
           quiet_hours_start: string | null
-          system_updates: boolean | null
-          test_results: boolean | null
+          system_updates: boolean
+          test_results: boolean
           updated_at: string | null
           user_id: string
         }
         Insert: {
-          appointment_reminders?: boolean | null
-          messages?: boolean | null
-          promotions?: boolean | null
-          quiet_hours_enabled?: boolean | null
+          appointment_reminders?: boolean
+          messages?: boolean
+          promotions?: boolean
+          quiet_hours_enabled?: boolean
           quiet_hours_end?: string | null
           quiet_hours_start?: string | null
-          system_updates?: boolean | null
-          test_results?: boolean | null
+          system_updates?: boolean
+          test_results?: boolean
           updated_at?: string | null
           user_id: string
         }
         Update: {
-          appointment_reminders?: boolean | null
-          messages?: boolean | null
-          promotions?: boolean | null
-          quiet_hours_enabled?: boolean | null
+          appointment_reminders?: boolean
+          messages?: boolean
+          promotions?: boolean
+          quiet_hours_enabled?: boolean
           quiet_hours_end?: string | null
           quiet_hours_start?: string | null
-          system_updates?: boolean | null
-          test_results?: boolean | null
+          system_updates?: boolean
+          test_results?: boolean
           updated_at?: string | null
           user_id?: string
         }
@@ -3859,7 +3847,7 @@ export type Database = {
       }
       notification_queue: {
         Row: {
-          attempts: number | null
+          attempts: number
           body: string
           channel: string
           created_at: string | null
@@ -3867,7 +3855,7 @@ export type Database = {
           error_message: string | null
           failed_at: string | null
           id: string
-          max_attempts: number | null
+          max_attempts: number
           provider: string | null
           provider_message_id: string | null
           recipient_phone: string
@@ -3880,7 +3868,7 @@ export type Database = {
           template_key: string | null
         }
         Insert: {
-          attempts?: number | null
+          attempts?: number
           body: string
           channel: string
           created_at?: string | null
@@ -3888,7 +3876,7 @@ export type Database = {
           error_message?: string | null
           failed_at?: string | null
           id?: string
-          max_attempts?: number | null
+          max_attempts?: number
           provider?: string | null
           provider_message_id?: string | null
           recipient_phone: string
@@ -3901,7 +3889,7 @@ export type Database = {
           template_key?: string | null
         }
         Update: {
-          attempts?: number | null
+          attempts?: number
           body?: string
           channel?: string
           created_at?: string | null
@@ -3909,7 +3897,7 @@ export type Database = {
           error_message?: string | null
           failed_at?: string | null
           id?: string
-          max_attempts?: number | null
+          max_attempts?: number
           provider?: string | null
           provider_message_id?: string | null
           recipient_phone?: string
@@ -3972,7 +3960,7 @@ export type Database = {
           channel: string
           created_at: string | null
           id: string
-          is_active: boolean | null
+          is_active: boolean
           key: string
           name_ar: string
           updated_at: string | null
@@ -3983,7 +3971,7 @@ export type Database = {
           channel: string
           created_at?: string | null
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           key: string
           name_ar: string
           updated_at?: string | null
@@ -3994,7 +3982,7 @@ export type Database = {
           channel?: string
           created_at?: string | null
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           key?: string
           name_ar?: string
           updated_at?: string | null
@@ -4067,8 +4055,8 @@ export type Database = {
         Row: {
           accuracy_m: number | null
           appointment_id: string | null
-          call_center_notified: boolean | null
-          contacted_911: boolean | null
+          call_center_notified: boolean
+          contacted_911: boolean
           created_at: string | null
           description: string | null
           id: string
@@ -4083,8 +4071,8 @@ export type Database = {
         Insert: {
           accuracy_m?: number | null
           appointment_id?: string | null
-          call_center_notified?: boolean | null
-          contacted_911?: boolean | null
+          call_center_notified?: boolean
+          contacted_911?: boolean
           created_at?: string | null
           description?: string | null
           id?: string
@@ -4099,8 +4087,8 @@ export type Database = {
         Update: {
           accuracy_m?: number | null
           appointment_id?: string | null
-          call_center_notified?: boolean | null
-          contacted_911?: boolean | null
+          call_center_notified?: boolean
+          contacted_911?: boolean
           created_at?: string | null
           description?: string | null
           id?: string
@@ -4179,7 +4167,7 @@ export type Database = {
           specialist_id: string
           user_id: string
           visit_id: string | null
-          would_recommend: boolean | null
+          would_recommend: boolean
         }
         Insert: {
           appointment_id?: string | null
@@ -4195,7 +4183,7 @@ export type Database = {
           specialist_id: string
           user_id: string
           visit_id?: string | null
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Update: {
           appointment_id?: string | null
@@ -4211,7 +4199,7 @@ export type Database = {
           specialist_id?: string
           user_id?: string
           visit_id?: string | null
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Relationships: [
           {
@@ -4299,7 +4287,7 @@ export type Database = {
           complications: string | null
           created_at: string | null
           family_member_id: string | null
-          follow_up_required: boolean | null
+          follow_up_required: boolean
           id: string
           notes: string | null
           performed_at: string | null
@@ -4314,7 +4302,7 @@ export type Database = {
           complications?: string | null
           created_at?: string | null
           family_member_id?: string | null
-          follow_up_required?: boolean | null
+          follow_up_required?: boolean
           id?: string
           notes?: string | null
           performed_at?: string | null
@@ -4329,7 +4317,7 @@ export type Database = {
           complications?: string | null
           created_at?: string | null
           family_member_id?: string | null
-          follow_up_required?: boolean | null
+          follow_up_required?: boolean
           id?: string
           notes?: string | null
           performed_at?: string | null
@@ -4433,7 +4421,7 @@ export type Database = {
           responsiveness_rating: number | null
           results_rating: number | null
           user_id: string
-          would_recommend: boolean | null
+          would_recommend: boolean
         }
         Insert: {
           appointment_id?: string | null
@@ -4448,7 +4436,7 @@ export type Database = {
           responsiveness_rating?: number | null
           results_rating?: number | null
           user_id: string
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Update: {
           appointment_id?: string | null
@@ -4463,7 +4451,7 @@ export type Database = {
           responsiveness_rating?: number | null
           results_rating?: number | null
           user_id?: string
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Relationships: [
           {
@@ -4527,8 +4515,8 @@ export type Database = {
       nutritionists: {
         Row: {
           address: string | null
-          available_in_clinic: boolean | null
-          available_online: boolean | null
+          available_in_clinic: boolean
+          available_online: boolean
           bio: string | null
           certifications: string[] | null
           cities: string[] | null
@@ -4542,27 +4530,27 @@ export type Database = {
           gender: string | null
           id: string
           initial_consultation_price: number | null
-          is_active: boolean | null
-          is_verified: boolean | null
+          is_active: boolean
+          is_verified: boolean
           languages: string[] | null
           latitude: number | null
           longitude: number | null
           monthly_plan_price: number | null
           photo_url: string | null
-          rating_avg: number | null
-          rating_count: number | null
+          rating_avg: number
+          rating_count: number
           specialties: string[] | null
-          success_rate: number | null
+          success_rate: number
           title: string
-          total_clients: number | null
+          total_clients: number
           updated_at: string | null
           user_id: string | null
-          years_experience: number | null
+          years_experience: number
         }
         Insert: {
           address?: string | null
-          available_in_clinic?: boolean | null
-          available_online?: boolean | null
+          available_in_clinic?: boolean
+          available_online?: boolean
           bio?: string | null
           certifications?: string[] | null
           cities?: string[] | null
@@ -4576,27 +4564,27 @@ export type Database = {
           gender?: string | null
           id?: string
           initial_consultation_price?: number | null
-          is_active?: boolean | null
-          is_verified?: boolean | null
+          is_active?: boolean
+          is_verified?: boolean
           languages?: string[] | null
           latitude?: number | null
           longitude?: number | null
           monthly_plan_price?: number | null
           photo_url?: string | null
-          rating_avg?: number | null
-          rating_count?: number | null
+          rating_avg?: number
+          rating_count?: number
           specialties?: string[] | null
-          success_rate?: number | null
+          success_rate?: number
           title?: string
-          total_clients?: number | null
+          total_clients?: number
           updated_at?: string | null
           user_id?: string | null
-          years_experience?: number | null
+          years_experience?: number
         }
         Update: {
           address?: string | null
-          available_in_clinic?: boolean | null
-          available_online?: boolean | null
+          available_in_clinic?: boolean
+          available_online?: boolean
           bio?: string | null
           certifications?: string[] | null
           cities?: string[] | null
@@ -4610,22 +4598,22 @@ export type Database = {
           gender?: string | null
           id?: string
           initial_consultation_price?: number | null
-          is_active?: boolean | null
-          is_verified?: boolean | null
+          is_active?: boolean
+          is_verified?: boolean
           languages?: string[] | null
           latitude?: number | null
           longitude?: number | null
           monthly_plan_price?: number | null
           photo_url?: string | null
-          rating_avg?: number | null
-          rating_count?: number | null
+          rating_avg?: number
+          rating_count?: number
           specialties?: string[] | null
-          success_rate?: number | null
+          success_rate?: number
           title?: string
-          total_clients?: number | null
+          total_clients?: number
           updated_at?: string | null
           user_id?: string | null
-          years_experience?: number | null
+          years_experience?: number
         }
         Relationships: [
           {
@@ -4666,7 +4654,7 @@ export type Database = {
           service_rating: number | null
           service_type: string | null
           user_id: string
-          would_recommend: boolean | null
+          would_recommend: boolean
         }
         Insert: {
           appointment_id?: string | null
@@ -4682,7 +4670,7 @@ export type Database = {
           service_rating?: number | null
           service_type?: string | null
           user_id: string
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Update: {
           appointment_id?: string | null
@@ -4698,7 +4686,7 @@ export type Database = {
           service_rating?: number | null
           service_type?: string | null
           user_id?: string
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Relationships: [
           {
@@ -4771,22 +4759,22 @@ export type Database = {
           frame_price_max: number | null
           frame_price_min: number | null
           id: string
-          is_active: boolean | null
-          is_featured: boolean | null
-          is_verified: boolean | null
+          is_active: boolean
+          is_featured: boolean
+          is_verified: boolean
           latitude: number | null
           lens_price_max: number | null
           lens_price_min: number | null
           longitude: number | null
           name: string
-          offers_contact_lenses: boolean | null
-          offers_eye_exam: boolean | null
-          offers_eye_surgery_referral: boolean | null
-          offers_prescription_lenses: boolean | null
-          offers_sunglasses: boolean | null
+          offers_contact_lenses: boolean
+          offers_eye_exam: boolean
+          offers_eye_surgery_referral: boolean
+          offers_prescription_lenses: boolean
+          offers_sunglasses: boolean
           phone: string | null
-          rating_avg: number | null
-          rating_count: number | null
+          rating_avg: number
+          rating_count: number
           updated_at: string | null
           whatsapp: string | null
           working_hours: string | null
@@ -4802,22 +4790,22 @@ export type Database = {
           frame_price_max?: number | null
           frame_price_min?: number | null
           id?: string
-          is_active?: boolean | null
-          is_featured?: boolean | null
-          is_verified?: boolean | null
+          is_active?: boolean
+          is_featured?: boolean
+          is_verified?: boolean
           latitude?: number | null
           lens_price_max?: number | null
           lens_price_min?: number | null
           longitude?: number | null
           name: string
-          offers_contact_lenses?: boolean | null
-          offers_eye_exam?: boolean | null
-          offers_eye_surgery_referral?: boolean | null
-          offers_prescription_lenses?: boolean | null
-          offers_sunglasses?: boolean | null
+          offers_contact_lenses?: boolean
+          offers_eye_exam?: boolean
+          offers_eye_surgery_referral?: boolean
+          offers_prescription_lenses?: boolean
+          offers_sunglasses?: boolean
           phone?: string | null
-          rating_avg?: number | null
-          rating_count?: number | null
+          rating_avg?: number
+          rating_count?: number
           updated_at?: string | null
           whatsapp?: string | null
           working_hours?: string | null
@@ -4833,22 +4821,22 @@ export type Database = {
           frame_price_max?: number | null
           frame_price_min?: number | null
           id?: string
-          is_active?: boolean | null
-          is_featured?: boolean | null
-          is_verified?: boolean | null
+          is_active?: boolean
+          is_featured?: boolean
+          is_verified?: boolean
           latitude?: number | null
           lens_price_max?: number | null
           lens_price_min?: number | null
           longitude?: number | null
           name?: string
-          offers_contact_lenses?: boolean | null
-          offers_eye_exam?: boolean | null
-          offers_eye_surgery_referral?: boolean | null
-          offers_prescription_lenses?: boolean | null
-          offers_sunglasses?: boolean | null
+          offers_contact_lenses?: boolean
+          offers_eye_exam?: boolean
+          offers_eye_surgery_referral?: boolean
+          offers_prescription_lenses?: boolean
+          offers_sunglasses?: boolean
           phone?: string | null
-          rating_avg?: number | null
-          rating_count?: number | null
+          rating_avg?: number
+          rating_count?: number
           updated_at?: string | null
           whatsapp?: string | null
           working_hours?: string | null
@@ -4896,7 +4884,7 @@ export type Database = {
           name_ar: string
           name_en: string | null
           phone: string | null
-          rating_avg: number | null
+          rating_avg: number
           rating_count: number
           slug: string | null
           specialties: string[] | null
@@ -4922,7 +4910,7 @@ export type Database = {
           name_ar: string
           name_en?: string | null
           phone?: string | null
-          rating_avg?: number | null
+          rating_avg?: number
           rating_count?: number
           slug?: string | null
           specialties?: string[] | null
@@ -4948,7 +4936,7 @@ export type Database = {
           name_ar?: string
           name_en?: string | null
           phone?: string | null
-          rating_avg?: number | null
+          rating_avg?: number
           rating_count?: number
           slug?: string | null
           specialties?: string[] | null
@@ -4965,7 +4953,7 @@ export type Database = {
           admin_id: string | null
           created_at: string | null
           id: string
-          is_pinned: boolean | null
+          is_pinned: boolean
           note: string
           note_type: string | null
           patient_id: string
@@ -4975,7 +4963,7 @@ export type Database = {
           admin_id?: string | null
           created_at?: string | null
           id?: string
-          is_pinned?: boolean | null
+          is_pinned?: boolean
           note: string
           note_type?: string | null
           patient_id: string
@@ -4985,7 +4973,7 @@ export type Database = {
           admin_id?: string | null
           created_at?: string | null
           id?: string
-          is_pinned?: boolean | null
+          is_pinned?: boolean
           note?: string
           note_type?: string | null
           patient_id?: string
@@ -5203,7 +5191,7 @@ export type Database = {
       }
       pharmacies: {
         Row: {
-          accepts_insurance: boolean | null
+          accepts_insurance: boolean
           address: string | null
           city: string
           closes_at: string | null
@@ -5211,12 +5199,12 @@ export type Database = {
           created_at: string | null
           description: string | null
           district: string
-          has_delivery: boolean | null
-          has_emergency_section: boolean | null
+          has_delivery: boolean
+          has_emergency_section: boolean
           id: string
-          is_24h: boolean | null
-          is_active: boolean | null
-          is_verified: boolean | null
+          is_24h: boolean
+          is_active: boolean
+          is_verified: boolean
           latitude: number | null
           license_image_url: string | null
           license_number: string | null
@@ -5225,8 +5213,8 @@ export type Database = {
           opens_at: string | null
           owner_user_id: string | null
           phone: string
-          rating_avg: number | null
-          rating_count: number | null
+          rating_avg: number
+          rating_count: number
           updated_at: string | null
           verified_at: string | null
           verified_by: string | null
@@ -5234,7 +5222,7 @@ export type Database = {
           working_days: string[] | null
         }
         Insert: {
-          accepts_insurance?: boolean | null
+          accepts_insurance?: boolean
           address?: string | null
           city: string
           closes_at?: string | null
@@ -5242,12 +5230,12 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           district: string
-          has_delivery?: boolean | null
-          has_emergency_section?: boolean | null
+          has_delivery?: boolean
+          has_emergency_section?: boolean
           id?: string
-          is_24h?: boolean | null
-          is_active?: boolean | null
-          is_verified?: boolean | null
+          is_24h?: boolean
+          is_active?: boolean
+          is_verified?: boolean
           latitude?: number | null
           license_image_url?: string | null
           license_number?: string | null
@@ -5256,8 +5244,8 @@ export type Database = {
           opens_at?: string | null
           owner_user_id?: string | null
           phone: string
-          rating_avg?: number | null
-          rating_count?: number | null
+          rating_avg?: number
+          rating_count?: number
           updated_at?: string | null
           verified_at?: string | null
           verified_by?: string | null
@@ -5265,7 +5253,7 @@ export type Database = {
           working_days?: string[] | null
         }
         Update: {
-          accepts_insurance?: boolean | null
+          accepts_insurance?: boolean
           address?: string | null
           city?: string
           closes_at?: string | null
@@ -5273,12 +5261,12 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           district?: string
-          has_delivery?: boolean | null
-          has_emergency_section?: boolean | null
+          has_delivery?: boolean
+          has_emergency_section?: boolean
           id?: string
-          is_24h?: boolean | null
-          is_active?: boolean | null
-          is_verified?: boolean | null
+          is_24h?: boolean
+          is_active?: boolean
+          is_verified?: boolean
           latitude?: number | null
           license_image_url?: string | null
           license_number?: string | null
@@ -5287,8 +5275,8 @@ export type Database = {
           opens_at?: string | null
           owner_user_id?: string | null
           phone?: string
-          rating_avg?: number | null
-          rating_count?: number | null
+          rating_avg?: number
+          rating_count?: number
           updated_at?: string | null
           verified_at?: string | null
           verified_by?: string | null
@@ -5403,13 +5391,13 @@ export type Database = {
           brand_variant: string | null
           custom_price: number | null
           id: string
-          is_available: boolean | null
+          is_available: boolean
           last_searched_at: string | null
           marked_unavailable_at: string | null
           medication_id: string
           notes: string | null
           pharmacy_id: string
-          searched_count: number | null
+          searched_count: number
           updated_at: string | null
         }
         Insert: {
@@ -5417,13 +5405,13 @@ export type Database = {
           brand_variant?: string | null
           custom_price?: number | null
           id?: string
-          is_available?: boolean | null
+          is_available?: boolean
           last_searched_at?: string | null
           marked_unavailable_at?: string | null
           medication_id: string
           notes?: string | null
           pharmacy_id: string
-          searched_count?: number | null
+          searched_count?: number
           updated_at?: string | null
         }
         Update: {
@@ -5431,13 +5419,13 @@ export type Database = {
           brand_variant?: string | null
           custom_price?: number | null
           id?: string
-          is_available?: boolean | null
+          is_available?: boolean
           last_searched_at?: string | null
           marked_unavailable_at?: string | null
           medication_id?: string
           notes?: string | null
           pharmacy_id?: string
-          searched_count?: number | null
+          searched_count?: number
           updated_at?: string | null
         }
         Relationships: [
@@ -5484,7 +5472,7 @@ export type Database = {
           reservation_id: string | null
           service_rating: number | null
           user_id: string
-          would_recommend: boolean | null
+          would_recommend: boolean
         }
         Insert: {
           availability_rating?: number | null
@@ -5498,7 +5486,7 @@ export type Database = {
           reservation_id?: string | null
           service_rating?: number | null
           user_id: string
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Update: {
           availability_rating?: number | null
@@ -5512,7 +5500,7 @@ export type Database = {
           reservation_id?: string | null
           service_rating?: number | null
           user_id?: string
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Relationships: [
           {
@@ -5693,7 +5681,7 @@ export type Database = {
           skill_rating: number | null
           specialist_id: string
           user_id: string
-          would_recommend: boolean | null
+          would_recommend: boolean
         }
         Insert: {
           appointment_id?: string | null
@@ -5709,7 +5697,7 @@ export type Database = {
           skill_rating?: number | null
           specialist_id: string
           user_id: string
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Update: {
           appointment_id?: string | null
@@ -5725,7 +5713,7 @@ export type Database = {
           skill_rating?: number | null
           specialist_id?: string
           user_id?: string
-          would_recommend?: boolean | null
+          would_recommend?: boolean
         }
         Relationships: [
           {
@@ -5794,12 +5782,12 @@ export type Database = {
           description: string | null
           icon: string | null
           id: string
-          is_active: boolean | null
+          is_active: boolean
           name_ar: string
           name_en: string | null
-          order_index: number | null
-          recommended_sessions: number | null
-          session_duration_minutes: number | null
+          order_index: number
+          recommended_sessions: number
+          session_duration_minutes: number
           slug: string
         }
         Insert: {
@@ -5809,12 +5797,12 @@ export type Database = {
           description?: string | null
           icon?: string | null
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           name_ar: string
           name_en?: string | null
-          order_index?: number | null
-          recommended_sessions?: number | null
-          session_duration_minutes?: number | null
+          order_index?: number
+          recommended_sessions?: number
+          session_duration_minutes?: number
           slug: string
         }
         Update: {
@@ -5824,20 +5812,20 @@ export type Database = {
           description?: string | null
           icon?: string | null
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           name_ar?: string
           name_en?: string | null
-          order_index?: number | null
-          recommended_sessions?: number | null
-          session_duration_minutes?: number | null
+          order_index?: number
+          recommended_sessions?: number
+          session_duration_minutes?: number
           slug?: string
         }
         Relationships: []
       }
       physio_specialists: {
         Row: {
-          available_for_clinic: boolean | null
-          available_for_home: boolean | null
+          available_for_clinic: boolean
+          available_for_home: boolean
           bio: string | null
           certifications: string[] | null
           cities: string[] | null
@@ -5851,23 +5839,23 @@ export type Database = {
           gender: string | null
           home_visit_price: number | null
           id: string
-          is_active: boolean | null
-          is_verified: boolean | null
+          is_active: boolean
+          is_verified: boolean
           languages: string[] | null
-          package_discount_pct: number | null
+          package_discount_pct: number
           photo_url: string | null
-          rating_avg: number | null
-          rating_count: number | null
+          rating_avg: number
+          rating_count: number
           specialties: string[] | null
           title: string
-          total_sessions: number | null
+          total_sessions: number
           updated_at: string | null
           user_id: string | null
-          years_experience: number | null
+          years_experience: number
         }
         Insert: {
-          available_for_clinic?: boolean | null
-          available_for_home?: boolean | null
+          available_for_clinic?: boolean
+          available_for_home?: boolean
           bio?: string | null
           certifications?: string[] | null
           cities?: string[] | null
@@ -5881,23 +5869,23 @@ export type Database = {
           gender?: string | null
           home_visit_price?: number | null
           id?: string
-          is_active?: boolean | null
-          is_verified?: boolean | null
+          is_active?: boolean
+          is_verified?: boolean
           languages?: string[] | null
-          package_discount_pct?: number | null
+          package_discount_pct?: number
           photo_url?: string | null
-          rating_avg?: number | null
-          rating_count?: number | null
+          rating_avg?: number
+          rating_count?: number
           specialties?: string[] | null
           title?: string
-          total_sessions?: number | null
+          total_sessions?: number
           updated_at?: string | null
           user_id?: string | null
-          years_experience?: number | null
+          years_experience?: number
         }
         Update: {
-          available_for_clinic?: boolean | null
-          available_for_home?: boolean | null
+          available_for_clinic?: boolean
+          available_for_home?: boolean
           bio?: string | null
           certifications?: string[] | null
           cities?: string[] | null
@@ -5911,19 +5899,19 @@ export type Database = {
           gender?: string | null
           home_visit_price?: number | null
           id?: string
-          is_active?: boolean | null
-          is_verified?: boolean | null
+          is_active?: boolean
+          is_verified?: boolean
           languages?: string[] | null
-          package_discount_pct?: number | null
+          package_discount_pct?: number
           photo_url?: string | null
-          rating_avg?: number | null
-          rating_count?: number | null
+          rating_avg?: number
+          rating_count?: number
           specialties?: string[] | null
           title?: string
-          total_sessions?: number | null
+          total_sessions?: number
           updated_at?: string | null
           user_id?: string | null
-          years_experience?: number | null
+          years_experience?: number
         }
         Relationships: [
           {
@@ -6054,7 +6042,7 @@ export type Database = {
           device_label: string | null
           endpoint: string
           id: string
-          is_active: boolean | null
+          is_active: boolean
           last_used_at: string | null
           p256dh: string
           user_agent: string | null
@@ -6066,7 +6054,7 @@ export type Database = {
           device_label?: string | null
           endpoint: string
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           last_used_at?: string | null
           p256dh: string
           user_agent?: string | null
@@ -6078,7 +6066,7 @@ export type Database = {
           device_label?: string | null
           endpoint?: string
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           last_used_at?: string | null
           p256dh?: string
           user_agent?: string | null
@@ -6114,33 +6102,33 @@ export type Database = {
           content: string
           created_at: string
           id: string
-          is_active: boolean | null
+          is_active: boolean
           shortcut: string
           specialist_id: string
           updated_at: string
-          use_count: number | null
+          use_count: number
         }
         Insert: {
           category?: string | null
           content: string
           created_at?: string
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           shortcut: string
           specialist_id: string
           updated_at?: string
-          use_count?: number | null
+          use_count?: number
         }
         Update: {
           category?: string | null
           content?: string
           created_at?: string
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           shortcut?: string
           specialist_id?: string
           updated_at?: string
-          use_count?: number | null
+          use_count?: number
         }
         Relationships: [
           {
@@ -6193,8 +6181,8 @@ export type Database = {
           cleanliness_rating: number | null
           created_at: string
           id: string
-          is_anonymous: boolean | null
-          is_published: boolean | null
+          is_anonymous: boolean
+          is_published: boolean
           overall_rating: number
           professionalism_rating: number | null
           punctuality_rating: number | null
@@ -6208,8 +6196,8 @@ export type Database = {
           cleanliness_rating?: number | null
           created_at?: string
           id?: string
-          is_anonymous?: boolean | null
-          is_published?: boolean | null
+          is_anonymous?: boolean
+          is_published?: boolean
           overall_rating: number
           professionalism_rating?: number | null
           punctuality_rating?: number | null
@@ -6223,8 +6211,8 @@ export type Database = {
           cleanliness_rating?: number | null
           created_at?: string
           id?: string
-          is_anonymous?: boolean | null
-          is_published?: boolean | null
+          is_anonymous?: boolean
+          is_published?: boolean
           overall_rating?: number
           professionalism_rating?: number | null
           punctuality_rating?: number | null
@@ -6311,27 +6299,27 @@ export type Database = {
           code: string
           created_at: string | null
           id: string
-          successful_referrals: number | null
-          total_earned: number | null
-          total_referrals: number | null
+          successful_referrals: number
+          total_earned: number
+          total_referrals: number
           user_id: string
         }
         Insert: {
           code: string
           created_at?: string | null
           id?: string
-          successful_referrals?: number | null
-          total_earned?: number | null
-          total_referrals?: number | null
+          successful_referrals?: number
+          total_earned?: number
+          total_referrals?: number
           user_id: string
         }
         Update: {
           code?: string
           created_at?: string | null
           id?: string
-          successful_referrals?: number | null
-          total_earned?: number | null
-          total_referrals?: number | null
+          successful_referrals?: number
+          total_earned?: number
+          total_referrals?: number
           user_id?: string
         }
         Relationships: [
@@ -6364,10 +6352,10 @@ export type Database = {
           id: string
           qualified_at: string | null
           referral_code: string
-          referred_bonus: number | null
+          referred_bonus: number
           referred_id: string
           referrer_id: string
-          referrer_reward: number | null
+          referrer_reward: number
           rewarded_at: string | null
           status: string
         }
@@ -6376,10 +6364,10 @@ export type Database = {
           id?: string
           qualified_at?: string | null
           referral_code: string
-          referred_bonus?: number | null
+          referred_bonus?: number
           referred_id: string
           referrer_id: string
-          referrer_reward?: number | null
+          referrer_reward?: number
           rewarded_at?: string | null
           status?: string
         }
@@ -6388,10 +6376,10 @@ export type Database = {
           id?: string
           qualified_at?: string | null
           referral_code?: string
-          referred_bonus?: number | null
+          referred_bonus?: number
           referred_id?: string
           referrer_id?: string
-          referrer_reward?: number | null
+          referrer_reward?: number
           rewarded_at?: string | null
           status?: string
         }
@@ -6753,7 +6741,7 @@ export type Database = {
           day_of_week: number
           end_time: string
           id: string
-          is_active: boolean | null
+          is_active: boolean
           specialist_id: string
           start_time: string
         }
@@ -6762,7 +6750,7 @@ export type Database = {
           day_of_week: number
           end_time: string
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           specialist_id: string
           start_time: string
         }
@@ -6771,7 +6759,7 @@ export type Database = {
           day_of_week?: number
           end_time?: string
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           specialist_id?: string
           start_time?: string
         }
@@ -7011,13 +6999,13 @@ export type Database = {
           created_at: string
           custom_name: string | null
           dosage: string | null
-          enable_reminders: boolean | null
+          enable_reminders: boolean
           end_date: string | null
           family_member_id: string | null
           frequency: string | null
           id: string
-          is_active: boolean | null
-          is_chronic: boolean | null
+          is_active: boolean
+          is_chronic: boolean
           medication_id: string | null
           notes: string | null
           prescription_id: string | null
@@ -7030,13 +7018,13 @@ export type Database = {
           created_at?: string
           custom_name?: string | null
           dosage?: string | null
-          enable_reminders?: boolean | null
+          enable_reminders?: boolean
           end_date?: string | null
           family_member_id?: string | null
           frequency?: string | null
           id?: string
-          is_active?: boolean | null
-          is_chronic?: boolean | null
+          is_active?: boolean
+          is_chronic?: boolean
           medication_id?: string | null
           notes?: string | null
           prescription_id?: string | null
@@ -7049,13 +7037,13 @@ export type Database = {
           created_at?: string
           custom_name?: string | null
           dosage?: string | null
-          enable_reminders?: boolean | null
+          enable_reminders?: boolean
           end_date?: string | null
           family_member_id?: string | null
           frequency?: string | null
           id?: string
-          is_active?: boolean | null
-          is_chronic?: boolean | null
+          is_active?: boolean
+          is_chronic?: boolean
           medication_id?: string | null
           notes?: string | null
           prescription_id?: string | null
@@ -7123,14 +7111,14 @@ export type Database = {
           governorate: string | null
           icon: string | null
           id: string
-          is_pinned: boolean | null
+          is_pinned: boolean
           label: string
           last_used_at: string | null
           lat: number
           lng: number
           notes: string | null
           updated_at: string | null
-          use_count: number | null
+          use_count: number
           user_id: string
         }
         Insert: {
@@ -7139,14 +7127,14 @@ export type Database = {
           governorate?: string | null
           icon?: string | null
           id?: string
-          is_pinned?: boolean | null
+          is_pinned?: boolean
           label: string
           last_used_at?: string | null
           lat: number
           lng: number
           notes?: string | null
           updated_at?: string | null
-          use_count?: number | null
+          use_count?: number
           user_id: string
         }
         Update: {
@@ -7155,14 +7143,14 @@ export type Database = {
           governorate?: string | null
           icon?: string | null
           id?: string
-          is_pinned?: boolean | null
+          is_pinned?: boolean
           label?: string
           last_used_at?: string | null
           lat?: number
           lng?: number
           notes?: string | null
           updated_at?: string | null
-          use_count?: number | null
+          use_count?: number
           user_id?: string
         }
         Relationships: [
@@ -7192,7 +7180,7 @@ export type Database = {
       user_telegram_links: {
         Row: {
           id: string
-          is_active: boolean | null
+          is_active: boolean
           linked_at: string
           telegram_user_id: number
           telegram_username: string | null
@@ -7200,7 +7188,7 @@ export type Database = {
         }
         Insert: {
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           linked_at?: string
           telegram_user_id: number
           telegram_username?: string | null
@@ -7208,7 +7196,7 @@ export type Database = {
         }
         Update: {
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           linked_at?: string
           telegram_user_id?: number
           telegram_username?: string | null
@@ -7255,9 +7243,9 @@ export type Database = {
           credentials_verified_by: string | null
           cv_url: string | null
           email: string | null
-          email_verified: boolean | null
+          email_verified: boolean
           email_verified_at: string | null
-          emergency_kit_confirmed: boolean | null
+          emergency_kit_confirmed: boolean
           emergency_kit_confirmed_at: string | null
           emergency_kit_items: Json | null
           full_name: string | null
@@ -7265,24 +7253,24 @@ export type Database = {
           health_ministry_expires_at: string | null
           health_ministry_license_number: string | null
           health_ministry_license_url: string | null
-          health_ministry_verified: boolean | null
+          health_ministry_verified: boolean
           id: string
           is_suspended: boolean
           last_active_at: string | null
           last_seen_at: string | null
           license_number: string | null
-          loyalty_points: number | null
+          loyalty_points: number
           loyalty_tier: string | null
           medical_info: Json | null
           notification_preferences: Json | null
           nursing_union_expires_at: string | null
           nursing_union_id_number: string | null
           nursing_union_id_url: string | null
-          nursing_union_verified: boolean | null
+          nursing_union_verified: boolean
           password_hash: string | null
           phone: string
           preferred_otp_channel: string | null
-          profile_completed: boolean | null
+          profile_completed: boolean
           rejection_reason: string | null
           role: Database["public"]["Enums"]["user_role"]
           signup_method: string | null
@@ -7299,10 +7287,10 @@ export type Database = {
           updated_at: string
           user_settings: Json | null
           wa_id: string | null
-          wa_otp_enabled: boolean | null
-          wa_verified: boolean | null
+          wa_otp_enabled: boolean
+          wa_verified: boolean
           wa_verified_at: string | null
-          wallet_balance: number | null
+          wallet_balance: number
           work_address: string | null
           work_lat: number | null
           work_lng: number | null
@@ -7324,9 +7312,9 @@ export type Database = {
           credentials_verified_by?: string | null
           cv_url?: string | null
           email?: string | null
-          email_verified?: boolean | null
+          email_verified?: boolean
           email_verified_at?: string | null
-          emergency_kit_confirmed?: boolean | null
+          emergency_kit_confirmed?: boolean
           emergency_kit_confirmed_at?: string | null
           emergency_kit_items?: Json | null
           full_name?: string | null
@@ -7334,24 +7322,24 @@ export type Database = {
           health_ministry_expires_at?: string | null
           health_ministry_license_number?: string | null
           health_ministry_license_url?: string | null
-          health_ministry_verified?: boolean | null
+          health_ministry_verified?: boolean
           id: string
           is_suspended?: boolean
           last_active_at?: string | null
           last_seen_at?: string | null
           license_number?: string | null
-          loyalty_points?: number | null
+          loyalty_points?: number
           loyalty_tier?: string | null
           medical_info?: Json | null
           notification_preferences?: Json | null
           nursing_union_expires_at?: string | null
           nursing_union_id_number?: string | null
           nursing_union_id_url?: string | null
-          nursing_union_verified?: boolean | null
+          nursing_union_verified?: boolean
           password_hash?: string | null
           phone: string
           preferred_otp_channel?: string | null
-          profile_completed?: boolean | null
+          profile_completed?: boolean
           rejection_reason?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           signup_method?: string | null
@@ -7368,10 +7356,10 @@ export type Database = {
           updated_at?: string
           user_settings?: Json | null
           wa_id?: string | null
-          wa_otp_enabled?: boolean | null
-          wa_verified?: boolean | null
+          wa_otp_enabled?: boolean
+          wa_verified?: boolean
           wa_verified_at?: string | null
-          wallet_balance?: number | null
+          wallet_balance?: number
           work_address?: string | null
           work_lat?: number | null
           work_lng?: number | null
@@ -7393,9 +7381,9 @@ export type Database = {
           credentials_verified_by?: string | null
           cv_url?: string | null
           email?: string | null
-          email_verified?: boolean | null
+          email_verified?: boolean
           email_verified_at?: string | null
-          emergency_kit_confirmed?: boolean | null
+          emergency_kit_confirmed?: boolean
           emergency_kit_confirmed_at?: string | null
           emergency_kit_items?: Json | null
           full_name?: string | null
@@ -7403,24 +7391,24 @@ export type Database = {
           health_ministry_expires_at?: string | null
           health_ministry_license_number?: string | null
           health_ministry_license_url?: string | null
-          health_ministry_verified?: boolean | null
+          health_ministry_verified?: boolean
           id?: string
           is_suspended?: boolean
           last_active_at?: string | null
           last_seen_at?: string | null
           license_number?: string | null
-          loyalty_points?: number | null
+          loyalty_points?: number
           loyalty_tier?: string | null
           medical_info?: Json | null
           notification_preferences?: Json | null
           nursing_union_expires_at?: string | null
           nursing_union_id_number?: string | null
           nursing_union_id_url?: string | null
-          nursing_union_verified?: boolean | null
+          nursing_union_verified?: boolean
           password_hash?: string | null
           phone?: string
           preferred_otp_channel?: string | null
-          profile_completed?: boolean | null
+          profile_completed?: boolean
           rejection_reason?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           signup_method?: string | null
@@ -7437,10 +7425,10 @@ export type Database = {
           updated_at?: string
           user_settings?: Json | null
           wa_id?: string | null
-          wa_otp_enabled?: boolean | null
-          wa_verified?: boolean | null
+          wa_otp_enabled?: boolean
+          wa_verified?: boolean
           wa_verified_at?: string | null
-          wallet_balance?: number | null
+          wallet_balance?: number
           work_address?: string | null
           work_lat?: number | null
           work_lng?: number | null
@@ -7605,19 +7593,19 @@ export type Database = {
           latitude: number | null
           longitude: number | null
           name: string
-          offers_adult: boolean | null
-          offers_covid: boolean | null
-          offers_home_visit: boolean | null
-          offers_pediatric: boolean | null
-          offers_travel: boolean | null
+          offers_adult: boolean
+          offers_covid: boolean
+          offers_home_visit: boolean
+          offers_pediatric: boolean
+          offers_travel: boolean
           opens_at: string | null
           phone: string | null
-          rating_avg: number | null
-          rating_count: number | null
+          rating_avg: number
+          rating_count: number
           type: string
           updated_at: string
           whatsapp: string | null
-          works_friday: boolean | null
+          works_friday: boolean
         }
         Insert: {
           address?: string | null
@@ -7632,19 +7620,19 @@ export type Database = {
           latitude?: number | null
           longitude?: number | null
           name: string
-          offers_adult?: boolean | null
-          offers_covid?: boolean | null
-          offers_home_visit?: boolean | null
-          offers_pediatric?: boolean | null
-          offers_travel?: boolean | null
+          offers_adult?: boolean
+          offers_covid?: boolean
+          offers_home_visit?: boolean
+          offers_pediatric?: boolean
+          offers_travel?: boolean
           opens_at?: string | null
           phone?: string | null
-          rating_avg?: number | null
-          rating_count?: number | null
+          rating_avg?: number
+          rating_count?: number
           type: string
           updated_at?: string
           whatsapp?: string | null
-          works_friday?: boolean | null
+          works_friday?: boolean
         }
         Update: {
           address?: string | null
@@ -7659,19 +7647,19 @@ export type Database = {
           latitude?: number | null
           longitude?: number | null
           name?: string
-          offers_adult?: boolean | null
-          offers_covid?: boolean | null
-          offers_home_visit?: boolean | null
-          offers_pediatric?: boolean | null
-          offers_travel?: boolean | null
+          offers_adult?: boolean
+          offers_covid?: boolean
+          offers_home_visit?: boolean
+          offers_pediatric?: boolean
+          offers_travel?: boolean
           opens_at?: string | null
           phone?: string | null
-          rating_avg?: number | null
-          rating_count?: number | null
+          rating_avg?: number
+          rating_count?: number
           type?: string
           updated_at?: string
           whatsapp?: string | null
-          works_friday?: boolean | null
+          works_friday?: boolean
         }
         Relationships: []
       }
@@ -7682,15 +7670,15 @@ export type Database = {
           created_at: string
           description: string | null
           diseases: string[] | null
-          display_order: number | null
+          display_order: number
           dose_interval_days: number | null
           doses_required: number
           icon: string | null
           id: string
           image_url: string | null
           is_active: boolean
-          is_free: boolean | null
-          is_mandatory: boolean | null
+          is_free: boolean
+          is_mandatory: boolean
           manufacturer: string | null
           name_ar: string
           name_en: string | null
@@ -7706,15 +7694,15 @@ export type Database = {
           created_at?: string
           description?: string | null
           diseases?: string[] | null
-          display_order?: number | null
+          display_order?: number
           dose_interval_days?: number | null
           doses_required?: number
           icon?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean
-          is_free?: boolean | null
-          is_mandatory?: boolean | null
+          is_free?: boolean
+          is_mandatory?: boolean
           manufacturer?: string | null
           name_ar: string
           name_en?: string | null
@@ -7730,15 +7718,15 @@ export type Database = {
           created_at?: string
           description?: string | null
           diseases?: string[] | null
-          display_order?: number | null
+          display_order?: number
           dose_interval_days?: number | null
           doses_required?: number
           icon?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean
-          is_free?: boolean | null
-          is_mandatory?: boolean | null
+          is_free?: boolean
+          is_mandatory?: boolean
           manufacturer?: string | null
           name_ar?: string
           name_en?: string | null
@@ -7884,7 +7872,7 @@ export type Database = {
           created_by: string | null
           description: string
           id: string
-          points: number | null
+          points: number
           points_after: number | null
           reference_id: string | null
           reference_type: string | null
@@ -7899,7 +7887,7 @@ export type Database = {
           created_by?: string | null
           description: string
           id?: string
-          points?: number | null
+          points?: number
           points_after?: number | null
           reference_id?: string | null
           reference_type?: string | null
@@ -7914,7 +7902,7 @@ export type Database = {
           created_by?: string | null
           description?: string
           id?: string
-          points?: number | null
+          points?: number
           points_after?: number | null
           reference_id?: string | null
           reference_type?: string | null
@@ -7984,7 +7972,7 @@ export type Database = {
           user_agent: string | null
           user_id: string | null
           verified_at: string | null
-          verify_attempts: number | null
+          verify_attempts: number
         }
         Insert: {
           channel: string
@@ -8002,7 +7990,7 @@ export type Database = {
           user_agent?: string | null
           user_id?: string | null
           verified_at?: string | null
-          verify_attempts?: number | null
+          verify_attempts?: number
         }
         Update: {
           channel?: string
@@ -8020,7 +8008,7 @@ export type Database = {
           user_agent?: string | null
           user_id?: string | null
           verified_at?: string | null
-          verify_attempts?: number | null
+          verify_attempts?: number
         }
         Relationships: [
           {
@@ -9971,19 +9959,3 @@ export const Constants = {
     },
   },
 } as const
-
-
-// ─── أسماء مختصرة (توافقية) ───
-// ملاحظة: `Tables<>` يُصدّره المولِّد نفسه أعلاه، فلا نُعيد تعريفه هنا.
-
-export type AppointmentStatus = Database['public']['Enums']['appointment_status'];
-export type UserRole = Database['public']['Enums']['user_role'];
-export type User = Database['public']['Tables']['users']['Row'];
-export type Appointment = Database['public']['Tables']['appointments']['Row'];
-export type AppointmentInsert = Database['public']['Tables']['appointments']['Insert'];
-export type AppointmentUpdate = Database['public']['Tables']['appointments']['Update'];
-export type AuditLog = Database['public']['Tables']['audit_logs']['Row'];
-
-export type OtpChannel = 'whatsapp' | 'telegram' | 'sms';
-export type TelegramLink = Database['public']['Tables']['user_telegram_links']['Row'];
-export type OtpAttempt = Database['public']['Tables']['otp_attempts']['Row'];

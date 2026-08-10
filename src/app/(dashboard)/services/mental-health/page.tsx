@@ -3,6 +3,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { toGender } from '@/lib/format/gender';
 import MentalHealthClient from './MentalHealthClient';
 
 export const dynamic = 'force-dynamic';
@@ -21,5 +22,17 @@ export default async function MentalHealthPage() {
     .order('rating_avg', { ascending: false })
     .limit(100);
 
-  return <MentalHealthClient specialists={specialists || []} />;
+  // القوائم الفارغة تصل NULL؛ نُسوّيها عند الحدّ كي لا تنهار `.includes`/`.join`
+  return (
+    <MentalHealthClient
+      specialists={(specialists ?? []).map((s) => ({
+        ...s,
+        specialties: s.specialties ?? [],
+        gender: toGender(s.gender),
+        certifications: s.certifications ?? [],
+        languages: s.languages ?? [],
+        cities: s.cities ?? [],
+      }))}
+    />
+  );
 }

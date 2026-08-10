@@ -145,6 +145,36 @@ unrouted_appointments AS (
   WHERE a.required_specialist_type IS NULL
     AND a.service_id IS DISTINCT FROM 'hospital-booking'
     AND a.status IN ('pending', 'confirmed')
+),
+
+-- ─── ١٠. مشغّلات إحصاءات التقييم بصلاحية المستدعي ───
+-- تحديثها لصفّ مقدّم الخدمة يخضع لـRLS، وسياسات المُقدّمين تسمح للمشرف
+-- أو لصاحب الصفّ وحدهما — لا للمريض المُقيِّم. فيُطابَق صفر صفوف بصمت
+-- ولا يتحرّك معدّل التقييم المعروض أبداً. (عطلٌ مُقاس، أصلحه الترحيل 0019)
+invoker_rating_triggers AS (
+  SELECT 'مشغّل تقييم بصلاحية المستدعي', p.proname::text,
+         'تحديث الإحصاءات يسقط بصمت تحت RLS — تقييمات المرضى لا تُحتسب'
+  FROM pg_proc p
+  JOIN pg_namespace n ON n.oid = p.pronamespace
+  WHERE n.nspname = 'public' AND p.prokind = 'f'
+    AND p.prosrc LIKE '%rating_avg =%'   -- تُسنِد الإحصاءة فعلاً، لا تذكرها في تعليق
+    AND NOT p.prosecdef
+),
+
+-- ─── ١١. أعلام وعدّادات تقبل NULL ───
+-- عمودٌ بقيمةٍ افتراضية ثابتة لا معنى لـNULL فيه: لا عدّاد «مجهول» ولا
+-- علَم «غير معروف». وجودها يدفع `| null` إلى الأنواع المولَّدة فتنكسر
+-- واجهات التطبيق الصحيحة. (١٩٨ عموداً، ثبّتها الترحيل 0020)
+nullable_flags AS (
+  SELECT 'عمود علَم/عدّاد يقبل NULL', (c.table_name || '.' || c.column_name)::text,
+         'قيمةٌ افتراضية ثابتة مع قبول NULL — تناقض في النمذجة'
+  FROM information_schema.columns c
+  JOIN information_schema.tables t
+    ON t.table_schema = c.table_schema AND t.table_name = c.table_name
+   AND t.table_type = 'BASE TABLE'
+  WHERE c.table_schema = 'public' AND c.is_nullable = 'YES'
+    AND c.data_type IN ('integer','bigint','smallint','numeric','double precision','boolean')
+    AND c.column_default ~ '^[0-9]+(\.[0-9]+)?$|^true$|^false$'
 )
 
 SELECT * FROM orphan_auth
@@ -156,4 +186,6 @@ UNION ALL SELECT * FROM definer_views
 UNION ALL SELECT * FROM loose_search_path
 UNION ALL SELECT * FROM specialist_no_type
 UNION ALL SELECT * FROM unrouted_appointments
+UNION ALL SELECT * FROM invoker_rating_triggers
+UNION ALL SELECT * FROM nullable_flags
 ORDER BY 1, 2;

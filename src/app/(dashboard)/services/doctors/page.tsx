@@ -5,6 +5,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { toGender } from '@/lib/format/gender';
 import DoctorsClient from './DoctorsClient';
 
 export const dynamic = 'force-dynamic';
@@ -21,5 +22,15 @@ export default async function DoctorsPage() {
     .order('rating_count', { ascending: false })
     .limit(100);
 
-  return <DoctorsClient doctors={doctors || []} />;
+  // قائمة اللغات الفارغة تصل NULL؛ نُسوّيها عند الحدّ
+  return (
+    <DoctorsClient
+      doctors={(doctors ?? []).map((d) => ({
+        ...d,
+        title: d.title ?? '',
+        gender: toGender(d.gender),
+        languages: d.languages ?? [],
+      }))}
+    />
+  );
 }

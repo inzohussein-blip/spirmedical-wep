@@ -3,6 +3,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { toGender } from '@/lib/format/gender';
 import { notFound } from 'next/navigation';
 import DoctorDetailClient from './DoctorDetailClient';
 import { checkIsFavorite } from '@/components/services/favorites-actions';
@@ -42,7 +43,12 @@ export default async function DoctorDetailPage({
 
   return (
     <DoctorDetailClient
-      doctor={doctor}
+      doctor={{
+        ...doctor,
+        title: doctor.title ?? '',
+        gender: toGender(doctor.gender),
+        languages: doctor.languages ?? [],
+      }}
       activeSubscription={activeSubscription}
       initialIsFavorite={await checkIsFavorite('doctor', params.id)}
     />

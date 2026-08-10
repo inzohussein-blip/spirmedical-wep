@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { X, Home, Building2, Video, Calendar, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { formatPrice } from '@/lib/format/price';
 import { createDoctorAppointment } from '@/app/(dashboard)/services/doctors/[id]/actions';
 import HapticButton from '@/components/pwa/HapticButton';
 
@@ -13,8 +14,9 @@ interface Doctor {
   available_for_home_visit: boolean;
   available_for_clinic: boolean;
   available_for_video: boolean;
-  home_visit_price: number;
-  video_consult_price: number;
+  // الأسعار اختيارية على الطبيب — انظر src/lib/format/price.ts
+  home_visit_price: number | null;
+  video_consult_price: number | null;
   clinic_name?: string | null;
   clinic_address?: string | null;
 }
@@ -210,9 +212,11 @@ export default function DoctorBookingModal({ doctor, defaultType, onClose, userA
                     <div style={{ fontSize: 13, fontWeight: 700 }}>{meta.label}</div>
                     <div style={{ fontSize: 10, opacity: isSelected ? 0.9 : 0.6 }}>{meta.description}</div>
                   </div>
-                  <div style={{ fontSize: 13, fontWeight: 800 }}>
-                    {typePrice.toLocaleString('ar-IQ')} د.ع
-                  </div>
+                  {formatPrice(typePrice) && (
+                    <div style={{ fontSize: 13, fontWeight: 800 }}>
+                      {formatPrice(typePrice)}
+                    </div>
+                  )}
                 </button>
               );
             })}
@@ -323,7 +327,7 @@ export default function DoctorBookingModal({ doctor, defaultType, onClose, userA
             السعر الإجمالي
           </span>
           <span style={{ fontSize: 18, fontWeight: 800, color: '#0F6E56' }}>
-            {price.toLocaleString('ar-IQ')} د.ع
+            {formatPrice(price) ?? 'يحدّده الطبيب'}
           </span>
         </div>
 
@@ -373,7 +377,7 @@ export default function DoctorBookingModal({ doctor, defaultType, onClose, userA
           ) : (
             <>
               <CheckCircle2 size={18} strokeWidth={2.5} />
-              تأكيد الحجز · {price.toLocaleString('ar-IQ')} د.ع
+              تأكيد الحجز{formatPrice(price) ? ` · ${formatPrice(price)}` : ''}
             </>
           )}
         </HapticButton>
