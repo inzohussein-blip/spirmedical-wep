@@ -21,5 +21,10 @@ export default async function CosmeticPage() {
     .order('rating_avg', { ascending: false })
     .limit(100);
 
-  return <CosmeticClient products={products || []} />;
+  // الأيقونة زينةُ عرض؛ غيابها يُترك فراغاً ولا يُخترع بديلٌ عنه
+  return (
+    <CosmeticClient
+      products={(products ?? []).map((p) => ({ ...p, image_emoji: p.image_emoji ?? '' }))}
+    />
+  );
 }

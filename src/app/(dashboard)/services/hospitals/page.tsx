@@ -3,10 +3,13 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { oneOfOr } from '@/lib/format/vocabulary';
 import HospitalsClient from './HospitalsClient';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'المستشفيات - Spir Medical' };
+
+const HOSPITAL_TYPES = ['government', 'private', 'health_center', 'specialized'] as const;
 
 export default async function HospitalsPage() {
   const supabase = createClient();
@@ -19,5 +22,13 @@ export default async function HospitalsPage() {
     .order('name')
     .limit(200);
 
-  return <HospitalsClient hospitals={hospitals || []} />;
+  // `type` محروس بقيد CHECK في القاعدة، لكنّ مولّد الأنواع لا يقرأ CHECK
+  return (
+    <HospitalsClient
+      hospitals={(hospitals ?? []).map((h) => ({
+        ...h,
+        type: oneOfOr(HOSPITAL_TYPES, h.type, 'private'),
+      }))}
+    />
+  );
 }

@@ -6,6 +6,7 @@ import {
   ArrowRight, Search, MapPin, Star,
   CheckCircle2, Award, TrendingUp,
 } from 'lucide-react';
+import { formatNumber } from '@/lib/format/price';
 import { haptic } from '@/lib/haptic';
 
 interface Nutritionist {
@@ -21,9 +22,9 @@ interface Nutritionist {
   cities: string[];
   available_online: boolean;
   available_in_clinic: boolean;
-  initial_consultation_price: number;
-  follow_up_price: number;
-  monthly_plan_price: number;
+  initial_consultation_price: number | null;
+  follow_up_price: number | null;
+  monthly_plan_price: number | null;
   rating_avg: number;
   rating_count: number;
   total_clients: number;
@@ -317,7 +318,7 @@ function NutritionistCard({ nutritionist }: { nutritionist: Nutritionist }) {
 }
 
 function PackageCard({ icon, title, price, color, highlight }: {
-  icon: string; title: string; price: number; color: string; highlight?: boolean;
+  icon: string; title: string; price: number | null; color: string; highlight?: boolean;
 }) {
   return (
     <div style={{
@@ -329,10 +330,14 @@ function PackageCard({ icon, title, price, color, highlight }: {
     }}>
       <div style={{ fontSize: 16, marginBottom: 2 }}>{icon}</div>
       <div style={{ fontSize: 9, color: 'var(--ink-3)', marginBottom: 2, fontWeight: 700 }}>{title}</div>
-      <div style={{ fontSize: 11, fontWeight: 900, color }}>
-        {price.toLocaleString('ar-IQ')}
-      </div>
-      <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع</div>
+      {formatNumber(price) && (
+        <>
+          <div style={{ fontSize: 11, fontWeight: 900, color }}>
+            {formatNumber(price)}
+          </div>
+          <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع</div>
+        </>
+      )}
     </div>
   );
 }

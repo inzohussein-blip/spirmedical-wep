@@ -6,6 +6,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { toGender } from '@/lib/format/gender';
 import ClinicsClient from './ClinicsClient';
 
 export const dynamic = 'force-dynamic';
@@ -25,5 +26,15 @@ export default async function ClinicsPage() {
     .order('rating_avg', { ascending: false })
     .limit(100);
 
-  return <ClinicsClient doctors={doctors || []} />;
+  // اللقب والقوائم الفارغة تصل NULL؛ نُسوّيها عند الحدّ
+  return (
+    <ClinicsClient
+      doctors={(doctors ?? []).map((d) => ({
+        ...d,
+        title: d.title ?? '',
+        gender: toGender(d.gender),
+        languages: d.languages ?? [],
+      }))}
+    />
+  );
 }

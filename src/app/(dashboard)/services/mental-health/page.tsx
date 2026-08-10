@@ -4,6 +4,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { toGender } from '@/lib/format/gender';
+import { oneOfOr } from '@/lib/format/vocabulary';
 import MentalHealthClient from './MentalHealthClient';
 
 export const dynamic = 'force-dynamic';
@@ -11,6 +12,8 @@ export const metadata = {
   title: 'الصحة النفسية - Spir Medical',
   description: 'أخصائيون نفسيون معتمدون - علاج القلق، الاكتئاب، العلاقات، الأطفال',
 };
+
+const MH_TYPES = ['psychiatrist', 'psychologist', 'therapist', 'counselor', 'family_therapist'] as const;
 
 export default async function MentalHealthPage() {
   const supabase = createClient();
@@ -29,6 +32,7 @@ export default async function MentalHealthPage() {
         ...s,
         specialties: s.specialties ?? [],
         gender: toGender(s.gender),
+        specialist_type: oneOfOr(MH_TYPES, s.specialist_type, 'therapist'),
         certifications: s.certifications ?? [],
         languages: s.languages ?? [],
         cities: s.cities ?? [],

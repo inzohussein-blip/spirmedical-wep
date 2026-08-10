@@ -22,5 +22,10 @@ export default async function DentalPage() {
     .order('rating_avg', { ascending: false })
     .limit(100);
 
-  return <DentalClient clinics={clinics || []} />;
+  // قائمة التخصّصات الفارغة تصل NULL؛ نُسوّيها عند الحدّ
+  return (
+    <DentalClient
+      clinics={(clinics ?? []).map((c) => ({ ...c, specialties: c.specialties ?? [] }))}
+    />
+  );
 }

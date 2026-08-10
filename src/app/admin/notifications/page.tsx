@@ -108,8 +108,8 @@ export default async function NotificationsPage({ searchParams }: { searchParams
             </thead>
             <tbody>
               {messages.map((m) => {
-                const status = STATUS_META[m.status] ?? STATUS_META.pending;
-                const channel = CHANNEL_META[m.channel] ?? CHANNEL_META.whatsapp;
+                const status = STATUS_META[m.status ?? ''] ?? STATUS_META.pending;
+                const channel = CHANNEL_META[m.channel ?? ''] ?? CHANNEL_META.whatsapp;
 
                 return (
                   <tr key={m.id} style={{ borderTop: '1px solid var(--line)' }}>
@@ -143,7 +143,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
                     </td>
                     <td style={td}>
                       <div style={{ fontSize: 11 }}>
-                        {new Date(m.created_at).toLocaleString('ar-IQ', { dateStyle: 'short', timeStyle: 'short' })}
+                        {new Date(m.created_at ?? Date.now()).toLocaleString('ar-IQ', { dateStyle: 'short', timeStyle: 'short' })}
                       </div>
                       {m.sent_at && (
                         <div style={{ fontSize: 9, color: 'var(--emerald)', marginTop: 2 }}>
@@ -152,7 +152,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
                       )}
                     </td>
                     <td style={td}>
-                      <NotificationRowActions id={m.id} status={m.status} />
+                      <NotificationRowActions id={m.id} status={m.status ?? 'pending'} />
                     </td>
                   </tr>
                 );

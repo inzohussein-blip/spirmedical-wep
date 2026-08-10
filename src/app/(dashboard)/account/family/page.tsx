@@ -5,6 +5,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { toGender } from '@/lib/format/gender';
 import { redirect } from 'next/navigation';
 import FamilyClient from './FamilyClient';
 
@@ -51,7 +52,11 @@ export default async function FamilyPage() {
 
   return (
     <FamilyClient
-      members={members || []}
+      members={(members ?? []).map((m) => ({
+        ...m,
+        gender: toGender(m.gender),
+        avatar_emoji: m.avatar_emoji ?? '',
+      }))}
       appointmentsCounts={appointmentsCounts}
     />
   );

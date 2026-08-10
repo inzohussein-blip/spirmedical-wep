@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import { oneOfOr } from '@/lib/format/vocabulary';
 import ChatList, { type ChatPreview } from '@/components/chat/ChatList';
 import { Zap } from 'lucide-react';
 
@@ -8,6 +9,9 @@ export const dynamic = 'force-dynamic';
 export const metadata = {
   title: 'الـ Inbox · لوحة الأخصائي',
 };
+
+const CHAT_PRIORITY = ['normal', 'low', 'high', 'urgent'] as const;
+const CHAT_STATUS = ['open', 'pending', 'resolved', 'archived'] as const;
 
 export default async function SpecialistInboxPage() {
   const supabase = createClient();
@@ -47,8 +51,8 @@ export default async function SpecialistInboxPage() {
       lastMessage: c.last_message || 'لا رسائل بعد',
       lastMessageAt: c.last_message_at || c.created_at,
       unreadCount: c.specialist_unread_count || 0,
-      status: c.status,
-      priority: c.priority || 'normal',
+      status: oneOfOr(CHAT_STATUS, c.status, 'open'),
+      priority: oneOfOr(CHAT_PRIORITY, c.priority, 'normal'),
       tags: c.tags || [],
       isPinned: c.is_pinned || false,
       isOnline: false, // سيُحدّث realtime

@@ -41,7 +41,7 @@ export default async function NewAppointmentPage({
   const savedLocations = (savedLocationsRaw ?? []).map((l) => ({
     id: l.id,
     label: l.label,
-    icon: l.icon,
+    icon: l.icon ?? '',
     address: l.address,
     lat: Number(l.lat),
     lng: Number(l.lng),

@@ -4,11 +4,14 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { toGender } from '@/lib/format/gender';
+import { oneOfOr } from '@/lib/format/vocabulary';
 import { notFound } from 'next/navigation';
 import DoctorDetailClient from './DoctorDetailClient';
 import { checkIsFavorite } from '@/components/services/favorites-actions';
 
 export const dynamic = 'force-dynamic';
+
+const PLANS = ['monthly', 'yearly'] as const;
 
 export default async function DoctorDetailPage({
   params,
@@ -49,7 +52,11 @@ export default async function DoctorDetailPage({
         gender: toGender(doctor.gender),
         languages: doctor.languages ?? [],
       }}
-      activeSubscription={activeSubscription}
+      activeSubscription={
+        activeSubscription
+          ? { ...activeSubscription, plan: oneOfOr(PLANS, activeSubscription.plan, 'monthly') }
+          : null
+      }
       initialIsFavorite={await checkIsFavorite('doctor', params.id)}
     />
   );

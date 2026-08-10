@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import { SPECIALIST_META, SPECIALIST_TYPES, type SpecialistType } from '@/lib/specialist-types';
+import { toSpecialistType, SPECIALIST_META, SPECIALIST_TYPES, type SpecialistType } from '@/lib/specialist-types';
 import { EmptyState } from '@/components/ui';
 
 export const dynamic = 'force-dynamic';
@@ -113,7 +113,8 @@ export default async function SpecialistsListPage({ searchParams }: { searchPara
             </thead>
             <tbody>
               {specialists.map((s) => {
-                const meta = s.specialist_type ? SPECIALIST_META[s.specialist_type] : null;
+                const type = toSpecialistType(s.specialist_type);
+                const meta = type ? SPECIALIST_META[type] : null;
                 return (
                   <tr key={s.id} style={{ borderTop: '1px solid var(--line)' }}>
                     <td style={td}>

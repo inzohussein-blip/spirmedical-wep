@@ -69,7 +69,7 @@ export default async function AdminAnalyticsPage() {
   // تجميع لكل يوم
   const dailyMap: Record<string, { total: number; users: Set<string> }> = {};
   (recentEvents || []).forEach((e) => {
-    const date = new Date(e.created_at).toISOString().split('T')[0];
+    const date = new Date(e.created_at ?? Date.now()).toISOString().split('T')[0];
     if (!dailyMap[date]) {
       dailyMap[date] = { total: 0, users: new Set() };
     }

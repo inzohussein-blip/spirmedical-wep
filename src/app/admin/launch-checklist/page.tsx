@@ -3,12 +3,17 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { oneOfOr } from '@/lib/format/vocabulary';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import LaunchChecklistClient from './LaunchChecklistClient';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'قائمة الإطلاق - Admin' };
+
+const CHECKLIST_CATEGORY = ['technical', 'content', 'legal', 'marketing', 'operations', 'security'] as const;
+
+const CHECKLIST_PRIORITY = ['critical', 'high', 'medium', 'low'] as const;
 
 export default async function LaunchChecklistPage() {
   const supabase = createClient();
@@ -39,7 +44,13 @@ export default async function LaunchChecklistPage() {
         </div>
       </div>
 
-      <LaunchChecklistClient items={items || []} />
+      <LaunchChecklistClient
+        items={(items ?? []).map((i) => ({
+          ...i,
+          category: oneOfOr(CHECKLIST_CATEGORY, i.category, 'technical'),
+          priority: oneOfOr(CHECKLIST_PRIORITY, i.priority, 'medium'),
+        }))}
+      />
     </>
   );
 }

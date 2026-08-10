@@ -39,7 +39,9 @@ export default async function BetaCodesPage() {
         </div>
       </div>
 
-      <BetaCodesClient codes={codes || []} />
+      <BetaCodesClient
+        codes={(codes ?? []).map((c) => ({ ...c, created_at: c.created_at ?? '' }))}
+      />
     </>
   );
 }

@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
-import { SPECIALIST_META } from '@/lib/specialist-types';
+import { oneOfOr } from '@/lib/format/vocabulary';
+import { toSpecialistType, SPECIALIST_META } from '@/lib/specialist-types';
 import SpecialistActions from './SpecialistActions';
 
 export const dynamic = 'force-dynamic';
@@ -9,6 +10,8 @@ export const dynamic = 'force-dynamic';
 export const metadata = {
   title: 'تفاصيل الاختصاصي · إدارة',
 };
+
+const APPROVAL_STATUS = ['pending', 'approved', 'rejected'] as const;
 
 export default async function SpecialistDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient();
@@ -33,7 +36,8 @@ export default async function SpecialistDetailPage({ params }: { params: { id: s
     ? (ratings.reduce((sum, r) => sum + r.overall_rating, 0) / ratings.length).toFixed(1)
     : '—';
 
-  const meta = specialist.specialist_type ? SPECIALIST_META[specialist.specialist_type] : null;
+  const specialistType = toSpecialistType(specialist.specialist_type);
+  const meta = specialistType ? SPECIALIST_META[specialistType] : null;
 
   return (
     <>
@@ -154,8 +158,8 @@ export default async function SpecialistDetailPage({ params }: { params: { id: s
         <div style={{ position: 'sticky', top: 24 }}>
           <SpecialistActions
             specialistId={specialist.id}
-            approvalStatus={specialist.approval_status}
-            currentType={specialist.specialist_type}
+            approvalStatus={oneOfOr(APPROVAL_STATUS, specialist.approval_status, 'pending')}
+            currentType={specialistType}
             isSuspended={specialist.is_suspended ?? false}
           />
         </div>

@@ -27,12 +27,12 @@ interface DentalClinic {
   doctor_count: number;
   doctor_names: string[];
   specialties: string[];
-  cleaning_price_min: number;
-  cleaning_price_max: number;
-  filling_price_min: number;
-  filling_price_max: number;
-  implant_price_min: number;
-  implant_price_max: number;
+  cleaning_price_min: number | null;
+  cleaning_price_max: number | null;
+  filling_price_min: number | null;
+  filling_price_max: number | null;
+  implant_price_min: number | null;
+  implant_price_max: number | null;
   offers_cleaning: boolean;
   offers_fillings: boolean;
   offers_extraction: boolean;

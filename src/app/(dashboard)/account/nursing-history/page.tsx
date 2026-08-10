@@ -5,6 +5,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { jsonObject } from '@/lib/format/vocabulary';
 import { redirect } from 'next/navigation';
 import NursingHistoryClient from './NursingHistoryClient';
 
@@ -40,7 +41,16 @@ export default async function NursingHistoryPage() {
 
   return (
     <NursingHistoryClient
-      visits={visits || []}
+      visits={(visits ?? []).map((v) => ({
+        ...v,
+        // أعمدة jsonb تصل بنوع `Json` الواسع؛ تُفحص أنّها كائنات
+        performed_at: v.performed_at ?? v.created_at ?? '',
+        created_at: v.created_at ?? '',
+        procedure_details: jsonObject<Record<string, unknown>>(v.procedure_details),
+        vital_signs: jsonObject<{ bp?: string; pulse?: number; temp?: number; spo2?: number }>(
+          v.vital_signs,
+        ),
+      }))}
       specialistsMap={specialistsMap}
     />
   );

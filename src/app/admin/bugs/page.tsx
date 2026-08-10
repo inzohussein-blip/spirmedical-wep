@@ -3,12 +3,17 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { oneOfOr } from '@/lib/format/vocabulary';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import BugsClient from './BugsClient';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'الأعطال - Admin' };
+
+const SEVERITY = ['critical', 'high', 'medium', 'low'] as const;
+
+const BUG_STATUS = ['open', 'in_progress', 'fixed', 'wont_fix', 'duplicate'] as const;
 
 export default async function BugsPage() {
   const supabase = createClient();
@@ -48,7 +53,15 @@ export default async function BugsPage() {
         </div>
       </div>
 
-      <BugsClient bugs={bugs || []} usersMap={usersMap} />
+      <BugsClient
+        bugs={(bugs ?? []).map((b) => ({
+          ...b,
+          created_at: b.created_at ?? '',
+          severity: oneOfOr(SEVERITY, b.severity, 'medium'),
+          status: oneOfOr(BUG_STATUS, b.status, 'open'),
+        }))}
+        usersMap={usersMap}
+      />
     </>
   );
 }

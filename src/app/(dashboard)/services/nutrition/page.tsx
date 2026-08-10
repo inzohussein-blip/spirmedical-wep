@@ -3,6 +3,7 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { toGender } from '@/lib/format/gender';
 import NutritionClient from './NutritionClient';
 
 export const dynamic = 'force-dynamic';
@@ -21,5 +22,18 @@ export default async function NutritionPage() {
     .order('rating_avg', { ascending: false })
     .limit(100);
 
-  return <NutritionClient nutritionists={nutritionists || []} />;
+  // القوائم الفارغة تصل NULL؛ و`gender` نصٌّ حرّ في المخطّط المولَّد رغم
+  // حراسة القاعدة له بقيد CHECK — فيُضيَّق هنا بدل تأكيدٍ أعمى
+  return (
+    <NutritionClient
+      nutritionists={(nutritionists ?? []).map((n) => ({
+        ...n,
+        gender: toGender(n.gender),
+        specialties: n.specialties ?? [],
+        certifications: n.certifications ?? [],
+        languages: n.languages ?? [],
+        cities: n.cities ?? [],
+      }))}
+    />
+  );
 }

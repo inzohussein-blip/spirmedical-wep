@@ -3,12 +3,16 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { oneOfOr } from '@/lib/format/vocabulary';
+import { toGender } from '@/lib/format/gender';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import MentalHealthAdminClient from './MentalHealthAdminClient';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'إدارة الصحة النفسية - Admin' };
+
+const MH_TYPES = ['psychiatrist', 'psychologist', 'therapist', 'counselor', 'family_therapist'] as const;
 
 export default async function AdminMentalHealthPage() {
   const supabase = createClient();
@@ -43,7 +47,17 @@ export default async function AdminMentalHealthPage() {
           🧠 إدارة الأخصائيين النفسيين
         </h1>
       </div>
-      <MentalHealthAdminClient initialSpecialists={specialists || []} />
+      <MentalHealthAdminClient
+        initialSpecialists={(specialists ?? []).map((s) => ({
+          ...s,
+          gender: toGender(s.gender),
+          specialist_type: oneOfOr(MH_TYPES, s.specialist_type, 'therapist'),
+          specialties: s.specialties ?? [],
+          certifications: s.certifications ?? [],
+          languages: s.languages ?? [],
+          cities: s.cities ?? [],
+        }))}
+      />
     </div>
   );
 }

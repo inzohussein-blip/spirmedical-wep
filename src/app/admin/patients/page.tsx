@@ -53,7 +53,7 @@ export default async function PatientsListPage({ searchParams }: { searchParams:
   const tagsMap = new Map<string, Array<{ tag: string; color: string }>>();
   (tagsData ?? []).forEach((t) => {
     if (!tagsMap.has(t.patient_id)) tagsMap.set(t.patient_id, []);
-    tagsMap.get(t.patient_id)!.push({ tag: t.tag, color: t.color });
+    tagsMap.get(t.patient_id)!.push({ tag: t.tag, color: t.color ?? '' });
   });
 
   return (

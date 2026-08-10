@@ -5,11 +5,14 @@
 // ═══════════════════════════════════════════════════════════════
 
 import { createClient } from '@/lib/supabase/server';
+import { oneOfOr } from '@/lib/format/vocabulary';
 import { redirect } from 'next/navigation';
 import WalletClient from './WalletClient';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'المحفظة - Spir Medical' };
+
+const TX_TYPES = ['credit', 'debit', 'refund', 'reward', 'points_redeem'] as const;
 
 export default async function WalletPage() {
   const supabase = createClient();
@@ -40,7 +43,11 @@ export default async function WalletPage() {
       walletBalance={walletBalance}
       loyaltyPoints={loyaltyPoints}
       loyaltyTier={loyaltyTier}
-      transactions={transactions || []}
+      transactions={(transactions ?? []).map((t) => ({
+        ...t,
+        transaction_type: oneOfOr(TX_TYPES, t.transaction_type, 'credit'),
+        created_at: t.created_at ?? '',
+      }))}
     />
   );
 }

@@ -77,7 +77,7 @@ export async function deleteCampaign(id: string) {
     .eq('id', id)
     .single();
 
-  if (campaign && ['sending', 'sent'].includes(campaign.status)) {
+  if (campaign?.status && ['sending', 'sent'].includes(campaign.status)) {
     return { success: false, error: 'لا يمكن حذف حملة مُرسَلة' };
   }
 
