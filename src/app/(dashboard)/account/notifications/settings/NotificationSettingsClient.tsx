@@ -146,7 +146,7 @@ export default function NotificationSettingsClient({
 
   if (permission === 'unsupported') {
     return (
-      <main className="scr" style={{ padding: 20 }}>
+      <main className="app-screen" style={{ padding: 20 }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 16px' }}>
           🔔 الإشعارات
         </h1>
@@ -164,7 +164,7 @@ export default function NotificationSettingsClient({
   }
 
   return (
-    <main className="scr" style={{ padding: 20, paddingBottom: 60 }}>
+    <main className="app-screen" style={{ padding: 20, paddingBottom: 60 }}>
       <div style={{ marginBottom: 16 }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0 }}>🔔 الإشعارات</h1>
         <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '4px 0 0' }}>

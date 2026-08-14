@@ -6682,11 +6682,17 @@
   color: var(--ink);
 }
 .tool-radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
+/* خيارات حاسبة الخطر أزرارٌ لا <label>، فتحتاج فئتها الخاصّة */
+.tool-radio,
 .tool-radio-group label {
   display: inline-flex; align-items: center; gap: 6px;
   min-height: 44px; padding: 8px 14px;
   background: var(--white); border: 1px solid var(--line);
   border-radius: 100px; font-size: 13px; font-weight: 600; cursor: pointer;
+  font-family: inherit; color: var(--ink);
+}
+.tool-radio.selected {
+  background: var(--emerald); border-color: var(--emerald); color: #fff;
 }
 
 /* ── نتائج التوصية والخطر ── */
