@@ -4570,3 +4570,65 @@ html {
     font-size: 16px;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   صفحات التسجيل: مُعدِّلات غير معرَّفة
+   ═══════════════════════════════════════════════════════════════════
+   `auth-screen--v` و`auth-helper--center` و`auth-link` و`auth-trust*`
+   مستعملة في صفحات التسجيل وغير معرَّفة، فتظهر روابط «سجّل الدخول»
+   بنمط الرابط الأزرق الافتراضي، ومؤشّرات الثقة نصّاً متلاصقاً.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.auth-screen--v { justify-content: center; }
+
+.auth-helper--center { text-align: center; }
+
+.auth-link {
+  color: var(--emerald);
+  font-weight: 700;
+  text-decoration: none;
+}
+.auth-link:hover { text-decoration: underline; }
+.auth-link--muted { color: var(--ink-3); font-weight: 600; }
+
+.auth-trust {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 11px;
+  color: var(--ink-3);
+}
+.auth-trust-item { white-space: nowrap; }
+.auth-trust-sep { color: var(--line); }
+
+/* ── رفع الملفّات في تسجيل المختصّين ── */
+.radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.radio-group label {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 44px; padding: 8px 14px;
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: 100px; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+
+.file-upload-input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.file-upload-content {
+  display: flex; align-items: center; gap: 10px;
+  min-height: 60px; padding: 12px 14px;
+  background: var(--white);
+  border: 1.5px dashed var(--line);
+  border-radius: 12px;
+  cursor: pointer;
+}
+.file-upload-icon { font-size: 22px; line-height: 1; flex-shrink: 0; }
+.file-upload-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+.file-upload-meta { font-size: 11px; color: var(--ink-3); }
+.file-upload-remove {
+  margin-inline-start: auto;
+  min-width: 44px; min-height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: 0; cursor: pointer;
+  color: var(--rose); font-size: 16px; font-family: inherit;
+}
