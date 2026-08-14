@@ -151,7 +151,7 @@ export default function SavedLocationsClient({ initialLocations }: Props) {
   };
 
   return (
-    <main className="scr">
+    <main className="app-screen">
       <div style={{ padding: '20px 16px 8px' }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0 }}>📍 مواقعي المحفوظة</h1>
         <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '4px 0 0' }}>
