@@ -4779,3 +4779,71 @@ html {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   عناوين أقسام الصفحة الرئيسية
+   ═══════════════════════════════════════════════════════════════════
+   `.landing-section-title` و`.landing-section-subtitle` مستعملتان في
+   أقسام الصفحة الرئيسية وغير معرَّفتين، فتسقط العناوين إلى نمط <h2>
+   الافتراضي — حجمٌ ولونٌ لا يطابقان بقيّة الأقسام (`landing-install-title`
+   مثلاً 32px/900). و`.landing-install-content` بلا تخطيط.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.landing-section-title {
+  font-size: 30px;
+  font-weight: 900;
+  color: var(--ink);
+  margin: 8px 0 10px;
+  line-height: 1.25;
+}
+.landing-section-subtitle {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--ink-3);
+  margin: 0 0 20px;
+  max-width: 60ch;
+}
+.landing-install-content { display: flex; flex-direction: column; }
+
+@media (max-width: 640px) {
+  .landing-section-title { font-size: 24px; }
+  .landing-section-subtitle { font-size: 14px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   شعار المدوّنة وروابط تنقّلها
+   ═══════════════════════════════════════════════════════════════════
+   الصفحة الرئيسية تكتب الشعار <strong> + <span>، أمّا صفحات المدوّنة
+   فتكتبه <span class="landing-logo-en"> + <span class="landing-logo-ar">.
+   والقاعدة القائمة `.landing-logo-text span` تُطبَّق على الاثنين معاً،
+   فيفقد اسم العلامة حجمه ووزنه ويظهر بحجم السطر الثانوي (11px).
+
+   و`.landing-link` مستعملة في شريط تنقّل المدوّنة وغير معرَّفة.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.landing-logo-text .landing-logo-en {
+  font-size: 16px;
+  font-weight: 800;
+  font-family: 'Tajawal', sans-serif;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: var(--ink);
+  margin-top: 0;
+}
+.landing-logo-text .landing-logo-ar {
+  font-size: 11px;
+  color: var(--ink-3);
+  margin-top: 2px;
+}
+
+.landing-link {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-2);
+  text-decoration: none;
+  border-radius: 8px;
+}
+.landing-link:hover { background: var(--paper-2); color: var(--ink); }
+
+.blog-newsletter-content { display: flex; flex-direction: column; gap: 8px; }

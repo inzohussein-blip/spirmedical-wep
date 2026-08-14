@@ -6713,3 +6713,67 @@
 .recommendation-urgent .recommendation-specialist { color: var(--rose); }
 .recommendation-soon { border-color: var(--amber); }
 .recommendation-soon .recommendation-specialist { color: var(--amber); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   🏥 قوائم المستشفيات والصيدليات (واجهة الضيف)
+   ═══════════════════════════════════════════════════════════════════
+   عائلة `hospital-*` تستعملها صفحتا الضيف للمستشفيات والصيدليات، ولم
+   تكن معرَّفة: فتظهر كل مستشفى أسطراً نصّية متلاصقة بلا بطاقة ولا فاصل،
+   وزرّا «اتصال» و«حجز موعد» نصّاً في سطرٍ واحد بلا مساحة لمس.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.hospitals-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+
+.hospital-card {
+  padding: 14px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.hospital-card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+.hospital-icon { font-size: 26px; line-height: 1; flex-shrink: 0; }
+.hospital-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.hospital-name { font-size: 14px; font-weight: 800; color: var(--ink); line-height: 1.4; }
+
+.hospital-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.hospital-type {
+  font-size: 11px; font-weight: 700;
+  padding: 2px 8px; border-radius: 100px;
+}
+.hospital-type.type-public { background: var(--emerald-soft); color: var(--emerald); }
+.hospital-type.type-private { background: var(--amber-soft); color: var(--amber); }
+.hospital-emergency-badge {
+  font-size: 11px; font-weight: 700;
+  padding: 2px 8px; border-radius: 100px;
+  background: var(--rose-soft); color: var(--rose);
+}
+
+.hospital-location {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--ink-3);
+  margin-bottom: 10px;
+}
+
+.hospital-actions { display: flex; gap: 8px; }
+.hospital-action-btn {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 44px;
+  padding: 10px 12px;
+  background: var(--emerald);
+  color: #fff;
+  border: 0; border-radius: 10px;
+  font-family: inherit; font-size: 13px; font-weight: 700;
+  text-decoration: none; cursor: pointer;
+}
+.hospital-action-btn.locked { background: var(--paper-2); color: var(--ink-2); }
+
+.pharmacy-info-banner {
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  background: var(--emerald-soft);
+  border-radius: 12px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--ink-2);
+}

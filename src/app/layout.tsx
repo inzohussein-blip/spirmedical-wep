@@ -6,6 +6,7 @@ import StructuredData from '@/components/seo/StructuredData';
 import PWAModeProvider from '@/components/pwa/PWAModeProvider';
 import ServiceWorkerRegistrar from '@/components/pwa/ServiceWorkerRegistrar';
 import { Toaster } from '@/components/ui/Toaster';
+import StyledJsxRegistry from '@/components/providers/StyledJsxRegistry';
 import { ThemeProvider } from '@/components/theme/ThemeProvider';
 import IOSSplashScreens from '@/components/pwa/IOSSplashScreens';
 import AppBackHandler from '@/components/pwa/AppBackHandler';
@@ -273,6 +274,7 @@ export default function RootLayout({
           تخطّي إلى المحتوى
         </a>
 
+        <StyledJsxRegistry>
         <PWAModeProvider>
           <ThemeProvider>
             {children}
@@ -286,6 +288,7 @@ export default function RootLayout({
           {/* مكوّنات غير حرجة مؤجَّلة (ssr:false) — خارج حزمة الدخول الرئيسية */}
           <DeferredGlobals />
         </PWAModeProvider>
+        </StyledJsxRegistry>
       </body>
     </html>
   );
