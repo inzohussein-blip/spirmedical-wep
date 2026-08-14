@@ -213,6 +213,10 @@ export default function OtpChannelSelector({ phone, onVerified, onCancel }: Prop
             transition: all 0.2s;
             text-align: right;
           }
+          /* لونا القناتين: مُعدِّلان مستعملان في className بلا تعريف */
+          .otp-channel-btn.whatsapp:hover { border-color: #25D366; }
+          .otp-channel-btn.telegram:hover { border-color: #229ED9; }
+
           .otp-channel-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.12);

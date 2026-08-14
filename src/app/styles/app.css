@@ -6777,3 +6777,239 @@
   line-height: 1.7;
   color: var(--ink-2);
 }
+
+/* ── نتيجة حاسبة الخطر: البطاقة ودرجاتها الثلاث ── */
+.risk-result {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 20px 16px; margin-bottom: 16px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-inline-start-width: 4px;
+  border-radius: 16px;
+  text-align: center;
+}
+.risk-result.risk-low { border-inline-start-color: var(--emerald); }
+.risk-result.risk-low .risk-result-score { color: var(--emerald); }
+.risk-result.risk-moderate { border-inline-start-color: var(--amber); }
+.risk-result.risk-moderate .risk-result-score { color: var(--amber); }
+.risk-result.risk-high { border-inline-start-color: var(--rose); }
+.risk-result.risk-high .risk-result-score { color: var(--rose); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   💳 بطاقات الاشتراك
+   ═══════════════════════════════════════════════════════════════════
+   عائلة `subscription-*` غير معرَّفة، فتظهر الباقات الثلاث قوائم نصّية
+   متلاحقة بلا بطاقة ولا سعرٍ بارز ولا زرّ اشتراك — والصفحة كلّها غرضها
+   المقارنة بينها.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.subscription-plan {
+  position: relative;
+  padding: 16px;
+  margin-bottom: 12px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+.subscription-plan.highlighted {
+  border-color: var(--emerald);
+  border-width: 2px;
+  box-shadow: 0 2px 12px rgba(1, 135, 95, 0.12);
+}
+.subscription-plan.current { background: var(--paper-3); }
+
+.subscription-badge {
+  position: absolute;
+  top: -10px;
+  inset-inline-start: 16px;
+  padding: 3px 10px;
+  background: var(--emerald);
+  color: #fff;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.subscription-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.subscription-name { font-size: 16px; font-weight: 800; color: var(--ink); margin: 0 0 2px; }
+.subscription-tagline { font-size: 12px; color: var(--ink-3); margin: 0; line-height: 1.5; }
+
+.subscription-price-block { text-align: center; flex-shrink: 0; }
+.subscription-price { font-size: 22px; font-weight: 900; color: var(--emerald); line-height: 1.1; }
+.subscription-price-free { font-size: 18px; font-weight: 900; color: var(--emerald); }
+.subscription-currency { font-size: 10px; color: var(--ink-3); margin-top: 2px; }
+
+.subscription-features { display: flex; flex-direction: column; gap: 8px; padding: 0; margin: 0 0 14px; }
+.subscription-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  list-style: none;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.subscription-features li.included > span:first-child { color: var(--emerald); font-weight: 800; }
+.subscription-features li.excluded { color: var(--ink-3); }
+.subscription-features li.excluded > span:first-child { color: var(--line-2, var(--ink-3)); }
+
+.subscription-cta,
+.subscription-cta-current {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--white);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.subscription-cta.primary { background: var(--emerald); border-color: var(--emerald); color: #fff; }
+.subscription-cta-current { background: var(--paper-2); color: var(--ink-3); cursor: default; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   🔒 نافذة «تحتاج حساباً» (LockedAction)
+   ═══════════════════════════════════════════════════════════════════
+   عائلة `upgrade-modal-*` غير معرَّفة، فتظهر النافذة كتلةً نصّية في أسفل
+   الصفحة بلا طبقةٍ معتِمة ولا بطاقة ولا أزرار — وهي البوّابة التي تُحوّل
+   الضيف إلى مستخدمٍ مسجَّل في كل إجراءٍ مقفل.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.upgrade-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(15, 26, 28, 0.45);
+}
+@media (min-width: 600px) { .upgrade-modal-overlay { align-items: center; } }
+
+.upgrade-modal {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  padding: 22px 18px calc(18px + env(safe-area-inset-bottom));
+  background: var(--white);
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.18);
+}
+
+.upgrade-modal-close {
+  position: absolute;
+  top: 10px;
+  inset-inline-end: 10px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--ink-3);
+  font-size: 18px;
+  font-family: inherit;
+}
+
+.upgrade-modal-icon { font-size: 40px; line-height: 1; margin-bottom: 10px; }
+.upgrade-modal-title { font-size: 17px; font-weight: 800; color: var(--ink); margin: 0 0 6px; }
+.upgrade-modal-text { font-size: 13px; line-height: 1.7; color: var(--ink-3); margin: 0 0 18px; }
+
+.upgrade-modal-actions { display: flex; flex-direction: column; gap: 8px; }
+
+.upgrade-modal-cta,
+.upgrade-modal-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 800;
+  text-decoration: none;
+}
+.upgrade-modal-cta { background: var(--emerald); color: #fff; }
+.upgrade-modal-secondary { background: var(--paper-2); color: var(--ink); }
+
+.upgrade-modal-skip {
+  margin-top: 10px;
+  min-height: 44px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-3);
+}
+
+/* ── مُتغيّرات ناقصة من عائلاتٍ قائمة ── */
+
+/* `.scr-tag-emerald` مستعملة بينما العائلة تعرّف success/amber/rose/muted فقط */
+.scr-tag-emerald { background: var(--emerald-soft); color: var(--emerald); }
+
+/* نسخة «ناجحة» من شريط المعلومات */
+.scr-info-banner-success { border-color: var(--emerald); background: var(--emerald-soft); }
+
+/* حقول النماذج داخل الشاشات (التذكيرات وغيرها) */
+.scr-input {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--ink);
+}
+.scr-input:focus { outline: 2px solid var(--emerald); outline-offset: 1px; }
+
+/* بطاقة بإطارٍ مميّز (إعدادات واتساب) */
+.card-pro {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+/* نصّ طلب إذن الإشعارات */
+.push-prompt-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+
+/* خيار اختيارٍ مفرد في تسجيل المختصّين */
+.radio-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 8px 16px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+.radio-option.selected { background: var(--emerald); border-color: var(--emerald); color: #fff; }

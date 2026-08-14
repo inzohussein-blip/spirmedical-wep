@@ -4847,3 +4847,12 @@ html {
 .landing-link:hover { background: var(--paper-2); color: var(--ink); }
 
 .blog-newsletter-content { display: flex; flex-direction: column; gap: 8px; }
+
+/* عنوانٌ فرعيّ لصفحات التسويق — النظير `.mkt-page-title` معرَّف وحده */
+.mkt-page-subtitle {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-3);
+  text-align: center;
+  margin: 0 0 16px;
+}
