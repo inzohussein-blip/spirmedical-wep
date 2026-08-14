@@ -6352,3 +6352,364 @@
     display: none !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   🚑 الإسعافات الأولية + أدوات الحالات الطارئة
+   ═══════════════════════════════════════════════════════════════════
+   صفحة الإسعافات (للضيف وللمستخدم) تستعمل عائلة `first-aid-*` و`tool-*`
+   كاملةً، **ولم تكن معرَّفة في أيّ ملفّ CSS**. النتيجة على الهاتف: الحالات
+   الستّ تُعرض نصّاً متلاصقاً في سطرٍ واحد بلا بطاقات ولا مساحات لمس،
+   و«اتصل بالإسعاف ١٢٢» رابطٌ نصّيّ ارتفاعه ١٦px لا زرّ.
+
+   هذه صفحة تُفتح في لحظة طوارئ. تُعرَّف هنا بالرموز القائمة في shared.css.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.tool-intro { text-align: center; margin-bottom: 16px; }
+.tool-intro-icon { font-size: 40px; line-height: 1; margin-bottom: 8px; }
+.tool-intro h2 { font-size: 17px; font-weight: 800; margin: 0 0 4px; color: var(--ink); }
+.tool-intro p { font-size: 13px; color: var(--ink-3); margin: 0; }
+
+/* ── زرّ الاتصال بالإسعاف: هدف لمسٍ كبير وواضح ── */
+.first-aid-quick-call,
+.first-aid-emergency-call {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  background: var(--rose);
+  color: #fff;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(199, 28, 86, 0.25);
+}
+.first-aid-quick-call span { font-size: 18px; }
+.first-aid-emergency-title { font-size: 14px; font-weight: 800; }
+.first-aid-emergency-number { font-size: 20px; font-weight: 900; letter-spacing: 1px; }
+
+/* ── شبكة الحالات: بطاقتان في الصفّ على الهاتف ── */
+.first-aid-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+@media (min-width: 600px) {
+  .first-aid-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.first-aid-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-height: 104px;
+  padding: 14px 10px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.first-aid-card:active { transform: scale(0.97); }
+.first-aid-card-icon { font-size: 30px; line-height: 1; }
+.first-aid-card-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+.first-aid-card-severity {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+
+/* ── درجة الخطورة: لونٌ يسبق القراءة ── */
+.severity-critical { border-inline-start: 4px solid var(--rose); }
+.severity-critical .first-aid-card-severity,
+.severity-critical .first-aid-detail-severity { background: var(--rose-soft); color: var(--rose); }
+.severity-urgent { border-inline-start: 4px solid var(--amber); }
+.severity-urgent .first-aid-card-severity,
+.severity-urgent .first-aid-detail-severity { background: var(--amber-soft); color: var(--amber); }
+.severity-normal { border-inline-start: 4px solid var(--emerald); }
+.severity-normal .first-aid-card-severity,
+.severity-normal .first-aid-detail-severity { background: var(--emerald-soft); color: var(--emerald); }
+
+/* ── صفحة التفصيل ── */
+.first-aid-detail-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px;
+  margin-bottom: 16px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+.first-aid-detail-icon { font-size: 44px; line-height: 1; }
+.first-aid-detail-severity {
+  font-size: 12px;
+  font-weight: 800;
+  padding: 3px 12px;
+  border-radius: 100px;
+}
+
+.first-aid-steps { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.first-aid-steps h3 { font-size: 15px; font-weight: 800; margin: 0 0 4px; color: var(--ink); }
+.first-aid-steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink);
+  list-style: none;
+  padding: 10px 12px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.first-aid-steps ol, .first-aid-steps ul { padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.step-num {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--emerald);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.first-aid-warning {
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  background: var(--rose-soft);
+  border: 1px solid var(--rose);
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink);
+}
+
+.tool-disclaimer {
+  padding: 12px 14px;
+  background: var(--amber-soft);
+  border-radius: 12px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   🚨 صفحة الطوارئ SOS
+   ═══════════════════════════════════════════════════════════════════
+   نفس عطل صفحة الإسعافات: عائلة `sos-*` و`emergency-*` و`quick-tip-*`
+   مستعملة في صفحتَي الطوارئ (المسجَّل والضيف) وغير معرَّفة في أيّ CSS.
+   فيظهر «اتصل بالإسعاف الآن ١٢٢» — وهو الإجراء الأوّل في الصفحة — نصّاً
+   عادياً بلا زرّ ولا لون، وأرقام الطوارئ قائمةً نصّية متلاصقة.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.sos-big-button {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  margin-bottom: 16px;
+  background: var(--rose);
+  color: #fff;
+  border-radius: 16px;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(199, 28, 86, 0.3);
+}
+.sos-big-button:active { transform: scale(0.99); }
+.sos-big-icon { font-size: 38px; line-height: 1; flex-shrink: 0; }
+.sos-big-content { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.sos-big-title { font-size: 17px; font-weight: 800; }
+.sos-big-number { font-size: 24px; font-weight: 900; letter-spacing: 2px; }
+
+.emergency-numbers-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.emergency-number-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-height: 112px;
+  padding: 14px 10px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  text-align: center;
+  text-decoration: none;
+  color: var(--ink);
+}
+.emergency-number-card:active { transform: scale(0.98); }
+.emergency-icon { font-size: 26px; line-height: 1; }
+.emergency-name { font-size: 13px; font-weight: 800; }
+.emergency-number { font-size: 18px; font-weight: 900; color: var(--rose); letter-spacing: 1px; }
+.emergency-desc { font-size: 11px; color: var(--ink-3); line-height: 1.5; }
+
+.quick-tips-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.quick-tip-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 56px;
+  padding: 12px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--ink);
+}
+.quick-tip-icon { font-size: 22px; line-height: 1; flex-shrink: 0; }
+.quick-tip-title { font-size: 13px; font-weight: 700; }
+
+/* ── بطاقة مشاركة الموقع في صفحة الطوارئ (مسجَّل وضيف) ── */
+.sos-gps-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  margin-bottom: 16px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  text-decoration: none;
+  color: var(--ink);
+}
+.sos-gps-icon { font-size: 26px; line-height: 1; flex-shrink: 0; }
+.sos-gps-content { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+.sos-gps-title { font-size: 14px; font-weight: 800; }
+.sos-gps-sub { font-size: 12px; color: var(--ink-3); line-height: 1.5; }
+.sos-gps-lock, .sos-gps-arrow { font-size: 18px; flex-shrink: 0; color: var(--ink-3); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   🩺 أدوات المريض: مدقّق الأعراض · حاسبة الخطر
+   ═══════════════════════════════════════════════════════════════════
+   عائلتا `symptom-*` و`risk-*` وبقيّة `tool-*` غير معرَّفة أيضاً، فتظهر
+   الأعراض القابلة للاختيار **نصّاً متلاصقاً** («التهاب حلقألم جسم») بلا
+   شرائح ولا مساحة لمس — والأداة كلّها تعتمد على اختيارها.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.symptom-category { margin-bottom: 16px; }
+.symptom-category-title {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 8px;
+}
+.symptom-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.symptom-chip,
+.symptom-chip-readonly {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 8px 14px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+.symptom-chip.selected {
+  background: var(--emerald);
+  border-color: var(--emerald);
+  color: #fff;
+}
+.symptom-chip-readonly { cursor: default; background: var(--paper-2); }
+
+.symptom-summary,
+.symptom-list-summary { font-size: 13px; font-weight: 700; color: var(--ink-2); margin-bottom: 12px; }
+
+/* ── أزرار الأدوات ── */
+.tool-cta,
+.tool-secondary-btn,
+.tool-emergency-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 18px;
+  margin-bottom: 12px;
+  border: 0;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  text-decoration: none;
+}
+.tool-cta { background: var(--emerald); color: #fff; }
+.tool-cta:disabled { opacity: 0.5; cursor: not-allowed; }
+.tool-secondary-btn { background: var(--paper-2); color: var(--ink); }
+.tool-emergency-btn { background: var(--rose); color: #fff; }
+
+/* ── نموذج حاسبة الخطر ── */
+.tool-form { display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px; }
+.tool-field { display: flex; flex-direction: column; gap: 6px; }
+.tool-field > label { font-size: 13px; font-weight: 700; color: var(--ink-2); }
+.tool-input {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--ink);
+}
+.tool-radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.tool-radio-group label {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 44px; padding: 8px 14px;
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: 100px; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+
+/* ── نتائج التوصية والخطر ── */
+.recommendation-card,
+.risk-result-card {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 20px 16px; margin-bottom: 16px;
+  background: var(--white); border: 1px solid var(--line); border-radius: 16px;
+  text-align: center;
+}
+.recommendation-icon, .risk-result-icon { font-size: 40px; line-height: 1; }
+.recommendation-specialist { font-size: 14px; font-weight: 800; color: var(--emerald); }
+.risk-result-title { font-size: 17px; font-weight: 800; color: var(--ink); }
+.risk-result-score { font-size: 32px; font-weight: 900; color: var(--emerald); }
+.risk-result-message { font-size: 13px; line-height: 1.7; color: var(--ink-2); }
+.risk-recommendations { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.risk-recommendations li {
+  list-style: none; padding: 10px 12px; font-size: 13px; line-height: 1.6;
+  background: var(--white); border: 1px solid var(--line); border-radius: 12px; color: var(--ink);
+}
+.risk-cta-section { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+
+.recommendation-urgent { border-color: var(--rose); }
+.recommendation-urgent .recommendation-specialist { color: var(--rose); }
+.recommendation-soon { border-color: var(--amber); }
+.recommendation-soon .recommendation-specialist { color: var(--amber); }

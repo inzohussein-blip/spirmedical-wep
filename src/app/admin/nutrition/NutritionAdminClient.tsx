@@ -98,7 +98,7 @@ export default function NutritionAdminClient({ initialNutritionists }: { initial
         </button>
       </div>
 
-      <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 12, overflow: 'hidden' }}>
+      <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 12, overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ background: 'var(--paper-3)' }}>

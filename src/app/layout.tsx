@@ -232,8 +232,9 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  // لا تُقفل التكبير: قفلُه يخالف WCAG 1.4.4، وهذا تطبيق طبّي يستعمله
+  // كبار السنّ وضعاف البصر. منعُ التقريب يمنعهم من قراءة جرعةٍ أو نتيجة.
+  // (iOS يتجاهل user-scalable=no منذ iOS 10؛ أندرويد يطبّقه فعلاً.)
   viewportFit: 'cover',
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#0E5C4D' },

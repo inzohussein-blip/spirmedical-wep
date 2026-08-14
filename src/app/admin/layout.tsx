@@ -41,7 +41,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const roleMeta = ADMIN_ROLES[profile!.role as keyof typeof ADMIN_ROLES];
 
   return (
-    <div style={{
+    <div className="admin-root" style={{
       display: 'flex',
       minHeight: '100vh',
       background: 'var(--paper)',
