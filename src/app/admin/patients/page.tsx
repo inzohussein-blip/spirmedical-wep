@@ -101,7 +101,7 @@ export default async function PatientsListPage({ searchParams }: { searchParams:
           size="lg"
         />
       ) : (
-        <div style={{ background: 'var(--white)', borderRadius: 14, overflow: 'hidden' }}>
+        <div style={{ background: 'var(--white)', borderRadius: 14, overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead style={{ background: 'var(--paper-3)' }}>
               <tr>
