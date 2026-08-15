@@ -175,6 +175,31 @@ nullable_flags AS (
   WHERE c.table_schema = 'public' AND c.is_nullable = 'YES'
     AND c.data_type IN ('integer','bigint','smallint','numeric','double precision','boolean')
     AND c.column_default ~ '^[0-9]+(\.[0-9]+)?$|^true$|^false$'
+),
+
+-- ─── ١٢. عمودٌ عليه أكثر من قيد CHECK يحصر قيمه ───
+-- قيود CHECK **تتقاطع ولا تتّحد**: القيمة يجب أن تمرّ من كلّ قيد. فعمودٌ
+-- عليه قيدان بمفرداتٍ مختلفة تكون مفرداته الفعلية **تقاطعهما** — والقيم
+-- التي يسمح بها الأوسع وحده لا يمكن تخزينها أبداً، وهي فخٌّ لمن يقرأه.
+-- (كان على `users.approval_status`؛ أسقط الترحيل 0022 الأوسع)
+contradictory_checks AS (
+  SELECT 'عمود بقيدَي CHECK متقاطعين',
+         (tbl || '.' || col)::text,
+         ('المفردات الفعلية هي تقاطع القيود: ' || constraints)
+  FROM (
+    SELECT c.relname AS tbl, a.attname AS col,
+           string_agg(con.conname, ' + ' ORDER BY con.conname) AS constraints,
+           count(*) AS n
+    FROM pg_constraint con
+    JOIN pg_class c ON c.oid = con.conrelid
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    JOIN unnest(con.conkey) k(attnum) ON true
+    JOIN pg_attribute a ON a.attrelid = c.oid AND a.attnum = k.attnum
+    WHERE n.nspname = 'public' AND con.contype = 'c'
+      AND pg_get_constraintdef(con.oid) LIKE '%= ANY %'
+    GROUP BY c.relname, a.attname
+  ) s
+  WHERE n > 1
 )
 
 SELECT * FROM orphan_auth
@@ -188,4 +213,5 @@ UNION ALL SELECT * FROM specialist_no_type
 UNION ALL SELECT * FROM unrouted_appointments
 UNION ALL SELECT * FROM invoker_rating_triggers
 UNION ALL SELECT * FROM nullable_flags
+UNION ALL SELECT * FROM contradictory_checks
 ORDER BY 1, 2;
