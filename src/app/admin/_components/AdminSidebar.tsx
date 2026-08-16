@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { hasPermission, type Permission } from '@/lib/admin-types';
@@ -57,21 +58,34 @@ interface Props {
 
 export default function AdminSidebar({ userName, userRole, roleLabel, roleIcon }: Props) {
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+
+  // يُغلق الدُّرج عند الانتقال إلى صفحة أخرى
+  useEffect(() => { setOpen(false); }, [pathname]);
 
   return (
-    <aside style={{
-      width: 260,
-      background: 'var(--emerald-deep, #073B30)',
-      color: 'var(--white)',
-      padding: '20px 14px',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 4,
-      position: 'sticky',
-      top: 0,
-      height: '100vh',
-      overflowY: 'auto',
-    }}>
+    <>
+      {/* زرّ القائمة — لا يظهر إلا على الشاشات الصغيرة (CSS) */}
+      <button
+        type="button"
+        className="admin-menu-btn"
+        onClick={() => setOpen((v) => !v)}
+        aria-label={open ? 'إغلاق القائمة' : 'فتح القائمة'}
+        aria-expanded={open}
+      >
+        {open ? '✕' : '☰'}
+      </button>
+
+      {/* طبقة معتِمة تُغلق الدُّرج باللمس خارجه */}
+      {open && (
+        <div
+          className="admin-sidebar-overlay"
+          onClick={() => setOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+    <aside className={`admin-sidebar ${open ? 'open' : ''}`}>
       {/* Logo */}
       <div style={{
         padding: '8px 12px 20px',
@@ -142,5 +156,6 @@ export default function AdminSidebar({ userName, userRole, roleLabel, roleIcon }
         Spir Medical Admin v2
       </div>
     </aside>
+    </>
   );
 }

@@ -13,7 +13,15 @@
 
 import type { OtpMode } from '../types';
 
-const DEFAULT_MODE: OtpMode = 'disabled';
+/**
+ * الافتراضي `optional` — مطابقٌ لـ`env.ts` و`flags.ts` و`.env.example`.
+ *
+ * كان `disabled` هنا وفي `SpecialistRegisterClient` بينما البقيّة `optional`،
+ * فبناءٌ لا يضبط `NEXT_PUBLIC_OTP_MODE` (والمتغيّر يُحقن وقت البناء) كان
+ * يجعل تسجيل المختصّين يسلك مسلكاً والدخول مسلكاً آخر. هذه الوحدة هي
+ * المصدر الوحيد الآن.
+ */
+const DEFAULT_MODE: OtpMode = 'optional';
 
 /**
  * قراءة وضع OTP من الـ env (client-side safe — NEXT_PUBLIC_*)

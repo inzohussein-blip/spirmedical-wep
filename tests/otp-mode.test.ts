@@ -17,9 +17,9 @@ describe('readOtpMode', () => {
     }
   });
 
-  it('defaults to disabled', () => {
+  it('defaults to optional', () => {
     delete process.env.NEXT_PUBLIC_OTP_MODE;
-    expect(readOtpMode()).toBe('disabled');
+    expect(readOtpMode()).toBe('optional');
   });
 
   it('reads required', () => {
@@ -37,9 +37,9 @@ describe('readOtpMode', () => {
     expect(readOtpMode()).toBe('disabled');
   });
 
-  it('falls back to disabled on invalid value', () => {
+  it('falls back to optional on invalid value', () => {
     process.env.NEXT_PUBLIC_OTP_MODE = 'whatever';
-    expect(readOtpMode()).toBe('disabled');
+    expect(readOtpMode()).toBe('optional');
   });
 });
 
