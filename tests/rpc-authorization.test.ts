@@ -94,6 +94,25 @@ describe('كشف دوالّ المُشغِّلات على REST', () => {
    *
    * وهو خطأٌ صامت تماماً — الترحيل ينجح والمدقّق يبقى مُنذِراً.
    */
+  /**
+   * دوالُّ التفويض التي تستدعيها سياسات RLS لا تُسحب صلاحيتها بل **تُنقل**
+   * إلى مخطّطٍ غير مكشوف: السحب يُسقط كلّ قراءة بـ42501 لأنّ تعبير
+   * السياسة يُنفَّذ بصلاحية الدور القارئ، بينما النقل يُخفي نقطة الدخول
+   * وتتبعه السياسات تلقائياً (تخزّن OID الدالّة لا اسمها).
+   */
+  it('دوالّ التفويض خارج المخطّط المكشوف', () => {
+    const sql = migrationFiles().map((f) => f.sql).join('\n');
+
+    for (const fn of ['is_admin', 'is_super_admin', 'current_user_is_approved_specialist_type']) {
+      expect(sql).toMatch(
+        new RegExp(`ALTER\\s+FUNCTION\\s+public\\.${fn}\\s*\\([^)]*\\)\\s*SET\\s+SCHEMA\\s+private`, 'i'),
+      );
+    }
+
+    // النقل بلا USAGE على المخطّط يكسر تقييم السياسة
+    expect(sql).toMatch(/GRANT\s+USAGE\s+ON\s+SCHEMA\s+private\s+TO[^;]*anon/i);
+  });
+
   it('سحب EXECUTE يشمل PUBLIC لا الدورين وحدهما', () => {
     for (const { name, sql } of migrationFiles()) {
       for (const m of sql.matchAll(/REVOKE\s+EXECUTE\s+ON\s+FUNCTION[^;]*?FROM\s+([^;]+)/gi)) {

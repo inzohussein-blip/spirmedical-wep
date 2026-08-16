@@ -249,6 +249,29 @@ unauthorized_definer_writes AS (
     AND (has_function_privilege('anon', p.oid, 'EXECUTE')
       OR has_function_privilege('authenticated', p.oid, 'EXECUTE'))
     AND NOT EXISTS (SELECT 1 FROM pg_depend d WHERE d.objid = p.oid AND d.deptype = 'e')
+),
+
+-- ─── ١٥. دالّة SECURITY DEFINER من صنعنا مكشوفة على REST ───
+-- `DEFINER` تُنفَّذ بصلاحية المالك فتتخطّى RLS تخطّياً كاملاً. وجودها في
+-- `public` يعني نقطةَ دخولٍ في `/rest/v1/rpc/` يبلغها الزائر أو المستخدم
+-- بلا وسيط — والحارس الوحيد ما كُتب في جسم الدالّة.
+--
+-- والعلاج ليس سحب EXECUTE دائماً: دوالُّ التفويض التي تستدعيها سياسات RLS
+-- **تحتاج** الصلاحية، وسحبُها يُسقط كلّ قراءة بـ42501 (قِيس). فالمخرج
+-- نقلُها إلى مخطّطٍ غير مكشوف — والسياسات تتبعها تلقائياً لأنّها تخزّن
+-- OID الدالّة لا اسمها. (٤ دوالّ، عالجها الترحيل 0024)
+--
+-- دوالّ الامتدادات (PostGIS) مستثناة: لا نملكها.
+exposed_definer_fns AS (
+  SELECT 'دالّة DEFINER مكشوفة على REST', p.proname::text,
+         'تتخطّى RLS ويبلغها anon أو authenticated عبر /rest/v1/rpc/'
+  FROM pg_proc p
+  JOIN pg_namespace n ON n.oid = p.pronamespace
+  WHERE n.nspname = 'public' AND p.prosecdef AND p.prokind = 'f'
+    AND p.prorettype <> 'trigger'::regtype
+    AND (has_function_privilege('anon', p.oid, 'EXECUTE')
+      OR has_function_privilege('authenticated', p.oid, 'EXECUTE'))
+    AND NOT EXISTS (SELECT 1 FROM pg_depend d WHERE d.objid = p.oid AND d.deptype = 'e')
 )
 
 SELECT * FROM orphan_auth
@@ -265,4 +288,5 @@ UNION ALL SELECT * FROM nullable_flags
 UNION ALL SELECT * FROM contradictory_checks
 UNION ALL SELECT * FROM exposed_trigger_fns
 UNION ALL SELECT * FROM unauthorized_definer_writes
+UNION ALL SELECT * FROM exposed_definer_fns
 ORDER BY 1, 2;

@@ -8891,10 +8891,6 @@ export type Database = {
         }
         Returns: string
       }
-      current_user_is_approved_specialist_type: {
-        Args: { req_type: string }
-        Returns: boolean
-      }
       determine_specialist_type: {
         Args: { service_id: string }
         Returns: string
@@ -9062,8 +9058,6 @@ export type Database = {
           retry_after_seconds: number
         }[]
       }
-      is_admin: { Args: { user_id: string }; Returns: boolean }
-      is_super_admin: { Args: { user_id: string }; Returns: boolean }
       longtransactionsenabled: { Args: never; Returns: boolean }
       mark_message_read: { Args: { message_id: string }; Returns: undefined }
       populate_geometry_columns:
@@ -9106,8 +9100,6 @@ export type Database = {
       }
       postgis_version: { Args: never; Returns: string }
       postgis_wagyu_version: { Args: never; Returns: string }
-      show_limit: { Args: never; Returns: number }
-      show_trgm: { Args: { "": string }; Returns: string[] }
       st_3dclosestpoint: {
         Args: { geom1: unknown; geom2: unknown }
         Returns: unknown
