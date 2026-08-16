@@ -4628,16 +4628,39 @@ html {
 }
 
 .file-upload-input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-.file-upload-content {
+
+/* صندوق الرفع هو الـ<label> نفسه (`.file-upload`) لا الغلافُ الداخلي.
+   كانت القواعد تضع الإطار المتقطّع وتخطيط الصفّ على `.file-upload-content`
+   بينما الترميز يجعله غلافَ النصّ وحده والأيقونةَ **شقيقةً** له — فالإطار
+   يحيط بالنصّ فقط، والأيقونة خارجه، و`margin-inline-start: auto` في زرّ
+   الحذف بلا أثرٍ لأنّ أباه ليس flex. */
+.file-upload {
   display: flex; align-items: center; gap: 10px;
   min-height: 60px; padding: 12px 14px;
   background: var(--white);
   border: 1.5px dashed var(--line);
   border-radius: 12px;
   cursor: pointer;
+  position: relative;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.file-upload:hover { border-color: var(--emerald); }
+
+/* الحالتان كانتا تُكتبان في JSX بلا قاعدةٍ تقابلهما: الحقل الخاطئ لا يبدو
+   خاطئاً، والملفّ المرفوع لا يبدو مرفوعاً */
+.file-upload.error { border-color: var(--rose); background: var(--rose-soft); }
+.file-upload.has-file { border-style: solid; border-color: var(--emerald); background: var(--emerald-soft); }
+
+.file-upload-content {
+  display: flex; flex-direction: column; gap: 2px;
+  flex: 1; min-width: 0;
 }
 .file-upload-icon { font-size: 22px; line-height: 1; flex-shrink: 0; }
-.file-upload-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+.file-upload-title {
+  font-size: 13px; font-weight: 700; color: var(--ink);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
 .file-upload-meta { font-size: 11px; color: var(--ink-3); }
 .file-upload-remove {
   margin-inline-start: auto;
@@ -4645,4 +4668,69 @@ html {
   display: flex; align-items: center; justify-content: center;
   background: none; border: 0; cursor: pointer;
   color: var(--rose); font-size: 16px; font-family: inherit;
+}
+
+
+/* ─────────────────────────────────────────────────────────
+   فئاتٌ كانت مستعملةً في JSX بلا تعريف
+   كلّها كُشفت بحارس `tests/mobile-layout.test.ts`؛ كانت في قائمة
+   الاستثناء المؤقّتة، وهذه تعريفاتها فأُفرغت القائمة.
+   ───────────────────────────────────────────────────────── */
+
+/* غلاف الخريطة: أبناؤه (‎.spir-map-view-card‎ و‎-recenter‎) معرَّفون
+   ويتموضعون بالنسبة إليه، فبقاؤه بلا قياسٍ يجعلهم يتموضعون بالنسبة
+   لأقرب سلفٍ آخر */
+.spir-map-view {
+  width: 100%;
+  min-height: 240px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--paper-2);
+}
+
+.spir-map-empty {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; min-height: 240px; padding: 24px;
+  text-align: center;
+  color: var(--ink-3); font-size: 13px; font-weight: 600;
+  background: var(--paper-2);
+  border: 1px dashed var(--line);
+  border-radius: 16px;
+}
+
+/* غلاف خريطة الكثافة */
+.mh-wrap {
+  position: relative;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--paper-2);
+}
+
+/* تنويعة البطاقة الخضراء — أخواتها ‎.service-amber‎ و‎.service-rose‎
+   معرَّفتان، وهذه وحدها كانت ناقصة رغم استعمالها في خمس صفحات */
+.service-emerald {
+  background: var(--emerald-soft);
+  border-color: rgba(1, 135, 95, 0.2);
+}
+
+/* سطر «آخر تحديث» أسفل الصفحات القانونية */
+.legal-updated {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin: 0 0 16px;
+}
+
+/* نموذج طلب حذف البيانات — يحمل تخطيطه في أنماطٍ سطرية، وهذه أرضيته */
+.deletion-form {
+  display: block;
+  width: 100%;
+}
+
+/* بطاقة نموذجٍ داخل شاشات التطبيق */
+.scr-form-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
 }

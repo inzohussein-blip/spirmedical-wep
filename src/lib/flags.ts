@@ -10,7 +10,7 @@
  */
 
 import { env, getOtpMode, type OtpMode } from './env';
-import { readOtpMode } from '@/features/auth/lib/otp-mode';
+import { readOtpMode } from '@/lib/auth/otp-mode';
 
 export type FeatureFlag =
   | 'specialist_chat'

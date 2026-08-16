@@ -52,12 +52,19 @@ export default function WhatsAppOtpSettings({
       disabled: !waVerified,
       disabledReason: 'يجب التحقق من رقم WhatsApp أولاً',
     },
+    // القناتان التاليتان **غير منفَّذتين** في الخادم: `sendOtpViaTelegram`
+    // و`sendOtpViaSms` تُرجعان `success: false` دائماً. وكانتا تُعرضان هنا
+    // قابلتين للاختيار بوصفٍ واثق («٥-٣٠ ثانية · يعمل بلا إنترنت»)، فمن
+    // يختار SMS يصير كلّ إرسال رمزٍ له فاشلاً — أي **خروجٌ كامل من التحقّق
+    // بخطوتين** في تطبيقٍ طبّي. تُعطَّلان حتى تُفعَّل القناة فعلاً.
     {
       id: 'telegram',
       label: 'Telegram',
       description: 'فوري · للحسابات المربوطة',
       icon: Send,
       brandColor: '#0088CC',
+      disabled: process.env.NEXT_PUBLIC_ENABLE_TELEGRAM_OTP !== 'true',
+      disabledReason: 'قناة تيليجرام غير مفعّلة بعد',
     },
     {
       id: 'sms',
@@ -65,6 +72,8 @@ export default function WhatsAppOtpSettings({
       description: '5-30 ثانية · يعمل بلا إنترنت',
       icon: Smartphone,
       brandColor: '#6E7878',
+      disabled: process.env.NEXT_PUBLIC_ENABLE_SMS_OTP !== 'true',
+      disabledReason: 'قناة SMS غير مفعّلة بعد',
     },
   ];
 

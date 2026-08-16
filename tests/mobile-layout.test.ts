@@ -220,18 +220,24 @@ describe('تباين الأزرار داخل النصّ القانونيّ', () 
 // ─────────────────────────────────────────────────────────────────
 describe('تعريف فئات CSS', () => {
   /**
-   * الفئات المتبقّية المعروفة: أغلفةٌ تحمل تخطيطها في نمطٍ سطريّ، أو
-   * فئاتٌ لا تحتاج قواعد (`deletion-form` مثلاً — فُحصت الصفحة وتُعرض
-   * منسَّقةً بالكامل، والعناصر الداخلية تحمل فئاتها المعرَّفة).
+   * القائمة **فارغة**، وهذا هو المطلوب.
    *
-   * الغرض من القائمة منع **الجديد**، لا تثبيت القديم. عند تعريف أيٍّ
-   * منها احذفها من هنا.
+   * كانت اثنتي عشرة فئة، وتبيّن عند مراجعتها واحدةً واحدة أنّها ثلاثة
+   * أصناف لا صنفٌ واحد:
+   *
+   *   • تسعٌ ناقصةٌ فعلاً — عُرِّفت في `shared.css`. وأخطرها `.file-upload`:
+   *     كان الإطار المتقطّع مكتوباً على `.file-upload-content` بينما
+   *     الترميز يجعله غلافَ النصّ وحده، فالصندوق يحيط بالنصّ والأيقونة
+   *     خارجه؛ و`.error`/`.has-file` بلا قاعدةٍ أصلاً فلا يبدو الحقل
+   *     الخاطئ خاطئاً.
+   *   • واحدةٌ (`push-prompt`) كانت **معرَّفة** ومُدرَجةً سهواً.
+   *   • اثنتان (`wa-otp-card`, `consult-empty`) لم تعودا مستعملتين.
+   *   • و`self-center` أداةُ Tailwind، محلّها قائمةُ الأدوات أدناه.
+   *
+   * إبقاؤها فارغةً يعني أنّ الحارس صار مطلقاً: أيّ فئةٍ بلا تعريف تُفشل
+   * الاختبار. إن اضطُرّ أحدٌ لإضافة اسمٍ هنا فليكتب السبب.
    */
-  const KNOWN_UNDEFINED = new Set([
-    'spir-map-view', 'spir-map-empty', 'mh-wrap', 'deletion-form',
-    'legal-updated', 'file-upload', 'scr-form-card', 'service-emerald',
-    'self-center', 'push-prompt', 'wa-otp-card', 'consult-empty',
-  ]);
+  const KNOWN_UNDEFINED = new Set<string>([]);
 
   // فئات Tailwind وما شابهها ليست من مسؤولية ملفّات CSS
   const UTILITY = new RegExp(
@@ -240,7 +246,7 @@ describe('تعريف فئات CSS', () => {
       'text|bg|border|rounded|shadow|gap|space|items|justify|font|leading|tracking|opacity|z|max|min|overflow|' +
       'transition|transform|scale|translate|cursor|select|object|top|bottom|left|right|inset|order|col|row|' +
       'animate|duration|ease|delay|ring|outline|divide|placeholder|from|via|to|backdrop|filter|blur|truncate|' +
-      'aspect|container|sr|not|pointer|shrink|grow|basis|whitespace|break)[-$]|' +
+      'aspect|container|sr|not|pointer|shrink|grow|basis|whitespace|break|self|place|list|fill|stroke)-|' +
       '^(flex|grid|hidden|block|truncate|container|sr-only|antialiased|shadow|transition|rounded|italic)$',
   );
 
@@ -268,9 +274,6 @@ describe('تعريف فئات CSS', () => {
     const offenders: string[] = [];
 
     for (const file of TSX) {
-      // وحدة features/ غير مستورَدة من أيّ صفحة (كود ميّت)
-      if (file.includes(`${'src'}/features/`)) continue;
-
       const src = read(file);
       const known = localClasses(src);
 

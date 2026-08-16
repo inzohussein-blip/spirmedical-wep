@@ -158,15 +158,28 @@ export async function sendOtp(params: {
       sendResult = await sendOtpMessage(normalized, otp);
       break;
 
+    // تيليجرام وSMS غير منفَّذتين بعد (تحتاجان بوتاً ومزوّداً عراقياً).
+    // والمستخدم قد يكون مخزَّناً على إحداهما من قبل أن تُعطَّل في الإعدادات
+    // — فبدل ردّه بفشلٍ يُخرجه من التحقّق بخطوتين كلّياً، نرجع إلى واتساب
+    // ونُعلمه بذلك. الأمان يبقى كما هو: الرمز نفسه والتحقّق نفسه، تتغيّر
+    // قناةُ التسليم وحدها.
     case 'telegram':
-      // TODO: استخدم Telegram bot الموجود
-      sendResult = await sendOtpViaTelegram(normalized, otp);
-      break;
+    case 'sms': {
+      const enabled = channel === 'telegram'
+        ? process.env.ENABLE_TELEGRAM_OTP === 'true'
+        : process.env.ENABLE_SMS_OTP === 'true';
 
-    case 'sms':
-      // TODO: تكامل مع مزود SMS عراقي
-      sendResult = await sendOtpViaSms(normalized, otp);
+      if (!enabled) {
+        logger.warn('OTP channel not enabled — falling back to WhatsApp', { channel });
+        sendResult = await sendOtpMessage(normalized, otp);
+        break;
+      }
+
+      sendResult = channel === 'telegram'
+        ? await sendOtpViaTelegram(normalized, otp)
+        : await sendOtpViaSms(normalized, otp);
       break;
+    }
 
     default:
       return { success: false, error: 'قناة غير مدعومة', code: 'CHANNEL_UNSUPPORTED' };
@@ -299,8 +312,9 @@ async function sendOtpViaTelegram(
   _phone: string,
   _otp: string
 ): Promise<{ success: boolean; messageId?: string; error?: string }> {
-  // TODO: تكامل مع Telegram bot الموجود
-  // يحتاج user_telegram_links لربط الرقم بالحساب
+  // غير منفَّذة: تحتاج بوتاً وجدول `user_telegram_links` لربط الرقم بالحساب.
+  // لا تُستدعى إلّا إذا كان `ENABLE_TELEGRAM_OTP=true`؛ وبدونه يرجع المُرسِل
+  // إلى واتساب فلا يُحرَم المستخدم من التحقّق.
   // ملاحظة أمنية: لا نُسجّل قيمة الـ OTP إطلاقاً.
   logger.warn('Telegram OTP channel not enabled', { channel: 'telegram' });
   return { success: false, error: 'Telegram OTP غير مفعّل بعد' };
@@ -310,7 +324,9 @@ async function sendOtpViaSms(
   _phone: string,
   _otp: string
 ): Promise<{ success: boolean; messageId?: string; error?: string }> {
-  // TODO: تكامل مع مزود SMS عراقي (Asiacell/Zain/etc)
+  // غير منفَّذة: تحتاج مزوّداً عراقياً (Asiacell/Zain/…).
+  // لا تُستدعى إلّا إذا كان `ENABLE_SMS_OTP=true`؛ وبدونه يرجع المُرسِل إلى
+  // واتساب فلا يُحرَم المستخدم من التحقّق.
   // ملاحظة أمنية: لا نُسجّل قيمة الـ OTP إطلاقاً.
   logger.warn('SMS OTP channel not enabled', { channel: 'sms' });
   return { success: false, error: 'SMS غير مفعّل بعد' };

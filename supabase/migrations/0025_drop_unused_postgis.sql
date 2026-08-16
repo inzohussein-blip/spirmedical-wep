@@ -1,0 +1,39 @@
+-- ════════════════════════════════════════════════════════════════════════
+-- 0025: إسقاط PostGIS — امتدادٌ غير مستعمل يحمل ثمانية إنذارات
+-- ════════════════════════════════════════════════════════════════════════
+--
+-- كان PostGIS مصدرَ **ثمانية** من إنذارات المدقّق التسعة الباقية:
+--
+--   • `spatial_ref_sys` مكشوفٌ بلا RLS                        (ERROR ×١)
+--   • `postgis` في مخطّط `public`                              (WARN  ×١)
+--   • `st_estimatedextent` بصلاحية DEFINER يبلغها الزائر       (WARN  ×٦)
+--
+-- ولا شيء منها قابلٌ للعلاج مع بقاء الامتداد، وقد جُرِّب كلٌّ منها وقِيس:
+--
+--   ALTER TABLE spatial_ref_sys ENABLE ROW LEVEL SECURITY
+--     → 42501 must be owner of table spatial_ref_sys   (المالك supabase_admin)
+--   REVOKE SELECT ON spatial_ref_sys FROM PUBLIC
+--     → تنجح العبارة ولا تفعل شيئاً (المنحة صادرةٌ عن supabase_admin)
+--   ALTER EXTENSION postgis SET SCHEMA extensions
+--     → 0A000 extension "postgis" does not support SET SCHEMA
+--
+-- فالمخرج الوحيد إسقاطُ الامتداد. وهو ممكنٌ لأنّ المشروع **لا يستعمله**:
+--
+--   صفر عمود geometry/geography   صفر فهرس مكانيّ
+--   صفر استدعاء لدوالّه في src/    صفر استدعاء في دوالّنا
+--
+-- والدليل الحاسم أنّ `DROP EXTENSION postgis` **بلا CASCADE** ينجح: لو
+-- تعلّق به عمودٌ أو فهرسٌ أو دالّةٌ من مخطّطنا لَرفض Postgres الإسقاط.
+-- (CASCADE هو ما يُسقط التوابع صامتاً — ولذلك لا يُستعمل هنا.)
+--
+-- قِيس في معاملةٍ مُتراجَعٍ عنها قبل التطبيق:
+--
+--   جداول public   ٩١ → ٩٠   (المفقود `spatial_ref_sys` وهو من PostGIS)
+--   سياسات RLS    ٢٦٤ → ٢٦٤  (لم تُمسّ)
+--   قراءة الزائر على ستّة جداول → OK
+--   بقايا كائنات postgis في public → ٠
+--
+-- للعودة إن لزم يوماً: `CREATE EXTENSION postgis;` (كانت 3.3.7). ولا
+-- بيانات تضيع — `spatial_ref_sys` جدولٌ مرجعيّ يُعيد الامتدادُ ملأه.
+
+DROP EXTENSION postgis;

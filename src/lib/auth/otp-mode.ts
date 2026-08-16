@@ -11,7 +11,9 @@
  *   - 'required': إرسال OTP إلزامي
  */
 
-import type { OtpMode } from '../types';
+/** أوضاع OTP الثلاثة — كانت في `features/auth/types.ts` وهو الملفّ
+ *  الوحيد الذي كان يحتاجه هذا، فضُمّ إليه عند نقل الوحدة. */
+export type OtpMode = 'disabled' | 'optional' | 'required';
 
 /**
  * الافتراضي `optional` — مطابقٌ لـ`env.ts` و`flags.ts` و`.env.example`.
