@@ -391,7 +391,7 @@ export default function PharmacyReservationModal({
           padding: 10,
           background: 'var(--paper-2)',
           borderRadius: 8,
-          fontSize: 10,
+          fontSize: 11,
           color: 'var(--ink-3)',
           lineHeight: 1.6,
         }}>

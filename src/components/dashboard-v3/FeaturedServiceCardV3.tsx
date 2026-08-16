@@ -83,7 +83,7 @@ export default function FeaturedServiceCardV3({
                 display: 'inline-block',
                 background: '#FBBC04',
                 color: '#202124',
-                fontSize: 9,
+                fontSize: 11,
                 fontWeight: 700,
                 padding: '2px 8px',
                 borderRadius: 9999,

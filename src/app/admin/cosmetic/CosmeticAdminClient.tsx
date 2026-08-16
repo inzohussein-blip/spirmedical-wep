@@ -190,14 +190,14 @@ export default function CosmeticAdminClient({ products: initial }: Props) {
                   {p.image_emoji || '🧴'}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 10, color: '#5F6368', fontWeight: 700 }}>
+                  <div style={{ fontSize: 11, color: '#5F6368', fontWeight: 700 }}>
                     {p.brand}
                   </div>
                   <h3 style={{ fontSize: 13, fontWeight: 700, margin: '2px 0', color: '#202124' }}>
                     {p.name}
                   </h3>
                   <div style={{ 
-                    fontSize: 10, color: '#80868B',
+                    fontSize: 11, color: '#80868B',
                     padding: '1px 6px', background: '#F1F3F4',
                     borderRadius: 6, display: 'inline-block',
                   }}>
@@ -224,7 +224,7 @@ export default function CosmeticAdminClient({ products: initial }: Props) {
                   <span style={{
                     display: 'inline-flex', alignItems: 'center', gap: 2,
                     padding: '2px 6px', background: '#FEF7E0',
-                    borderRadius: 6, fontSize: 10, fontWeight: 700, color: '#B06000',
+                    borderRadius: 6, fontSize: 11, fontWeight: 700, color: '#B06000',
                   }}>
                     <IconStar size={9} stroke={2.2} fill="currentColor" />
                     {p.rating_avg.toFixed(1)} ({p.rating_count})
@@ -234,7 +234,7 @@ export default function CosmeticAdminClient({ products: initial }: Props) {
                   <span style={{
                     display: 'inline-flex', alignItems: 'center', gap: 2,
                     padding: '2px 6px', background: '#E6F3EF',
-                    borderRadius: 6, fontSize: 10, fontWeight: 700, color: '#04342C',
+                    borderRadius: 6, fontSize: 11, fontWeight: 700, color: '#04342C',
                   }}>
                     <IconAward size={9} stroke={2.2} />
                     موصى به
@@ -243,7 +243,7 @@ export default function CosmeticAdminClient({ products: initial }: Props) {
                 {!p.is_in_stock && (
                   <span style={{
                     padding: '2px 6px', background: '#FCE8E6', color: '#8B1240',
-                    borderRadius: 6, fontSize: 10, fontWeight: 700,
+                    borderRadius: 6, fontSize: 11, fontWeight: 700,
                   }}>
                     غير متوفّر
                   </span>
@@ -251,7 +251,7 @@ export default function CosmeticAdminClient({ products: initial }: Props) {
                 {!p.is_active && (
                   <span style={{
                     padding: '2px 6px', background: '#F1F3F4', color: '#5F6368',
-                    borderRadius: 6, fontSize: 10, fontWeight: 700,
+                    borderRadius: 6, fontSize: 11, fontWeight: 700,
                   }}>
                     معطّل
                   </span>
@@ -275,7 +275,7 @@ export default function CosmeticAdminClient({ products: initial }: Props) {
                     background: p.is_active ? '#FCE8E6' : '#E6F3EF',
                     color: p.is_active ? '#8B1240' : '#04342C',
                     border: 0, borderRadius: 8,
-                    fontSize: 10, fontWeight: 700, cursor: 'pointer',
+                    fontSize: 11, fontWeight: 700, cursor: 'pointer',
                   }}
                 >
                   {p.is_active ? 'تعطيل' : 'تفعيل'}
@@ -292,7 +292,7 @@ export default function CosmeticAdminClient({ products: initial }: Props) {
                     background: p.is_in_stock ? '#FEF7E0' : '#E8F0FE',
                     color: p.is_in_stock ? '#B06000' : '#1A73E8',
                     border: 0, borderRadius: 8,
-                    fontSize: 10, fontWeight: 700, cursor: 'pointer',
+                    fontSize: 11, fontWeight: 700, cursor: 'pointer',
                   }}
                 >
                   {p.is_in_stock ? 'تعليم نفاد' : 'متوفّر'}
@@ -310,7 +310,7 @@ export default function CosmeticAdminClient({ products: initial }: Props) {
                     background: p.is_recommended ? '#F1F3F4' : '#FEF7E0',
                     color: p.is_recommended ? '#5F6368' : '#B06000',
                     border: 0, borderRadius: 8,
-                    fontSize: 10, fontWeight: 700, cursor: 'pointer',
+                    fontSize: 11, fontWeight: 700, cursor: 'pointer',
                     display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 4,
                   }}
                 >

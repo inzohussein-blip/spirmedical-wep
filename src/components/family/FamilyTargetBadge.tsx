@@ -150,7 +150,7 @@ export default function FamilyTargetBadge({ familyMemberId, ownerName }: Props) 
               background: 'var(--amber)',
               color: 'var(--paper-3)',
               borderRadius: 4,
-              fontSize: 9,
+              fontSize: 11,
               fontWeight: 800,
               marginBottom: 4,
             }}

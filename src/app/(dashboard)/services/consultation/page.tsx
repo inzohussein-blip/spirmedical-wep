@@ -166,7 +166,7 @@ export default async function ConsultationPage() {
                     }}
                   >
                     <div style={{ fontSize: 13, fontWeight: 700 }}>{label}</div>
-                    <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 2 }}>
+                    <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 2 }}>
                       {count} طبيب
                     </div>
                   </Link>

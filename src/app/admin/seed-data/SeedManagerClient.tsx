@@ -277,7 +277,7 @@ export default function SeedManagerClient() {
                         <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>
                           {cat.label}
                         </div>
-                        <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 1 }}>
+                        <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 1 }}>
                           {cat.existing} موجود · {willAdd} متاح
                         </div>
                       </div>
@@ -399,23 +399,23 @@ export default function SeedManagerClient() {
                     gap: 12,
                   }}>
                     <div style={{ background: '#fff', padding: 12, borderRadius: 8 }}>
-                      <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>المُحاول</div>
+                      <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>المُحاول</div>
                       <div style={{ fontSize: 20, fontWeight: 800 }}>{result.summary.total_attempted}</div>
                     </div>
                     <div style={{ background: '#fff', padding: 12, borderRadius: 8 }}>
-                      <div style={{ fontSize: 10, color: '#01875F' }}>تم الإدراج</div>
+                      <div style={{ fontSize: 11, color: '#01875F' }}>تم الإدراج</div>
                       <div style={{ fontSize: 20, fontWeight: 800, color: '#01875F' }}>
                         {result.summary.total_inserted}
                       </div>
                     </div>
                     <div style={{ background: '#fff', padding: 12, borderRadius: 8 }}>
-                      <div style={{ fontSize: 10, color: '#B06000' }}>تم التخطّي</div>
+                      <div style={{ fontSize: 11, color: '#B06000' }}>تم التخطّي</div>
                       <div style={{ fontSize: 20, fontWeight: 800, color: '#B06000' }}>
                         {result.summary.total_skipped}
                       </div>
                     </div>
                     <div style={{ background: '#fff', padding: 12, borderRadius: 8 }}>
-                      <div style={{ fontSize: 10, color: '#C71C56' }}>أخطاء</div>
+                      <div style={{ fontSize: 11, color: '#C71C56' }}>أخطاء</div>
                       <div style={{ fontSize: 20, fontWeight: 800, color: '#C71C56' }}>
                         {result.summary.total_errors}
                       </div>
@@ -454,7 +454,7 @@ export default function SeedManagerClient() {
                       <div style={{
                         marginTop: 8, padding: 8,
                         background: '#FCE8E6', borderRadius: 6,
-                        fontSize: 10, color: '#C71C56',
+                        fontSize: 11, color: '#C71C56',
                       }}>
                         {r.errors.slice(0, 3).map((e, i) => (
                           <div key={i}>• {e}</div>

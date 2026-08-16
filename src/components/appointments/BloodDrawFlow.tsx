@@ -977,7 +977,7 @@ export default function BloodDrawFlow({
           width: 22px;
           height: 22px;
           border-radius: 50%;
-          font-size: 10px;
+          font-size: 11px;
           cursor: pointer;
           color: var(--ink-2, #1F2A2C);
         }
@@ -1025,7 +1025,7 @@ export default function BloodDrawFlow({
           color: var(--ink, #0F1A1C);
         }
         .bd-sug-meta {
-          font-size: 10px;
+          font-size: 11px;
           color: var(--ink-3, #6E7878);
           display: flex;
           gap: 5px;
@@ -1118,7 +1118,7 @@ export default function BloodDrawFlow({
           line-height: 1.3;
         }
         .bd-chip-price {
-          font-size: 10px;
+          font-size: 11px;
           font-weight: 800;
           color: var(--emerald, #0E5C4D);
           font-family: 'JetBrains Mono', monospace;
@@ -1144,7 +1144,7 @@ export default function BloodDrawFlow({
         .bd-discount-badge {
           background: var(--amber, #B8540C);
           color: var(--paper-3, #FAF6EB);
-          font-size: 10px;
+          font-size: 11px;
           padding: 3px 8px;
           border-radius: 100px;
           font-weight: 800;
@@ -1184,7 +1184,7 @@ export default function BloodDrawFlow({
           width: 22px;
           height: 22px;
           border-radius: 50%;
-          font-size: 10px;
+          font-size: 11px;
           cursor: pointer;
           font-weight: 800;
         }
@@ -1210,7 +1210,7 @@ export default function BloodDrawFlow({
           color: var(--ink-2, #1F2A2C);
         }
         .bd-optional {
-          font-size: 9px;
+          font-size: 11px;
           color: var(--ink-3, #6E7878);
           font-weight: 600;
         }
@@ -1239,7 +1239,7 @@ export default function BloodDrawFlow({
           line-height: 1.5;
         }
         .bd-hint {
-          font-size: 10px;
+          font-size: 11px;
           color: var(--ink-3, #6E7878);
           margin-top: 4px;
         }
@@ -1346,7 +1346,7 @@ export default function BloodDrawFlow({
           line-height: 1.3;
         }
         .bd-lab-city {
-          font-size: 10px;
+          font-size: 11px;
           color: var(--ink-3, #6E7878);
         }
         .bd-lab-card.selected .bd-lab-city {
@@ -1357,13 +1357,13 @@ export default function BloodDrawFlow({
           opacity: 0.85;
         }
         .bd-lab-rating {
-          font-size: 10px;
+          font-size: 11px;
           color: var(--amber, #B8540C);
           font-weight: 700;
           margin-top: 3px;
         }
         .bd-lab-time {
-          font-size: 10px;
+          font-size: 11px;
           color: var(--ink-3, #6E7878);
           margin-top: 3px;
         }
@@ -1380,7 +1380,7 @@ export default function BloodDrawFlow({
           left: 8px;
           background: var(--emerald, #0E5C4D);
           color: var(--paper-3, #FAF6EB);
-          font-size: 9px;
+          font-size: 11px;
           font-weight: 800;
           padding: 3px 7px;
           border-radius: 100px;
@@ -1492,7 +1492,7 @@ export default function BloodDrawFlow({
           transform: translateY(-1px);
         }
         .bd-missing-chip-hint {
-          font-size: 9px;
+          font-size: 11px;
           font-weight: 600;
           opacity: 0.85;
         }
@@ -1542,7 +1542,7 @@ export default function BloodDrawFlow({
           font-family: 'JetBrains Mono', monospace;
         }
         .bd-result-eta {
-          font-size: 10px;
+          font-size: 11px;
           color: var(--emerald-deep, #073B30);
           margin-top: 6px;
           padding-top: 6px;
@@ -1577,7 +1577,7 @@ export default function BloodDrawFlow({
         }
         .bd-trust-row {
           text-align: center;
-          font-size: 9px;
+          font-size: 11px;
           color: var(--ink-3, #6E7878);
           margin-top: 7px;
         }

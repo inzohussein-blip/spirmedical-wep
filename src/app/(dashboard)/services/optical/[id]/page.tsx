@@ -95,7 +95,7 @@ export default async function OpticalDetailPage({
               </div>
               {store.is_featured && (
                 <span style={{
-                  display: 'inline-block', fontSize: 10, fontWeight: 900,
+                  display: 'inline-block', fontSize: 11, fontWeight: 900,
                   background: 'var(--amber)', color: 'var(--paper-3)',
                   padding: '2px 8px', borderRadius: 100, marginBottom: 6,
                 }}>⭐ متجر مميّز</span>

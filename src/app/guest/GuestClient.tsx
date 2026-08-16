@@ -356,7 +356,7 @@ export default function GuestClient() {
         {/* Footer hint */}
         <div style={{
           padding: '20px 18px 8px',
-          fontSize: 10,
+          fontSize: 11,
           color: 'var(--ink-3)',
           textAlign: 'center',
           lineHeight: 1.6,

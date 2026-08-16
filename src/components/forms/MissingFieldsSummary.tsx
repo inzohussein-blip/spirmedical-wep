@@ -92,7 +92,7 @@ export default function MissingFieldsSummary({
           transform: translateY(-1px);
         }
         .ffs-chip-hint {
-          font-size: 9px;
+          font-size: 11px;
           font-weight: 600;
           opacity: 0.85;
         }

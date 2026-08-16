@@ -247,7 +247,7 @@ export default function ClinicsClient({ doctors }: Props) {
 
                       {d.clinic_address && (
                         <div style={{
-                          fontSize: 10,
+                          fontSize: 11,
                           color: 'var(--ink-3)',
                           marginTop: 4,
                           display: 'flex',
@@ -265,7 +265,7 @@ export default function ClinicsClient({ doctors }: Props) {
                           <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--amber)' }}>
                             {d.rating_avg.toFixed(1)}
                           </span>
-                          <span style={{ fontSize: 10, color: 'var(--ink-3)' }}>
+                          <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                             ({d.rating_count})
                           </span>
                         </div>

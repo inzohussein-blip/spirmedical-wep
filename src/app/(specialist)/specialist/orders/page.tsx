@@ -165,7 +165,7 @@ export default async function SpecialistOrdersPage({
                     <div className="scr-list-item-title">
                       {patient?.full_name ?? 'مريض'}
                       {isUnassigned && (
-                        <span style={{ marginInlineStart: 8, fontSize: 10, background: 'var(--rose-soft)', color: 'var(--rose)', padding: '2px 8px', borderRadius: 100, fontWeight: 800 }}>
+                        <span style={{ marginInlineStart: 8, fontSize: 11, background: 'var(--rose-soft)', color: 'var(--rose)', padding: '2px 8px', borderRadius: 100, fontWeight: 800 }}>
                           جديد
                         </span>
                       )}

@@ -289,7 +289,7 @@ export default function WhatsAppOtpSettings({
                       {ch.recommended && (
                         <span
                           style={{
-                            fontSize: 9,
+                            fontSize: 11,
                             background: 'var(--emerald-soft)',
                             color: 'var(--emerald)',
                             padding: '2px 6px',

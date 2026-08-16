@@ -189,7 +189,7 @@ export default function FamilyClient({ members, appointmentsCounts }: Props) {
                       {counts && counts.total > 0 && (
                         <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
                           <span style={{
-                            fontSize: 10,
+                            fontSize: 11,
                             padding: '2px 6px',
                             background: 'var(--emerald-soft)',
                             color: 'var(--emerald)',
@@ -200,7 +200,7 @@ export default function FamilyClient({ members, appointmentsCounts }: Props) {
                           </span>
                           {counts.pending > 0 && (
                             <span style={{
-                              fontSize: 10,
+                              fontSize: 11,
                               padding: '2px 6px',
                               background: 'var(--amber-soft)',
                               color: 'var(--amber)',
@@ -487,7 +487,7 @@ function MemberModal({
                 }}
               >
                 <span style={{ fontSize: 18 }}>{r.emoji}</span>
-                <span style={{ fontSize: 9, fontWeight: 700 }}>{r.label}</span>
+                <span style={{ fontSize: 11, fontWeight: 700 }}>{r.label}</span>
               </button>
             ))}
           </div>

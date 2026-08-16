@@ -255,7 +255,7 @@ export default function DoctorsClient({ doctors }: Props) {
                             flexWrap: 'wrap',
                             gap: 4,
                             marginTop: 6,
-                            fontSize: 10,
+                            fontSize: 11,
                           }}
                         >
                           {d.years_experience > 0 && (
@@ -292,7 +292,7 @@ export default function DoctorsClient({ doctors }: Props) {
                             <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--amber)' }}>
                               {d.rating_avg.toFixed(1)}
                             </span>
-                            <span style={{ fontSize: 10, color: 'var(--ink-3)' }}>
+                            <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                               ({d.rating_count} تقييم)
                             </span>
                           </div>
@@ -350,7 +350,7 @@ export default function DoctorsClient({ doctors }: Props) {
 
 function tagStyle(): React.CSSProperties {
   return {
-    fontSize: 10,
+    fontSize: 11,
     padding: '3px 8px',
     background: 'var(--paper-3)',
     color: 'var(--ink-3)',
@@ -368,7 +368,7 @@ function serviceTag(): React.CSSProperties {
     background: 'var(--paper-3)',
     color: 'var(--ink-2)',
     borderRadius: 6,
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: 700,
   };
 }

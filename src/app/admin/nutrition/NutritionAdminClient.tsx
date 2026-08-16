@@ -117,13 +117,13 @@ export default function NutritionAdminClient({ initialNutritionists }: { initial
               <tr key={n.id} style={{ borderBottom: '1px solid var(--line)' }}>
                 <td style={tdStyle}>
                   <div style={{ fontWeight: 700 }}>{n.title} {n.full_name}</div>
-                  <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>{n.gender === 'female' ? 'أنثى' : 'ذكر'}</div>
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{n.gender === 'female' ? 'أنثى' : 'ذكر'}</div>
                 </td>
                 <td style={tdStyle}>{n.years_experience} سنة</td>
                 <td style={tdStyle}>{n.cities.slice(0, 2).join(', ')}</td>
                 <td style={tdStyle}>
-                  {formatNumber(n.initial_consultation_price) && <div style={{ fontSize: 9 }}>💬 {formatNumber(n.initial_consultation_price)}</div>}
-                  {formatNumber(n.monthly_plan_price) && <div style={{ fontSize: 9 }}>📅 {formatNumber(n.monthly_plan_price)}</div>}
+                  {formatNumber(n.initial_consultation_price) && <div style={{ fontSize: 11 }}>💬 {formatNumber(n.initial_consultation_price)}</div>}
+                  {formatNumber(n.monthly_plan_price) && <div style={{ fontSize: 11 }}>📅 {formatNumber(n.monthly_plan_price)}</div>}
                 </td>
                 <td style={tdStyle}>{n.total_clients}</td>
                 <td style={tdStyle}>

@@ -77,7 +77,7 @@ function ToolCard({ tool }: { tool: ServiceConfig }) {
       </div>
       
       <div style={{
-        fontSize: 10, color: '#5F6368', lineHeight: 1.4,
+        fontSize: 11, color: '#5F6368', lineHeight: 1.4,
         position: 'relative', zIndex: 1,
       }}>
         {tool.description}

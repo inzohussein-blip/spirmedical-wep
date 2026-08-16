@@ -132,13 +132,13 @@ export default function OpticalAdminClient({ initialStores }: { initialStores: O
               <tr key={s.id} style={{ borderBottom: '1px solid var(--line)' }}>
                 <td style={tdStyle}>
                   <div style={{ fontWeight: 700 }}>{s.name}</div>
-                  {s.is_featured && <span style={{ fontSize: 10, color: 'var(--amber)' }}>⭐</span>}
+                  {s.is_featured && <span style={{ fontSize: 11, color: 'var(--amber)' }}>⭐</span>}
                 </td>
-                <td style={tdStyle}>{s.city}{s.district && <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>{s.district}</div>}</td>
+                <td style={tdStyle}>{s.city}{s.district && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{s.district}</div>}</td>
                 <td style={tdStyle}>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
                     {s.brands.slice(0, 3).map((b, i) => <Badge key={i}>{b}</Badge>)}
-                    {s.brands.length > 3 && <span style={{ fontSize: 10, color: 'var(--ink-3)' }}>+{s.brands.length - 3}</span>}
+                    {s.brands.length > 3 && <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>+{s.brands.length - 3}</span>}
                   </div>
                 </td>
                 <td style={tdStyle}>
@@ -326,7 +326,7 @@ function StatCard({ label, value, color }: { label: string; value: number; color
 }
 
 function Badge({ children, color = 'var(--ink-2)' }: { children: React.ReactNode; color?: string }) {
-  return <span style={{ fontSize: 9, padding: '2px 6px', background: 'var(--paper-3)', color, borderRadius: 100, fontWeight: 700 }}>{children}</span>;
+  return <span style={{ fontSize: 11, padding: '2px 6px', background: 'var(--paper-3)', color, borderRadius: 100, fontWeight: 700 }}>{children}</span>;
 }
 
 function IconButton({ children, onClick, title, color }: { children: React.ReactNode; onClick: () => void; title: string; color: string }) {

@@ -221,7 +221,7 @@ export default async function FavoritesPage() {
                 >
                   <Icon size={18} strokeWidth={2.2} style={{ color: meta.color, marginBottom: 2 }} aria-hidden />
                   <div style={{ fontSize: 16, fontWeight: 800, color: meta.color }}>{count}</div>
-                  <div style={{ fontSize: 9, color: 'var(--ink-3)' }}>{meta.label}</div>
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{meta.label}</div>
                 </div>
               );
             })}
@@ -286,10 +286,10 @@ export default async function FavoritesPage() {
                       {fav.rating_avg && fav.rating_avg > 0 && (
                         <div style={{ marginTop: 4, display: 'inline-flex', alignItems: 'center', gap: 3 }}>
                           <Star size={10} fill="#A57100" stroke="#A57100" aria-hidden />
-                          <span style={{ fontSize: 10, fontWeight: 700 }}>
+                          <span style={{ fontSize: 11, fontWeight: 700 }}>
                             {fav.rating_avg.toFixed(1)}
                           </span>
-                          <span style={{ fontSize: 9, color: 'var(--ink-3)' }}>
+                          <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                             ({fav.rating_count} تقييم)
                           </span>
                         </div>

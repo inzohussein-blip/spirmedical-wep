@@ -248,7 +248,7 @@ export default function OtpChannelSelector({ phone, onVerified, onCancel }: Prop
             margin-bottom: 4px;
           }
           .otp-channel-time {
-            font-size: 10px;
+            font-size: 11px;
             color: var(--emerald, #0E5C4D);
             font-weight: 700;
           }

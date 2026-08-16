@@ -169,6 +169,7 @@ export default function PerformanceMonitor() {
 
   return (
     <div
+      data-perf-monitor=""
       style={{
         position: 'fixed',
         bottom: 12,
@@ -244,7 +245,7 @@ export default function PerformanceMonitor() {
       </div>
 
       {/* Footer */}
-      <div style={{ paddingTop: 6, borderTop: '1px solid rgba(255,255,255,0.1)', opacity: 0.5, fontSize: 9 }}>
+      <div style={{ paddingTop: 6, borderTop: '1px solid rgba(255,255,255,0.1)', opacity: 0.5, fontSize: 11 }}>
         Ctrl+Shift+P لإخفاء/إظهار
       </div>
     </div>

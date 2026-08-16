@@ -177,7 +177,7 @@ export default function FeedbackClient({ feedbackList, usersMap }: Props) {
                       <span style={{ fontSize: 11, color: typeMeta.color, fontWeight: 800 }}>
                         {typeMeta.label}
                       </span>
-                      <span style={{ fontSize: 10, color: 'var(--ink-3)' }}>·</span>
+                      <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>·</span>
                       <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                         {CATEGORY_LABELS[f.category] || f.category}
                       </span>
@@ -186,7 +186,7 @@ export default function FeedbackClient({ feedbackList, usersMap }: Props) {
                         background: statusMeta.bg,
                         color: statusMeta.color,
                         borderRadius: 4,
-                        fontSize: 9,
+                        fontSize: 11,
                         fontWeight: 800,
                       }}>
                         {statusMeta.emoji} {statusMeta.label}
@@ -216,7 +216,7 @@ export default function FeedbackClient({ feedbackList, usersMap }: Props) {
                       </div>
                     )}
 
-                    <div style={{ marginTop: 8, fontSize: 10, color: 'var(--ink-3)' }}>
+                    <div style={{ marginTop: 8, fontSize: 11, color: 'var(--ink-3)' }}>
                       {user ? `👤 ${user.full_name}${user.phone ? ` · ${user.phone}` : ''}` : '👤 مجهول'}
                       {' · '}
                       {new Date(f.created_at).toLocaleString('ar-IQ', {
@@ -225,7 +225,7 @@ export default function FeedbackClient({ feedbackList, usersMap }: Props) {
                       {f.page_url && (
                         <>
                           {' · '}
-                          <code style={{ fontSize: 9, background: 'var(--paper-3)', padding: '1px 4px', borderRadius: 3 }}>
+                          <code style={{ fontSize: 11, background: 'var(--paper-3)', padding: '1px 4px', borderRadius: 3 }}>
                             {f.page_url}
                           </code>
                         </>
@@ -254,7 +254,7 @@ export default function FeedbackClient({ feedbackList, usersMap }: Props) {
                         borderRadius: 100,
                         cursor: f.status === key ? 'default' : 'pointer',
                         fontFamily: 'inherit',
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: 700,
                         opacity: f.status === key ? 0.7 : 1,
                       }}

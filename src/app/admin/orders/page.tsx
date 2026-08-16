@@ -239,14 +239,14 @@ function KanbanView({ orders, usersMap }: { orders: Array<Record<string, unknown
                       {patient?.full_name ?? 'مريض'}
                     </div>
                     <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{o.service_type}</div>
-                    <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 4 }}>
+                    <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 4 }}>
                       📅 {new Date(o.scheduled_at).toLocaleDateString('ar-IQ', { day: 'numeric', month: 'short' })}
                     </div>
                   </Link>
                 );
               })}
               {colOrders.length > 20 && (
-                <div style={{ fontSize: 10, color: 'var(--ink-3)', textAlign: 'center', padding: 8 }}>
+                <div style={{ fontSize: 11, color: 'var(--ink-3)', textAlign: 'center', padding: 8 }}>
                   +{colOrders.length - 20} طلب آخر
                 </div>
               )}

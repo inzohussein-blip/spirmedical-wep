@@ -207,7 +207,7 @@ export default function CampaignsClient({ campaigns }: Props) {
                         background: statusMeta.bg,
                         color: statusMeta.color,
                         borderRadius: 4,
-                        fontSize: 9,
+                        fontSize: 11,
                         fontWeight: 800,
                       }}>
                         {statusMeta.label}
@@ -238,7 +238,7 @@ export default function CampaignsClient({ campaigns }: Props) {
                       {c.message_content}
                     </div>
 
-                    <div style={{ display: 'flex', gap: 10, fontSize: 10, color: 'var(--ink-3)' }}>
+                    <div style={{ display: 'flex', gap: 10, fontSize: 11, color: 'var(--ink-3)' }}>
                       <span>
                         <Users size={9} style={{ display: 'inline', verticalAlign: -1 }} />
                         {' '}{c.recipients_count} مستهدف
@@ -554,7 +554,7 @@ function modalContent(): React.CSSProperties { return { background: 'var(--paper
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 10 }}>
-      <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 3 }}>{label}</label>
+      <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 3 }}>{label}</label>
       {children}
     </div>
   );

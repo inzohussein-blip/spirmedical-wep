@@ -136,14 +136,14 @@ export default function MentalHealthAdminClient({ initialSpecialists }: { initia
               <tr key={s.id} style={{ borderBottom: '1px solid var(--line)' }}>
                 <td style={tdStyle}>
                   <div style={{ fontWeight: 700 }}>{s.title} {s.full_name}</div>
-                  <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>{s.gender === 'female' ? 'أنثى' : 'ذكر'}</div>
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{s.gender === 'female' ? 'أنثى' : 'ذكر'}</div>
                 </td>
                 <td style={tdStyle}><Badge>{TYPE_LABELS[s.specialist_type]}</Badge></td>
                 <td style={tdStyle}>{s.years_experience} سنة</td>
                 <td style={tdStyle}>{s.cities.slice(0, 2).join(', ')}{s.cities.length > 2 && `+${s.cities.length - 2}`}</td>
                 <td style={tdStyle}>
-                  {s.available_online && formatNumber(s.online_session_price) && <div style={{ fontSize: 10 }}>💻 {formatNumber(s.online_session_price)}</div>}
-                  {s.available_in_clinic && formatNumber(s.clinic_session_price) && <div style={{ fontSize: 10 }}>🏢 {formatNumber(s.clinic_session_price)}</div>}
+                  {s.available_online && formatNumber(s.online_session_price) && <div style={{ fontSize: 11 }}>💻 {formatNumber(s.online_session_price)}</div>}
+                  {s.available_in_clinic && formatNumber(s.clinic_session_price) && <div style={{ fontSize: 11 }}>🏢 {formatNumber(s.clinic_session_price)}</div>}
                 </td>
                 <td style={tdStyle}>{s.total_sessions}</td>
                 <td style={tdStyle}>
@@ -333,7 +333,7 @@ function StatCard({ label, value, color }: { label: string; value: number; color
 }
 
 function Badge({ children }: { children: React.ReactNode }) {
-  return <span style={{ fontSize: 10, padding: '2px 6px', background: 'var(--emerald-soft)', color: 'var(--emerald)', borderRadius: 100, fontWeight: 700 }}>{children}</span>;
+  return <span style={{ fontSize: 11, padding: '2px 6px', background: 'var(--emerald-soft)', color: 'var(--emerald)', borderRadius: 100, fontWeight: 700 }}>{children}</span>;
 }
 
 function IconButton({ children, onClick, title, color }: { children: React.ReactNode; onClick: () => void; title: string; color: string }) {

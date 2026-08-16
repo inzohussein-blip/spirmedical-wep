@@ -262,7 +262,7 @@ export default async function PhysioSpecialistPage({
               {homePrice && (
                 <div style={{ textAlign: 'end' }}>
                   <div style={{ fontSize: 14, fontWeight: 900, color: 'var(--emerald)' }}>{homePrice}</div>
-                  <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>د.ع · كاش</div>
                 </div>
               )}
             </Link>
@@ -304,7 +304,7 @@ export default async function PhysioSpecialistPage({
               {clinicPrice && (
                 <div style={{ textAlign: 'end' }}>
                   <div style={{ fontSize: 14, fontWeight: 900, color: '#A57100' }}>{clinicPrice}</div>
-                  <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>د.ع · كاش</div>
                 </div>
               )}
             </Link>
@@ -360,7 +360,7 @@ export default async function PhysioSpecialistPage({
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 12, fontWeight: 700 }}>{t.name_ar}</div>
                     {t.description && (
-                      <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>{t.description}</div>
+                      <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{t.description}</div>
                     )}
                   </div>
                   <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--emerald)' }}>
@@ -420,7 +420,7 @@ function Stat({ icon, value, label }: { icon: React.ReactNode; value: string; la
         {icon}
       </div>
       <div style={{ fontSize: 14, fontWeight: 900 }}>{value}</div>
-      <div style={{ fontSize: 9, opacity: 0.75, marginTop: 1 }}>{label}</div>
+      <div style={{ fontSize: 11, opacity: 0.75, marginTop: 1 }}>{label}</div>
     </div>
   );
 }

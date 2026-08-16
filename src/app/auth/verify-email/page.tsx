@@ -54,7 +54,7 @@ export default function VerifyEmailPage() {
         {status === 'loading' && (
           <>
             <div className="mb-6 animate-spin">
-              <svg className="w-12 h-12 mx-auto text-emerald-600" fill="none" viewBox="0 0 24 24">
+              <svg className="w-12 h-12 mx-auto text-emerald-700" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
@@ -90,13 +90,13 @@ export default function VerifyEmailPage() {
             <div className="mt-6 space-y-3">
               <button
                 onClick={() => router.push('/login')}
-                className="w-full bg-emerald-600 text-white py-3 rounded-lg hover:bg-emerald-700 transition font-medium"
+                className="w-full bg-emerald-700 text-white py-3 rounded-lg hover:bg-emerald-800 transition font-medium"
               >
                 العودة للدخول
               </button>
               <button
                 onClick={() => router.push('/register')}
-                className="w-full border-2 border-emerald-600 text-emerald-600 py-3 rounded-lg hover:bg-emerald-50 transition font-medium"
+                className="w-full border-2 border-emerald-700 text-emerald-700 py-3 rounded-lg hover:bg-emerald-50 transition font-medium"
               >
                 إنشاء حساب جديد
               </button>

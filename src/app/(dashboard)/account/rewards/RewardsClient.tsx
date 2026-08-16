@@ -185,7 +185,7 @@ export default function RewardsClient({
                     borderRadius: 100,
                   }} />
                 </div>
-                <div style={{ fontSize: 10, opacity: 0.8, marginTop: 4 }}>
+                <div style={{ fontSize: 11, opacity: 0.8, marginTop: 4 }}>
                   تحتاج {pointsToNext.toLocaleString('ar-IQ')} نقطة أخرى
                 </div>
               </div>
@@ -277,10 +277,10 @@ export default function RewardsClient({
                       color: m.badge_color,
                     }}>
                       {m.name_ar}
-                      {isCurrent && <span style={{ fontSize: 10, marginInlineStart: 8 }}>← الحالي</span>}
+                      {isCurrent && <span style={{ fontSize: 11, marginInlineStart: 8 }}>← الحالي</span>}
                       {achieved && !isCurrent && <CheckCircle2 size={12} color="var(--emerald)" style={{ marginInlineStart: 8 }} />}
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>
+                    <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                       {m.min_points.toLocaleString('ar-IQ')} نقطة
                     </div>
                     <div style={{ fontSize: 11, color: 'var(--ink-2)', marginTop: 2 }}>
@@ -326,7 +326,7 @@ export default function RewardsClient({
                 marginBottom: 10,
                 textAlign: 'center',
               }}>
-                <div style={{ fontSize: 10, color: 'var(--ink-3)', marginBottom: 4 }}>
+                <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 4 }}>
                   كودك الخاص
                 </div>
                 <div style={{
@@ -457,7 +457,7 @@ export default function RewardsClient({
                       {r.status === 'qualified' && '⏳ قيد المعالجة'}
                       {r.status === 'pending' && '📝 سجّل لكن لم يستخدم'}
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>
+                    <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                       {new Date(r.created_at).toLocaleDateString('ar-IQ')}
                     </div>
                   </div>

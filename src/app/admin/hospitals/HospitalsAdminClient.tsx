@@ -182,13 +182,13 @@ export default function HospitalsAdminClient({ hospitals }: Props) {
                         {h.is_verified && <CheckCircle2 size={11} color="var(--emerald)" style={{ marginInlineStart: 4 }} />}
                       </div>
                       {h.district && (
-                        <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>{h.district}</div>
+                        <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{h.district}</div>
                       )}
                     </td>
                     <td style={tdStyle}>{typeMeta?.emoji} {typeMeta?.label}</td>
                     <td style={tdStyle}>{h.city}</td>
                     <td style={tdStyle}>
-                      <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', fontSize: 9 }}>
+                      <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', fontSize: 11 }}>
                         {h.has_emergency && <span style={featureTag('var(--rose)')}>طوارئ</span>}
                         {h.is_24h && <span style={featureTag('var(--emerald)')}>٢٤/٧</span>}
                         {h.has_lab && <span style={featureTag('var(--ink-3)')}>مختبر</span>}
@@ -201,7 +201,7 @@ export default function HospitalsAdminClient({ hospitals }: Props) {
                         background: h.is_active ? 'var(--emerald-soft)' : 'var(--rose-soft)',
                         color: h.is_active ? 'var(--emerald)' : 'var(--rose)',
                         borderRadius: 4,
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: 800,
                       }}>
                         {h.is_active ? 'نشط' : 'معطّل'}
@@ -452,7 +452,7 @@ function HospitalModal({
                   border: '1px solid',
                   borderColor: departments.includes(d.id) ? 'var(--emerald)' : 'var(--line)',
                   borderRadius: 100,
-                  fontSize: 10,
+                  fontSize: 11,
                   fontWeight: 700,
                   cursor: 'pointer',
                   fontFamily: 'inherit',
@@ -501,7 +501,7 @@ function featureTag(color: string): React.CSSProperties {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 12 }}>
-      <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 3 }}>{label}</label>
+      <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 3 }}>{label}</label>
       {children}
     </div>
   );

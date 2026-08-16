@@ -97,7 +97,7 @@ export default function ScheduleClient({ initialSchedules, initialAutoReply }: P
               {s.is_active && (
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                   <div>
-                    <label style={{ fontSize: 10, color: 'var(--ink-3)', fontWeight: 700, display: 'block', marginBottom: 2 }}>من</label>
+                    <label style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700, display: 'block', marginBottom: 2 }}>من</label>
                     <input
                       type="time"
                       value={s.start_time}
@@ -106,7 +106,7 @@ export default function ScheduleClient({ initialSchedules, initialAutoReply }: P
                     />
                   </div>
                   <div>
-                    <label style={{ fontSize: 10, color: 'var(--ink-3)', fontWeight: 700, display: 'block', marginBottom: 2 }}>إلى</label>
+                    <label style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700, display: 'block', marginBottom: 2 }}>إلى</label>
                     <input
                       type="time"
                       value={s.end_time}

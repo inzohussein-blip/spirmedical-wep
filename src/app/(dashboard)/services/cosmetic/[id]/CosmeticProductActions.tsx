@@ -258,7 +258,7 @@ function ReviewModal({
               resize: 'vertical',
             }}
           />
-          <div style={{ fontSize: 10, color: 'var(--ink-3)', textAlign: 'left', marginTop: 2 }}>
+          <div style={{ fontSize: 11, color: 'var(--ink-3)', textAlign: 'left', marginTop: 2 }}>
             {comment.length} / 500
           </div>
         </div>

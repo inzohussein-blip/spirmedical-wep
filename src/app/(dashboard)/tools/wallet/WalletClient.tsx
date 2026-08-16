@@ -232,17 +232,17 @@ export default function WalletClient({
                 >
                   <div style={{ fontSize: 22, marginBottom: 2 }}>{tier.emoji}</div>
                   <div style={{
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: 800,
                     color: isCurrent ? tier.color : 'var(--ink-2)',
                   }}>
                     {tier.name}
                   </div>
-                  <div style={{ fontSize: 9, color: 'var(--ink-3)', marginTop: 2 }}>
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 2 }}>
                     {tier.threshold === 0 ? 'البداية' : `${tier.threshold}+`}
                   </div>
                   <div style={{
-                    fontSize: 9,
+                    fontSize: 11,
                     color: tier.color,
                     fontWeight: 800,
                     marginTop: 2,
@@ -334,7 +334,7 @@ export default function WalletClient({
                     <div style={{ fontSize: 12, fontWeight: 700 }}>
                       {t.description}
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 2 }}>
+                    <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 2 }}>
                       {new Date(t.created_at).toLocaleDateString('ar-IQ', {
                         year: 'numeric', month: 'short', day: 'numeric',
                       })}

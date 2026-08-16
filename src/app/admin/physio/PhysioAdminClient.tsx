@@ -200,7 +200,7 @@ export default function PhysioAdminClient({ physios: initialPhysios }: Props) {
                     <span style={{
                       display: 'inline-flex', alignItems: 'center', gap: 2,
                       padding: '2px 8px', background: '#E8F0FE', color: '#1A73E8',
-                      borderRadius: 10, fontSize: 10, fontWeight: 700,
+                      borderRadius: 10, fontSize: 11, fontWeight: 700,
                     }}>
                       <IconShield size={10} stroke={2.5} fill="currentColor" />
                       معتمد
@@ -209,7 +209,7 @@ export default function PhysioAdminClient({ physios: initialPhysios }: Props) {
                   {!p.is_active && (
                     <span style={{
                       padding: '2px 8px', background: '#FCE8E6', color: '#8B1240',
-                      borderRadius: 10, fontSize: 10, fontWeight: 700,
+                      borderRadius: 10, fontSize: 11, fontWeight: 700,
                     }}>
                       معطّل
                     </span>
@@ -244,7 +244,7 @@ export default function PhysioAdminClient({ physios: initialPhysios }: Props) {
                           padding: '2px 8px',
                           background: '#F1F3F4',
                           borderRadius: 8,
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: 600,
                           color: '#3C4043',
                         }}

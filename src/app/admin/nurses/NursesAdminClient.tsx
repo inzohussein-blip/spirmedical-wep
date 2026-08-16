@@ -176,7 +176,7 @@ export default function NursesAdminClient({ nurses }: Props) {
                           <div style={{ fontWeight: 700 }}>
                             {nurse.full_name || 'بدون اسم'}
                           </div>
-                          <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>
+                          <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                             {nurse.gender === 'female' ? '♀ أنثى' : '♂ ذكر'}
                           </div>
                         </div>
@@ -220,7 +220,7 @@ export default function NursesAdminClient({ nurses }: Props) {
                         display: 'inline-flex',
                         padding: '2px 8px',
                         borderRadius: 12,
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: 700,
                         background: status.bg,
                         color: status.color,

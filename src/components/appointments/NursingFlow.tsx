@@ -498,7 +498,7 @@ export default function NursingFlow({
                     }}>
                       {proc.price.toLocaleString('ar-IQ')}
                     </div>
-                    <div style={{ fontSize: 9, color: 'var(--ink-3)' }}>د.ع</div>
+                    <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>د.ع</div>
                   </div>
                   {isSelected && (
                     <CheckCircle2 size={20} color="var(--emerald)" strokeWidth={2.4} />
@@ -551,7 +551,7 @@ export default function NursingFlow({
                 </span>
                 {allergies[a.key] && (
                   <span style={{
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: 800,
                     background: 'var(--rose)',
                     color: 'var(--paper-3)',
@@ -720,7 +720,7 @@ export default function NursingFlow({
               />
               <div style={{ flex: 1, fontSize: 12 }}>
                 <div style={{ fontWeight: 700 }}>ليس لدي وصفة (سيراها الممرض)</div>
-                <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 2 }}>
+                <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 2 }}>
                   ⚠️ قد يرفض الممرض إعطاء حقن دون وصفة موقّعة
                 </div>
               </div>
@@ -853,7 +853,7 @@ export default function NursingFlow({
                       insetInlineEnd: 8,
                       background: 'var(--amber)',
                       color: 'var(--paper-3)',
-                      fontSize: 9,
+                      fontSize: 11,
                       fontWeight: 800,
                       padding: '3px 8px',
                       borderRadius: 6,
@@ -972,7 +972,7 @@ export default function NursingFlow({
                 <div style={{ fontSize: 13, fontWeight: 800 }}>
                   تكرار العلاج (كورس)
                 </div>
-                <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 2 }}>
+                <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 2 }}>
                   للمضادات الحيوية والإبر الدورية
                 </div>
               </div>
@@ -1007,7 +1007,7 @@ export default function NursingFlow({
                       }}
                     >
                       <div style={{ fontSize: 11, fontWeight: 800 }}>{r.label}</div>
-                      <div style={{ fontSize: 9, opacity: 0.8 }}>{r.sub}</div>
+                      <div style={{ fontSize: 11, opacity: 0.8 }}>{r.sub}</div>
                     </button>
                   ))}
                 </div>

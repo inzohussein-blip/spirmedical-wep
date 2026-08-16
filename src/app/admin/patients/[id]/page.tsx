@@ -133,7 +133,7 @@ export default async function PatientDetailPage({ params }: { params: { id: stri
                       </div>
                     </div>
                     <span style={{
-                      fontSize: 10, padding: '3px 8px', borderRadius: 100, fontWeight: 800,
+                      fontSize: 11, padding: '3px 8px', borderRadius: 100, fontWeight: 800,
                       background: a.status === 'completed' ? 'var(--emerald-soft)' :
                                   a.status === 'cancelled' ? 'var(--rose-soft)' : 'var(--amber-soft, #F8E5C7)',
                       color: a.status === 'completed' ? 'var(--emerald-deep)' :

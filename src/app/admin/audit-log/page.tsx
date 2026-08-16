@@ -94,7 +94,7 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Sea
                     </td>
                     <td style={td}>
                       <div style={{ fontWeight: 700, fontSize: 12 }}>{admin?.full_name ?? '—'}</div>
-                      <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>{admin?.role ?? '—'}</div>
+                      <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{admin?.role ?? '—'}</div>
                     </td>
                     <td style={td}>
                       <span style={{ fontSize: 12, fontWeight: 700 }}>{meta.icon} {meta.label}</span>
@@ -118,7 +118,7 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Sea
                       {a.details ? (
                         <details>
                           <summary style={{ cursor: 'pointer', fontSize: 11, color: 'var(--ink-3)' }}>عرض</summary>
-                          <pre style={{ fontSize: 10, background: 'var(--paper-3)', padding: 8, borderRadius: 6, marginTop: 4, maxWidth: 220, overflow: 'auto', whiteSpace: 'pre-wrap', fontFamily: 'inherit' }}>
+                          <pre style={{ fontSize: 11, background: 'var(--paper-3)', padding: 8, borderRadius: 6, marginTop: 4, maxWidth: 220, overflow: 'auto', whiteSpace: 'pre-wrap', fontFamily: 'inherit' }}>
                             {JSON.stringify(a.details, null, 2)}
                           </pre>
                         </details>

@@ -110,7 +110,7 @@ export default async function SpecialistChatsPage() {
                   padding: '3px 8px',
                   background: 'var(--white)',
                   borderRadius: 6,
-                  fontSize: 10,
+                  fontSize: 11,
                   fontWeight: 700,
                   color: 'var(--ink-2)',
                 }}
@@ -211,7 +211,7 @@ export default async function SpecialistChatsPage() {
                           {chat.priority !== 'normal' && (
                             <span
                               style={{
-                                fontSize: 9,
+                                fontSize: 11,
                                 padding: '1px 5px',
                                 background: `${priorityMeta.color}15`,
                                 color: priorityMeta.color,
@@ -242,7 +242,7 @@ export default async function SpecialistChatsPage() {
                             alignItems: 'center',
                             gap: 4,
                             marginTop: 4,
-                            fontSize: 9,
+                            fontSize: 11,
                             color: 'var(--ink-3)',
                           }}
                         >
@@ -286,7 +286,7 @@ export default async function SpecialistChatsPage() {
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              fontSize: 10,
+                              fontSize: 11,
                               fontWeight: 900,
                             }}
                           >

@@ -564,7 +564,7 @@ export default function PharmacyDetailClient({
                       {/* Status badge */}
                       <span
                         style={{
-                          fontSize: 9,
+                          fontSize: 11,
                           fontWeight: 800,
                           padding: '4px 8px',
                           borderRadius: 6,
@@ -637,7 +637,7 @@ export default function PharmacyDetailClient({
                         {item.notes && (
                           <span
                             style={{
-                              fontSize: 10,
+                              fontSize: 11,
                               color: 'var(--ink-3)',
                               flex: 1,
                             }}
@@ -716,7 +716,7 @@ export default function PharmacyDetailClient({
 
 function tagStyle(): React.CSSProperties {
   return {
-    fontSize: 10,
+    fontSize: 11,
     padding: '3px 8px',
     background: 'var(--paper-3)',
     borderRadius: 6,
@@ -739,7 +739,7 @@ function StatPill({ icon, label, sub }: { icon: React.ReactNode; label: string; 
         {icon}
       </div>
       <div style={{ fontSize: 12, fontWeight: 900 }}>{label}</div>
-      <div style={{ fontSize: 9, opacity: 0.75, marginTop: 1 }}>{sub}</div>
+      <div style={{ fontSize: 11, opacity: 0.75, marginTop: 1 }}>{sub}</div>
     </div>
   );
 }

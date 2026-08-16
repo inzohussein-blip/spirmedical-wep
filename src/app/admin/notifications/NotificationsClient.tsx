@@ -91,7 +91,7 @@ export default function NotificationsClient() {
                 placeholder="مرحباً..."
                 style={{ ...inputStyle, resize: 'vertical' }}
               />
-              <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 4 }}>
+              <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 4 }}>
                 💡 يدعم WhatsApp: *bold* _italic_ ~strikethrough~
               </div>
             </div>

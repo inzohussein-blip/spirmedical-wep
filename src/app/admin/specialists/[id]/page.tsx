@@ -184,7 +184,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div style={{ background: 'var(--paper-3)', padding: 16, borderRadius: 10, textAlign: 'center' }}>
       <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--emerald-deep)', marginBottom: 4 }}>{value}</div>
-      <div style={{ fontSize: 10, color: 'var(--ink-3)', fontWeight: 700 }}>{label}</div>
+      <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>{label}</div>
     </div>
   );
 }

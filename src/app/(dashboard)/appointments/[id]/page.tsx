@@ -309,7 +309,7 @@ export default async function AppointmentDetailsPage({ params, searchParams }: P
               {decryptedNotes}
             </p>
             <div style={{
-              fontSize: '10px',
+              fontSize: '11px',
               color: 'var(--ink-3, #6E7878)',
               marginTop: '8px',
               textAlign: 'center',

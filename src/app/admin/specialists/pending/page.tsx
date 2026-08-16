@@ -79,7 +79,7 @@ export default async function PendingSpecialistsPage() {
                       </div>
                     </div>
                     <div style={{
-                      fontSize: 10,
+                      fontSize: 11,
                       padding: '4px 10px',
                       borderRadius: 100,
                       background: 'var(--amber-soft, #F8E5C7)',

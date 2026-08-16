@@ -191,7 +191,7 @@ export default function BetaCodesClient({ codes }: Props) {
                 <div style={{
                   display: 'flex',
                   justifyContent: 'space-between',
-                  fontSize: 10,
+                  fontSize: 11,
                   color: 'var(--ink-3)',
                 }}>
                   <span>
@@ -386,7 +386,7 @@ function CreateCodeModal({
 }
 
 const labelStyle: React.CSSProperties = {
-  fontSize: 10, fontWeight: 700, color: 'var(--ink-3)',
+  fontSize: 11, fontWeight: 700, color: 'var(--ink-3)',
   display: 'block', marginBottom: 4,
 };
 

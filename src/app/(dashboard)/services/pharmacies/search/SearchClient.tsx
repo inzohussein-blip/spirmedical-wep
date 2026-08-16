@@ -290,7 +290,7 @@ export default function SearchClient() {
                               {p.is_24h && (
                                 <span
                                   style={{
-                                    fontSize: 9,
+                                    fontSize: 11,
                                     marginInlineStart: 6,
                                     padding: '2px 6px',
                                     background: 'var(--emerald)',
@@ -305,7 +305,7 @@ export default function SearchClient() {
                             </div>
                             <div
                               style={{
-                                fontSize: 10,
+                                fontSize: 11,
                                 color: 'var(--ink-3)',
                                 display: 'flex',
                                 alignItems: 'center',
@@ -333,7 +333,7 @@ export default function SearchClient() {
                             {p.notes && (
                               <div
                                 style={{
-                                  fontSize: 10,
+                                  fontSize: 11,
                                   color: 'var(--ink-3)',
                                   marginTop: 2,
                                   fontStyle: 'italic',

@@ -248,7 +248,7 @@ export default function DoctorsAdminClient({ doctors }: Props) {
                             {d.is_verified && <CheckCircle2 size={11} color="var(--emerald)" style={{ marginInlineStart: 4 }} />}
                           </div>
                           {d.years_experience > 0 && (
-                            <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>
+                            <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                               {d.years_experience} سنة خبرة
                             </div>
                           )}
@@ -283,7 +283,7 @@ export default function DoctorsAdminClient({ doctors }: Props) {
                           background: d.is_active ? 'var(--emerald-soft)' : 'var(--rose-soft)',
                           color: d.is_active ? 'var(--emerald)' : 'var(--rose)',
                           borderRadius: 4,
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: 800,
                         }}
                       >
@@ -771,7 +771,7 @@ const inputStyle: React.CSSProperties = {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 0 }}>
-      <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 3 }}>
+      <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 3 }}>
         {label}
       </label>
       {children}

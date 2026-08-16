@@ -51,7 +51,7 @@ export default function SpecialistError({
                 background: 'var(--paper-3)',
                 padding: '6px 12px',
                 borderRadius: 100,
-                fontSize: 10,
+                fontSize: 11,
                 color: 'var(--ink-3)',
                 fontFamily: 'monospace',
                 display: 'inline-block',

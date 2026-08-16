@@ -332,7 +332,7 @@ function StatBox({ label, value, highlight, icon }: {
     >
       {icon && <div style={{ fontSize: 14, marginBottom: 2 }}>{icon}</div>}
       <div style={{ fontSize: 18, fontWeight: 900 }}>{value}</div>
-      <div style={{ fontSize: 10, opacity: 0.85 }}>{label}</div>
+      <div style={{ fontSize: 11, opacity: 0.85 }}>{label}</div>
     </div>
   );
 }
@@ -408,19 +408,19 @@ function InventoryRow({
             )}
           </div>
           {medication.name_en && (
-            <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 1 }}>
+            <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 1 }}>
               {medication.name_en}
             </div>
           )}
           {medication.manufacturer && (
-            <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>
+            <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
               {medication.manufacturer}
             </div>
           )}
           {item.searched_count > 0 && (
             <div
               style={{
-                fontSize: 10,
+                fontSize: 11,
                 color: 'var(--emerald)',
                 marginTop: 4,
                 display: 'flex',
@@ -516,7 +516,7 @@ function InventoryRow({
                 display: 'flex',
                 flexWrap: 'wrap',
                 gap: 4,
-                fontSize: 10,
+                fontSize: 11,
               }}
             >
               {item.brand_variant && (
@@ -764,13 +764,13 @@ function AddMedicationModal({
                     <div style={{ fontSize: 12, fontWeight: 800 }}>
                       {m.name_ar}
                       {m.strength && (
-                        <span style={{ fontSize: 10, color: 'var(--ink-3)', marginInlineStart: 4 }}>
+                        <span style={{ fontSize: 11, color: 'var(--ink-3)', marginInlineStart: 4 }}>
                           {m.strength}
                         </span>
                       )}
                     </div>
                     {m.name_en && (
-                      <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>
+                      <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                         {m.name_en}
                         {m.manufacturer && ` · ${m.manufacturer}`}
                       </div>

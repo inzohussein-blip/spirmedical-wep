@@ -227,7 +227,7 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
           color: 'var(--paper-3)',
           padding: '2px 8px',
           borderRadius: 100,
-          fontSize: 9,
+          fontSize: 11,
           fontWeight: 900,
         }}>
           ⭐ مميّز
@@ -259,7 +259,7 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
             </p>
           )}
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10, color: 'var(--ink-3)', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--ink-3)', flexWrap: 'wrap' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <MapPin size={10} />
               {clinic.city}{clinic.district ? ` · ${clinic.district}` : ''}
@@ -296,7 +296,7 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
             <span
               key={i}
               style={{
-                fontSize: 10,
+                fontSize: 11,
                 padding: '3px 8px',
                 background: 'var(--paper-3)',
                 borderRadius: 100,
@@ -316,7 +316,7 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
         borderRadius: 8,
         padding: '8px 10px',
         marginBottom: 10,
-        fontSize: 10,
+        fontSize: 11,
         color: 'var(--ink-2)',
         lineHeight: 1.6,
       }}>

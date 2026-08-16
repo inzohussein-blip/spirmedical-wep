@@ -135,13 +135,13 @@ export default async function PatientsListPage({ searchParams }: { searchParams:
                         ) : (
                           tags.slice(0, 3).map((t, i) => (
                             <span key={i} style={{
-                              fontSize: 10, padding: '2px 8px', borderRadius: 100,
+                              fontSize: 11, padding: '2px 8px', borderRadius: 100,
                               background: 'var(--paper-3)', color: 'var(--ink)', fontWeight: 700,
                             }}>{t.tag}</span>
                           ))
                         )}
                         {tags.length > 3 && (
-                          <span style={{ fontSize: 10, color: 'var(--ink-3)' }}>+{tags.length - 3}</span>
+                          <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>+{tags.length - 3}</span>
                         )}
                       </div>
                     </td>

@@ -195,7 +195,7 @@ function NutritionistCard({ nutritionist }: { nutritionist: Nutritionist }) {
             </p>
           )}
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10, color: 'var(--ink-3)', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--ink-3)', flexWrap: 'wrap' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Award size={10} />
               {nutritionist.years_experience} سنة
@@ -235,7 +235,7 @@ function NutritionistCard({ nutritionist }: { nutritionist: Nutritionist }) {
               <span
                 key={i}
                 style={{
-                  fontSize: 10,
+                  fontSize: 11,
                   padding: '3px 8px',
                   background: 'var(--paper-3)',
                   borderRadius: 100,
@@ -256,7 +256,7 @@ function NutritionistCard({ nutritionist }: { nutritionist: Nutritionist }) {
           display: 'flex',
           alignItems: 'center',
           gap: 4,
-          fontSize: 10,
+          fontSize: 11,
           color: 'var(--ink-3)',
           marginBottom: 10,
         }}>
@@ -329,13 +329,13 @@ function PackageCard({ icon, title, price, color, highlight }: {
       textAlign: 'center',
     }}>
       <div style={{ fontSize: 16, marginBottom: 2 }}>{icon}</div>
-      <div style={{ fontSize: 9, color: 'var(--ink-3)', marginBottom: 2, fontWeight: 700 }}>{title}</div>
+      <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 2, fontWeight: 700 }}>{title}</div>
       {formatNumber(price) && (
         <>
           <div style={{ fontSize: 11, fontWeight: 900, color }}>
             {formatNumber(price)}
           </div>
-          <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع</div>
+          <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>د.ع</div>
         </>
       )}
     </div>

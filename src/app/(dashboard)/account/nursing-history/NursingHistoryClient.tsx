@@ -412,7 +412,7 @@ function VitalCard({ icon, label, value }: { icon: React.ReactNode; label: strin
       <div style={{ color: 'var(--emerald)', display: 'flex', justifyContent: 'center', marginBottom: 2 }}>
         {icon}
       </div>
-      <div style={{ fontSize: 9, color: 'var(--ink-3)', fontWeight: 700 }}>{label}</div>
+      <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>{label}</div>
       <div style={{ fontSize: 12, fontWeight: 900 }}>{value}</div>
     </div>
   );

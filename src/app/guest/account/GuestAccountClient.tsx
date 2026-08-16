@@ -67,7 +67,19 @@ export default function GuestAccountClient() {
         </div>
 
         <div style={{ textAlign: 'center', padding: '8px 18px 20px' }}>
-          <Link href="/login" style={{ color: 'var(--emerald)', fontSize: 12, fontWeight: 700, textDecoration: 'none' }}>
+          <Link
+            href="/login"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              minHeight: 44,
+              padding: '0 14px',
+              color: 'var(--emerald)',
+              fontSize: 13,
+              fontWeight: 700,
+              textDecoration: 'none',
+            }}
+          >
             ← الدخول لحساب موجود
           </Link>
         </div>

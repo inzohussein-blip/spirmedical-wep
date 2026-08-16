@@ -54,7 +54,7 @@ interface Props {
 }
 
 const SIZE_CONFIG = {
-  sm: { padding: '3px 8px', fontSize: 10, iconSize: 11, gap: 4 },
+  sm: { padding: '3px 8px', fontSize: 11, iconSize: 11, gap: 4 },
   md: { padding: '4px 10px', fontSize: 11, iconSize: 13, gap: 5 },
   lg: { padding: '6px 14px', fontSize: 13, iconSize: 15, gap: 6 },
 };

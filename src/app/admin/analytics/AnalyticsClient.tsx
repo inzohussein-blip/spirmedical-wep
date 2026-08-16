@@ -146,7 +146,7 @@ export default function AnalyticsClient({ stats, daily, totals }: Props) {
                   }}
                 >
                   {/* Numbers */}
-                  <div style={{ fontSize: 9, fontWeight: 800, color: 'var(--emerald)' }}>
+                  <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--emerald)' }}>
                     {d.total}
                   </div>
 
@@ -176,7 +176,7 @@ export default function AnalyticsClient({ stats, daily, totals }: Props) {
                   <div style={{
                     position: 'absolute',
                     bottom: 0,
-                    fontSize: 9,
+                    fontSize: 11,
                     color: 'var(--ink-3)',
                     fontWeight: 700,
                   }}>
@@ -254,7 +254,7 @@ export default function AnalyticsClient({ stats, daily, totals }: Props) {
                     <div style={{ fontSize: 18 }}>{meta.emoji}</div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 12, fontWeight: 800 }}>{meta.label}</div>
-                      <div style={{ fontSize: 9, color: 'var(--ink-3)', fontFamily: 'monospace' }}>
+                      <div style={{ fontSize: 11, color: 'var(--ink-3)', fontFamily: 'monospace' }}>
                         {stat.event_name}
                       </div>
                     </div>
@@ -262,7 +262,7 @@ export default function AnalyticsClient({ stats, daily, totals }: Props) {
                       <div style={{ fontSize: 14, fontWeight: 900, color: meta.color }}>
                         {stat.total.toLocaleString('ar-IQ')}
                       </div>
-                      <div style={{ fontSize: 9, color: 'var(--ink-3)' }}>
+                      <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                         {stat.unique_users} مستخدم
                       </div>
                     </div>

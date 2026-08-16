@@ -252,7 +252,7 @@ export default function FAQClient() {
                   >
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: 700,
                         color: 'var(--ink-3)',
                         marginBottom: 4,

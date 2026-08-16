@@ -187,7 +187,7 @@ export default async function VaccinesPage() {
               }}>
                 <CatIcon size={14} stroke={2.2} color={meta.color} />
                 {meta.label}
-                <span style={{ marginInlineStart: 'auto', fontSize: 10, color: '#80868B' }}>
+                <span style={{ marginInlineStart: 'auto', fontSize: 11, color: '#80868B' }}>
                   {items.length}
                 </span>
               </div>
@@ -233,7 +233,7 @@ export default async function VaccinesPage() {
                           <span style={{
                             padding: '1px 6px',
                             background: '#FCE8E6', color: '#8B1240',
-                            borderRadius: 8, fontSize: 9, fontWeight: 700,
+                            borderRadius: 8, fontSize: 11, fontWeight: 700,
                           }}>
                             إلزامي
                           </span>
@@ -246,7 +246,7 @@ export default async function VaccinesPage() {
                         )}
                       </div>
                       {vaccine.diseases && vaccine.diseases.length > 0 && (
-                        <div style={{ fontSize: 10, color: '#80868B', marginTop: 2 }}>
+                        <div style={{ fontSize: 11, color: '#80868B', marginTop: 2 }}>
                           ضد: {vaccine.diseases.slice(0, 3).join('، ')}
                           {vaccine.diseases.length > 3 && '...'}
                         </div>
@@ -257,7 +257,7 @@ export default async function VaccinesPage() {
                         <span style={{
                           padding: '3px 10px',
                           background: '#E6F3EF', color: '#01875F',
-                          borderRadius: 10, fontSize: 10, fontWeight: 700,
+                          borderRadius: 10, fontSize: 11, fontWeight: 700,
                         }}>
                           مجاني
                         </span>
@@ -315,7 +315,7 @@ function StatBox({
         <Icon size={18} stroke={2} />
       </div>
       <div style={{ fontSize: 18, fontWeight: 900, color: '#202124' }}>{value}</div>
-      <div style={{ fontSize: 10, color: '#5F6368', fontWeight: 600 }}>{label}</div>
+      <div style={{ fontSize: 11, color: '#5F6368', fontWeight: 600 }}>{label}</div>
     </div>
   );
 }

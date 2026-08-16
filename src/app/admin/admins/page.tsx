@@ -69,7 +69,7 @@ export default async function AdminsPage() {
               <p style={{ fontSize: 11, color: 'var(--ink-3)', margin: 0, lineHeight: 1.5 }}>
                 {meta.description}
               </p>
-              <div style={{ marginTop: 8, fontSize: 10, color: 'var(--ink-3)' }}>
+              <div style={{ marginTop: 8, fontSize: 11, color: 'var(--ink-3)' }}>
                 {meta.permissions.length} صلاحية
               </div>
             </div>

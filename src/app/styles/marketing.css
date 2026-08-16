@@ -779,10 +779,12 @@
   gap: 4px;
 }
 
+/* الحشو هنا كان على الـli لا على الرابط، فهدف اللمس ارتفاعه ١٣px فقط
+   (سطر النصّ وحده) بينما المساحة المريحة حوله غير قابلة للنقر */
 .landing-footer-col li {
   font-size: 13px;
   color: var(--ink-2);
-  padding: 8px 0;
+  padding: 0;
   transition: color 0.15s;
 }
 
@@ -797,8 +799,10 @@
 .landing-footer-col a:hover { color: var(--emerald); }
 
 .landing-footer-col li a {
-  padding: 0;
-  display: inline;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 4px 0;
 }
 
 .landing-footer-logo {
@@ -996,9 +1000,12 @@
   font-weight: 800;
 }
 
+/* الحشو الرأسيّ على عنصرٍ سطريّ يوسّع مساحة النقر دون أن يزيح السطر —
+   فروابط النصّ ترتفع من ١٤px إلى ٣٠px مع بقاء الفقرة كما هي */
 .legal-content a {
   color: var(--emerald);
   font-weight: 700;
+  padding-block: 8px;
   text-decoration: underline;
   text-decoration-color: var(--emerald-soft);
   text-decoration-thickness: 2px;
@@ -1214,6 +1221,18 @@
   box-shadow: none;
 }
 
+/* الزرّ يقع داخل `.legal-content`، وقاعدة `.legal-content a` أعلى تخصيصاً
+   (0,1,1) من `.legal-link-btn` (0,1,0) فتفرض `color: var(--emerald)` فوق
+   خلفيةٍ خضراء — نصٌّ بلون خلفيته تماماً، نسبة تباين ١٫٠٠. */
+.legal-content a.legal-link-btn {
+  color: var(--paper-3);
+  text-decoration: none;
+}
+
+.legal-content a.legal-link-btn.outline {
+  color: var(--ink);
+}
+
 .legal-link-btn.outline:hover {
   background: var(--paper-2);
   border-color: var(--ink-3);
@@ -1349,7 +1368,7 @@
 
 .landing-lang-soon {
   margin-inline-start: auto;
-  font-size: 9px;
+  font-size: 11px;
   padding: 2px 6px;
   background: var(--paper-3);
   color: var(--ink-3);
@@ -1572,7 +1591,7 @@
 }
 
 .landing-phone-hello {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--ink-3);
   font-weight: 500;
 }
@@ -1617,7 +1636,7 @@
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 12px;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--ink-3);
 }
 
@@ -1629,7 +1648,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 9px;
+  font-size: 11px;
   color: var(--white);
 }
 
@@ -1645,7 +1664,7 @@
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 100px;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--ink);
   white-space: nowrap;
@@ -1711,7 +1730,7 @@
   background: var(--amber);
   color: var(--white);
   border-radius: 100px;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 800;
   margin-bottom: 3px;
 }
@@ -1725,7 +1744,7 @@
 }
 
 .landing-phone-promo-sub {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--emerald);
   font-weight: 500;
 }
@@ -1769,7 +1788,7 @@
 }
 
 .landing-phone-featured-meta {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--emerald);
   font-weight: 800;
 }
@@ -1834,7 +1853,7 @@
 }
 
 .landing-float-sub {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--ink-3);
 }
 
@@ -1881,7 +1900,7 @@
 }
 
 .landing-app-small {
-  font-size: 9px;
+  font-size: 11px;
   opacity: 0.85;
 }
 
@@ -1897,7 +1916,7 @@
   padding: 2px 6px;
   background: var(--amber);
   color: var(--white);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 800;
   border-radius: 100px;
 }
@@ -2132,6 +2151,16 @@
   color: var(--paper);
 }
 
+/* كلمة التمييز المائلة داخل بطاقة الأطبّاء كانت **غير مرئية**: قاعدة
+   `.landing-italic` تلوّنها بـ‎--emerald‎ (#01875F) وخلفية البطاقة تبدأ
+   بالتدرّج من اللون نفسه — نسبة تباينٍ ١٫٠٠ بالضبط. و`.on-light` تُفتِّح
+   الـh2 دون أن تصل إلى الـspan لأنّ للـspan قاعدته الخاصّة.
+   الأبيض النقيّ يعطي ٤٫٥٣ على أفتح طرفي التدرّج، والحرف المائل يبقى
+   مميِّزاً للكلمة كما أُريد لها. */
+.landing-doctors-content .landing-italic {
+  color: #FFFFFF;
+}
+
 .landing-doctors-lede {
   font-size: 14px;
   line-height: 1.7;
@@ -2224,7 +2253,7 @@
   font-size: 36px;
   font-weight: 800;
   line-height: 1;
-  color: var(--amber);
+  color: var(--amber-on-dark);
   margin-bottom: 4px;
 }
 
@@ -2743,7 +2772,7 @@
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .blog-card-arrow {
@@ -3296,7 +3325,7 @@
 
 .article-related-cat {
   display: inline-block;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
   color: var(--emerald);
   text-transform: uppercase;
@@ -3465,7 +3494,7 @@
   background: rgba(255, 255, 255, 0.95);
   color: var(--ink-2);
   border-radius: 100px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   backdrop-filter: blur(4px);
 }
@@ -3485,7 +3514,7 @@
   background: var(--emerald-soft);
   color: var(--emerald-deep);
   border-radius: 100px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
 }
 
@@ -4121,7 +4150,7 @@ html {
 .mkt-search-shortcut {
   padding: 3px 7px; background: var(--paper-2);
   border-radius: 6px;
-  font-size: 9px; font-weight: 700; color: var(--ink-3);
+  font-size: 11px; font-weight: 700; color: var(--ink-3);
 }
 
 .mkt-section-head {
@@ -4334,7 +4363,7 @@ html {
 }
 
 .mkt-list-item-meta {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--ink-3);
   margin-bottom: 2px;
 }

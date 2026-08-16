@@ -636,7 +636,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           margin: 0;
         }
         .service-badge {
-          font-size: 9px;
+          font-size: 11px;
           padding: 2px 7px;
           border-radius: 100px;
           font-weight: 800;
@@ -812,7 +812,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           color: var(--ink-3, #6E7878);
         }
         .field-counter {
-          font-size: 10px;
+          font-size: 11px;
           color: var(--ink-3, #6E7878);
           text-align: left;
           font-family: 'JetBrains Mono', monospace;
@@ -941,7 +941,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           font-family: 'JetBrains Mono', monospace;
         }
         .summary-price-note {
-          font-size: 10px;
+          font-size: 11px;
           color: var(--emerald-deep, #073B30);
           opacity: 0.8;
           margin-top: 4px;

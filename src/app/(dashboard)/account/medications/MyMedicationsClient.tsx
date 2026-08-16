@@ -182,7 +182,7 @@ export default function MyMedicationsClient({ medications }: Props) {
                             padding: '2px 6px',
                             background: 'var(--paper-2)',
                             borderRadius: 8,
-                            fontSize: 10,
+                            fontSize: 11,
                             color: 'var(--ink-2)',
                             fontWeight: 600,
                           }}
@@ -200,7 +200,7 @@ export default function MyMedicationsClient({ medications }: Props) {
                         background: '#FAEEDA',
                         color: '#412402',
                         borderRadius: 8,
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: 700,
                       }}>
                         مزمن
@@ -212,7 +212,7 @@ export default function MyMedicationsClient({ medications }: Props) {
                         background: '#E1F5EE',
                         color: '#04342C',
                         borderRadius: 8,
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: 700,
                         display: 'inline-flex',
                         alignItems: 'center',

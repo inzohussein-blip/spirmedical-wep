@@ -154,7 +154,7 @@ export default async function PharmacyReservationsPage() {
                           gap: 4,
                           padding: '2px 8px',
                           borderRadius: 12,
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: 700,
                           background: status.bg,
                           color: status.color,

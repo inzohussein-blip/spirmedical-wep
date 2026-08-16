@@ -132,7 +132,7 @@ export default function AdminSidebar({ userName, userRole, roleLabel, roleIcon }
               <span style={{
                 background: 'var(--amber)',
                 color: 'var(--white)',
-                fontSize: 10,
+                fontSize: 11,
                 padding: '2px 6px',
                 borderRadius: 100,
                 fontWeight: 800,
@@ -149,7 +149,7 @@ export default function AdminSidebar({ userName, userRole, roleLabel, roleIcon }
         marginTop: 'auto',
         paddingTop: 16,
         borderTop: '1px solid rgba(255,255,255,0.1)',
-        fontSize: 10,
+        fontSize: 11,
         opacity: 0.6,
         textAlign: 'center',
       }}>

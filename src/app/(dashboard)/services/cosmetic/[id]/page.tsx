@@ -208,7 +208,7 @@ export default async function CosmeticProductDetailPage({
                 background: '#FCEBEB',
                 color: '#A32D2D',
                 borderRadius: 8,
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: 700,
                 marginTop: 4,
               }}>
@@ -231,7 +231,7 @@ export default async function CosmeticProductDetailPage({
                 background: '#E1F5EE',
                 color: '#04342C',
                 borderRadius: 10,
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: 700,
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -247,7 +247,7 @@ export default async function CosmeticProductDetailPage({
                 background: '#E1F5EE',
                 color: '#04342C',
                 borderRadius: 10,
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: 700,
               }}>
                 ✓ متوفّر
@@ -258,7 +258,7 @@ export default async function CosmeticProductDetailPage({
                 background: '#FCEBEB',
                 color: '#791F1F',
                 borderRadius: 10,
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: 700,
               }}>
                 ✗ غير متوفّر
@@ -270,7 +270,7 @@ export default async function CosmeticProductDetailPage({
                 background: 'var(--paper-2)',
                 color: 'var(--ink-2)',
                 borderRadius: 10,
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: 700,
               }}>
                 {CATEGORY_LABELS[product.category] || product.category}
@@ -411,7 +411,7 @@ export default async function CosmeticProductDetailPage({
                         />
                       ))}
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>
+                    <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                       {date}
                     </div>
                   </div>
@@ -432,7 +432,7 @@ export default async function CosmeticProductDetailPage({
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: 3,
-                      fontSize: 10,
+                      fontSize: 11,
                       color: '#0F6E56',
                       fontWeight: 600,
                     }}>

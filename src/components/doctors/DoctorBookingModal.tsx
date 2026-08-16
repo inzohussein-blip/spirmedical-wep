@@ -210,7 +210,7 @@ export default function DoctorBookingModal({ doctor, defaultType, onClose, userA
                   <Icon size={20} strokeWidth={2.2} aria-hidden />
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 13, fontWeight: 700 }}>{meta.label}</div>
-                    <div style={{ fontSize: 10, opacity: isSelected ? 0.9 : 0.6 }}>{meta.description}</div>
+                    <div style={{ fontSize: 11, opacity: isSelected ? 0.9 : 0.6 }}>{meta.description}</div>
                   </div>
                   {formatPrice(typePrice) && (
                     <div style={{ fontSize: 13, fontWeight: 800 }}>

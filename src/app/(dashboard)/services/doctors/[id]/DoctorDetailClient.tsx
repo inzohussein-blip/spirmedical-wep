@@ -423,7 +423,7 @@ export default function DoctorDetailClient({ doctor, activeSubscription, initial
                   <div style={{ fontSize: 14, fontWeight: 900, color: 'var(--emerald)' }}>
                     {formatNumber(doctor.home_visit_price)}
                   </div>
-                  <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>د.ع · كاش</div>
                   </>
                 )}
               </div>
@@ -473,7 +473,7 @@ export default function DoctorDetailClient({ doctor, activeSubscription, initial
                 <div style={{ fontSize: 14, fontWeight: 900, color: '#A57100' }}>
                   25,000
                 </div>
-                <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
+                <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>د.ع · كاش</div>
               </div>
             </button>
           )}
@@ -523,7 +523,7 @@ export default function DoctorDetailClient({ doctor, activeSubscription, initial
                   <div style={{ fontSize: 14, fontWeight: 900, color: '#1D9E75' }}>
                     {formatNumber(doctor.video_consult_price)}
                   </div>
-                  <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>د.ع · كاش</div>
                   </>
                 )}
               </div>
@@ -573,7 +573,7 @@ export default function DoctorDetailClient({ doctor, activeSubscription, initial
               <div style={{ fontSize: 14, fontWeight: 900, color: 'var(--emerald)' }}>
                 {activeSubscription ? 'مجاناً' : formatNumber(doctor.video_consult_price)}
               </div>
-              <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>
+              <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                 {activeSubscription ? 'ضمن الاشتراك' : 'د.ع · كاش'}
               </div>
             </div>
@@ -635,7 +635,7 @@ export default function DoctorDetailClient({ doctor, activeSubscription, initial
                       <div style={{ fontSize: 16, fontWeight: 900, color: 'var(--emerald)' }}>
                         {formatNumber(doctor.monthly_subscription_price)}
                       </div>
-                      <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع</div>
+                      <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>د.ع</div>
                       </>
                     )}
                   </div>
@@ -668,7 +668,7 @@ export default function DoctorDetailClient({ doctor, activeSubscription, initial
                       insetInlineEnd: 12,
                       background: 'var(--amber)',
                       color: 'var(--paper-3)',
-                      fontSize: 9,
+                      fontSize: 11,
                       fontWeight: 900,
                       padding: '2px 8px',
                       borderRadius: 6,
@@ -701,7 +701,7 @@ export default function DoctorDetailClient({ doctor, activeSubscription, initial
                       <div style={{ fontSize: 16, fontWeight: 900 }}>
                         {formatNumber(doctor.yearly_subscription_price)}
                       </div>
-                      <div style={{ fontSize: 10, opacity: 0.85 }}>د.ع/سنة</div>
+                      <div style={{ fontSize: 11, opacity: 0.85 }}>د.ع/سنة</div>
                       </>
                     )}
                   </div>
@@ -739,7 +739,7 @@ function StatBox({ icon, value, label }: { icon: React.ReactNode; value: string;
         {icon}
       </div>
       <div style={{ fontSize: 13, fontWeight: 900 }}>{value}</div>
-      <div style={{ fontSize: 9, opacity: 0.75, marginTop: 1 }}>{label}</div>
+      <div style={{ fontSize: 11, opacity: 0.75, marginTop: 1 }}>{label}</div>
     </div>
   );
 }

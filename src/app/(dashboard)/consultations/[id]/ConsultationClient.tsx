@@ -219,7 +219,7 @@ export default function ConsultationClient({
               <div style={{ fontSize: 14, fontWeight: 800 }}>
                 {otherParty}
               </div>
-              <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>
+              <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                 {isClosed ? '✓ مغلقة' : 'مفتوحة · رد خلال 24 ساعة'}
               </div>
             </div>
@@ -314,7 +314,7 @@ export default function ConsultationClient({
                   key={msg.id}
                   style={{
                     textAlign: 'center',
-                    fontSize: 10,
+                    fontSize: 11,
                     color: 'var(--ink-3)',
                     margin: '12px 0',
                     fontStyle: 'italic',
@@ -391,7 +391,7 @@ export default function ConsultationClient({
                   )}
                   <div
                     style={{
-                      fontSize: 9,
+                      fontSize: 11,
                       opacity: 0.7,
                       marginTop: 4,
                       textAlign: 'end',
@@ -516,7 +516,7 @@ export default function ConsultationClient({
                   border: 'none',
                   cursor: 'pointer',
                   fontFamily: 'inherit',
-                  fontSize: 10,
+                  fontSize: 11,
                 }}
               >
                 إغلاق الاستشارة
@@ -747,7 +747,7 @@ function ShareRecordModal({
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 13, fontWeight: 800 }}>{r.title}</div>
-                      <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 1 }}>
+                      <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 1 }}>
                         {new Date(r.date).toLocaleDateString('ar-IQ')}
                         {r.summary && ` · ${r.summary}`}
                       </div>

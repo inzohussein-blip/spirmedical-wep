@@ -99,7 +99,7 @@ export default function NursingActions({ orderId, initialData }: Props) {
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
           <div>
-            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الضغط</label>
+            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الضغط</label>
             <input
               type="text"
               value={data.vitals?.bp ?? ''}
@@ -109,7 +109,7 @@ export default function NursingActions({ orderId, initialData }: Props) {
             />
           </div>
           <div>
-            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>النبض</label>
+            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>النبض</label>
             <input
               type="text"
               value={data.vitals?.pulse ?? ''}
@@ -119,7 +119,7 @@ export default function NursingActions({ orderId, initialData }: Props) {
             />
           </div>
           <div>
-            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الحرارة (°C)</label>
+            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الحرارة (°C)</label>
             <input
               type="text"
               value={data.vitals?.temp ?? ''}
@@ -129,7 +129,7 @@ export default function NursingActions({ orderId, initialData }: Props) {
             />
           </div>
           <div>
-            <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الأوكسجين SpO₂ (%)</label>
+            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الأوكسجين SpO₂ (%)</label>
             <input
               type="text"
               value={data.vitals?.spo2 ?? ''}

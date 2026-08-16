@@ -79,7 +79,7 @@
 
 /* attribution أصغر وأنيق */
 .leaflet-control-attribution {
-  font-size: 9px !important;
+  font-size: 11px !important;
   background: rgba(255, 255, 255, 0.85) !important;
   padding: 2px 6px !important;
 }
@@ -172,8 +172,11 @@
   --emerald: #01875F;          /* V3 Primary */
   --emerald-deep: #056559;     /* V3 Primary Deep */
   --emerald-soft: #E6F3EF;     /* V3 Primary Soft */
-  --amber: #B06000;            /* V3 Yellow Deep */
+  --amber: #B06000;            /* V3 Yellow Deep — للنصّ على خلفيةٍ فاتحة */
   --amber-soft: #FEF7E0;       /* V3 Yellow Soft */
+  /* عنبرٌ للنصّ فوق الأخضر الداكن: ‎--amber‎ عليه نسبة ١٫٦٢ فقط (المطلوب ٣)
+     لأنّ اللونين داكنان معاً، فالأرقام تكاد تختفي داخل البطاقة */
+  --amber-on-dark: #FFDFA1;
   --rose: #C71C56;             /* V3 Pink */
   --rose-soft: #FCE8E6;        /* V3 Pink Soft */
   --paper: #F8F9FA;            /* V3 Surface */
@@ -908,7 +911,7 @@
 .auth-brand-sub::after {
   content: "دليل الفرات الأوسط الطبي";
   display: block;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--emerald);
   font-weight: 700;
   margin-top: 6px;
@@ -1104,6 +1107,17 @@
 
 .auth-helper a, .auth-inline-link { color: var(--emerald); font-weight: 700; }
 
+/* رابطٌ منفردٌ في سطره هدفُ لمسه ارتفاع النصّ وحده (١٢px) — نجعله كتلةً
+   بارتفاعٍ لا يقلّ عن ٤٤ (WCAG 2.5.5). الروابط داخل جملةٍ مستثناة
+   بحكم القاعدة نفسها، ولذا لا نلمس `.auth-inline-link`. */
+.auth-helper > a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 12px;
+}
+
 .auth-resend-btn {
   background: none;
   border: none;
@@ -1259,7 +1273,7 @@
   letter-spacing: -0.01em; line-height: 1.1;
 }
 
-.app-logo-sub { font-size: 9px; color: var(--ink-3); margin-top: 2px; }
+.app-logo-sub { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
 
 .app-header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
@@ -1391,8 +1405,8 @@
 .featured-info { flex: 1; position: relative; z-index: 1; }
 
 .featured-meta {
-  font-size: 9px; font-weight: 800;
-  color: var(--amber);
+  font-size: 11px; font-weight: 800;
+  color: var(--amber-on-dark);
   letter-spacing: 0.05em; text-transform: uppercase;
   margin-bottom: 4px;
 }
@@ -1404,12 +1418,12 @@
 }
 
 .service-sub, .service-desc {
-  font-size: 10px; color: var(--ink-3); line-height: 1.4;
+  font-size: 11px; color: var(--ink-3); line-height: 1.4;
 }
 
 .service-meta {
   display: flex; gap: 8px; margin-top: 8px;
-  font-size: 9px; color: var(--ink-3);
+  font-size: 11px; color: var(--ink-3);
 }
 
 .service-arrow {
@@ -1426,14 +1440,14 @@
   padding: 2px 7px;
   background: var(--amber); color: var(--paper-3);
   border-radius: 999px;
-  font-size: 8px; font-weight: 800;
+  font-size: 11px; font-weight: 800;
 }
 
 .service-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
 
 .service-info { flex: 1; }
 
-.service-duration, .service-price { font-size: 10px; color: var(--ink-3); }
+.service-duration, .service-price { font-size: 11px; color: var(--ink-3); }
 
 .service-radio {
   width: 20px; height: 20px;
@@ -1477,7 +1491,7 @@
 
 .cookie-option { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-2); }
 
-.cookie-required { font-size: 10px; color: var(--ink-3); margin-right: auto; }
+.cookie-required { font-size: 11px; color: var(--ink-3); margin-right: auto; }
 
 .cookie-actions { display: flex; gap: 8px; }
 
@@ -1491,7 +1505,7 @@
 
 .cookie-btn.secondary { background: var(--paper-2); color: var(--ink); }
 
-.cookie-legal { font-size: 10px; color: var(--ink-3); text-align: center; margin-top: 12px; }
+.cookie-legal { font-size: 11px; color: var(--ink-3); text-align: center; margin-top: 12px; }
 
 .cookie-link { color: var(--emerald); font-weight: 700; }
 
@@ -1673,7 +1687,7 @@
 }
 
 .service-meta {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--amber);
   font-weight: 700;
   margin-top: 4px;
@@ -1687,7 +1701,7 @@
   background: var(--amber);
   color: var(--white);
   border-radius: 100px;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
 }
 
@@ -1783,7 +1797,7 @@
 
 .service-emergency .service-desc {
   color: var(--rose);
-  font-size: 10px;
+  font-size: 11px;
   opacity: 0.85;
 }
 
@@ -2731,13 +2745,13 @@ html {
 }
 
 .service-desc {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--ink-3);
   line-height: 1.4;
 }
 
 .service-meta {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--emerald);
   font-weight: 800;
   margin-top: 3px;
@@ -2751,7 +2765,7 @@ html {
   background: var(--amber);
   color: var(--white);
   border-radius: 100px;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 800;
   box-shadow: 0 2px 6px -2px rgba(184, 84, 12, 0.5);
 }
@@ -2841,7 +2855,7 @@ html {
 }
 
 .service-featured .service-meta {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--emerald);
   font-weight: 800;
 }
@@ -2914,7 +2928,7 @@ html {
 
 .service-emergency .service-desc {
   color: var(--rose);
-  font-size: 10px;
+  font-size: 11px;
   opacity: 0.85;
   font-weight: 600;
 }
@@ -3204,7 +3218,7 @@ html {
 .service-featured-v2-badge {
   background: #FAC775;
   color: #412402;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 900;
   padding: 2px 7px;
   border-radius: 100px;
@@ -3230,7 +3244,7 @@ html {
   -webkit-backdrop-filter: blur(8px);
   border-radius: 6px;
   padding: 3px 8px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   display: inline-flex;
   align-items: center;
@@ -3296,7 +3310,7 @@ html {
 }
 
 .service-list-card-subtitle {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--ink-3, #5F5E5A);
   margin-top: 2px;
 }
@@ -3316,7 +3330,7 @@ html {
 }
 
 .service-list-card-reviews {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--ink-3, #5F5E5A);
   margin-top: 2px;
 }
@@ -3341,7 +3355,7 @@ html {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 500;
   color: #0F6E56;
 }
@@ -3368,7 +3382,7 @@ html {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   padding: 3px 9px;
   border-radius: 100px;
@@ -3508,7 +3522,7 @@ html {
 }
 
 .empty-state-v2-or {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--ink-3, #888780);
   margin: 14px 0 6px;
 }
@@ -4083,7 +4097,7 @@ html {
 }
 
 .services-map-selected-meta {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--ink-3, #5F5E5A);
   margin-top: 3px;
   display: flex;
@@ -4099,7 +4113,7 @@ html {
   background: var(--amber-soft, #FAEEDA);
   color: var(--amber, #BA7517);
   border-radius: 100px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   flex-shrink: 0;
 }

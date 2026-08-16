@@ -220,11 +220,11 @@ export default function DentalAdminClient({ initialClinics }: Props) {
               <tr key={c.id} style={{ borderBottom: '1px solid var(--line)' }}>
                 <td style={tdStyle}>
                   <div style={{ fontWeight: 700 }}>{c.name}</div>
-                  {c.is_featured && <span style={{ fontSize: 10, color: 'var(--amber)' }}>⭐ مميّزة</span>}
+                  {c.is_featured && <span style={{ fontSize: 11, color: 'var(--amber)' }}>⭐ مميّزة</span>}
                 </td>
                 <td style={tdStyle}>
                   {c.city}
-                  {c.district && <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>{c.district}</div>}
+                  {c.district && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{c.district}</div>}
                 </td>
                 <td style={tdStyle}>{c.doctor_count}</td>
                 <td style={tdStyle}>
@@ -629,7 +629,7 @@ function StatCard({ label, value, color }: { label: string; value: number; color
 function Badge({ children, color = 'var(--ink-2)' }: { children: React.ReactNode; color?: string }) {
   return (
     <span style={{
-      fontSize: 9,
+      fontSize: 11,
       padding: '2px 6px',
       background: 'var(--paper-3)',
       color,

@@ -171,7 +171,7 @@ export default function BugReportButton() {
                       borderRadius: 8,
                       cursor: 'pointer',
                       fontFamily: 'inherit',
-                      fontSize: 10,
+                      fontSize: 11,
                       fontWeight: 700,
                     }}
                   >
@@ -209,7 +209,7 @@ export default function BugReportButton() {
                 style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit', borderColor: fe.hasError('description') ? 'var(--rose)' : undefined }}
                 maxLength={500}
               />
-              <div style={{ fontSize: 9, color: 'var(--ink-3)', marginTop: 2, textAlign: 'end' }}>
+              <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 2, textAlign: 'end' }}>
                 {description.length}/500
               </div>
               <FieldError message={fe.fieldErrors.description} />
@@ -220,7 +220,7 @@ export default function BugReportButton() {
               background: 'var(--amber-soft)',
               borderRadius: 8,
               padding: 10,
-              fontSize: 10,
+              fontSize: 11,
               color: 'var(--ink-2)',
               marginBottom: 14,
               display: 'flex',

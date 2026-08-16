@@ -149,7 +149,7 @@ export default async function VaccineDetailPage({
               padding: '2px 10px',
               background: '#C71C56',
               borderRadius: 12,
-              fontSize: 10,
+              fontSize: 11,
               fontWeight: 700,
               marginInlineStart: 6,
             }}>

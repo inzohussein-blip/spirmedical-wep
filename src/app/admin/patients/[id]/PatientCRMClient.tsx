@@ -165,11 +165,11 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
           }}>+</button>
         </div>
 
-        <div style={{ fontSize: 10, color: 'var(--ink-3)', marginBottom: 4 }}>اقتراحات:</div>
+        <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 4 }}>اقتراحات:</div>
         <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
           {SUGGESTED_TAGS.filter((t) => !tags.find((tt) => tt.tag === t)).map((t) => (
             <button key={t} onClick={() => handleAddTag(t)} disabled={isPending} style={{
-              fontSize: 10, padding: '3px 8px', borderRadius: 100,
+              fontSize: 11, padding: '3px 8px', borderRadius: 100,
               background: 'transparent', border: '1px dashed var(--line)',
               color: 'var(--ink-3)', cursor: 'pointer', fontFamily: 'inherit',
             }}>+ {t}</button>
@@ -243,7 +243,7 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
                     }}>🗑</button>
                   </div>
                   <p style={{ fontSize: 12, color: 'var(--ink)', margin: '0 0 4px', lineHeight: 1.6 }}>{n.note}</p>
-                  <div style={{ fontSize: 9, color: 'var(--ink-3)' }}>
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                     {n.admin_name} · {new Date(n.created_at).toLocaleString('ar-IQ', { dateStyle: 'short', timeStyle: 'short' })}
                   </div>
                 </div>

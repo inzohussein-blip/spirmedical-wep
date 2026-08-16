@@ -441,7 +441,7 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
                       padding: '3px 8px',
                       background: 'var(--white)',
                       borderRadius: 100,
-                      fontSize: 10,
+                      fontSize: 11,
                       fontWeight: 700,
                     }}>
                       ✓ {s}

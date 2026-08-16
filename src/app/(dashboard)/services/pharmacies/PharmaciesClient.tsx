@@ -199,7 +199,7 @@ export default function PharmaciesClient({ pharmacies }: Props) {
                         <span
                           title="موثّقة"
                           style={{
-                            fontSize: 10,
+                            fontSize: 11,
                             background: 'var(--emerald-soft)',
                             color: 'var(--emerald)',
                             padding: '2px 6px',

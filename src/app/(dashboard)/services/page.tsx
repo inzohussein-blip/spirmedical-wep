@@ -214,7 +214,7 @@ export default async function ServicesPage() {
             <span style={{
               position: 'absolute', top: 10, right: 10,
               background: '#FBBC04', color: '#202124',
-              fontSize: 10, fontWeight: 700,
+              fontSize: 11, fontWeight: 700,
               padding: '2px 7px', borderRadius: 9999, zIndex: 2,
             }}>
               الأكثر طلباً
@@ -225,7 +225,7 @@ export default async function ServicesPage() {
             <div style={{ fontSize: 12, fontWeight: 500, color: '#202124', marginBottom: 3, position: 'relative', zIndex: 1 }}>
               سحب دم + تحاليل
             </div>
-            <div style={{ fontSize: 10, color: '#5F6368', lineHeight: 1.4, position: 'relative', zIndex: 1 }}>
+            <div style={{ fontSize: 11, color: '#5F6368', lineHeight: 1.4, position: 'relative', zIndex: 1 }}>
               +٢٠٠ فحص · في منزلك
             </div>
             <div style={{ position: 'absolute', bottom: 10, left: 10, color: '#80868B' }}>
@@ -259,7 +259,7 @@ export default async function ServicesPage() {
             <div style={{ fontSize: 12, fontWeight: 500, color: '#202124', marginBottom: 3, position: 'relative', zIndex: 1 }}>
               تمريض منزلي
             </div>
-            <div style={{ fontSize: 10, color: '#5F6368', lineHeight: 1.4, position: 'relative', zIndex: 1 }}>
+            <div style={{ fontSize: 11, color: '#5F6368', lineHeight: 1.4, position: 'relative', zIndex: 1 }}>
               إبر · جروح · كانيولا
             </div>
             <div style={{ position: 'absolute', bottom: 10, left: 10, color: '#80868B' }}>

@@ -112,7 +112,7 @@ export default async function DentalDetailPage({
               {clinic.is_featured && (
                 <span style={{
                   display: 'inline-block',
-                  fontSize: 10, fontWeight: 900,
+                  fontSize: 11, fontWeight: 900,
                   background: 'var(--amber)', color: 'var(--paper-3)',
                   padding: '2px 8px', borderRadius: 100,
                   marginBottom: 6,
@@ -265,7 +265,7 @@ export default async function DentalDetailPage({
               show={clinic.offers_implants}
             />
           </div>
-          <p style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 10, marginBottom: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 10, marginBottom: 0, lineHeight: 1.5 }}>
             💡 الأسعار تقريبية وتتوقّف على الحالة. تأكّد من العيادة قبل الزيارة.
           </p>
         </div>

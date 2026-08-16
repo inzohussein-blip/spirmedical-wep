@@ -269,7 +269,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
             </p>
           )}
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10, color: 'var(--ink-3)', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--ink-3)', flexWrap: 'wrap' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Award size={10} />
               {specialist.years_experience} سنة خبرة
@@ -299,7 +299,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
             <span
               key={i}
               style={{
-                fontSize: 10,
+                fontSize: 11,
                 padding: '3px 8px',
                 background: 'var(--paper-3)',
                 borderRadius: 100,
@@ -319,7 +319,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
           display: 'flex',
           alignItems: 'center',
           gap: 4,
-          fontSize: 10,
+          fontSize: 11,
           color: 'var(--ink-3)',
           marginBottom: 10,
         }}>
@@ -338,7 +338,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
             borderRadius: 8,
             border: '1px solid var(--emerald)',
           }}>
-            <div style={{ fontSize: 9, color: 'var(--ink-3)', marginBottom: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
+            <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
               💻 أونلاين
             </div>
             {formatPrice(specialist.online_session_price) && (
@@ -356,7 +356,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
             borderRadius: 8,
             border: '1px solid var(--amber)',
           }}>
-            <div style={{ fontSize: 9, color: 'var(--ink-3)', marginBottom: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
+            <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
               🏢 عيادة
             </div>
             {formatPrice(specialist.clinic_session_price) && (
@@ -368,7 +368,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
         )}
       </div>
 
-      <div style={{ fontSize: 9, color: 'var(--ink-3)', textAlign: 'center', marginBottom: 8 }}>
+      <div style={{ fontSize: 11, color: 'var(--ink-3)', textAlign: 'center', marginBottom: 8 }}>
         مدة الجلسة: {specialist.session_duration_minutes} دقيقة
       </div>
 

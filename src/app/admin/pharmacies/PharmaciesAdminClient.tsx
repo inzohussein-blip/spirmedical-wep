@@ -128,14 +128,14 @@ export default function PharmaciesAdminClient({ pharmacies, inventoryCounts }: P
                   <tr key={p.id} style={{ borderBottom: '1px solid var(--line)' }}>
                     <td style={tdStyle}>
                       <div style={{ fontWeight: 800 }}>{p.name}</div>
-                      <div style={{ fontSize: 10, color: 'var(--ink-3)', display: 'flex', gap: 4, marginTop: 2 }}>
+                      <div style={{ fontSize: 11, color: 'var(--ink-3)', display: 'flex', gap: 4, marginTop: 2 }}>
                         {p.is_24h && <span style={{ padding: '1px 5px', background: 'var(--emerald-soft)', color: 'var(--emerald)', borderRadius: 3, fontWeight: 700 }}>٢٤/٧</span>}
                         {p.has_emergency_section && <span style={{ padding: '1px 5px', background: 'var(--rose-soft)', color: 'var(--rose)', borderRadius: 3, fontWeight: 700 }}>طوارئ</span>}
                       </div>
                     </td>
                     <td style={tdStyle}>
                       <div style={{ fontSize: 12 }}>{p.city}</div>
-                      <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>{p.district}</div>
+                      <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{p.district}</div>
                     </td>
                     <td style={tdStyle}>
                       <a href={`tel:${p.phone}`} style={{ color: 'var(--emerald)', textDecoration: 'none', fontSize: 11 }}>
@@ -146,17 +146,17 @@ export default function PharmaciesAdminClient({ pharmacies, inventoryCounts }: P
                       {counts ? (
                         <div>
                           <div style={{ fontSize: 11, fontWeight: 800 }}>{counts.available}/{counts.total}</div>
-                          <div style={{ fontSize: 9, color: 'var(--ink-3)' }}>متوفر/إجمالي</div>
+                          <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>متوفر/إجمالي</div>
                         </div>
                       ) : '—'}
                     </td>
                     <td style={tdStyle}>
-                      <span style={{ fontSize: 10, color: p.owner_user_id ? 'var(--emerald)' : 'var(--ink-3)' }}>
+                      <span style={{ fontSize: 11, color: p.owner_user_id ? 'var(--emerald)' : 'var(--ink-3)' }}>
                         {p.owner_user_id ? '✓ مربوط' : '—'}
                       </span>
                     </td>
                     <td style={tdStyle}>
-                      <span style={{ padding: '2px 8px', background: p.is_active ? 'var(--emerald-soft)' : 'var(--rose-soft)', color: p.is_active ? 'var(--emerald)' : 'var(--rose)', borderRadius: 4, fontSize: 10, fontWeight: 800 }}>
+                      <span style={{ padding: '2px 8px', background: p.is_active ? 'var(--emerald-soft)' : 'var(--rose-soft)', color: p.is_active ? 'var(--emerald)' : 'var(--rose)', borderRadius: 4, fontSize: 11, fontWeight: 800 }}>
                         {p.is_active ? 'نشط' : 'معطّل'}
                       </span>
                     </td>
@@ -373,7 +373,7 @@ function modalContent(): React.CSSProperties {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 10 }}>
-      <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 3 }}>{label}</label>
+      <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 3 }}>{label}</label>
       {children}
     </div>
   );

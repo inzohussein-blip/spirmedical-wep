@@ -164,7 +164,7 @@ export default async function AccountPage() {
               <div style={{
                 display: 'inline-block', padding: '2px 10px',
                 background: 'rgba(255,255,255,0.18)', borderRadius: 12,
-                fontSize: 10, fontWeight: 700,
+                fontSize: 11, fontWeight: 700,
               }}>
                 {roleLabel}
               </div>
@@ -280,7 +280,7 @@ export default async function AccountPage() {
         {/* Footer */}
         <div style={{
           textAlign: 'center', padding: '20px 14px 80px',
-          fontSize: 10, color: '#80868B', lineHeight: 1.6,
+          fontSize: 11, color: '#80868B', lineHeight: 1.6,
         }}>
           <div style={{ fontWeight: 700, marginBottom: 2 }}>Spir Medical · سباير ميديكال</div>
           <div>الإصدار 1.0.0 · صنع بعناية في النجف 🇮🇶</div>

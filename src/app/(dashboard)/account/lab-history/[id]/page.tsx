@@ -242,7 +242,7 @@ export default async function LabOrderDetailPage({ params }: PageProps) {
                           {result.result_value} {result.unit}
                         </strong>
                         <span style={{
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: 600,
                           padding: '2px 8px',
                           borderRadius: 4,

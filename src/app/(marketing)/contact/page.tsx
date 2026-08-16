@@ -71,7 +71,7 @@ export default function ContactPage() {
 
           <ContactCard
             icon={<MessageCircle size={20} />}
-            color="#25D366"
+            color="#0F7A4A"
             title="WhatsApp"
             subtitle="الأسرع للردود - اكتب لنا"
             value="9647803993585"
@@ -254,7 +254,7 @@ function ContactCard({
         {hours && (
           <div
             style={{
-              fontSize: 10,
+              fontSize: 11,
               color: 'var(--ink-3)',
               marginTop: 2,
               display: 'flex',
@@ -293,7 +293,7 @@ function DeptCard({ emoji, label, email }: { emoji: string; label: string; email
         <div style={{ fontSize: 11, fontWeight: 800 }}>{label}</div>
         <div
           style={{
-            fontSize: 9,
+            fontSize: 11,
             color: 'var(--ink-3)',
             direction: 'ltr',
             textAlign: 'start',

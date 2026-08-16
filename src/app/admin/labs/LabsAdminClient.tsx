@@ -230,7 +230,7 @@ export default function LabsAdminClient({ labs }: Props) {
                       gap: 4,
                       padding: '2px 8px',
                       borderRadius: 12,
-                      fontSize: 10,
+                      fontSize: 11,
                       fontWeight: 700,
                       background: lab.is_active ? '#E1F5EE' : '#FCEBEB',
                       color: lab.is_active ? '#04342C' : '#791F1F',

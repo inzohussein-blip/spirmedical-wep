@@ -54,7 +54,7 @@ function BentoCard({ service }: { service: ServiceConfig }) {
             : service.badge === 'الأكثر طلباً' ? '#FBBC04' : '#F1F3F4',
           color: service.badge === 'جديد' ? '#FFFFFF' 
             : service.badge === 'الأكثر طلباً' ? '#202124' : '#5F6368',
-          fontSize: 10, fontWeight: 700,
+          fontSize: 11, fontWeight: 700,
           padding: '2px 7px', borderRadius: 9999, zIndex: 2,
         }}>
           {service.badge}
@@ -74,7 +74,7 @@ function BentoCard({ service }: { service: ServiceConfig }) {
       </div>
       
       <div style={{
-        fontSize: 10, color: '#5F6368', lineHeight: 1.4,
+        fontSize: 11, color: '#5F6368', lineHeight: 1.4,
         position: 'relative', zIndex: 1,
       }}>
         {service.description}

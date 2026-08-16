@@ -386,7 +386,7 @@ function StatBox({ icon, value, label }: { icon: React.ReactNode; value: string;
     <div style={{ padding: 8, background: 'rgba(255,255,255,0.12)', borderRadius: 10, textAlign: 'center' }}>
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 2, opacity: 0.85 }}>{icon}</div>
       <div style={{ fontSize: 13, fontWeight: 900 }}>{value}</div>
-      <div style={{ fontSize: 9, opacity: 0.75, marginTop: 1 }}>{label}</div>
+      <div style={{ fontSize: 11, opacity: 0.75, marginTop: 1 }}>{label}</div>
     </div>
   );
 }

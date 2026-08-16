@@ -185,19 +185,20 @@ export default function PatientRegisterPage() {
             {/* Terms */}
             <div className="flex items-start gap-2">
               <input
+                id="agreeTerms"
                 type="checkbox"
                 checked={formData.agreeTerms}
                 onChange={(e) => setFormData({ ...formData, agreeTerms: e.target.checked })}
-                className="mt-1"
+                className="mt-1 w-5 h-5 shrink-0"
                 disabled={loading}
               />
-              <label className="text-sm text-gray-600">
+              <label htmlFor="agreeTerms" className="text-sm text-gray-600 py-1 cursor-pointer">
                 أوافق على{' '}
-                <Link href="/legal/terms" className="text-emerald-600 hover:underline">
+                <Link href="/legal/terms" className="py-2 text-emerald-700 hover:underline">
                   الشروط والأحكام
                 </Link>{' '}
                 و{' '}
-                <Link href="/legal/privacy" className="text-emerald-600 hover:underline">
+                <Link href="/legal/privacy" className="py-2 text-emerald-700 hover:underline">
                   سياسة الخصوصية
                 </Link>
               </label>
@@ -207,7 +208,7 @@ export default function PatientRegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-emerald-600 text-white py-3 rounded-lg hover:bg-emerald-700 transition disabled:opacity-50 font-medium"
+              className="w-full bg-emerald-700 text-white py-3 rounded-lg hover:bg-emerald-800 transition disabled:opacity-50 font-medium"
             >
               {loading ? 'جاري الإنشاء...' : 'إنشاء حساب'}
             </button>
@@ -216,14 +217,14 @@ export default function PatientRegisterPage() {
           {/* Already Have Account */}
           <p className="text-center mt-6 text-gray-700">
             لديك حساب بالفعل؟{' '}
-            <Link href="/login" className="text-emerald-600 hover:underline font-medium">
+            <Link href="/login" className="py-2 text-emerald-700 hover:underline font-medium">
               سجّل الدخول
             </Link>
           </p>
 
           {/* Back to Role Selection */}
           <p className="text-center mt-4">
-            <Link href="/register" className="text-sm text-gray-600 hover:underline">
+            <Link href="/register" className="inline-flex items-center min-h-[44px] px-3 text-sm text-gray-600 hover:underline">
               ← العودة
             </Link>
           </p>
@@ -259,7 +260,7 @@ export default function PatientRegisterPage() {
             onClick={() => {
               setStep('form');
             }}
-            className="text-emerald-600 hover:underline font-medium"
+            className="inline-flex items-center min-h-[44px] px-2 text-emerald-700 hover:underline font-medium"
           >
             انقر هنا لإعادة الإرسال
           </button>

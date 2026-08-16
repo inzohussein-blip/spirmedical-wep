@@ -61,7 +61,7 @@ export default function AuthError({
         }}>
           {error.message}
           {error.digest && (
-            <div style={{ marginTop: 6, fontSize: 10, opacity: 0.7 }}>
+            <div style={{ marginTop: 6, fontSize: 11, opacity: 0.7 }}>
               Digest: {error.digest}
             </div>
           )}

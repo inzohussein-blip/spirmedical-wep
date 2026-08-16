@@ -210,7 +210,7 @@ function ServiceTypesView({
             {/* Conditions */}
             {t.conditions.length > 0 && (
               <div style={{ marginBottom: 10 }}>
-                <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-3)', marginBottom: 4 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', marginBottom: 4 }}>
                   يُعالج:
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
@@ -218,7 +218,7 @@ function ServiceTypesView({
                     <span
                       key={i}
                       style={{
-                        fontSize: 10,
+                        fontSize: 11,
                         padding: '2px 8px',
                         background: 'var(--paper-3)',
                         borderRadius: 100,
@@ -236,7 +236,7 @@ function ServiceTypesView({
             <div style={{
               display: 'flex',
               gap: 10,
-              fontSize: 10,
+              fontSize: 11,
               color: 'var(--ink-3)',
               marginBottom: 10,
               flexWrap: 'wrap',
@@ -412,7 +412,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
             </p>
           )}
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10, color: 'var(--ink-3)', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--ink-3)', flexWrap: 'wrap' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
               <Award size={10} />
               {specialist.years_experience} سنة خبرة
@@ -441,7 +441,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
           display: 'flex',
           alignItems: 'center',
           gap: 4,
-          fontSize: 10,
+          fontSize: 11,
           color: 'var(--ink-3)',
           marginBottom: 10,
         }}>
@@ -460,7 +460,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
             borderRadius: 8,
             border: '1px solid var(--emerald)',
           }}>
-            <div style={{ fontSize: 9, color: 'var(--ink-3)', marginBottom: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
+            <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
               <Home size={10} />
               زيارة منزلية
             </div>
@@ -479,7 +479,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
             borderRadius: 8,
             border: '1px solid var(--amber)',
           }}>
-            <div style={{ fontSize: 9, color: 'var(--ink-3)', marginBottom: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
+            <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
               <Building2 size={10} />
               عيادة
             </div>
