@@ -200,6 +200,55 @@ contradictory_checks AS (
     GROUP BY c.relname, a.attname
   ) s
   WHERE n > 1
+),
+
+-- ─── ١٣. دالّة مُشغِّل مكشوفة على REST ───
+-- دوالّ نوعُ إرجاعها `trigger` لا تُستدعى إلّا من مُشغِّل، ومنحُها EXECUTE
+-- لا يفيد شيئاً — والصلاحية تُفحص عند إنشاء المُشغِّل لا عند إطلاقه
+-- (مُقاس). فكشفُها في `/rest/v1/rpc/` سطحُ هجومٍ بلا مقابل.
+-- ملاحظةٌ لمن يُصلح: السحب يجب أن يشمل PUBLIC، فالمنحة موروثةٌ منه لا
+-- ممنوحةٌ للدورين صراحةً — `FROM anon, authenticated` وحدَه بلا أثر.
+-- (٣٨ دالّة، سحبها الترحيل 0023)
+exposed_trigger_fns AS (
+  SELECT 'دالّة مُشغِّل مكشوفة على REST', p.proname::text,
+         'EXECUTE ممنوحٌ لدورٍ عامّ بلا فائدة — تظهر في /rest/v1/rpc/'
+  FROM pg_proc p
+  JOIN pg_namespace n ON n.oid = p.pronamespace
+  WHERE n.nspname = 'public'
+    AND p.prorettype = 'trigger'::regtype
+    AND NOT EXISTS (SELECT 1 FROM pg_depend d WHERE d.objid = p.oid AND d.deptype = 'e')
+    AND (has_function_privilege('anon', p.oid, 'EXECUTE')
+      OR has_function_privilege('authenticated', p.oid, 'EXECUTE'))
+),
+
+-- ─── ١٤. دالّة SECURITY DEFINER تكتب بمعرّفٍ من المستدعي بلا تفويض ───
+-- `SECURITY DEFINER` تتخطّى RLS، فإن قبلت الدالّة `uuid` من المستدعي ثمّ
+-- كتبت به دون مقارنته بـ`auth.uid()` صار بوسع أيّ مستخدمٍ مسجَّل الكتابة
+-- على صفّ غيره. حدث في `generate_referral_code`: أيّ مستخدمٍ يُبدّل رمز
+-- إحالة أيّ شخصٍ آخر. (أصلحه الترحيل 0023)
+--
+-- الكشف تقريبيّ: دالّةُ DEFINER فيها وسيط uuid وعبارةُ كتابة، ولا ذِكر
+-- لـauth.uid() في جسمها.
+--
+-- وشرطُ المِنحة جزءٌ من التعريف لا زينة: `add_wallet_transaction` و
+-- `create_prescription_from_order` لهما الشكل نفسه بالضبط — تكتبان رصيد
+-- محفظةٍ ووصفةً بمعرّفٍ من المستدعي — لكنّ EXECUTE مسحوبٌ منهما فلا
+-- يبلغهما أحدٌ عبر REST. بلا هذا الشرط يُبلّغ الفحص عنهما في كلّ تشغيل،
+-- وفحصٌ يُبلّغ عمّا ليس عطلاً يُدرَّب الناس على تجاهله.
+unauthorized_definer_writes AS (
+  SELECT 'دالّة DEFINER تكتب بمعرّفٍ خارجيّ', p.proname::text,
+         'تتخطّى RLS وتقبل uuid من المستدعي دون مقارنته بـauth.uid()'
+  FROM pg_proc p
+  JOIN pg_namespace n ON n.oid = p.pronamespace
+  WHERE n.nspname = 'public' AND p.prosecdef AND p.prokind = 'f'
+    AND p.prorettype <> 'trigger'::regtype
+    AND pg_get_function_identity_arguments(p.oid) ILIKE '%uuid%'
+    AND p.prosrc ~* '(INSERT\s+INTO|UPDATE\s+public\.|DELETE\s+FROM)'
+    AND p.prosrc NOT ILIKE '%auth.uid()%'
+    -- بالغةٌ فعلاً من الخارج
+    AND (has_function_privilege('anon', p.oid, 'EXECUTE')
+      OR has_function_privilege('authenticated', p.oid, 'EXECUTE'))
+    AND NOT EXISTS (SELECT 1 FROM pg_depend d WHERE d.objid = p.oid AND d.deptype = 'e')
 )
 
 SELECT * FROM orphan_auth
@@ -214,4 +263,6 @@ UNION ALL SELECT * FROM unrouted_appointments
 UNION ALL SELECT * FROM invoker_rating_triggers
 UNION ALL SELECT * FROM nullable_flags
 UNION ALL SELECT * FROM contradictory_checks
+UNION ALL SELECT * FROM exposed_trigger_fns
+UNION ALL SELECT * FROM unauthorized_definer_writes
 ORDER BY 1, 2;
