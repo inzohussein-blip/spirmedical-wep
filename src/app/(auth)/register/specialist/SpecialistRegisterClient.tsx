@@ -10,6 +10,7 @@ import {
   type SpecialistRegisterInput,
 } from '@/lib/validations/auth-forms';
 import { registerSpecialist } from '../actions';
+import { readOtpMode } from '@/features/auth/lib/otp-mode';
 
 type FormState = {
   fullName: string;
@@ -25,11 +26,8 @@ type FormState = {
 };
 
 export default function SpecialistRegisterClient() {
-  // OTP Mode (3 أوضاع)
-  const otpMode = (process.env.NEXT_PUBLIC_OTP_MODE ?? 'disabled') as
-    | 'disabled'
-    | 'optional'
-    | 'required';
+  // OTP Mode (3 أوضاع) — من المصدر الموحّد لا بقراءة env مباشرةً
+  const otpMode = readOtpMode();
 
   const isOtpRequired = otpMode === 'required';
   const isOtpOptional = otpMode === 'optional';

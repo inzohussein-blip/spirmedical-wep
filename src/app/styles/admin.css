@@ -110,3 +110,93 @@
     font-size: 16px !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   📱 لوحة الإدارة على الهاتف — الشريط الجانبيّ دُرجٌ منزلق
+   ═══════════════════════════════════════════════════════════════════
+   كان الشريط `width: 260px` ثابتاً داخل جذرٍ `display: flex`. مقيسٌ على
+   عرض ٣٦٠px: الشريط يأخذ ٢٦٠ ويبقى للمحتوى **٣٦px** — عُشر الشاشة. فلوحة
+   الإدارة كانت تعمل على الحاسوب وحده عملياً.
+   وعلى ٣٩٠px: ٦٦px (١٧٪).
+
+   الحلّ: يبقى الشريط كما هو على الشاشات الواسعة، ويصير على الضيّقة دُرجاً
+   مخفيّاً يُفتح بزرّ ☰ ويُغلق باللمس خارجه أو بالانتقال لصفحة.
+
+   ملاحظة: خصائص التخطيط نُقلت من النمط السطريّ إلى هنا عمداً — النمط
+   السطريّ يتغلّب على استعلامات الوسائط فلا يمكن تجاوزه.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.admin-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--emerald-deep, #073B30);
+  color: var(--white);
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* زرّ القائمة وطبقة التعتيم: مخفيّان على الحاسوب */
+.admin-menu-btn { display: none; }
+.admin-sidebar-overlay { display: none; }
+
+@media (max-width: 900px) {
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    /* في RTL يكون inline-start هو الحافة اليمنى — وهي جهة الشريط على
+       الحاسوب وجهة زرّ ☰، فيأتي الدُّرج من حيث يتوقّعه المستخدم */
+    inset-inline-start: 0;
+    width: min(280px, 82vw);
+    height: 100dvh;
+    z-index: 60;
+    transform: translateX(100%);   /* RTL: يختفي خارج الحافة اليمنى */
+    transition: transform 0.22s ease;
+    box-shadow: -8px 0 24px rgba(0, 0, 0, 0.18);
+    /* مساحة تحت زرّ ✕ كي لا يغطّي عنوان اللوحة */
+    padding-top: calc(64px + env(safe-area-inset-top));
+  }
+  [dir='ltr'] .admin-sidebar { transform: translateX(-100%); }
+
+  .admin-sidebar.open { transform: translateX(0); }
+
+  .admin-sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    background: rgba(15, 26, 28, 0.45);
+  }
+
+  .admin-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: calc(10px + env(safe-area-inset-top));
+    inset-inline-start: 12px;
+    z-index: 65;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--emerald-deep, #073B30);
+    color: var(--white);
+    font-size: 18px;
+    font-family: inherit;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  /* المحتوى يستعيد الشاشة كاملةً، بحشوٍ يناسب الهاتف */
+  .admin-root > main {
+    padding: 14px !important;
+    padding-top: calc(64px + env(safe-area-inset-top)) !important;
+  }
+}

@@ -10,6 +10,7 @@
  */
 
 import { env, getOtpMode, type OtpMode } from './env';
+import { readOtpMode } from '@/features/auth/lib/otp-mode';
 
 export type FeatureFlag =
   | 'specialist_chat'
@@ -95,7 +96,7 @@ export function isOtpDisabled(): boolean {
  */
 export function isPasswordlessLoginAllowed(): boolean {
   if (process.env.ALLOW_PASSWORDLESS_LOGIN === 'true') return true;
-  return (process.env.NEXT_PUBLIC_OTP_MODE ?? 'optional') !== 'required';
+  return readOtpMode() !== 'required';
 }
 
 /**
