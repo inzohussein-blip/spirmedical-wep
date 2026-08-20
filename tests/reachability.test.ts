@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync, existsSync, statSync } from 'fs';
-import { join } from 'path';
+import { join, relative } from 'path';
 
 /**
  * 🧭 حارس الوصول والاكتمال
@@ -122,5 +122,78 @@ describe('قوالب الإشعارات', () => {
 
     const missing = [...new Set(requested)].filter((k) => !defined.has(k)).sort();
     expect(missing).toEqual([]);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────
+// ٤. لا يُرسَل معامل استعلامٍ إلى صفحةٍ لا تقرؤه
+// ─────────────────────────────────────────────────────────────────
+/**
+ * شريط البحث في لوحة التحكّم كان يوجّه إلى `/services?q=…` — و
+ * `services/page.tsx` لا تستقبل `searchParams` إطلاقاً. فما يكتبه
+ * المستخدم يُلقى في المهمَل ويصل خريطةً عامّة، بلا خطأ ولا رسالة.
+ *
+ * وصفحة البحث الحقيقية `/search` تقرأ `q` وتمرّره إلى `SearchClient`
+ * (٢٦٥ سطراً من بحثٍ فعليّ) — ولم يكن يشير إليها رابطٌ واحد.
+ *
+ * العطل من صنفٍ لا يكشفه المترجم: المسار موجود، والتصريف ينجح، والوظيفة
+ * تختفي في الطريق.
+ */
+describe('معاملات الاستعلام تصل صفحةً تقرؤها', () => {
+  it('كل توجيهٍ داخليّ بمعامل استعلام يقصد صفحةً تستقبل searchParams', () => {
+    const appDir = join(SRC, 'app');
+
+    const tsx: string[] = [];
+    (function walk(d: string) {
+      for (const e of readdirSync(d)) {
+        const full = join(d, e);
+        if (statSync(full).isDirectory()) walk(full);
+        else if (full.endsWith('.tsx')) tsx.push(full);
+      }
+    })(SRC);
+
+    /** يحوّل مساراً إلى ملفّ الصفحة، مع تجاهل مجموعات المسارات */
+    function pageFor(route: string): string | null {
+      const parts = route.split('/').filter(Boolean);
+      const groups = readdirSync(appDir).filter(
+        (e) => e.startsWith('(') && statSync(join(appDir, e)).isDirectory(),
+      );
+      for (const prefix of ['', ...groups]) {
+        const p = join(appDir, prefix, ...parts, 'page.tsx');
+        if (existsSync(p)) return p;
+      }
+      return null;
+    }
+
+    /**
+     * معاملاتٌ لا تَعِد المستخدم بشيء، فتجاهلُها ليس عطلاً.
+     * `from` وسمُ مصدرٍ للتحليلات: `/consultations?from=share` تعرض
+     * الاستشارات كلَّها سواءٌ قُرئ الوسم أم لا.
+     */
+    const MARKER_PARAMS = new Set(['from', 'utm_source', 'utm_medium', 'utm_campaign', 'ref']);
+
+    /** التعليقات تذكر مساراتٍ لشرح ما كان — لا لتوجيه المستخدم */
+    const stripComments = (src: string) =>
+      src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+
+    const offenders: string[] = [];
+    for (const file of tsx) {
+      const src = stripComments(readFileSync(file, 'utf8'));
+      for (const m of src.matchAll(/[`'"](\/[a-z0-9/_-]*)\?([a-zA-Z_]+)=/g)) {
+        const [, route, param] = m;
+        if (route.includes('[')) continue;
+        if (MARKER_PARAMS.has(param)) continue;
+        const target = pageFor(route);
+        if (!target) continue; // مسارٌ ديناميّ أو خارجيّ — يغطّيه حارس الروابط
+        // الصفحة تقرأ المعامل إمّا بخاصّية `searchParams` (مكوّن خادم)
+        // أو بـ`useSearchParams` (مكوّن عميل)
+        const targetSrc = readFileSync(target, 'utf8');
+        if (!/searchParams|useSearchParams/.test(targetSrc)) {
+          offenders.push(`${relative(process.cwd(), file)} → ${route}?${param}=`);
+        }
+      }
+    }
+
+    expect([...new Set(offenders)]).toEqual([]);
   });
 });

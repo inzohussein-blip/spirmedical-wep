@@ -1,23 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { signInWithEmail } from '@/lib/auth/email-auth';
 import { getRoleHomePath } from '@/lib/auth/home-path';
 import { submitErrorMessage } from '@/lib/forms/submit-error';
 import { createClient } from '@/lib/supabase/client';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 // ═══════════════════════════════════════════════════════════
 // 🔐 صفحة الدخول - Email-First
 // ═══════════════════════════════════════════════════════════
 
-export default function LoginPage() {
+/**
+ * الصفحة تعرض `error` منذ البداية، لكنّها لم تكن تقرأ `?error=` من المسار
+ * قطّ — بينما `PinLockScreen` يوجّه إليها بـ
+ * `/login?error=أعد+تسجيل+الدخول+لإعادة+تعيين+PIN`.
+ * فمن نسي رمز القفل يصل صفحة الدخول بلا تفسيرٍ لسبب وصوله.
+ *
+ * `useSearchParams` يوجب حدَّ Suspense في App Router، ولذا غُلِّف الجسم.
+ */
+function LoginPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(searchParams.get('error') ?? '');
   const [showPhone, setShowPhone] = useState(false);
 
   // ─────────────────────────────────────────────────────────
@@ -223,5 +232,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginPageInner />
+    </Suspense>
   );
 }

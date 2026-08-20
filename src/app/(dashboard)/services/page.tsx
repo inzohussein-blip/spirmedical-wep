@@ -282,6 +282,9 @@ export default async function ServicesPage() {
             { href: '/services/mental-health', Icon: IconBrain, color: '#7C4DFF', bg: '#EDE7F6', label: 'الصحة النفسية', count: counts.mentalHealthSpecialists },
             { href: '/services/nutrition', Icon: IconApple, color: '#34A853', bg: '#E8F5E9', label: 'التغذية', count: counts.nutritionists },
             { href: '/services/doctors', Icon: IconStethoscope, color: '#01875F', bg: '#E6F3EF', label: 'الأطباء', count: counts.doctors },
+            // العيادات صفحةٌ عاملة (أطباء يستقبلون في عياداتهم الخاصّة) لم
+            // يكن يشير إليها رابطٌ واحد في المشروع كلّه
+            { href: '/services/clinics', Icon: IconBuildingHospital, color: '#B06000', bg: '#FEF7E0', label: 'العيادات', count: counts.doctors },
           ].map((cat) => {
             const CatIcon = cat.Icon;
             return (

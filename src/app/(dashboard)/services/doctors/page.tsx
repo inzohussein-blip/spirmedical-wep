@@ -11,7 +11,11 @@ import DoctorsClient from './DoctorsClient';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'أطباء العائلة - Spir Medical' };
 
-export default async function DoctorsPage() {
+export default async function DoctorsPage({
+  searchParams,
+}: {
+  searchParams: { specialty?: string; video?: string };
+}) {
   const supabase = createClient();
 
   const { data: doctors } = await supabase
@@ -25,6 +29,8 @@ export default async function DoctorsPage() {
   // قائمة اللغات الفارغة تصل NULL؛ نُسوّيها عند الحدّ
   return (
     <DoctorsClient
+      initialSpecialty={searchParams.specialty ?? ''}
+      videoOnly={searchParams.video === 'true'}
       doctors={(doctors ?? []).map((d) => ({
         ...d,
         title: d.title ?? '',

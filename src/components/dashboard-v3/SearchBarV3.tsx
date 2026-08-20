@@ -19,7 +19,10 @@ export default function SearchBarV3({
     e.preventDefault();
     if (!query.trim()) return;
     startTransition(() => {
-      router.push(`/services?q=${encodeURIComponent(query.trim())}`);
+      // كان يوجّه إلى `/services?q=` — وتلك الصفحة لا تستقبل `searchParams`
+      // إطلاقاً، فيُلقى ما كتبه المستخدم في المهمَل ويصل خريطةً عامّة.
+      // وصفحة البحث الحقيقية `/search` تقرأ `q` ولم يكن يشير إليها شيء.
+      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
     });
   }
 
