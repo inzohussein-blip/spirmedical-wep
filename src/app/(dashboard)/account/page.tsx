@@ -43,6 +43,9 @@ const SECTION_RECORDS: SectionItem[] = [
   { id: 'medical-record', Icon: IconHeartbeat, color: '#EA4335', bg: '#FCE8E6', title: 'سجلي الطبي', desc: 'تاريخك الصحي ومؤشراتك', href: '/account/medical-record' },
   { id: 'family', Icon: IconUsers, color: '#FF6D00', bg: '#FFF3E0', title: 'أفراد العائلة', desc: 'سجّل خدمات لعائلتك', href: '/account/family' },
   { id: 'favorites', Icon: IconHeart, color: '#C71C56', bg: '#FCE8E6', title: 'المفضّلة', desc: 'الأماكن المحفوظة للوصول السريع', href: '/account/favorites' },
+  // قائمة أمنيات التجميل جدولٌ منفصل عن `service_favorites` (قيد CHECK فيها
+  // لا يشمل التجميل)، فلها مدخلها الخاصّ — وكانت بلا مدخلٍ إطلاقاً
+  { id: 'cosmetic-wishlist', Icon: IconHeart, color: '#B06000', bg: '#FEF7E0', title: 'قائمة أمنياتي', desc: 'منتجات التجميل المحفوظة', href: '/account/cosmetic-wishlist' },
 ];
 
 const SECTION_SETTINGS: SectionItem[] = [

@@ -197,3 +197,51 @@ describe('معاملات الاستعلام تصل صفحةً تقرؤها', () 
     expect([...new Set(offenders)]).toEqual([]);
   });
 });
+
+// ─────────────────────────────────────────────────────────────────
+// ٥. كل revalidatePath يقصد مساراً موجوداً
+// ─────────────────────────────────────────────────────────────────
+/**
+ * `toggleWishlist` كان يستدعي `revalidatePath('/account/cosmetic-wishlist')`
+ * ولا صفحة بهذا المسار. والاستدعاء لا يفشل — Next يتجاهل مساراً لا يعرفه
+ * بصمت — لكنّ دلالته أنّ صفحةً كان يُفترض وجودها.
+ *
+ * وكان الأثر حقيقياً: المستخدم يضغط القلب فيُحفظ المنتج في
+ * `cosmetic_wishlist`، ولا مكان في التطبيق كلّه يعرض ما حفظ. البيانات
+ * تُجمع ولا تُعاد إليه.
+ */
+describe('مسارات إعادة التحقّق', () => {
+  it('كل revalidatePath يقصد صفحةً موجودة', () => {
+    const appDir = join(SRC, 'app');
+
+    const files: string[] = [];
+    (function walk(d: string) {
+      for (const e of readdirSync(d)) {
+        const full = join(d, e);
+        if (statSync(full).isDirectory()) walk(full);
+        else if (full.endsWith('.ts') || full.endsWith('.tsx')) files.push(full);
+      }
+    })(SRC);
+
+    const groups = readdirSync(appDir).filter(
+      (e) => e.startsWith('(') && statSync(join(appDir, e)).isDirectory(),
+    );
+
+    const offenders: string[] = [];
+    for (const file of files) {
+      for (const m of readFileSync(file, 'utf8').matchAll(
+        /revalidatePath\(\s*['"`](\/[^'"`$]*)/g,
+      )) {
+        const route = m[1];
+        if (route === '/' || route.includes('[')) continue;
+        const parts = route.split('/').filter(Boolean);
+        const found = ['', ...groups].some((p) =>
+          existsSync(join(appDir, p, ...parts, 'page.tsx')),
+        );
+        if (!found) offenders.push(`${relative(process.cwd(), file)} → ${route}`);
+      }
+    }
+
+    expect([...new Set(offenders)]).toEqual([]);
+  });
+});
