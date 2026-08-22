@@ -245,3 +245,73 @@ describe('مسارات إعادة التحقّق', () => {
     expect([...new Set(offenders)]).toEqual([]);
   });
 });
+
+// ─────────────────────────────────────────────────────────────────
+// ٦. كل جدول تقييمٍ له مُشغِّل إحصاءات له كاتبٌ في التطبيق
+// ─────────────────────────────────────────────────────────────────
+/**
+ * في القاعدة نظاما تقييمٍ متوازيان:
+ *
+ *   • `ratings` — جدولٌ عامّ يكتب فيه `rateAppointment`، **بلا مُشغِّل**.
+ *   • عشرة جداول `*_ratings` — على كلٍّ منها مُشغِّلٌ يحدّث `rating_avg`
+ *     و`rating_count` على صفّ المزوّد.
+ *
+ * فما لا يُفرَّع إلى جدوله الخاصّ لا يتحرّك متوسّطه أبداً. وكانت كتلة
+ * التفريع تغطّي ثلاثة أنواع، فبقيت خمسة (أطباء · تمريض · علاج طبيعي ·
+ * صحة نفسية · تغذية) بلا كاتب — و`doctors.rating_avg` صفرٌ دائماً بينما
+ * صفحة الأطباء تُرتّب به وتعرضه على كلّ بطاقة.
+ *
+ * قِيس بعد الإصلاح على القاعدة الحيّة في معاملةٍ مُتراجَعٍ عنها:
+ * ٠ ← ٥٫٠٠ للأطباء، ٠ ← ٤٫٠٠ للصحة النفسية، ٠ ← ٣٫٠٠ للتغذية،
+ * ٠ ← ٥٫٠٠ للعلاج الطبيعي.
+ *
+ * الحارس ساكن: يقرأ أسماء الجداول من ملفّات الترحيل (حيث تُنشأ مُشغِّلاتها)
+ * ويتأكّد أنّ لكلٍّ منها `insert` في `src/`.
+ */
+describe('كتّاب جداول التقييم', () => {
+  it('كل جدول تقييمٍ عليه مُشغِّل إحصاءات يكتب فيه التطبيق', () => {
+    const migrationsDir = join(ROOT, 'supabase', 'migrations');
+    const sql = readdirSync(migrationsDir)
+      .filter((f) => f.endsWith('.sql'))
+      .map((f) => read(join(migrationsDir, f)))
+      .join('\n');
+
+    // جداولٌ يُنشأ عليها مُشغِّلٌ يحدّث إحصاءات التقييم
+    const withTrigger = new Set<string>();
+    for (const m of sql.matchAll(
+      /CREATE\s+TRIGGER\s+\w+[\s\S]{0,120}?\bON\s+(?:public\.)?(\w*ratings|\w*reviews)\b[\s\S]{0,160}?EXECUTE\s+(?:PROCEDURE|FUNCTION)\s+(?:public\.)?(\w*rating\w*)/gi,
+    )) {
+      withTrigger.add(m[1]);
+    }
+
+    expect(withTrigger.size).toBeGreaterThan(4);
+
+    let appSrc = '';
+    (function walk(d: string) {
+      for (const e of readdirSync(d)) {
+        const full = join(d, e);
+        if (statSync(full).isDirectory()) walk(full);
+        else if ((full.endsWith('.ts') || full.endsWith('.tsx')) && !full.includes('types'))
+          appSrc += readFileSync(full, 'utf8');
+      }
+    })(SRC);
+
+    /**
+     * القراءة وحدها لا تُحرّك الإحصاءة، فتلزم كتابةٌ قريبة من الاستدعاء —
+     * `insert` أو `upsert` (كلتاهما تُطلق المُشغِّل؛ الصيدليات والتجميل
+     * تستعملان `upsert` بـ`onConflict` لمنع التقييم المكرّر).
+     * وتُفحص **كل** مواضع الاستدعاء لا أوّلها: الجدول قد يُقرأ في موضعٍ
+     * ويُكتَب في آخر (كما في `pharmacy_ratings`).
+     */
+    const noWriter = [...withTrigger].filter((t) => {
+      const needle = `from('${t}')`;
+      for (let i = appSrc.indexOf(needle); i !== -1; i = appSrc.indexOf(needle, i + 1)) {
+        const near = appSrc.slice(i, i + 400);
+        if (near.includes('.insert(') || near.includes('.upsert(')) return false;
+      }
+      return true;
+    }).sort();
+
+    expect(noWriter).toEqual([]);
+  });
+});
