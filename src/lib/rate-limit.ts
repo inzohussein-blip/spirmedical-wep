@@ -118,11 +118,68 @@ export async function checkRateLimit(
         return await checkRateLimitUpstash(key, options, redis);
       }
     } catch {
-      // لو فشل Upstash لأي سبب، ارجع للذاكرة
+      // لو فشل Upstash لأي سبب، ارجع للطبقات التالية
     }
   }
 
+  // قاعدة البيانات: مشتركةٌ بين كل النسخ، ولا تحتاج خدمةً إضافية.
+  // كانت الطبقة الوحيدة بعد Upstash هي الذاكرة — ولكلّ نسخة serverless
+  // ذاكرتُها، فالحدّ الفعليّ يتضاعف بعدد النسخ الحيّة على أخطر المسارات
+  // (إرسال OTP والتحقّق منه والدخول والتسجيل).
+  const viaDb = await checkRateLimitDb(key, options);
+  if (viaDb) return viaDb;
+
   return checkRateLimitMemory(key, options);
+}
+
+/**
+ * الطبقة المخزَّنة في `rate_limit_buckets` عبر `consume_rate_limit`.
+ *
+ * الزيادة والقرار في عبارةٍ واحدة داخل القاعدة (`INSERT … ON CONFLICT DO
+ * UPDATE … RETURNING`) فلا سباق بين قراءةٍ وكتابة بين نسختين.
+ *
+ * **تفشل مفتوحةً إلى الذاكرة عمداً** (`null` لا استثناء): تعذُّر الوصول
+ * للقاعدة يجب ألّا يمنع مريضاً من تسجيل الدخول. الطبقة التالية تبقى
+ * حارساً، والنتيجة أبداً ليست أسوأ من الحالة السابقة.
+ *
+ * وتحتاج `SUPABASE_SERVICE_ROLE_KEY`: الدالّة ممنوحةٌ لـ`service_role`
+ * وحده ومسحوبةٌ من `anon` و`authenticated`، فلا تُبلَغ من المتصفّح.
+ */
+async function checkRateLimitDb(
+  key: string,
+  options: RateLimitOptions
+): Promise<RateLimitResult | null> {
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return null;
+
+  try {
+    const admin = createAdminClient() as unknown as {
+      rpc: (fn: string, args: Record<string, unknown>) => Promise<{
+        data: Array<{
+          allowed: boolean;
+          remaining: number;
+          retry_after_seconds: number;
+        }> | null;
+        error: unknown;
+      }>;
+    };
+
+    const { data, error } = await admin.rpc('consume_rate_limit', {
+      p_key: key,
+      p_max: options.max,
+      p_window_seconds: options.windowSeconds,
+    });
+
+    if (error || !data || data.length === 0) return null;
+
+    const row = data[0];
+    return {
+      allowed: row.allowed,
+      remaining: row.remaining,
+      retryAfterSeconds: row.retry_after_seconds,
+    };
+  } catch {
+    return null;
+  }
 }
 
 function checkRateLimitMemory(
