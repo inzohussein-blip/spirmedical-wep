@@ -1152,18 +1152,20 @@ BEGIN
   WHERE id = NEW.pharmacy_id;
   
   IF pharmacy_owner IS NOT NULL THEN
+    -- تصحيحٌ لاحق (الترحيل 0029): الأعمدة القديمة
+    -- `user_id, title, icon, data, scheduled_at` لا وجود لها في
+    -- `notification_queue`، و`recipient_phone` و`channel` إلزاميّان. والمشغِّل
+    -- AFTER، فالخطأ كان يُسقط الحجزَ نفسه لا الإشعارَ وحده.
     INSERT INTO public.notification_queue (
-      user_id, template_key, title, body, icon, data, created_at, scheduled_at
-    ) VALUES (
-      pharmacy_owner,
-      'pharmacy_reservation_new',
-      'حجز دواء جديد 💊',
+      recipient_user_id, recipient_phone, channel, template_key,
+      body, scheduled_for, related_type, related_id
+    )
+    SELECT
+      pharmacy_owner, u.phone, 'push', 'pharmacy_reservation_new',
       'لديك حجز جديد من مريض - يرجى الرد',
-      '💊',
-      jsonb_build_object('reservation_id', NEW.id, 'url', '/pharmacy-orders/' || NEW.id),
-      NOW(),
-      NOW()
-    );
+      NOW(), 'pharmacy_reservation', NEW.id
+    FROM public.users u
+    WHERE u.id = pharmacy_owner AND u.phone IS NOT NULL AND u.phone <> '';
   END IF;
   
   RETURN NEW;
@@ -1214,18 +1216,19 @@ BEGIN
       RETURN NEW;
   END CASE;
   
+  -- تصحيحٌ لاحق (الترحيل 0029): الأعمدة القديمة
+  -- `user_id, title, icon, data, scheduled_at` لا وجود لها في
+  -- `notification_queue`، و`recipient_phone` و`channel` إلزاميّان. والمشغِّل
+  -- AFTER، فالخطأ كان يُسقط الحجزَ نفسه لا الإشعارَ وحده.
   INSERT INTO public.notification_queue (
-    user_id, template_key, title, body, icon, data, created_at, scheduled_at
-  ) VALUES (
-    NEW.user_id,
-    template_key_val,
-    title_val,
-    body_val,
-    icon_val,
-    jsonb_build_object('reservation_id', NEW.id, 'url', '/account/pharmacy-reservations/' || NEW.id),
-    NOW(),
-    NOW()
-  );
+    recipient_user_id, recipient_phone, channel, template_key,
+    body, scheduled_for, related_type, related_id
+  )
+  SELECT
+    NEW.user_id, u.phone, 'push', template_key_val,
+    body_val, NOW(), 'pharmacy_reservation', NEW.id
+  FROM public.users u
+  WHERE u.id = NEW.user_id AND u.phone IS NOT NULL AND u.phone <> '';
   
   RETURN NEW;
 END;
