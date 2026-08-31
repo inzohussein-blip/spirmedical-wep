@@ -32,41 +32,44 @@ export default async function DashboardPage() {
     redirect('/login');
   }
 
-  // ─── جلب الـ profile ───
-  const { data: profile } = await supabase
-    .from('users')
-    .select('full_name')
-    .eq('id', user.id)
-    .single();
-
-  const fullName = profile?.full_name || 'صديقنا';
-  const firstName = fullName.split(' ')[0];
-
-  // ─── إحصاءات للـ Hero ───
-  const testsCountRes = await supabase
-    .from('appointments')
-    .select('id', { count: 'exact', head: true })
-    .eq('user_id', user.id);
-  const testsCount = testsCountRes.count ?? 0;
-
-  const rxCountRes = await supabase
-    .from('prescriptions')
-    .select('id', { count: 'exact', head: true })
-    .eq('user_id', user.id);
-  const prescriptionsCount = rxCountRes.count ?? 0;
-
-  // `notifications` غير مُعرّف في database.ts بعد (يُحسم بـ db:types) — cast مُضيَّق
-  const notifRes = await (supabase as unknown as {
-    from: (t: string) => {
-      select: (c: string, o: { count: 'exact'; head: boolean }) => {
-        eq: (c: string, v: string) => { eq: (c: string, v: boolean) => Promise<{ count: number | null }> };
+  // ─── أربعة نداءاتٍ لا يعتمد أيٌّ منها على الآخر ───
+  //
+  // كانت تُنتظَر واحداً بعد واحد، فتُدفع أربعُ رحلاتٍ متتاليةٍ إلى Supabase
+  // قبل أن يُرسم شيء. وهي كلّها تسأل عن `user.id` وحده — لا شيء فيها يحتاج
+  // نتيجةَ ما قبله. فبـ`Promise.all` تصير نافذةَ انتظارٍ واحدة بطول أبطئها
+  // لا بمجموعها. وهذه أوّل شاشةٍ يراها المريض بعد الدخول.
+  const [profileRes, testsCountRes, rxCountRes, notifRes] = await Promise.all([
+    supabase
+      .from('users')
+      .select('full_name')
+      .eq('id', user.id)
+      .single(),
+    supabase
+      .from('appointments')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id),
+    supabase
+      .from('prescriptions')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id),
+    // `notifications` غير مُعرّف في database.ts بعد (يُحسم بـ db:types) — cast مُضيَّق
+    (supabase as unknown as {
+      from: (t: string) => {
+        select: (c: string, o: { count: 'exact'; head: boolean }) => {
+          eq: (c: string, v: string) => { eq: (c: string, v: boolean) => Promise<{ count: number | null }> };
+        };
       };
-    };
-  })
-    .from('notifications')
-    .select('id', { count: 'exact', head: true })
-    .eq('user_id', user.id)
-    .eq('is_read', false);
+    })
+      .from('notifications')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('is_read', false),
+  ]);
+
+  const fullName = profileRes.data?.full_name || 'صديقنا';
+  const firstName = fullName.split(' ')[0];
+  const testsCount = testsCountRes.count ?? 0;
+  const prescriptionsCount = rxCountRes.count ?? 0;
   const hasUnread = (notifRes.count ?? 0) > 0;
 
   return (

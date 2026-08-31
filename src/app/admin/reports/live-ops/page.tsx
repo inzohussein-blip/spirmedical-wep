@@ -35,24 +35,29 @@ export default async function LiveOpsPage() {
   const today = baghdadDayWindow().start.toISOString();
   const tomorrow = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
 
-  const { data: activeOrders } = await supabase
-    .from('appointments')
-    .select(
-      'id, service_type, status, scheduled_at, location_lat, location_lng, address, user_id, specialist_id'
-    )
-    .in('status', ['pending', 'confirmed', 'in_progress'])
-    .gte('scheduled_at', today)
-    .lte('scheduled_at', tomorrow)
-    .not('location_lat', 'is', null)
-    .not('location_lng', 'is', null);
-
-  // الأخصائيين النشطين (لديهم work_lat/lng)
-  const { data: activeSpecialists } = await supabase
-    .from('users')
-    .select('id, full_name, work_lat, work_lng, work_address, specialist_type')
-    .eq('role', 'specialist')
-    .not('work_lat', 'is', null)
-    .not('work_lng', 'is', null);
+  // نداءاتٌ مستقلّة: لا يعتمد أيٌّ منها على نتيجة سابقه، وكانت تُنتظَر واحداً بعد واحد
+  // فتُدفع رحلةٌ شبكيّةٌ لكلٍّ منها قبل أن يُرسم شيء. الآن نافذةُ انتظارٍ واحدة.
+  const [{ data: activeOrders }, { data: activeSpecialists }] = await Promise.all([
+    // «اليوم» بتوقيت بغداد لا بتوقيت الخادم (UTC على Vercel) — وإلّا بدأ اليوم
+    // الساعة ٠٣:٠٠ بغداد وسقطت طلبات ما بعد منتصف الليل في حصيلة الأمس.
+    supabase
+      .from('appointments')
+      .select(
+        'id, service_type, status, scheduled_at, location_lat, location_lng, address, user_id, specialist_id'
+      )
+      .in('status', ['pending', 'confirmed', 'in_progress'])
+      .gte('scheduled_at', today)
+      .lte('scheduled_at', tomorrow)
+      .not('location_lat', 'is', null)
+      .not('location_lng', 'is', null),
+    // الأخصائيين النشطين (لديهم work_lat/lng)
+    supabase
+      .from('users')
+      .select('id, full_name, work_lat, work_lng, work_address, specialist_type')
+      .eq('role', 'specialist')
+      .not('work_lat', 'is', null)
+      .not('work_lng', 'is', null),
+  ]);
 
   // بناء المؤشرات للخريطة
   type MapMarker = {

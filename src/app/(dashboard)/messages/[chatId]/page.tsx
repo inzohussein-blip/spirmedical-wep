@@ -28,20 +28,23 @@ export default async function PatientChatDetailPage({ params }: { params: { chat
     notFound();
   }
 
-  // معلومات الأخصائي
-  const { data: specialist } = await supabase
-    .from('users')
-    .select('id, full_name')
-    .eq('id', chat.specialist_id)
-    .single();
-
-  // الرسائل
-  const { data: messagesRaw } = await supabase
-    .from('messages')
-    .select('*')
-    .eq('chat_id', params.chatId)
-    .order('created_at', { ascending: true })
-    .limit(100);
+  // نداءاتٌ مستقلّة: لا يعتمد أيٌّ منها على نتيجة سابقه، وكانت تُنتظَر واحداً بعد واحد
+  // فتُدفع رحلةٌ شبكيّةٌ لكلٍّ منها قبل أن يُرسم شيء. الآن نافذةُ انتظارٍ واحدة.
+  const [{ data: specialist }, { data: messagesRaw }] = await Promise.all([
+    // معلومات الأخصائي
+    supabase
+      .from('users')
+      .select('id, full_name')
+      .eq('id', chat.specialist_id)
+      .single(),
+    // الرسائل
+    supabase
+      .from('messages')
+      .select('*')
+      .eq('chat_id', params.chatId)
+      .order('created_at', { ascending: true })
+      .limit(100),
+  ]);
 
   const specName = specialist ? `د. ${specialist.full_name}` : 'الطبيب';
   const participant: ChatParticipant = {

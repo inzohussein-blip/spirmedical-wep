@@ -19,20 +19,23 @@ export default async function WalletPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 
-  // جلب بيانات المستخدم
-  const { data: profile } = await supabase
-    .from('users')
-    .select('wallet_balance, loyalty_points, loyalty_tier')
-    .eq('id', user.id)
-    .single();
-
-  // جلب آخر 20 معاملة
-  const { data: transactions } = await supabase
-    .from('wallet_transactions')
-    .select('*')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
-    .limit(20);
+  // نداءاتٌ مستقلّة: لا يعتمد أيٌّ منها على نتيجة سابقه، وكانت تُنتظَر واحداً بعد واحد
+  // فتُدفع رحلةٌ شبكيّةٌ لكلٍّ منها قبل أن يُرسم شيء. الآن نافذةُ انتظارٍ واحدة.
+  const [{ data: profile }, { data: transactions }] = await Promise.all([
+    // جلب بيانات المستخدم
+    supabase
+      .from('users')
+      .select('wallet_balance, loyalty_points, loyalty_tier')
+      .eq('id', user.id)
+      .single(),
+    // جلب آخر 20 معاملة
+    supabase
+      .from('wallet_transactions')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(20),
+  ]);
 
   const walletBalance = (profile as { wallet_balance?: number })?.wallet_balance ?? 0;
   const loyaltyPoints = (profile as { loyalty_points?: number })?.loyalty_points ?? 0;

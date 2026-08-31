@@ -3000,11 +3000,20 @@ html {
   to { width: 28px; opacity: 1; }
 }
 
-/* ── 4. Page Transitions (للـ framer-motion - fallback CSS) ── */
+/* ── 4. انتقال الصفحات — CSS خالص، بلا مكتبة ولا انتظار خروج ── */
+/*
+ * كان `PageTransitionProvider` يستعمل framer-motion بـ`mode="wait"`: تُكمل
+ * الصفحة الخارجة خروجها (0.28s) ثمّ تدخل الداخلة (0.28s) — 0.56s تُضاف إلى
+ * كلّ فتح شاشة. صار الانتقال دخولاً وحده، والمكتبة حُذفت (لم يكن لها
+ * مستهلكٌ آخر في المشروع).
+ *
+ * الاتّجاه من اليمين (`-16px`) لأنّ الواجهة عربيّةٌ RTL: الجديد يأتي من
+ * جهة التقدّم لا من عكسها.
+ */
 @keyframes page-enter-slide {
   from {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translateX(-16px);
   }
   to {
     opacity: 1;
@@ -3012,8 +3021,29 @@ html {
   }
 }
 
+.page-enter {
+  animation: page-enter-slide 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* الاسم القديم يبقى: قد يشير إليه كودٌ لم يُهاجَر بعد */
 .page-transition-slide {
-  animation: page-enter-slide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: page-enter-slide 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/*
+ * من طلب تقليل الحركة يحصل على تلاشٍ خفيفٍ وحده. وهذا يُطبَّق قبل أوّل
+ * رسم، بخلاف `matchMedia` في `useEffect` التي كانت تُقرأ بعده — فكانت
+ * النسخة السابقة تعرض الحركة الكاملة أوّل مرّةٍ لمن طلب تقليلها.
+ */
+@media (prefers-reduced-motion: reduce) {
+  @keyframes page-enter-slide {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .page-enter,
+  .page-transition-slide {
+    animation-duration: 0.1s;
+  }
 }
 
 /* ── 5. Skeleton Screens (محسّنة) ── */

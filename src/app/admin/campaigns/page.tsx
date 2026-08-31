@@ -24,18 +24,21 @@ export default async function CampaignsPage() {
     .from('users').select('role').eq('id', user.id).single();
   if (!profile || !['admin', 'super_admin'].includes(profile.role)) redirect('/dashboard');
 
-  const { data: campaigns } = await supabase
-    .from('campaigns')
-    .select('*')
-    .order('created_at', { ascending: false })
-    .limit(100);
-
-  // عدّ المستخدمين المستهدفين
-  const { count: totalUsers } = await supabase
-    .from('users')
-    .select('*', { count: 'exact', head: true })
-    // 'patient' لا 'user': الأخير ليس قيمة صالحة في user_role، فكان العدّاد صفراً دائماً
-    .eq('role', 'patient');
+  // نداءاتٌ مستقلّة: لا يعتمد أيٌّ منها على نتيجة سابقه، وكانت تُنتظَر واحداً بعد واحد
+  // فتُدفع رحلةٌ شبكيّةٌ لكلٍّ منها قبل أن يُرسم شيء. الآن نافذةُ انتظارٍ واحدة.
+  const [{ data: campaigns }, { count: totalUsers }] = await Promise.all([
+    supabase
+      .from('campaigns')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(100),
+    // عدّ المستخدمين المستهدفين
+    supabase
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+      // 'patient' لا 'user': الأخير ليس قيمة صالحة في user_role، فكان العدّاد صفراً دائماً
+      .eq('role', 'patient'),
+  ]);
 
   return (
     <>

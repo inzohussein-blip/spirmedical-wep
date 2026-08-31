@@ -74,39 +74,42 @@ export default async function PharmacyManagementPage() {
     );
   }
 
-  // جلب المخزون
-  const { data: inventory } = await supabase
-    .from('pharmacy_inventory')
-    .select(`
-      id,
-      is_available,
-      custom_price,
-      brand_variant,
-      notes,
-      searched_count,
-      added_at,
-      medication:medications (
+  // نداءاتٌ مستقلّة: لا يعتمد أيٌّ منها على نتيجة سابقه، وكانت تُنتظَر واحداً بعد واحد
+  // فتُدفع رحلةٌ شبكيّةٌ لكلٍّ منها قبل أن يُرسم شيء. الآن نافذةُ انتظارٍ واحدة.
+  const [{ data: inventory }, { data: allMedications }] = await Promise.all([
+    // جلب المخزون
+    supabase
+      .from('pharmacy_inventory')
+      .select(`
         id,
-        name_ar,
-        name_en,
-        generic_name,
-        manufacturer,
-        category,
-        form,
-        strength,
-        package_size,
-        requires_prescription
-      )
-    `)
-    .eq('pharmacy_id', pharmacy.id)
-    .order('updated_at', { ascending: false });
-
-  // جلب الكتالوج الكامل (للإضافة)
-  const { data: allMedications } = await supabase
-    .from('medications')
-    .select('id, name_ar, name_en, category, strength, manufacturer')
-    .order('name_ar')
-    .limit(500);
+        is_available,
+        custom_price,
+        brand_variant,
+        notes,
+        searched_count,
+        added_at,
+        medication:medications (
+          id,
+          name_ar,
+          name_en,
+          generic_name,
+          manufacturer,
+          category,
+          form,
+          strength,
+          package_size,
+          requires_prescription
+        )
+      `)
+      .eq('pharmacy_id', pharmacy.id)
+      .order('updated_at', { ascending: false }),
+    // جلب الكتالوج الكامل (للإضافة)
+    supabase
+      .from('medications')
+      .select('id, name_ar, name_en, category, strength, manufacturer')
+      .order('name_ar')
+      .limit(500),
+  ]);
 
   return (
     <PharmacyManagementClient
