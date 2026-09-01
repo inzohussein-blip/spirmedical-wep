@@ -55,7 +55,7 @@ export default function ServiceComingSoon({
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
             minHeight: 44, padding: '0 20px', borderRadius: 12,
-            background: 'var(--emerald-deep, #0F766E)', color: '#fff',
+            background: 'var(--emerald-deep, var(--emerald-deep, #056559))', color: '#fff',
             fontSize: 14, fontWeight: 800, textDecoration: 'none',
           }}
         >

@@ -72,10 +72,10 @@ const DialogContent = React.forwardRef<
       <DialogPrimitive.Close
         className={cn(
           'absolute left-4 top-4 rounded-full p-1.5',
-          'text-[var(--ink-3,#6E7878)] hover:text-[var(--ink,#0F1A1C)]',
-          'hover:bg-[var(--paper-2,#F4EFE2)]',
+          'text-[var(--ink-3, #5F6368)] hover:text-[var(--ink, #202124)]',
+          'hover:bg-[var(--paper-2, #F1F3F4)]',
           'transition-colors',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald,#0E5C4D)]',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--emerald,#01875F)]',
           'disabled:pointer-events-none'
         )}
         aria-label="إغلاق"
@@ -121,7 +121,7 @@ const DialogTitle = React.forwardRef<
     ref={ref}
     className={cn(
       'text-lg font-extrabold leading-none tracking-tight',
-      'text-[var(--ink,#0F1A1C)]',
+      'text-[var(--ink, #202124)]',
       className
     )}
     {...props}
@@ -137,7 +137,7 @@ const DialogDescription = React.forwardRef<
     ref={ref}
     className={cn(
       'text-sm leading-relaxed',
-      'text-[var(--ink-3,#6E7878)]',
+      'text-[var(--ink-3, #5F6368)]',
       className
     )}
     {...props}

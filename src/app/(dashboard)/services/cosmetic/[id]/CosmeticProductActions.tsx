@@ -75,7 +75,7 @@ export default function CosmeticProductActions({
         style={{
           flex: 1,
           padding: 12,
-          background: '#0F6E56',
+          background: 'var(--emerald-mid, #0F6E56)',
           color: 'white',
           border: 0,
           borderRadius: 12,
@@ -99,7 +99,7 @@ export default function CosmeticProductActions({
           left: '50%',
           transform: 'translateX(-50%)',
           padding: '10px 16px',
-          background: '#0F6E56',
+          background: 'var(--emerald-mid, #0F6E56)',
           color: 'white',
           borderRadius: 24,
           fontSize: 12,
@@ -308,7 +308,7 @@ function ReviewModal({
           style={{
             width: '100%',
             padding: 12,
-            background: rating === 0 ? 'var(--ink-3)' : '#0F6E56',
+            background: rating === 0 ? 'var(--ink-3)' : 'var(--emerald-mid, #0F6E56)',
             color: 'white',
             border: 0,
             borderRadius: 10,

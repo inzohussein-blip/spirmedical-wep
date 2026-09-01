@@ -356,7 +356,7 @@ export default function LabResultsForm({ orderId, expectedTests = [], existingRe
             gap: 8, 
             width: '100%', 
             marginTop: 12,
-            background: '#0F6E56',
+            background: 'var(--emerald-mid, #0F6E56)',
             color: 'white',
             fontWeight: 700,
           }}

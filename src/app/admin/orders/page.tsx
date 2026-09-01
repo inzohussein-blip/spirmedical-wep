@@ -19,9 +19,9 @@ interface SearchParams {
 }
 
 const STATUS_META: Record<string, { label: string; bg: string; color: string }> = {
-  pending: { label: 'جديد', bg: 'var(--amber-soft, #F8E5C7)', color: 'var(--amber-deep, #6B3A08)' },
+  pending: { label: 'جديد', bg: 'var(--amber-soft, #FEF7E0)', color: 'var(--amber-deep, #6B3A08)' },
   confirmed: { label: 'مؤكّد', bg: 'var(--emerald-soft)', color: 'var(--emerald-deep)' },
-  in_progress: { label: 'جارٍ', bg: 'var(--amber-soft, #F8E5C7)', color: 'var(--amber-deep, #6B3A08)' },
+  in_progress: { label: 'جارٍ', bg: 'var(--amber-soft, #FEF7E0)', color: 'var(--amber-deep, #6B3A08)' },
   completed: { label: 'مكتمل', bg: 'var(--emerald-soft)', color: 'var(--emerald-deep)' },
   cancelled: { label: 'ملغى', bg: 'var(--rose-soft)', color: 'var(--rose)' },
 };

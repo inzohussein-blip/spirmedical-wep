@@ -98,7 +98,7 @@ export default function ServiceSwitchesClient({ initial }: { initial: Row[] }) {
                   key={r.id}
                   style={{
                     padding: 12, background: 'var(--white, #fff)',
-                    border: '1px solid var(--line, #E8E6DE)', borderRadius: 10,
+                    border: '1px solid var(--line, #DADCE0)', borderRadius: 10,
                     opacity: r.isEnabled ? 1 : 0.75,
                   }}
                 >
@@ -107,7 +107,7 @@ export default function ServiceSwitchesClient({ initial }: { initial: Row[] }) {
                       aria-hidden="true"
                       style={{
                         width: 10, height: 10, borderRadius: '50%', flexShrink: 0,
-                        background: r.isEnabled ? '#0F766E' : '#9AA0A6',
+                        background: r.isEnabled ? 'var(--emerald-deep, #056559)' : '#9AA0A6',
                       }}
                     />
                     <div style={{ flex: 1, minWidth: 150 }}>
@@ -155,7 +155,7 @@ export default function ServiceSwitchesClient({ initial }: { initial: Row[] }) {
                       }}
                       style={{
                         ...btn, background: 'var(--white, #fff)',
-                        border: '1px solid var(--line, #E8E6DE)', color: 'var(--ink, #26251F)',
+                        border: '1px solid var(--line, #DADCE0)', color: 'var(--ink, #202124)',
                       }}
                     >
                       {r.note ? 'تعديل السبب' : 'إضافة سبب'}
@@ -173,14 +173,14 @@ export default function ServiceSwitchesClient({ initial }: { initial: Row[] }) {
                         style={{
                           flex: 1, minWidth: 220, minHeight: 44, padding: '10px 12px',
                           fontSize: 14, borderRadius: 8,
-                          border: '1px solid var(--line, #E8E6DE)',
+                          border: '1px solid var(--line, #DADCE0)',
                         }}
                       />
                       <button
                         type="button"
                         disabled={pending}
                         onClick={() => apply(r, r.isEnabled, draftNote)}
-                        style={{ ...btn, background: 'var(--emerald-deep, #0F766E)', color: '#fff', border: 'none' }}
+                        style={{ ...btn, background: 'var(--emerald-deep, var(--emerald-deep, #056559))', color: '#fff', border: 'none' }}
                       >
                         حفظ
                       </button>

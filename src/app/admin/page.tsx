@@ -371,7 +371,7 @@ export default async function AdminDashboard() {
                     borderRadius: 100,
                     background: o.status === 'completed' ? 'var(--emerald-soft)' :
                                 o.status === 'cancelled' ? 'var(--rose-soft)' :
-                                'var(--amber-soft, #F8E5C7)',
+                                'var(--amber-soft, #FEF7E0)',
                     color: o.status === 'completed' ? 'var(--emerald-deep)' :
                            o.status === 'cancelled' ? 'var(--rose)' :
                            'var(--amber-deep, #6B3A08)',

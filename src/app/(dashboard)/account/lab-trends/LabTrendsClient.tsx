@@ -145,7 +145,7 @@ function TestTrendCard({ test }: { test: TrendableTest }) {
           {trend && (
             <div style={{ 
               fontSize: 11, 
-              color: trend === 'up' ? '#A57100' : trend === 'down' ? '#0F6E56' : '#6B7280',
+              color: trend === 'up' ? '#A57100' : trend === 'down' ? 'var(--emerald-mid, #0F6E56)' : '#6B7280',
               display: 'flex',
               alignItems: 'center',
               gap: 2,

@@ -60,7 +60,7 @@ export default function NotificationRowActions({
           onClick={() => run(() => retryNotification(id), 'أُعيدت الرسالة إلى الطابور')}
           title="إعادة المحاولة"
           aria-label="إعادة المحاولة"
-          style={actionBtn('var(--emerald-deep, #085041)', pending)}
+          style={actionBtn('var(--emerald-deep, #056559)', pending)}
         >
           <RotateCw size={14} aria-hidden />
         </button>
@@ -89,7 +89,7 @@ function actionBtn(color: string, disabled: boolean): React.CSSProperties {
     width: 30,
     height: 30,
     borderRadius: 8,
-    border: '1px solid var(--line, #E8E6DE)',
+    border: '1px solid var(--line, #DADCE0)',
     background: 'var(--white, #fff)',
     color,
     cursor: disabled ? 'not-allowed' : 'pointer',

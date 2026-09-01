@@ -98,7 +98,7 @@ export default async function PhysioSpecialistPage({
 
         {/* Hero */}
         <div style={{
-          background: 'linear-gradient(135deg, #0F6E56 0%, #04342C 100%)',
+          background: 'linear-gradient(135deg, var(--emerald-mid, #0F6E56) 0%, #04342C 100%)',
           color: 'white',
           borderRadius: 16,
           padding: 20,
@@ -246,7 +246,7 @@ export default async function PhysioSpecialistPage({
                 height: 44,
                 borderRadius: 12,
                 background: '#E1F5EE',
-                color: '#0F6E56',
+                color: 'var(--emerald-mid, #0F6E56)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',

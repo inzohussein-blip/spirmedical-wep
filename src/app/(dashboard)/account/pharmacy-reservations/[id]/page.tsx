@@ -377,7 +377,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
                   marginTop: 8,
                 }}>
                   <span>الإجمالي</span>
-                  <span style={{ color: '#0F6E56' }}>{reservation.total_final_price.toLocaleString('ar-IQ')} د.ع</span>
+                  <span style={{ color: 'var(--emerald-mid, #0F6E56)' }}>{reservation.total_final_price.toLocaleString('ar-IQ')} د.ع</span>
                 </div>
               )}
             </div>

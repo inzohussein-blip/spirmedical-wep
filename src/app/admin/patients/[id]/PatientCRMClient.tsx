@@ -25,7 +25,7 @@ interface Props {
 const NOTE_TYPE_META = {
   general: { label: 'عام', icon: '📝', color: 'var(--paper-3)' },
   warning: { label: 'تحذير', icon: '⚠️', color: 'var(--rose-soft)' },
-  vip: { label: 'VIP', icon: '⭐', color: 'var(--amber-soft, #F8E5C7)' },
+  vip: { label: 'VIP', icon: '⭐', color: 'var(--amber-soft, #FEF7E0)' },
   follow_up: { label: 'متابعة', icon: '🔔', color: 'var(--emerald-soft)' },
 };
 

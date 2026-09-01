@@ -130,7 +130,7 @@ export default function AdminSidebar({ userName, userRole, roleLabel, roleIcon }
               fontSize: 13,
               fontWeight: 700,
               textDecoration: 'none',
-              color: isActive ? 'var(--emerald-deep, #073B30)' : 'var(--white)',
+              color: isActive ? 'var(--emerald-deep, #056559)' : 'var(--white)',
               background: isActive ? 'var(--white)' : 'transparent',
               transition: 'all 0.15s',
             }}

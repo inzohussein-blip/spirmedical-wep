@@ -164,7 +164,7 @@ export default async function VaccinesPage() {
             <div style={{ fontSize: 13, fontWeight: 800, color: '#04342C' }}>
               جدول التطعيمات الوطني
             </div>
-            <div style={{ fontSize: 11, color: '#0F6E56' }}>
+            <div style={{ fontSize: 11, color: 'var(--emerald-mid, #0F6E56)' }}>
               تابع جرعات طفلك حسب العمر
             </div>
           </div>

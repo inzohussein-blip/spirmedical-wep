@@ -126,7 +126,7 @@ export default function AppointmentTimeline({
           font-size: 14px;
           font-weight: 800;
           margin: 0 0 18px;
-          color: var(--ink, #0F1A1C);
+          color: var(--ink, #202124);
           display: flex;
           align-items: center;
           gap: 8px;
@@ -151,24 +151,24 @@ export default function AppointmentTimeline({
           width: 36px;
           height: 36px;
           border-radius: 50%;
-          background: var(--paper-3, #FAF6EB);
+          background: var(--paper-3, #FFFFFF);
           border: 2px solid var(--line, rgba(15, 26, 28, 0.08));
           display: flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
           transition: all 0.3s;
-          color: var(--ink-3, #6E7878);
+          color: var(--ink-3, #5F6368);
         }
         .timeline-event.active .timeline-icon {
-          background: var(--emerald-soft, #D9E5DF);
-          border-color: var(--emerald, #0E5C4D);
-          color: var(--emerald, #0E5C4D);
+          background: var(--emerald-soft, #E6F3EF);
+          border-color: var(--emerald, #01875F);
+          color: var(--emerald, #01875F);
         }
         .timeline-event.current .timeline-icon {
-          background: var(--emerald, #0E5C4D);
-          border-color: var(--emerald, #0E5C4D);
-          color: var(--paper, #FAF6EB);
+          background: var(--emerald, #01875F);
+          border-color: var(--emerald, #01875F);
+          color: var(--paper, #F8F9FA);
           box-shadow: 0 0 0 4px rgba(14, 92, 77, 0.15);
           animation: glow 2s ease-in-out infinite;
         }
@@ -183,7 +183,7 @@ export default function AppointmentTimeline({
           min-height: 20px;
         }
         .timeline-line.active {
-          background: var(--emerald, #0E5C4D);
+          background: var(--emerald, #01875F);
         }
         .timeline-content {
           flex: 1;
@@ -192,28 +192,28 @@ export default function AppointmentTimeline({
         .timeline-label {
           font-size: 13px;
           font-weight: 700;
-          color: var(--ink, #0F1A1C);
+          color: var(--ink, #202124);
         }
         .timeline-event.inactive .timeline-label {
-          color: var(--ink-3, #6E7878);
+          color: var(--ink-3, #5F6368);
         }
         .timeline-time {
           font-size: 11px;
-          color: var(--ink-3, #6E7878);
+          color: var(--ink-3, #5F6368);
           margin-top: 3px;
           font-family: 'JetBrains Mono', monospace;
         }
         .timeline-pending {
           font-size: 11px;
-          color: var(--ink-4, #A4ACAA);
+          color: var(--ink-4, #80868B);
           margin-top: 3px;
           font-style: italic;
         }
         .timeline-reason {
           font-size: 11px;
-          color: var(--rose, #A82E3D);
+          color: var(--rose, #C71C56);
           margin-top: 5px;
-          background: var(--rose-soft, #F0D7D8);
+          background: var(--rose-soft, #FCE8E6);
           padding: 4px 10px;
           border-radius: 6px;
           display: inline-block;

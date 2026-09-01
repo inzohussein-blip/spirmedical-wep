@@ -153,8 +153,8 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
               <div style={{
                 marginTop: 12,
                 padding: '8px 12px',
-                background: 'var(--amber-soft, #F0DBC2)',
-                color: 'var(--amber, #B8540C)',
+                background: 'var(--amber-soft, #FEF7E0)',
+                color: 'var(--amber, #B06000)',
                 borderRadius: 8,
                 fontSize: 11,
                 fontWeight: 700,
@@ -216,7 +216,7 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
                 <a href={`tel:${specialist.phone}`} style={{ padding: '8px 12px', background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', borderRadius: 8, textDecoration: 'none', fontSize: 12, fontWeight: 800 }}>📞</a>
               </div>
             ) : (
-              <div style={{ background: 'var(--amber-soft, #F8E5C7)', padding: 16, borderRadius: 10, fontSize: 12, color: 'var(--amber-deep, #6B3A08)', fontWeight: 700, textAlign: 'center' }}>
+              <div style={{ background: 'var(--amber-soft, #FEF7E0)', padding: 16, borderRadius: 10, fontSize: 12, color: 'var(--amber-deep, #6B3A08)', fontWeight: 700, textAlign: 'center' }}>
                 ⚠️ لم يُعيَّن اختصاصي بعد
               </div>
             )}

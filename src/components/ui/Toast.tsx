@@ -58,13 +58,13 @@ const toastVariants = cva(
     variants: {
       variant: {
         default:
-          'bg-white border-[var(--line,rgba(15,26,28,0.08))] text-[var(--ink,#0F1A1C)]',
+          'bg-white border-[var(--line,rgba(15,26,28,0.08))] text-[var(--ink, #202124)]',
         success:
-          'bg-[var(--emerald-soft,#D9E5DF)] border-[var(--emerald,#0E5C4D)] text-[var(--emerald-deep,#073B30)]',
+          'bg-[var(--emerald-soft, #E6F3EF)] border-[var(--emerald,#01875F)] text-[var(--emerald-deep,#056559)]',
         warning:
-          'bg-[var(--amber-soft,#F0DBC2)] border-[var(--amber,#B8540C)] text-[var(--amber,#B8540C)]',
+          'bg-[var(--amber-soft, #FEF7E0)] border-[var(--amber, #B06000)] text-[var(--amber, #B06000)]',
         destructive:
-          'bg-[var(--rose-soft,#F0D7D8)] border-[var(--rose,#A82E3D)] text-[var(--rose,#A82E3D)]',
+          'bg-[var(--rose-soft, #FCE8E6)] border-[var(--rose, #C71C56)] text-[var(--rose, #C71C56)]',
       },
     },
     defaultVariants: {

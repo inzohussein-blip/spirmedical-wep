@@ -125,7 +125,7 @@ export default function LabsAdminClient({ labs }: Props) {
           onClick={() => setShowCreate(true)}
           style={{
             padding: '10px 18px',
-            background: '#0F6E56',
+            background: 'var(--emerald-mid, #0F6E56)',
             color: 'white',
             border: 0,
             borderRadius: 10,
@@ -459,8 +459,8 @@ function LabEditModal({
                     fontSize: 11,
                     fontWeight: 600,
                     border: '1px solid',
-                    borderColor: formData.specialties.includes(s.value) ? '#0F6E56' : 'var(--line)',
-                    background: formData.specialties.includes(s.value) ? '#0F6E56' : 'var(--white)',
+                    borderColor: formData.specialties.includes(s.value) ? 'var(--emerald-mid, #0F6E56)' : 'var(--line)',
+                    background: formData.specialties.includes(s.value) ? 'var(--emerald-mid, #0F6E56)' : 'var(--white)',
                     color: formData.specialties.includes(s.value) ? 'white' : 'var(--ink-2)',
                     cursor: 'pointer',
                   }}
@@ -499,7 +499,7 @@ function LabEditModal({
             style={{
               flex: 1,
               padding: 12,
-              background: '#0F6E56',
+              background: 'var(--emerald-mid, #0F6E56)',
               color: 'white',
               border: 0,
               borderRadius: 10,

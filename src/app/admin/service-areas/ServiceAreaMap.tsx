@@ -209,7 +209,7 @@ export default function ServiceAreaMap({
         width: '100%',
         borderRadius: 12,
         overflow: 'hidden',
-        border: '1px solid var(--line, #E8E6DE)',
+        border: '1px solid var(--line, #DADCE0)',
       }}
       role="application"
       aria-label="خريطة رسم منطقة الخدمة — انقر لإضافة نقطة، وانقر على نقطةٍ لحذفها"

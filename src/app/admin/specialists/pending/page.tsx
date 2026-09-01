@@ -82,7 +82,7 @@ export default async function PendingSpecialistsPage() {
                       fontSize: 11,
                       padding: '4px 10px',
                       borderRadius: 100,
-                      background: 'var(--amber-soft, #F8E5C7)',
+                      background: 'var(--amber-soft, #FEF7E0)',
                       color: 'var(--amber-deep, #6B3A08)',
                       fontWeight: 800,
                     }}>
@@ -98,7 +98,7 @@ export default async function PendingSpecialistsPage() {
                   </div>
 
                   {s.specialist_bio && (
-                    <p style={{ fontSize: 12, color: 'var(--ink-2, #2A3540)', margin: '0 0 12px', lineHeight: 1.7 }}>
+                    <p style={{ fontSize: 12, color: 'var(--ink-2, #3C4043)', margin: '0 0 12px', lineHeight: 1.7 }}>
                       {s.specialist_bio}
                     </p>
                   )}
@@ -108,7 +108,7 @@ export default async function PendingSpecialistsPage() {
                     style={{
                       display: 'inline-block',
                       padding: '8px 16px',
-                      background: 'var(--emerald-deep, #073B30)',
+                      background: 'var(--emerald-deep, #056559)',
                       color: 'var(--white)',
                       borderRadius: 10,
                       fontSize: 12,

@@ -12,8 +12,8 @@ export const metadata = {
 };
 
 const STATUS_META: Record<string, { color: string; bg: string; label: string }> = {
-  pending: { color: 'var(--amber-deep, #6B3A08)', bg: 'var(--amber-soft, #F8E5C7)', label: 'بانتظار الإرسال' },
-  sending: { color: 'var(--amber-deep, #6B3A08)', bg: 'var(--amber-soft, #F8E5C7)', label: 'يُرسل الآن' },
+  pending: { color: 'var(--amber-deep, #6B3A08)', bg: 'var(--amber-soft, #FEF7E0)', label: 'بانتظار الإرسال' },
+  sending: { color: 'var(--amber-deep, #6B3A08)', bg: 'var(--amber-soft, #FEF7E0)', label: 'يُرسل الآن' },
   sent: { color: 'var(--emerald-deep)', bg: 'var(--emerald-soft)', label: 'أُرسل' },
   failed: { color: 'var(--rose)', bg: 'var(--rose-soft)', label: 'فشل' },
   cancelled: { color: 'var(--ink-3)', bg: 'var(--paper-3)', label: 'ملغى' },

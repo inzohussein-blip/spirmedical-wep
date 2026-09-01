@@ -82,7 +82,7 @@ export default function MyMedicationsClient({ medications }: Props) {
         style={{
           width: '100%',
           padding: 12,
-          background: '#0F6E56',
+          background: 'var(--emerald-mid, #0F6E56)',
           color: 'white',
           border: 0,
           borderRadius: 12,
@@ -153,7 +153,7 @@ export default function MyMedicationsClient({ medications }: Props) {
                   height: 38,
                   borderRadius: 10,
                   background: med.is_chronic ? '#FAEEDA' : '#E1F5EE',
-                  color: med.is_chronic ? '#A57100' : '#0F6E56',
+                  color: med.is_chronic ? '#A57100' : 'var(--emerald-mid, #0F6E56)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -406,8 +406,8 @@ function AddMedicationModal({ onClose, onSaved }: { onClose: () => void; onSaved
                       fontSize: 11,
                       fontWeight: 600,
                       border: '1px solid',
-                      borderColor: selected ? '#0F6E56' : 'var(--line)',
-                      background: selected ? '#0F6E56' : 'var(--white)',
+                      borderColor: selected ? 'var(--emerald-mid, #0F6E56)' : 'var(--line)',
+                      background: selected ? 'var(--emerald-mid, #0F6E56)' : 'var(--white)',
                       color: selected ? 'white' : 'var(--ink-2)',
                       cursor: 'pointer',
                     }}
@@ -485,7 +485,7 @@ function AddMedicationModal({ onClose, onSaved }: { onClose: () => void; onSaved
             style={{
               flex: 1,
               padding: 12,
-              background: '#0F6E56',
+              background: 'var(--emerald-mid, #0F6E56)',
               color: 'white',
               border: 0,
               borderRadius: 10,

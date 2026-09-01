@@ -197,7 +197,7 @@ export default async function CosmeticProductDetailPage({
             <div style={{
               fontSize: 24,
               fontWeight: 900,
-              color: '#0F6E56',
+              color: 'var(--emerald-mid, #0F6E56)',
             }}>
               {finalPrice.toLocaleString('ar-IQ')} د.ع
             </div>
@@ -433,7 +433,7 @@ export default async function CosmeticProductDetailPage({
                       alignItems: 'center',
                       gap: 3,
                       fontSize: 11,
-                      color: '#0F6E56',
+                      color: 'var(--emerald-mid, #0F6E56)',
                       fontWeight: 600,
                     }}>
                       <CheckCircle2 size={10} strokeWidth={2.5} aria-hidden />

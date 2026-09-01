@@ -326,7 +326,7 @@ export default function DoctorBookingModal({ doctor, defaultType, onClose, userA
           <span style={{ fontSize: 12, color: 'var(--ink-2)', fontWeight: 600 }}>
             السعر الإجمالي
           </span>
-          <span style={{ fontSize: 18, fontWeight: 800, color: '#0F6E56' }}>
+          <span style={{ fontSize: 18, fontWeight: 800, color: 'var(--emerald-mid, #0F6E56)' }}>
             {formatPrice(price) ?? 'يحدّده الطبيب'}
           </span>
         </div>
@@ -359,7 +359,7 @@ export default function DoctorBookingModal({ doctor, defaultType, onClose, userA
           style={{
             width: '100%',
             padding: 14,
-            background: '#0F6E56',
+            background: 'var(--emerald-mid, #0F6E56)',
             color: 'white',
             border: 0,
             borderRadius: 12,

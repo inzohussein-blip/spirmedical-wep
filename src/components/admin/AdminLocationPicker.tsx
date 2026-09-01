@@ -260,7 +260,7 @@ export default function AdminLocationPicker({
             color: '#085041',
           }}
         >
-          <Check size={14} aria-hidden style={{ color: '#0F6E56', flexShrink: 0 }} />
+          <Check size={14} aria-hidden style={{ color: 'var(--emerald-mid, #0F6E56)', flexShrink: 0 }} />
           <span style={{ fontWeight: 700 }}>
             {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}
           </span>

@@ -182,13 +182,13 @@ function VitalChart({
           <div style={{
             fontSize: 18,
             fontWeight: 800,
-            color: isInRange ? '#0F6E56' : '#A57100',
+            color: isInRange ? 'var(--emerald-mid, #0F6E56)' : '#A57100',
           }}>
             {lastValue} <span style={{ fontSize: 11, fontWeight: 600 }}>{unit}</span>
           </div>
           <div style={{
             fontSize: 11,
-            color: trend === 'up' ? '#A57100' : trend === 'down' ? '#0F6E56' : '#6B7280',
+            color: trend === 'up' ? '#A57100' : trend === 'down' ? 'var(--emerald-mid, #0F6E56)' : '#6B7280',
             display: 'flex',
             alignItems: 'center',
             gap: 2,

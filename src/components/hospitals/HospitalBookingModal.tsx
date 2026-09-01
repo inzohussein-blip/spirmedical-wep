@@ -164,8 +164,8 @@ export default function HospitalBookingModal({ hospital, onClose, userPhone }: P
                     fontSize: 11,
                     fontWeight: 600,
                     border: '1px solid',
-                    borderColor: selected ? '#0F6E56' : 'var(--line)',
-                    background: selected ? '#0F6E56' : 'var(--white)',
+                    borderColor: selected ? 'var(--emerald-mid, #0F6E56)' : 'var(--line)',
+                    background: selected ? 'var(--emerald-mid, #0F6E56)' : 'var(--white)',
                     color: selected ? 'white' : 'var(--ink-2)',
                     cursor: 'pointer',
                   }}
@@ -275,7 +275,7 @@ export default function HospitalBookingModal({ hospital, onClose, userPhone }: P
           style={{
             width: '100%',
             padding: 14,
-            background: '#0F6E56',
+            background: 'var(--emerald-mid, #0F6E56)',
             color: 'white',
             border: 0,
             borderRadius: 12,

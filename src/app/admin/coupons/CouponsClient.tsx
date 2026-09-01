@@ -197,7 +197,7 @@ export default function CouponsClient({ coupons }: Props) {
                       {expired ? (
                         <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--rose-soft)', color: 'var(--rose)', fontWeight: 800 }}>منتهي</span>
                       ) : exhausted ? (
-                        <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--amber-soft, #F8E5C7)', color: 'var(--amber-deep, #6B3A08)', fontWeight: 800 }}>استُنفذ</span>
+                        <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--amber-soft, #FEF7E0)', color: 'var(--amber-deep, #6B3A08)', fontWeight: 800 }}>استُنفذ</span>
                       ) : usable ? (
                         <button onClick={() => handleToggle(c.id, false)} disabled={isPending} style={{
                           fontSize: 11, padding: '3px 10px', borderRadius: 100,

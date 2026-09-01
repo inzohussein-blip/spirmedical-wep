@@ -347,7 +347,7 @@ export default function UserLocationPicker({
             </>
           ) : (
             <>
-              <Check size={14} aria-hidden style={{ color: '#0F6E56' }} />
+              <Check size={14} aria-hidden style={{ color: 'var(--emerald-mid, #0F6E56)' }} />
               الموقع محدّد
             </>
           )}

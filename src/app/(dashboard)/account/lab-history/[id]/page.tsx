@@ -279,7 +279,7 @@ export default async function LabOrderDetailPage({ params }: PageProps) {
                             gap: 4,
                             marginTop: 8,
                             fontSize: 11,
-                            color: '#0F6E56',
+                            color: 'var(--emerald-mid, #0F6E56)',
                             textDecoration: 'underline',
                           }}
                         >
@@ -358,7 +358,7 @@ export default async function LabOrderDetailPage({ params }: PageProps) {
             <span style={{ fontWeight: 600 }}>{order.tests_total.toLocaleString('ar-IQ')} د.ع</span>
           </div>
           {order.discount > 0 && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: 13, color: '#0F6E56' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: 13, color: 'var(--emerald-mid, #0F6E56)' }}>
               <span>خصم</span>
               <span style={{ fontWeight: 600 }}>-{order.discount.toLocaleString('ar-IQ')} د.ع</span>
             </div>
@@ -373,7 +373,7 @@ export default async function LabOrderDetailPage({ params }: PageProps) {
             fontWeight: 700,
           }}>
             <span>الإجمالي</span>
-            <span style={{ color: '#0F6E56' }}>{order.total_price.toLocaleString('ar-IQ')} د.ع</span>
+            <span style={{ color: 'var(--emerald-mid, #0F6E56)' }}>{order.total_price.toLocaleString('ar-IQ')} د.ع</span>
           </div>
         </div>
         </>

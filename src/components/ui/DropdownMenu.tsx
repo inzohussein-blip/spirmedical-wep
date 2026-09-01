@@ -38,7 +38,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
     ref={ref}
     className={cn(
       'flex cursor-default select-none items-center rounded-lg px-2 py-1.5 text-sm outline-none',
-      'focus:bg-[var(--paper-2,#F4EFE2)] data-[state=open]:bg-[var(--paper-2,#F4EFE2)]',
+      'focus:bg-[var(--paper-2, #F1F3F4)] data-[state=open]:bg-[var(--paper-2, #F1F3F4)]',
       'gap-2',
       inset && 'pr-8',
       className
@@ -85,10 +85,10 @@ const DropdownMenuItem = React.forwardRef<
       'relative flex cursor-default select-none items-center gap-2',
       'rounded-lg px-2.5 py-1.5 text-sm outline-none',
       'transition-colors',
-      'focus:bg-[var(--paper-2,#F4EFE2)]',
+      'focus:bg-[var(--paper-2, #F1F3F4)]',
       'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       variant === 'destructive' &&
-        'text-[var(--rose,#A82E3D)] focus:bg-[var(--rose-soft,#F0D7D8)] focus:text-[var(--rose,#A82E3D)]',
+        'text-[var(--rose, #C71C56)] focus:bg-[var(--rose-soft, #FCE8E6)] focus:text-[var(--rose, #C71C56)]',
       inset && 'pr-8',
       className
     )}
@@ -105,7 +105,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
     ref={ref}
     className={cn(
       'relative flex cursor-default select-none items-center rounded-lg py-1.5 pr-8 pl-2.5 text-sm outline-none',
-      'focus:bg-[var(--paper-2,#F4EFE2)]',
+      'focus:bg-[var(--paper-2, #F1F3F4)]',
       'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className
     )}
@@ -132,7 +132,7 @@ const DropdownMenuLabel = React.forwardRef<
   <DropdownMenuPrimitive.Label
     ref={ref}
     className={cn(
-      'px-2 py-1.5 text-xs font-bold text-[var(--ink-3,#6E7878)]',
+      'px-2 py-1.5 text-xs font-bold text-[var(--ink-3, #5F6368)]',
       inset && 'pr-8',
       className
     )}
@@ -163,7 +163,7 @@ const DropdownMenuShortcut = ({
   return (
     <span
       className={cn(
-        'mr-auto text-xs tracking-widest text-[var(--ink-3,#6E7878)]',
+        'mr-auto text-xs tracking-widest text-[var(--ink-3, #5F6368)]',
         className
       )}
       {...props}

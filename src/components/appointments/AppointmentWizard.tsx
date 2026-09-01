@@ -481,7 +481,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
 
       <style jsx>{`
         .wizard {
-          background: var(--paper-3, #FAF6EB);
+          background: var(--paper-3, #FFFFFF);
           padding: 16px;
           border-radius: 16px;
           max-width: 720px;
@@ -509,31 +509,31 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           justify-content: center;
           font-size: 13px;
           font-weight: 800;
-          background: var(--paper-2, #EDE6D3);
-          color: var(--ink-3, #6E7878);
+          background: var(--paper-2, #F1F3F4);
+          color: var(--ink-3, #5F6368);
           border: 1px solid var(--line, rgba(15, 26, 28, 0.08));
           transition: all 0.3s;
           flex-shrink: 0;
         }
         .wizard-step-circle.active {
-          background: var(--emerald, #0E5C4D);
-          color: var(--paper-3, #FAF6EB);
-          border-color: var(--emerald, #0E5C4D);
+          background: var(--emerald, #01875F);
+          color: var(--paper-3, #FFFFFF);
+          border-color: var(--emerald, #01875F);
         }
         .wizard-step-circle.done {
-          background: var(--emerald, #0E5C4D);
-          color: var(--paper-3, #FAF6EB);
+          background: var(--emerald, #01875F);
+          color: var(--paper-3, #FFFFFF);
         }
         .wizard-step-line {
           flex: 1;
           height: 3px;
-          background: var(--paper-2, #EDE6D3);
+          background: var(--paper-2, #F1F3F4);
           margin: 0 8px;
           border-radius: 100px;
           transition: all 0.3s;
         }
         .wizard-step-line.active {
-          background: var(--emerald, #0E5C4D);
+          background: var(--emerald, #01875F);
         }
 
         .wizard-step-info {
@@ -542,14 +542,14 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
         }
         .wizard-step-num {
           font-size: 11px;
-          color: var(--ink-3, #6E7878);
+          color: var(--ink-3, #5F6368);
           font-weight: 600;
           margin-bottom: 4px;
         }
         .wizard-step-title {
           font-size: 18px;
           font-weight: 800;
-          color: var(--ink, #0F1A1C);
+          color: var(--ink, #202124);
         }
 
         .step-content {
@@ -579,9 +579,9 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           transition: all 0.15s;
         }
         .category-pill.active {
-          background: var(--emerald, #0E5C4D);
-          color: var(--paper-3, #FAF6EB);
-          border-color: var(--emerald, #0E5C4D);
+          background: var(--emerald, #01875F);
+          color: var(--paper-3, #FFFFFF);
+          border-color: var(--emerald, #01875F);
         }
         .services-list {
           display: flex;
@@ -605,13 +605,13 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.1);
         }
         .service-card.selected {
-          border-color: var(--emerald, #0E5C4D);
-          background: var(--emerald-soft, #D9E5DF);
+          border-color: var(--emerald, #01875F);
+          background: var(--emerald-soft, #E6F3EF);
         }
         .service-icon {
           width: 56px;
           height: 56px;
-          background: var(--paper-2, #EDE6D3);
+          background: var(--paper-2, #F1F3F4);
           border-radius: 14px;
           display: flex;
           align-items: center;
@@ -620,7 +620,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           flex-shrink: 0;
         }
         .service-card.selected .service-icon {
-          background: var(--emerald, #0E5C4D);
+          background: var(--emerald, #01875F);
         }
         .service-info { flex: 1; min-width: 0; }
         .service-header {
@@ -641,12 +641,12 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           border-radius: 100px;
           font-weight: 800;
         }
-        .badge-emerald { background: var(--emerald, #0E5C4D); color: var(--paper-3, #FAF6EB); }
-        .badge-amber { background: var(--amber, #B8540C); color: var(--paper-3, #FAF6EB); }
-        .badge-rose { background: var(--rose, #A82E3D); color: var(--paper-3, #FAF6EB); }
+        .badge-emerald { background: var(--emerald, #01875F); color: var(--paper-3, #FFFFFF); }
+        .badge-amber { background: var(--amber, #B06000); color: var(--paper-3, #FFFFFF); }
+        .badge-rose { background: var(--rose, #C71C56); color: var(--paper-3, #FFFFFF); }
         .service-desc {
           font-size: 11px;
-          color: var(--ink-3, #6E7878);
+          color: var(--ink-3, #5F6368);
           margin: 0 0 6px;
           line-height: 1.5;
         }
@@ -657,24 +657,24 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
         }
         .service-price {
           font-weight: 800;
-          color: var(--emerald, #0E5C4D);
+          color: var(--emerald, #01875F);
         }
         .service-duration {
-          color: var(--ink-3, #6E7878);
+          color: var(--ink-3, #5F6368);
         }
         .service-radio {
           font-size: 22px;
-          color: var(--ink-4, #A4ACAA);
+          color: var(--ink-4, #80868B);
           flex-shrink: 0;
         }
         .service-card.selected .service-radio {
-          color: var(--emerald, #0E5C4D);
+          color: var(--emerald, #01875F);
         }
 
         /* Step 2: Time */
         .info-banner {
-          background: var(--emerald-soft, #D9E5DF);
-          color: var(--emerald-deep, #073B30);
+          background: var(--emerald-soft, #E6F3EF);
+          color: var(--emerald-deep, #056559);
           padding: 10px 14px;
           border-radius: 11px;
           font-size: 12px;
@@ -703,9 +703,9 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           text-align: center;
         }
         .date-pill.active {
-          background: var(--emerald, #0E5C4D);
-          color: var(--paper-3, #FAF6EB);
-          border-color: var(--emerald, #0E5C4D);
+          background: var(--emerald, #01875F);
+          color: var(--paper-3, #FFFFFF);
+          border-color: var(--emerald, #01875F);
         }
         .date-pill-day {
           font-size: 11px;
@@ -741,7 +741,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           gap: 6px;
         }
         .time-slot {
-          background: var(--paper-3, #FAF6EB);
+          background: var(--paper-3, #FFFFFF);
           border: 1px solid var(--line, rgba(15, 26, 28, 0.08));
           border-radius: 10px;
           padding: 9px;
@@ -752,13 +752,13 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           transition: all 0.15s;
         }
         .time-slot:hover:not(.disabled):not(.active) {
-          border-color: var(--emerald, #0E5C4D);
+          border-color: var(--emerald, #01875F);
           background: var(--white, #FFFFFF);
         }
         .time-slot.active {
-          background: var(--emerald, #0E5C4D);
-          color: var(--paper-3, #FAF6EB);
-          border-color: var(--emerald, #0E5C4D);
+          background: var(--emerald, #01875F);
+          color: var(--paper-3, #FFFFFF);
+          border-color: var(--emerald, #01875F);
         }
         .time-slot.disabled {
           opacity: 0.4;
@@ -772,12 +772,12 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           width: 5px;
           height: 5px;
           border-radius: 50%;
-          background: var(--amber, #B8540C);
+          background: var(--amber, #B06000);
         }
         .empty-hint {
           text-align: center;
           padding: 30px;
-          color: var(--ink-3, #6E7878);
+          color: var(--ink-3, #5F6368);
           font-size: 13px;
         }
 
@@ -805,22 +805,22 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
         }
         .field-group input:focus,
         .field-group textarea:focus {
-          border-color: var(--emerald, #0E5C4D);
+          border-color: var(--emerald, #01875F);
         }
         .field-hint {
           font-size: 11px;
-          color: var(--ink-3, #6E7878);
+          color: var(--ink-3, #5F6368);
         }
         .field-counter {
           font-size: 11px;
-          color: var(--ink-3, #6E7878);
+          color: var(--ink-3, #5F6368);
           text-align: left;
           font-family: 'JetBrains Mono', monospace;
         }
         .gps-btn {
-          background: var(--amber-soft, #F0DBC2);
-          color: var(--amber, #B8540C);
-          border: 1px solid var(--amber, #B8540C);
+          background: var(--amber-soft, #FEF7E0);
+          color: var(--amber, #B06000);
+          border: 1px solid var(--amber, #B06000);
           border-radius: 10px;
           padding: 9px;
           font-size: 12px;
@@ -829,7 +829,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           margin-top: 4px;
         }
         .online-banner {
-          background: var(--emerald-soft, #D9E5DF);
+          background: var(--emerald-soft, #E6F3EF);
           border-radius: 14px;
           padding: 16px;
           display: flex;
@@ -841,19 +841,19 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           font-size: 14px;
           font-weight: 800;
           margin: 0 0 4px;
-          color: var(--emerald-deep, #073B30);
+          color: var(--emerald-deep, #056559);
         }
         .online-banner p {
           font-size: 12px;
           margin: 0;
-          color: var(--emerald-deep, #073B30);
+          color: var(--emerald-deep, #056559);
         }
         .phone-input-wrap {
           display: flex;
           gap: 8px;
         }
         .phone-prefix {
-          background: var(--paper-2, #EDE6D3);
+          background: var(--paper-2, #F1F3F4);
           padding: 12px;
           border-radius: 12px;
           font-weight: 700;
@@ -882,7 +882,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
         .summary-icon {
           width: 56px;
           height: 56px;
-          background: var(--emerald-soft, #D9E5DF);
+          background: var(--emerald-soft, #E6F3EF);
           border-radius: 14px;
           display: flex;
           align-items: center;
@@ -896,7 +896,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
         }
         .summary-header p {
           font-size: 11px;
-          color: var(--ink-3, #6E7878);
+          color: var(--ink-3, #5F6368);
           margin: 0;
         }
         .summary-rows {
@@ -912,7 +912,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
         }
         .summary-label {
           font-size: 12px;
-          color: var(--ink-3, #6E7878);
+          color: var(--ink-3, #5F6368);
           font-weight: 600;
           flex-shrink: 0;
         }
@@ -922,7 +922,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           text-align: left;
         }
         .summary-price {
-          background: var(--emerald-soft, #D9E5DF);
+          background: var(--emerald-soft, #E6F3EF);
           border-radius: 12px;
           padding: 14px;
           margin-top: 4px;
@@ -933,7 +933,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           align-items: center;
           font-size: 14px;
           font-weight: 700;
-          color: var(--emerald-deep, #073B30);
+          color: var(--emerald-deep, #056559);
         }
         .summary-price-row strong {
           font-size: 18px;
@@ -942,7 +942,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
         }
         .summary-price-note {
           font-size: 11px;
-          color: var(--emerald-deep, #073B30);
+          color: var(--emerald-deep, #056559);
           opacity: 0.8;
           margin-top: 4px;
         }
@@ -950,16 +950,16 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           display: flex;
           gap: 10px;
           padding: 12px;
-          background: var(--paper-2, #EDE6D3);
+          background: var(--paper-2, #F1F3F4);
           border-radius: 11px;
           font-size: 12px;
         }
         .confirm-checkbox label {
-          color: var(--ink-2, #1F2A2C);
+          color: var(--ink-2, #3C4043);
           cursor: pointer;
         }
         .confirm-checkbox a {
-          color: var(--emerald, #0E5C4D);
+          color: var(--emerald, #01875F);
           font-weight: 700;
           text-decoration: none;
         }
@@ -984,8 +984,8 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           transition: all 0.2s;
         }
         .btn-primary {
-          background: var(--emerald, #0E5C4D);
-          color: var(--paper-3, #FAF6EB);
+          background: var(--emerald, #01875F);
+          color: var(--paper-3, #FFFFFF);
           box-shadow: 0 6px 16px -4px rgba(14, 92, 77, 0.4);
         }
         .btn-primary:hover:not(:disabled) {
@@ -997,12 +997,12 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           box-shadow: none;
         }
         .btn-confirm {
-          background: var(--emerald-deep, #073B30);
+          background: var(--emerald-deep, #056559);
         }
         .btn-secondary {
           background: var(--white, #FFFFFF);
           border: 1px solid var(--line, rgba(15, 26, 28, 0.08));
-          color: var(--ink, #0F1A1C);
+          color: var(--ink, #202124);
         }
       `}</style>
     </div>

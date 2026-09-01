@@ -179,7 +179,7 @@ export default function PharmacyReservationModal({
                 }}
               >
                 <div style={{ display: 'flex', gap: 6 }}>
-                  <Pill size={16} strokeWidth={2.2} style={{ color: '#0F6E56', marginTop: 8 }} aria-hidden />
+                  <Pill size={16} strokeWidth={2.2} style={{ color: 'var(--emerald-mid, #0F6E56)', marginTop: 8 }} aria-hidden />
                   <input
                     type="text"
                     value={item.name}
@@ -252,8 +252,8 @@ export default function PharmacyReservationModal({
               marginTop: 8,
               padding: '8px 14px',
               background: 'var(--white)',
-              color: '#0F6E56',
-              border: '1px dashed #0F6E56',
+              color: 'var(--emerald-mid, #0F6E56)',
+              border: '1px dashed var(--emerald-mid, #0F6E56)',
               borderRadius: 8,
               fontSize: 12,
               fontWeight: 700,
@@ -362,7 +362,7 @@ export default function PharmacyReservationModal({
           style={{
             width: '100%',
             padding: 14,
-            background: '#0F6E56',
+            background: 'var(--emerald-mid, #0F6E56)',
             color: 'white',
             border: 0,
             borderRadius: 12,

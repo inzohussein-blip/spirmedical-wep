@@ -85,7 +85,7 @@ export default async function SpecialistDetailPage({ params }: { params: { id: s
                     borderRadius: 100,
                     background: specialist.approval_status === 'approved' ? 'var(--emerald-soft)' :
                                specialist.approval_status === 'rejected' ? 'var(--rose-soft)' :
-                               'var(--amber-soft, #F8E5C7)',
+                               'var(--amber-soft, #FEF7E0)',
                     color: specialist.approval_status === 'approved' ? 'var(--emerald-deep)' :
                            specialist.approval_status === 'rejected' ? 'var(--rose)' :
                            'var(--amber-deep, #6B3A08)',

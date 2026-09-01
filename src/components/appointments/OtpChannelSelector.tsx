@@ -169,7 +169,7 @@ export default function OtpChannelSelector({ phone, onVerified, onCancel }: Prop
           .otp-icon {
             width: 72px;
             height: 72px;
-            background: var(--emerald-soft, #D9E5DF);
+            background: var(--emerald-soft, #E6F3EF);
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
@@ -184,12 +184,12 @@ export default function OtpChannelSelector({ phone, onVerified, onCancel }: Prop
           }
           .otp-header p {
             font-size: 13px;
-            color: var(--ink-3, #6E7878);
+            color: var(--ink-3, #5F6368);
             margin: 0 0 10px;
           }
           .otp-phone {
             display: inline-block;
-            background: var(--paper-2, #EDE6D3);
+            background: var(--paper-2, #F1F3F4);
             padding: 6px 14px;
             border-radius: 8px;
             font-family: 'JetBrains Mono', monospace;
@@ -244,21 +244,21 @@ export default function OtpChannelSelector({ phone, onVerified, onCancel }: Prop
           }
           .otp-channel-desc {
             font-size: 11px;
-            color: var(--ink-3, #6E7878);
+            color: var(--ink-3, #5F6368);
             margin-bottom: 4px;
           }
           .otp-channel-time {
             font-size: 11px;
-            color: var(--emerald, #0E5C4D);
+            color: var(--emerald, #01875F);
             font-weight: 700;
           }
           .otp-channel-arrow {
             font-size: 18px;
-            color: var(--ink-4, #A4ACAA);
+            color: var(--ink-4, #80868B);
             font-weight: 700;
           }
           .otp-info-box {
-            background: var(--amber-soft, #F0DBC2);
+            background: var(--amber-soft, #FEF7E0);
             border-radius: 12px;
             padding: 12px;
             display: flex;
@@ -268,7 +268,7 @@ export default function OtpChannelSelector({ phone, onVerified, onCancel }: Prop
           .otp-info-icon { font-size: 20px; }
           .otp-info-text {
             font-size: 12px;
-            color: var(--amber, #B8540C);
+            color: var(--amber, #B06000);
             line-height: 1.5;
           }
           .otp-info-text strong {
@@ -280,13 +280,13 @@ export default function OtpChannelSelector({ phone, onVerified, onCancel }: Prop
           .otp-cancel-btn {
             background: transparent;
             border: 0;
-            color: var(--ink-3, #6E7878);
+            color: var(--ink-3, #5F6368);
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             padding: 8px;
           }
-          .otp-cancel-btn:hover { color: var(--ink, #0F1A1C); }
+          .otp-cancel-btn:hover { color: var(--ink, #202124); }
         `}</style>
       </div>
     );
@@ -387,12 +387,12 @@ export default function OtpChannelSelector({ phone, onVerified, onCancel }: Prop
         }
         .otp-header p {
           font-size: 13px;
-          color: var(--ink-3, #6E7878);
+          color: var(--ink-3, #5F6368);
           margin: 0 0 8px;
         }
         .otp-phone {
           display: inline-block;
-          background: var(--paper-2, #EDE6D3);
+          background: var(--paper-2, #F1F3F4);
           padding: 6px 14px;
           border-radius: 8px;
           font-family: 'JetBrains Mono', monospace;
@@ -418,10 +418,10 @@ export default function OtpChannelSelector({ phone, onVerified, onCancel }: Prop
           outline: none;
           transition: border-color 0.2s;
         }
-        .otp-input:focus { border-color: var(--emerald, #0E5C4D); }
+        .otp-input:focus { border-color: var(--emerald, #01875F); }
         .otp-error {
-          background: var(--rose-soft, #F0D7D8);
-          color: var(--rose, #A82E3D);
+          background: var(--rose-soft, #FCE8E6);
+          color: var(--rose, #C71C56);
           padding: 8px 12px;
           border-radius: 8px;
           font-size: 12px;
@@ -429,8 +429,8 @@ export default function OtpChannelSelector({ phone, onVerified, onCancel }: Prop
           text-align: center;
         }
         .otp-verify-btn {
-          background: var(--emerald, #0E5C4D);
-          color: var(--paper-3, #FAF6EB);
+          background: var(--emerald, #01875F);
+          color: var(--paper-3, #FFFFFF);
           padding: 14px;
           border-radius: 12px;
           font-size: 14px;
@@ -445,12 +445,12 @@ export default function OtpChannelSelector({ phone, onVerified, onCancel }: Prop
         .otp-resend {
           text-align: center;
           font-size: 12px;
-          color: var(--ink-3, #6E7878);
+          color: var(--ink-3, #5F6368);
         }
         .otp-resend-btn {
           background: transparent;
           border: 0;
-          color: var(--emerald, #0E5C4D);
+          color: var(--emerald, #01875F);
           font-weight: 700;
           cursor: pointer;
           font-size: 13px;
@@ -458,7 +458,7 @@ export default function OtpChannelSelector({ phone, onVerified, onCancel }: Prop
         .otp-cancel-btn {
           background: transparent;
           border: 0;
-          color: var(--ink-3, #6E7878);
+          color: var(--ink-3, #5F6368);
           font-size: 12px;
           font-weight: 600;
           cursor: pointer;

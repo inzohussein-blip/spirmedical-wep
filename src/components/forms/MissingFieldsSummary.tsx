@@ -50,7 +50,7 @@ export default function MissingFieldsSummary({
       <style jsx>{`
         .ffs {
           background: var(--rose-soft, #FCE8E6);
-          border: 1px solid var(--rose, #A82E3D);
+          border: 1px solid var(--rose, #C71C56);
           border-radius: 12px;
           padding: 10px 12px;
           margin-bottom: 10px;
@@ -59,7 +59,7 @@ export default function MissingFieldsSummary({
           display: flex;
           align-items: center;
           gap: 6px;
-          color: var(--rose, #A82E3D);
+          color: var(--rose, #C71C56);
           font-size: 12px;
           font-weight: 800;
           margin-bottom: 8px;
@@ -76,18 +76,18 @@ export default function MissingFieldsSummary({
           gap: 1px;
           padding: 6px 11px;
           background: var(--white, #FFFFFF);
-          border: 1px solid var(--rose, #A82E3D);
+          border: 1px solid var(--rose, #C71C56);
           border-radius: 10px;
           font-size: 12px;
           font-weight: 800;
-          color: var(--rose, #A82E3D);
+          color: var(--rose, #C71C56);
           cursor: pointer;
           transition: all 0.15s;
           font-family: inherit;
           text-align: start;
         }
         .ffs-chip:hover {
-          background: var(--rose, #A82E3D);
+          background: var(--rose, #C71C56);
           color: var(--white, #FFFFFF);
           transform: translateY(-1px);
         }

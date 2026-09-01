@@ -61,7 +61,7 @@ export async function createServiceArea(input: {
   const ring = validateRing(input.polygon);
   if (!ring.ok) return { ok: false, error: ring.error };
 
-  const color = input.color && HEX.test(input.color) ? input.color : '#0F766E';
+  const color = input.color && HEX.test(input.color) ? input.color : 'var(--emerald-deep, #056559)';
 
   const { data, error } = await (auth.supabase as any)
     .from('service_areas')

@@ -23,7 +23,7 @@ const ServiceAreaMap = dynamic(() => import('./ServiceAreaMap'), {
     <div
       style={{
         height: 460, borderRadius: 12, display: 'grid', placeItems: 'center',
-        background: '#F6F5F1', border: '1px solid var(--line, #E8E6DE)',
+        background: '#F6F5F1', border: '1px solid var(--line, #DADCE0)',
         color: '#77756E', fontSize: 13,
       }}
     >
@@ -32,7 +32,7 @@ const ServiceAreaMap = dynamic(() => import('./ServiceAreaMap'), {
   ),
 });
 
-const PALETTE = ['#0F766E', '#B45309', '#1D4ED8', '#9D174D', '#4D7C0F', '#6D28D9'];
+const PALETTE = ['var(--emerald-deep, #056559)', '#B45309', '#1D4ED8', '#9D174D', '#4D7C0F', '#6D28D9'];
 
 interface Props {
   initialAreas: ServiceArea[];
@@ -153,11 +153,11 @@ export default function ServiceAreasClient({ initialAreas }: Props) {
 
   const label: React.CSSProperties = {
     display: 'block', fontSize: 12, fontWeight: 700,
-    color: 'var(--ink-2, #5F5E5A)', marginBottom: 4,
+    color: 'var(--ink-2, #3C4043)', marginBottom: 4,
   };
   const input: React.CSSProperties = {
     width: '100%', padding: '10px 12px', fontSize: 14,
-    border: '1px solid var(--line, #E8E6DE)', borderRadius: 8,
+    border: '1px solid var(--line, #DADCE0)', borderRadius: 8,
     background: 'var(--white, #fff)', minHeight: 44,
   };
   const btn: React.CSSProperties = {
@@ -201,7 +201,7 @@ export default function ServiceAreasClient({ initialAreas }: Props) {
       <div
         style={{
           display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap',
-          fontSize: 13, color: 'var(--ink-2, #5F5E5A)',
+          fontSize: 13, color: 'var(--ink-2, #3C4043)',
         }}
       >
         <strong>{draft.length}</strong> نقطة
@@ -212,7 +212,7 @@ export default function ServiceAreasClient({ initialAreas }: Props) {
           disabled={draft.length === 0 || pending}
           style={{
             ...btn, background: 'var(--white, #fff)',
-            border: '1px solid var(--line, #E8E6DE)', color: 'var(--ink, #26251F)',
+            border: '1px solid var(--line, #DADCE0)', color: 'var(--ink, #202124)',
             opacity: draft.length === 0 ? 0.5 : 1,
           }}
         >
@@ -224,7 +224,7 @@ export default function ServiceAreasClient({ initialAreas }: Props) {
           disabled={draft.length === 0 || pending}
           style={{
             ...btn, background: 'var(--white, #fff)',
-            border: '1px solid var(--line, #E8E6DE)', color: 'var(--ink, #26251F)',
+            border: '1px solid var(--line, #DADCE0)', color: 'var(--ink, #202124)',
             opacity: draft.length === 0 ? 0.5 : 1,
           }}
         >
@@ -236,7 +236,7 @@ export default function ServiceAreasClient({ initialAreas }: Props) {
         style={{
           display: 'grid', gap: 12, padding: 16,
           background: 'var(--white, #fff)',
-          border: '1px solid var(--line, #E8E6DE)', borderRadius: 12,
+          border: '1px solid var(--line, #DADCE0)', borderRadius: 12,
         }}
       >
         <h2 style={{ fontSize: 15, fontWeight: 900, margin: 0 }}>
@@ -280,7 +280,7 @@ export default function ServiceAreasClient({ initialAreas }: Props) {
                 aria-label={`اللون ${c}`} aria-pressed={color === c}
                 style={{
                   width: 44, height: 44, borderRadius: 10, background: c,
-                  border: color === c ? '3px solid var(--ink, #26251F)' : '1px solid rgba(0,0,0,.15)',
+                  border: color === c ? '3px solid var(--ink, #202124)' : '1px solid rgba(0,0,0,.15)',
                   cursor: 'pointer',
                 }}
               />
@@ -291,14 +291,14 @@ export default function ServiceAreasClient({ initialAreas }: Props) {
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <button
             type="button" onClick={save} disabled={pending}
-            style={{ ...btn, background: 'var(--emerald-deep, #0F766E)', color: '#fff', opacity: pending ? 0.6 : 1 }}
+            style={{ ...btn, background: 'var(--emerald-deep, var(--emerald-deep, #056559))', color: '#fff', opacity: pending ? 0.6 : 1 }}
           >
             {pending ? '…' : editingId ? 'حفظ التعديل' : 'حفظ المنطقة'}
           </button>
           {editingId && (
             <button
               type="button" onClick={resetForm} disabled={pending}
-              style={{ ...btn, background: 'var(--white, #fff)', border: '1px solid var(--line, #E8E6DE)', color: 'var(--ink, #26251F)' }}
+              style={{ ...btn, background: 'var(--white, #fff)', border: '1px solid var(--line, #DADCE0)', color: 'var(--ink, #202124)' }}
             >
               إلغاء التعديل
             </button>
@@ -323,7 +323,7 @@ export default function ServiceAreasClient({ initialAreas }: Props) {
                 style={{
                   display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap',
                   padding: 12, background: 'var(--white, #fff)',
-                  border: '1px solid var(--line, #E8E6DE)', borderRadius: 10,
+                  border: '1px solid var(--line, #DADCE0)', borderRadius: 10,
                   opacity: a.is_active ? 1 : 0.55,
                 }}
               >
@@ -341,13 +341,13 @@ export default function ServiceAreasClient({ initialAreas }: Props) {
                 </div>
                 <button
                   type="button" onClick={() => beginEdit(a)} disabled={pending}
-                  style={{ ...btn, padding: '8px 12px', fontSize: 13, background: 'var(--white, #fff)', border: '1px solid var(--line, #E8E6DE)', color: 'var(--ink, #26251F)' }}
+                  style={{ ...btn, padding: '8px 12px', fontSize: 13, background: 'var(--white, #fff)', border: '1px solid var(--line, #DADCE0)', color: 'var(--ink, #202124)' }}
                 >
                   تعديل
                 </button>
                 <button
                   type="button" onClick={() => onToggle(a)} disabled={pending}
-                  style={{ ...btn, padding: '8px 12px', fontSize: 13, background: 'var(--white, #fff)', border: '1px solid var(--line, #E8E6DE)', color: 'var(--ink, #26251F)' }}
+                  style={{ ...btn, padding: '8px 12px', fontSize: 13, background: 'var(--white, #fff)', border: '1px solid var(--line, #DADCE0)', color: 'var(--ink, #202124)' }}
                 >
                   {a.is_active ? 'تعطيل' : 'تفعيل'}
                 </button>

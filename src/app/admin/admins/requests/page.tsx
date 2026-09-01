@@ -48,7 +48,7 @@ export default async function AdminRequestsPage({
             textAlign: 'center',
             padding: '48px 24px',
             color: 'var(--ink-3)',
-            background: 'var(--paper-2, #faf8f1)',
+            background: 'var(--paper-2, #F1F3F4)',
             borderRadius: 16,
           }}
         >
