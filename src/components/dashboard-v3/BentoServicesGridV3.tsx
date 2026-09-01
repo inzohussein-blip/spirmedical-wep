@@ -9,8 +9,13 @@
 import Link from 'next/link';
 import { IconArrowLeft } from '@tabler/icons-react';
 import { CORE_SERVICES, type ServiceConfig } from '@/lib/services-v3';
+import { getServiceSwitches } from '@/lib/service-switches.server';
+import { isEnabled } from '@/lib/service-switches';
 
-export default function BentoServicesGridV3() {
+export default async function BentoServicesGridV3() {
+  // مصدرُ «قريباً» صار القاعدة لا ثابتاً في الكود. و`cache` من React تجعل
+  // هذا النداءَ نفسه الذي أجراه التخطيط في الطلب ذاته — لا رحلةً ثانية.
+  const switches = await getServiceSwitches();
   return (
     <div style={{ padding: '0 14px 14px' }}>
       <div style={{
@@ -29,16 +34,28 @@ export default function BentoServicesGridV3() {
         display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8,
       }}>
         {CORE_SERVICES.map((service) => (
-          <BentoCard key={service.id} service={service} />
+          <BentoCard
+            key={service.id}
+            service={service}
+            disabled={!isEnabled(switches, service.id)}
+          />
         ))}
       </div>
     </div>
   );
 }
 
-function BentoCard({ service }: { service: ServiceConfig }) {
+function BentoCard({
+  service,
+  disabled,
+}: {
+  service: ServiceConfig;
+  disabled: boolean;
+}) {
   const Icon = service.icon;
-  const isComingSoon = service.badge === 'قريباً';
+  // مطفأةٌ من اللوحة، أو معلَّمةٌ «قريباً» في الإعداد الساكن — كلاهما يمنع
+  const isComingSoon = disabled || service.badge === 'قريباً';
+  const badge = isComingSoon ? 'قريباً' : service.badge;
   
   const cardContent = (
     <>
@@ -47,17 +64,17 @@ function BentoCard({ service }: { service: ServiceConfig }) {
         background: service.softBg, opacity: 0.7, top: -12, left: -12,
       }} />
       
-      {service.badge && (
+      {badge && (
         <span style={{
           position: 'absolute', top: 10, right: 10,
-          background: service.badge === 'جديد' ? '#C71C56' 
-            : service.badge === 'الأكثر طلباً' ? '#FBBC04' : '#F1F3F4',
-          color: service.badge === 'جديد' ? '#FFFFFF' 
-            : service.badge === 'الأكثر طلباً' ? '#202124' : '#5F6368',
+          background: badge === 'جديد' ? '#C71C56'
+            : badge === 'الأكثر طلباً' ? '#FBBC04' : '#F1F3F4',
+          color: badge === 'جديد' ? '#FFFFFF'
+            : badge === 'الأكثر طلباً' ? '#202124' : '#5F6368',
           fontSize: 11, fontWeight: 700,
           padding: '2px 7px', borderRadius: 9999, zIndex: 2,
         }}>
-          {service.badge}
+          {badge}
         </span>
       )}
       
@@ -104,7 +121,12 @@ function BentoCard({ service }: { service: ServiceConfig }) {
   };
   
   if (isComingSoon) {
-    return <div style={cardStyle}>{cardContent}</div>;
+    // لا رابط. و`aria-disabled` كي يعرف قارئُ الشاشة أنّها معروضةٌ لا مُتاحة.
+    return (
+      <div style={cardStyle} aria-disabled="true">
+        {cardContent}
+      </div>
+    );
   }
   
   return (

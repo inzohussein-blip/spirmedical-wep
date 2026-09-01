@@ -13,22 +13,38 @@
 import Link from 'next/link';
 import { IconClock, IconCash, IconArrowLeft } from '@tabler/icons-react';
 import { FEATURED_SERVICE } from '@/lib/services-v3';
+import { getServiceSwitches } from '@/lib/service-switches.server';
+import { isEnabled } from '@/lib/service-switches';
 
 interface Props {
   duration?: string;     // e.g. "30 دقيقة"
   priceFrom?: number;    // e.g. 15
 }
 
-export default function FeaturedServiceCardV3({
+export default async function FeaturedServiceCardV3({
   duration = '30 دقيقة',
   priceFrom = 15,
 }: Props) {
   const service = FEATURED_SERVICE;
   const Icon = service.icon;
-  
+  const switches = await getServiceSwitches();
+  const disabled = !isEnabled(switches, service.id);
+
+  // الخدمة المميّزة تُطفأ كغيرها: تبقى في مكانها بلا رابط
+  const Wrapper = disabled
+    ? ({ children, style }: { children: React.ReactNode; style: React.CSSProperties }) => (
+        <div style={{ ...style, cursor: 'default', opacity: 0.55 }} aria-disabled="true">
+          {children}
+        </div>
+      )
+    : ({ children, style }: { children: React.ReactNode; style: React.CSSProperties }) => (
+        <Link href={service.route} style={style}>
+          {children}
+        </Link>
+      );
+
   return (
-    <Link
-      href={service.route}
+    <Wrapper
       style={{
         display: 'block',
         margin: '0 14px 14px',
@@ -77,12 +93,12 @@ export default function FeaturedServiceCardV3({
         {/* Info */}
         <div style={{ flex: 1, minWidth: 0 }}>
           {/* Badge */}
-          {service.badge && (
+          {(disabled || service.badge) && (
             <span
               style={{
                 display: 'inline-block',
-                background: '#FBBC04',
-                color: '#202124',
+                background: disabled ? '#F1F3F4' : '#FBBC04',
+                color: disabled ? '#5F6368' : '#202124',
                 fontSize: 11,
                 fontWeight: 700,
                 padding: '2px 8px',
@@ -90,7 +106,7 @@ export default function FeaturedServiceCardV3({
                 marginBottom: 6,
               }}
             >
-              {service.badge}
+              {disabled ? 'قريباً' : service.badge}
             </span>
           )}
           
@@ -169,6 +185,6 @@ export default function FeaturedServiceCardV3({
           <IconArrowLeft size={16} stroke={2.2} />
         </div>
       </div>
-    </Link>
+    </Wrapper>
   );
 }

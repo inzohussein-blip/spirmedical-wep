@@ -9,8 +9,12 @@
 import Link from 'next/link';
 import { IconArrowLeft, IconSparkles } from '@tabler/icons-react';
 import { SMART_TOOLS, type ServiceConfig } from '@/lib/services-v3';
+import { getServiceSwitches } from '@/lib/service-switches.server';
+import { isEnabled } from '@/lib/service-switches';
 
-export default function SmartToolsGridV3() {
+export default async function SmartToolsGridV3() {
+  const switches = await getServiceSwitches();
+
   return (
     <div style={{ padding: '0 14px 14px' }}>
       <div style={{
@@ -33,32 +37,47 @@ export default function SmartToolsGridV3() {
         display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8,
       }}>
         {SMART_TOOLS.map((tool) => (
-          <ToolCard key={tool.id} tool={tool} />
+          <ToolCard
+            key={tool.id}
+            tool={tool}
+            disabled={!isEnabled(switches, tool.id)}
+          />
         ))}
       </div>
     </div>
   );
 }
 
-function ToolCard({ tool }: { tool: ServiceConfig }) {
+function ToolCard({ tool, disabled }: { tool: ServiceConfig; disabled: boolean }) {
   const Icon = tool.icon;
-  
-  return (
-    <Link 
-      href={tool.route}
-      style={{
-        background: '#FFFFFF',
-        border: '0.5px solid #DADCE0',
-        borderRadius: 14,
-        padding: 14,
-        position: 'relative',
-        overflow: 'hidden',
-        minHeight: 110,
-        textDecoration: 'none',
-        color: 'inherit',
-        display: 'block',
-      }}
-    >
+
+  const cardStyle: React.CSSProperties = {
+    background: '#FFFFFF',
+    border: '0.5px solid #DADCE0',
+    borderRadius: 14,
+    padding: 14,
+    position: 'relative',
+    overflow: 'hidden',
+    minHeight: 110,
+    textDecoration: 'none',
+    color: 'inherit',
+    display: 'block',
+    cursor: disabled ? 'default' : 'pointer',
+    opacity: disabled ? 0.55 : 1,
+  };
+
+  const body = (
+    <>
+      {disabled && (
+        <span style={{
+          position: 'absolute', top: 10, right: 10,
+          background: '#F1F3F4', color: '#5F6368',
+          fontSize: 11, fontWeight: 700,
+          padding: '2px 7px', borderRadius: 9999, zIndex: 2,
+        }}>
+          قريباً
+        </span>
+      )}
       <div aria-hidden style={{
         position: 'absolute', width: 70, height: 70, borderRadius: '50%',
         background: tool.softBg, opacity: 0.7, top: -12, left: -12,
@@ -88,6 +107,21 @@ function ToolCard({ tool }: { tool: ServiceConfig }) {
       }}>
         <IconArrowLeft size={14} stroke={2} />
       </div>
+    </>
+  );
+
+  // الأداة المطفأة تبقى معروضةً بلا رابط — كالخدمات تماماً
+  if (disabled) {
+    return (
+      <div style={cardStyle} aria-disabled="true">
+        {body}
+      </div>
+    );
+  }
+
+  return (
+    <Link href={tool.route} style={cardStyle}>
+      {body}
     </Link>
   );
 }

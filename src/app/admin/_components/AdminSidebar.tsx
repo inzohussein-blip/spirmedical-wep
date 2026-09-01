@@ -37,6 +37,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/admin/cosmetic', icon: '💄', label: 'منتجات التجميل', permission: 'specialists.view' },
   { href: '/admin/locations', icon: '📍', label: 'المواقع', permission: 'specialists.view' },
   { href: '/admin/service-areas', icon: '🧭', label: 'مناطق الخدمة', permission: 'settings.edit' },
+  { href: '/admin/services', icon: '🔌', label: 'تشغيل الخدمات', permission: 'settings.edit' },
   { href: '/admin/patients', icon: '👤', label: 'المرضى (CRM)', permission: 'patients.view' },
   { href: '/admin/orders', icon: '📋', label: 'الطلبات', permission: 'orders.view' },
   { href: '/admin/notifications', icon: '💬', label: 'الإشعارات' },

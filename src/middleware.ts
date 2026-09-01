@@ -58,6 +58,9 @@ export async function middleware(request: NextRequest) {
   // ويحتاجه تخطيط المختصّ ليستثني صفحتَي «قيد المراجعة/مرفوض» من بوّابة
   // الاعتماد (وإلّا وقع تحويل لا نهائي).
   response.headers.set('x-pathname', pathname);
+  // ومعه سلسلة الاستعلام: خدمتان تتقاسمان `/appointments/new` ولا تفترقان
+  // إلّا بـ`?service=`، فحارسُ الإطفاء في التخطيط يحتاجها ليعرف أيّهما.
+  response.headers.set('x-search', request.nextUrl.search);
   return response;
 }
 

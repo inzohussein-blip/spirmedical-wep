@@ -1,4 +1,9 @@
+import { headers } from 'next/headers';
 import { requireSession } from '@/lib/auth/session';
+import ServiceComingSoon from '@/components/services/ServiceComingSoon';
+import { allSwitchableServices } from '@/lib/service-switches';
+import { getServiceSwitches } from '@/lib/service-switches.server';
+import { isEnabled, noteFor, serviceIdForPath } from '@/lib/service-switches';
 import { AuthenticatedShell } from '@/components/layout/AuthenticatedShell';
 import BugReportButton from '@/components/feedback/BugReportButton';
 import PageTransitionProvider from '@/components/pwa/PageTransitionProvider';
@@ -25,6 +30,39 @@ export default async function DashboardLayout({
   const session = await requireSession({
     allowedRoles: ['patient'],
   });
+
+  // ─── بوّابة الخدمات المطفأة ───
+  //
+  // المنع هنا لا في البطاقة. `BentoServicesGridV3` كانت تُسقط الرابط
+  // للخدمة المعلَّمة «قريباً»، لكنّ كتابة المسار في شريط العنوان تفتحها
+  // كاملةً — وكذلك أيّ رابطٍ محفوظٍ أو نتيجةِ بحث. وبوضعه في التخطيط
+  // يشمل المنعُ كلّ صفحات المجموعة دفعةً واحدة، والصفحاتُ الداخلية معها
+  // (`/services/dental/<id>` يُمنع بإطفاء `/services/dental`).
+  //
+  // ولا يُجلب محتوى الصفحة أصلاً: نُرجع شاشة «قريباً» مكان `children`.
+  const h = headers();
+  const pathname = h.get('x-pathname') ?? '';
+  const search = new URLSearchParams(h.get('x-search') ?? '');
+  const serviceId = serviceIdForPath(pathname, search);
+
+  if (serviceId) {
+    const switches = await getServiceSwitches();
+    if (!isEnabled(switches, serviceId)) {
+      const cfg = allSwitchableServices().find((s) => s.id === serviceId);
+      return (
+        <AuthenticatedShell
+          session={session}
+          shellRole="patient"
+          notificationRole="patient"
+        >
+          <ServiceComingSoon
+            title={cfg?.title ?? 'الخدمة'}
+            note={noteFor(switches, serviceId)}
+          />
+        </AuthenticatedShell>
+      );
+    }
+  }
 
   return (
     <AuthenticatedShell
