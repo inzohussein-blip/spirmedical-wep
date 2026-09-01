@@ -154,7 +154,7 @@ export default async function AdminOrderDetailPage({ params }: { params: { id: s
                 marginTop: 12,
                 padding: '8px 12px',
                 background: 'var(--amber-soft, #FEF7E0)',
-                color: 'var(--amber, #B06000)',
+                color: 'var(--amber, var(--amber, #B06000))',
                 borderRadius: 8,
                 fontSize: 11,
                 fontWeight: 700,

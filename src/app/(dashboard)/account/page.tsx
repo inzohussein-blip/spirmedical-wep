@@ -133,7 +133,7 @@ export default async function AccountPage() {
 
         {/* Profile Card - V3 Hero style */}
         <div style={{
-          background: 'linear-gradient(135deg, #01875F 0%, #056559 100%)',
+          background: 'linear-gradient(135deg, var(--emerald, #01875F) 0%, var(--emerald-deep, #056559) 100%)',
           margin: 14,
           borderRadius: 20,
           padding: 18,
@@ -150,7 +150,7 @@ export default async function AccountPage() {
           <div style={{ display: 'flex', gap: 14, alignItems: 'center', position: 'relative' }}>
             <div style={{
               width: 64, height: 64, borderRadius: '50%',
-              background: '#E6F3EF', color: '#01875F',
+              background: 'var(--emerald-soft, #E6F3EF)', color: 'var(--emerald, #01875F)',
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 28, fontWeight: 900, fontFamily: 'Tajawal, sans-serif',
               flexShrink: 0,

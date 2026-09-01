@@ -101,7 +101,7 @@ export default async function VaccineDetailPage({
         {/* Hero */}
         <div style={{
           background: vaccine.is_free 
-            ? 'linear-gradient(135deg, #01875F 0%, #056559 100%)'
+            ? 'linear-gradient(135deg, var(--emerald, #01875F) 0%, var(--emerald-deep, #056559) 100%)'
             : 'linear-gradient(135deg, #FF6D00 0%, #E65100 100%)',
           margin: 14,
           borderRadius: 20,
@@ -147,7 +147,7 @@ export default async function VaccineDetailPage({
             <div style={{
               display: 'inline-block',
               padding: '2px 10px',
-              background: '#C71C56',
+              background: 'var(--rose, #C71C56)',
               borderRadius: 12,
               fontSize: 11,
               fontWeight: 700,
@@ -190,7 +190,7 @@ export default async function VaccineDetailPage({
               </div>
               <div style={{ 
                 fontSize: 12, fontWeight: 800, 
-                color: isComplete ? '#01875F' : '#FF6D00',
+                color: isComplete ? 'var(--emerald, #01875F)' : '#FF6D00',
               }}>
                 {completedDoses} / {vaccine.doses_required}
               </div>
@@ -208,7 +208,7 @@ export default async function VaccineDetailPage({
               <div style={{
                 width: `${(completedDoses / vaccine.doses_required) * 100}%`,
                 height: '100%',
-                background: isComplete ? '#01875F' : '#FF6D00',
+                background: isComplete ? 'var(--emerald, #01875F)' : '#FF6D00',
                 transition: 'width 0.3s',
               }} />
             </div>
@@ -219,7 +219,7 @@ export default async function VaccineDetailPage({
                 alignItems: 'center',
                 gap: 6,
                 padding: 8,
-                background: '#E6F3EF',
+                background: 'var(--emerald-soft, #E6F3EF)',
                 borderRadius: 8,
                 fontSize: 12,
                 color: '#04342C',
@@ -265,7 +265,7 @@ export default async function VaccineDetailPage({
                   >
                     <div style={{
                       width: 36, height: 36, borderRadius: '50%',
-                      background: '#E6F3EF', color: '#01875F',
+                      background: 'var(--emerald-soft, #E6F3EF)', color: 'var(--emerald, #01875F)',
                       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                       fontSize: 13, fontWeight: 900,
                       flexShrink: 0,
@@ -358,7 +358,7 @@ export default async function VaccineDetailPage({
                 justifyContent: 'center',
                 gap: 8,
                 padding: 14,
-                background: '#01875F',
+                background: 'var(--emerald, #01875F)',
                 color: '#FFFFFF',
                 borderRadius: 12,
                 fontSize: 14,

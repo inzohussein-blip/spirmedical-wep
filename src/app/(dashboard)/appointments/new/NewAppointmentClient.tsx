@@ -282,7 +282,7 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
       {error && (
         <div style={{
           background: 'var(--rose-soft, #FCE8E6)',
-          color: 'var(--rose, #C71C56)',
+          color: 'var(--rose, var(--rose, #C71C56))',
           padding: '10px 14px',
           borderRadius: '10px',
           fontSize: '12px',
@@ -299,8 +299,8 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
       {/* Clinic preselect banner */}
       {clinicId && (
         <div style={{
-          background: 'var(--emerald-soft, #E6F3EF)',
-          color: 'var(--emerald-deep, #056559)',
+          background: 'var(--emerald-soft, var(--emerald-soft, #E6F3EF))',
+          color: 'var(--emerald-deep, var(--emerald-deep, #056559))',
           padding: '12px 14px',
           borderRadius: '12px',
           fontSize: '12px',

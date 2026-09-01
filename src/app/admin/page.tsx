@@ -144,7 +144,7 @@ export default async function AdminDashboard() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          background: 'linear-gradient(135deg, #01875F 0%, #073B30 100%)',
+          background: 'linear-gradient(135deg, var(--emerald, #01875F) 0%, #073B30 100%)',
           color: 'var(--white)',
           padding: '14px 20px',
           borderRadius: 14,
@@ -271,7 +271,7 @@ export default async function AdminDashboard() {
         style={{
           display: 'flex', alignItems: 'center', gap: 16,
           padding: '18px 20px', marginBottom: 24,
-          background: 'linear-gradient(135deg, #01875F, #073B30)',
+          background: 'linear-gradient(135deg, var(--emerald, #01875F), #073B30)',
           borderRadius: 16, textDecoration: 'none', color: '#fff',
           boxShadow: '0 4px 16px rgba(1,135,95,0.2)',
         }}

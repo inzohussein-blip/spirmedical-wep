@@ -143,7 +143,7 @@ export default function LocationsAdminClient({ initialLocations }: Props) {
         <button
           type="button"
           onClick={() => setShowAddModal(true)}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 16px', background: '#01875F', color: '#fff', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 16px', background: 'var(--emerald, #01875F)', color: '#fff', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
         >
           <Plus size={16} aria-hidden /> إضافة موقع
         </button>
@@ -242,8 +242,8 @@ function FilterPill({ active, onClick, children, small }: {
       style={{
         padding: small ? '5px 10px' : '7px 13px',
         borderRadius: 100,
-        border: `1px solid ${active ? '#01875F' : '#E8E6DE'}`,
-        background: active ? '#01875F' : '#fff',
+        border: `1px solid ${active ? 'var(--emerald, #01875F)' : '#E8E6DE'}`,
+        background: active ? 'var(--emerald, #01875F)' : '#fff',
         color: active ? '#fff' : '#5F5E5A',
         fontSize: small ? 11.5 : 12.5,
         fontWeight: 600,
@@ -279,7 +279,7 @@ function LocationRow({ loc, isPending, onToggle, onDelete, onEditCoords }: {
           <span>{loc.label}</span>
           {loc.city && <span>· {loc.city}</span>}
           {!hasCoords && (
-            <span style={{ color: '#B06000', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+            <span style={{ color: 'var(--amber, #B06000)', display: 'inline-flex', alignItems: 'center', gap: 3 }}>
               <AlertCircle size={11} aria-hidden /> بدون إحداثيات
             </span>
           )}
@@ -477,9 +477,9 @@ function AddLocationModal({ onClose, onSuccess }: { onClose: () => void; onSucce
               onClick={() => setSource(s.value)}
               style={{
                 padding: '7px 12px', borderRadius: 10,
-                border: `1.5px solid ${source === s.value ? '#01875F' : '#E8E6DE'}`,
-                background: source === s.value ? '#E6F3EF' : '#fff',
-                color: source === s.value ? '#01875F' : '#5F5E5A',
+                border: `1.5px solid ${source === s.value ? 'var(--emerald, #01875F)' : '#E8E6DE'}`,
+                background: source === s.value ? 'var(--emerald-soft, #E6F3EF)' : '#fff',
+                color: source === s.value ? 'var(--emerald, #01875F)' : '#5F5E5A',
                 fontSize: 12.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
               }}
             >
@@ -528,7 +528,7 @@ function AddLocationModal({ onClose, onSuccess }: { onClose: () => void; onSucce
             type="button"
             onClick={handleSave}
             disabled={saving}
-            style={{ flex: 2, padding: 12, borderRadius: 10, border: 'none', background: '#01875F', color: '#fff', fontSize: 14, fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+            style={{ flex: 2, padding: 12, borderRadius: 10, border: 'none', background: 'var(--emerald, #01875F)', color: '#fff', fontSize: 14, fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
           >
             {saving ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} aria-hidden /> : <Check size={16} aria-hidden />}
             {saving ? 'جارٍ الحفظ...' : 'إضافة الموقع'}

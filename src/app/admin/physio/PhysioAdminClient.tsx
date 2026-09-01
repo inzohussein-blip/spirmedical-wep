@@ -99,7 +99,7 @@ export default function PhysioAdminClient({ physios: initialPhysios }: Props) {
       {feedback && (
         <div style={{
           padding: '10px 14px',
-          background: '#E6F3EF',
+          background: 'var(--emerald-soft, #E6F3EF)',
           color: '#04342C',
           borderRadius: 10,
           fontSize: 13,
@@ -181,7 +181,7 @@ export default function PhysioAdminClient({ physios: initialPhysios }: Props) {
               {/* Avatar */}
               <div style={{
                 width: 60, height: 60, borderRadius: '50%',
-                background: 'linear-gradient(135deg, #01875F, #056559)',
+                background: 'linear-gradient(135deg, var(--emerald, #01875F), var(--emerald-deep, #056559))',
                 color: '#fff',
                 display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 24, fontWeight: 900, fontFamily: 'Tajawal, sans-serif',
@@ -259,13 +259,13 @@ export default function PhysioAdminClient({ physios: initialPhysios }: Props) {
                   {p.available_for_home && (
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, color: '#5F6368' }}>
                       <IconCurrencyDollar size={11} stroke={2.2} />
-                      منزلي: <strong style={{ color: '#01875F' }}>{p.home_visit_price.toLocaleString('ar-IQ')}</strong>
+                      منزلي: <strong style={{ color: 'var(--emerald, #01875F)' }}>{p.home_visit_price.toLocaleString('ar-IQ')}</strong>
                     </span>
                   )}
                   {p.available_for_clinic && (
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, color: '#5F6368' }}>
                       <IconCurrencyDollar size={11} stroke={2.2} />
-                      عيادة: <strong style={{ color: '#01875F' }}>{p.clinic_visit_price.toLocaleString('ar-IQ')}</strong>
+                      عيادة: <strong style={{ color: 'var(--emerald, #01875F)' }}>{p.clinic_visit_price.toLocaleString('ar-IQ')}</strong>
                     </span>
                   )}
                 </div>
@@ -300,8 +300,8 @@ export default function PhysioAdminClient({ physios: initialPhysios }: Props) {
                   disabled={isPending}
                   style={{
                     padding: '6px 12px',
-                    background: p.is_active ? '#FEF7E0' : '#E6F3EF',
-                    color: p.is_active ? '#B06000' : '#04342C',
+                    background: p.is_active ? '#FEF7E0' : 'var(--emerald-soft, #E6F3EF)',
+                    color: p.is_active ? 'var(--amber, #B06000)' : '#04342C',
                     border: 0, borderRadius: 8,
                     fontSize: 11, fontWeight: 700,
                     cursor: 'pointer',
@@ -331,7 +331,7 @@ function FilterChip({
       onClick={onClick}
       style={{
         padding: '8px 14px',
-        background: active ? '#01875F' : '#F1F3F4',
+        background: active ? 'var(--emerald, #01875F)' : '#F1F3F4',
         color: active ? '#FFFFFF' : '#3C4043',
         border: 0,
         borderRadius: 8,

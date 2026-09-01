@@ -163,7 +163,7 @@ export default async function FeaturedServiceCardV3({
                 alignItems: 'center',
                 gap: 3,
                 fontSize: 11,
-                color: '#01875F',
+                color: 'var(--emerald, #01875F)',
                 fontWeight: 700,
               }}
             >

@@ -291,7 +291,7 @@ export default function ServiceAreasClient({ initialAreas }: Props) {
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <button
             type="button" onClick={save} disabled={pending}
-            style={{ ...btn, background: 'var(--emerald-deep, var(--emerald-deep, #056559))', color: '#fff', opacity: pending ? 0.6 : 1 }}
+            style={{ ...btn, background: 'var(--emerald-deep, var(--emerald-deep, var(--emerald-deep, #056559)))', color: '#fff', opacity: pending ? 0.6 : 1 }}
           >
             {pending ? '…' : editingId ? 'حفظ التعديل' : 'حفظ المنطقة'}
           </button>

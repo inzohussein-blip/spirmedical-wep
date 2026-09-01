@@ -169,7 +169,7 @@ export function AppShell({
             <Link
               href="/login"
               className="app-sidebar-item"
-              style={{ background: '#01875F', color: '#fff', justifyContent: 'center' }}
+              style={{ background: 'var(--emerald, #01875F)', color: '#fff', justifyContent: 'center' }}
             >
               <span>تسجيل الدخول</span>
             </Link>

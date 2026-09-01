@@ -66,7 +66,7 @@ export default function SearchBarV3({
           border: 0,
           padding: 4,
           cursor: 'pointer',
-          color: '#01875F',
+          color: 'var(--emerald, #01875F)',
           flexShrink: 0,
           display: 'inline-flex',
           alignItems: 'center',

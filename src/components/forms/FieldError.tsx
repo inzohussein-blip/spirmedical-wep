@@ -15,7 +15,7 @@ export default function FieldError({ message }: { message?: string | null }) {
         display: 'flex',
         alignItems: 'center',
         gap: 5,
-        color: 'var(--rose, #C71C56)',
+        color: 'var(--rose, var(--rose, #C71C56))',
         fontSize: 11.5,
         fontWeight: 800,
         marginTop: 5,

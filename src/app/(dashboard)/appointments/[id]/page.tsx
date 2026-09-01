@@ -132,7 +132,7 @@ export default async function AppointmentDetailsPage({ params, searchParams }: P
           <div
             role="status"
             style={{
-              background: 'var(--emerald-soft, #E6F3EF)',
+              background: 'var(--emerald-soft, var(--emerald-soft, #E6F3EF))',
               border: '1px solid var(--emerald, var(--emerald-mid, #0F6E56))',
               borderRadius: '14px',
               padding: '14px 16px',
@@ -142,9 +142,9 @@ export default async function AppointmentDetailsPage({ params, searchParams }: P
             }}
           >
             <CheckCircle2 size={20} strokeWidth={2.2} aria-hidden
-              style={{ color: 'var(--emerald-deep, #056559)', flexShrink: 0, marginTop: 1 }} />
+              style={{ color: 'var(--emerald-deep, var(--emerald-deep, #056559))', flexShrink: 0, marginTop: 1 }} />
             <div>
-              <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--emerald-deep, #056559)' }}>
+              <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--emerald-deep, var(--emerald-deep, #056559))' }}>
                 تمّ استلام طلبك بنجاح
               </div>
               <div style={{ fontSize: 12.5, color: 'var(--ink-2)', lineHeight: 1.7, marginTop: 2 }}>
@@ -173,12 +173,12 @@ export default async function AppointmentDetailsPage({ params, searchParams }: P
             <div style={{
               width: '56px',
               height: '56px',
-              background: 'var(--emerald-soft, #E6F3EF)',
+              background: 'var(--emerald-soft, var(--emerald-soft, #E6F3EF))',
               borderRadius: '14px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'var(--emerald-deep, #056559)',
+              color: 'var(--emerald-deep, var(--emerald-deep, #056559))',
             }}>
               <Stethoscope size={28} strokeWidth={2} />
             </div>

@@ -153,8 +153,8 @@ export default async function VaccinesPage() {
             gap: 12,
             margin: '0 14px 16px',
             padding: 14,
-            background: '#E6F3EF',
-            border: '1px solid #01875F',
+            background: 'var(--emerald-soft, #E6F3EF)',
+            border: '1px solid var(--emerald, #01875F)',
             borderRadius: 14,
             textDecoration: 'none',
           }}
@@ -256,13 +256,13 @@ export default async function VaccinesPage() {
                       {vaccine.is_free ? (
                         <span style={{
                           padding: '3px 10px',
-                          background: '#E6F3EF', color: '#01875F',
+                          background: 'var(--emerald-soft, #E6F3EF)', color: 'var(--emerald, #01875F)',
                           borderRadius: 10, fontSize: 11, fontWeight: 700,
                         }}>
                           مجاني
                         </span>
                       ) : (
-                        <div style={{ fontSize: 12, fontWeight: 800, color: '#01875F' }}>
+                        <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--emerald, #01875F)' }}>
                           {vaccine.price.toLocaleString('ar-IQ')} د.ع
                         </div>
                       )}

@@ -108,7 +108,7 @@ export default async function PendingSpecialistsPage() {
                     style={{
                       display: 'inline-block',
                       padding: '8px 16px',
-                      background: 'var(--emerald-deep, #056559)',
+                      background: 'var(--emerald-deep, var(--emerald-deep, #056559))',
                       color: 'var(--white)',
                       borderRadius: 10,
                       fontSize: 12,

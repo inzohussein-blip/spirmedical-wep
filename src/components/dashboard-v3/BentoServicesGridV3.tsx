@@ -67,7 +67,7 @@ function BentoCard({
       {badge && (
         <span style={{
           position: 'absolute', top: 10, right: 10,
-          background: badge === 'جديد' ? '#C71C56'
+          background: badge === 'جديد' ? 'var(--rose, #C71C56)'
             : badge === 'الأكثر طلباً' ? '#FBBC04' : '#F1F3F4',
           color: badge === 'جديد' ? '#FFFFFF'
             : badge === 'الأكثر طلباً' ? '#202124' : '#5F6368',

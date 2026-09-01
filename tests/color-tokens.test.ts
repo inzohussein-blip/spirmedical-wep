@@ -111,4 +111,41 @@ describe('رموز الألوان واحتياطاتها', () => {
     const RUNTIME = new Set(['btn-primary-bg', 'btn-primary-bg-hover', 'btn-primary-fg']);
     expect([...undefinedTokens].filter((t) => !RUNTIME.has(t)).sort()).toEqual([]);
   });
+
+  it('ألوان العلامة لا تُكتب حرفيّاً داخل كتل style', () => {
+    // للمشرف صفحةٌ يغيّر بها ألوان المنصّة (`/admin/settings/theme`)،
+    // و`ThemeProvider` يحقن القيم في ستّة رموز وقت التشغيل. فكلّ لونٍ
+    // مكتوبٍ حرفيّاً بقيمة أحدها **لا يستجيب** لذلك التخصيص: يغيّر المشرف
+    // الأخضرَ فتبقى ١٣٣ بقعةً على لونها القديم.
+    //
+    // يبقى استعمالٌ مشروع: `var(--emerald, #01875F)` — الحرفيُّ هنا احتياط.
+    const THEMED = new Set(['#01875F', '#056559', '#E6F3EF', '#B06000', '#C71C56']);
+    const offenders: string[] = [];
+
+    for (const f of files) {
+      if (/shared\.css|pwa\.css|ThemeProvider\.tsx/.test(f)) continue;
+      if (!/\.tsx?$/.test(f)) continue;
+      const src = readFileSync(f, 'utf8');
+
+      // كتل style={{ … }} بعدّ الأقواس
+      for (const m of src.matchAll(/style=\{\{/g)) {
+        let i = m.index! + m[0].length - 2;
+        let depth = 0;
+        while (i < src.length) {
+          if (src[i] === '{') depth++;
+          else if (src[i] === '}') { depth--; if (depth === 0) break; }
+          i++;
+        }
+        const body = src.slice(m.index! + m[0].length, i);
+        for (const c of body.matchAll(/#[0-9A-Fa-f]{6}/g)) {
+          const hex = c[0].toUpperCase();
+          if (!THEMED.has(hex)) continue;
+          const before = body.slice(Math.max(0, c.index! - 40), c.index!);
+          if (/var\(\s*--[\w-]+\s*,\s*$/.test(before)) continue; // احتياطٌ سليم
+          offenders.push(`${f.replace(ROOT + '/', '')}: ${hex}`);
+        }
+      }
+    }
+    expect([...new Set(offenders)]).toEqual([]);
+  });
 });

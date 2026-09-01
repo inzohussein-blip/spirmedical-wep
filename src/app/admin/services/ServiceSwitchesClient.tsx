@@ -107,7 +107,7 @@ export default function ServiceSwitchesClient({ initial }: { initial: Row[] }) {
                       aria-hidden="true"
                       style={{
                         width: 10, height: 10, borderRadius: '50%', flexShrink: 0,
-                        background: r.isEnabled ? 'var(--emerald-deep, #056559)' : '#9AA0A6',
+                        background: r.isEnabled ? 'var(--emerald-deep, var(--emerald-deep, #056559))' : '#9AA0A6',
                       }}
                     />
                     <div style={{ flex: 1, minWidth: 150 }}>
@@ -180,7 +180,7 @@ export default function ServiceSwitchesClient({ initial }: { initial: Row[] }) {
                         type="button"
                         disabled={pending}
                         onClick={() => apply(r, r.isEnabled, draftNote)}
-                        style={{ ...btn, background: 'var(--emerald-deep, var(--emerald-deep, #056559))', color: '#fff', border: 'none' }}
+                        style={{ ...btn, background: 'var(--emerald-deep, var(--emerald-deep, var(--emerald-deep, #056559)))', color: '#fff', border: 'none' }}
                       >
                         حفظ
                       </button>
