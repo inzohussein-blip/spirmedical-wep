@@ -215,15 +215,15 @@ ALTER TABLE public.chat_notes ENABLE ROW LEVEL SECURITY;
 -- ─── Chats ───
 DROP POLICY IF EXISTS "Users see their chats" ON public.chats;
 CREATE POLICY "Users see their chats" ON public.chats
-  FOR SELECT USING (auth.uid() = patient_id OR auth.uid() = specialist_id);
+  FOR SELECT USING ((SELECT auth.uid()) = patient_id OR (SELECT auth.uid()) = specialist_id);
 
 DROP POLICY IF EXISTS "Users create their chats" ON public.chats;
 CREATE POLICY "Users create their chats" ON public.chats
-  FOR INSERT WITH CHECK (auth.uid() = patient_id OR auth.uid() = specialist_id);
+  FOR INSERT WITH CHECK ((SELECT auth.uid()) = patient_id OR (SELECT auth.uid()) = specialist_id);
 
 DROP POLICY IF EXISTS "Users update their chats" ON public.chats;
 CREATE POLICY "Users update their chats" ON public.chats
-  FOR UPDATE USING (auth.uid() = patient_id OR auth.uid() = specialist_id);
+  FOR UPDATE USING ((SELECT auth.uid()) = patient_id OR (SELECT auth.uid()) = specialist_id);
 
 
 -- ─── Messages ───
@@ -233,38 +233,38 @@ CREATE POLICY "Users see chat messages" ON public.messages
     EXISTS (
       SELECT 1 FROM public.chats
       WHERE chats.id = messages.chat_id
-      AND (chats.patient_id = auth.uid() OR chats.specialist_id = auth.uid())
+      AND (chats.patient_id = (SELECT auth.uid()) OR chats.specialist_id = (SELECT auth.uid()))
     )
   );
 
 DROP POLICY IF EXISTS "Users send messages" ON public.messages;
 CREATE POLICY "Users send messages" ON public.messages
   FOR INSERT WITH CHECK (
-    auth.uid() = sender_id
+    (SELECT auth.uid()) = sender_id
     AND EXISTS (
       SELECT 1 FROM public.chats
       WHERE chats.id = messages.chat_id
-      AND (chats.patient_id = auth.uid() OR chats.specialist_id = auth.uid())
+      AND (chats.patient_id = (SELECT auth.uid()) OR chats.specialist_id = (SELECT auth.uid()))
     )
   );
 
 DROP POLICY IF EXISTS "Users update own messages" ON public.messages;
 CREATE POLICY "Users update own messages" ON public.messages
-  FOR UPDATE USING (auth.uid() = sender_id);
+  FOR UPDATE USING ((SELECT auth.uid()) = sender_id);
 
 
 -- ─── Quick Replies (Specialists only) ───
 DROP POLICY IF EXISTS "Specialists manage own templates" ON public.quick_replies;
 CREATE POLICY "Specialists manage own templates" ON public.quick_replies
-  USING (auth.uid() = specialist_id)
-  WITH CHECK (auth.uid() = specialist_id);
+  USING ((SELECT auth.uid()) = specialist_id)
+  WITH CHECK ((SELECT auth.uid()) = specialist_id);
 
 
 -- ─── Chat Notes (Specialists only) ───
 DROP POLICY IF EXISTS "Specialists manage chat notes" ON public.chat_notes;
 CREATE POLICY "Specialists manage chat notes" ON public.chat_notes
-  USING (auth.uid() = specialist_id)
-  WITH CHECK (auth.uid() = specialist_id);
+  USING ((SELECT auth.uid()) = specialist_id)
+  WITH CHECK ((SELECT auth.uid()) = specialist_id);
 
 
 -- ════════════════════════════════════════════════════════════════════
@@ -356,8 +356,8 @@ ALTER TABLE public.notification_logs ENABLE ROW LEVEL SECURITY;
 -- Templates: admins يديرونها، الكل يقرأ النشط
 DROP POLICY IF EXISTS notif_templates_admin ON public.notification_templates;
 CREATE POLICY notif_templates_admin ON public.notification_templates
-  FOR ALL USING (public.is_admin(auth.uid()))
-  WITH CHECK (public.is_admin(auth.uid()));
+  FOR ALL USING (public.is_admin((SELECT auth.uid())))
+  WITH CHECK (public.is_admin((SELECT auth.uid())));
 
 DROP POLICY IF EXISTS notif_templates_read ON public.notification_templates;
 CREATE POLICY notif_templates_read ON public.notification_templates
@@ -367,18 +367,18 @@ CREATE POLICY notif_templates_read ON public.notification_templates
 DROP POLICY IF EXISTS notif_queue_recipient ON public.notification_queue;
 CREATE POLICY notif_queue_recipient ON public.notification_queue
   FOR SELECT USING (
-    recipient_user_id = auth.uid() OR public.is_admin(auth.uid())
+    recipient_user_id = (SELECT auth.uid()) OR public.is_admin((SELECT auth.uid()))
   );
 
 DROP POLICY IF EXISTS notif_queue_admin_manage ON public.notification_queue;
 CREATE POLICY notif_queue_admin_manage ON public.notification_queue
-  FOR ALL USING (public.is_admin(auth.uid()))
-  WITH CHECK (public.is_admin(auth.uid()));
+  FOR ALL USING (public.is_admin((SELECT auth.uid())))
+  WITH CHECK (public.is_admin((SELECT auth.uid())));
 
 -- Logs: admins only
 DROP POLICY IF EXISTS notif_logs_admin ON public.notification_logs;
 CREATE POLICY notif_logs_admin ON public.notification_logs
-  FOR SELECT USING (public.is_admin(auth.uid()));
+  FOR SELECT USING (public.is_admin((SELECT auth.uid())));
 
 
 -- ═══════════════════════════════════════════════════════════════════
@@ -637,8 +637,8 @@ ALTER TABLE public.whatsapp_otp ENABLE ROW LEVEL SECURITY;
 -- whatsapp_otp: service_role only (حساس)
 DROP POLICY IF EXISTS "Service role only - whatsapp_otp" ON public.whatsapp_otp;
 CREATE POLICY "Service role only - whatsapp_otp" ON public.whatsapp_otp
-  USING (auth.jwt()->>'role' = 'service_role')
-  WITH CHECK (auth.jwt()->>'role' = 'service_role');
+  USING ((SELECT auth.jwt())->>'role' = 'service_role')
+  WITH CHECK ((SELECT auth.jwt())->>'role' = 'service_role');
 
 
 -- ════════════════════════════════════════════════════════════════════
@@ -690,22 +690,22 @@ ALTER TABLE public.push_subscriptions ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "push_sub_select_own" ON public.push_subscriptions;
 CREATE POLICY "push_sub_select_own"
   ON public.push_subscriptions FOR SELECT
-  USING (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "push_sub_insert_own" ON public.push_subscriptions;
 CREATE POLICY "push_sub_insert_own"
   ON public.push_subscriptions FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
+  WITH CHECK ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "push_sub_update_own" ON public.push_subscriptions;
 CREATE POLICY "push_sub_update_own"
   ON public.push_subscriptions FOR UPDATE
-  USING (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "push_sub_delete_own" ON public.push_subscriptions;
 CREATE POLICY "push_sub_delete_own"
   ON public.push_subscriptions FOR DELETE
-  USING (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id);
 
 -- ─── 2. notification_preferences ───────────────────────
 CREATE TABLE IF NOT EXISTS public.notification_preferences (
@@ -731,17 +731,17 @@ ALTER TABLE public.notification_preferences ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "notif_pref_select_own" ON public.notification_preferences;
 CREATE POLICY "notif_pref_select_own"
   ON public.notification_preferences FOR SELECT
-  USING (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "notif_pref_upsert_own" ON public.notification_preferences;
 CREATE POLICY "notif_pref_upsert_own"
   ON public.notification_preferences FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
+  WITH CHECK ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "notif_pref_update_own" ON public.notification_preferences;
 CREATE POLICY "notif_pref_update_own"
   ON public.notification_preferences FOR UPDATE
-  USING (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id);
 
 -- ─── 3. Helper: تنشئة تفضيلات افتراضية ───
 CREATE OR REPLACE FUNCTION public.ensure_notification_preferences()
@@ -812,13 +812,13 @@ ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "users_select_own_notifications" ON public.notifications;
 CREATE POLICY "users_select_own_notifications"
   ON public.notifications FOR SELECT
-  USING (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "users_update_own_notifications" ON public.notifications;
 CREATE POLICY "users_update_own_notifications"
   ON public.notifications FOR UPDATE
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id)
+  WITH CHECK ((SELECT auth.uid()) = user_id);
 
 -- الإدراج عبر service_role فقط (من الخادم) — لا policy للـ INSERT للمستخدمين.
 

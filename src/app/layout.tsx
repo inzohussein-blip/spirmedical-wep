@@ -22,6 +22,14 @@ import '@fontsource/tajawal/400.css';
 import '@fontsource/tajawal/500.css';
 import '@fontsource/tajawal/700.css';
 import '@fontsource/tajawal/800.css';
+// ٩٠٠ يُستعمل ٢٤٧ مرّةً في الواجهة ولم يكن يُستورَد.
+//
+// ولا يعني ذلك تغليظاً حسابياً: خوارزمية المطابقة في CSS للوزن المطلوب
+// فوق ٥٠٠ تبحث صعوداً أوّلاً ثمّ نزولاً، فكان ٩٠٠ يهبط إلى ٨٠٠ **الحقيقيّ**
+// لا إلى تزويرٍ للحروف. العطب أدقّ من ذلك وأصعب رؤيةً: العنوان المكتوب
+// ٩٠٠ والنصّ المكتوب ٨٠٠ يظهران بالثقل نفسه، فيضيع تدرّجٌ كامل من
+// التسلسل البصريّ كان مقصوداً في ٢٤٧ موضعاً.
+import '@fontsource/tajawal/900.css';
 import '@fontsource/jetbrains-mono/500.css';
 
 // خرائط MapLibre — CSS الخرائط في وحدة مفصولة route-scoped

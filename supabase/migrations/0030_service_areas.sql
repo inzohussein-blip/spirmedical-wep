@@ -62,8 +62,8 @@ CREATE POLICY service_areas_public_read ON public.service_areas
 
 DROP POLICY IF EXISTS service_areas_admin_manage ON public.service_areas;
 CREATE POLICY service_areas_admin_manage ON public.service_areas
-  FOR ALL USING (private.is_admin(auth.uid()))
-  WITH CHECK (private.is_admin(auth.uid()));
+  FOR ALL USING (private.is_admin((SELECT auth.uid())))
+  WITH CHECK (private.is_admin((SELECT auth.uid())));
 
 GRANT SELECT ON public.service_areas TO anon, authenticated;
 GRANT INSERT, UPDATE, DELETE ON public.service_areas TO authenticated;

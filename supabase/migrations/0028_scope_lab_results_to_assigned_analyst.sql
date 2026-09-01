@@ -40,11 +40,11 @@ CREATE POLICY lab_results_analyst_read ON public.lab_results
     EXISTS (
       SELECT 1 FROM public.appointments a
        WHERE a.lab_order_id = lab_results.lab_order_id
-         AND (a.specialist_id = auth.uid() OR a.assigned_specialist_id = auth.uid())
+         AND (a.specialist_id = (SELECT auth.uid()) OR a.assigned_specialist_id = (SELECT auth.uid()))
     )
     AND EXISTS (
       SELECT 1 FROM public.users u
-       WHERE u.id = auth.uid()
+       WHERE u.id = (SELECT auth.uid())
          AND u.specialist_type = 'lab_analyst'
          AND u.approval_status = 'approved'
          AND COALESCE(u.is_suspended, false) = false
@@ -59,16 +59,16 @@ CREATE POLICY lab_results_analyst_read ON public.lab_results
 CREATE POLICY lab_results_analyst_insert ON public.lab_results
   FOR INSERT TO authenticated
   WITH CHECK (
-    entered_by = auth.uid()
+    entered_by = (SELECT auth.uid())
     AND EXISTS (
       SELECT 1 FROM public.appointments a
        WHERE a.lab_order_id = lab_results.lab_order_id
-         AND (a.specialist_id = auth.uid() OR a.assigned_specialist_id = auth.uid())
+         AND (a.specialist_id = (SELECT auth.uid()) OR a.assigned_specialist_id = (SELECT auth.uid()))
          AND a.user_id = lab_results.user_id
     )
     AND EXISTS (
       SELECT 1 FROM public.users u
-       WHERE u.id = auth.uid()
+       WHERE u.id = (SELECT auth.uid())
          AND u.specialist_type = 'lab_analyst'
          AND u.approval_status = 'approved'
          AND COALESCE(u.is_suspended, false) = false
@@ -82,11 +82,11 @@ CREATE POLICY lab_results_analyst_update ON public.lab_results
     EXISTS (
       SELECT 1 FROM public.appointments a
        WHERE a.lab_order_id = lab_results.lab_order_id
-         AND (a.specialist_id = auth.uid() OR a.assigned_specialist_id = auth.uid())
+         AND (a.specialist_id = (SELECT auth.uid()) OR a.assigned_specialist_id = (SELECT auth.uid()))
     )
     AND EXISTS (
       SELECT 1 FROM public.users u
-       WHERE u.id = auth.uid()
+       WHERE u.id = (SELECT auth.uid())
          AND u.specialist_type = 'lab_analyst'
          AND u.approval_status = 'approved'
          AND COALESCE(u.is_suspended, false) = false
@@ -96,12 +96,12 @@ CREATE POLICY lab_results_analyst_update ON public.lab_results
     EXISTS (
       SELECT 1 FROM public.appointments a
        WHERE a.lab_order_id = lab_results.lab_order_id
-         AND (a.specialist_id = auth.uid() OR a.assigned_specialist_id = auth.uid())
+         AND (a.specialist_id = (SELECT auth.uid()) OR a.assigned_specialist_id = (SELECT auth.uid()))
          AND a.user_id = lab_results.user_id
     )
     AND EXISTS (
       SELECT 1 FROM public.users u
-       WHERE u.id = auth.uid()
+       WHERE u.id = (SELECT auth.uid())
          AND u.specialist_type = 'lab_analyst'
          AND u.approval_status = 'approved'
          AND COALESCE(u.is_suspended, false) = false
@@ -117,11 +117,11 @@ CREATE POLICY lab_results_analyst_delete ON public.lab_results
     EXISTS (
       SELECT 1 FROM public.appointments a
        WHERE a.lab_order_id = lab_results.lab_order_id
-         AND (a.specialist_id = auth.uid() OR a.assigned_specialist_id = auth.uid())
+         AND (a.specialist_id = (SELECT auth.uid()) OR a.assigned_specialist_id = (SELECT auth.uid()))
     )
     AND EXISTS (
       SELECT 1 FROM public.users u
-       WHERE u.id = auth.uid()
+       WHERE u.id = (SELECT auth.uid())
          AND u.specialist_type = 'lab_analyst'
          AND u.approval_status = 'approved'
          AND COALESCE(u.is_suspended, false) = false
@@ -143,7 +143,7 @@ CREATE POLICY lab_orders_specialist_read ON public.lab_orders
     EXISTS (
       SELECT 1 FROM public.appointments a
        WHERE a.lab_order_id = lab_orders.id
-         AND (a.specialist_id = auth.uid() OR a.assigned_specialist_id = auth.uid())
+         AND (a.specialist_id = (SELECT auth.uid()) OR a.assigned_specialist_id = (SELECT auth.uid()))
     )
   );
 
@@ -154,6 +154,6 @@ CREATE POLICY lab_orders_specialist_update ON public.lab_orders
     EXISTS (
       SELECT 1 FROM public.appointments a
        WHERE a.lab_order_id = lab_orders.id
-         AND (a.specialist_id = auth.uid() OR a.assigned_specialist_id = auth.uid())
+         AND (a.specialist_id = (SELECT auth.uid()) OR a.assigned_specialist_id = (SELECT auth.uid()))
     )
   );

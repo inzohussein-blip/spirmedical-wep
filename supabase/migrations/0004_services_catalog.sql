@@ -83,15 +83,15 @@ ALTER TABLE public.pharmacies ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "pharmacies_select_active" ON public.pharmacies;
 CREATE POLICY "pharmacies_select_active"
   ON public.pharmacies FOR SELECT
-  USING (is_active = TRUE OR auth.uid() = owner_user_id);
+  USING (is_active = TRUE OR (SELECT auth.uid()) = owner_user_id);
 
 -- تعديل: المالك أو الأدمن
 DROP POLICY IF EXISTS "pharmacies_update_owner" ON public.pharmacies;
 CREATE POLICY "pharmacies_update_owner"
   ON public.pharmacies FOR UPDATE
   USING (
-    auth.uid() = owner_user_id
-    OR EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    (SELECT auth.uid()) = owner_user_id
+    OR EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 -- إدراج: فقط الأدمن
@@ -99,7 +99,7 @@ DROP POLICY IF EXISTS "pharmacies_insert_admin" ON public.pharmacies;
 CREATE POLICY "pharmacies_insert_admin"
   ON public.pharmacies FOR INSERT
   WITH CHECK (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 -- ─── 2. كتالوج الأدوية الشامل (مرجع وطني) ───────────────────
@@ -165,7 +165,7 @@ DROP POLICY IF EXISTS "medications_admin_only" ON public.medications;
 CREATE POLICY "medications_admin_only"
   ON public.medications FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 -- ─── 3. مخزون الصيدلية (الجدول الأهم!) ───────────────────────
@@ -213,9 +213,9 @@ CREATE POLICY "inventory_update_owner"
   USING (
     EXISTS (
       SELECT 1 FROM public.pharmacies p
-      WHERE p.id = pharmacy_id AND p.owner_user_id = auth.uid()
+      WHERE p.id = pharmacy_id AND p.owner_user_id = (SELECT auth.uid())
     )
-    OR EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    OR EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 -- ─── 4. سجل عمليات البحث (تحليلات) ──────────────────────────
@@ -242,13 +242,13 @@ DROP POLICY IF EXISTS "searches_admin_select" ON public.medication_searches;
 CREATE POLICY "searches_admin_select"
   ON public.medication_searches FOR SELECT
   USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 DROP POLICY IF EXISTS "searches_insert_self" ON public.medication_searches;
 CREATE POLICY "searches_insert_self"
   ON public.medication_searches FOR INSERT
-  WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
+  WITH CHECK ((SELECT auth.uid()) = user_id OR user_id IS NULL);
 
 -- ─── 5. View: medications مع عدد الصيدليات المتوفر فيها ─────
 CREATE OR REPLACE VIEW public.medications_with_availability AS
@@ -385,14 +385,14 @@ ALTER TABLE public.doctors ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "doctors_select_active" ON public.doctors;
 CREATE POLICY "doctors_select_active"
   ON public.doctors FOR SELECT
-  USING (is_active = TRUE OR auth.uid() = user_id);
+  USING (is_active = TRUE OR (SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "doctors_admin_manage" ON public.doctors;
 CREATE POLICY "doctors_admin_manage"
   ON public.doctors FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
-    OR auth.uid() = user_id
+    EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
+    OR (SELECT auth.uid()) = user_id
   );
 
 -- ─── اشتراكات طبيب العائلة ───────────────────────────────
@@ -428,9 +428,9 @@ DROP POLICY IF EXISTS "subscriptions_own" ON public.doctor_subscriptions;
 CREATE POLICY "subscriptions_own"
   ON public.doctor_subscriptions FOR ALL
   USING (
-    auth.uid() = user_id
-    OR EXISTS (SELECT 1 FROM doctors WHERE id = doctor_id AND user_id = auth.uid())
-    OR EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    (SELECT auth.uid()) = user_id
+    OR EXISTS (SELECT 1 FROM doctors WHERE id = doctor_id AND user_id = (SELECT auth.uid()))
+    OR EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 -- ════════════════════════════════════════════════════════════════════
@@ -515,7 +515,7 @@ DROP POLICY IF EXISTS "hospitals_admin_manage" ON public.hospitals;
 CREATE POLICY "hospitals_admin_manage"
   ON public.hospitals FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 -- ════════════════════════════════════════════════════════════════════
@@ -581,9 +581,9 @@ DROP POLICY IF EXISTS "consultations_participants" ON public.consultations;
 CREATE POLICY "consultations_participants"
   ON public.consultations FOR ALL
   USING (
-    auth.uid() = patient_user_id
-    OR auth.uid() = doctor_user_id
-    OR EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    (SELECT auth.uid()) = patient_user_id
+    OR (SELECT auth.uid()) = doctor_user_id
+    OR EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 -- ─── رسائل الاستشارة (نص + صور) ──────────────────────────
@@ -619,20 +619,20 @@ CREATE POLICY "consultation_messages_participants"
     EXISTS (
       SELECT 1 FROM public.consultations c
       WHERE c.id = consultation_id
-      AND (auth.uid() = c.patient_user_id OR auth.uid() = c.doctor_user_id)
+      AND ((SELECT auth.uid()) = c.patient_user_id OR (SELECT auth.uid()) = c.doctor_user_id)
     )
-    OR EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    OR EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 DROP POLICY IF EXISTS "consultation_messages_insert" ON public.consultation_messages;
 CREATE POLICY "consultation_messages_insert"
   ON public.consultation_messages FOR INSERT
   WITH CHECK (
-    auth.uid() = sender_id
+    (SELECT auth.uid()) = sender_id
     AND EXISTS (
       SELECT 1 FROM public.consultations c
       WHERE c.id = consultation_id
-      AND (auth.uid() = c.patient_user_id OR auth.uid() = c.doctor_user_id)
+      AND ((SELECT auth.uid()) = c.patient_user_id OR (SELECT auth.uid()) = c.doctor_user_id)
     )
   );
 
@@ -743,7 +743,7 @@ DROP POLICY IF EXISTS "cosmetic_admin_manage" ON public.cosmetic_products;
 CREATE POLICY "cosmetic_admin_manage"
   ON public.cosmetic_products FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 -- ─── Seed data ───
@@ -815,7 +815,7 @@ DROP POLICY IF EXISTS "physio_types_admin" ON public.physio_service_types;
 CREATE POLICY "physio_types_admin"
   ON public.physio_service_types FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 -- ─── 2. الأخصائيون ───
@@ -874,7 +874,7 @@ DROP POLICY IF EXISTS "physio_specialists_admin" ON public.physio_specialists;
 CREATE POLICY "physio_specialists_admin"
   ON public.physio_specialists FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 -- ─── Seed: أنواع العلاج الفيزيائي ───
@@ -1105,7 +1105,7 @@ CREATE POLICY "dental_public"
 DROP POLICY IF EXISTS "dental_admin" ON public.dental_clinics;
 CREATE POLICY "dental_admin"
   ON public.dental_clinics FOR ALL
-  USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin')));
+  USING (EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin')));
 
 -- ════════════════════════════════════════════════════════════════════
 -- 👓 2. EYEWEAR
@@ -1166,7 +1166,7 @@ CREATE POLICY "optical_public"
 DROP POLICY IF EXISTS "optical_admin" ON public.optical_stores;
 CREATE POLICY "optical_admin"
   ON public.optical_stores FOR ALL
-  USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin')));
+  USING (EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin')));
 
 -- ════════════════════════════════════════════════════════════════════
 -- 🧠 3. MENTAL HEALTH
@@ -1240,7 +1240,7 @@ CREATE POLICY "mental_public"
 DROP POLICY IF EXISTS "mental_admin" ON public.mental_health_specialists;
 CREATE POLICY "mental_admin"
   ON public.mental_health_specialists FOR ALL
-  USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin')));
+  USING (EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin')));
 
 -- ════════════════════════════════════════════════════════════════════
 -- 🥗 4. NUTRITION
@@ -1306,7 +1306,7 @@ CREATE POLICY "nutrition_public"
 DROP POLICY IF EXISTS "nutrition_admin" ON public.nutritionists;
 CREATE POLICY "nutrition_admin"
   ON public.nutritionists FOR ALL
-  USING (EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin')));
+  USING (EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin')));
 
 -- ════════════════════════════════════════════════════════════════════
 -- 🌱 SEED DATA
@@ -1692,7 +1692,7 @@ CREATE POLICY "vaccines_public_read"
 DROP POLICY IF EXISTS "vaccines_admin_all" ON public.vaccines;
 CREATE POLICY "vaccines_admin_all"
   ON public.vaccines FOR ALL
-  USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM public.users WHERE id = (SELECT auth.uid()) AND role = 'admin'));
 
 -- ─── 2. VACCINE CLINICS ───
 CREATE TABLE IF NOT EXISTS public.vaccine_clinics (
@@ -1748,7 +1748,7 @@ CREATE POLICY "vaccine_clinics_public_read"
 DROP POLICY IF EXISTS "vaccine_clinics_admin_all" ON public.vaccine_clinics;
 CREATE POLICY "vaccine_clinics_admin_all"
   ON public.vaccine_clinics FOR ALL
-  USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM public.users WHERE id = (SELECT auth.uid()) AND role = 'admin'));
 
 -- ─── 3. VACCINATION RECORDS ───
 -- سجل تطعيمات المريض (والعائلة)
@@ -1794,12 +1794,12 @@ ALTER TABLE public.vaccination_records ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "vaccination_records_user_all" ON public.vaccination_records;
 CREATE POLICY "vaccination_records_user_all"
-  ON public.vaccination_records FOR ALL USING (user_id = auth.uid());
+  ON public.vaccination_records FOR ALL USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "vaccination_records_admin_read" ON public.vaccination_records;
 CREATE POLICY "vaccination_records_admin_read"
   ON public.vaccination_records FOR SELECT
-  USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM public.users WHERE id = (SELECT auth.uid()) AND role = 'admin'));
 
 -- ─── 4. أعمدة في appointments للقاحات ───
 ALTER TABLE public.appointments

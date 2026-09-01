@@ -40,8 +40,8 @@ CREATE POLICY service_switches_public_read ON public.service_switches
 
 DROP POLICY IF EXISTS service_switches_admin_manage ON public.service_switches;
 CREATE POLICY service_switches_admin_manage ON public.service_switches
-  FOR ALL USING (private.is_admin(auth.uid()))
-  WITH CHECK (private.is_admin(auth.uid()));
+  FOR ALL USING (private.is_admin((SELECT auth.uid())))
+  WITH CHECK (private.is_admin((SELECT auth.uid())));
 
 GRANT SELECT ON public.service_switches TO anon, authenticated;
 GRANT INSERT, UPDATE, DELETE ON public.service_switches TO authenticated;

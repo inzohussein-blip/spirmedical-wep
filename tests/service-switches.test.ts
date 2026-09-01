@@ -127,7 +127,11 @@ describe('اتّساق الكود مع الترحيل', () => {
 
   it('الجدول مقروءٌ للجميع ومكتوبٌ للمشرف وحده', () => {
     expect(sql).toContain('FOR SELECT USING (true)');
-    expect(sql).toContain('private.is_admin(auth.uid())');
+    // الشرط أن تكون الكتابة محكومةً بـ`is_admin`، لا أن تُكتب بصياغةٍ بعينها.
+    // أوّل صياغةٍ طابقت النصّ حرفياً `private.is_admin(auth.uid())`، فسقطت
+    // حين لفّ الترحيلُ 0032 النداءَ في `(SELECT …)` — وهو تغييرٌ في الأداء
+    // لا في الصلاحية. الحارس يجب أن يمسك المعنى لا الحروف.
+    expect(sql).toMatch(/private\.is_admin\(\s*(\(\s*SELECT\s+)?auth\.uid\(\)/);
   });
 });
 

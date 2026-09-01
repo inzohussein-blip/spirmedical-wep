@@ -129,8 +129,8 @@ CREATE POLICY schedules_view_all ON public.specialist_schedules FOR SELECT USING
 
 DROP POLICY IF EXISTS schedules_manage_own ON public.specialist_schedules;
 CREATE POLICY schedules_manage_own ON public.specialist_schedules
-  FOR ALL USING (specialist_id = auth.uid())
-  WITH CHECK (specialist_id = auth.uid());
+  FOR ALL USING (specialist_id = (SELECT auth.uid()))
+  WITH CHECK (specialist_id = (SELECT auth.uid()));
 
 
 -- ═══════════════════════════════════════════════════════════════════
@@ -199,8 +199,8 @@ $$;
 DROP POLICY IF EXISTS appointments_specialist_view ON public.appointments;
 CREATE POLICY appointments_specialist_view ON public.appointments
   FOR SELECT USING (
-    user_id = auth.uid()  -- المريض يشوف طلباته
-    OR assigned_specialist_id = auth.uid()  -- الاختصاصي المعيّن
+    user_id = (SELECT auth.uid())  -- المريض يشوف طلباته
+    OR assigned_specialist_id = (SELECT auth.uid())  -- الاختصاصي المعيّن
     OR (  -- أي اختصاصي من نفس النوع المطلوب يشوفها لو لم تُعيّن
       appointments.assigned_specialist_id IS NULL
       AND public.current_user_is_approved_specialist_type(appointments.required_specialist_type::text)
@@ -211,8 +211,8 @@ CREATE POLICY appointments_specialist_view ON public.appointments
 DROP POLICY IF EXISTS appointments_specialist_update ON public.appointments;
 CREATE POLICY appointments_specialist_update ON public.appointments
   FOR UPDATE USING (
-    user_id = auth.uid()
-    OR assigned_specialist_id = auth.uid()
+    user_id = (SELECT auth.uid())
+    OR assigned_specialist_id = (SELECT auth.uid())
     OR public.current_user_is_approved_specialist_type(appointments.required_specialist_type::text)
   );
 
@@ -306,17 +306,17 @@ DROP POLICY IF EXISTS "nursing_history_select_own" ON public.nursing_visit_histo
 CREATE POLICY "nursing_history_select_own"
   ON public.nursing_visit_history FOR SELECT
   USING (
-    auth.uid() = user_id 
-    OR auth.uid() = specialist_id
-    OR EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
+    (SELECT auth.uid()) = user_id 
+    OR (SELECT auth.uid()) = specialist_id
+    OR EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role = 'admin')
   );
 
 DROP POLICY IF EXISTS "nursing_history_insert_specialist" ON public.nursing_visit_history;
 CREATE POLICY "nursing_history_insert_specialist"
   ON public.nursing_visit_history FOR INSERT
   WITH CHECK (
-    auth.uid() = specialist_id
-    OR EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
+    (SELECT auth.uid()) = specialist_id
+    OR EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role = 'admin')
   );
 
 -- ─── 3. سجل تفعيل زر الطوارئ للممرض ────────────────────────
@@ -354,14 +354,14 @@ ALTER TABLE public.nurse_emergency_logs ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "nurse_emergency_specialist_insert" ON public.nurse_emergency_logs;
 CREATE POLICY "nurse_emergency_specialist_insert"
   ON public.nurse_emergency_logs FOR INSERT
-  WITH CHECK (auth.uid() = specialist_id);
+  WITH CHECK ((SELECT auth.uid()) = specialist_id);
 
 DROP POLICY IF EXISTS "nurse_emergency_admin_select" ON public.nurse_emergency_logs;
 CREATE POLICY "nurse_emergency_admin_select"
   ON public.nurse_emergency_logs FOR SELECT
   USING (
-    auth.uid() = specialist_id
-    OR EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'admin')
+    (SELECT auth.uid()) = specialist_id
+    OR EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role = 'admin')
   );
 
 -- ─── 4. تقييم جودة الخدمة التمريضية ──────────────────────
@@ -471,16 +471,16 @@ DROP POLICY IF EXISTS "credentials_log_specialist_self" ON public.specialist_cre
 CREATE POLICY "credentials_log_specialist_self"
   ON public.specialist_credentials_log FOR SELECT
   USING (
-    auth.uid() = specialist_id
-    OR EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    (SELECT auth.uid()) = specialist_id
+    OR EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 DROP POLICY IF EXISTS "credentials_log_admin_insert" ON public.specialist_credentials_log;
 CREATE POLICY "credentials_log_admin_insert"
   ON public.specialist_credentials_log FOR INSERT
   WITH CHECK (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
-    OR auth.uid() = specialist_id
+    EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
+    OR (SELECT auth.uid()) = specialist_id
   );
 
 -- ─── 4. تنبيهات انتهاء الصلاحية (View) ──────────────────
@@ -581,17 +581,17 @@ ALTER TABLE public.nurse_ratings ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "nurse_ratings_user_own" ON public.nurse_ratings;
 CREATE POLICY "nurse_ratings_user_own"
   ON public.nurse_ratings FOR SELECT
-  USING (user_id = auth.uid());
+  USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "nurse_ratings_user_insert" ON public.nurse_ratings;
 CREATE POLICY "nurse_ratings_user_insert"
   ON public.nurse_ratings FOR INSERT
-  WITH CHECK (user_id = auth.uid());
+  WITH CHECK (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "nurse_ratings_specialist_read" ON public.nurse_ratings;
 CREATE POLICY "nurse_ratings_specialist_read"
   ON public.nurse_ratings FOR SELECT
-  USING (specialist_id = auth.uid());
+  USING (specialist_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "nurse_ratings_public_read" ON public.nurse_ratings;
 CREATE POLICY "nurse_ratings_public_read"
@@ -602,7 +602,7 @@ DROP POLICY IF EXISTS "nurse_ratings_admin_all" ON public.nurse_ratings;
 CREATE POLICY "nurse_ratings_admin_all"
   ON public.nurse_ratings FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    EXISTS (SELECT 1 FROM public.users WHERE id = (SELECT auth.uid()) AND role = 'admin')
   );
 
 -- ─── 2. View للـ vitals trends ───
@@ -717,11 +717,11 @@ ALTER TABLE public.doctor_ratings ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "doctor_ratings_user_own" ON public.doctor_ratings;
 CREATE POLICY "doctor_ratings_user_own"
-  ON public.doctor_ratings FOR SELECT USING (user_id = auth.uid());
+  ON public.doctor_ratings FOR SELECT USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "doctor_ratings_user_insert" ON public.doctor_ratings;
 CREATE POLICY "doctor_ratings_user_insert"
-  ON public.doctor_ratings FOR INSERT WITH CHECK (user_id = auth.uid());
+  ON public.doctor_ratings FOR INSERT WITH CHECK (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "doctor_ratings_public_read" ON public.doctor_ratings;
 CREATE POLICY "doctor_ratings_public_read"
@@ -730,7 +730,7 @@ CREATE POLICY "doctor_ratings_public_read"
 DROP POLICY IF EXISTS "doctor_ratings_admin_all" ON public.doctor_ratings;
 CREATE POLICY "doctor_ratings_admin_all"
   ON public.doctor_ratings FOR ALL
-  USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM public.users WHERE id = (SELECT auth.uid()) AND role = 'admin'));
 
 -- ─── 2. أعمدة جديدة على appointments للأطباء ───
 ALTER TABLE public.appointments
@@ -781,12 +781,12 @@ ALTER TABLE public.video_sessions ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "video_sessions_participants" ON public.video_sessions;
 CREATE POLICY "video_sessions_participants"
   ON public.video_sessions FOR SELECT
-  USING (patient_user_id = auth.uid() OR doctor_user_id = auth.uid());
+  USING (patient_user_id = (SELECT auth.uid()) OR doctor_user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "video_sessions_admin" ON public.video_sessions;
 CREATE POLICY "video_sessions_admin"
   ON public.video_sessions FOR ALL
-  USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM public.users WHERE id = (SELECT auth.uid()) AND role = 'admin'));
 
 -- ─── 4. Notification templates ───
 INSERT INTO public.notification_templates (key, name_ar, channel, body_ar)
@@ -933,15 +933,15 @@ ALTER TABLE public.pharmacy_reservations ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "pharmacy_reservations_user_own" ON public.pharmacy_reservations;
 CREATE POLICY "pharmacy_reservations_user_own"
-  ON public.pharmacy_reservations FOR SELECT USING (user_id = auth.uid());
+  ON public.pharmacy_reservations FOR SELECT USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "pharmacy_reservations_user_insert" ON public.pharmacy_reservations;
 CREATE POLICY "pharmacy_reservations_user_insert"
-  ON public.pharmacy_reservations FOR INSERT WITH CHECK (user_id = auth.uid());
+  ON public.pharmacy_reservations FOR INSERT WITH CHECK (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "pharmacy_reservations_user_update" ON public.pharmacy_reservations;
 CREATE POLICY "pharmacy_reservations_user_update"
-  ON public.pharmacy_reservations FOR UPDATE USING (user_id = auth.uid());
+  ON public.pharmacy_reservations FOR UPDATE USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "pharmacy_reservations_pharmacy_owner" ON public.pharmacy_reservations;
 CREATE POLICY "pharmacy_reservations_pharmacy_owner"
@@ -950,14 +950,14 @@ CREATE POLICY "pharmacy_reservations_pharmacy_owner"
     EXISTS (
       SELECT 1 FROM public.pharmacies p
       WHERE p.id = pharmacy_reservations.pharmacy_id 
-        AND p.owner_user_id = auth.uid()
+        AND p.owner_user_id = (SELECT auth.uid())
     )
   );
 
 DROP POLICY IF EXISTS "pharmacy_reservations_admin_all" ON public.pharmacy_reservations;
 CREATE POLICY "pharmacy_reservations_admin_all"
   ON public.pharmacy_reservations FOR ALL
-  USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM public.users WHERE id = (SELECT auth.uid()) AND role = 'admin'));
 
 -- ─── 2. PHARMACY RATINGS ───
 CREATE TABLE IF NOT EXISTS public.pharmacy_ratings (
@@ -988,11 +988,11 @@ ALTER TABLE public.pharmacy_ratings ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "pharmacy_ratings_user_own" ON public.pharmacy_ratings;
 CREATE POLICY "pharmacy_ratings_user_own"
-  ON public.pharmacy_ratings FOR SELECT USING (user_id = auth.uid());
+  ON public.pharmacy_ratings FOR SELECT USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "pharmacy_ratings_user_insert" ON public.pharmacy_ratings;
 CREATE POLICY "pharmacy_ratings_user_insert"
-  ON public.pharmacy_ratings FOR INSERT WITH CHECK (user_id = auth.uid());
+  ON public.pharmacy_ratings FOR INSERT WITH CHECK (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "pharmacy_ratings_public_read" ON public.pharmacy_ratings;
 CREATE POLICY "pharmacy_ratings_public_read"
@@ -1001,7 +1001,7 @@ CREATE POLICY "pharmacy_ratings_public_read"
 DROP POLICY IF EXISTS "pharmacy_ratings_admin_all" ON public.pharmacy_ratings;
 CREATE POLICY "pharmacy_ratings_admin_all"
   ON public.pharmacy_ratings FOR ALL
-  USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM public.users WHERE id = (SELECT auth.uid()) AND role = 'admin'));
 
 -- ─── 3. PHARMACY FAVORITES ───
 CREATE TABLE IF NOT EXISTS public.pharmacy_favorites (
@@ -1020,7 +1020,7 @@ ALTER TABLE public.pharmacy_favorites ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "pharmacy_favorites_user_all" ON public.pharmacy_favorites;
 CREATE POLICY "pharmacy_favorites_user_all"
-  ON public.pharmacy_favorites FOR ALL USING (user_id = auth.uid());
+  ON public.pharmacy_favorites FOR ALL USING (user_id = (SELECT auth.uid()));
 
 -- ─── 4. USER MEDICATIONS - أدوية المريض المعتادة ───
 CREATE TABLE IF NOT EXISTS public.user_medications (
@@ -1067,7 +1067,7 @@ ALTER TABLE public.user_medications ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "user_medications_user_all" ON public.user_medications;
 CREATE POLICY "user_medications_user_all"
-  ON public.user_medications FOR ALL USING (user_id = auth.uid());
+  ON public.user_medications FOR ALL USING (user_id = (SELECT auth.uid()));
 
 -- ─── 5. Notification templates ───
 INSERT INTO public.notification_templates (key, name_ar, channel, body_ar)
@@ -1328,11 +1328,11 @@ ALTER TABLE public.hospital_ratings ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "hospital_ratings_user_own" ON public.hospital_ratings;
 CREATE POLICY "hospital_ratings_user_own"
-  ON public.hospital_ratings FOR SELECT USING (user_id = auth.uid());
+  ON public.hospital_ratings FOR SELECT USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "hospital_ratings_user_insert" ON public.hospital_ratings;
 CREATE POLICY "hospital_ratings_user_insert"
-  ON public.hospital_ratings FOR INSERT WITH CHECK (user_id = auth.uid());
+  ON public.hospital_ratings FOR INSERT WITH CHECK (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "hospital_ratings_public_read" ON public.hospital_ratings;
 CREATE POLICY "hospital_ratings_public_read"
@@ -1341,7 +1341,7 @@ CREATE POLICY "hospital_ratings_public_read"
 DROP POLICY IF EXISTS "hospital_ratings_admin_all" ON public.hospital_ratings;
 CREATE POLICY "hospital_ratings_admin_all"
   ON public.hospital_ratings FOR ALL
-  USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM public.users WHERE id = (SELECT auth.uid()) AND role = 'admin'));
 
 -- ─── 3. DENTAL RATINGS ───
 CREATE TABLE IF NOT EXISTS public.dental_ratings (
@@ -1372,11 +1372,11 @@ ALTER TABLE public.dental_ratings ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "dental_ratings_user_own" ON public.dental_ratings;
 CREATE POLICY "dental_ratings_user_own"
-  ON public.dental_ratings FOR SELECT USING (user_id = auth.uid());
+  ON public.dental_ratings FOR SELECT USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "dental_ratings_user_insert" ON public.dental_ratings;
 CREATE POLICY "dental_ratings_user_insert"
-  ON public.dental_ratings FOR INSERT WITH CHECK (user_id = auth.uid());
+  ON public.dental_ratings FOR INSERT WITH CHECK (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "dental_ratings_public_read" ON public.dental_ratings;
 CREATE POLICY "dental_ratings_public_read"
@@ -1385,7 +1385,7 @@ CREATE POLICY "dental_ratings_public_read"
 DROP POLICY IF EXISTS "dental_ratings_admin_all" ON public.dental_ratings;
 CREATE POLICY "dental_ratings_admin_all"
   ON public.dental_ratings FOR ALL
-  USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM public.users WHERE id = (SELECT auth.uid()) AND role = 'admin'));
 
 -- ─── 4. OPTICAL RATINGS ───
 CREATE TABLE IF NOT EXISTS public.optical_ratings (
@@ -1416,11 +1416,11 @@ ALTER TABLE public.optical_ratings ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "optical_ratings_user_own" ON public.optical_ratings;
 CREATE POLICY "optical_ratings_user_own"
-  ON public.optical_ratings FOR SELECT USING (user_id = auth.uid());
+  ON public.optical_ratings FOR SELECT USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "optical_ratings_user_insert" ON public.optical_ratings;
 CREATE POLICY "optical_ratings_user_insert"
-  ON public.optical_ratings FOR INSERT WITH CHECK (user_id = auth.uid());
+  ON public.optical_ratings FOR INSERT WITH CHECK (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "optical_ratings_public_read" ON public.optical_ratings;
 CREATE POLICY "optical_ratings_public_read"
@@ -1429,7 +1429,7 @@ CREATE POLICY "optical_ratings_public_read"
 DROP POLICY IF EXISTS "optical_ratings_admin_all" ON public.optical_ratings;
 CREATE POLICY "optical_ratings_admin_all"
   ON public.optical_ratings FOR ALL
-  USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM public.users WHERE id = (SELECT auth.uid()) AND role = 'admin'));
 
 -- ─── 5. SERVICE FAVORITES (موحّد لكل الخدمات) ───
 CREATE TABLE IF NOT EXISTS public.service_favorites (
@@ -1454,7 +1454,7 @@ ALTER TABLE public.service_favorites ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "service_favorites_user_all" ON public.service_favorites;
 CREATE POLICY "service_favorites_user_all"
-  ON public.service_favorites FOR ALL USING (user_id = auth.uid());
+  ON public.service_favorites FOR ALL USING (user_id = (SELECT auth.uid()));
 
 -- ─── 6. Triggers: تحديث rating_avg تلقائياً ───
 
@@ -1595,11 +1595,11 @@ ALTER TABLE public.mental_health_ratings ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "mental_ratings_user_own" ON public.mental_health_ratings;
 CREATE POLICY "mental_ratings_user_own"
-  ON public.mental_health_ratings FOR SELECT USING (user_id = auth.uid());
+  ON public.mental_health_ratings FOR SELECT USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "mental_ratings_user_insert" ON public.mental_health_ratings;
 CREATE POLICY "mental_ratings_user_insert"
-  ON public.mental_health_ratings FOR INSERT WITH CHECK (user_id = auth.uid());
+  ON public.mental_health_ratings FOR INSERT WITH CHECK (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "mental_ratings_public_read" ON public.mental_health_ratings;
 CREATE POLICY "mental_ratings_public_read"
@@ -1608,7 +1608,7 @@ CREATE POLICY "mental_ratings_public_read"
 DROP POLICY IF EXISTS "mental_ratings_admin_all" ON public.mental_health_ratings;
 CREATE POLICY "mental_ratings_admin_all"
   ON public.mental_health_ratings FOR ALL
-  USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM public.users WHERE id = (SELECT auth.uid()) AND role = 'admin'));
 
 -- ─── 2. NUTRITIONIST RATINGS ───
 CREATE TABLE IF NOT EXISTS public.nutritionist_ratings (
@@ -1641,11 +1641,11 @@ ALTER TABLE public.nutritionist_ratings ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "nutritionist_ratings_user_own" ON public.nutritionist_ratings;
 CREATE POLICY "nutritionist_ratings_user_own"
-  ON public.nutritionist_ratings FOR SELECT USING (user_id = auth.uid());
+  ON public.nutritionist_ratings FOR SELECT USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "nutritionist_ratings_user_insert" ON public.nutritionist_ratings;
 CREATE POLICY "nutritionist_ratings_user_insert"
-  ON public.nutritionist_ratings FOR INSERT WITH CHECK (user_id = auth.uid());
+  ON public.nutritionist_ratings FOR INSERT WITH CHECK (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "nutritionist_ratings_public_read" ON public.nutritionist_ratings;
 CREATE POLICY "nutritionist_ratings_public_read"
@@ -1654,7 +1654,7 @@ CREATE POLICY "nutritionist_ratings_public_read"
 DROP POLICY IF EXISTS "nutritionist_ratings_admin_all" ON public.nutritionist_ratings;
 CREATE POLICY "nutritionist_ratings_admin_all"
   ON public.nutritionist_ratings FOR ALL
-  USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM public.users WHERE id = (SELECT auth.uid()) AND role = 'admin'));
 
 -- ─── 3. PHYSIO RATINGS ───
 CREATE TABLE IF NOT EXISTS public.physio_ratings (
@@ -1689,11 +1689,11 @@ ALTER TABLE public.physio_ratings ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "physio_ratings_user_own" ON public.physio_ratings;
 CREATE POLICY "physio_ratings_user_own"
-  ON public.physio_ratings FOR SELECT USING (user_id = auth.uid());
+  ON public.physio_ratings FOR SELECT USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "physio_ratings_user_insert" ON public.physio_ratings;
 CREATE POLICY "physio_ratings_user_insert"
-  ON public.physio_ratings FOR INSERT WITH CHECK (user_id = auth.uid());
+  ON public.physio_ratings FOR INSERT WITH CHECK (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "physio_ratings_public_read" ON public.physio_ratings;
 CREATE POLICY "physio_ratings_public_read"
@@ -1702,7 +1702,7 @@ CREATE POLICY "physio_ratings_public_read"
 DROP POLICY IF EXISTS "physio_ratings_admin_all" ON public.physio_ratings;
 CREATE POLICY "physio_ratings_admin_all"
   ON public.physio_ratings FOR ALL
-  USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM public.users WHERE id = (SELECT auth.uid()) AND role = 'admin'));
 
 -- ─── 4. أعمدة structured في appointments للـ 3 services ───
 ALTER TABLE public.appointments
@@ -1737,7 +1737,7 @@ ALTER TABLE public.cosmetic_wishlist ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "cosmetic_wishlist_user_all" ON public.cosmetic_wishlist;
 CREATE POLICY "cosmetic_wishlist_user_all"
-  ON public.cosmetic_wishlist FOR ALL USING (user_id = auth.uid());
+  ON public.cosmetic_wishlist FOR ALL USING (user_id = (SELECT auth.uid()));
 
 -- ─── 6. COSMETIC PRODUCT REVIEWS ───
 CREATE TABLE IF NOT EXISTS public.cosmetic_product_reviews (
@@ -1774,15 +1774,15 @@ ALTER TABLE public.cosmetic_product_reviews ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "cosmetic_reviews_user_own" ON public.cosmetic_product_reviews;
 CREATE POLICY "cosmetic_reviews_user_own"
-  ON public.cosmetic_product_reviews FOR SELECT USING (user_id = auth.uid());
+  ON public.cosmetic_product_reviews FOR SELECT USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "cosmetic_reviews_user_insert" ON public.cosmetic_product_reviews;
 CREATE POLICY "cosmetic_reviews_user_insert"
-  ON public.cosmetic_product_reviews FOR INSERT WITH CHECK (user_id = auth.uid());
+  ON public.cosmetic_product_reviews FOR INSERT WITH CHECK (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "cosmetic_reviews_user_update" ON public.cosmetic_product_reviews;
 CREATE POLICY "cosmetic_reviews_user_update"
-  ON public.cosmetic_product_reviews FOR UPDATE USING (user_id = auth.uid());
+  ON public.cosmetic_product_reviews FOR UPDATE USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "cosmetic_reviews_public_read" ON public.cosmetic_product_reviews;
 CREATE POLICY "cosmetic_reviews_public_read"
@@ -1791,7 +1791,7 @@ CREATE POLICY "cosmetic_reviews_public_read"
 DROP POLICY IF EXISTS "cosmetic_reviews_admin_all" ON public.cosmetic_product_reviews;
 CREATE POLICY "cosmetic_reviews_admin_all"
   ON public.cosmetic_product_reviews FOR ALL
-  USING (EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'));
+  USING (EXISTS (SELECT 1 FROM public.users WHERE id = (SELECT auth.uid()) AND role = 'admin'));
 
 -- ─── 7. Triggers لتحديث stats ───
 
