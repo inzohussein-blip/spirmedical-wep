@@ -89,5 +89,10 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.rate_limit_buckets TO service_rol
 REVOKE ALL ON public.rate_limit_buckets FROM anon, authenticated;
 
 -- تنظيف الدلاء المنتهية: يمنع نموّ الجدول بلا حدّ.
-CREATE INDEX IF NOT EXISTS idx_rate_limit_buckets_reset
-  ON public.rate_limit_buckets (reset_at);
+--
+-- تصحيحٌ لاحق (الترحيل 0034): كان هنا فهرسٌ باسم
+-- `idx_rate_limit_buckets_reset` على `(reset_at)` — وهو تكرارٌ حرفيّ
+-- لـ`idx_rate_limit_reset` المُنشَأ في 0001 على العمود نفسه. و`IF NOT
+-- EXISTS` لا يحمي من ذلك: هو يفحص **الاسم** لا التعريف، فمرّ الاثنان
+-- معاً. فهرسان متطابقان يعنيان ضعفَ كلفة الكتابة بلا أيّ مكسبٍ في القراءة.
+-- الفهرس الأقدم يكفي، فحُذف هذا.

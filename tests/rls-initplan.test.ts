@@ -91,3 +91,27 @@ describe('سياسات RLS تحسب auth.uid() مرّةً لا لكلّ صفّ',
     expect(sql).toContain('(?<!SELECT )');
   });
 });
+
+describe('ترحيلات الأداء تُثبت أنّها فعلت شيئاً', () => {
+  const read = (f: string) => readFileSync(join(MIGRATIONS, f), 'utf8');
+
+  it('التحقّق الذاتيّ يمنع ترحيلاً «ينجح» وهو فارغ', () => {
+    // ترحيلٌ يمرّ بلا أن يفعل شيئاً أسوأ من ترحيلٍ يفشل: الفشل يُرى.
+    for (const f of ['0032_rls_auth_uid_initplan.sql', '0035_merge_permissive_policies.sql']) {
+      expect(read(f)).toMatch(/RAISE\s+EXCEPTION/i);
+    }
+  });
+
+  it('دمج السياسات يأخذ WITH CHECK من USING عند غيابه', () => {
+    // سياسةُ UPDATE بلا WITH CHECK تستعمل USING في الفحص أيضاً. وإغفال ذلك
+    // عند الدمج يُضيّق الفحصَ على من كان يمرّ — أي تغييرُ صلاحيةٍ لا إعادةَ
+    // صياغة، وهو ما يُفترض ألّا يفعله هذا الترحيل.
+    expect(read('0035_merge_permissive_policies.sql'))
+      .toMatch(/coalesce\(\s*p\.with_check\s*,\s*p\.qual\s*\)/);
+  });
+
+  it('فهرسة المفاتيح الأجنبية تغطّي ما رصده المدقّق', () => {
+    const n = (read('0033_index_foreign_keys.sql').match(/CREATE INDEX/g) ?? []).length;
+    expect(n).toBe(56);
+  });
+});
