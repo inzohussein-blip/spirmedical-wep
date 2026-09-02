@@ -222,8 +222,12 @@ CREATE POLICY "Users create their chats" ON public.chats
   FOR INSERT WITH CHECK ((SELECT auth.uid()) = patient_id OR (SELECT auth.uid()) = specialist_id);
 
 DROP POLICY IF EXISTS "Users update their chats" ON public.chats;
+-- `WITH CHECK` صريحٌ لا يُستنسخ من `USING`. وتجميدُ عمودَي الطرفين نفسه
+-- في الترحيل 0038 بمُشغِّل، لأنّ `WITH CHECK` لا يرى `OLD`.
 CREATE POLICY "Users update their chats" ON public.chats
-  FOR UPDATE USING ((SELECT auth.uid()) = patient_id OR (SELECT auth.uid()) = specialist_id);
+  FOR UPDATE
+  USING ((SELECT auth.uid()) = patient_id OR (SELECT auth.uid()) = specialist_id)
+  WITH CHECK ((SELECT auth.uid()) = patient_id OR (SELECT auth.uid()) = specialist_id);
 
 
 -- ─── Messages ───
@@ -249,8 +253,20 @@ CREATE POLICY "Users send messages" ON public.messages
   );
 
 DROP POLICY IF EXISTS "Users update own messages" ON public.messages;
+-- بلا `WITH CHECK` كان `chat_id` عموداً يُعدَّل، فتُنقل الرسالة إلى محادثةِ
+-- غيرك. الشرطُ هنا نسخةٌ من شرط الإدراج (الترحيل 0037).
 CREATE POLICY "Users update own messages" ON public.messages
-  FOR UPDATE USING ((SELECT auth.uid()) = sender_id);
+  FOR UPDATE
+  USING ((SELECT auth.uid()) = sender_id)
+  WITH CHECK (
+    (SELECT auth.uid()) = sender_id
+    AND EXISTS (
+      SELECT 1 FROM public.chats c
+       WHERE c.id = messages.chat_id
+         AND (c.patient_id = (SELECT auth.uid())
+           OR c.specialist_id = (SELECT auth.uid()))
+    )
+  );
 
 
 -- ─── Quick Replies (Specialists only) ───

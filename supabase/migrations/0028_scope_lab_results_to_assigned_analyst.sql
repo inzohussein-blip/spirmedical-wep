@@ -148,12 +148,24 @@ CREATE POLICY lab_orders_specialist_read ON public.lab_orders
   );
 
 DROP POLICY IF EXISTS lab_orders_specialist_update ON public.lab_orders;
+-- `a.user_id = lab_orders.user_id` يربط صاحبَ الطلب بصاحب الموعد، فلا ينقل
+-- المختصُّ الطلبَ إلى حسابٍ آخر (الترحيل 0039). و`WITH CHECK` صريحٌ لأنّ
+-- الشرطَ لا يذكر `user_id` وحده فلا يكفي استنساخُ `USING`.
 CREATE POLICY lab_orders_specialist_update ON public.lab_orders
   FOR UPDATE
   USING (
     EXISTS (
       SELECT 1 FROM public.appointments a
        WHERE a.lab_order_id = lab_orders.id
+         AND a.user_id = lab_orders.user_id
+         AND (a.specialist_id = (SELECT auth.uid()) OR a.assigned_specialist_id = (SELECT auth.uid()))
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM public.appointments a
+       WHERE a.lab_order_id = lab_orders.id
+         AND a.user_id = lab_orders.user_id
          AND (a.specialist_id = (SELECT auth.uid()) OR a.assigned_specialist_id = (SELECT auth.uid()))
     )
   );
