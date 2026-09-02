@@ -213,7 +213,13 @@ CREATE POLICY appointments_specialist_update ON public.appointments
   FOR UPDATE USING (
     user_id = (SELECT auth.uid())
     OR assigned_specialist_id = (SELECT auth.uid())
-    OR public.current_user_is_approved_specialist_type(appointments.required_specialist_type::text)
+    -- تصحيحٌ لاحق (الترحيل 0036): كانت هذه الذراع بلا شرط
+    -- `assigned_specialist_id IS NULL`، فيستطيع أيّ مختصٍّ معتمَدٍ من النوع
+    -- المطلوب تعديلَ **كلّ** موعدٍ من نوعه — حتى المُسنَد لزميله وهو لا
+    -- يراه. وسياسةُ القراءة أضيقُ منها، لكنّ تعديلاً بلا شرطٍ ولا RETURNING
+    -- لا تُستدعى فيه القراءةُ أصلاً.
+    OR (assigned_specialist_id IS NULL
+        AND public.current_user_is_approved_specialist_type(appointments.required_specialist_type::text))
   );
 
 
