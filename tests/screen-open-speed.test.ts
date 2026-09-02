@@ -146,3 +146,70 @@ describe('لا شلّالَ انتظارٍ في الصفحات', () => {
     expect(offenders).toEqual([]);
   });
 });
+
+describe('التوازي لا يخلط كتابةً بقراءة', () => {
+  /**
+   * «لا تبعيّة في التعبير» لا تعني «آمنٌ للتوازي».
+   *
+   * كاد تحويلٌ آليٌّ أن يُدخل هذا في `deleteServiceArea`:
+   *
+   *     const [{ data: before }, { error }] = await Promise.all([
+   *       supabase.from('service_areas').select('name_ar').eq('id', id),
+   *       supabase.from('service_areas').delete().eq('id', id),
+   *     ]);
+   *
+   * لا يشير الحذفُ إلى `before`، فبدا للكاشف مستقلّاً. لكنّهما يمسّان
+   * **الصفّ نفسه**: قد يسبق الحذفُ القراءةَ فيُسجَّل الحذفُ بلا اسم — وهو
+   * بالضبط ما كان الترتيبُ المتسلسل يمنعه.
+   *
+   * فالقاعدة: كتلةُ `Promise.all` تقرأ أو تكتب، لا الاثنين على جدولٍ واحد.
+   */
+  const WRITE = /\.(insert|update|upsert|delete)\(/;
+
+  function parallelBlocks(src: string): string[] {
+    const out: string[] = [];
+    const marker = 'await Promise.all([';
+    let from = 0;
+    for (;;) {
+      const i = src.indexOf(marker, from);
+      if (i < 0) break;
+      let j = i + marker.length;
+      let depth = 0;
+      while (j < src.length) {
+        if (src[j] === '[') depth++;
+        else if (src[j] === ']') { if (depth === 0) break; depth--; }
+        j++;
+      }
+      out.push(src.slice(i, j));
+      from = j;
+    }
+    return out;
+  }
+
+  function tablesIn(block: string): string[] {
+    return [...block.matchAll(/\.from\(\s*['"`]([\w.]+)['"`]\s*\)/g)].map((m) => m[1]);
+  }
+
+  it('يقرأ كتل التوازي قراءةً صحيحة', () => {
+    // حارسُ الحارس: محلّلٌ مكسورٌ يجد صفراً فيمرّ الفحصُ التالي بلا معنى
+    const total = walk(APP, 'page.tsx')
+      .concat(walk(APP, 'actions.ts'))
+      .reduce((n, f) => n + parallelBlocks(readFileSync(f, 'utf8')).length, 0);
+    expect(total).toBeGreaterThan(5);
+  });
+
+  it('لا كتلةَ توازٍ تجمع كتابةً وقراءةً على الجدول نفسه', () => {
+    const offenders: string[] = [];
+    for (const f of walk(APP, 'page.tsx').concat(walk(APP, 'actions.ts'))) {
+      for (const block of parallelBlocks(readFileSync(f, 'utf8'))) {
+        if (!WRITE.test(block)) continue;
+        const tables = tablesIn(block);
+        const dupes = tables.filter((t, i) => tables.indexOf(t) !== i);
+        if (dupes.length) {
+          offenders.push(`${f.replace(process.cwd() + '/', '')} → ${[...new Set(dupes)].join(', ')}`);
+        }
+      }
+    }
+    expect(offenders).toEqual([]);
+  });
+});
