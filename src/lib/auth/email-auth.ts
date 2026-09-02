@@ -188,10 +188,10 @@ export async function verifyEmailToken(token: string): Promise<{
   });
 
   try {
-    // 1. ابحث عن token
+    // 1. ابحث عن token — لتمييز سبب الرفض في الرسالة
     const { data: tokenData, error: findErr } = await admin
       .from('email_verification_tokens')
-      .select('user_id, expires_at')
+      .select('user_id, expires_at, used_at')
       .eq('token', token)
       .maybeSingle();
 
@@ -204,29 +204,43 @@ export async function verifyEmailToken(token: string): Promise<{
       return { success: false, error: 'انتهت صلاحية الرابط' };
     }
 
-    // 3. حدّث email_verified
+    if (tokenData.used_at) {
+      return { success: false, error: 'استُعمل هذا الرابط من قبل' };
+    }
+
+    // 3. استهلك الرمز **قبل** الوثوق به، وبشرط `used_at IS NULL` في العبارة
+    //    نفسها. الفحصُ أعلاه للرسالة لا للحراسة: بين قراءةٍ وكتابةٍ منفصلتين
+    //    تتّسع نافذةٌ يمرّ منها طلبان بالرمز ذاته. وصفٌ واحدٌ يعود من هنا
+    //    يعني أنّ هذا الطلب هو الذي ظفر به.
+    const { data: claimed } = await admin
+      .from('email_verification_tokens')
+      .update({ used_at: new Date().toISOString() })
+      .eq('token', token)
+      .is('used_at', null)
+      .select('user_id')
+      .maybeSingle();
+
+    if (!claimed) {
+      return { success: false, error: 'استُعمل هذا الرابط من قبل' };
+    }
+
+    // 4. حدّث email_verified
     const { error: updateErr } = await admin
       .from('users')
       .update({
         email_verified: true,
         email_verified_at: new Date().toISOString(),
       })
-      .eq('id', tokenData.user_id);
+      .eq('id', claimed.user_id);
 
     if (updateErr) throw updateErr;
 
-    // 4. حدّث في Supabase Auth
-    await admin.auth.admin.updateUserById(tokenData.user_id, {
+    // 5. حدّث في Supabase Auth
+    await admin.auth.admin.updateUserById(claimed.user_id, {
       email_confirm: true,
     });
 
-    // 5. حدّث token status
-    await admin
-      .from('email_verification_tokens')
-      .update({ used_at: new Date().toISOString() })
-      .eq('token', token);
-
-    return { success: true, userId: tokenData.user_id };
+    return { success: true, userId: claimed.user_id };
   } catch (err) {
     return {
       success: false,
