@@ -34,6 +34,10 @@ const ROUTE = readFileSync(
 );
 const VERCEL = JSON.parse(readFileSync(join(process.cwd(), 'vercel.json'), 'utf8'));
 
+const ADMIN_DIR = join(process.cwd(), 'src', 'app', 'admin', 'settings');
+const ADMIN_ACTION = readFileSync(join(ADMIN_DIR, 'auto-reject-actions.ts'), 'utf8');
+const ADMIN_PAGE = readFileSync(join(ADMIN_DIR, 'page.tsx'), 'utf8');
+
 /** جسمُ الدالّة وحده — دون ترويسة التعليقات، كي لا يمرّ شرطٌ ذُكر في شرحٍ فقط */
 function fnBody(): string {
   const start = MIG.indexOf('CREATE OR REPLACE FUNCTION private.auto_reject_stale_pending');
@@ -97,6 +101,28 @@ describe('الرفض التلقائيّ محدودٌ بحدوده', () => {
         (c) => c.path === '/api/cron/auto-reject-pending',
       ),
     ).toBe(true);
+  });
+
+  it('المشرف يضبط المدّة من اللوحة، لا من SQL', () => {
+    expect(ADMIN_ACTION).toMatch(/from\('app_settings'\)/);
+    expect(ADMIN_ACTION).toMatch(/pending_auto_reject_hours/);
+    // للمدير العام وحده، وبتحقّقٍ من المُدخَل
+    expect(ADMIN_ACTION).toMatch(/role\s*!==\s*'super_admin'/);
+    expect(ADMIN_ACTION).toMatch(/Number\.isInteger\(hours\)/);
+    expect(ADMIN_PAGE).toMatch(/AutoRejectClient/);
+  });
+
+  it('ولا مدّةَ مفترَضةً في اللوحة أيضاً — الغيابُ صفرٌ لا ٤٨', () => {
+    // القيمة الوحيدة المسمَّرة في المستودع كلّه هي بذرةُ الصفّ في الترحيل.
+    // القيمة الوحيدة المسمَّرة في المستودع كلّه هي بذرةُ الصفّ في الترحيل.
+    // (وأوّل صياغةٍ فحصت `48` في الملفّ كلّه فسقطت على `fontSize: 48` في
+    //  بطاقةٍ لا صلةَ لها — فحُصر الفحصُ في مسار القراءة نفسه.)
+    const i = ADMIN_PAGE.indexOf('autoRejectRow');
+    expect(i).toBeGreaterThan(0);
+    const readback = ADMIN_PAGE.slice(i, ADMIN_PAGE.indexOf('return (', i));
+    expect(readback).toMatch(/autoRejectRow\?\.value\s*\?\?\s*0\b/);
+    expect(readback).not.toMatch(/\?\?\s*[1-9]/);
+    expect(ADMIN_ACTION).not.toMatch(/\b48\b/);
   });
 
   it('الدالّة للخادم وحده', () => {
