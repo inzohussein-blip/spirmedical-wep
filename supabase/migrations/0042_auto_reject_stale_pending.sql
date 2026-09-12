@@ -59,6 +59,12 @@ CREATE POLICY app_settings_admin_manage ON public.app_settings
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.app_settings TO authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.app_settings TO service_role;
 
+-- `updated_by` مفتاحٌ أجنبيّ، فيحتاج فهرساً يغطّيه (على نهج 0033): بلا
+-- فهرسٍ يمسح حذفُ مستخدمٍ الجدولَ كلَّه للتحقّق من التبعيّة.
+CREATE INDEX IF NOT EXISTS idx_app_settings_updated_by
+  ON public.app_settings (updated_by)
+  WHERE updated_by IS NOT NULL;
+
 INSERT INTO public.app_settings (key, value, description_ar) VALUES
   ('pending_auto_reject_hours', '48'::jsonb,
    'مدّة انتظار الطلب المعلَّق غير المُسنَد قبل رفضه تلقائياً، بالساعات. صفرٌ أو أقلّ يوقف الرفض التلقائيّ.')
