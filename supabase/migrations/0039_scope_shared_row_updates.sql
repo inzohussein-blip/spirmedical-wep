@@ -41,6 +41,10 @@
 CREATE OR REPLACE FUNCTION private.consultations_participants_immutable()
 RETURNS trigger
 LANGUAGE plpgsql
+-- `pg_temp` أخيراً عمداً (على نهج 0014): لو تقدّم لأمكن حجبُ جداولنا بجداول
+-- مؤقّتةٍ يُنشئها المهاجم. وسويبُ 0014 لم يبلغ هذه الدالّة لأنّه يمسح
+-- `public` وحدها، ومخطَّط `private` أُنشئ بعده في 0024.
+SET search_path = public, pg_temp
 AS $$
 BEGIN
   IF private.is_admin((SELECT auth.uid())) THEN
