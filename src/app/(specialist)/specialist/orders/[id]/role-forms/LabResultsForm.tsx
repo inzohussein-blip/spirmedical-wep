@@ -187,7 +187,7 @@ export default function LabResultsForm({ orderId, expectedTests = [], existingRe
           type="button" 
           onClick={() => startTransition(async () => { await updateLabOrderStatus(orderId, 'sample_collected'); })}
           className="scr-pill"
-          style={{ fontSize: 11 }}
+          style={{ fontSize: 12 }}
         >
           ✓ تمّ السحب
         </button>
@@ -195,7 +195,7 @@ export default function LabResultsForm({ orderId, expectedTests = [], existingRe
           type="button"
           onClick={() => startTransition(async () => { await updateLabOrderStatus(orderId, 'sent_to_lab'); })}
           className="scr-pill"
-          style={{ fontSize: 11 }}
+          style={{ fontSize: 12 }}
         >
           📤 أُرسل للمختبر
         </button>
@@ -203,7 +203,7 @@ export default function LabResultsForm({ orderId, expectedTests = [], existingRe
           type="button"
           onClick={() => startTransition(async () => { await updateLabOrderStatus(orderId, 'processing'); })}
           className="scr-pill"
-          style={{ fontSize: 11 }}
+          style={{ fontSize: 12 }}
         >
           ⚗️ قيد التحليل
         </button>
@@ -298,7 +298,7 @@ export default function LabResultsForm({ orderId, expectedTests = [], existingRe
                     style={{
                       padding: '4px 10px',
                       borderRadius: 12,
-                      fontSize: 11,
+                      fontSize: 12,
                       fontWeight: 600,
                       border: '1px solid',
                       borderColor: r.status === opt.value ? opt.color : 'var(--line)',

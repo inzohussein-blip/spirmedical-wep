@@ -96,7 +96,7 @@ export default function FamilyTargetBadge({ familyMemberId, ownerName }: Props) 
           <User size={18} />
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>الطلب لـ:</div>
+          <div style={{ fontSize: 12, color: 'var(--ink-3)' }}>الطلب لـ:</div>
           <div style={{ fontSize: 13, fontWeight: 800 }}>
             {ownerName || 'المريض'}
           </div>
@@ -150,7 +150,7 @@ export default function FamilyTargetBadge({ familyMemberId, ownerName }: Props) 
               background: 'var(--amber)',
               color: 'var(--paper-3)',
               borderRadius: 4,
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: 800,
               marginBottom: 4,
             }}
@@ -161,7 +161,7 @@ export default function FamilyTargetBadge({ familyMemberId, ownerName }: Props) 
           <div style={{ fontSize: 14, fontWeight: 800 }}>
             {target.full_name}
           </div>
-          <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 1 }}>
+          <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 1 }}>
             {RELATION_LABELS[target.relation] || target.relation}
             {age !== null && ` · ${age} سنة`}
             {target.gender && ` · ${target.gender === 'male' ? 'ذكر' : 'أنثى'}`}
@@ -184,13 +184,13 @@ export default function FamilyTargetBadge({ familyMemberId, ownerName }: Props) 
           }}
         >
           {target.chronic_conditions && target.chronic_conditions.length > 0 && (
-            <div style={{ fontSize: 11, color: 'var(--ink-2)' }}>
+            <div style={{ fontSize: 12, color: 'var(--ink-2)' }}>
               <strong style={{ color: 'var(--amber)' }}>⚕️ أمراض مزمنة:</strong>{' '}
               {target.chronic_conditions.join('، ')}
             </div>
           )}
           {target.allergies && target.allergies.length > 0 && (
-            <div style={{ fontSize: 11, color: 'var(--ink-2)' }}>
+            <div style={{ fontSize: 12, color: 'var(--ink-2)' }}>
               <strong style={{ color: 'var(--rose)' }}>⚠️ حساسيات:</strong>{' '}
               {target.allergies.join('، ')}
             </div>

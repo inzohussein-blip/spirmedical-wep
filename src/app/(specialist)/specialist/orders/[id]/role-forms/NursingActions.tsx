@@ -64,7 +64,7 @@ export default function NursingActions({ orderId, initialData }: Props) {
 
       <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 16 }}>
         <div style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>نوع الإجراء</label>
+          <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>نوع الإجراء</label>
           <div className="scr-pills">
             {ACTION_TYPES.map((t) => {
               const Icon = t.icon;
@@ -84,7 +84,7 @@ export default function NursingActions({ orderId, initialData }: Props) {
         </div>
 
         <div style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>الوصف التفصيلي</label>
+          <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>الوصف التفصيلي</label>
           <textarea
             value={data.description ?? ''}
             onChange={(e) => setData({ ...data, description: e.target.value })}
@@ -99,7 +99,7 @@ export default function NursingActions({ orderId, initialData }: Props) {
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
           <div>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الضغط</label>
+            <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الضغط</label>
             <input
               type="text"
               value={data.vitals?.bp ?? ''}
@@ -109,7 +109,7 @@ export default function NursingActions({ orderId, initialData }: Props) {
             />
           </div>
           <div>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>النبض</label>
+            <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>النبض</label>
             <input
               type="text"
               value={data.vitals?.pulse ?? ''}
@@ -119,7 +119,7 @@ export default function NursingActions({ orderId, initialData }: Props) {
             />
           </div>
           <div>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الحرارة (°C)</label>
+            <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الحرارة (°C)</label>
             <input
               type="text"
               value={data.vitals?.temp ?? ''}
@@ -129,7 +129,7 @@ export default function NursingActions({ orderId, initialData }: Props) {
             />
           </div>
           <div>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الأوكسجين SpO₂ (%)</label>
+            <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الأوكسجين SpO₂ (%)</label>
             <input
               type="text"
               value={data.vitals?.spo2 ?? ''}
@@ -141,7 +141,7 @@ export default function NursingActions({ orderId, initialData }: Props) {
         </div>
 
         <div style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>ملاحظات</label>
+          <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>ملاحظات</label>
           <textarea
             value={data.notes ?? ''}
             onChange={(e) => setData({ ...data, notes: e.target.value })}
@@ -163,7 +163,7 @@ export default function NursingActions({ orderId, initialData }: Props) {
         </button>
 
         {success && (
-          <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginTop: 8, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+          <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '8px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700, marginTop: 8, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             <CheckCircle2 size={14} strokeWidth={2.4} />
             تم الحفظ
           </div>

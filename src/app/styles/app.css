@@ -672,7 +672,7 @@
 .scr-stat-value.ink { color: var(--ink); }
 
 .scr-stat-label {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-3);
   font-weight: 700;
 }
@@ -1437,7 +1437,7 @@
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 100px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--ink);
   cursor: pointer;
@@ -1641,14 +1641,14 @@
 }
 
 .scr-list-item-subtitle {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-2);
   margin-bottom: 4px;
   line-height: 1.5;
 }
 
 .scr-list-item-meta {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-3);
   margin-bottom: 2px;
 }
@@ -1683,7 +1683,7 @@
   background: var(--paper-3);
   color: var(--ink-2);
   border-radius: 100px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -1725,7 +1725,7 @@
   background: var(--paper-3);
   border: 1px solid var(--line);
   border-radius: 100px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--ink);
   cursor: pointer;
@@ -2317,7 +2317,7 @@
 }
 
 .spec-insight-title {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-3);
   font-weight: 600;
   margin-bottom: 2px;
@@ -2331,7 +2331,7 @@
 }
 
 .spec-insight-desc {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-3);
 }
 
@@ -2692,7 +2692,7 @@
 }
 
 .spec-stats-hero-label {
-  font-size: 11px;
+  font-size: 12px;
   opacity: 0.85;
   font-weight: 600;
   margin-bottom: 8px;
@@ -2713,7 +2713,7 @@
 }
 
 .spec-stats-hero-meta {
-  font-size: 11px;
+  font-size: 12px;
   opacity: 0.85;
 }
 
@@ -3000,7 +3000,7 @@
 .inbox-stat-value.amber { color: var(--amber); }
 
 .inbox-stat-label {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-3);
   font-weight: 600;
 }
@@ -5355,7 +5355,7 @@
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 100px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--ink);
   cursor: pointer;
@@ -7035,3 +7035,16 @@
    في آخر الملفّ عمداً: `.scr-search` معرَّفٌ مرّتين أعلاه، والأخيرُ يغلب. */
 .scr-search { padding-block: 0; }
 .scr-search input { align-self: stretch; padding-block: 12px; min-height: 44px; }
+
+/* ─── بطاقات إحصاء المختص: الرقمُ هو المعلومة ───
+   كانت تستعير .service-title (12px) للرقم و.service-desc للتسمية، فبدا
+   «١ طلب جديد» أصغرَ من كلمة «طلبات جديدة». */
+.service-card.spec-stat { min-height: 0; }
+.service-card.spec-stat .service-icon { font-size: 22px; margin-bottom: 6px; }
+.service-card.spec-stat .spec-stat-value {
+  font-size: 26px;
+  line-height: 1.1;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 2px;
+}

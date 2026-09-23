@@ -57,15 +57,15 @@ export default function MealPlan({ orderId, initialData }: { orderId: string; in
       <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 16 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 16 }}>
           <div>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الوزن الحالي (كغ)</label>
+            <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الوزن الحالي (كغ)</label>
             <input type="text" value={data.current_weight ?? ''} onChange={(e) => setData({ ...data, current_weight: e.target.value })} placeholder="80" style={inputStyle} />
           </div>
           <div>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الوزن المستهدف</label>
+            <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>الوزن المستهدف</label>
             <input type="text" value={data.target_weight ?? ''} onChange={(e) => setData({ ...data, target_weight: e.target.value })} placeholder="72" style={inputStyle} />
           </div>
           <div>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>سعرات يومية</label>
+            <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 2 }}>سعرات يومية</label>
             <input type="text" value={data.daily_calories ?? ''} onChange={(e) => setData({ ...data, daily_calories: e.target.value })} placeholder="1800" style={inputStyle} />
           </div>
         </div>
@@ -74,7 +74,7 @@ export default function MealPlan({ orderId, initialData }: { orderId: string; in
           const Icon = f.icon;
           return (
             <div key={f.key} style={{ marginBottom: 12 }}>
-              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>
+              <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>
                 <Icon size={12} strokeWidth={2.2} aria-hidden />
                 {f.label}
               </label>
@@ -99,7 +99,7 @@ export default function MealPlan({ orderId, initialData }: { orderId: string; in
           {isPending ? 'جارٍ الحفظ...' : 'حفظ الخطة'}
         </button>
         {success && (
-          <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginTop: 8, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+          <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '8px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700, marginTop: 8, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             <CheckCircle2 size={14} strokeWidth={2.4} />
             تم الحفظ
           </div>

@@ -98,7 +98,7 @@ export default async function SpecialistDashboard() {
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 12, opacity: 0.85, fontWeight: 700 }}>أهلاً</div>
               <div style={{ fontSize: 16, fontWeight: 800 }}>{profile?.full_name ?? 'أخصائي'}</div>
-              <div style={{ fontSize: 11, opacity: 0.9, marginTop: 2 }}>{meta.label}</div>
+              <div style={{ fontSize: 12, opacity: 0.9, marginTop: 2 }}>{meta.label}</div>
             </div>
           </div>
         </div>
@@ -108,24 +108,24 @@ export default async function SpecialistDashboard() {
           <div className="scr-section-title">إحصائيات اليوم</div>
         </div>
         <div className="services-grid">
-          <Link href="/specialist/orders?filter=new" className="service-card service-rose" style={{ textDecoration: 'none' }}>
+          <Link href="/specialist/orders?filter=new" className="service-card service-rose spec-stat" style={{ textDecoration: 'none' }}>
             <div className="service-icon" aria-hidden="true">📥</div>
-            <div className="service-title">{newOrders ?? 0}</div>
+            <div className="service-title spec-stat-value">{newOrders ?? 0}</div>
             <div className="service-desc">طلبات جديدة</div>
           </Link>
-          <Link href="/specialist/orders?filter=in_progress" className="service-card service-amber" style={{ textDecoration: 'none' }}>
+          <Link href="/specialist/orders?filter=in_progress" className="service-card service-amber spec-stat" style={{ textDecoration: 'none' }}>
             <div className="service-icon" aria-hidden="true">🔄</div>
-            <div className="service-title">{inProgressOrders ?? 0}</div>
+            <div className="service-title spec-stat-value">{inProgressOrders ?? 0}</div>
             <div className="service-desc">قيد التنفيذ</div>
           </Link>
-          <Link href="/specialist/orders?filter=completed" className="service-card service-default" style={{ textDecoration: 'none' }}>
+          <Link href="/specialist/orders?filter=completed" className="service-card service-default spec-stat" style={{ textDecoration: 'none' }}>
             <div className="service-icon" aria-hidden="true">✅</div>
-            <div className="service-title">{completedToday ?? 0}</div>
+            <div className="service-title spec-stat-value">{completedToday ?? 0}</div>
             <div className="service-desc">مكتمل اليوم</div>
           </Link>
-          <div className="service-card service-default">
+          <div className="service-card service-default spec-stat">
             <div className="service-icon" aria-hidden="true">⭐</div>
-            <div className="service-title">{avgRating}</div>
+            <div className="service-title spec-stat-value">{avgRating}</div>
             <div className="service-desc">تقييمك</div>
           </div>
         </div>

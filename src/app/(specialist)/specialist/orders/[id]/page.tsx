@@ -188,7 +188,7 @@ export default async function SpecialistOrderDetailPage({
           <div style={{ fontSize: 28 }}>{meta.icon}</div>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 14, fontWeight: 800 }}>{order.service_type}</div>
-            <div style={{ fontSize: 11, opacity: 0.9 }}>{meta.label}</div>
+            <div style={{ fontSize: 12, opacity: 0.9 }}>{meta.label}</div>
           </div>
           <span className={`scr-tag ${status.color}`} style={{ background: 'rgba(255,255,255,0.2)', color: 'var(--white)' }}>
             {status.label}
@@ -215,7 +215,7 @@ export default async function SpecialistOrderDetailPage({
               <div className="scr-list-item-subtitle">{patient?.governorate ?? '—'}</div>
             </div>
             {patient?.phone && (
-              <a href={`tel:${patient.phone}`} className="scr-action-btn">
+              <a href={`tel:${patient.phone}`} className="scr-action-btn" aria-label="اتصال بالمريض">
                 <Phone size={16} strokeWidth={2.2} />
               </a>
             )}

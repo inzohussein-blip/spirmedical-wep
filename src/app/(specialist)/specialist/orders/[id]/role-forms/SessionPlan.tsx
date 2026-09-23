@@ -54,7 +54,7 @@ export default function SessionPlan({ orderId, initialData }: { orderId: string;
           const Icon = f.icon;
           return (
             <div key={f.key} style={{ marginBottom: 12 }}>
-              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>
+              <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>
                 <Icon size={12} strokeWidth={2.2} aria-hidden />
                 {f.label}
               </label>
@@ -70,7 +70,7 @@ export default function SessionPlan({ orderId, initialData }: { orderId: string;
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 12 }}>
           <div>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>عدد الجلسات</label>
+            <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>عدد الجلسات</label>
             <input
               type="text"
               value={data.sessions_count ?? ''}
@@ -80,7 +80,7 @@ export default function SessionPlan({ orderId, initialData }: { orderId: string;
             />
           </div>
           <div>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>الجلسة التالية</label>
+            <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>الجلسة التالية</label>
             <input
               type="text"
               value={data.next_session ?? ''}
@@ -102,7 +102,7 @@ export default function SessionPlan({ orderId, initialData }: { orderId: string;
           {isPending ? 'جارٍ الحفظ...' : 'حفظ الخطة'}
         </button>
         {success && (
-          <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginTop: 8, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+          <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '8px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700, marginTop: 8, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             <CheckCircle2 size={14} strokeWidth={2.4} />
             تم الحفظ
           </div>

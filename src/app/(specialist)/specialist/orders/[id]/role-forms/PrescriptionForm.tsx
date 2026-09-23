@@ -73,7 +73,7 @@ export default function PrescriptionForm({ orderId, initialData }: Props) {
 
       <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 14, padding: 16 }}>
         <div style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>التشخيص</label>
+          <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>التشخيص</label>
           <textarea
             value={data.diagnosis ?? ''}
             onChange={(e) => setData({ ...data, diagnosis: e.target.value })}
@@ -85,7 +85,7 @@ export default function PrescriptionForm({ orderId, initialData }: Props) {
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
           <div className="scr-section-title" style={{ fontSize: 12 }}>الأدوية ({(data.medications ?? []).length})</div>
-          <button type="button" onClick={addMed} style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', border: 0, padding: '4px 12px', borderRadius: 100, fontSize: 11, fontWeight: 800, cursor: 'pointer' }}>+ دواء</button>
+          <button type="button" onClick={addMed} style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', border: 0, padding: '4px 12px', borderRadius: 100, fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>+ دواء</button>
         </div>
 
         {(data.medications ?? []).length === 0 ? (
@@ -133,7 +133,7 @@ export default function PrescriptionForm({ orderId, initialData }: Props) {
                   placeholder="ملاحظات (بعد الأكل، إلخ)"
                   style={inputStyle}
                 />
-                <button type="button" onClick={() => removeMed(i)} style={{ marginTop: 8, background: 'var(--rose-soft)', color: 'var(--rose)', border: 0, padding: '4px 10px', borderRadius: 6, fontSize: 11, fontWeight: 800, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <button type="button" onClick={() => removeMed(i)} style={{ marginTop: 8, background: 'var(--rose-soft)', color: 'var(--rose)', border: 0, padding: '4px 10px', borderRadius: 6, fontSize: 12, fontWeight: 800, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                   <Trash2 size={12} strokeWidth={2.2} />
                   حذف
                 </button>
@@ -143,7 +143,7 @@ export default function PrescriptionForm({ orderId, initialData }: Props) {
         )}
 
         <div style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>تعليمات إضافية</label>
+          <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>تعليمات إضافية</label>
           <textarea
             value={data.instructions ?? ''}
             onChange={(e) => setData({ ...data, instructions: e.target.value })}
@@ -154,7 +154,7 @@ export default function PrescriptionForm({ orderId, initialData }: Props) {
         </div>
 
         <div style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>المراجعة (Follow-up)</label>
+          <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>المراجعة (Follow-up)</label>
           <input
             type="text"
             value={data.follow_up ?? ''}
@@ -176,7 +176,7 @@ export default function PrescriptionForm({ orderId, initialData }: Props) {
         </button>
 
         {success && (
-          <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginTop: 8, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+          <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '8px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700, marginTop: 8, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             <CheckCircle2 size={14} strokeWidth={2.4} />
             تم الحفظ
           </div>

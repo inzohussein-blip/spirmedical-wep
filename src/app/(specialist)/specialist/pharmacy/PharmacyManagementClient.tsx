@@ -162,7 +162,7 @@ export default function PharmacyManagementClient({
               <h2 style={{ fontSize: 18, fontWeight: 900, margin: 0 }}>
                 {pharmacy.name}
               </h2>
-              <p style={{ fontSize: 11, opacity: 0.85, margin: '2px 0 0' }}>
+              <p style={{ fontSize: 12, opacity: 0.85, margin: '2px 0 0' }}>
                 {pharmacy.city} · {pharmacy.district}
               </p>
             </div>
@@ -333,7 +333,7 @@ function StatBox({ label, value, highlight, icon }: {
     >
       {icon && <div style={{ fontSize: 14, marginBottom: 2 }}>{icon}</div>}
       <div style={{ fontSize: 18, fontWeight: 900 }}>{value}</div>
-      <div style={{ fontSize: 11, opacity: 0.85 }}>{label}</div>
+      <div style={{ fontSize: 12, opacity: 0.85 }}>{label}</div>
     </div>
   );
 }
@@ -403,25 +403,25 @@ function InventoryRow({
           <div style={{ fontSize: 13, fontWeight: 800 }}>
             {medication.name_ar}
             {medication.strength && (
-              <span style={{ fontSize: 11, color: 'var(--ink-3)', marginInlineStart: 4 }}>
+              <span style={{ fontSize: 12, color: 'var(--ink-3)', marginInlineStart: 4 }}>
                 {medication.strength}
               </span>
             )}
           </div>
           {medication.name_en && (
-            <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 1 }}>
+            <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 1 }}>
               {medication.name_en}
             </div>
           )}
           {medication.manufacturer && (
-            <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
+            <div style={{ fontSize: 12, color: 'var(--ink-3)' }}>
               {medication.manufacturer}
             </div>
           )}
           {item.searched_count > 0 && (
             <div
               style={{
-                fontSize: 11,
+                fontSize: 12,
                 color: 'var(--emerald)',
                 marginTop: 4,
                 display: 'flex',
@@ -478,7 +478,7 @@ function InventoryRow({
                     borderRadius: 8,
                     cursor: 'pointer',
                     fontFamily: 'inherit',
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: 800,
                     display: 'flex',
                     alignItems: 'center',
@@ -499,7 +499,7 @@ function InventoryRow({
                     borderRadius: 8,
                     cursor: 'pointer',
                     fontFamily: 'inherit',
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: 700,
                   }}
                 >
@@ -517,7 +517,7 @@ function InventoryRow({
                 display: 'flex',
                 flexWrap: 'wrap',
                 gap: 4,
-                fontSize: 11,
+                fontSize: 12,
               }}
             >
               {item.brand_variant && (
@@ -766,13 +766,13 @@ function AddMedicationModal({
                     <div style={{ fontSize: 12, fontWeight: 800 }}>
                       {m.name_ar}
                       {m.strength && (
-                        <span style={{ fontSize: 11, color: 'var(--ink-3)', marginInlineStart: 4 }}>
+                        <span style={{ fontSize: 12, color: 'var(--ink-3)', marginInlineStart: 4 }}>
                           {m.strength}
                         </span>
                       )}
                     </div>
                     {m.name_en && (
-                      <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
+                      <div style={{ fontSize: 12, color: 'var(--ink-3)' }}>
                         {m.name_en}
                         {m.manufacturer && ` · ${m.manufacturer}`}
                       </div>

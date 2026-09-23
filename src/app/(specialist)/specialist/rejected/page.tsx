@@ -35,7 +35,7 @@ export default async function RejectedPage() {
 
         {profile?.rejection_reason && (
           <div style={{ background: 'var(--rose-soft)', padding: 16, borderRadius: 12, marginBottom: 20 }}>
-            <div style={{ fontSize: 11, color: 'var(--rose)', fontWeight: 800, marginBottom: 4 }}>السبب:</div>
+            <div style={{ fontSize: 12, color: 'var(--rose)', fontWeight: 800, marginBottom: 4 }}>السبب:</div>
             <div style={{ fontSize: 13, color: 'var(--ink)' }}>{profile.rejection_reason}</div>
           </div>
         )}
