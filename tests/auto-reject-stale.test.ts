@@ -37,6 +37,10 @@ const VERCEL = JSON.parse(readFileSync(join(process.cwd(), 'vercel.json'), 'utf8
 const ADMIN_DIR = join(process.cwd(), 'src', 'app', 'admin', 'settings');
 const ADMIN_ACTION = readFileSync(join(ADMIN_DIR, 'auto-reject-actions.ts'), 'utf8');
 const ADMIN_PAGE = readFileSync(join(ADMIN_DIR, 'page.tsx'), 'utf8');
+const SETTINGS_KEYS = readFileSync(
+  join(process.cwd(), 'src', 'lib', 'app-settings.ts'),
+  'utf8',
+);
 
 /** جسمُ الدالّة وحده — دون ترويسة التعليقات، كي لا يمرّ شرطٌ ذُكر في شرحٍ فقط */
 function fnBody(): string {
@@ -105,7 +109,12 @@ describe('الرفض التلقائيّ محدودٌ بحدوده', () => {
 
   it('المشرف يضبط المدّة من اللوحة، لا من SQL', () => {
     expect(ADMIN_ACTION).toMatch(/from\('app_settings'\)/);
-    expect(ADMIN_ACTION).toMatch(/pending_auto_reject_hours/);
+    // المفتاحُ في وحدةٍ عاديّة لا في ملفّ `'use server'` (انظر
+    // tests/use-server-exports.test.ts)، فيُتتبَّع إليها: الثابتُ قيمتُه
+    // مفتاحُ الترحيل، والاستعلامُ يستعمله هو لا نصّاً منسوخاً.
+    expect(SETTINGS_KEYS).toMatch(/AUTO_REJECT_KEY\s*=\s*'pending_auto_reject_hours'/);
+    expect(ADMIN_ACTION).toMatch(/import\s*\{\s*AUTO_REJECT_KEY\s*\}\s*from\s*'@\/lib\/app-settings'/);
+    expect(ADMIN_ACTION).toMatch(/\.eq\(\s*'key'\s*,\s*AUTO_REJECT_KEY\s*\)/);
     // للمدير العام وحده، وبتحقّقٍ من المُدخَل
     expect(ADMIN_ACTION).toMatch(/role\s*!==\s*'super_admin'/);
     expect(ADMIN_ACTION).toMatch(/Number\.isInteger\(hours\)/);
