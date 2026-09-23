@@ -1,8 +1,9 @@
 'use client';
 
+import ModalShell, { ModalCloseButton } from '@/components/ui/ModalShell';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { X, Home, Building2, Video, Calendar, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Home, Building2, Video, Calendar, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { formatPrice } from '@/lib/format/price';
 import { createDoctorAppointment } from '@/app/(dashboard)/services/doctors/[id]/actions';
 import HapticButton from '@/components/pwa/HapticButton';
@@ -137,43 +138,17 @@ export default function DoctorBookingModal({ doctor, defaultType, onClose, userA
   const maxDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
   return (
-    <div 
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(0,0,0,0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000,
-        padding: 16,
-      }}
-      onClick={onClose}
-    >
-      <div 
-        style={{
-          background: 'var(--white)',
-          borderRadius: 16,
-          padding: 20,
-          width: '100%',
-          maxWidth: 480,
-          maxHeight: '90vh',
-          overflowY: 'auto',
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
+    <ModalShell onClose={onClose} labelledBy="dbm-title">
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
           <div>
-            <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>
+            <h2 id="dbm-title" style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>
               حجز موعد
             </h2>
             <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 2 }}>
               مع {doctor.title} {doctor.full_name}
             </div>
           </div>
-          <button onClick={onClose} style={{ background: 'transparent', border: 0, cursor: 'pointer' }}>
-            <X size={22} strokeWidth={2.2} />
-          </button>
+          <ModalCloseButton onClick={onClose} />
         </div>
 
         {/* نوع الموعد */}
@@ -210,7 +185,7 @@ export default function DoctorBookingModal({ doctor, defaultType, onClose, userA
                   <Icon size={20} strokeWidth={2.2} aria-hidden />
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 13, fontWeight: 700 }}>{meta.label}</div>
-                    <div style={{ fontSize: 11, opacity: isSelected ? 0.9 : 0.6 }}>{meta.description}</div>
+                    <div style={{ fontSize: 12, opacity: isSelected ? 0.9 : 0.6 }}>{meta.description}</div>
                   </div>
                   {formatPrice(typePrice) && (
                     <div style={{ fontSize: 13, fontWeight: 800 }}>
@@ -226,7 +201,7 @@ export default function DoctorBookingModal({ doctor, defaultType, onClose, userA
         {/* التاريخ والوقت */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
           <div>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-2)', display: 'block', marginBottom: 4 }}>
+            <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-2)', display: 'block', marginBottom: 4 }}>
               التاريخ *
             </label>
             <input
@@ -239,7 +214,7 @@ export default function DoctorBookingModal({ doctor, defaultType, onClose, userA
             />
           </div>
           <div>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-2)', display: 'block', marginBottom: 4 }}>
+            <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-2)', display: 'block', marginBottom: 4 }}>
               الوقت *
             </label>
             <input
@@ -256,7 +231,7 @@ export default function DoctorBookingModal({ doctor, defaultType, onClose, userA
         {/* العنوان (للزيارة المنزلية) */}
         {type === 'home_visit' && (
           <div style={{ marginBottom: 12 }}>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-2)', display: 'block', marginBottom: 4 }}>
+            <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-2)', display: 'block', marginBottom: 4 }}>
               العنوان المفصّل *
             </label>
             <textarea
@@ -271,7 +246,7 @@ export default function DoctorBookingModal({ doctor, defaultType, onClose, userA
 
         {/* سبب الزيارة */}
         <div style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-2)', display: 'block', marginBottom: 4 }}>
+          <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-2)', display: 'block', marginBottom: 4 }}>
             سبب الزيارة *
           </label>
           <input
@@ -286,7 +261,7 @@ export default function DoctorBookingModal({ doctor, defaultType, onClose, userA
 
         {/* الأدوية الحالية */}
         <div style={{ marginBottom: 12 }}>
-          <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-2)', display: 'block', marginBottom: 4 }}>
+          <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-2)', display: 'block', marginBottom: 4 }}>
             الأدوية الحالية (اختياري)
           </label>
           <textarea
@@ -300,7 +275,7 @@ export default function DoctorBookingModal({ doctor, defaultType, onClose, userA
 
         {/* ملاحظات إضافية */}
         <div style={{ marginBottom: 16 }}>
-          <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-2)', display: 'block', marginBottom: 4 }}>
+          <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-2)', display: 'block', marginBottom: 4 }}>
             ملاحظات إضافية (اختياري)
           </label>
           <textarea
@@ -381,7 +356,6 @@ export default function DoctorBookingModal({ doctor, defaultType, onClose, userA
             </>
           )}
         </HapticButton>
-      </div>
-    </div>
+    </ModalShell>
   );
 }

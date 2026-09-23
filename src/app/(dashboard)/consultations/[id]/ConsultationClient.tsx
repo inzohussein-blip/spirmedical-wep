@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 import Link from 'next/link';
 import {
   ArrowRight, Send, Image as ImageIcon, FileText, X,
@@ -596,6 +597,7 @@ function ShareRecordModal({
     date: string;
     summary?: string;
   }>>([]);
+  const dialogRef = useModalDialog(true, onClose);
   const [loading, setLoading] = useState(true);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isPending, startTransition] = useTransition();
@@ -653,21 +655,26 @@ function ShareRecordModal({
       onClick={onClose}
     >
       <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="share-record-title"
         onClick={(e) => e.stopPropagation()}
         style={{
           background: 'var(--paper)',
           width: '100%',
           maxWidth: 500,
-          maxHeight: '85vh',
+          maxHeight: '85dvh',
           borderRadius: '20px 20px 0 0',
-          padding: 16,
+          padding: '16px 16px calc(16px + env(safe-area-inset-bottom))',
+          outline: 'none',
           display: 'flex',
           flexDirection: 'column',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
-          <h3 style={{ fontSize: 16, fontWeight: 900, margin: 0, flex: 1 }}>
-            <FileText size={16} style={{ display: 'inline', verticalAlign: -2, marginInlineEnd: 6 }} />
+          <h3 id="share-record-title" style={{ fontSize: 16, fontWeight: 900, margin: 0, flex: 1 }}>
+            <FileText size={16} aria-hidden style={{ display: 'inline', verticalAlign: -2, marginInlineEnd: 6 }} />
             مشاركة سجل طبي
           </h3>
           <button
@@ -675,8 +682,9 @@ function ShareRecordModal({
             onClick={onClose}
             aria-label="إغلاق"
             style={{
-              width: 32,
-              height: 32,
+              width: 44,
+              height: 44,
+              flexShrink: 0,
               background: 'var(--paper-3)',
               border: 'none',
               borderRadius: '50%',
@@ -686,11 +694,11 @@ function ShareRecordModal({
               justifyContent: 'center',
             }}
           >
-            <X size={16} />
+            <X size={18} aria-hidden />
           </button>
         </div>
 
-        <p style={{ fontSize: 11, color: 'var(--ink-3)', margin: '0 0 12px' }}>
+        <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '0 0 12px' }}>
           اختر السجلات الطبية التي تريد مشاركتها مع الطبيب
         </p>
 

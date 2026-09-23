@@ -18,6 +18,7 @@ import { toast } from '@/components/ui/Toaster';
 import { markLocationUsed } from '@/app/(dashboard)/account/locations/actions';
 import { submitErrorMessage } from '@/lib/forms/submit-error';
 import FamilyMemberPicker from '@/components/family/FamilyMemberPicker';
+import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
 import {
   Droplet, Search, Star, User, MapPin, Building2, Calendar,
   TestTube, Clock, CheckCircle2, BarChart3, Lock, X, Loader2,
@@ -792,88 +793,91 @@ export default function BloodDrawFlow({
         )}
       </div>
 
-      {/* ═══ Sticky Footer للسعر والإرسال ═══ */}
+      {/* ═══ ملخّص الطلب — داخل الصفحة لا في الشريط الثابت ═══
+          كان التفصيلُ وملخّصُ الحقول الناقصة وسطرُ الثقة كلُّها في الشريط
+          الثابت، فبلغ ارتفاعُه ربعَ شاشة 640px ونما إلى ٢٥٠px عند الخطأ. */}
+      {selectedTests.length > 0 && (
+        <div className="bd-price-card">
+          <div className="bd-price-title">ملخّص الطلب</div>
+          {SHOW_PRICES ? (
+            <>
+              <div className="bd-price-line">
+                <span>التحاليل ({selectedTests.length})</span>
+                <span>{formatTestPrice(total)}</span>
+              </div>
+              <div className="bd-price-line">
+                <span>زيارة فني المختبر</span>
+                <span>{formatTestPrice(BLOOD_DRAW_PRICE)}</span>
+              </div>
+              <div className="bd-price-line bd-price-total">
+                <span>الإجمالي</span>
+                <strong>{formatTestPrice(totalWithDrawing)}</strong>
+              </div>
+            </>
+          ) : (
+            <div className="bd-price-line bd-price-total">
+              <span>التحاليل المختارة</span>
+              <strong>{selectedTests.length}</strong>
+            </div>
+          )}
+          {resultTime && (
+            <div className="bd-result-eta">
+              <BarChart3 size={14} strokeWidth={2.2} aria-hidden />
+              <span>النتيجة جاهزة خلال <strong>{resultTime}</strong> من السحب</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="bd-trust-row">
+        <Lock size={12} strokeWidth={2.2} aria-hidden />
+        <span>معلوماتك مشفّرة · صناعة عراقية ·</span>
+        <Star size={12} strokeWidth={2.4} fill="currentColor" aria-hidden />
+        <span>معتمد طبياً</span>
+      </div>
+
+      {/* ═══ الشريط الثابت: سطرٌ واحد — الملخّص وزرّ الإرسال ═══ */}
       <div className="bd-sticky-footer">
-        {/* ✨ صندوق «الحقول الناقصة» — يظهر عند محاولة إرسال ناقصة، وكل بند قابل للنقر */}
         {missingFields.length > 0 && (
-          <div className="bd-missing-summary" role="alert">
-            <div className="bd-missing-head">
-              <AlertTriangle size={14} strokeWidth={2.6} aria-hidden />
-              <span>لإتمام الطلب، أكمل هذه الحقول:</span>
-            </div>
-            <div className="bd-missing-chips">
-              {missingFields.map((f) => (
-                <button
-                  key={f}
-                  type="button"
-                  className="bd-missing-chip"
-                  onClick={() => {
-                    const el = fieldRefs[f]?.current;
-                    el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    setTimeout(
-                      () => (el as HTMLInputElement | null)?.focus?.({ preventScroll: true }),
-                      300,
-                    );
-                  }}
-                >
-                  {BLOOD_DRAW_FIELD_LABELS[f] || f}
-                  <span className="bd-missing-chip-hint">{fieldErrors[f]}</span>
-                </button>
-              ))}
-            </div>
+          <div className="bd-missing-wrap">
+            <MissingFieldsSummary
+              compact
+              fields={missingFields}
+              labels={BLOOD_DRAW_FIELD_LABELS}
+              errors={fieldErrors as Record<string, string>}
+              onJump={() => focusFirstError(fieldErrors)}
+            />
           </div>
         )}
 
-        {selectedTests.length > 0 && (
-          <div className="bd-price-card">
-            {SHOW_PRICES ? (
+        <div className="bd-footer-row">
+          <div className="bd-footer-sum" aria-live="polite">
+            {selectedTests.length === 0 ? (
+              <span>لم تختر تحليلاً بعد</span>
+            ) : SHOW_PRICES ? (
               <>
-                <div className="bd-price-line">
-                  <span>التحاليل ({selectedTests.length})</span>
-                  <span>{formatTestPrice(total)}</span>
-                </div>
-                <div className="bd-price-line">
-                  <span>زيارة فني المختبر</span>
-                  <span>{formatTestPrice(BLOOD_DRAW_PRICE)}</span>
-                </div>
-                <div className="bd-price-line bd-price-total">
-                  <span>الإجمالي</span>
-                  <strong>{formatTestPrice(totalWithDrawing)}</strong>
-                </div>
+                <span>الإجمالي</span>
+                <strong>{formatTestPrice(totalWithDrawing)}</strong>
               </>
             ) : (
-              <div className="bd-price-line bd-price-total">
+              <>
                 <span>التحاليل المختارة</span>
                 <strong>{selectedTests.length}</strong>
-              </div>
-            )}
-            {resultTime && (
-              <div className="bd-result-eta">
-                <BarChart3 size={14} strokeWidth={2.2} aria-hidden />
-                <span>النتيجة جاهزة خلال <strong>{resultTime}</strong> من السحب</span>
-              </div>
+              </>
             )}
           </div>
-        )}
-
-        <button
-          type="button"
-          className="bd-submit-btn"
-          disabled={submitting}
-          onClick={handleSubmit}
-        >
-          {submitting ? (
-            <><Loader2 size={16} strokeWidth={2.2} style={{ animation: 'spin-smooth 1s linear infinite' }} /> جارٍ إرسال الطلب...</>
-          ) : (
-            <><CheckCircle2 size={16} strokeWidth={2.2} /> اطلب الفحص</>
-          )}
-        </button>
-
-        <div className="bd-trust-row">
-          <Lock size={12} strokeWidth={2.2} aria-hidden />
-          <span>معلوماتك مشفّرة · صناعة عراقية ·</span>
-          <Star size={12} strokeWidth={2.4} fill="currentColor" aria-hidden />
-          <span>معتمد طبياً</span>
+          <button
+            type="button"
+            className="bd-submit-btn"
+            disabled={submitting}
+            onClick={handleSubmit}
+          >
+            {submitting ? (
+              <><Loader2 size={16} strokeWidth={2.2} style={{ animation: 'spin-smooth 1s linear infinite' }} /> جارٍ الإرسال...</>
+            ) : (
+              <><CheckCircle2 size={16} strokeWidth={2.2} /> اطلب الفحص</>
+            )}
+          </button>
         </div>
       </div>
 
@@ -882,7 +886,8 @@ export default function BloodDrawFlow({
           display: flex;
           flex-direction: column;
           gap: 14px;
-          padding-bottom: 130px;
+          /* ارتفاع الشريط الثابت (~76px) + سطر الحقول الناقصة إن ظهر */
+          padding-bottom: 136px;
           position: relative;
         }
 
@@ -1447,83 +1452,66 @@ export default function BloodDrawFlow({
           margin-top: 5px;
         }
 
-        /* ─── صندوق «الحقول الناقصة» (فوق زر الإرسال) ─── */
-        .bd-missing-summary {
-          background: var(--rose-soft, #FCE8E6);
-          border: 1px solid var(--rose, #C71C56);
-          border-radius: 12px;
-          padding: 10px 12px;
-          margin-bottom: 10px;
-        }
-        .bd-missing-head {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          color: var(--rose, #C71C56);
-          font-size: 12px;
-          font-weight: 800;
+        .bd-missing-wrap {
           margin-bottom: 8px;
-        }
-        .bd-missing-chips {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 6px;
-        }
-        .bd-missing-chip {
-          display: inline-flex;
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 1px;
-          padding: 6px 11px;
-          background: var(--white, #FFFFFF);
-          border: 1px solid var(--rose, #C71C56);
-          border-radius: 10px;
-          font-size: 12px;
-          font-weight: 800;
-          color: var(--rose, #C71C56);
-          cursor: pointer;
-          transition: all 0.15s;
-          font-family: inherit;
-          text-align: start;
-        }
-        .bd-missing-chip:hover {
-          background: var(--rose, #C71C56);
-          color: var(--white, #FFFFFF);
-          transform: translateY(-1px);
-        }
-        .bd-missing-chip-hint {
-          font-size: 11px;
-          font-weight: 600;
-          opacity: 0.85;
         }
 
         /* ─── STICKY FOOTER (داخل حدود التطبيق 480px) ─── */
         .bd-sticky-footer {
           position: fixed;
-          bottom: 64px; /* فوق الـ bottom-nav مباشرة */
+          /* شريط التنقّل السفليّ مخفيّ في صفحة الطلب (AppShell)، فالشريط
+             يستقرّ على الحافّة ويتجنّب منطقة المؤشّر في iOS. */
+          bottom: 0;
           left: 0;
           right: 0;
           margin: 0 auto;
           width: 100%;
           max-width: 480px;
           background: var(--white, #FFFFFF);
-          padding: 10px 14px 12px;
+          padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
           z-index: 35;
           box-sizing: border-box;
           border-top: 1px solid var(--line, rgba(15, 26, 28, 0.08));
-          transition: all 0.2s ease;
+          box-shadow: 0 -6px 16px -10px rgba(15, 26, 28, 0.25);
+        }
+        .bd-footer-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .bd-footer-sum {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+          flex: 1;
+          font-size: 12px;
+          font-weight: 700;
+          color: var(--ink-3, #5F6368);
+          line-height: 1.3;
+        }
+        .bd-footer-sum strong {
+          font-size: 16px;
+          font-weight: 800;
+          color: var(--emerald, #01875F);
+          font-family: 'JetBrains Mono', monospace;
         }
         .bd-price-card {
           background: var(--paper-3, #FFFFFF);
-          border-radius: 11px;
-          padding: 10px 12px;
-          margin-bottom: 10px;
+          border: 1px solid var(--line, rgba(15, 26, 28, 0.08));
+          border-radius: 12px;
+          padding: 12px 14px;
+        }
+        .bd-price-title {
+          font-size: 13px;
+          font-weight: 800;
+          color: var(--ink, #202124);
+          margin-bottom: 6px;
         }
         .bd-price-line {
           display: flex;
           justify-content: space-between;
-          padding: 2px 0;
-          font-size: 11px;
+          padding: 3px 0;
+          font-size: 12px;
           color: var(--ink-2, #3C4043);
         }
         .bd-price-total {
@@ -1542,14 +1530,18 @@ export default function BloodDrawFlow({
           font-family: 'JetBrains Mono', monospace;
         }
         .bd-result-eta {
-          font-size: 11px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 12px;
           color: var(--emerald-deep, #056559);
           margin-top: 6px;
           padding-top: 6px;
           border-top: 1px dashed var(--line, rgba(15, 26, 28, 0.08));
         }
         .bd-submit-btn {
-          width: 100%;
+          flex: 1.4;
+          min-height: 48px;
           background: var(--emerald, #01875F);
           color: var(--paper-3, #FFFFFF);
           border: 0;
@@ -1586,7 +1578,6 @@ export default function BloodDrawFlow({
           gap: 4px;
           font-size: 12px;
           color: var(--ink-3, #5F6368);
-          margin-top: 7px;
         }
         /* ✨ V25.1: Saved Locations chips */
         .bd-saved-locations {

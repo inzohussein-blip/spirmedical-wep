@@ -510,10 +510,10 @@ export default function ChatWindow({
         >
           {isPending ? (
             <Loader2 size={18} strokeWidth={2.2} style={{ animation: 'spin-smooth 1s linear infinite' }} />
-          ) : inputValue.trim() ? (
-            <Send size={18} strokeWidth={2.2} />
           ) : (
-            <Mic size={18} strokeWidth={2.2} />
+            // لا ميكروفون حين يفرغ الحقل: الزرّ معطَّلٌ ولا تسجيلَ صوتيّ
+            // في التطبيق، فكان يَعِد بما لا يفعله.
+            <Send size={18} strokeWidth={2.2} aria-hidden />
           )}
         </button>
       </div>

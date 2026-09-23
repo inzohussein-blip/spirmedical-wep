@@ -11,7 +11,7 @@ import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
 import { ALL_LABS } from '@/lib/services/labs-data';
 import { createAppointmentV2, createBloodDrawOrder, createNursingAppointment } from './actions';
 import { track } from '@/lib/analytics';
-import { FlaskConical, AlertTriangle, Briefcase, MessageCircle, Syringe } from 'lucide-react';
+import { FlaskConical, AlertTriangle, Briefcase, MessageCircle, Syringe, ChevronRight } from 'lucide-react';
 
 interface Props {
   service: string;
@@ -253,7 +253,7 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
             fontWeight: 700,
           }}
         >
-          <span>←</span><span>الرئيسية</span>
+          <ChevronRight size={14} strokeWidth={2.4} aria-hidden /><span>الرئيسية</span>
         </Link>
         <h1 style={{
           fontSize: '15px',

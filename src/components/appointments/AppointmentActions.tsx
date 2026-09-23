@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 import { cancelAppointment } from '@/app/(dashboard)/appointments/[id]/actions';
 import { Phone, MessageCircle, MapPin, X, RefreshCw, AlertTriangle } from 'lucide-react';
 
@@ -25,6 +26,9 @@ export default function AppointmentActions({
   const [cancelReason, setCancelReason] = useState('');
   const [cancelling, setCancelling] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const cancelDialogRef = useModalDialog(showCancelModal, () => {
+    if (!cancelling) setShowCancelModal(false);
+  });
 
   const canCancel = ['pending', 'confirmed'].includes(status);
   const canCall = status === 'in_progress' && specialistPhone;
@@ -125,9 +129,16 @@ export default function AppointmentActions({
 
       {showCancelModal && (
         <div className="modal-backdrop" onClick={() => !cancelling && setShowCancelModal(false)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-icon"><AlertTriangle size={26} strokeWidth={2} /></div>
-            <h3>إلغاء الحجز؟</h3>
+          <div
+            ref={cancelDialogRef}
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="cancel-dialog-title"
+            className="modal-card"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-icon" aria-hidden="true"><AlertTriangle size={26} strokeWidth={2} /></div>
+            <h3 id="cancel-dialog-title">إلغاء الحجز؟</h3>
             <p>سيتم إلغاء حجزك نهائياً ولا يمكن التراجع.</p>
 
             <div className="reasons-list">
@@ -216,7 +227,7 @@ export default function AppointmentActions({
           display: flex;
           align-items: flex-end;
           justify-content: center;
-          padding: 16px;
+          padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
           backdrop-filter: blur(4px);
         }
         .modal-card {
@@ -225,6 +236,10 @@ export default function AppointmentActions({
           padding: 24px;
           max-width: 420px;
           width: 100%;
+          max-height: calc(100dvh - 32px);
+          overflow-y: auto;
+          overscroll-behavior: contain;
+          outline: none;
           box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.2);
           animation: slideUp 0.3s ease;
         }

@@ -1592,6 +1592,62 @@
   }
 }
 
+/* ─────────────────────────────────────────────────────────
+   ModalShell (.ms-*) — ورقةٌ سفليّة على الهاتف، نافذةٌ وسطى فوق 640px
+   ───────────────────────────────────────────────────────── */
+.ms-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(15, 26, 28, 0.5);
+  overscroll-behavior: contain;
+}
+.ms-panel {
+  width: 100%;
+  max-height: 92vh;
+  max-height: 92dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--white, #fff);
+  border-radius: 20px 20px 0 0;
+  padding: 8px 18px calc(18px + env(safe-area-inset-bottom));
+  box-shadow: 0 -10px 30px -12px rgba(15, 26, 28, 0.35);
+  outline: none;
+}
+.ms-panel::before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 4px;
+  margin: 0 auto 10px;
+  border-radius: 100px;
+  background: var(--line-2, #E8EAED);
+}
+.ms-close {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  margin-block-start: -6px;
+  margin-inline-end: -10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-2, #3c4043);
+  cursor: pointer;
+}
+.ms-close:hover { background: var(--paper-2, #f1f3f4); }
+@media (min-width: 640px) {
+  .ms-backdrop { align-items: center; padding: 16px; }
+  .ms-panel { border-radius: 16px; max-height: 90dvh; padding: 20px; }
+  .ms-panel::before { display: none; }
+}
+
 @media print {
   .app-header, .app-bottom-nav, .skip-link, .cookie-overlay { display: none !important; }
   .app-shell { max-width: 100%; box-shadow: none; }

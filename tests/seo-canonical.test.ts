@@ -152,7 +152,6 @@ describe('🏷️ البيانات المنظَّمة في HTML الخادم', (
 });
 
 describe('🗺️ ادّعاءُ التغطية واحد', () => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { SERVED_CITIES, areaServedJsonLd } = require('@/lib/seo/coverage');
 
   it('🚨 لا محافظةَ مكرّرة', () => {

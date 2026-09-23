@@ -1,7 +1,8 @@
 'use client';
 
+import ModalShell, { ModalCloseButton } from '@/components/ui/ModalShell';
 import { useState, useTransition } from 'react';
-import { Heart, Star, MessageSquare, X, Save, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Heart, Star, MessageSquare, Save, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { toggleCosmeticWishlist, submitCosmeticReview } from './actions';
 
 interface Props {
@@ -163,32 +164,15 @@ function ReviewModal({
   }
 
   return (
-    <div
-      style={{
-        position: 'fixed', inset: 0,
-        background: 'rgba(0,0,0,0.5)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        zIndex: 1000, padding: 16,
-      }}
-      onClick={onClose}
-    >
-      <div
-        style={{
-          background: 'var(--white)', borderRadius: 16, padding: 20,
-          width: '100%', maxWidth: 440, maxHeight: '90vh', overflowY: 'auto',
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
+    <ModalShell onClose={onClose} labelledBy="review-modal-title" maxWidth={440}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 14 }}>
           <div>
-            <h2 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>قيّم المنتج</h2>
+            <h2 id="review-modal-title" style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>قيّم المنتج</h2>
             <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 2 }}>
               {productName}
             </div>
           </div>
-          <button onClick={onClose} style={{ background: 'transparent', border: 0, cursor: 'pointer' }}>
-            <X size={20} strokeWidth={2.2} />
-          </button>
+          <ModalCloseButton onClick={onClose} />
         </div>
 
         {/* Rating */}
@@ -325,7 +309,6 @@ function ReviewModal({
           <Save size={14} strokeWidth={2.2} />
           {isPending ? 'جارٍ الإرسال...' : existingReview ? 'تحديث' : 'إرسال التقييم'}
         </button>
-      </div>
-    </div>
+    </ModalShell>
   );
 }

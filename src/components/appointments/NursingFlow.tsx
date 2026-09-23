@@ -389,7 +389,7 @@ export default function NursingFlow({
 
   // ─── Render ─────────────────────────────────
   return (
-    <div style={{ paddingBottom: 80 }}>
+    <div style={{ paddingBottom: 132 }}>
       {/* Progress bar */}
       <div style={{
         position: 'sticky',
@@ -1232,9 +1232,13 @@ export default function NursingFlow({
         bottom: 0,
         insetInlineStart: 0,
         insetInlineEnd: 0,
+        marginInline: 'auto',
+        maxWidth: 480,
+        boxSizing: 'border-box',
         background: 'var(--paper)',
         borderTop: '1px solid var(--line)',
-        padding: '12px 16px',
+        boxShadow: '0 -6px 16px -10px rgba(15, 26, 28, 0.25)',
+        padding: '10px 16px calc(10px + env(safe-area-inset-bottom))',
         display: 'flex',
         flexDirection: 'column',
         gap: 8,
@@ -1246,6 +1250,7 @@ export default function NursingFlow({
           labels={NURSING_FIELD_LABELS}
           errors={fe.fieldErrors}
           onJump={fe.jumpTo}
+          compact
         />
 
         <div style={{ display: 'flex', gap: 8 }}>

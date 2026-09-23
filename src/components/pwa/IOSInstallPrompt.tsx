@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { X, Share, Plus } from 'lucide-react';
 import { isIOSDevice, isPWAInstalled, shouldShowInstallPrompt, dismissInstallPrompt } from '@/lib/pwa';
 import { haptic } from '@/lib/haptic';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 /**
  * iOS Install Instructions Modal (V25.23)
@@ -34,6 +35,7 @@ export default function IOSInstallPrompt() {
     setShow(false);
     dismissInstallPrompt();
   };
+  const dialogRef = useModalDialog(show, handleClose);
 
   if (!show) return null;
 
@@ -53,8 +55,13 @@ export default function IOSInstallPrompt() {
       onClick={handleClose}
     >
       <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ios-install-title"
         onClick={(e) => e.stopPropagation()}
         style={{
+          outline: 'none',
           background: 'var(--paper)',
           borderRadius: 24,
           padding: 24,
@@ -85,7 +92,7 @@ export default function IOSInstallPrompt() {
               📱
             </div>
             <div>
-              <h2 style={{ fontSize: 18, fontWeight: 900, margin: 0 }}>
+              <h2 id="ios-install-title" style={{ fontSize: 18, fontWeight: 900, margin: 0 }}>
                 ثبّت سباير على الـ iPhone
               </h2>
               <p style={{ fontSize: 11, color: 'var(--ink-3)', margin: '2px 0 0' }}>

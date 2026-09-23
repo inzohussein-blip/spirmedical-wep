@@ -102,6 +102,13 @@ export function AppShell({
   const PAGES_WITHOUT_APPSHELL_HEADER = ['/dashboard', '/guest', '/specialist'];
   const hideAppShellHeader = PAGES_WITHOUT_APPSHELL_HEADER.includes(pathname);
 
+  // مهامٌّ مُركَّزة: نموذج الطلب له شريطُ إرسالٍ ثابت في أسفله، فكان شريطُ
+  // التنقّل يأكل 71px من شاشة 640px ويتراكب معه. الرجوعُ متاحٌ من الرأس.
+  const FOCUSED_TASK_ROUTES = ['/appointments/new'];
+  const hideBottomNav = FOCUSED_TASK_ROUTES.some(
+    (r) => pathname === r || pathname.startsWith(`${r}/`),
+  );
+
   return (
     <div className="app-viewport">
       <a href="#main-content" className="skip-link">
@@ -276,6 +283,7 @@ export function AppShell({
         </main>
 
         {/* === BOTTOM NAV === */}
+        {!hideBottomNav && (
         <nav
           className="app-bottom-nav"
           role="navigation"
@@ -300,6 +308,7 @@ export function AppShell({
             );
           })}
         </nav>
+        )}
       </div>
     </div>
   );

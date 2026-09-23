@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 import {
   MessageCircle, Send, Smartphone, Check, X, Shield, Loader2,
   AlertTriangle, ChevronLeft,
@@ -40,6 +41,12 @@ export default function WhatsAppOtpSettings({
   const [verifyCode, setVerifyCode] = useState('');
   const [verifyError, setVerifyError] = useState<string | null>(null);
   const [verifySuccess, setVerifySuccess] = useState(false);
+  const cancelVerify = () => {
+    setVerifying(false);
+    setVerifyCode('');
+    setVerifyError(null);
+  };
+  const verifyDialogRef = useModalDialog(verifying, cancelVerify);
 
   const channels: ChannelOption[] = [
     {
@@ -361,12 +368,19 @@ export default function WhatsAppOtpSettings({
           }}
         >
           <div
+            ref={verifyDialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="التحقّق من رقم واتساب"
             style={{
               background: '#fff',
               borderRadius: 16,
               padding: 24,
               maxWidth: 360,
               width: '100%',
+              maxHeight: 'calc(100dvh - 32px)',
+              overflowY: 'auto',
+              outline: 'none',
               textAlign: 'center',
             }}
           >
@@ -488,11 +502,7 @@ export default function WhatsAppOtpSettings({
 
                 <button
                   type="button"
-                  onClick={() => {
-                    setVerifying(false);
-                    setVerifyCode('');
-                    setVerifyError(null);
-                  }}
+                  onClick={cancelVerify}
                   style={{
                     background: 'transparent',
                     border: 0,

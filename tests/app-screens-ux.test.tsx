@@ -30,7 +30,6 @@ jest.mock('next/link', () => {
 const read = (p: string) => readFileSync(join(process.cwd(), p), 'utf8');
 
 describe('① متتبِّعُ الطلب لا يناقض نفسه', () => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const LiveStatusCard = require('@/components/dashboard/LiveStatusCard').default;
   const steps = () => [...document.querySelectorAll('.live-status-step')];
   const circle = (i: number) => steps()[i].querySelector('.live-status-step-circle')!;
@@ -64,17 +63,19 @@ describe('① متتبِّعُ الطلب لا يناقض نفسه', () => {
   });
 });
 
-describe('② زرُّ الإبلاغ عن عطل لا يتراكب مع «+»', () => {
-  it('🚨 لا يُعرض عائماً في تخطيط شاشات المريض', () => {
-    expect(read('src/app/(dashboard)/layout.tsx')).not.toMatch(/<BugReportButton\b/);
-  });
-  it('🚨 وهو بندٌ في «مساعدة والدعم»', () => {
-    expect(read('src/app/(dashboard)/account/help/page.tsx')).toMatch(/<BugReportButton variant="inline" \/>/);
+describe('② لا زرَّ إبلاغٍ عن عطل في واجهة المريض', () => {
+  // كان عائماً فوق زرّ «+» فلا يُلمس، ثمّ نُقل إلى «مساعدة والدعم»، ثمّ رأى
+  // المالك أنّه غير ضروريّ فحُذف. ولوحةُ الإدارة تبقى تعرض البلاغات السابقة.
+  it('🚨 لا يُعرض في أيّ شاشة، ولا يبقى المكوّنُ ميّتاً', () => {
+    const { existsSync } = require('fs');
+    expect(existsSync(join(process.cwd(), 'src/components/feedback/BugReportButton.tsx'))).toBe(false);
+    for (const f of ['src/app/(dashboard)/layout.tsx', 'src/app/(dashboard)/account/help/page.tsx']) {
+      expect(read(f)).not.toMatch(/BugReport/);
+    }
   });
 });
 
 describe('③ إجراءاتُ «+»', () => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const FloatingActionButton = require('@/components/ui/FloatingActionButton').default;
 
   it('🚨 مطويّةً: خارجَ ترتيب Tab وشجرة الإتاحة', () => {
@@ -98,7 +99,6 @@ describe('③ إجراءاتُ «+»', () => {
 });
 
 describe('④ بحثُ الرئيسية', () => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const SearchBarV3 = require('@/components/dashboard-v3/SearchBarV3').default;
 
   it('🚨 لا زرَّ «بحث صوتي» ميّتاً', () => {

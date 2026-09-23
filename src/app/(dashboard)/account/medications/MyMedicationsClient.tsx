@@ -1,8 +1,9 @@
 'use client';
 
+import ModalShell, { ModalCloseButton } from '@/components/ui/ModalShell';
 import { useState, useTransition } from 'react';
 import { 
-  Pill, Plus, Edit, Trash2, Power, X, Save, Bell, BellOff, 
+  Pill, Plus, Edit, Trash2, Power, Save, Bell, BellOff, 
   Clock, Calendar, AlertTriangle, CheckCircle2,
 } from 'lucide-react';
 import { useConfirm } from '@/components/ui';
@@ -321,36 +322,10 @@ function AddMedicationModal({ onClose, onSaved }: { onClose: () => void; onSaved
   }
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(0,0,0,0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000,
-        padding: 16,
-      }}
-      onClick={onClose}
-    >
-      <div
-        style={{
-          background: 'var(--white)',
-          borderRadius: 16,
-          padding: 20,
-          width: '100%',
-          maxWidth: 440,
-          maxHeight: '90vh',
-          overflowY: 'auto',
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
+    <ModalShell onClose={onClose} labelledBy="add-med-title" maxWidth={440}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-          <h2 style={{ fontSize: 17, fontWeight: 800, margin: 0 }}>إضافة دواء</h2>
-          <button onClick={onClose} style={{ background: 'transparent', border: 0, cursor: 'pointer' }}>
-            <X size={20} strokeWidth={2.2} />
-          </button>
+          <h2 id="add-med-title" style={{ fontSize: 17, fontWeight: 800, margin: 0 }}>إضافة دواء</h2>
+          <ModalCloseButton onClick={onClose} />
         </div>
 
         <div style={{ display: 'grid', gap: 12 }}>
@@ -519,8 +494,7 @@ function AddMedicationModal({ onClose, onSaved }: { onClose: () => void; onSaved
             إلغاء
           </button>
         </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 

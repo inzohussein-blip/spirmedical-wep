@@ -1,9 +1,10 @@
 'use client';
 
+import ModalShell, { ModalCloseButton } from '@/components/ui/ModalShell';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  X, Building2, Calendar, Clock, AlertTriangle, CheckCircle2, Stethoscope,
+  Building2, Calendar, Clock, AlertTriangle, CheckCircle2, Stethoscope,
 } from 'lucide-react';
 import { createServiceBooking } from '@/app/(dashboard)/services/booking/actions';
 
@@ -104,34 +105,10 @@ export default function HospitalBookingModal({ hospital, onClose, userPhone }: P
   const maxDate = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(0,0,0,0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000,
-        padding: 16,
-      }}
-      onClick={onClose}
-    >
-      <div
-        style={{
-          background: 'var(--white)',
-          borderRadius: 16,
-          padding: 20,
-          width: '100%',
-          maxWidth: 480,
-          maxHeight: '90vh',
-          overflowY: 'auto',
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
+    <ModalShell onClose={onClose} labelledBy="hbm-title">
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
           <div>
-            <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>
+            <h2 id="hbm-title" style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>
               حجز موعد
             </h2>
             <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 2 }}>
@@ -139,9 +116,7 @@ export default function HospitalBookingModal({ hospital, onClose, userPhone }: P
               {hospital.name}
             </div>
           </div>
-          <button onClick={onClose} style={{ background: 'transparent', border: 0, cursor: 'pointer' }}>
-            <X size={22} strokeWidth={2.2} />
-          </button>
+          <ModalCloseButton onClick={onClose} />
         </div>
 
         {/* القسم */}
@@ -161,7 +136,7 @@ export default function HospitalBookingModal({ hospital, onClose, userPhone }: P
                   style={{
                     padding: '8px 10px',
                     borderRadius: 8,
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: 600,
                     border: '1px solid',
                     borderColor: selected ? 'var(--emerald-mid, #0F6E56)' : 'var(--line)',
@@ -241,7 +216,7 @@ export default function HospitalBookingModal({ hospital, onClose, userPhone }: P
           background: '#E1F5EE',
           color: '#04342C',
           borderRadius: 10,
-          fontSize: 11,
+          fontSize: 12,
           marginBottom: 14,
           lineHeight: 1.6,
         }}>
@@ -295,8 +270,7 @@ export default function HospitalBookingModal({ hospital, onClose, userPhone }: P
             </>
           )}
         </button>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 
@@ -310,7 +284,7 @@ const inputStyle: React.CSSProperties = {
 };
 
 const inputLabelStyle: React.CSSProperties = {
-  fontSize: 11,
+  fontSize: 12,
   fontWeight: 700,
   color: 'var(--ink-2)',
   display: 'block',

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { SERVICES, CATEGORIES, formatPrice, formatDuration, type Service } from '@/lib/services/services-data';
 import { generateAvailableDates, generateTimeSlotsForDate, groupTimeSlots, formatDateRelative, toArabicDigits, type TimeSlot } from '@/lib/services/time-slots';
 import OtpChannelSelector from './OtpChannelSelector';
@@ -45,7 +46,14 @@ interface Props {
   onSubmit: (data: BookingData) => Promise<WizardSubmitResult | void>;
 }
 
+/**
+ * خدماتٌ لها تدفّقٌ مخصّص في الصفحة نفسها. اختيارُها هنا كان يُكمل حجزاً عامّاً
+ * بلا اختيار تحاليل ولا إجراءٍ تمريضيّ، فيصل الطلبُ ناقصاً إلى المختبر.
+ */
+export const DEDICATED_FLOW_SERVICES = ['blood-draw', 'home-nursing'] as const;
+
 export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
+  const router = useRouter();
   const [step, setStep] = useState<Step>(1);
   const [otpVerified, setOtpVerified] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -171,7 +179,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           </div>
 
           {/* قائمة الخدمات */}
-          <div className="services-list" ref={fe.registerRef('service')}>
+          <div className="aw-services-list" ref={fe.registerRef('service')}>
             {SERVICES
               .filter((s) => !selectedCategory || s.category === selectedCategory)
               .filter((s) => s.available)
@@ -179,29 +187,37 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
                 <button
                   key={service.id}
                   type="button"
-                  onClick={() => { setData({ ...data, service }); fe.clearError('service'); }}
-                  className={`service-card ${data.service?.id === service.id ? 'selected' : ''}`}
+                  onClick={() => {
+                    if ((DEDICATED_FLOW_SERVICES as readonly string[]).includes(service.id)) {
+                      router.push(`/appointments/new?service=${service.id}`);
+                      return;
+                    }
+                    setData({ ...data, service });
+                    fe.clearError('service');
+                  }}
+                  className={`aw-service-card ${data.service?.id === service.id ? 'selected' : ''}`}
+                  aria-pressed={data.service?.id === service.id}
                 >
-                  <div className="service-icon">{service.emoji}</div>
-                  <div className="service-info">
-                    <div className="service-header">
+                  <div className="aw-service-icon" aria-hidden="true">{service.emoji}</div>
+                  <div className="aw-service-info">
+                    <div className="aw-service-header">
                       <h3>{service.nameAr}</h3>
                       {service.badge && (
-                        <span className={`service-badge badge-${service.badgeColor || 'emerald'}`}>
+                        <span className={`aw-service-badge badge-${service.badgeColor || 'emerald'}`}>
                           {service.badge}
                         </span>
                       )}
                     </div>
-                    <p className="service-desc">{service.description}</p>
-                    <div className="service-meta">
-                      <span className="service-price">من {formatPrice(service.basePrice)}</span>
-                      <span className="service-duration" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <p className="aw-service-desc">{service.description}</p>
+                    <div className="aw-service-meta">
+                      <span className="aw-service-price">من {formatPrice(service.basePrice)}</span>
+                      <span className="aw-service-duration" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                         <Clock size={12} strokeWidth={2.2} />
                         {formatDuration(service.duration)}
                       </span>
                     </div>
                   </div>
-                  <div className="service-radio">
+                  <div className="aw-service-radio" aria-hidden="true">
                     {data.service?.id === service.id ? '●' : '○'}
                   </div>
                 </button>
@@ -320,7 +336,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
             </div>
           )}
 
-          <div className="field-group">
+          <div className="aw-field-group">
             <label>ملاحظات إضافية (اختياري)</label>
             <textarea
               value={data.notes}
@@ -333,7 +349,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           </div>
 
           {!data.service?.needsAddress && data.phone === '' && (
-            <div className="field-group" ref={fe.registerRef('phone')}>
+            <div className="aw-field-group" ref={fe.registerRef('phone')}>
               <label>رقم الهاتف للتواصل *</label>
               <div className="phone-input-wrap">
                 <span className="phone-prefix">🇮🇶 +964</span>
@@ -576,6 +592,8 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           font-weight: 600;
           cursor: pointer;
           white-space: nowrap;
+          flex-shrink: 0;
+          min-height: 40px;
           transition: all 0.15s;
         }
         .category-pill.active {
@@ -583,12 +601,12 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           color: var(--paper-3, #FFFFFF);
           border-color: var(--emerald, #01875F);
         }
-        .services-list {
+        .aw-services-list {
           display: flex;
           flex-direction: column;
           gap: 10px;
         }
-        .service-card {
+        .aw-service-card {
           background: var(--white, #FFFFFF);
           border: 1.5px solid var(--line, rgba(15, 26, 28, 0.08));
           border-radius: 16px;
@@ -600,15 +618,15 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           transition: all 0.2s;
           text-align: right;
         }
-        .service-card:hover {
+        .aw-service-card:hover {
           transform: translateY(-2px);
           box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.1);
         }
-        .service-card.selected {
+        .aw-service-card.selected {
           border-color: var(--emerald, #01875F);
           background: var(--emerald-soft, #E6F3EF);
         }
-        .service-icon {
+        .aw-service-icon {
           width: 56px;
           height: 56px;
           background: var(--paper-2, #F1F3F4);
@@ -619,23 +637,23 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           font-size: 28px;
           flex-shrink: 0;
         }
-        .service-card.selected .service-icon {
+        .aw-service-card.selected .aw-service-icon {
           background: var(--emerald, #01875F);
         }
-        .service-info { flex: 1; min-width: 0; }
-        .service-header {
+        .aw-service-info { flex: 1; min-width: 0; }
+        .aw-service-header {
           display: flex;
           align-items: center;
           gap: 8px;
           flex-wrap: wrap;
           margin-bottom: 4px;
         }
-        .service-header h3 {
+        .aw-service-header h3 {
           font-size: 14px;
           font-weight: 800;
           margin: 0;
         }
-        .service-badge {
+        .aw-service-badge {
           font-size: 11px;
           padding: 2px 7px;
           border-radius: 100px;
@@ -644,30 +662,30 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
         .badge-emerald { background: var(--emerald, #01875F); color: var(--paper-3, #FFFFFF); }
         .badge-amber { background: var(--amber, #B06000); color: var(--paper-3, #FFFFFF); }
         .badge-rose { background: var(--rose, #C71C56); color: var(--paper-3, #FFFFFF); }
-        .service-desc {
+        .aw-service-desc {
           font-size: 11px;
           color: var(--ink-3, #5F6368);
           margin: 0 0 6px;
           line-height: 1.5;
         }
-        .service-meta {
+        .aw-service-meta {
           display: flex;
           gap: 12px;
           font-size: 11px;
         }
-        .service-price {
+        .aw-service-price {
           font-weight: 800;
           color: var(--emerald, #01875F);
         }
-        .service-duration {
+        .aw-service-duration {
           color: var(--ink-3, #5F6368);
         }
-        .service-radio {
+        .aw-service-radio {
           font-size: 22px;
           color: var(--ink-4, #80868B);
           flex-shrink: 0;
         }
-        .service-card.selected .service-radio {
+        .aw-service-card.selected .aw-service-radio {
           color: var(--emerald, #01875F);
         }
 
@@ -782,17 +800,17 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
         }
 
         /* Step 3: Details */
-        .field-group {
+        .aw-field-group {
           display: flex;
           flex-direction: column;
           gap: 6px;
         }
-        .field-group label {
+        .aw-field-group label {
           font-size: 12px;
           font-weight: 700;
         }
-        .field-group input,
-        .field-group textarea {
+        .aw-field-group input,
+        .aw-field-group textarea {
           background: var(--white, #FFFFFF);
           border: 1.5px solid var(--line, rgba(15, 26, 28, 0.08));
           border-radius: 12px;
@@ -803,8 +821,8 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           transition: border-color 0.2s;
           resize: vertical;
         }
-        .field-group input:focus,
-        .field-group textarea:focus {
+        .aw-field-group input:focus,
+        .aw-field-group textarea:focus {
           border-color: var(--emerald, #01875F);
         }
         .field-hint {
@@ -965,12 +983,20 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
         }
 
         /* Actions */
+        /* لاصقٌ في الأسفل: كانت قائمةُ الخدمات أربعَ شاشات و«التالي» في
+           آخرها، فيختار المريضُ خدمةً ثمّ يبحث عن الزرّ. */
         .wizard-actions {
+          position: sticky;
+          bottom: 0;
+          z-index: 5;
           display: flex;
           gap: 8px;
-          margin-top: 24px;
-          padding-top: 16px;
+          margin: 24px -16px -16px;
+          padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+          background: var(--paper-3, #FFFFFF);
           border-top: 1px solid var(--line, rgba(15, 26, 28, 0.08));
+          border-radius: 0 0 16px 16px;
+          box-shadow: 0 -6px 16px -10px rgba(15, 26, 28, 0.25);
         }
         .btn-primary,
         .btn-secondary {
