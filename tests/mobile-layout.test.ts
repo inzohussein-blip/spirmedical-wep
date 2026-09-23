@@ -246,7 +246,9 @@ describe('تعريف فئات CSS', () => {
       'text|bg|border|rounded|shadow|gap|space|items|justify|font|leading|tracking|opacity|z|max|min|overflow|' +
       'transition|transform|scale|translate|cursor|select|object|top|bottom|left|right|inset|order|col|row|' +
       'animate|duration|ease|delay|ring|outline|divide|placeholder|from|via|to|backdrop|filter|blur|truncate|' +
-      'aspect|container|sr|not|pointer|shrink|grow|basis|whitespace|break|self|place|list|fill|stroke)-|' +
+      'aspect|container|sr|not|pointer|shrink|grow|basis|whitespace|break|self|place|list|fill|stroke|' +
+      // `accent-*` أداةُ Tailwind لـ accent-color (مربّعات الاختيار) — مُولَّدةٌ فعلاً في البناء
+      'accent)-|' +
       '^(flex|grid|hidden|block|truncate|container|sr-only|antialiased|shadow|transition|rounded|italic)$',
   );
 

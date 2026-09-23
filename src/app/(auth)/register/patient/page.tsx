@@ -109,41 +109,49 @@ export default function PatientRegisterPage() {
 
             {/* Full Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="reg-name" className="block text-sm font-medium text-gray-700 mb-2">
                 الاسم الكامل
               </label>
               <input
                 type="text"
+                id="reg-name"
+                autoComplete="name"
                 value={formData.fullName}
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                 placeholder="أحمد محمد"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 disabled={loading}
               />
             </div>
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="reg-email" className="block text-sm font-medium text-gray-700 mb-2">
                 البريد الإلكتروني
               </label>
               <input
                 type="email"
+                id="reg-email"
+                autoComplete="email"
+                inputMode="email"
+                dir="ltr"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="your@email.com"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 disabled={loading}
               />
             </div>
 
             {/* Gender */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">الجنس</label>
+              <label htmlFor="reg-gender" className="block text-sm font-medium text-gray-700 mb-2">الجنس</label>
               <select
+                id="reg-gender"
+                autoComplete="sex"
                 value={formData.gender}
                 onChange={(e) => setFormData({ ...formData, gender: e.target.value as 'male' | 'female' })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 disabled={loading}
               >
                 <option value="male">ذكر</option>
@@ -153,43 +161,50 @@ export default function PatientRegisterPage() {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="reg-password" className="block text-sm font-medium text-gray-700 mb-2">
                 كلمة المرور
               </label>
               <input
                 type="password"
+                id="reg-password"
+                autoComplete="new-password"
+                aria-describedby="reg-password-hint"
+                dir="ltr"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 placeholder="••••••••"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 disabled={loading}
               />
-              <p className="text-xs text-gray-500 mt-1">8 أحرف على الأقل</p>
+              <p id="reg-password-hint" className="text-sm text-gray-500 mt-1">8 أحرف على الأقل</p>
             </div>
 
             {/* Confirm Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="reg-password-confirm" className="block text-sm font-medium text-gray-700 mb-2">
                 تأكيد كلمة المرور
               </label>
               <input
                 type="password"
+                id="reg-password-confirm"
+                autoComplete="new-password"
+                dir="ltr"
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                 placeholder="••••••••"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 disabled={loading}
               />
             </div>
 
             {/* Terms */}
-            <div className="flex items-start gap-2">
+            <div className="flex items-start gap-3 py-1">
               <input
                 id="agreeTerms"
                 type="checkbox"
                 checked={formData.agreeTerms}
                 onChange={(e) => setFormData({ ...formData, agreeTerms: e.target.checked })}
-                className="mt-1 w-5 h-5 shrink-0"
+                className="mt-1 w-6 h-6 shrink-0 accent-emerald-700 cursor-pointer"
                 disabled={loading}
               />
               <label htmlFor="agreeTerms" className="text-sm text-gray-600 py-1 cursor-pointer">

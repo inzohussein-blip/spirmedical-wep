@@ -323,7 +323,7 @@ export default function PrivacyPage() {
               <Link href="/legal/terms" className="legal-link-btn">
                 الشروط والأحكام ←
               </Link>
-              <Link href="/" className="legal-link-btn outline">
+              <Link href="/" className="legal-link-btn legal-link-btn--ghost">
                 العودة للرئيسية
               </Link>
             </div>

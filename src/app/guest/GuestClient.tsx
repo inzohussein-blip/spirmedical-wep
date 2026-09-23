@@ -1,5 +1,6 @@
 'use client';
 
+import { Search } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { LockedAction } from '@/components/app/LockedAction';
@@ -252,8 +253,13 @@ export default function GuestClient() {
         </div>
 
         {/* Search */}
-        <div className="scr-search">
-          <div className="scr-search-icon" aria-hidden="true">⌕</div>
+        {/* `<label>` لا `<div>`: المربّع المرئيّ ~٥٠px والحقلُ نفسه ~٢٦px، فكان
+            اللمسُ على حافّة المربّع لا يُركّز الحقل. */}
+        <label className="scr-search">
+          <span className="scr-search-icon" aria-hidden="true">
+            {/* لا رمزَ U+2315: كثيرٌ من خطوط أندرويد لا تحويه فيظهر مربّعاً */}
+            <Search size={13} strokeWidth={2.6} />
+          </span>
           <input
             type="search"
             placeholder="ابحث عن خدمة، طبيب، أو فحص..."
@@ -261,7 +267,7 @@ export default function GuestClient() {
             onChange={(e) => setSearchQuery(e.target.value)}
             aria-label="البحث"
           />
-        </div>
+        </label>
 
         {/* Stories */}
         <div className="scr-stories" aria-label="القصص الطبية">
@@ -356,7 +362,7 @@ export default function GuestClient() {
         {/* Footer hint */}
         <div style={{
           padding: '20px 18px 8px',
-          fontSize: 11,
+          fontSize: 12,
           color: 'var(--ink-3)',
           textAlign: 'center',
           lineHeight: 1.6,

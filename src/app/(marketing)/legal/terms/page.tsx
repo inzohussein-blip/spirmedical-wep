@@ -210,7 +210,7 @@ export default function TermsPage() {
               <Link href="/legal/privacy" className="legal-link-btn">
                 سياسة الخصوصية ←
               </Link>
-              <Link href="/" className="legal-link-btn outline">
+              <Link href="/" className="legal-link-btn legal-link-btn--ghost">
                 العودة للرئيسية
               </Link>
             </div>

@@ -9,7 +9,7 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, X } from 'lucide-react';
+import { ArrowRight, X, Search } from 'lucide-react';
 import type { Icon as TablerIcon } from '@tabler/icons-react';
 import {
   FEATURED_SERVICE,
@@ -151,7 +151,7 @@ export default function SearchClient({
 
         {/* Search input */}
         <div className="scr-search" role="search" style={{ marginBottom: 16 }}>
-          <div className="scr-search-icon" aria-hidden="true">⌕</div>
+          <span className="scr-search-icon" aria-hidden="true"><Search size={13} strokeWidth={2.6} /></span>
           <input
             type="search"
             autoFocus

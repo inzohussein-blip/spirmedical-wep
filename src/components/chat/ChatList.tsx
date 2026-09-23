@@ -4,9 +4,7 @@ import Link from 'next/link';
 import { useState, useMemo, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import type { LucideIcon } from 'lucide-react';
-import {
-  Inbox, Circle, MessageCircle, Clock, CheckCircle2, AlertTriangle, Pin,
-} from 'lucide-react';
+import { Inbox, Circle, MessageCircle, Clock, CheckCircle2, AlertTriangle, Pin, Search } from 'lucide-react';
 
 export interface ChatPreview {
   id: string;
@@ -158,10 +156,11 @@ export default function ChatList({ initialChats, currentChatId, basePath, viewer
     <div className="inbox-list">
       {/* Search */}
       <div className="inbox-search">
-        <span className="inbox-search-icon" aria-hidden="true">⌕</span>
+        <span className="inbox-search-icon" aria-hidden="true"><Search size={14} strokeWidth={2.4} /></span>
         <input
           type="search"
           placeholder="ابحث في المحادثات..."
+          aria-label="ابحث في المحادثات"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />

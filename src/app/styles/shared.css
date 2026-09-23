@@ -270,8 +270,11 @@
      ═══════════════════════════════════════════════════════════════
      خطوط متناسقة لكل المنصة
   */
-  --text-2xs: 9px;       /* tiny - footer fine print */
-  --text-xs: 11px;       /* extra small - labels */
+  /* أرضيّةُ الخطّ: الحرف العربيّ يبدو أصغر من اللاتينيّ بالحجم نفسه، فكان
+     ٩px و١١px عسيرَي القراءة على الهاتف. قيس في تدقيق الهاتف: نصٌّ دون
+     ١٢px في كلّ صفحةٍ تقريباً، منه تسميات شريط التنقّل السفليّ. */
+  --text-2xs: 11px;      /* tiny - footer fine print (كان 9px) */
+  --text-xs: 12px;       /* extra small - labels (كان 11px) */
   --text-sm: 12px;       /* small - metadata */
   --text-base: 13px;     /* base - body text */
   --text-md: 14px;       /* medium - subheadings */
@@ -947,14 +950,14 @@
 }
 
 .auth-brand-sub {
-  font-size: 11px; color: var(--ink-3); margin-top: 2px;
+  font-size: 12px; color: var(--ink-3); margin-top: 2px;
 }
 
 /* 🆕 V33: شعار نصّي "دليل الفرات الأوسط الطبي" تحت اسم التطبيق */
 .auth-brand-sub::after {
   content: "دليل الفرات الأوسط الطبي";
   display: block;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--emerald);
   font-weight: 700;
   margin-top: 6px;
@@ -1316,7 +1319,7 @@
   letter-spacing: -0.01em; line-height: 1.1;
 }
 
-.app-logo-sub { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
+.app-logo-sub { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
 
 .app-header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
@@ -1448,7 +1451,7 @@
 .featured-info { flex: 1; position: relative; z-index: 1; }
 
 .featured-meta {
-  font-size: 11px; font-weight: 800;
+  font-size: 12px; font-weight: 800;
   color: var(--amber-on-dark);
   letter-spacing: 0.05em; text-transform: uppercase;
   margin-bottom: 4px;
@@ -1461,7 +1464,7 @@
 }
 
 .service-sub, .service-desc {
-  font-size: 11px; color: var(--ink-3); line-height: 1.4;
+  font-size: 12px; color: var(--ink-3); line-height: 1.4;
 }
 
 .service-meta {
@@ -1483,7 +1486,7 @@
   padding: 2px 7px;
   background: var(--amber); color: var(--paper-3);
   border-radius: 999px;
-  font-size: 11px; font-weight: 800;
+  font-size: 12px; font-weight: 800;
 }
 
 .service-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
@@ -1524,7 +1527,7 @@
 
 .cookie-title { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
 
-.cookie-desc { font-size: 11px; color: var(--ink-3); line-height: 1.6; margin-bottom: 12px; }
+.cookie-desc { font-size: 13px; color: var(--ink-3); line-height: 1.6; margin-bottom: 12px; }
 
 .cookie-options {
   display: flex; flex-direction: column; gap: 8px;
@@ -1539,16 +1542,39 @@
 .cookie-actions { display: flex; gap: 8px; }
 
 .cookie-btn {
-  flex: 1; padding: 12px; border: 0;
-  border-radius: 10px;
-  font-size: 12px; font-weight: 800; cursor: pointer;
+  flex: 1; min-height: 44px; padding: 10px 12px; border: 0;
+  border-radius: 10px; white-space: nowrap;
+  font-size: 14px; font-weight: 800; cursor: pointer;
+}
+
+/* لا `.outline`: ذاك صنفٌ أداتيّ في Tailwind (`outline-style: solid`) كان
+   يرسم حلقةً سوداء سميكة حول الزرّ. */
+.cookie-btn--ghost {
+  background: var(--white); color: var(--ink);
+  border: 1px solid var(--line-2);
+}
+
+/* رابطٌ داخل الجملة القانونيّة لا صفٌّ مستقلّ — يوفّر سطراً من ارتفاع الشعار.
+   (الأهدافُ السطريّة في جملةٍ مستثناةٌ من حدّ الحجم في WCAG 2.5.8.) */
+.cookie-details-link {
+  display: inline; padding: 0 2px;
+  background: none; border: 0; cursor: pointer;
+  font: inherit; font-weight: 700; color: var(--emerald);
+  text-decoration: underline; text-underline-offset: 3px;
 }
 
 .cookie-btn.primary { background: var(--btn-primary-bg); color: var(--paper-3); }
 
 .cookie-btn.secondary { background: var(--paper-2); color: var(--ink); }
 
-.cookie-legal { font-size: 11px; color: var(--ink-3); text-align: center; margin-top: 12px; }
+.cookie-legal { font-size: 12px; color: var(--ink-3); text-align: center; margin: 10px 0 0; line-height: 1.7; }
+
+/* الهاتف: الأيقونة تأكل ارتفاعاً لا يحتاجه الشعار */
+@media (max-width: 480px) {
+  .cookie-overlay { padding: 8px 8px calc(8px + env(safe-area-inset-bottom)); }
+  .cookie-banner { padding: 14px; }
+  .cookie-icon { display: none; }
+}
 
 .cookie-link { color: var(--emerald); font-weight: 700; }
 
@@ -1724,7 +1750,7 @@
 }
 
 .service-desc {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-3);
   line-height: 1.4;
 }
@@ -1744,7 +1770,7 @@
   background: var(--amber);
   color: var(--white);
   border-radius: 100px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -2788,7 +2814,7 @@ html {
 }
 
 .service-desc {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-3);
   line-height: 1.4;
 }
@@ -2808,7 +2834,7 @@ html {
   background: var(--amber);
   color: var(--white);
   border-radius: 100px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   box-shadow: 0 2px 6px -2px rgba(184, 84, 12, 0.5);
 }
@@ -4807,3 +4833,6 @@ html {
   border-radius: 14px;
   padding: 16px;
 }
+
+/* المربّعُ كلّه يُركّز الحقل (صار <label>) — فالمؤشّر مؤشّرُ كتابة */
+.scr-search, .mkt-search { cursor: text; }

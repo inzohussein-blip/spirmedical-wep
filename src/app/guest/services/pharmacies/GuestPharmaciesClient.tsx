@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { Search } from 'lucide-react';
 
 interface Pharmacy {
   id: string;
@@ -45,8 +46,8 @@ export default function GuestPharmaciesClient() {
         </div>
 
         <div style={{ padding: '0 18px' }}>
-          <div className="scr-search" style={{ margin: '0 0 12px 0' }}>
-            <div className="scr-search-icon" aria-hidden="true">⌕</div>
+          <label className="scr-search" style={{ margin: '0 0 12px 0' }}>
+            <span className="scr-search-icon" aria-hidden="true"><Search size={13} strokeWidth={2.6} /></span>
             <input
               type="search"
               placeholder="ابحث عن صيدلية أو مدينة..."
@@ -54,7 +55,7 @@ export default function GuestPharmaciesClient() {
               onChange={(e) => setSearchQuery(e.target.value)}
               aria-label="البحث"
             />
-          </div>
+          </label>
 
           <div className="scr-tabs" style={{ padding: '4px 0 12px 0' }}>
             <button

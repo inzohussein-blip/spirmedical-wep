@@ -162,7 +162,7 @@
 }
 
 .app-bottom-label { 
-  font-size: 11px; 
+  font-size: 12px; 
   line-height: 1; 
   font-weight: 600; 
 }
@@ -186,7 +186,7 @@
   letter-spacing: -0.01em; color: var(--ink);
 }
 
-.scr-loc { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
+.scr-loc { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
 
 .scr-avatar {
   width: 34px; height: 34px; border-radius: 50%;
@@ -286,7 +286,7 @@
 }
 
 .story-label {
-  font-size: 11px; color: var(--ink);
+  font-size: 12px; color: var(--ink);
   font-weight: 500; text-align: center;
 }
 
@@ -331,7 +331,7 @@
 .scr-banner-content { flex: 1; position: relative; z-index: 1; }
 
 .scr-banner-tag {
-  font-size: 11px; color: var(--amber-on-dark);
+  font-size: 12px; color: var(--amber-on-dark);
   letter-spacing: 0.05em; text-transform: uppercase;
   font-weight: 700; margin-bottom: 2px;
 }
@@ -339,12 +339,12 @@
 .scr-banner-title { font-size: 13px; font-weight: 800; }
 
 .scr-banner-sub {
-  font-size: 11px; opacity: 0.85; margin-top: 2px;
+  font-size: 12px; opacity: 0.85; margin-top: 2px;
   color: rgba(244,239,226,0.7);
 }
 
 .scr-banner-cta {
-  font-size: 11px; font-weight: 800;
+  font-size: 13px; font-weight: 800;
   background: var(--amber); padding: 8px 10px;
   border-radius: 8px;
   position: relative; z-index: 1;
@@ -368,7 +368,7 @@
   background: var(--btn-primary-bg); border-radius: 2px;
 }
 
-.scr-section-link { font-size: 11px; color: var(--ink-3); font-weight: 700; }
+.scr-section-link { font-size: 12px; color: var(--ink-3); font-weight: 700; }
 
 /* ═══════════════════════════════════════════════════════════════════
    APP SUB-PAGES (orders/favorites/account) — patterns مشتركة
@@ -552,7 +552,7 @@
   background: var(--btn-primary-bg);
   color: var(--paper-3);
   border-radius: 100px;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 800;
   flex-shrink: 0;
   white-space: nowrap;
@@ -635,7 +635,7 @@
 }
 
 .scr-account-desc {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-3);
 }
 
@@ -5509,7 +5509,7 @@
 }
 
 .scr-section-link {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-3);
   font-weight: 600;
 }
@@ -6559,7 +6559,7 @@
 .emergency-icon { font-size: 26px; line-height: 1; }
 .emergency-name { font-size: 13px; font-weight: 800; }
 .emergency-number { font-size: 18px; font-weight: 900; color: var(--rose); letter-spacing: 1px; }
-.emergency-desc { font-size: 11px; color: var(--ink-3); line-height: 1.5; }
+.emergency-desc { font-size: 12px; color: var(--ink-3); line-height: 1.5; }
 
 .quick-tips-grid {
   display: grid;
@@ -6745,13 +6745,13 @@
 
 .hospital-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .hospital-type {
-  font-size: 11px; font-weight: 700;
+  font-size: 12px; font-weight: 700;
   padding: 2px 8px; border-radius: 100px;
 }
 .hospital-type.type-public { background: var(--emerald-soft); color: var(--emerald); }
 .hospital-type.type-private { background: var(--amber-soft); color: var(--amber); }
 .hospital-emergency-badge {
-  font-size: 11px; font-weight: 700;
+  font-size: 12px; font-weight: 700;
   padding: 2px 8px; border-radius: 100px;
   background: var(--rose-soft); color: var(--rose);
 }
@@ -7021,3 +7021,9 @@
   cursor: pointer;
 }
 .radio-option.selected { background: var(--emerald); border-color: var(--emerald); color: #fff; }
+
+/* الحقلُ يملأ ارتفاعَ المربّع كلّه: كان المربّع ~٥٠px والحقل ~٢٦px، فاللمسُ
+   على حافّته العليا أو السفلى لا يُركّزه. يعمل أيّاً كان الغلاف (div أو label).
+   في آخر الملفّ عمداً: `.scr-search` معرَّفٌ مرّتين أعلاه، والأخيرُ يغلب. */
+.scr-search { padding-block: 0; }
+.scr-search input { align-self: stretch; padding-block: 12px; min-height: 44px; }
