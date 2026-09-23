@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { isSuperAdmin } from '@/lib/admin-types';
 import AutoRejectClient from './AutoRejectClient';
-import { AUTO_REJECT_KEY } from './auto-reject-actions';
+import { AUTO_REJECT_KEY } from '@/lib/app-settings';
 
 export const dynamic = 'force-dynamic';
 

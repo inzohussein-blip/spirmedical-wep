@@ -3,8 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { logAuditEvent } from '@/lib/audit';
-
-export const AUTO_REJECT_KEY = 'pending_auto_reject_hours';
+import { AUTO_REJECT_KEY } from '@/lib/app-settings';
 
 /** حدٌّ أعلى معقول: سنةٌ كاملة. أبعدُ من ذلك خطأُ إدخالٍ لا نيّة. */
 const MAX_HOURS = 24 * 365;
