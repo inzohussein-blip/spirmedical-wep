@@ -293,8 +293,8 @@ spirmedical-wep/
 ## 🗄️ قاعدة البيانات
 
 - **Supabase** — المشروع `ioulxemokusfeykjcaxg`.
-- `src/types/database.ts` فيه 90 جدولاً، ولم يُعَد توليده منذ جداول أحدث
-  (`service_areas` 0030، `app_settings` 0042) — شغّل `npm run db:types` بعد أيّ ترحيل.
+- `src/types/database.ts` مولَّدٌ من الإنتاج (93 جدولاً) — أعِد توليده بعد أيّ ترحيل
+  بـ`npm run db:types`.
 - **الترحيلات** في `supabase/migrations/0001…0045`.
   - `0001–0010` ليست في سجلّ Supabase (أُنشئت الجداول بطريقةٍ أخرى): **كلُّ إصلاحٍ ترحيلٌ جديد**، لا تعديلٌ لملفٍّ قديم.
   - مخطَّط `private` للدوالّ المُفوَّضة (`SECURITY DEFINER`)، وكلُّ دالّةٍ تُعلن `SET search_path = public, pg_temp`.

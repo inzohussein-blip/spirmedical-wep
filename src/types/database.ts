@@ -206,6 +206,52 @@ export type Database = {
           },
         ]
       }
+      app_settings: {
+        Row: {
+          description_ar: string
+          key: string
+          updated_at: string
+          updated_by: string | null
+          value: Json
+        }
+        Insert: {
+          description_ar: string
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+          value: Json
+        }
+        Update: {
+          description_ar?: string
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "app_settings_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "expiring_credentials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "app_settings_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "specialist_stats"
+            referencedColumns: ["specialist_id"]
+          },
+          {
+            foreignKeyName: "app_settings_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       app_theme_settings: {
         Row: {
           accent_color: string
@@ -6495,6 +6541,67 @@ export type Database = {
           },
         ]
       }
+      service_areas: {
+        Row: {
+          color: string
+          created_at: string
+          created_by: string | null
+          governorate: string | null
+          id: string
+          is_active: boolean
+          name_ar: string
+          notes: string | null
+          polygon: Json
+          updated_at: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          governorate?: string | null
+          id?: string
+          is_active?: boolean
+          name_ar: string
+          notes?: string | null
+          polygon: Json
+          updated_at?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          created_by?: string | null
+          governorate?: string | null
+          id?: string
+          is_active?: boolean
+          name_ar?: string
+          notes?: string | null
+          polygon?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_areas_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "expiring_credentials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_areas_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "specialist_stats"
+            referencedColumns: ["specialist_id"]
+          },
+          {
+            foreignKeyName: "service_areas_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_favorites: {
         Row: {
           created_at: string
@@ -6535,6 +6642,52 @@ export type Database = {
           {
             foreignKeyName: "service_favorites_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_switches: {
+        Row: {
+          is_enabled: boolean
+          note_ar: string | null
+          service_id: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          is_enabled?: boolean
+          note_ar?: string | null
+          service_id: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          is_enabled?: boolean
+          note_ar?: string | null
+          service_id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_switches_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "expiring_credentials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_switches_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "specialist_stats"
+            referencedColumns: ["specialist_id"]
+          },
+          {
+            foreignKeyName: "service_switches_updated_by_fkey"
+            columns: ["updated_by"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -8689,6 +8842,14 @@ export type Database = {
       cleanup_expired_rate_limits: { Args: never; Returns: number }
       cleanup_expired_verification_tokens: { Args: never; Returns: undefined }
       cleanup_expired_whatsapp_otp: { Args: never; Returns: number }
+      consume_rate_limit: {
+        Args: { p_key: string; p_max: number; p_window_seconds: number }
+        Returns: {
+          allowed: boolean
+          remaining: number
+          retry_after_seconds: number
+        }[]
+      }
       create_prescription_from_order: {
         Args: {
           p_diagnosis: string
@@ -8734,6 +8895,26 @@ export type Database = {
         }[]
       }
       mark_message_read: { Args: { message_id: string }; Returns: undefined }
+      point_in_polygon: {
+        Args: { p_lat: number; p_lng: number; p_polygon: Json }
+        Returns: boolean
+      }
+      run_auto_reject_stale_pending: {
+        Args: never
+        Returns: {
+          notified: number
+          rejected: number
+        }[]
+      }
+      service_areas_covering: {
+        Args: { p_lat: number; p_lng: number }
+        Returns: {
+          color: string
+          governorate: string
+          id: string
+          name_ar: string
+        }[]
+      }
       validate_coupon_for_user: {
         Args: {
           p_code: string
@@ -8820,12 +9001,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -8849,11 +9030,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -8874,11 +9055,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -8899,11 +9080,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -8916,11 +9097,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
