@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import { checkIsFavorite } from '@/components/services/favorites-actions';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 export const dynamic = 'force-dynamic';
 
@@ -294,7 +295,7 @@ export default async function DentalDetailPage({
 
           <div style={{ display: 'flex', gap: 8 }}>
             {clinic.phone && (
-              <a
+              <PhoneLink phone={clinic.phone}
                 href={`tel:${clinic.phone}`}
                 style={{
                   flex: 1,
@@ -315,10 +316,10 @@ export default async function DentalDetailPage({
               >
                 <Phone size={14} />
                 اتصل
-              </a>
+              </PhoneLink>
             )}
             {(clinic.whatsapp || clinic.phone) && (
-              <a
+              <PhoneLink phone={(clinic.whatsapp || clinic.phone)}
                 href={`https://wa.me/${(clinic.whatsapp || clinic.phone)!.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('السلام عليكم - أود الاستفسار عبر Spir Medical')}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -341,7 +342,7 @@ export default async function DentalDetailPage({
               >
                 <MessageCircle size={14} />
                 WhatsApp
-              </a>
+              </PhoneLink>
             )}
           </div>
         </div>

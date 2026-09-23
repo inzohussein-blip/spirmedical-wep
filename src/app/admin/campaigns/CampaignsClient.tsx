@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
 import { createCampaign, updateCampaign, deleteCampaign, sendCampaign } from './actions';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 interface Campaign {
   id: string;
@@ -376,11 +377,12 @@ function CampaignModal({
     });
   };
 
+  const dialogRef = useModalDialog(true, onClose);
   return (
     <div style={modalOverlay()} onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} style={modalContent()}>
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="campaign-modal-title" onClick={(e) => e.stopPropagation()} style={modalContent()}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-          <h3 style={{ fontSize: 18, fontWeight: 900, margin: 0, flex: 1 }}>
+          <h3 id="campaign-modal-title" style={{ fontSize: 18, fontWeight: 900, margin: 0, flex: 1 }}>
             {editing ? 'تعديل حملة' : 'حملة جديدة'}
           </h3>
           <button onClick={onClose} aria-label="إغلاق" style={closeBtn()}><X size={16} /></button>

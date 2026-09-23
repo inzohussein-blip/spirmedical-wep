@@ -196,7 +196,10 @@ describe('④ سلوك النوافذ المنبثقة (useModalDialog)', () => 
 
   it('🚨 كلُّ نافذةٍ منبثقة للمريض تُعلن نفسها نافذة', () => {
     // نمطُ النافذة اليدويّ: غلافٌ ثابت يوقف انتشار النقر إلى الخلفيّة.
-    const roots = ['src/components', 'src/app/(dashboard)', 'src/app/(marketing)', 'src/app/(auth)'];
+    const roots = [
+      'src/components', 'src/app/(dashboard)', 'src/app/(marketing)', 'src/app/(auth)',
+      'src/app/admin', 'src/app/(specialist)', 'src/app/guest',
+    ];
     const files: string[] = [];
     const walk = (d: string) => {
       for (const f of readdirSync(join(process.cwd(), d))) {
@@ -209,8 +212,10 @@ describe('④ سلوك النوافذ المنبثقة (useModalDialog)', () => 
     const bare = files.filter((f) => {
       const s = read(f);
       return (
-        /onClick=\{\(e\) => e\.stopPropagation\(\)\}/.test(s) &&
-        /position: ?'?fixed'?/.test(s) &&
+        // نمطان: غلافٌ يوقف انتشار النقر، أو خلفيّةٌ داكنةٌ تملأ الشاشة
+        ((/onClick=\{\(e\) => e\.stopPropagation\(\)\}/.test(s) && /position: ?'?fixed'?/.test(s)) ||
+          /inset: ?'?0'?,[^\n]*\n?[^\n]*rgba\((0, ?0, ?0|15, ?26, ?28), ?0\.[3-9]/.test(s) ||
+          /inset: ?'?0'?,[^\n]*rgba\((0, ?0, ?0|15, ?26, ?28), ?0\.[3-9]/.test(s)) &&
         !/role="(alert)?dialog"|<ModalShell\b|<BottomSheet\b/.test(s)
       );
     });
@@ -227,5 +232,67 @@ describe('لا وعودَ صوتيّة بلا تسجيل', () => {
 
   it('بحثُ الرئيسية بلا زرّ صوتيّ', () => {
     expect(read('src/components/dashboard-v3/SearchBarV3.tsx')).not.toMatch(/<(Mic|IconMicrophone)\b|aria-label="بحث صوتي"/);
+  });
+});
+
+describe('لا رمزَ تحقّق في رفع الطلب (قرار المالك)', () => {
+  it.each([
+    'src/components/appointments/AppointmentWizard.tsx',
+    'src/components/appointments/BloodDrawFlow.tsx',
+    'src/components/appointments/NursingFlow.tsx',
+    'src/app/(dashboard)/appointments/new/NewAppointmentClient.tsx',
+    'src/app/(dashboard)/appointments/new/actions.ts',
+  ])('%s', (f) => {
+    const s = read(f);
+    expect(s).not.toMatch(/OtpChannelSelector|otp-service|sendOtp|verifyOtp|otpVerified/);
+  });
+});
+
+describe('نصوصُ نماذج الطلب لا تقلّ عن 12px', () => {
+  it.each([
+    'src/components/appointments/AppointmentWizard.tsx',
+    'src/components/appointments/BloodDrawFlow.tsx',
+    'src/components/appointments/NursingFlow.tsx',
+    'src/components/family/FamilyMemberPicker.tsx',
+  ])('%s', (f) => {
+    const s = read(f);
+    expect(s.match(/fontSize: ?'?(?:[0-9]|1[01])(?:\.\d+)?(?:px)?'?\b|font-size: ?(?:[0-9]|1[01])(?:\.\d+)?px/g) ?? []).toEqual([]);
+  });
+});
+
+describe('لا شيءَ ينبثق فوق نموذج الطلب أو الطوارئ', () => {
+  const { isFocusedTaskRoute, isEmergencyRoute } = require('@/lib/focused-routes');
+  it('المسارات', () => {
+    expect(isFocusedTaskRoute('/appointments/new')).toBe(true);
+    expect(isFocusedTaskRoute('/appointments/newer')).toBe(false);
+    expect(isEmergencyRoute('/sos')).toBe(true);
+    expect(isEmergencyRoute('/guest/sos')).toBe(true);
+    expect(isEmergencyRoute('/dashboard')).toBe(false);
+  });
+
+  it.each([
+    'src/components/notifications/PushPermissionPrompt.tsx',
+    'src/components/pwa/SmartInstallPrompt.tsx',
+    'src/components/pwa/IOSInstallPrompt.tsx',
+  ])('🚨 %s يحترم المهامَّ المُركَّزة والطوارئ', (f) => {
+    const s = read(f);
+    expect(s).toMatch(/isFocusedTaskRoute\(pathname\)/);
+    expect(s).toMatch(/isEmergencyRoute\(pathname\)/);
+  });
+
+  it('🚨 طلبُ الإشعارات لا يُعرض في صفحة الطلب', () => {
+    const { act: rAct } = require('@testing-library/react');
+    jest.useFakeTimers();
+    (window as any).Notification = { permission: 'default' };
+    mockPath = '/appointments/new';
+    const PushPermissionPrompt = require('@/components/notifications/PushPermissionPrompt').default;
+    const { container, rerender } = render(<PushPermissionPrompt />);
+    rAct(() => { jest.advanceTimersByTime(6000); });
+    expect(container.querySelector('.push-prompt')).toBeNull();
+    // ويظهر حين يغادر
+    mockPath = '/appointments/a1';
+    rerender(<PushPermissionPrompt />);
+    expect(container.querySelector('.push-prompt')).not.toBeNull();
+    jest.useRealTimers();
   });
 });

@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SERVICES, CATEGORIES, formatPrice, formatDuration, type Service } from '@/lib/services/services-data';
 import { generateAvailableDates, generateTimeSlotsForDate, groupTimeSlots, formatDateRelative, toArabicDigits, type TimeSlot } from '@/lib/services/time-slots';
-import OtpChannelSelector from './OtpChannelSelector';
 import UserLocationPickerWrapper from '@/components/maps/UserLocationPickerWrapper';
 import {
   Calendar, MapPin, Lightbulb, Monitor, Clock, FileText, ChevronUp,
@@ -55,7 +54,6 @@ export const DEDICATED_FLOW_SERVICES = ['blood-draw', 'home-nursing'] as const;
 export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
   const router = useRouter();
   const [step, setStep] = useState<Step>(1);
-  const [otpVerified, setOtpVerified] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const [data, setData] = useState<BookingData>({
@@ -110,7 +108,6 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
   };
 
   const handleConfirm = async () => {
-    if (!otpVerified) return;
     setSubmitting(true);
     try {
       const res = await onSubmit(data);
@@ -367,133 +364,120 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
         </div>
       )}
 
-      {/* === STEP 4: التأكيد + OTP === */}
+      {/* === STEP 4: التأكيد ===
+          لا رمزَ تحقّق عند رفع الطلب (قرار المالك): المريضُ مسجَّل الدخول،
+          وسحبُ الدم والتمريض بلا رمزٍ أصلاً. */}
       {step === 4 && (
         <div className="step-content">
-          {!otpVerified ? (
-            <OtpChannelSelector
-              phone={data.phone || userPhone}
-              purpose="appointment"
-              onVerified={() => setOtpVerified(true)}
-              onCancel={() => setStep(3)}
-            />
-          ) : (
-            <>
-              {/* ملخّص الحجز */}
-              <div className="summary-card">
-                <div className="summary-header">
-                  <div className="summary-icon">{data.service?.emoji}</div>
-                  <div>
-                    <h3>{data.service?.nameAr}</h3>
-                    <p>{data.service?.description}</p>
-                  </div>
-                </div>
+          {/* ملخّص الحجز */}
+          <div className="summary-card">
+            <div className="summary-header">
+              <div className="summary-icon">{data.service?.emoji}</div>
+              <div>
+                <h3>{data.service?.nameAr}</h3>
+                <p>{data.service?.description}</p>
+              </div>
+            </div>
 
-                <div className="summary-rows">
-                  <div className="summary-row">
-                    <span className="summary-label">
-                      <Calendar size={13} strokeWidth={2.2} aria-hidden />
-                      <span>التاريخ والوقت</span>
-                    </span>
-                    <span className="summary-value">
-                      {data.slot && `${data.slot.displayDate} · ${data.slot.displayTime}`}
-                    </span>
-                  </div>
-
-                  {data.service?.needsAddress && (
-                    <div className="summary-row">
-                      <span className="summary-label">
-                        <MapPin size={13} strokeWidth={2.2} aria-hidden />
-                        <span>العنوان</span>
-                      </span>
-                      <span className="summary-value">{data.address}</span>
-                    </div>
-                  )}
-
-                  <div className="summary-row">
-                    <span className="summary-label">
-                      <Clock size={13} strokeWidth={2.2} aria-hidden />
-                      <span>المدة المتوقعة</span>
-                    </span>
-                    <span className="summary-value">{formatDuration(data.service?.duration || 60)}</span>
-                  </div>
-
-                  {data.notes && (
-                    <div className="summary-row">
-                      <span className="summary-label">
-                        <FileText size={13} strokeWidth={2.2} aria-hidden />
-                        <span>ملاحظات</span>
-                      </span>
-                      <span className="summary-value">{data.notes}</span>
-                    </div>
-                  )}
-
-                </div>
-
-                <div className="summary-price">
-                  <div className="summary-price-row">
-                    <span>السعر التقديري</span>
-                    <strong>{formatPrice(data.service?.basePrice || 0)}</strong>
-                  </div>
-                  <div className="summary-price-note" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <Lightbulb size={12} strokeWidth={2.2} aria-hidden />
-                    السعر النهائي قد يختلف حسب المتطلبات الفعلية
-                  </div>
-                </div>
+            <div className="summary-rows">
+              <div className="summary-row">
+                <span className="summary-label">
+                  <Calendar size={13} strokeWidth={2.2} aria-hidden />
+                  <span>التاريخ والوقت</span>
+                </span>
+                <span className="summary-value">
+                  {data.slot && `${data.slot.displayDate} · ${data.slot.displayTime}`}
+                </span>
               </div>
 
-              {/* تأكيد + شروط */}
-              <div className="confirm-checkbox">
-                <input type="checkbox" id="confirm-terms" defaultChecked />
-                <label htmlFor="confirm-terms">
-                  أؤكّد أن المعلومات صحيحة وأوافق على
-                  <a href="/legal/terms" target="_blank" rel="noopener noreferrer"> شروط الخدمة</a>
-                </label>
+              {data.service?.needsAddress && (
+                <div className="summary-row">
+                  <span className="summary-label">
+                    <MapPin size={13} strokeWidth={2.2} aria-hidden />
+                    <span>العنوان</span>
+                  </span>
+                  <span className="summary-value">{data.address}</span>
+                </div>
+              )}
+
+              <div className="summary-row">
+                <span className="summary-label">
+                  <Clock size={13} strokeWidth={2.2} aria-hidden />
+                  <span>المدة المتوقعة</span>
+                </span>
+                <span className="summary-value">{formatDuration(data.service?.duration || 60)}</span>
               </div>
-            </>
-          )}
+
+              {data.notes && (
+                <div className="summary-row">
+                  <span className="summary-label">
+                    <FileText size={13} strokeWidth={2.2} aria-hidden />
+                    <span>ملاحظات</span>
+                  </span>
+                  <span className="summary-value">{data.notes}</span>
+                </div>
+              )}
+
+            </div>
+
+            <div className="summary-price">
+              <div className="summary-price-row">
+                <span>السعر التقديري</span>
+                <strong>{formatPrice(data.service?.basePrice || 0)}</strong>
+              </div>
+              <div className="summary-price-note" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Lightbulb size={12} strokeWidth={2.2} aria-hidden />
+                السعر النهائي قد يختلف حسب المتطلبات الفعلية
+              </div>
+            </div>
+          </div>
+
+          {/* تأكيد + شروط */}
+          <div className="confirm-checkbox">
+            <input type="checkbox" id="confirm-terms" defaultChecked />
+            <label htmlFor="confirm-terms">
+              أؤكّد أن المعلومات صحيحة وأوافق على
+              <a href="/legal/terms" target="_blank" rel="noopener noreferrer"> شروط الخدمة</a>
+            </label>
+          </div>
         </div>
       )}
 
       {/* صندوق «الحقول الناقصة» */}
-      {(step !== 4 || otpVerified) && (
-        <MissingFieldsSummary
-          fields={fe.missingFields}
-          labels={APPOINTMENT_FIELD_LABELS}
-          errors={fe.fieldErrors}
-          onJump={fe.jumpTo}
-        />
-      )}
+      <MissingFieldsSummary
+        fields={fe.missingFields}
+        labels={APPOINTMENT_FIELD_LABELS}
+        errors={fe.fieldErrors}
+        onJump={fe.jumpTo}
+      />
 
       {/* أزرار التنقّل */}
-      {(step !== 4 || otpVerified) && (
-        <div className="wizard-actions">
-          {step > 1 && (
-            <button type="button" onClick={goBack} className="btn-secondary">
-              ← السابق
-            </button>
-          )}
-          {step < 4 && (
-            <button
-              type="button"
-              onClick={goNext}
-              className="btn-primary"
-            >
-              التالي ←
-            </button>
-          )}
-          {step === 4 && otpVerified && (
-            <button
-              type="button"
-              onClick={handleConfirm}
-              disabled={submitting}
-              className="btn-primary btn-confirm"
-            >
-              {submitting ? 'جارٍ التأكيد...' : '✓ تأكيد الحجز'}
-            </button>
-          )}
-        </div>
-      )}
+      <div className="wizard-actions">
+        {step > 1 && (
+          <button type="button" onClick={goBack} className="btn-secondary">
+            → السابق
+          </button>
+        )}
+        {step < 4 && (
+          <button
+            type="button"
+            onClick={goNext}
+            className="btn-primary"
+          >
+            التالي ←
+          </button>
+        )}
+        {step === 4 && (
+          <button
+            type="button"
+            onClick={handleConfirm}
+            disabled={submitting}
+            className="btn-primary btn-confirm"
+          >
+            {submitting ? 'جارٍ التأكيد...' : '✓ تأكيد الحجز'}
+          </button>
+        )}
+      </div>
 
       <style jsx>{`
         .wizard {
@@ -557,7 +541,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           margin-bottom: 18px;
         }
         .wizard-step-num {
-          font-size: 11px;
+          font-size: 12px;
           color: var(--ink-3, #5F6368);
           font-weight: 600;
           margin-bottom: 4px;
@@ -654,7 +638,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           margin: 0;
         }
         .aw-service-badge {
-          font-size: 11px;
+          font-size: 12px;
           padding: 2px 7px;
           border-radius: 100px;
           font-weight: 800;
@@ -663,7 +647,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
         .badge-amber { background: var(--amber, #B06000); color: var(--paper-3, #FFFFFF); }
         .badge-rose { background: var(--rose, #C71C56); color: var(--paper-3, #FFFFFF); }
         .aw-service-desc {
-          font-size: 11px;
+          font-size: 12px;
           color: var(--ink-3, #5F6368);
           margin: 0 0 6px;
           line-height: 1.5;
@@ -671,7 +655,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
         .aw-service-meta {
           display: flex;
           gap: 12px;
-          font-size: 11px;
+          font-size: 12px;
         }
         .aw-service-price {
           font-weight: 800;
@@ -726,7 +710,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           border-color: var(--emerald, #01875F);
         }
         .date-pill-day {
-          font-size: 11px;
+          font-size: 12px;
           font-weight: 600;
           margin-bottom: 4px;
         }
@@ -763,7 +747,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           border: 1px solid var(--line, rgba(15, 26, 28, 0.08));
           border-radius: 10px;
           padding: 9px;
-          font-size: 11px;
+          font-size: 12px;
           font-weight: 600;
           cursor: pointer;
           position: relative;
@@ -826,11 +810,11 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           border-color: var(--emerald, #01875F);
         }
         .field-hint {
-          font-size: 11px;
+          font-size: 12px;
           color: var(--ink-3, #5F6368);
         }
         .field-counter {
-          font-size: 11px;
+          font-size: 12px;
           color: var(--ink-3, #5F6368);
           text-align: left;
           font-family: 'JetBrains Mono', monospace;
@@ -913,7 +897,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           margin: 0 0 3px;
         }
         .summary-header p {
-          font-size: 11px;
+          font-size: 12px;
           color: var(--ink-3, #5F6368);
           margin: 0;
         }
@@ -928,7 +912,11 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           align-items: flex-start;
           gap: 12px;
         }
+        /* سطرٌ مرن: Tailwind يجعل <svg> كتلةً فكانت الأيقونة فوق التسمية */
         .summary-label {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
           font-size: 12px;
           color: var(--ink-3, #5F6368);
           font-weight: 600;
@@ -959,7 +947,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           font-family: 'JetBrains Mono', monospace;
         }
         .summary-price-note {
-          font-size: 11px;
+          font-size: 12px;
           color: var(--emerald-deep, #056559);
           opacity: 0.8;
           margin-top: 4px;

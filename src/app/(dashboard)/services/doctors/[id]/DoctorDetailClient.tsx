@@ -17,6 +17,7 @@ import ShareButton from '@/components/pwa/ShareButton';
 import LazyImage from '@/components/ui/LazyImage';
 import DoctorBookingModal from '@/components/doctors/DoctorBookingModal';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 interface Doctor {
   id: string;
@@ -351,7 +352,7 @@ export default function DoctorDetailClient({ doctor, activeSubscription, initial
               </div>
             )}
             {doctor.clinic_phone && (
-              <a
+              <PhoneLink phone={doctor.clinic_phone}
                 href={`tel:${doctor.clinic_phone}`}
                 style={{
                   display: 'inline-flex',
@@ -369,7 +370,7 @@ export default function DoctorDetailClient({ doctor, activeSubscription, initial
               >
                 <Phone size={12} />
                 {doctor.clinic_phone}
-              </a>
+              </PhoneLink>
             )}
           </div>
         )}

@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import FreeMedicalMapWrapper from '@/components/maps/SpirMapViewWrapper';
 import type { MapMarker } from '@/types/location';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 interface Hospital {
   id: string;
@@ -398,13 +399,13 @@ export default function HospitalsClient({ hospitals }: Props) {
 
                           <div style={{ display: 'flex', gap: 4 }} onClick={(e) => e.preventDefault()}>
                             {h.phone && (
-                              <a
+                              <PhoneLink phone={h.phone}
                                 href={`tel:${h.phone}`}
                                 onClick={(e) => e.stopPropagation()}
                                 style={actionBtnStyle()}
                               >
                                 <Phone size={12} />
-                              </a>
+                              </PhoneLink>
                             )}
                             {h.latitude && h.longitude && (
                               <a

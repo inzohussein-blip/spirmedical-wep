@@ -12,6 +12,7 @@ import {
   toggleOpticalActive,
   toggleOpticalFeatured,
 } from './actions';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 interface OpticalStore {
   id: string;
@@ -197,10 +198,11 @@ function StoreModal({ store, onClose }: { store: OpticalStore | null; onClose: (
     else { toast.error(result.error || 'فشلت العملية'); setIsSaving(false); }
   };
 
+  const dialogRef = useModalDialog(true, onClose);
   return (
     <div style={modalOverlay}>
-      <div style={modalContent}>
-        <h2 style={{ fontSize: 18, fontWeight: 900, marginBottom: 16 }}>
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="optical-modal-title" style={modalContent}>
+        <h2 id="optical-modal-title" style={{ fontSize: 18, fontWeight: 900, marginBottom: 16 }}>
           {store ? '✏️ تعديل متجر' : '➕ إضافة متجر'}
         </h2>
 

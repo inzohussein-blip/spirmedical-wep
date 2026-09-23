@@ -7,6 +7,7 @@ import {
   AlertCircle, Loader2, Package,
 } from 'lucide-react';
 import { searchMedicationAvailability } from './actions';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 interface SearchResult {
   medication: {
@@ -355,7 +356,7 @@ export default function SearchClient() {
                               {p.custom_price.toLocaleString('ar-IQ')} د.ع
                             </div>
                           )}
-                          <a
+                          <PhoneLink phone={p.phone}
                             href={`tel:${p.phone}`}
                             onClick={(e) => e.stopPropagation()}
                             aria-label="اتصال"
@@ -372,7 +373,7 @@ export default function SearchClient() {
                             }}
                           >
                             <Phone size={14} />
-                          </a>
+                          </PhoneLink>
                         </Link>
                       ))}
                     </div>

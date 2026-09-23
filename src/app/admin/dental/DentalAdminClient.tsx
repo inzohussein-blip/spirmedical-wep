@@ -12,6 +12,7 @@ import {
   toggleDentalActive,
   toggleDentalFeatured,
 } from './actions';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 interface DentalClinic {
   id: string;
@@ -369,10 +370,11 @@ function ClinicModal({ clinic, onClose }: { clinic: DentalClinic | null; onClose
     }
   };
 
+  const dialogRef = useModalDialog(true, onClose);
   return (
     <div style={modalOverlay}>
-      <div style={modalContent}>
-        <h2 style={{ fontSize: 18, fontWeight: 900, marginBottom: 16 }}>
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="dental-modal-title" style={modalContent}>
+        <h2 id="dental-modal-title" style={{ fontSize: 18, fontWeight: 900, marginBottom: 16 }}>
           {clinic ? '✏️ تعديل عيادة' : '➕ إضافة عيادة'}
         </h2>
 

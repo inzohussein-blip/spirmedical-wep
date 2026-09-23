@@ -68,15 +68,21 @@ describe('كشف الهواتف النائبة', () => {
     return out;
   }
 
-  it('الأرقام المتسلسلة موجودة فعلاً — فالتحذير ليس احتياطياً', () => {
-    const nums = phones().map(Number).sort((a, b) => a - b);
-    let run = 1;
-    let longest = 1;
-    for (let i = 1; i < nums.length; i++) {
-      run = nums[i] - nums[i - 1] === 1 ? run + 1 : 1;
-      longest = Math.max(longest, run);
-    }
-    // لو نُظّفت البيانات يوماً واختفى التسلسل، فليُراجَع التحذير وهذا الاختبار
-    expect(longest).toBeGreaterThanOrEqual(3);
+  it('🚨 لا رقمَ كاملاً في البذور: المُختلَقُ مُقنَّعٌ «0771 xxx xxxx»', () => {
+    // كان هذا الاختبار يُثبت وجود التسلسل كي لا يصير التحذير احتياطياً.
+    // قُنّعت الأرقام (قرار المالك)، فالحارسُ الآن ألّا يعود رقمٌ كامل.
+    expect(phones()).toEqual([]);
+    const masked = readdirSync(SEED_DIR)
+      .filter((x) => x.endsWith('.ts'))
+      .flatMap((f) => [...read(join(SEED_DIR, f)).matchAll(/phone: '0\d{3} xxx xxxx'/g)]);
+    expect(masked.length).toBeGreaterThan(10);
+  });
+
+  it('رقمُ الطوارئ في البذور هو 122 لا رقماً مُختلَقاً', () => {
+    const emergency = readdirSync(SEED_DIR)
+      .filter((x) => x.endsWith('.ts'))
+      .flatMap((f) => [...read(join(SEED_DIR, f)).matchAll(/^\s+phone_emergency: '([^']*)'/gm)].map((m) => m[1]));
+    expect(emergency.length).toBeGreaterThan(0);
+    expect(emergency.filter((e) => e !== '122')).toEqual([]);
   });
 });

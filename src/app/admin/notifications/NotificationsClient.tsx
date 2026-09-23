@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 import { sendManualWhatsApp } from './actions';
 
 export default function NotificationsClient() {
@@ -12,6 +13,7 @@ export default function NotificationsClient() {
   const [body, setBody] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const dialogRef = useModalDialog(showForm, () => setShowForm(false));
 
   function handleSend() {
     setError(''); setSuccess('');
@@ -48,13 +50,13 @@ export default function NotificationsClient() {
           <div onClick={() => setShowForm(false)} style={{
             position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 100,
           }} />
-          <div style={{
+          <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="wa-send-title" style={{
             position: 'fixed', top: '50%', left: '50%',
             transform: 'translate(-50%, -50%)',
             background: 'var(--white)', borderRadius: 16, padding: 24,
             width: 480, maxWidth: '90vw', zIndex: 101,
           }}>
-            <h2 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 14px' }}>
+            <h2 id="wa-send-title" style={{ fontSize: 18, fontWeight: 800, margin: '0 0 14px' }}>
               💬 إرسال رسالة WhatsApp
             </h2>
 

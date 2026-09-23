@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { isFocusedTaskRoute } from '@/lib/focused-routes';
 import { useState, useEffect } from 'react';
 import {
   IconHome, IconHome2, IconLayoutGrid, IconClipboardList,
@@ -104,10 +105,7 @@ export function AppShell({
 
   // مهامٌّ مُركَّزة: نموذج الطلب له شريطُ إرسالٍ ثابت في أسفله، فكان شريطُ
   // التنقّل يأكل 71px من شاشة 640px ويتراكب معه. الرجوعُ متاحٌ من الرأس.
-  const FOCUSED_TASK_ROUTES = ['/appointments/new'];
-  const hideBottomNav = FOCUSED_TASK_ROUTES.some(
-    (r) => pathname === r || pathname.startsWith(`${r}/`),
-  );
+  const hideBottomNav = isFocusedTaskRoute(pathname);
 
   return (
     <div className="app-viewport">

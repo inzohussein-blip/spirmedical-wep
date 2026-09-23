@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import NewAppointmentClient from './NewAppointmentClient';
+import ServiceComingSoon from '@/components/services/ServiceComingSoon';
+import { isBookingSoon } from '@/lib/services-v3';
 
 export const metadata = {
   title: 'حجز موعد جديد · سباير ميديكال',
@@ -19,6 +21,18 @@ export default async function NewAppointmentPage({
 
   if (!user) {
     redirect('/login');
+  }
+
+  // حجزٌ مُغلقٌ مؤقّتاً: لا يُعرض المعالجُ العامّ فيُرفع طلبٌ بلا خدمته
+  if (isBookingSoon(searchParams.service)) {
+    return (
+      <ServiceComingSoon
+        title="حجز جلسات العلاج الطبيعي"
+        note="نجهّز الحجز الآن وسيكون متاحاً قريباً. يمكنك تصفّح الأخصائيين وخدماتهم في هذه الأثناء."
+        backHref="/services/physio"
+        backLabel="تصفّح أخصائيي العلاج الطبيعي"
+      />
+    );
   }
 
   // نداءاتٌ مستقلّة: لا يعتمد أيٌّ منها على نتيجة سابقه، وكانت تُنتظَر واحداً بعد واحد

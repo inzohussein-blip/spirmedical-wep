@@ -10,9 +10,13 @@ import { IconClockPause, IconArrowRight } from '@tabler/icons-react';
 export default function ServiceComingSoon({
   title,
   note,
+  backHref = '/dashboard',
+  backLabel = 'العودة إلى الخدمات',
 }: {
   title: string;
   note?: string | null;
+  backHref?: string;
+  backLabel?: string;
 }) {
   return (
     <main
@@ -51,7 +55,7 @@ export default function ServiceComingSoon({
         </p>
 
         <Link
-          href="/dashboard"
+          href={backHref}
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
             minHeight: 44, padding: '0 20px', borderRadius: 12,
@@ -60,7 +64,7 @@ export default function ServiceComingSoon({
           }}
         >
           <IconArrowRight size={18} stroke={2} />
-          العودة إلى الخدمات
+          {backLabel}
         </Link>
       </div>
     </main>

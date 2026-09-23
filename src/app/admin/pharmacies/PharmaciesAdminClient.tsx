@@ -10,6 +10,8 @@ import { toast } from '@/components/ui/Toaster';
 import { useConfirm } from '@/components/ui';
 import { createPharmacy, updatePharmacy, deletePharmacy, togglePharmacyActive } from './actions';
 import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWrapper';
+import PhoneLink from '@/components/ui/PhoneLink';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 interface Pharmacy {
   id: string;
@@ -138,9 +140,9 @@ export default function PharmaciesAdminClient({ pharmacies, inventoryCounts }: P
                       <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{p.district}</div>
                     </td>
                     <td style={tdStyle}>
-                      <a href={`tel:${p.phone}`} style={{ color: 'var(--emerald)', textDecoration: 'none', fontSize: 11 }}>
+                      <PhoneLink phone={p.phone} href={`tel:${p.phone}`} style={{ color: 'var(--emerald)', textDecoration: 'none', fontSize: 11 }}>
                         {p.phone}
-                      </a>
+                      </PhoneLink>
                     </td>
                     <td style={tdStyle}>
                       {counts ? (
@@ -255,11 +257,12 @@ function PharmacyModal({
     });
   };
 
+  const dialogRef = useModalDialog(true, onClose);
   return (
     <div style={modalOverlay()} onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} style={modalContent()}>
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="pharmacy-modal-title" onClick={(e) => e.stopPropagation()} style={modalContent()}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-          <h3 style={{ fontSize: 18, fontWeight: 900, margin: 0, flex: 1 }}>
+          <h3 id="pharmacy-modal-title" style={{ fontSize: 18, fontWeight: 900, margin: 0, flex: 1 }}>
             {editing ? 'تعديل صيدلية' : 'إضافة صيدلية'}
           </h3>
           <button onClick={onClose} aria-label="إغلاق" style={closeBtn()}><X size={16} /></button>

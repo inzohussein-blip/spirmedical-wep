@@ -7,6 +7,7 @@ import {
   ChevronLeft, Package,
 } from 'lucide-react';
 import ExternalMapButton from '@/components/maps/ExternalMapButton';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 interface Pharmacy {
   id: string;
@@ -245,14 +246,14 @@ export default function PharmaciesClient({ pharmacies }: Props) {
                       className="scr-list-item-actions"
                       onClick={(e) => e.preventDefault()}
                     >
-                      <a
+                      <PhoneLink phone={p.phone}
                         href={`tel:${p.phone}`}
                         className="scr-action-btn"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <Phone size={14} strokeWidth={2.2} aria-hidden />
                         <span>اتصال</span>
-                      </a>
+                      </PhoneLink>
                       <div onClick={(e) => e.stopPropagation()}>
                         <ExternalMapButton
                           lat={p.latitude}

@@ -11,6 +11,7 @@ import ShareButton from '@/components/pwa/ShareButton';
 import PharmacyReservationModal from '@/components/pharmacies/PharmacyReservationModal';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import PharmacyRatingCard from './PharmacyRatingCard';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 interface Pharmacy {
   id: string;
@@ -277,7 +278,7 @@ export default function PharmacyDetailClient({
               position: 'relative',
             }}
           >
-            <a
+            <PhoneLink phone={pharmacy.phone}
               href={`tel:${pharmacy.phone}`}
               style={{
                 flex: 1,
@@ -295,9 +296,9 @@ export default function PharmacyDetailClient({
               }}
             >
               <Phone size={14} /> اتصال
-            </a>
+            </PhoneLink>
             {pharmacy.whatsapp && (
-              <a
+              <PhoneLink phone={pharmacy.whatsapp}
                 href={`https://wa.me/${pharmacy.whatsapp.replace(/\D/g, '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -317,7 +318,7 @@ export default function PharmacyDetailClient({
                 }}
               >
                 <MessageCircle size={14} /> واتساب
-              </a>
+              </PhoneLink>
             )}
             <a
               href={`https://maps.google.com/?q=${encodeURIComponent(pharmacy.name + ' ' + pharmacy.district + ' ' + pharmacy.city)}`}

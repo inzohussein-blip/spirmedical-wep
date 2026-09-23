@@ -12,6 +12,7 @@ import {
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import { checkIsFavorite } from '@/components/services/favorites-actions';
 import { formatPrice, formatPriceRange, count, formatRating } from '@/lib/format/price';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 export const dynamic = 'force-dynamic';
 
@@ -251,14 +252,14 @@ export default async function OpticalDetailPage({
 
           {store.phone && (
             <div style={{ display: 'flex', gap: 8 }}>
-              <a href={`tel:${store.phone}`} style={ctaSecondary('var(--amber)')}>
+              <PhoneLink phone={store.phone} href={`tel:${store.phone}`} style={ctaSecondary('var(--amber)')}>
                 <Phone size={14} />اتصل
-              </a>
-              <a href={`https://wa.me/${store.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('السلام عليكم - أود الاستفسار عبر Spir Medical')}`}
+              </PhoneLink>
+              <PhoneLink phone={store.phone} href={`https://wa.me/${store.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('السلام عليكم - أود الاستفسار عبر Spir Medical')}`}
                 target="_blank" rel="noopener noreferrer"
                 style={ctaSecondary('var(--ink-2)')}>
                 <MessageCircle size={14} />WhatsApp
-              </a>
+              </PhoneLink>
             </div>
           )}
         </div>

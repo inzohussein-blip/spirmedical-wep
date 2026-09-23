@@ -6,6 +6,7 @@ import {
   Plus, Edit, Trash2, Star, Power, MapPin, Phone, 
   Building2, X, Save, Search, CheckCircle2,
 } from 'lucide-react';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 interface PartnerLab {
   id: string;
@@ -358,6 +359,7 @@ function LabEditModal({
     });
   }
 
+  const dialogRef = useModalDialog(true, onClose);
   return (
     <div style={{
       position: 'fixed',
@@ -369,7 +371,7 @@ function LabEditModal({
       zIndex: 1000,
       padding: 16,
     }}>
-      <div style={{
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="lab-modal-title" style={{
         background: 'var(--white)',
         borderRadius: 16,
         padding: 20,
@@ -379,7 +381,7 @@ function LabEditModal({
         overflowY: 'auto',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>
+          <h2 id="lab-modal-title" style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>
             {lab ? 'تعديل مختبر' : 'إضافة مختبر جديد'}
           </h2>
           <button onClick={onClose} style={{ background: 'transparent', border: 0, cursor: 'pointer' }}>

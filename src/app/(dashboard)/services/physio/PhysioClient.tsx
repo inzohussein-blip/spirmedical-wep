@@ -82,6 +82,13 @@ export default function PhysioClient({ serviceTypes, specialists }: Props) {
           {serviceTypes.length} نوع · {specialists.length} أخصائي
         </p>
 
+        <div role="status" style={{
+          padding: '10px 12px', marginBottom: 14, borderRadius: 10,
+          background: '#F1F3F4', color: '#3C4043', fontSize: 13, fontWeight: 700,
+        }}>
+          حجز الجلسات قريباً — تصفّح الأخصائيين وخدماتهم الآن.
+        </div>
+
         {/* View toggle */}
         <div style={{
           display: 'flex',
@@ -493,25 +500,25 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
       </div>
 
       {/* Action */}
-      <Link
-        href={`/appointments/new?service=physio&specialist=${specialist.id}`}
+      {/* الحجزُ «قريباً»: البطاقةُ للتصفّح، ولا رابطَ إلى صفحة الطلب */}
+      <div
+        aria-disabled="true"
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           gap: 6,
+          minHeight: 40,
           padding: '10px 14px',
-          background: 'var(--emerald)',
-          color: 'var(--paper-3)',
+          background: '#F1F3F4',
+          color: '#5F6368',
           borderRadius: 10,
-          textDecoration: 'none',
-          fontFamily: 'inherit',
           fontSize: 12,
           fontWeight: 800,
         }}
       >
-        احجز جلسة
-      </Link>
+        الحجز قريباً
+      </div>
     </article>
   );
 }

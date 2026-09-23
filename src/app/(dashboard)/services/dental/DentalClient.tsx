@@ -9,6 +9,7 @@ import {
 import { formatPriceRange } from '@/lib/format/price';
 import { haptic } from '@/lib/haptic';
 import ExternalMapButton from '@/components/maps/ExternalMapButton';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 interface DentalClinic {
   id: string;
@@ -358,7 +359,7 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
         {/* Secondary actions */}
         <div style={{ display: 'flex', gap: 6 }}>
           {clinic.phone && (
-            <a
+            <PhoneLink phone={clinic.phone}
               href={`tel:${clinic.phone}`}
               onClick={() => haptic.light()}
               style={{
@@ -380,10 +381,10 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
             >
               <Phone size={12} />
               اتصل
-            </a>
+            </PhoneLink>
           )}
           {clinic.phone && (
-            <a
+            <PhoneLink phone={clinic.phone}
               href={`https://wa.me/${clinic.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('السلام عليكم - أود حجز موعد عبر Spir Medical')}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -402,7 +403,7 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
               }}
             >
               💬 WhatsApp
-            </a>
+            </PhoneLink>
           )}
           <ExternalMapButton
             lat={clinic.latitude}

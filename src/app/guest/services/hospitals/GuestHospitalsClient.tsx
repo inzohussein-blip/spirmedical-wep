@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { Search } from 'lucide-react';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 interface Hospital {
   id: string;
@@ -15,12 +16,12 @@ interface Hospital {
 }
 
 const HOSPITALS: Hospital[] = [
-  { id: 'h1', name: 'مستشفى بغداد التعليمي', type: 'حكومي', city: 'بغداد', district: 'باب المعظم', phone: '07811111111', emergency: true },
-  { id: 'h2', name: 'مستشفى الإمام علي', type: 'حكومي', city: 'النجف', district: 'الكوفة', phone: '07822222222', emergency: true },
-  { id: 'h3', name: 'مستشفى الكندي العام', type: 'حكومي', city: 'بغداد', district: 'الكرادة', phone: '07833333333', emergency: true },
-  { id: 'h4', name: 'مستشفى دار السلام', type: 'خاص', city: 'بغداد', district: 'الأعظمية', phone: '07844444444', emergency: false },
-  { id: 'h5', name: 'مستشفى ابن سينا', type: 'خاص', city: 'البصرة', district: 'العشار', phone: '07855555555', emergency: true },
-  { id: 'h6', name: 'مستشفى الموصل العام', type: 'حكومي', city: 'الموصل', district: 'الجامعة', phone: '07866666666', emergency: true },
+  { id: 'h1', name: 'مستشفى بغداد التعليمي', type: 'حكومي', city: 'بغداد', district: 'باب المعظم', phone: '0781 xxx xxxx', emergency: true },
+  { id: 'h2', name: 'مستشفى الإمام علي', type: 'حكومي', city: 'النجف', district: 'الكوفة', phone: '0782 xxx xxxx', emergency: true },
+  { id: 'h3', name: 'مستشفى الكندي العام', type: 'حكومي', city: 'بغداد', district: 'الكرادة', phone: '0783 xxx xxxx', emergency: true },
+  { id: 'h4', name: 'مستشفى دار السلام', type: 'خاص', city: 'بغداد', district: 'الأعظمية', phone: '0784 xxx xxxx', emergency: false },
+  { id: 'h5', name: 'مستشفى ابن سينا', type: 'خاص', city: 'البصرة', district: 'العشار', phone: '0785 xxx xxxx', emergency: true },
+  { id: 'h6', name: 'مستشفى الموصل العام', type: 'حكومي', city: 'الموصل', district: 'الجامعة', phone: '0786 xxx xxxx', emergency: true },
 ];
 
 export default function GuestHospitalsClient() {
@@ -112,10 +113,10 @@ export default function GuestHospitalsClient() {
                     <span>{hospital.city} - {hospital.district}</span>
                   </div>
                   <div className="hospital-actions">
-                    <a href={`tel:${hospital.phone}`} className="hospital-action-btn">
+                    <PhoneLink phone={hospital.phone} href={`tel:${hospital.phone}`} className="hospital-action-btn">
                       <span aria-hidden="true">📞</span>
                       <span>اتصال</span>
-                    </a>
+                    </PhoneLink>
                     <button
                       className="hospital-action-btn locked"
                       type="button"

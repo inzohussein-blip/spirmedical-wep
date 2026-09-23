@@ -12,6 +12,7 @@ import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWr
 import {
   createDoctor, updateDoctor, deleteDoctor, toggleDoctorActive, verifyDoctor,
 } from './actions';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 interface Doctor {
   id: string;
@@ -473,6 +474,7 @@ function DoctorModal({
     });
   };
 
+  const dialogRef = useModalDialog(true, onClose);
   return (
     <div
       style={{
@@ -488,7 +490,7 @@ function DoctorModal({
       }}
       onClick={onClose}
     >
-      <div
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="doctor-modal-title"
         onClick={(e) => e.stopPropagation()}
         style={{
           background: 'var(--paper)',
@@ -500,7 +502,7 @@ function DoctorModal({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-          <h3 style={{ fontSize: 18, fontWeight: 900, margin: 0, flex: 1 }}>
+          <h3 id="doctor-modal-title" style={{ fontSize: 18, fontWeight: 900, margin: 0, flex: 1 }}>
             {editing ? 'تعديل طبيب' : 'إضافة طبيب جديد'}
           </h3>
           <button

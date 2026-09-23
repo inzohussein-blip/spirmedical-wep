@@ -9,6 +9,7 @@ import {
 import { haptic } from '@/lib/haptic';
 import { formatPrice, formatPriceRange } from '@/lib/format/price';
 import ExternalMapButton from '@/components/maps/ExternalMapButton';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 interface Store {
   id: string;
@@ -279,7 +280,7 @@ function StoreCard({ store }: { store: Store }) {
         {/* Secondary actions */}
         <div style={{ display: 'flex', gap: 6 }}>
           {store.phone && (
-            <a
+            <PhoneLink phone={store.phone}
               href={`tel:${store.phone}`}
               onClick={() => haptic.light()}
               style={{
@@ -301,10 +302,10 @@ function StoreCard({ store }: { store: Store }) {
             >
               <Phone size={12} />
               اتصل
-            </a>
+            </PhoneLink>
           )}
           {store.phone && (
-            <a
+            <PhoneLink phone={store.phone}
               href={`https://wa.me/${store.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('السلام عليكم - أود الاستفسار عبر Spir Medical')}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -323,7 +324,7 @@ function StoreCard({ store }: { store: Store }) {
               }}
             >
               💬 WhatsApp
-            </a>
+            </PhoneLink>
           )}
           <ExternalMapButton
             lat={store.latitude}

@@ -225,10 +225,33 @@ export default async function PhysioSpecialistPage({
             <div className="scr-section-title">خيارات الحجز</div>
           </div>
 
+          {/* الحجزُ مغلقٌ مؤقّتاً والصفحةُ مفتوحةٌ للتصفّح (isBookingSoon) */}
+          <div
+            role="status"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '10px 12px',
+              marginBottom: 10,
+              background: '#F1F3F4',
+              borderRadius: 10,
+              fontSize: 13,
+              fontWeight: 700,
+              color: '#3C4043',
+            }}
+          >
+            <span style={{ padding: '2px 10px', borderRadius: 9999, background: '#fff', fontSize: 12, fontWeight: 800 }}>
+              قريباً
+            </span>
+            الحجز غير متاحٍ بعد — تصفّح الخدمات والأسعار الآن.
+          </div>
+
           {specialist.available_for_home && (
-            <Link
-              href={`/appointments/new?service=physio&specialist=${specialist.id}&type=home`}
+            <div
+              aria-disabled="true"
               style={{
+                opacity: 0.75,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 12,
@@ -265,13 +288,14 @@ export default async function PhysioSpecialistPage({
                   <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>د.ع · كاش</div>
                 </div>
               )}
-            </Link>
+            </div>
           )}
 
           {specialist.available_for_clinic && (
-            <Link
-              href={`/appointments/new?service=physio&specialist=${specialist.id}&type=clinic`}
+            <div
+              aria-disabled="true"
               style={{
+                opacity: 0.75,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 12,
@@ -307,7 +331,7 @@ export default async function PhysioSpecialistPage({
                   <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>د.ع · كاش</div>
                 </div>
               )}
-            </Link>
+            </div>
           )}
 
           {count(specialist.package_discount_pct) > 0 && (

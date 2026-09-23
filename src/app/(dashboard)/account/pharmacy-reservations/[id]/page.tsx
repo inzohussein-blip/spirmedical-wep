@@ -10,6 +10,7 @@ import {
   Calendar, AlertTriangle, CheckCircle2, X, Package,
 } from 'lucide-react';
 import CancelReservationButton from './CancelReservationButton';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'تفاصيل الحجز · سباير ميديكال' };
@@ -210,7 +211,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
           
           {/* أزرار التواصل */}
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            <a 
+            <PhoneLink phone={reservation.pharmacies.phone} 
               href={`tel:${reservation.pharmacies.phone}`}
               style={{
                 padding: '6px 12px',
@@ -227,9 +228,9 @@ export default async function ReservationDetailPage({ params }: PageProps) {
             >
               <Phone size={12} strokeWidth={2.2} aria-hidden />
               اتصال
-            </a>
+            </PhoneLink>
             {reservation.pharmacies.whatsapp && (
-              <a 
+              <PhoneLink phone={reservation.pharmacies.whatsapp} 
                 href={`https://wa.me/${reservation.pharmacies.whatsapp.replace(/\D/g, '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -248,7 +249,7 @@ export default async function ReservationDetailPage({ params }: PageProps) {
               >
                 <MessageCircle size={12} strokeWidth={2.2} aria-hidden />
                 واتساب
-              </a>
+              </PhoneLink>
             )}
             {mapsUrl && (
               <a 

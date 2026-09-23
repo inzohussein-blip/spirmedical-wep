@@ -15,6 +15,7 @@ import {
   updateInventoryItem,
   removeFromInventory,
 } from './actions';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 interface Pharmacy {
   id: string;
@@ -656,6 +657,7 @@ function AddMedicationModal({
     });
   };
 
+  const dialogRef = useModalDialog(true, onClose);
   return (
     <div
       style={{
@@ -669,7 +671,7 @@ function AddMedicationModal({
       }}
       onClick={onClose}
     >
-      <div
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="add-med-modal-title"
         onClick={(e) => e.stopPropagation()}
         style={{
           background: 'var(--paper)',
@@ -683,7 +685,7 @@ function AddMedicationModal({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-          <h3 style={{ fontSize: 16, fontWeight: 900, margin: 0, flex: 1 }}>
+          <h3 id="add-med-modal-title" style={{ fontSize: 16, fontWeight: 900, margin: 0, flex: 1 }}>
             إضافة دواء للكتالوج
           </h3>
           <button

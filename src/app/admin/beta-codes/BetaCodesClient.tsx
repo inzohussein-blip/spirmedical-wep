@@ -11,6 +11,7 @@ import {
   createBetaCode, toggleBetaCode, deleteBetaCode,
   generateRandomBetaCode, type BetaCodeInput,
 } from './actions';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 interface BetaCode {
   id: string;
@@ -292,17 +293,18 @@ function CreateCodeModal({
     });
   };
 
+  const dialogRef = useModalDialog(true, onClose);
   return (
     <div style={{
       position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 9999,
       display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
     }} onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} style={{
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="beta-modal-title" onClick={(e) => e.stopPropagation()} style={{
         background: 'var(--paper)', width: '100%', maxWidth: 480,
         borderRadius: 14, padding: 20,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-          <h3 style={{ fontSize: 18, fontWeight: 900, margin: 0, flex: 1 }}>رمز Beta جديد</h3>
+          <h3 id="beta-modal-title" style={{ fontSize: 18, fontWeight: 900, margin: 0, flex: 1 }}>رمز Beta جديد</h3>
           <button onClick={onClose} aria-label="إغلاق" style={{
             width: 32, height: 32, background: 'var(--paper-3)', border: 'none',
             borderRadius: '50%', cursor: 'pointer',

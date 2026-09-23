@@ -5,6 +5,8 @@ import { X, Share, Plus } from 'lucide-react';
 import { isIOSDevice, isPWAInstalled, shouldShowInstallPrompt, dismissInstallPrompt } from '@/lib/pwa';
 import { haptic } from '@/lib/haptic';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
+import { usePathname } from 'next/navigation';
+import { isFocusedTaskRoute, isEmergencyRoute } from '@/lib/focused-routes';
 
 /**
  * iOS Install Instructions Modal (V25.23)
@@ -14,6 +16,9 @@ import { useModalDialog } from '@/lib/hooks/useModalDialog';
  */
 export default function IOSInstallPrompt() {
   const [show, setShow] = useState(false);
+  const pathname = usePathname();
+  // لا ينبثق فوق نموذج الطلب ولا فوق شاشة الطوارئ
+  const suppressed = isFocusedTaskRoute(pathname) || isEmergencyRoute(pathname);
 
   useEffect(() => {
     // نتفقد فقط على iOS غير المُثبّت
@@ -35,9 +40,9 @@ export default function IOSInstallPrompt() {
     setShow(false);
     dismissInstallPrompt();
   };
-  const dialogRef = useModalDialog(show, handleClose);
+  const dialogRef = useModalDialog(show && !suppressed, handleClose);
 
-  if (!show) return null;
+  if (!show || suppressed) return null;
 
   return (
     <div

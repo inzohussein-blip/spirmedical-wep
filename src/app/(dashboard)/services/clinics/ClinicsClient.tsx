@@ -7,6 +7,7 @@ import {
   Building2, Calendar, CheckCircle2, Clock, Languages,
 } from 'lucide-react';
 import ExternalMapButton from '@/components/maps/ExternalMapButton';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 interface Doctor {
   id: string;
@@ -284,7 +285,7 @@ export default function ClinicsClient({ doctors }: Props) {
                     }}
                   >
                     {d.clinic_phone && (
-                      <a
+                      <PhoneLink phone={d.clinic_phone}
                         href={`tel:${d.clinic_phone}`}
                         onClick={(e) => e.stopPropagation()}
                         style={{
@@ -304,7 +305,7 @@ export default function ClinicsClient({ doctors }: Props) {
                       >
                         <Phone size={12} />
                         اتصال
-                      </a>
+                      </PhoneLink>
                     )}
                     {d.clinic_lat && d.clinic_lng && (
                       <div onClick={(e) => e.stopPropagation()}>

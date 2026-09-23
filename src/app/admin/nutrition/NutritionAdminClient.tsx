@@ -12,6 +12,7 @@ import {
   toggleNutritionActive,
   toggleNutritionVerified,
 } from './actions';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 interface Nutritionist {
   id: string;
@@ -191,10 +192,11 @@ function NutritionistModal({ nutritionist, onClose }: { nutritionist: Nutritioni
     else { toast.error(result.error || 'فشلت العملية'); setIsSaving(false); }
   };
 
+  const dialogRef = useModalDialog(true, onClose);
   return (
     <div style={modalOverlay}>
-      <div style={modalContent}>
-        <h2 style={{ fontSize: 18, fontWeight: 900, marginBottom: 16 }}>
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="nutrition-modal-title" style={modalContent}>
+        <h2 id="nutrition-modal-title" style={{ fontSize: 18, fontWeight: 900, marginBottom: 16 }}>
           {nutritionist ? '✏️ تعديل أخصائي' : '➕ إضافة أخصائي'}
         </h2>
 

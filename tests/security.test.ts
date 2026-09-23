@@ -32,11 +32,27 @@ describe('Security: ENCRYPTION_KEY مطلوب دائماً (لا مفتاح اح
   });
 });
 
-describe('Security: وحدة otp-channels بلا إرسال/تحقق على العميل', () => {
-  it('لا تُصدّر sendOtp ولا verifyOtp (لا باب خلفي)', async () => {
-    const mod = (await import('@/lib/services/otp-channels')) as Record<string, unknown>;
-    expect(mod.sendOtp).toBeUndefined();
-    expect(mod.verifyOtp).toBeUndefined();
+describe('Security: رمزُ التحقّق خادميٌّ وحده', () => {
+  // كانت وحدةُ otp-channels طبقةَ عرضٍ على العميل وحارسُها يمنع أن تُصدّر
+  // sendOtp/verifyOtp. حُذفت مع خطوة الرمز في رفع الطلب؛ والحارسُ الأعمّ:
+  // لا ملفَّ عميلٍ يستورد خدمة الرمز فيولّد أو يتحقّق في المتصفّح.
+  it('لا ملفَّ «use client» يستورد otp-service', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const files: string[] = [];
+    const walk = (d: string) => {
+      for (const f of fs.readdirSync(d)) {
+        const p = path.join(d, f);
+        if (fs.statSync(p).isDirectory()) walk(p);
+        else if (/\.tsx?$/.test(p)) files.push(p);
+      }
+    };
+    walk(path.join(process.cwd(), 'src'));
+    const offenders = files.filter((f) => {
+      const s = fs.readFileSync(f, 'utf8');
+      return /^['"]use client['"]/m.test(s) && /whatsapp\/otp-service/.test(s);
+    });
+    expect(offenders).toEqual([]);
   });
 });
 

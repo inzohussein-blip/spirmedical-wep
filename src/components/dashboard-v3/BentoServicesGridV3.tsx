@@ -55,7 +55,8 @@ function BentoCard({
   const Icon = service.icon;
   // مطفأةٌ من اللوحة، أو معلَّمةٌ «قريباً» في الإعداد الساكن — كلاهما يمنع
   const isComingSoon = disabled || service.badge === 'قريباً';
-  const badge = isComingSoon ? 'قريباً' : service.badge;
+  // حجزٌ قريب: الشارةُ نفسها لكنّ البطاقة تبقى رابطاً — الصفحاتُ للتصفّح
+  const badge = isComingSoon || service.bookingSoon ? 'قريباً' : service.badge;
   
   const cardContent = (
     <>

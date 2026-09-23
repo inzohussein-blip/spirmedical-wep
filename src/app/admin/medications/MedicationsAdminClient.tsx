@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
 import { createMedication, updateMedication, deleteMedication } from './actions';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 interface Medication {
   id: string;
@@ -230,11 +231,12 @@ function MedicationModal({
     });
   };
 
+  const dialogRef = useModalDialog(true, onClose);
   return (
     <div style={modalOverlay()} onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} style={modalContent()}>
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="medication-modal-title" onClick={(e) => e.stopPropagation()} style={modalContent()}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-          <h3 style={{ fontSize: 18, fontWeight: 900, margin: 0, flex: 1 }}>
+          <h3 id="medication-modal-title" style={{ fontSize: 18, fontWeight: 900, margin: 0, flex: 1 }}>
             {editing ? 'تعديل دواء' : 'إضافة دواء'}
           </h3>
           <button onClick={onClose} aria-label="إغلاق" style={closeBtn()}><X size={16} /></button>
