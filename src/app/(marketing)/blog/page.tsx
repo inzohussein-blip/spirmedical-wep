@@ -6,6 +6,7 @@ import { ARTICLES, getAllCategories } from '@/lib/data/blog-articles';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
+  alternates: { canonical: '/blog' },
   title: 'المدونة الطبية · سباير ميديكال',
   description: 'مقالات طبية موثوقة من أطباء متخصصين. نصائح صحية، شرح الأمراض، التحاليل، والوقاية بلغة سهلة ومبسّطة.',
   openGraph: {

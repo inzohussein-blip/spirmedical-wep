@@ -4,6 +4,7 @@ export const revalidate = 86400;
 import Link from 'next/link';
 
 export const metadata = {
+  alternates: { canonical: '/legal/disclaimer' },
   title: 'إخلاء المسؤولية الطبية · سباير ميديكال',
   description: 'إخلاء المسؤولية حول المحتوى الطبي والخدمات في منصة سباير ميديكال',
 };

@@ -112,16 +112,11 @@ export const metadata: Metadata = {
   },
 
   // 🌍 اللغات والمناطق
-  alternates: {
-    canonical: SITE_URL,
-    languages: {
-      'ar-IQ': SITE_URL,
-      'ar': SITE_URL,
-      'en-US': `${SITE_URL}/en`,
-      'ku': `${SITE_URL}/ku`,
-      'x-default': SITE_URL,
-    },
-  },
+  // ⚠️ لا `alternates` هنا عمداً. كان الجذر يُعلن `canonical: SITE_URL`،
+  // وNext يُورّث حقول metadata إلى كلّ صفحةٍ لا تتجاوزها — فكانت /faq
+  // و/about و/blog وسائرُ الصفحات العامّة تُعلن الصفحةَ الرئيسية أصلاً لها،
+  // فيطويها Google فيها. وكانت `hreflang` تشير إلى /en و/ku ولا وجود لهما.
+  // كلُّ صفحةٍ عامّة تُعلن canonical نفسها (tests/seo-canonical.test.ts).
 
   // 📱 OpenGraph - معاينات السوشيال
   openGraph: {

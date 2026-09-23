@@ -4,6 +4,7 @@ export const revalidate = 86400;
 import Link from 'next/link';
 
 export const metadata = {
+  alternates: { canonical: '/legal/privacy' },
   title: 'سياسة الخصوصية · سباير ميديكال',
   description: 'كيف نجمع ونحمي بياناتك الطبية والشخصية',
 };

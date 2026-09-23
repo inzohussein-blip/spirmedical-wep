@@ -4,6 +4,7 @@ export const revalidate = 86400;
 import FeedbackClient from './FeedbackClient';
 
 export const metadata = {
+  alternates: { canonical: '/feedback' },
   title: 'شاركنا رأيك · Spir Medical',
   description: 'ساعدنا في تطوير الخدمة - شاركنا اقتراحاتك وملاحظاتك',
 };

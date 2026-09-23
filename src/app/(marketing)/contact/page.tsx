@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 
 export const metadata = {
+  alternates: { canonical: '/contact' },
   title: 'اتصل بنا · سباير ميديكال',
   description: 'تواصل مع فريق سباير ميديكال - دعم فني، استفسارات، شكاوى',
 };

@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import LandingMobileMenu from '@/components/landing/MobileMenu';
 import LandingFAQ from '@/components/landing/FAQ';
+import JsonLd from '@/components/seo/JsonLd';
 import LandingStats from '@/components/landing/Stats';
 import LandingCoverageMap from '@/components/landing/LandingCoverageMap';
 import LandingScrollEffects from '@/components/landing/LandingScrollEffects';
@@ -15,6 +16,7 @@ import { getRoleHomePath } from '@/lib/auth/home-path';
 import './styles/marketing.css';
 
 export const metadata = {
+  alternates: { canonical: '/' },
   title: 'سباير ميديكال · Spir Medical — منصة طبية رقمية متكاملة في العراق',
   description: 'الرعاية الصحية بين يديك · ١٥ خدمة طبية · في كل المحافظات العراقية',
 };
@@ -219,6 +221,7 @@ export default async function HomePage({
           {/* روابط Desktop */}
           <div className="landing-nav-links">
             <a href="#services" className="landing-nav-link-section">الخدمات</a>
+            <Link href="/home-blood-draw" className="landing-nav-link-section">سحب دم منزلي</Link>
             <a href="#how-it-works" className="landing-nav-link-section">كيف يعمل</a>
             <a href="#coverage-map" className="landing-nav-link-section">التغطية</a>
             <a href="#install" className="landing-nav-link-section">التطبيق</a>
@@ -795,6 +798,19 @@ export default async function HomePage({
           </div>
 
           <LandingFAQ items={FAQ_ITEMS} />
+          {/* مُشتقّةٌ من الأسئلة المعروضة نفسها — Google يشترط ظهورها */}
+          <JsonLd
+            id="ld-faq-home"
+            data={{
+              '@context': 'https://schema.org',
+              '@type': 'FAQPage',
+              mainEntity: FAQ_ITEMS.map((f) => ({
+                '@type': 'Question',
+                name: f.q,
+                acceptedAnswer: { '@type': 'Answer', text: f.a },
+              })),
+            }}
+          />
         </div>
       </section>
 

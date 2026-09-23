@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Share2, Plus, MoreVertical, Download, ChevronRight } from 'lucide-react';
 
 export const metadata = {
+  alternates: { canonical: '/help/install' },
   title: 'كيف أُثبّت التطبيق · سباير ميديكال',
   description: 'دليل شامل لتثبيت تطبيق سباير ميديكال على هاتفك',
 };

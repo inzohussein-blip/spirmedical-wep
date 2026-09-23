@@ -4,6 +4,7 @@ export const revalidate = 86400;
 import Link from 'next/link';
 
 export const metadata = {
+  alternates: { canonical: '/legal/refund' },
   title: 'سياسة الاسترداد · سباير ميديكال',
   description: 'شروط وأحكام استرداد المدفوعات في سباير ميديكال',
 };

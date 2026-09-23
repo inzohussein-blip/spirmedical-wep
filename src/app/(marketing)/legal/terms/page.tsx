@@ -4,6 +4,7 @@ export const revalidate = 86400;
 import Link from 'next/link';
 
 export const metadata = {
+  alternates: { canonical: '/legal/terms' },
   title: 'الشروط والأحكام · سباير ميديكال',
   description: 'الشروط القانونية لاستخدام منصة سباير ميديكال',
 };
