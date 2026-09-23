@@ -690,12 +690,6 @@ export default function BloodDrawFlow({
                 <div className="bd-lab-emoji">{lab.emoji}</div>
                 <div className="bd-lab-name">{lab.nameAr}</div>
                 <div className="bd-lab-city">{lab.city}</div>
-                {!isAny && lab.rating > 0 && (
-                  <div className="bd-lab-rating">
-                    <Star size={11} strokeWidth={2.4} fill="currentColor" aria-hidden />
-                    <span>{lab.rating} · {lab.reviewsCount}+ تقييم</span>
-                  </div>
-                )}
                 <div className="bd-lab-time">
                   <Clock size={11} strokeWidth={2.4} aria-hidden />
                   <span>{lab.resultTime}</span>
@@ -1360,12 +1354,6 @@ export default function BloodDrawFlow({
         .bd-lab-card.is-any.selected .bd-lab-city {
           color: var(--paper-3, #FFFFFF);
           opacity: 0.85;
-        }
-        .bd-lab-rating {
-          font-size: 12px;
-          color: var(--amber, #B06000);
-          font-weight: 700;
-          margin-top: 3px;
         }
         .bd-lab-time {
           font-size: 12px;

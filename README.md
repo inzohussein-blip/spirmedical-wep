@@ -109,9 +109,9 @@ spirmedical-wep/
 │   ├── lib/                     المنطق: auth, supabase, whatsapp, services, validations …
 │   └── types/database.ts        أنواع Supabase المولَّدة — npm run db:types
 ├── supabase/
-│   ├── migrations/              0001 → 0045 (انظر «قاعدة البيانات»)
+│   ├── migrations/              0001 → 0047 (انظر «قاعدة البيانات»)
 │   └── *.sql                    أدوات فحصٍ يدويّة (verify, health-check)
-├── tests/                       64 ملفاً — حرّاسٌ ساكنة وسلوكية
+├── tests/                       حرّاسٌ ساكنة وسلوكية (npx jest)
 ├── public/                      sw.js · manifest.json · llms.txt · ai.txt · أيقونات
 ├── docs/                        API · SETUP · RUNBOOK · DESIGN_TOKENS …
 ├── vercel.json                  رؤوس، تحويلات، ومهامّ الكرون
@@ -295,7 +295,7 @@ spirmedical-wep/
 - **Supabase** — المشروع `ioulxemokusfeykjcaxg`.
 - `src/types/database.ts` مولَّدٌ من الإنتاج (93 جدولاً) — أعِد توليده بعد أيّ ترحيل
   بـ`npm run db:types`.
-- **الترحيلات** في `supabase/migrations/0001…0045`.
+- **الترحيلات** في `supabase/migrations/0001…0047`.
   - `0001–0010` ليست في سجلّ Supabase (أُنشئت الجداول بطريقةٍ أخرى): **كلُّ إصلاحٍ ترحيلٌ جديد**، لا تعديلٌ لملفٍّ قديم.
   - مخطَّط `private` للدوالّ المُفوَّضة (`SECURITY DEFINER`)، وكلُّ دالّةٍ تُعلن `SET search_path = public, pg_temp`.
   - PostGIS مُسقَط عمداً (0025)؛ مناطق الخدمة `jsonb` + اختبار الشعاع (0030).
@@ -324,6 +324,8 @@ spirmedical-wep/
 | 0043 | تثبيت `search_path` لدوالّ `private` |
 | 0044 | فهرسٌ لمفتاحٍ أجنبيّ في `app_settings` |
 | 0045 | إخفاء أرقام المنشآت المُختلَقة («0770 xxx xxxx»)، و`122` باقٍ |
+| 0046 | دمج السياسات المتراكبة: سياسةٌ واحدة لكلّ (جدول، أمر) على 44 جدولاً — مكافئة بـOR؛ وإغلاق إدراج `bug_reports` |
+| 0047 | تصفير تقييمات المختبرات المبذورة (لا مصدرَ حيّاً لها) |
 
 ```bash
 npm run db:link     # ربط المشروع
@@ -358,18 +360,19 @@ npm run db:types    # توليد src/types/database.ts
 
 ---
 
-## 🧪 الاختبارات (`tests/` — 64 ملفاً)
+## 🧪 الاختبارات (`tests/`)
 
 العُرف: **كلُّ إصلاحٍ يُقرَن بحارس، ويُثبَت الحارسُ بكسر ما يحرسه** ثمّ إرجاعه.
 
 | المجال | الحرّاس |
 |---|---|
-| الأمان وRLS | `rls-coverage` `rls-initplan` `rls-shared-row-participants` `rls-update-scope` `rpc-authorization` `security` `phi-policy-scope` `email-verification-tokens` `safe-redirect` |
+| الأمان وRLS | `rls-coverage` `rls-initplan` `rls-shared-row-participants` `rls-update-scope` `rpc-authorization` `security` `phi-policy-scope` `email-verification-tokens` `safe-redirect` `policy-merge` |
 | قاعدة البيانات | `schema-conformance` `insert-column-contracts` `enum-values` `auto-reject-stale` `seed-data-honesty` |
 | الإشعارات | `notification-push-channel` `notification-toast` `whatsapp` |
 | رفع الطلب والنوافذ | `order-flow-modals` `physio-booking-soon` `order-visibility` `order-clinical-details` `checkout` `validations` |
 | الهاتف وواجهة المستخدم | `mobile-ux` `mobile-layout` `app-screens-ux` `specialist-screens` `facility-phones` `color-tokens` `font-weights` |
-| البناء والفهرسة | `use-server-exports` `seo-canonical` `route-links` `wired-features` `env-coverage` `landing-routing` |
+| البناء والفهرسة | `use-server-exports` `seo-canonical` `route-links` `wired-features` `env-coverage` `landing-routing` `project-map` |
+| الأرقام الحيّة | `app-live-numbers` |
 
 ---
 
@@ -405,9 +408,8 @@ npm run db:types    # توليد src/types/database.ts
 ## 🔑 ما ينتظر قرار المالك
 
 القائمة الحيّة في [`CLAUDE.md`](CLAUDE.md) (قسم «معلّقٌ على المالك وحده»)، ومنها:
-حمايةُ كلمات المرور المسرَّبة في Supabase، ودمجُ سياسات RLS المتراكبة، وأرقامُ
-الصفحة الرئيسية المكتوبة في الكود، وإدخالُ أرقام المنشآت الموثَّقة، والتحقّقُ في
-Google Search Console.
+حمايةُ كلمات المرور المسرَّبة في Supabase، وإدخالُ أرقام المنشآت الموثَّقة،
+والتحقّقُ في Google Search Console.
 
 ---
 
