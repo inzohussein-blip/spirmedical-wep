@@ -422,7 +422,10 @@ export default function WhatsAppOtpSettings({
 
                 <input
                   type="text"
+                  className="input-large-text"
                   inputMode="numeric"
+                  autoComplete="one-time-code"
+                  aria-label="رمز التحقّق"
                   pattern="[0-9]*"
                   maxLength={6}
                   value={verifyCode}

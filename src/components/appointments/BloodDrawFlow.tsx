@@ -1575,9 +1575,16 @@ export default function BloodDrawFlow({
           cursor: wait;
           box-shadow: none;
         }
+        /* سطرٌ مرن لا نصٌّ مُوسَّط: Tailwind يجعل كلّ <svg> كتلةً
+           (display: block)، فكانت الأيقونتان تسقطان كلٌّ على سطرٍ عند حافّة
+           الشاشة بعيداً عن نصّهما. */
         .bd-trust-row {
-          text-align: center;
-          font-size: 11px;
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: center;
+          gap: 4px;
+          font-size: 12px;
           color: var(--ink-3, #5F6368);
           margin-top: 7px;
         }

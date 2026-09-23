@@ -23,7 +23,15 @@ const BUG_FIELD_LABELS: Record<string, string> = { title: 'العنوان', desc
  * ═══════════════════════════════════════════════════════════════
  */
 
-export default function BugReportButton() {
+/**
+ * `floating` زرٌّ عائمٌ في الزاوية؛ `inline` بندٌ في قائمة (صفحة المساعدة).
+ *
+ * كان عائماً في كلّ شاشات المريض عند `bottom: 90; inset-inline-end: 16` —
+ * وهو موضعُ زرّ «+» للإجراءات السريعة نفسُه. قِيس بعرض 360px: الزرّ «+»
+ * (z-index 999) فوق زرّ البلاغ (z-index 100) بتداخل 48×40px، فلا يظهر منه
+ * إلّا حافّةٌ حمراء ولا يُلمس. فصار بنداً في «مساعدة والدعم».
+ */
+export default function BugReportButton({ variant = 'floating' }: { variant?: 'floating' | 'inline' } = {}) {
   const [showModal, setShowModal] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [title, setTitle] = useState('');
@@ -65,8 +73,25 @@ export default function BugReportButton() {
 
   return (
     <>
+      {variant === 'inline' && (
+        <button
+          type="button"
+          onClick={() => setShowModal(true)}
+          className="scr-list-item scr-list-item-clickable"
+          style={{ width: '100%', textAlign: 'start', border: 0, font: 'inherit', cursor: 'pointer' }}
+        >
+          <div className="scr-list-item-icon" aria-hidden="true">
+            <Bug size={22} strokeWidth={2} />
+          </div>
+          <div className="scr-list-item-content">
+            <div className="scr-list-item-title">الإبلاغ عن عطل</div>
+            <div className="scr-list-item-subtitle">صف المشكلة وسنعمل على إصلاحها</div>
+          </div>
+        </button>
+      )}
+
       {/* Floating button */}
-      {!showModal && (
+      {variant === 'floating' && !showModal && (
         <button
           type="button"
           onClick={() => setShowModal(true)}

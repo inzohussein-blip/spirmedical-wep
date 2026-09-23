@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import BugReportButton from '@/components/feedback/BugReportButton';
 import type { LucideIcon } from 'lucide-react';
 import {
   ArrowRight, Phone, Mail, MessageCircle, MapPin,
@@ -45,6 +46,13 @@ export default function HelpPage() {
         <p className="scr-page-subtitle">نحن هنا لمساعدتك</p>
 
         {/* طرق التواصل */}
+        <div className="scr-section-head" style={{ marginTop: 8 }}>
+          <div className="scr-section-title">مشكلة في التطبيق؟</div>
+        </div>
+        <div className="scr-list-stack" style={{ marginBottom: 16 }}>
+          <BugReportButton variant="inline" />
+        </div>
+
         <div className="scr-section-head" style={{ marginTop: 8 }}>
           <div className="scr-section-title">تواصل معنا</div>
         </div>

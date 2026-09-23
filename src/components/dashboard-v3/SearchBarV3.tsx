@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { IconSearch, IconMicrophone } from '@tabler/icons-react';
+import { IconSearch } from '@tabler/icons-react';
 
 interface Props {
   placeholder?: string;
@@ -28,27 +28,37 @@ export default function SearchBarV3({
 
   return (
     <form
+      role="search"
       onSubmit={handleSubmit}
       style={{
         margin: '0 14px 14px',
         background: '#F1F3F4',
         borderRadius: 14,
-        padding: '10px 12px',
+        // لا حشوةَ رأسيّة: الحقلُ يملأ الارتفاع كلّه. كان ~٢١px داخل صندوقٍ
+        // ~٦٤px، فاللمسُ فوقه أو تحته لا يُركّزه.
+        padding: '0 12px',
         display: 'flex',
         alignItems: 'center',
         gap: 8,
-        minHeight: 44,
+        minHeight: 48,
       }}
     >
-      <IconSearch size={18} stroke={2} color="#5F6368" style={{ flexShrink: 0 }} />
+      <IconSearch size={18} stroke={2} color="#5F6368" style={{ flexShrink: 0 }} aria-hidden="true" />
+      {/* لا زرَّ «بحث صوتي»: كان بلا onClick — عنصرٌ ظاهرٌ مُسمّى لا يفعل
+          شيئاً. ومفتاحُ الإملاء في لوحة مفاتيح الهاتف يعمل في هذا الحقل. */}
       <input
-        type="text"
+        type="search"
+        enterKeyHint="search"
+        aria-label="ابحث عن خدمة أو طبيب أو فحص"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder}
         disabled={isPending}
         style={{
           flex: 1,
+          alignSelf: 'stretch',
+          minHeight: 48,
+          padding: '12px 0',
           background: 'transparent',
           border: 0,
           outline: 'none',
@@ -58,23 +68,6 @@ export default function SearchBarV3({
           minWidth: 0,
         }}
       />
-      <button
-        type="button"
-        aria-label="بحث صوتي"
-        style={{
-          background: 'transparent',
-          border: 0,
-          padding: 4,
-          cursor: 'pointer',
-          color: 'var(--emerald, #01875F)',
-          flexShrink: 0,
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <IconMicrophone size={18} stroke={2} />
-      </button>
     </form>
   );
 }

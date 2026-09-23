@@ -39,12 +39,20 @@ const STATUS_LABELS: Record<LiveStatus, string> = {
   completed: 'مُكتمل',
 };
 
-const STATUS_INDEX: Record<LiveStatus, number> = {
-  pending: 0,
-  confirmed: 0,
-  on_the_way: 1,
-  in_service: 2,
-  completed: 3,
+/**
+ * كم خطوةً اكتملت، وأيُّها الجارية الآن.
+ *
+ * كان هنا فهرسٌ واحد، و`pending` و`confirmed` كلاهما صفر — فالطلب المعلَّق
+ * والمؤكَّد يبدوان متطابقين. وكانت الخطوة الجارية تُرسم بـ✓ كالمكتملة،
+ * فبطاقةٌ عنوانها «في انتظار التأكيد» تُظهر «تأكيد» مُعلَّمةً بعلامة إتمام.
+ * `active = -1`: لا خطوةَ جارية (مؤكَّدٌ ينتظر الانطلاق).
+ */
+const STEP_STATE: Record<LiveStatus, { done: number; active: number }> = {
+  pending: { done: 0, active: 0 },
+  confirmed: { done: 1, active: -1 },
+  on_the_way: { done: 1, active: 1 },
+  in_service: { done: 2, active: 2 },
+  completed: { done: 3, active: 3 },
 };
 
 const STEPS = [
@@ -64,7 +72,7 @@ export default function LiveStatusCard({
   etaDistance,
   appointmentId,
 }: Props) {
-  const currentIndex = STATUS_INDEX[status];
+  const { done, active } = STEP_STATE[status];
   const statusLabel = STATUS_LABELS[status];
 
   return (
@@ -116,20 +124,20 @@ export default function LiveStatusCard({
 
       <div className="live-status-steps">
         {STEPS.map((step, i) => {
-          const isComplete = i < currentIndex;
-          const isActive = i === currentIndex;
-          const isPending = i > currentIndex;
+          const isComplete = i < done;
+          const isActive = i === active;
 
           return (
             <div key={step.label} style={{ display: 'contents' }}>
-              <div className="live-status-step">
+              <div className="live-status-step" aria-current={isActive ? 'step' : undefined}>
                 <div
                   className={`live-status-step-circle ${
                     isComplete ? 'complete' : isActive ? 'active' : 'pending'
                   }`}
                   aria-hidden="true"
                 >
-                  {!isPending && step.icon}
+                  {/* ✓ للمكتملة وحدها — الجاريةُ حلقةٌ نابضة لا علامةُ إتمام */}
+                  {isComplete && step.icon}
                   {isActive && <span className="live-status-step-ring" />}
                 </div>
                 <div
@@ -138,12 +146,16 @@ export default function LiveStatusCard({
                   }`}
                 >
                   {step.label}
+                  <span className="sr-only">
+                    {isComplete ? ' — مكتملة' : isActive ? ' — جارية' : ''}
+                  </span>
                 </div>
               </div>
               {i < STEPS.length - 1 && (
                 <div
                   className={`live-status-step-line ${
-                    i < currentIndex ? 'complete' : ''
+                    // الخطُّ يمتلئ حين تُبلَغ الخطوةُ التي يقود إليها
+                    i + 1 < done || i + 1 === active ? 'complete' : ''
                   }`}
                   aria-hidden="true"
                 />
