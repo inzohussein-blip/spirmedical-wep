@@ -85,21 +85,28 @@ export default function FloatingActionButton() {
           <div
             key={action.href}
             className={`fab-action ${isOpen ? 'open' : ''}`}
+            // مطويّةً: خفيّةٌ بصرياً (opacity 0 + pointer-events none) لكنّها
+            // كانت تبقى في ترتيب Tab ويعلنها قارئ الشاشة — ثلاثةُ روابط لا تُرى.
+            aria-hidden={!isOpen}
             style={{
               transitionDelay: isOpen ? `${i * 50}ms` : `${(actions.length - 1 - i) * 30}ms`,
               bottom: `${64 + i * 52}px`,
             }}
           >
-            <span className={`fab-action-label ${action.variant === 'danger' ? 'danger' : ''}`}>
-              {action.label}
-            </span>
+            {/* الصفُّ كلُّه رابط: كان التسميةُ نصّاً لا يُلمس والرابطُ الدائرةَ
+                (38px) وحدها — فلمسُ «سحب دم» حيث تتّجه العين لا يفعل شيئاً. */}
             <Link
               href={action.href}
               onClick={() => setIsOpen(false)}
-              className={`fab-action-btn ${action.variant === 'danger' ? 'danger' : ''}`}
-              aria-label={action.label}
+              className="fab-action-link"
+              tabIndex={isOpen ? undefined : -1}
             >
-              <span aria-hidden="true">{action.icon}</span>
+              <span className={`fab-action-label ${action.variant === 'danger' ? 'danger' : ''}`}>
+                {action.label}
+              </span>
+              <span className={`fab-action-btn ${action.variant === 'danger' ? 'danger' : ''}`} aria-hidden="true">
+                {action.icon}
+              </span>
             </Link>
           </div>
         ))}

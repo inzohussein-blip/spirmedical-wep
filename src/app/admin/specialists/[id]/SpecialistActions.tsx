@@ -116,12 +116,12 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
   };
 
   const btnPrimary: React.CSSProperties = {
-    width: '100%', padding: '12px', background: 'var(--emerald-deep, #073B30)',
+    width: '100%', padding: '12px', background: 'var(--emerald-deep, #056559)',
     color: 'var(--white)', border: 0, borderRadius: 10, fontSize: 13, fontWeight: 800,
     cursor: 'pointer', fontFamily: 'inherit',
   };
   const btnRose: React.CSSProperties = {
-    ...btnPrimary, background: 'var(--rose, #A82E3D)',
+    ...btnPrimary, background: 'var(--rose, #C71C56)',
   };
   const btnGhost: React.CSSProperties = {
     width: '100%', padding: '10px', background: 'transparent',

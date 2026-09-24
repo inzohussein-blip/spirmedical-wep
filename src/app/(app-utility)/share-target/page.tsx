@@ -78,7 +78,7 @@ export default function ShareTargetPage({
               </h3>
               {searchParams.title && (
                 <div style={{ marginBottom: 6 }}>
-                  <div style={{ fontSize: 10, color: 'var(--ink-3)', marginBottom: 2 }}>
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 2 }}>
                     العنوان
                   </div>
                   <div style={{ fontSize: 13, fontWeight: 700 }}>{searchParams.title}</div>
@@ -86,7 +86,7 @@ export default function ShareTargetPage({
               )}
               {searchParams.text && (
                 <div style={{ marginBottom: 6 }}>
-                  <div style={{ fontSize: 10, color: 'var(--ink-3)', marginBottom: 2 }}>
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 2 }}>
                     النص
                   </div>
                   <div style={{ fontSize: 12, color: 'var(--ink-2)', lineHeight: 1.6 }}>
@@ -96,7 +96,7 @@ export default function ShareTargetPage({
               )}
               {searchParams.url && (
                 <div>
-                  <div style={{ fontSize: 10, color: 'var(--ink-3)', marginBottom: 2 }}>
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 2 }}>
                     الرابط
                   </div>
                   <a

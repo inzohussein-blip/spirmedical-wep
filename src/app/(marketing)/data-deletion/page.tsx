@@ -4,6 +4,7 @@ import Link from 'next/link';
 import DeletionForm from './DeletionForm';
 
 export const metadata = {
+  alternates: { canonical: '/data-deletion' },
   title: 'سياسة حذف البيانات · سباير ميديكال',
   description: 'كيفية طلب حذف بياناتك الشخصية من سباير ميديكال — آلية موثّقة وآمنة.',
 };

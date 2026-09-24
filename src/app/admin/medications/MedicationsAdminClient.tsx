@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
 import { createMedication, updateMedication, deleteMedication } from './actions';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 interface Medication {
   id: string;
@@ -131,8 +132,8 @@ export default function MedicationsAdminClient({ medications }: Props) {
                   <tr key={m.id} style={{ borderBottom: '1px solid var(--line)' }}>
                     <td style={tdStyle}>
                       <div style={{ fontWeight: 800 }}>{m.name_ar}</div>
-                      {m.name_en && <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>{m.name_en}</div>}
-                      {m.generic_name && <div style={{ fontSize: 9, color: 'var(--ink-3)', fontStyle: 'italic' }}>({m.generic_name})</div>}
+                      {m.name_en && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{m.name_en}</div>}
+                      {m.generic_name && <div style={{ fontSize: 11, color: 'var(--ink-3)', fontStyle: 'italic' }}>({m.generic_name})</div>}
                     </td>
                     <td style={tdStyle}>{catMeta?.emoji} {catMeta?.label}</td>
                     <td style={tdStyle}>{m.form ? FORM_LABELS[m.form] : '—'}</td>
@@ -140,9 +141,9 @@ export default function MedicationsAdminClient({ medications }: Props) {
                     <td style={tdStyle}>{m.manufacturer || '—'}</td>
                     <td style={tdStyle}>
                       {m.requires_prescription ? (
-                        <span style={{ padding: '2px 6px', background: 'var(--amber-soft)', color: 'var(--amber)', borderRadius: 4, fontSize: 10, fontWeight: 800 }}>📋 وصفة</span>
+                        <span style={{ padding: '2px 6px', background: 'var(--amber-soft)', color: 'var(--amber)', borderRadius: 4, fontSize: 11, fontWeight: 800 }}>📋 وصفة</span>
                       ) : (
-                        <span style={{ fontSize: 10, color: 'var(--ink-3)' }}>—</span>
+                        <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>—</span>
                       )}
                     </td>
                     <td style={tdStyle}>
@@ -230,11 +231,12 @@ function MedicationModal({
     });
   };
 
+  const dialogRef = useModalDialog(true, onClose);
   return (
     <div style={modalOverlay()} onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} style={modalContent()}>
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="medication-modal-title" onClick={(e) => e.stopPropagation()} style={modalContent()}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-          <h3 style={{ fontSize: 18, fontWeight: 900, margin: 0, flex: 1 }}>
+          <h3 id="medication-modal-title" style={{ fontSize: 18, fontWeight: 900, margin: 0, flex: 1 }}>
             {editing ? 'تعديل دواء' : 'إضافة دواء'}
           </h3>
           <button onClick={onClose} aria-label="إغلاق" style={closeBtn()}><X size={16} /></button>
@@ -331,7 +333,7 @@ function modalContent(): React.CSSProperties {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 10 }}>
-      <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 3 }}>{label}</label>
+      <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 3 }}>{label}</label>
       {children}
     </div>
   );

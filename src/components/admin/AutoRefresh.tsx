@@ -65,7 +65,7 @@ export default function AutoRefresh({
         alignItems: 'center',
         gap: 10,
         padding: '8px 14px',
-        background: enabled ? '#E6F3EF' : '#F1F3F4',
+        background: enabled ? 'var(--emerald-soft, #E6F3EF)' : '#F1F3F4',
         border: `1px solid ${enabled ? '#9BD9C0' : '#E8EAED'}`,
         borderRadius: 12,
         fontSize: 13,
@@ -109,7 +109,7 @@ export default function AutoRefresh({
         aria-pressed={enabled}
         style={{
           border: 'none',
-          background: enabled ? '#01875F' : '#9AA0A6',
+          background: enabled ? 'var(--emerald, #01875F)' : '#9AA0A6',
           color: '#fff',
           cursor: 'pointer',
           fontSize: 11,

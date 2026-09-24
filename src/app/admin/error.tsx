@@ -76,7 +76,7 @@ export default function AdminError({
         </div>
 
         {error.digest && (
-          <p style={{ fontSize: 10, color: 'var(--ink-3)', marginBottom: 16 }}>
+          <p style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 16 }}>
             رقم الخطأ: <code style={{ fontFamily: 'monospace' }}>{error.digest}</code>
           </p>
         )}

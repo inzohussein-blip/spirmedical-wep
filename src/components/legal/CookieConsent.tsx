@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
 type ConsentState = {
@@ -71,10 +72,21 @@ function saveConsentEverywhere(consent: ConsentState) {
   }
 }
 
+/**
+ * صفحاتُ الطوارئ لا يظهر فيها الشعار: كان يغطّي ثلثَ الشاشة في
+ * `/guest/sos` فوق أرقام الإسعاف، فيُضطرّ من في طارئٍ إلى صرفه أوّلاً.
+ */
+export function isEmergencyPath(pathname: string | null): boolean {
+  return !!pathname && /(^|\/)sos(\/|$)/.test(pathname);
+}
+
 export function CookieConsent() {
+  const pathname = usePathname();
   const [show, setShow] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
-  const [analytics, setAnalytics] = useState(true);
+  // `false` كما يَعِد النصّ: «الكوكيز الضرورية فقط مُفعّلة بشكل افتراضي».
+  // كان `true`، فمن فتح «التخصيص» وحفظ دون أن يلمس شيئاً وافق على التحليلات.
+  const [analytics, setAnalytics] = useState(false);
   const [marketing, setMarketing] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -125,15 +137,14 @@ export function CookieConsent() {
   }, [show]);
 
   // لا تعرض شيئاً قبل mount (يحل hydration mismatch)
-  if (!mounted || !show) return null;
+  if (!mounted || !show || isEmergencyPath(pathname)) return null;
 
   return (
     <div
       className="cookie-overlay"
-      role="dialog"
+      role="region"
       aria-labelledby="cookie-title"
       aria-describedby="cookie-desc"
-      aria-modal="true"
     >
       <div className="cookie-banner">
         <div className="cookie-icon" aria-hidden="true">🍪</div>
@@ -204,15 +215,8 @@ export function CookieConsent() {
           {!showDetails ? (
             <>
               <button
-                onClick={() => setShowDetails(true)}
-                className="cookie-btn outline"
-                type="button"
-              >
-                التفاصيل
-              </button>
-              <button
                 onClick={acceptNecessary}
-                className="cookie-btn outline"
+                className="cookie-btn cookie-btn--ghost"
                 type="button"
               >
                 الضرورية فقط
@@ -221,7 +225,6 @@ export function CookieConsent() {
                 onClick={acceptAll}
                 className="cookie-btn primary"
                 type="button"
-                autoFocus
               >
                 قبول الكل
               </button>
@@ -230,7 +233,7 @@ export function CookieConsent() {
             <>
               <button
                 onClick={() => setShowDetails(false)}
-                className="cookie-btn outline"
+                className="cookie-btn cookie-btn--ghost"
                 type="button"
               >
                 ← العودة
@@ -255,6 +258,18 @@ export function CookieConsent() {
           <Link href="/legal/privacy" className="cookie-link">
             سياسة الخصوصية
           </Link>.
+          {!showDetails && (
+            <>
+              {' · '}
+              <button
+                onClick={() => setShowDetails(true)}
+                className="cookie-details-link"
+                type="button"
+              >
+                تخصيص
+              </button>
+            </>
+          )}
         </p>
       </div>
     </div>

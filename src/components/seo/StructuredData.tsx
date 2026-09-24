@@ -1,4 +1,5 @@
-import Script from 'next/script';
+import { areaServedJsonLd } from '@/lib/seo/coverage';
+import JsonLd from './JsonLd';
 
 // ============================================================
 // 🏷️ Structured Data (JSON-LD) - Schema.org
@@ -33,26 +34,10 @@ const organizationSchema = {
     latitude: 32.0000,
     longitude: 44.3333,
   },
-  areaServed: [
-    { '@type': 'Country', name: 'العراق' },
-    { '@type': 'AdministrativeArea', name: 'النجف' },
-    { '@type': 'AdministrativeArea', name: 'كربلاء' },
-    { '@type': 'AdministrativeArea', name: 'بابل' },
-    { '@type': 'AdministrativeArea', name: 'الديوانية' },
-    { '@type': 'AdministrativeArea', name: 'بغداد' },
-    { '@type': 'AdministrativeArea', name: 'البصرة' },
-    { '@type': 'AdministrativeArea', name: 'كركوك' },
-    { '@type': 'AdministrativeArea', name: 'دهوك' },
-    { '@type': 'AdministrativeArea', name: 'بابل' },
-    { '@type': 'AdministrativeArea', name: 'الأنبار' },
-    { '@type': 'AdministrativeArea', name: 'ديالى' },
-    { '@type': 'AdministrativeArea', name: 'صلاح الدين' },
-    { '@type': 'AdministrativeArea', name: 'القادسية' },
-    { '@type': 'AdministrativeArea', name: 'ميسان' },
-    { '@type': 'AdministrativeArea', name: 'المثنى' },
-    { '@type': 'AdministrativeArea', name: 'ذي قار' },
-    { '@type': 'AdministrativeArea', name: 'واسط' },
-  ],
+  // مُشتقّةٌ من المرجع الواحد. كانت هنا ١٧ مُدخلاً مكتوبةً باليد: «بابل»
+  // مكرّرة، و«الديوانية» و«القادسية» وهما المحافظةُ نفسها باسمين —
+  // وتعارضُ بقيّةَ ادّعاءات الموقع عن التغطية (src/lib/seo/coverage.ts).
+  areaServed: areaServedJsonLd(),
   medicalSpecialty: [
     'GeneralPractice',
     'Pediatric',
@@ -111,98 +96,24 @@ const websiteSchema = {
 };
 
 // 3. BreadcrumbList Schema
-const breadcrumbSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    {
-      '@type': 'ListItem',
-      position: 1,
-      name: 'الرئيسية',
-      item: SITE_URL,
-    },
-  ],
-};
 
 // 4. FAQ Schema (for AI featured snippets)
-const faqSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: [
-    {
-      '@type': 'Question',
-      name: 'ما هو تطبيق سباير ميديكال؟',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'سباير ميديكال هي منصة طبية رقمية عراقية تقدم خدمات صحية شاملة: سحب دم منزلي، تحاليل، استشارات طبية، طبيب عائلة، وإدارة سجل طبي.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'هل التطبيق مجاني؟',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'تصفّح التطبيق وحجز الخدمات مجاني. الخدمات الفعلية (التحاليل، الاستشارات) لها رسوم تظهر قبل التأكيد.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'هل بياناتي الطبية آمنة؟',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'نعم، كل البيانات الطبية مُشفّرة بأعلى معايير الأمان (AES-256). لن نشاركها مع أي طرف ثالث.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'في أي مدن يعمل سباير ميديكال؟',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'نعمل في الفرات الأوسط: النجف، كربلاء، بابل، الديوانية، وبقية المحافظات العراقية.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'كيف أحجز موعداً؟',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'سجّل في التطبيق برقم هاتفك العراقي، اختر الخدمة المطلوبة، حدد الموقع والوقت، وستصلك رسالة تأكيد.',
-      },
-    },
-  ],
-};
 
+/**
+ * ما يُحقن في **كلّ** صفحة: المؤسّسة والموقع وحدهما.
+ *
+ * كان هنا أيضاً `breadcrumbSchema` ثابتٌ («الرئيسية» وحدها) و`faqSchema` —
+ * يُحقنان في كلّ صفحة، حتى صفحات الخصوصية والتطبيق المُسجَّل. وGoogle يشترط
+ * أن تكون أسئلةُ FAQPage **مرئيّةً في الصفحة نفسها**، ومسارُ التنقّل أن
+ * يصف موضعَ الصفحة فعلاً. بل إنّ الأسئلة الخمسة هنا لم تطابق حتى أسئلة
+ * الرئيسية المرئيّة (ثمانية، مختلفة). فنُقلت FAQPage إلى الرئيسية مُشتقّةً
+ * من `FAQ_ITEMS` المعروضة، وحُذف مسارُ التنقّل الثابت.
+ */
 export default function StructuredData() {
   return (
     <>
-      <Script
-        id="ld-organization"
-        type="application/ld+json"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(organizationSchema),
-        }}
-      />
-      <Script
-        id="ld-website"
-        type="application/ld+json"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
-      />
-      <Script
-        id="ld-breadcrumb"
-        type="application/ld+json"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(breadcrumbSchema),
-        }}
-      />
-      <Script
-        id="ld-faq"
-        type="application/ld+json"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
+      <JsonLd id="ld-organization" data={organizationSchema} />
+      <JsonLd id="ld-website" data={websiteSchema} />
     </>
   );
 }

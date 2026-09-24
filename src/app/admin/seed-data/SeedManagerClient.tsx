@@ -161,14 +161,38 @@ export default function SeedManagerClient() {
               📦 إدارة البيانات الأولية
             </h1>
             <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '4px 0 0' }}>
-              أضف مستشفيات وصيدليات وأطباء حقيقيين بضغطة واحدة
+              أضف مستشفيات وصيدليات وأطباء بضغطة واحدة
             </p>
+          </div>
+        </div>
+
+        {/* تحذيرٌ عند موضع القرار لا في تعليقٍ داخل ملفّ:
+            الأسماء والمواقع حقيقية والهواتف مُختلَقة (كتلٌ متسلسلة، ورقم
+            طوارئ واحدٌ لخمسة مستشفيات). واقتران اسمٍ حقيقيّ برقمٍ خاطئ في
+            تطبيقٍ فيه شاشة طوارئ أسوأ من دليلٍ فارغ. */}
+        <div
+          role="alert"
+          style={{
+            display: 'flex', gap: 10, alignItems: 'flex-start',
+            background: 'var(--amber-soft)',
+            border: '1px solid rgba(176, 96, 0, 0.35)',
+            borderRadius: 12, padding: 14, marginBottom: 16,
+          }}
+        >
+          <span style={{ fontSize: 18, lineHeight: 1.2 }} aria-hidden="true">⚠️</span>
+          <div style={{ fontSize: 12, lineHeight: 1.8, color: 'var(--ink-2)' }}>
+            <strong style={{ color: 'var(--amber)' }}>بيانات تطويرٍ لا بيانات إطلاق.</strong>{' '}
+            الأسماء والمواقع حقيقية، لكنّ <strong>أرقام الهواتف مُختلَقة</strong>{' '}
+            (كتلٌ متسلسلة، ورقم طوارئ واحدٌ لخمسة مستشفيات). إدراجها في قاعدةٍ
+            يستعملها مرضى حقيقيون يعني أنّ مريضاً في حالة طوارئ قد يطلب رقماً
+            لا يخصّ المستشفى الذي يقرأ اسمه. استبدل وسائل الاتصال بأرقامٍ
+            موثَّقة قبل الإدراج في الإنتاج.
           </div>
         </div>
 
         {/* Summary Card */}
         <div style={{
-          background: 'linear-gradient(135deg, #01875F 0%, #073B30 100%)',
+          background: 'linear-gradient(135deg, var(--emerald, #01875F) 0%, #073B30 100%)',
           color: 'var(--white)', borderRadius: 14,
           padding: 20, marginBottom: 20,
           display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16,
@@ -277,7 +301,7 @@ export default function SeedManagerClient() {
                         <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>
                           {cat.label}
                         </div>
-                        <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 1 }}>
+                        <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 1 }}>
                           {cat.existing} موجود · {willAdd} متاح
                         </div>
                       </div>
@@ -327,7 +351,7 @@ export default function SeedManagerClient() {
                 onClick={() => setConfirmMode(true)}
                 style={{
                   padding: '12px 24px',
-                  background: '#01875F', color: '#fff',
+                  background: 'var(--emerald, #01875F)', color: '#fff',
                   border: 0, borderRadius: 10,
                   fontSize: 14, fontWeight: 700, cursor: 'pointer',
                   display: 'flex', alignItems: 'center', gap: 8,
@@ -357,7 +381,7 @@ export default function SeedManagerClient() {
                   disabled={seeding}
                   style={{
                     padding: '12px 24px',
-                    background: seeding ? '#9AA0A6' : '#C71C56',
+                    background: seeding ? '#9AA0A6' : 'var(--rose, #C71C56)',
                     color: '#fff',
                     border: 0, borderRadius: 10,
                     fontSize: 13, fontWeight: 700,
@@ -378,14 +402,14 @@ export default function SeedManagerClient() {
               <div>
                 {/* Success Summary */}
                 <div style={{
-                  background: '#E6F3EF',
-                  border: '1px solid #01875F',
+                  background: 'var(--emerald-soft, #E6F3EF)',
+                  border: '1px solid var(--emerald, #01875F)',
                   borderRadius: 14, padding: 20, marginBottom: 16,
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
                     <IconChecks size={28} stroke={2} color="#01875F" />
                     <div>
-                      <h2 style={{ fontSize: 16, fontWeight: 700, color: '#01875F', margin: 0 }}>
+                      <h2 style={{ fontSize: 16, fontWeight: 700, color: 'var(--emerald, #01875F)', margin: 0 }}>
                         تم التنفيذ بنجاح!
                       </h2>
                       <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '4px 0 0' }}>
@@ -399,24 +423,24 @@ export default function SeedManagerClient() {
                     gap: 12,
                   }}>
                     <div style={{ background: '#fff', padding: 12, borderRadius: 8 }}>
-                      <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>المُحاول</div>
+                      <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>المُحاول</div>
                       <div style={{ fontSize: 20, fontWeight: 800 }}>{result.summary.total_attempted}</div>
                     </div>
                     <div style={{ background: '#fff', padding: 12, borderRadius: 8 }}>
-                      <div style={{ fontSize: 10, color: '#01875F' }}>تم الإدراج</div>
-                      <div style={{ fontSize: 20, fontWeight: 800, color: '#01875F' }}>
+                      <div style={{ fontSize: 11, color: 'var(--emerald, #01875F)' }}>تم الإدراج</div>
+                      <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--emerald, #01875F)' }}>
                         {result.summary.total_inserted}
                       </div>
                     </div>
                     <div style={{ background: '#fff', padding: 12, borderRadius: 8 }}>
-                      <div style={{ fontSize: 10, color: '#B06000' }}>تم التخطّي</div>
-                      <div style={{ fontSize: 20, fontWeight: 800, color: '#B06000' }}>
+                      <div style={{ fontSize: 11, color: 'var(--amber, #B06000)' }}>تم التخطّي</div>
+                      <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--amber, #B06000)' }}>
                         {result.summary.total_skipped}
                       </div>
                     </div>
                     <div style={{ background: '#fff', padding: 12, borderRadius: 8 }}>
-                      <div style={{ fontSize: 10, color: '#C71C56' }}>أخطاء</div>
-                      <div style={{ fontSize: 20, fontWeight: 800, color: '#C71C56' }}>
+                      <div style={{ fontSize: 11, color: 'var(--rose, #C71C56)' }}>أخطاء</div>
+                      <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--rose, #C71C56)' }}>
                         {result.summary.total_errors}
                       </div>
                     </div>
@@ -441,12 +465,12 @@ export default function SeedManagerClient() {
                     }}>
                       <div style={{ fontSize: 13, fontWeight: 700 }}>{r.label}</div>
                       <div style={{ display: 'flex', gap: 12, fontSize: 11 }}>
-                        <span style={{ color: '#01875F' }}>✓ {r.inserted} مُدرج</span>
+                        <span style={{ color: 'var(--emerald, #01875F)' }}>✓ {r.inserted} مُدرج</span>
                         {r.skipped > 0 && (
-                          <span style={{ color: '#B06000' }}>⊘ {r.skipped} موجود</span>
+                          <span style={{ color: 'var(--amber, #B06000)' }}>⊘ {r.skipped} موجود</span>
                         )}
                         {r.errors.length > 0 && (
-                          <span style={{ color: '#C71C56' }}>✗ {r.errors.length} خطأ</span>
+                          <span style={{ color: 'var(--rose, #C71C56)' }}>✗ {r.errors.length} خطأ</span>
                         )}
                       </div>
                     </div>
@@ -454,7 +478,7 @@ export default function SeedManagerClient() {
                       <div style={{
                         marginTop: 8, padding: 8,
                         background: '#FCE8E6', borderRadius: 6,
-                        fontSize: 10, color: '#C71C56',
+                        fontSize: 11, color: 'var(--rose, #C71C56)',
                       }}>
                         {r.errors.slice(0, 3).map((e, i) => (
                           <div key={i}>• {e}</div>
@@ -473,7 +497,7 @@ export default function SeedManagerClient() {
                   }}
                   style={{
                     marginTop: 16, padding: '12px 24px',
-                    background: '#01875F', color: '#fff',
+                    background: 'var(--emerald, #01875F)', color: '#fff',
                     border: 0, borderRadius: 10,
                     fontSize: 13, fontWeight: 700, cursor: 'pointer',
                     width: '100%',
@@ -485,13 +509,13 @@ export default function SeedManagerClient() {
             ) : (
               <div style={{
                 background: '#FCE8E6',
-                border: '1px solid #C71C56',
+                border: '1px solid var(--rose, #C71C56)',
                 borderRadius: 12, padding: 20,
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <IconAlertTriangle size={24} stroke={2} color="#C71C56" />
                   <div>
-                    <h3 style={{ fontSize: 14, fontWeight: 700, color: '#C71C56', margin: 0 }}>
+                    <h3 style={{ fontSize: 14, fontWeight: 700, color: 'var(--rose, #C71C56)', margin: 0 }}>
                       فشل التنفيذ
                     </h3>
                     <p style={{ fontSize: 12, color: 'var(--ink)', margin: '4px 0 0' }}>

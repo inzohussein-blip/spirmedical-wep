@@ -12,6 +12,7 @@ import {
   toggleNutritionActive,
   toggleNutritionVerified,
 } from './actions';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 interface Nutritionist {
   id: string;
@@ -117,13 +118,13 @@ export default function NutritionAdminClient({ initialNutritionists }: { initial
               <tr key={n.id} style={{ borderBottom: '1px solid var(--line)' }}>
                 <td style={tdStyle}>
                   <div style={{ fontWeight: 700 }}>{n.title} {n.full_name}</div>
-                  <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>{n.gender === 'female' ? 'أنثى' : 'ذكر'}</div>
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{n.gender === 'female' ? 'أنثى' : 'ذكر'}</div>
                 </td>
                 <td style={tdStyle}>{n.years_experience} سنة</td>
                 <td style={tdStyle}>{n.cities.slice(0, 2).join(', ')}</td>
                 <td style={tdStyle}>
-                  {formatNumber(n.initial_consultation_price) && <div style={{ fontSize: 9 }}>💬 {formatNumber(n.initial_consultation_price)}</div>}
-                  {formatNumber(n.monthly_plan_price) && <div style={{ fontSize: 9 }}>📅 {formatNumber(n.monthly_plan_price)}</div>}
+                  {formatNumber(n.initial_consultation_price) && <div style={{ fontSize: 11 }}>💬 {formatNumber(n.initial_consultation_price)}</div>}
+                  {formatNumber(n.monthly_plan_price) && <div style={{ fontSize: 11 }}>📅 {formatNumber(n.monthly_plan_price)}</div>}
                 </td>
                 <td style={tdStyle}>{n.total_clients}</td>
                 <td style={tdStyle}>
@@ -191,10 +192,11 @@ function NutritionistModal({ nutritionist, onClose }: { nutritionist: Nutritioni
     else { toast.error(result.error || 'فشلت العملية'); setIsSaving(false); }
   };
 
+  const dialogRef = useModalDialog(true, onClose);
   return (
     <div style={modalOverlay}>
-      <div style={modalContent}>
-        <h2 style={{ fontSize: 18, fontWeight: 900, marginBottom: 16 }}>
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="nutrition-modal-title" style={modalContent}>
+        <h2 id="nutrition-modal-title" style={{ fontSize: 18, fontWeight: 900, marginBottom: 16 }}>
           {nutritionist ? '✏️ تعديل أخصائي' : '➕ إضافة أخصائي'}
         </h2>
 

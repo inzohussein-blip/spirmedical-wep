@@ -149,7 +149,7 @@ export default function BugsClient({ bugs, usersMap }: Props) {
                         background: sev.bg,
                         color: sev.color,
                         borderRadius: 4,
-                        fontSize: 9,
+                        fontSize: 11,
                         fontWeight: 800,
                       }}>
                         {sev.emoji} {sev.label}
@@ -159,7 +159,7 @@ export default function BugsClient({ bugs, usersMap }: Props) {
                         background: st.bg,
                         color: st.color,
                         borderRadius: 4,
-                        fontSize: 9,
+                        fontSize: 11,
                         fontWeight: 800,
                       }}>
                         {st.emoji} {st.label}
@@ -175,11 +175,11 @@ export default function BugsClient({ bugs, usersMap }: Props) {
 
                     {b.steps_to_reproduce && (
                       <details style={{ marginTop: 6 }}>
-                        <summary style={{ fontSize: 10, color: 'var(--ink-3)', cursor: 'pointer', fontWeight: 700 }}>
+                        <summary style={{ fontSize: 11, color: 'var(--ink-3)', cursor: 'pointer', fontWeight: 700 }}>
                           خطوات الإعادة
                         </summary>
                         <pre style={{
-                          fontSize: 10,
+                          fontSize: 11,
                           background: 'var(--paper-3)',
                           padding: 8,
                           borderRadius: 6,
@@ -192,12 +192,12 @@ export default function BugsClient({ bugs, usersMap }: Props) {
                       </details>
                     )}
 
-                    <div style={{ marginTop: 8, fontSize: 10, color: 'var(--ink-3)', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    <div style={{ marginTop: 8, fontSize: 11, color: 'var(--ink-3)', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                       <span>👤 {user?.full_name || 'مجهول'}</span>
                       {b.browser && <span>🌐 {b.browser}</span>}
                       {b.device && <span>📱 {b.device}</span>}
                       {b.page_url && (
-                        <code style={{ fontSize: 9, background: 'var(--paper-3)', padding: '1px 4px', borderRadius: 3 }}>
+                        <code style={{ fontSize: 11, background: 'var(--paper-3)', padding: '1px 4px', borderRadius: 3 }}>
                           {b.page_url}
                         </code>
                       )}
@@ -239,7 +239,7 @@ export default function BugsClient({ bugs, usersMap }: Props) {
                         borderRadius: 100,
                         cursor: b.status === key ? 'default' : 'pointer',
                         fontFamily: 'inherit',
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: 700,
                         opacity: b.status === key ? 0.7 : 1,
                       }}

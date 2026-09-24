@@ -11,7 +11,7 @@ import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
 import { ALL_LABS } from '@/lib/services/labs-data';
 import { createAppointmentV2, createBloodDrawOrder, createNursingAppointment } from './actions';
 import { track } from '@/lib/analytics';
-import { FlaskConical, AlertTriangle, Briefcase, MessageCircle, Syringe } from 'lucide-react';
+import { FlaskConical, AlertTriangle, Briefcase, MessageCircle, Syringe, ChevronRight } from 'lucide-react';
 
 interface Props {
   service: string;
@@ -243,7 +243,7 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
             display: 'inline-flex',
             alignItems: 'center',
             gap: '4px',
-            background: 'var(--paper-2, #EDE6D3)',
+            background: 'var(--paper-2, #F1F3F4)',
             border: '1px solid var(--line)',
             borderRadius: '100px',
             padding: '6px 12px',
@@ -253,7 +253,7 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
             fontWeight: 700,
           }}
         >
-          <span>←</span><span>الرئيسية</span>
+          <ChevronRight size={14} strokeWidth={2.4} aria-hidden /><span>الرئيسية</span>
         </Link>
         <h1 style={{
           fontSize: '15px',
@@ -281,8 +281,8 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
       {/* Error */}
       {error && (
         <div style={{
-          background: 'var(--rose-soft, #F0D7D8)',
-          color: 'var(--rose, #A82E3D)',
+          background: 'var(--rose-soft, #FCE8E6)',
+          color: 'var(--rose, var(--rose, #C71C56))',
           padding: '10px 14px',
           borderRadius: '10px',
           fontSize: '12px',
@@ -299,8 +299,8 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
       {/* Clinic preselect banner */}
       {clinicId && (
         <div style={{
-          background: 'var(--emerald-soft, #D9E5DF)',
-          color: 'var(--emerald-deep, #073B30)',
+          background: 'var(--emerald-soft, var(--emerald-soft, #E6F3EF))',
+          color: 'var(--emerald-deep, var(--emerald-deep, #056559))',
           padding: '12px 14px',
           borderRadius: '12px',
           fontSize: '12px',
@@ -318,7 +318,7 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
       {/* Consultation type banner */}
       {consultationType && (
         <div style={{
-          background: 'var(--amber-soft, #F0DBC2)',
+          background: 'var(--amber-soft, #FEF7E0)',
           color: '#6B3A08',
           padding: '12px 14px',
           borderRadius: '12px',

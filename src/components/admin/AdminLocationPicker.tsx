@@ -242,7 +242,7 @@ export default function AdminLocationPicker({
       </div>
 
       {error && (
-        <div style={{ fontSize: 12, color: '#C71C56', marginBottom: 6 }}>⚠️ {error}</div>
+        <div style={{ fontSize: 12, color: 'var(--rose, #C71C56)', marginBottom: 6 }}>⚠️ {error}</div>
       )}
 
       {coords && (
@@ -253,14 +253,14 @@ export default function AdminLocationPicker({
             alignItems: 'center',
             gap: 8,
             padding: '8px 12px',
-            background: '#E6F3EF',
+            background: 'var(--emerald-soft, #E6F3EF)',
             border: '1px solid #9BD9C0',
             borderRadius: 10,
             fontSize: 12,
             color: '#085041',
           }}
         >
-          <Check size={14} aria-hidden style={{ color: '#0F6E56', flexShrink: 0 }} />
+          <Check size={14} aria-hidden style={{ color: 'var(--emerald-mid, #0F6E56)', flexShrink: 0 }} />
           <span style={{ fontWeight: 700 }}>
             {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}
           </span>

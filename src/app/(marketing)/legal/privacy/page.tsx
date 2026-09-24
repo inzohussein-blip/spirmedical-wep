@@ -4,6 +4,7 @@ export const revalidate = 86400;
 import Link from 'next/link';
 
 export const metadata = {
+  alternates: { canonical: '/legal/privacy' },
   title: 'سياسة الخصوصية · سباير ميديكال',
   description: 'كيف نجمع ونحمي بياناتك الطبية والشخصية',
 };
@@ -322,7 +323,7 @@ export default function PrivacyPage() {
               <Link href="/legal/terms" className="legal-link-btn">
                 الشروط والأحكام ←
               </Link>
-              <Link href="/" className="legal-link-btn outline">
+              <Link href="/" className="legal-link-btn legal-link-btn--ghost">
                 العودة للرئيسية
               </Link>
             </div>

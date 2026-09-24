@@ -79,7 +79,7 @@
 
 /* attribution أصغر وأنيق */
 .leaflet-control-attribution {
-  font-size: 9px !important;
+  font-size: 11px !important;
   background: rgba(255, 255, 255, 0.85) !important;
   padding: 2px 6px !important;
 }
@@ -172,8 +172,33 @@
   --emerald: #01875F;          /* V3 Primary */
   --emerald-deep: #056559;     /* V3 Primary Deep */
   --emerald-soft: #E6F3EF;     /* V3 Primary Soft */
-  --amber: #B06000;            /* V3 Yellow Deep */
+
+  /*
+   * أخضرُ وسيطٌ كان يُكتب `var(--emerald-mid, #0F6E56)` حرفياً في ٢٩ ملفّاً (٧٨ موضعاً) بلا
+   * رمزٍ يمثّله — فتغييرُه كان يعني تعديل ٢٩ ملفّاً، ولا يستجيب لتخصيص
+   * الألوان في لوحة المشرف كما تستجيب بقيّة اللوحة.
+   *
+   * سُمّي هنا ولم تُغيَّر قيمته: توحيدُه مع `--emerald` تغييرٌ بصريٌّ في
+   * ٧٨ موضعاً، وذلك قرارُ صاحب المنصّة لا قرارُ تنظيفٍ آليّ.
+   */
+  --emerald-mid: #0F6E56;
+  --amber: #B06000;            /* V3 Yellow Deep — للنصّ على خلفيةٍ فاتحة */
   --amber-soft: #FEF7E0;       /* V3 Yellow Soft */
+  /* عنبرٌ للنصّ فوق الأخضر الداكن: ‎--amber‎ عليه نسبة ١٫٦٢ فقط (المطلوب ٣)
+     لأنّ اللونين داكنان معاً، فالأرقام تكاد تختفي داخل البطاقة */
+  --amber-on-dark: #FFDFA1;
+
+  /* كهرمانٌ داكنٌ لنصّ الحالات في لوحة الإدارة — كان يُستعمل بلا تعريف */
+  --amber-deep: #6B3A08;
+
+  /*
+   * `--brand` اسمٌ مضلِّل: قيمتُه زرقاء (`#185FA5`) وعلامةُ المشروع
+   * زمرّديّة. كان يُستعمل في محرّر مواقع الطلبات بلا تعريف، فيُحلّ دائماً
+   * إلى احتياطه. عُرّف هنا بقيمته الحالية كي لا يتغيّر شيءٌ في الشاشة،
+   * لكنّ إعادة تسميته إلى `--admin-accent` أو ضمّه إلى `--spir-blue`
+   * (#1A73E8) تنظيفٌ يستحقّ النظر — وهو قرارٌ بصريٌّ لا آليّ.
+   */
+  --brand: #185FA5;
   --rose: #C71C56;             /* V3 Pink */
   --rose-soft: #FCE8E6;        /* V3 Pink Soft */
   --paper: #F8F9FA;            /* V3 Surface */
@@ -184,6 +209,15 @@
   --ink-2: #3C4043;            /* V3 Text 2 */
   --ink-3: #5F6368;            /* V3 Text 3 */
   --ink-4: #80868B;            /* V3 Text 4 */
+
+  /*
+   * `--muted` كان يُستعمل في أربعة مواضع بلا تعريف، فيُحلّ دائماً إلى
+   * احتياطه `#64748B` — وهو رماديٌّ مائلٌ للأزرق من لوحةٍ أخرى (Tailwind
+   * slate) لا صلة له بلوحة المشروع. يُعرَّف هنا إحالةً إلى `--ink-3`،
+   * وهو رماديُّ النصّ الخافت في هذا المشروع. الفارق بين اللونين طفيف،
+   * والمكسب أنّ الرمادي صار واحداً لا اثنين.
+   */
+  --muted: var(--ink-3);
   --line: #DADCE0;             /* V3 Border */
   --line-2: #E8EAED;           /* V3 Border Soft */
   --header-bg: rgba(255, 255, 255, 0.95);
@@ -236,8 +270,11 @@
      ═══════════════════════════════════════════════════════════════
      خطوط متناسقة لكل المنصة
   */
-  --text-2xs: 9px;       /* tiny - footer fine print */
-  --text-xs: 11px;       /* extra small - labels */
+  /* أرضيّةُ الخطّ: الحرف العربيّ يبدو أصغر من اللاتينيّ بالحجم نفسه، فكان
+     ٩px و١١px عسيرَي القراءة على الهاتف. قيس في تدقيق الهاتف: نصٌّ دون
+     ١٢px في كلّ صفحةٍ تقريباً، منه تسميات شريط التنقّل السفليّ. */
+  --text-2xs: 11px;      /* tiny - footer fine print (كان 9px) */
+  --text-xs: 12px;       /* extra small - labels (كان 11px) */
   --text-sm: 12px;       /* small - metadata */
   --text-base: 13px;     /* base - body text */
   --text-md: 14px;       /* medium - subheadings */
@@ -258,7 +295,19 @@
   /* Font weights */
   --weight-normal: 400;
   --weight-medium: 500;
-  --weight-semibold: 600;
+  /*
+   * Tajawal لا تملك وزن ٦٠٠ (أوزانها ٢٠٠/٣٠٠/٤٠٠/٥٠٠/٧٠٠/٨٠٠/٩٠٠).
+   *
+   * وخوارزمية المطابقة في CSS تحسم ذلك بلا غموض: المطلوب فوق ٥٠٠ يُبحث
+   * له صعوداً أوّلاً، فينتهي ٦٠٠ إلى ٧٠٠ **دائماً وفي كلّ المتصفّحات**.
+   * أي أنّ `semibold` و`bold` في هذا المشروع الشيءُ نفسه بصرياً — درجةٌ
+   * في السلّم لا وجود لها، وإن كان الكود يظنّها موجودة.
+   *
+   * فالرمز يقول الآن ما يحدث فعلاً. لا يتغيّر شيءٌ في الشاشة، لكن من
+   * يقرأ الكود يعرف أنّ أمامه درجتين لا ثلاثاً — ومن أراد درجةً وسطى
+   * حقيقيّةً فأمامه ٥٠٠ وهو مُحمَّل.
+   */
+  --weight-semibold: 700;
   --weight-bold: 700;
   --weight-extrabold: 800;
   --weight-black: 900;
@@ -901,14 +950,14 @@
 }
 
 .auth-brand-sub {
-  font-size: 11px; color: var(--ink-3); margin-top: 2px;
+  font-size: 12px; color: var(--ink-3); margin-top: 2px;
 }
 
 /* 🆕 V33: شعار نصّي "دليل الفرات الأوسط الطبي" تحت اسم التطبيق */
 .auth-brand-sub::after {
   content: "دليل الفرات الأوسط الطبي";
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   color: var(--emerald);
   font-weight: 700;
   margin-top: 6px;
@@ -1027,7 +1076,7 @@
 
 .auth-otp-input:focus { border-color: var(--emerald); }
 
-.auth-field-hint { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
+.auth-field-hint { font-size: 12px; color: var(--ink-3); margin-top: 4px; }
 
 .auth-field-error { font-size: 12px; color: var(--rose); font-weight: 700; margin-top: 4px; }
 
@@ -1103,6 +1152,17 @@
 }
 
 .auth-helper a, .auth-inline-link { color: var(--emerald); font-weight: 700; }
+
+/* رابطٌ منفردٌ في سطره هدفُ لمسه ارتفاع النصّ وحده (١٢px) — نجعله كتلةً
+   بارتفاعٍ لا يقلّ عن ٤٤ (WCAG 2.5.5). الروابط داخل جملةٍ مستثناة
+   بحكم القاعدة نفسها، ولذا لا نلمس `.auth-inline-link`. */
+.auth-helper > a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 12px;
+}
 
 .auth-resend-btn {
   background: none;
@@ -1259,7 +1319,7 @@
   letter-spacing: -0.01em; line-height: 1.1;
 }
 
-.app-logo-sub { font-size: 9px; color: var(--ink-3); margin-top: 2px; }
+.app-logo-sub { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
 
 .app-header-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
@@ -1391,8 +1451,8 @@
 .featured-info { flex: 1; position: relative; z-index: 1; }
 
 .featured-meta {
-  font-size: 9px; font-weight: 800;
-  color: var(--amber);
+  font-size: 12px; font-weight: 800;
+  color: var(--amber-on-dark);
   letter-spacing: 0.05em; text-transform: uppercase;
   margin-bottom: 4px;
 }
@@ -1404,12 +1464,12 @@
 }
 
 .service-sub, .service-desc {
-  font-size: 10px; color: var(--ink-3); line-height: 1.4;
+  font-size: 12px; color: var(--ink-3); line-height: 1.4;
 }
 
 .service-meta {
   display: flex; gap: 8px; margin-top: 8px;
-  font-size: 9px; color: var(--ink-3);
+  font-size: 11px; color: var(--ink-3);
 }
 
 .service-arrow {
@@ -1426,14 +1486,14 @@
   padding: 2px 7px;
   background: var(--amber); color: var(--paper-3);
   border-radius: 999px;
-  font-size: 8px; font-weight: 800;
+  font-size: 12px; font-weight: 800;
 }
 
 .service-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
 
 .service-info { flex: 1; }
 
-.service-duration, .service-price { font-size: 10px; color: var(--ink-3); }
+.service-duration, .service-price { font-size: 11px; color: var(--ink-3); }
 
 .service-radio {
   width: 20px; height: 20px;
@@ -1467,7 +1527,7 @@
 
 .cookie-title { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
 
-.cookie-desc { font-size: 11px; color: var(--ink-3); line-height: 1.6; margin-bottom: 12px; }
+.cookie-desc { font-size: 13px; color: var(--ink-3); line-height: 1.6; margin-bottom: 12px; }
 
 .cookie-options {
   display: flex; flex-direction: column; gap: 8px;
@@ -1477,21 +1537,44 @@
 
 .cookie-option { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-2); }
 
-.cookie-required { font-size: 10px; color: var(--ink-3); margin-right: auto; }
+.cookie-required { font-size: 11px; color: var(--ink-3); margin-right: auto; }
 
 .cookie-actions { display: flex; gap: 8px; }
 
 .cookie-btn {
-  flex: 1; padding: 12px; border: 0;
-  border-radius: 10px;
-  font-size: 12px; font-weight: 800; cursor: pointer;
+  flex: 1; min-height: 44px; padding: 10px 12px; border: 0;
+  border-radius: 10px; white-space: nowrap;
+  font-size: 14px; font-weight: 800; cursor: pointer;
+}
+
+/* لا `.outline`: ذاك صنفٌ أداتيّ في Tailwind (`outline-style: solid`) كان
+   يرسم حلقةً سوداء سميكة حول الزرّ. */
+.cookie-btn--ghost {
+  background: var(--white); color: var(--ink);
+  border: 1px solid var(--line-2);
+}
+
+/* رابطٌ داخل الجملة القانونيّة لا صفٌّ مستقلّ — يوفّر سطراً من ارتفاع الشعار.
+   (الأهدافُ السطريّة في جملةٍ مستثناةٌ من حدّ الحجم في WCAG 2.5.8.) */
+.cookie-details-link {
+  display: inline; padding: 0 2px;
+  background: none; border: 0; cursor: pointer;
+  font: inherit; font-weight: 700; color: var(--emerald);
+  text-decoration: underline; text-underline-offset: 3px;
 }
 
 .cookie-btn.primary { background: var(--btn-primary-bg); color: var(--paper-3); }
 
 .cookie-btn.secondary { background: var(--paper-2); color: var(--ink); }
 
-.cookie-legal { font-size: 10px; color: var(--ink-3); text-align: center; margin-top: 12px; }
+.cookie-legal { font-size: 12px; color: var(--ink-3); text-align: center; margin: 10px 0 0; line-height: 1.7; }
+
+/* الهاتف: الأيقونة تأكل ارتفاعاً لا يحتاجه الشعار */
+@media (max-width: 480px) {
+  .cookie-overlay { padding: 8px 8px calc(8px + env(safe-area-inset-bottom)); }
+  .cookie-banner { padding: 14px; }
+  .cookie-icon { display: none; }
+}
 
 .cookie-link { color: var(--emerald); font-weight: 700; }
 
@@ -1507,6 +1590,62 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ─────────────────────────────────────────────────────────
+   ModalShell (.ms-*) — ورقةٌ سفليّة على الهاتف، نافذةٌ وسطى فوق 640px
+   ───────────────────────────────────────────────────────── */
+.ms-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(15, 26, 28, 0.5);
+  overscroll-behavior: contain;
+}
+.ms-panel {
+  width: 100%;
+  max-height: 92vh;
+  max-height: 92dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--white, #fff);
+  border-radius: 20px 20px 0 0;
+  padding: 8px 18px calc(18px + env(safe-area-inset-bottom));
+  box-shadow: 0 -10px 30px -12px rgba(15, 26, 28, 0.35);
+  outline: none;
+}
+.ms-panel::before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 4px;
+  margin: 0 auto 10px;
+  border-radius: 100px;
+  background: var(--line-2, #E8EAED);
+}
+.ms-close {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  margin-block-start: -6px;
+  margin-inline-end: -10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-2, #3c4043);
+  cursor: pointer;
+}
+.ms-close:hover { background: var(--paper-2, #f1f3f4); }
+@media (min-width: 640px) {
+  .ms-backdrop { align-items: center; padding: 16px; }
+  .ms-panel { border-radius: 16px; max-height: 90dvh; padding: 20px; }
+  .ms-panel::before { display: none; }
 }
 
 @media print {
@@ -1667,13 +1806,13 @@
 }
 
 .service-desc {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-3);
   line-height: 1.4;
 }
 
 .service-meta {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--amber);
   font-weight: 700;
   margin-top: 4px;
@@ -1687,7 +1826,7 @@
   background: var(--amber);
   color: var(--white);
   border-radius: 100px;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -1783,7 +1922,7 @@
 
 .service-emergency .service-desc {
   color: var(--rose);
-  font-size: 10px;
+  font-size: 11px;
   opacity: 0.85;
 }
 
@@ -2731,13 +2870,13 @@ html {
 }
 
 .service-desc {
-  font-size: 10px;
+  font-size: 12px;
   color: var(--ink-3);
   line-height: 1.4;
 }
 
 .service-meta {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--emerald);
   font-weight: 800;
   margin-top: 3px;
@@ -2751,7 +2890,7 @@ html {
   background: var(--amber);
   color: var(--white);
   border-radius: 100px;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 800;
   box-shadow: 0 2px 6px -2px rgba(184, 84, 12, 0.5);
 }
@@ -2841,7 +2980,7 @@ html {
 }
 
 .service-featured .service-meta {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--emerald);
   font-weight: 800;
 }
@@ -2914,7 +3053,7 @@ html {
 
 .service-emergency .service-desc {
   color: var(--rose);
-  font-size: 10px;
+  font-size: 11px;
   opacity: 0.85;
   font-weight: 600;
 }
@@ -2986,11 +3125,20 @@ html {
   to { width: 28px; opacity: 1; }
 }
 
-/* ── 4. Page Transitions (للـ framer-motion - fallback CSS) ── */
+/* ── 4. انتقال الصفحات — CSS خالص، بلا مكتبة ولا انتظار خروج ── */
+/*
+ * كان `PageTransitionProvider` يستعمل framer-motion بـ`mode="wait"`: تُكمل
+ * الصفحة الخارجة خروجها (0.28s) ثمّ تدخل الداخلة (0.28s) — 0.56s تُضاف إلى
+ * كلّ فتح شاشة. صار الانتقال دخولاً وحده، والمكتبة حُذفت (لم يكن لها
+ * مستهلكٌ آخر في المشروع).
+ *
+ * الاتّجاه من اليمين (`-16px`) لأنّ الواجهة عربيّةٌ RTL: الجديد يأتي من
+ * جهة التقدّم لا من عكسها.
+ */
 @keyframes page-enter-slide {
   from {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translateX(-16px);
   }
   to {
     opacity: 1;
@@ -2998,8 +3146,29 @@ html {
   }
 }
 
+.page-enter {
+  animation: page-enter-slide 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* الاسم القديم يبقى: قد يشير إليه كودٌ لم يُهاجَر بعد */
 .page-transition-slide {
-  animation: page-enter-slide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: page-enter-slide 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/*
+ * من طلب تقليل الحركة يحصل على تلاشٍ خفيفٍ وحده. وهذا يُطبَّق قبل أوّل
+ * رسم، بخلاف `matchMedia` في `useEffect` التي كانت تُقرأ بعده — فكانت
+ * النسخة السابقة تعرض الحركة الكاملة أوّل مرّةٍ لمن طلب تقليلها.
+ */
+@media (prefers-reduced-motion: reduce) {
+  @keyframes page-enter-slide {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .page-enter,
+  .page-transition-slide {
+    animation-duration: 0.1s;
+  }
 }
 
 /* ── 5. Skeleton Screens (محسّنة) ── */
@@ -3122,7 +3291,7 @@ html {
 .service-featured-v2 {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #1D9E75 0%, #0F6E56 100%);
+  background: linear-gradient(135deg, #1D9E75 0%, var(--emerald-mid, #0F6E56) 100%);
   border-radius: 18px;
   padding: 16px;
   color: white;
@@ -3204,7 +3373,7 @@ html {
 .service-featured-v2-badge {
   background: #FAC775;
   color: #412402;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 900;
   padding: 2px 7px;
   border-radius: 100px;
@@ -3230,7 +3399,7 @@ html {
   -webkit-backdrop-filter: blur(8px);
   border-radius: 6px;
   padding: 3px 8px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   display: inline-flex;
   align-items: center;
@@ -3276,7 +3445,7 @@ html {
   justify-content: center;
   font-size: 20px;
   flex-shrink: 0;
-  background: var(--emerald-soft, #E1F5EE);
+  background: var(--emerald-soft, #E6F3EF);
 }
 
 .service-list-card-icon.amber {
@@ -3291,13 +3460,13 @@ html {
 .service-list-card-title {
   font-size: 12px;
   font-weight: 900;
-  color: var(--ink, #2C2C2A);
+  color: var(--ink, #202124);
   line-height: 1.3;
 }
 
 .service-list-card-subtitle {
-  font-size: 10px;
-  color: var(--ink-3, #5F5E5A);
+  font-size: 11px;
+  color: var(--ink-3, #5F6368);
   margin-top: 2px;
 }
 
@@ -3316,8 +3485,8 @@ html {
 }
 
 .service-list-card-reviews {
-  font-size: 9px;
-  color: var(--ink-3, #5F5E5A);
+  font-size: 11px;
+  color: var(--ink-3, #5F6368);
   margin-top: 2px;
 }
 
@@ -3341,9 +3510,9 @@ html {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 500;
-  color: #0F6E56;
+  color: var(--emerald-mid, #0F6E56);
 }
 
 .service-card-mini-tag.amber-tag {
@@ -3368,7 +3537,7 @@ html {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   padding: 3px 9px;
   border-radius: 100px;
@@ -3382,7 +3551,7 @@ html {
 }
 
 .status-pill-active {
-  background: var(--emerald-soft, #E1F5EE);
+  background: var(--emerald-soft, #E6F3EF);
   color: #04342C;
 }
 
@@ -3478,7 +3647,7 @@ html {
 
 .empty-state-v2-description {
   font-size: 12px;
-  color: var(--ink-3, #5F5E5A);
+  color: var(--ink-3, #5F6368);
   line-height: 1.7;
   margin-bottom: 18px;
 }
@@ -3508,8 +3677,8 @@ html {
 }
 
 .empty-state-v2-or {
-  font-size: 10px;
-  color: var(--ink-3, #888780);
+  font-size: 11px;
+  color: var(--ink-3, #5F6368);
   margin: 14px 0 6px;
 }
 
@@ -3522,8 +3691,8 @@ html {
 
 .empty-state-v2-secondary-btn {
   background: white;
-  border: 0.5px solid var(--line-2, #D3D1C7);
-  color: var(--ink-3, #5F5E5A);
+  border: 0.5px solid var(--line-2, #E8EAED);
+  color: var(--ink-3, #5F6368);
   padding: 6px 14px;
   border-radius: 100px;
   font-size: 11px;
@@ -3537,7 +3706,7 @@ html {
 
 .empty-state-v2-secondary-btn:active {
   transform: scale(0.97);
-  background: var(--paper-2, #F1EFE8);
+  background: var(--paper-2, #F1F3F4);
 }
 
 @keyframes fab-backdrop-in {
@@ -3569,8 +3738,8 @@ html {
 .ext-map-btn-compact {
   padding: 7px 12px;
   font-size: 12px;
-  background: var(--emerald-soft, #E1F5EE);
-  color: var(--emerald-deep, #04342C);
+  background: var(--emerald-soft, #E6F3EF);
+  color: var(--emerald-deep, #056559);
   border: 0.5px solid #9FE1CB;
   border-radius: 10px;
 }
@@ -3585,14 +3754,14 @@ html {
   padding: 12px 16px;
   font-size: 13px;
   background: white;
-  color: var(--ink, #2C2C2A);
-  border: 0.5px solid var(--line, #E8E5DC);
+  color: var(--ink, #202124);
+  border: 0.5px solid var(--line, #DADCE0);
   border-radius: 12px;
 }
 
 .ext-map-btn-full:active {
   transform: scale(0.98);
-  background: var(--paper-2, #F1EFE8);
+  background: var(--paper-2, #F1F3F4);
 }
 
 /* Backdrop */
@@ -3635,7 +3804,7 @@ html {
 .ext-map-sheet-handle {
   width: 40px;
   height: 4px;
-  background: var(--line-2, #D3D1C7);
+  background: var(--line-2, #E8EAED);
   border-radius: 100px;
   margin: 0 auto 14px;
 }
@@ -3647,13 +3816,13 @@ html {
 .ext-map-sheet-title {
   font-size: 15px;
   font-weight: 900;
-  color: var(--ink, #2C2C2A);
+  color: var(--ink, #202124);
   margin: 0 0 4px;
 }
 
 .ext-map-sheet-desc {
   font-size: 11px;
-  color: var(--ink-3, #5F5E5A);
+  color: var(--ink-3, #5F6368);
   margin: 0;
 }
 
@@ -3670,12 +3839,12 @@ html {
   gap: 8px;
   padding: 12px;
   background: white;
-  border: 0.5px solid var(--line, #E8E5DC);
+  border: 0.5px solid var(--line, #DADCE0);
   border-radius: 12px;
   font-family: inherit;
   font-size: 12px;
   font-weight: 500;
-  color: var(--ink, #2C2C2A);
+  color: var(--ink, #202124);
   cursor: pointer;
   transition: all 0.15s;
   -webkit-tap-highlight-color: transparent;
@@ -3684,7 +3853,7 @@ html {
 
 .ext-map-provider:active {
   transform: scale(0.97);
-  background: var(--paper-2, #F1EFE8);
+  background: var(--paper-2, #F1F3F4);
 }
 
 .ext-map-provider-icon {
@@ -3705,13 +3874,13 @@ html {
 .ext-map-cancel {
   width: 100%;
   padding: 12px;
-  background: var(--paper-2, #F1EFE8);
+  background: var(--paper-2, #F1F3F4);
   border: none;
   border-radius: 12px;
   font-family: inherit;
   font-size: 13px;
   font-weight: 500;
-  color: var(--ink-2, #444441);
+  color: var(--ink-2, #3C4043);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: all 0.15s;
@@ -3719,7 +3888,7 @@ html {
 
 .ext-map-cancel:active {
   transform: scale(0.98);
-  background: var(--line, #E8E5DC);
+  background: var(--line, #DADCE0);
 }
 
 /* ── 2. ServicesMapHub ── */
@@ -3749,14 +3918,14 @@ html {
   font-size: 12px;
   font-weight: 500;
   background: white;
-  border: 0.5px solid var(--line, #E8E5DC);
+  border: 0.5px solid var(--line, #DADCE0);
   border-radius: 100px;
   white-space: nowrap;
   cursor: pointer;
   transition: all 0.15s;
   -webkit-tap-highlight-color: transparent;
   font-family: inherit;
-  color: var(--ink-2, #444441);
+  color: var(--ink-2, #3C4043);
   flex-shrink: 0;
 }
 
@@ -3765,9 +3934,9 @@ html {
 }
 
 .services-map-filter-btn.active {
-  background: var(--emerald-deep, #04342C);
+  background: var(--emerald-deep, #056559);
   color: white;
-  border-color: var(--emerald-deep, #04342C);
+  border-color: var(--emerald-deep, #056559);
 }
 
 .services-map-filter-symbol {
@@ -3787,10 +3956,10 @@ html {
   padding: 8px 12px;
   font-size: 12px;
   background: white;
-  border: 0.5px solid var(--line, #E8E5DC);
+  border: 0.5px solid var(--line, #DADCE0);
   border-radius: 10px;
   font-family: inherit;
-  color: var(--ink, #2C2C2A);
+  color: var(--ink, #202124);
 }
 
 .services-map-count {
@@ -3799,16 +3968,16 @@ html {
   gap: 5px;
   padding: 8px 12px;
   font-size: 11px;
-  color: var(--ink-3, #5F5E5A);
+  color: var(--ink-3, #5F6368);
   background: white;
-  border: 0.5px solid var(--line, #E8E5DC);
+  border: 0.5px solid var(--line, #DADCE0);
   border-radius: 10px;
   white-space: nowrap;
 }
 
 .services-map-count strong {
   font-weight: 900;
-  color: var(--ink, #2C2C2A);
+  color: var(--ink, #202124);
 }
 
 .services-map-floating-controls {
@@ -3826,7 +3995,7 @@ html {
   height: 38px;
   border-radius: 10px;
   background: white;
-  border: 0.5px solid var(--line, #E8E5DC);
+  border: 0.5px solid var(--line, #DADCE0);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3852,14 +4021,14 @@ html {
   margin-top: 20px;
   padding: 16px;
   background: var(--white, #fff);
-  border: 1px solid var(--line, #E8E5DC);
+  border: 1px solid var(--line, #DADCE0);
   border-radius: 14px;
 }
 
 .pharmacy-rating-title {
   font-size: 14px;
   font-weight: 800;
-  color: var(--ink, #2C2C2A);
+  color: var(--ink, #202124);
   margin-bottom: 12px;
 }
 
@@ -3873,7 +4042,7 @@ html {
 
 .pharmacy-rating-label {
   font-size: 13px;
-  color: var(--muted, #64748b);
+  color: var(--muted, #5F6368);
 }
 
 .pharmacy-rating-stars {
@@ -3899,7 +4068,7 @@ html {
   width: 100%;
   margin-top: 10px;
   padding: 10px 12px;
-  border: 1px solid var(--line, #E8E5DC);
+  border: 1px solid var(--line, #DADCE0);
   border-radius: 10px;
   font-family: inherit;
   font-size: 13px;
@@ -3950,8 +4119,8 @@ html {
   height: 38px;
   border-radius: 10px;
   background: var(--white, #fff);
-  border: 0.5px solid var(--line, #E8E5DC);
-  color: var(--muted, #64748b);
+  border: 0.5px solid var(--line, #DADCE0);
+  color: var(--muted, #5F6368);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -4021,7 +4190,7 @@ html {
   inset-inline-start: 12px;
   inset-inline-end: 12px;
   background: white;
-  border: 0.5px solid var(--line, #E8E5DC);
+  border: 0.5px solid var(--line, #DADCE0);
   border-radius: 14px;
   padding: 14px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
@@ -4046,14 +4215,14 @@ html {
   inset-inline-end: 8px;
   width: 26px;
   height: 26px;
-  background: var(--paper-2, #F1EFE8);
+  background: var(--paper-2, #F1F3F4);
   border: none;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--ink-3, #5F5E5A);
+  color: var(--ink-3, #5F6368);
 }
 
 .services-map-selected-header {
@@ -4078,13 +4247,13 @@ html {
 .services-map-selected-name {
   font-size: 13px;
   font-weight: 900;
-  color: var(--ink, #2C2C2A);
+  color: var(--ink, #202124);
   line-height: 1.3;
 }
 
 .services-map-selected-meta {
-  font-size: 10px;
-  color: var(--ink-3, #5F5E5A);
+  font-size: 11px;
+  color: var(--ink-3, #5F6368);
   margin-top: 3px;
   display: flex;
   align-items: center;
@@ -4096,10 +4265,10 @@ html {
   align-items: center;
   gap: 3px;
   padding: 3px 8px;
-  background: var(--amber-soft, #FAEEDA);
-  color: var(--amber, #BA7517);
+  background: var(--amber-soft, #FEF7E0);
+  color: var(--amber, #B06000);
   border-radius: 100px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   flex-shrink: 0;
 }
@@ -4114,7 +4283,7 @@ html {
   padding: 9px 14px;
   font-size: 12px;
   font-weight: 900;
-  background: var(--emerald, #1D9E75);
+  background: var(--emerald, #01875F);
   color: white;
   border: none;
   border-radius: 10px;
@@ -4141,12 +4310,12 @@ html {
 .user-location-title {
   font-size: 13px;
   font-weight: 900;
-  color: var(--ink, #2C2C2A);
+  color: var(--ink, #202124);
 }
 
 .user-location-desc {
   font-size: 11px;
-  color: var(--ink-3, #5F5E5A);
+  color: var(--ink-3, #5F6368);
   margin-top: 3px;
 }
 
@@ -4161,12 +4330,12 @@ html {
   font-size: 11px;
   font-weight: 500;
   background: white;
-  border: 0.5px solid var(--line, #E8E5DC);
+  border: 0.5px solid var(--line, #DADCE0);
   border-radius: 10px;
   cursor: pointer;
   z-index: 100;
   font-family: inherit;
-  color: var(--ink, #2C2C2A);
+  color: var(--ink, #202124);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   -webkit-tap-highlight-color: transparent;
 }
@@ -4185,11 +4354,11 @@ html {
   inset-inline-start: 12px;
   inset-inline-end: 12px;
   background: white;
-  border: 0.5px solid var(--line, #E8E5DC);
+  border: 0.5px solid var(--line, #DADCE0);
   border-radius: 10px;
   padding: 6px 12px;
   font-size: 11px;
-  color: var(--ink-3, #5F5E5A);
+  color: var(--ink-3, #5F6368);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -4197,8 +4366,8 @@ html {
 }
 
 .user-location-error {
-  background: var(--rose-soft, #FCEBEB);
-  color: var(--rose, #A32D2D);
+  background: var(--rose-soft, #FCE8E6);
+  color: var(--rose, #C71C56);
   padding: 10px 12px;
   border-radius: 10px;
   font-size: 12px;
@@ -4211,8 +4380,8 @@ html {
   align-items: center;
   gap: 5px;
   padding: 5px 10px;
-  background: var(--emerald-soft, #E1F5EE);
-  color: var(--emerald-deep, #04342C);
+  background: var(--emerald-soft, #E6F3EF);
+  color: var(--emerald-deep, #056559);
   border-radius: 100px;
   font-size: 11px;
   font-weight: 500;
@@ -4227,7 +4396,7 @@ html {
   display: block;
   font-size: 11px;
   font-weight: 500;
-  color: var(--ink-3, #5F5E5A);
+  color: var(--ink-3, #5F6368);
   margin-bottom: 5px;
 }
 
@@ -4235,16 +4404,16 @@ html {
   width: 100%;
   padding: 10px 12px;
   font-size: 13px;
-  border: 0.5px solid var(--line, #E8E5DC);
+  border: 0.5px solid var(--line, #DADCE0);
   border-radius: 10px;
   background: white;
   font-family: inherit;
-  color: var(--ink, #2C2C2A);
+  color: var(--ink, #202124);
 }
 
 .user-location-input:focus {
   outline: none;
-  border-color: var(--emerald, #1D9E75);
+  border-color: var(--emerald, #01875F);
   box-shadow: 0 0 0 3px rgba(29, 158, 117, 0.1);
 }
 
@@ -4379,12 +4548,12 @@ html {
   left: 50%;
   transform: translate(-50%, -50%);
   background: rgba(255, 255, 255, 0.95);
-  border: 0.5px solid var(--line, #E8E5DC);
+  border: 0.5px solid var(--line, #DADCE0);
   border-radius: 100px;
   padding: 8px 14px;
   font-size: 11px;
   font-weight: 500;
-  color: var(--ink-2, #444441);
+  color: var(--ink-2, #3C4043);
   z-index: 500;
   display: flex;
   align-items: center;
@@ -4402,8 +4571,8 @@ html {
 .services-map-loading-spinner {
   width: 12px;
   height: 12px;
-  border: 2px solid var(--line-2, #D3D1C7);
-  border-top-color: var(--emerald, #1D9E75);
+  border: 2px solid var(--line-2, #E8EAED);
+  border-top-color: var(--emerald, #01875F);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }
@@ -4469,7 +4638,7 @@ html {
   height: 38px;
   border-radius: 10px;
   background: white;
-  border: 0.5px solid var(--line, #E8E5DC);
+  border: 0.5px solid var(--line, #DADCE0);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4491,7 +4660,7 @@ html {
   inset-inline-start: 12px;
   inset-inline-end: 12px;
   background: white;
-  border: 0.5px solid var(--line, #E8E5DC);
+  border: 0.5px solid var(--line, #DADCE0);
   border-radius: 14px;
   padding: 14px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
@@ -4510,14 +4679,14 @@ html {
   inset-inline-end: 8px;
   width: 26px;
   height: 26px;
-  background: var(--paper-2, #F1EFE8);
+  background: var(--paper-2, #F1F3F4);
   border: none;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--ink-3, #5F5E5A);
+  color: var(--ink-3, #5F6368);
   font-size: 16px;
   line-height: 1;
 }
@@ -4533,23 +4702,23 @@ html {
 .spir-map-view-card-title {
   font-size: 13px;
   font-weight: 900;
-  color: var(--ink, #2C2C2A);
+  color: var(--ink, #202124);
   line-height: 1.4;
 }
 
 .spir-map-view-card-subtitle {
   font-size: 11px;
-  color: var(--ink-3, #5F5E5A);
+  color: var(--ink-3, #5F6368);
   margin-top: 2px;
 }
 
 .spir-map-view-card-desc {
   font-size: 11px;
-  color: var(--ink-2, #444441);
+  color: var(--ink-2, #3C4043);
   line-height: 1.6;
   margin: 8px 0 10px;
   padding: 8px 10px;
-  background: var(--paper-2, #F1EFE8);
+  background: var(--paper-2, #F1F3F4);
   border-radius: 8px;
 }
 
@@ -4563,11 +4732,22 @@ html {
 
    يقتصر على الشاشات الصغيرة كي لا يتغيّر تصميم سطح المكتب.
    ═══════════════════════════════════════════════════════════════════ */
+/* ثمّ قِيس في شاشات المستخدم المُسجَّل فبان أنّ هذه القاعدة كانت تخسر: جزءا
+   `select` و`textarea` خصوصيّتهما (0,0,1) فحسب — سلسلةُ `:not()` لا تقوّي
+   إلّا `input` — فأيّ صنفٍ يغلبهما: `.auth-input` (13px) على قائمة المحافظة،
+   و`.bd-textarea` (13px) على عنوان حجز سحب الدم، و`.services-map-gov-select`
+   (12px). فكلّها كانت تُكبّر iOS.
+   وأكثرُ من ذلك: نحو ٨٥ حقلاً تضع `style={{ fontSize: 13 }}` مضمَّناً — في
+   حجز التمريض، ونافذتَي حجز الطبيب والصيدلية، والوصفات والتذكيرات — والنمطُ
+   المضمَّن لا يغلبه إلّا `!important`. وهذا ما فعله admin.css للوحة الإدارة
+   ولسببه نفسه؛ فيُعمَّم هنا، مقصوراً على الشاشات الصغيرة.
+   والمستثنى ما خطُّه أكبر من 16px عمداً، وإلّا صغّرته القاعدة:
+   `.auth-otp-input` (26px) و`.input-large-text` (خانة رمز واتساب، 24px). */
 @media (max-width: 640px) {
-  input:not([type='checkbox']):not([type='radio']):not([type='range']),
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not(.auth-otp-input):not(.input-large-text),
   select,
   textarea {
-    font-size: 16px;
+    font-size: 16px !important;
   }
 }
 
@@ -4614,16 +4794,39 @@ html {
 }
 
 .file-upload-input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-.file-upload-content {
+
+/* صندوق الرفع هو الـ<label> نفسه (`.file-upload`) لا الغلافُ الداخلي.
+   كانت القواعد تضع الإطار المتقطّع وتخطيط الصفّ على `.file-upload-content`
+   بينما الترميز يجعله غلافَ النصّ وحده والأيقونةَ **شقيقةً** له — فالإطار
+   يحيط بالنصّ فقط، والأيقونة خارجه، و`margin-inline-start: auto` في زرّ
+   الحذف بلا أثرٍ لأنّ أباه ليس flex. */
+.file-upload {
   display: flex; align-items: center; gap: 10px;
   min-height: 60px; padding: 12px 14px;
   background: var(--white);
   border: 1.5px dashed var(--line);
   border-radius: 12px;
   cursor: pointer;
+  position: relative;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.file-upload:hover { border-color: var(--emerald); }
+
+/* الحالتان كانتا تُكتبان في JSX بلا قاعدةٍ تقابلهما: الحقل الخاطئ لا يبدو
+   خاطئاً، والملفّ المرفوع لا يبدو مرفوعاً */
+.file-upload.error { border-color: var(--rose); background: var(--rose-soft); }
+.file-upload.has-file { border-style: solid; border-color: var(--emerald); background: var(--emerald-soft); }
+
+.file-upload-content {
+  display: flex; flex-direction: column; gap: 2px;
+  flex: 1; min-width: 0;
 }
 .file-upload-icon { font-size: 22px; line-height: 1; flex-shrink: 0; }
-.file-upload-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+.file-upload-title {
+  font-size: 13px; font-weight: 700; color: var(--ink);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
 .file-upload-meta { font-size: 11px; color: var(--ink-3); }
 .file-upload-remove {
   margin-inline-start: auto;
@@ -4632,3 +4835,71 @@ html {
   background: none; border: 0; cursor: pointer;
   color: var(--rose); font-size: 16px; font-family: inherit;
 }
+
+
+/* ─────────────────────────────────────────────────────────
+   فئاتٌ كانت مستعملةً في JSX بلا تعريف
+   كلّها كُشفت بحارس `tests/mobile-layout.test.ts`؛ كانت في قائمة
+   الاستثناء المؤقّتة، وهذه تعريفاتها فأُفرغت القائمة.
+   ───────────────────────────────────────────────────────── */
+
+/* غلاف الخريطة: أبناؤه (‎.spir-map-view-card‎ و‎-recenter‎) معرَّفون
+   ويتموضعون بالنسبة إليه، فبقاؤه بلا قياسٍ يجعلهم يتموضعون بالنسبة
+   لأقرب سلفٍ آخر */
+.spir-map-view {
+  width: 100%;
+  min-height: 240px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--paper-2);
+}
+
+.spir-map-empty {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; min-height: 240px; padding: 24px;
+  text-align: center;
+  color: var(--ink-3); font-size: 13px; font-weight: 600;
+  background: var(--paper-2);
+  border: 1px dashed var(--line);
+  border-radius: 16px;
+}
+
+/* غلاف خريطة الكثافة */
+.mh-wrap {
+  position: relative;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--paper-2);
+}
+
+/* تنويعة البطاقة الخضراء — أخواتها ‎.service-amber‎ و‎.service-rose‎
+   معرَّفتان، وهذه وحدها كانت ناقصة رغم استعمالها في خمس صفحات */
+.service-emerald {
+  background: var(--emerald-soft);
+  border-color: rgba(1, 135, 95, 0.2);
+}
+
+/* سطر «آخر تحديث» أسفل الصفحات القانونية */
+.legal-updated {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin: 0 0 16px;
+}
+
+/* نموذج طلب حذف البيانات — يحمل تخطيطه في أنماطٍ سطرية، وهذه أرضيته */
+.deletion-form {
+  display: block;
+  width: 100%;
+}
+
+/* بطاقة نموذجٍ داخل شاشات التطبيق */
+.scr-form-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+/* المربّعُ كلّه يُركّز الحقل (صار <label>) — فالمؤشّر مؤشّرُ كتابة */
+.scr-search, .mkt-search { cursor: text; }

@@ -12,6 +12,7 @@ import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWr
 import {
   createDoctor, updateDoctor, deleteDoctor, toggleDoctorActive, verifyDoctor,
 } from './actions';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 interface Doctor {
   id: string;
@@ -248,7 +249,7 @@ export default function DoctorsAdminClient({ doctors }: Props) {
                             {d.is_verified && <CheckCircle2 size={11} color="var(--emerald)" style={{ marginInlineStart: 4 }} />}
                           </div>
                           {d.years_experience > 0 && (
-                            <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>
+                            <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                               {d.years_experience} سنة خبرة
                             </div>
                           )}
@@ -283,7 +284,7 @@ export default function DoctorsAdminClient({ doctors }: Props) {
                           background: d.is_active ? 'var(--emerald-soft)' : 'var(--rose-soft)',
                           color: d.is_active ? 'var(--emerald)' : 'var(--rose)',
                           borderRadius: 4,
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: 800,
                         }}
                       >
@@ -473,6 +474,7 @@ function DoctorModal({
     });
   };
 
+  const dialogRef = useModalDialog(true, onClose);
   return (
     <div
       style={{
@@ -488,7 +490,7 @@ function DoctorModal({
       }}
       onClick={onClose}
     >
-      <div
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="doctor-modal-title"
         onClick={(e) => e.stopPropagation()}
         style={{
           background: 'var(--paper)',
@@ -500,7 +502,7 @@ function DoctorModal({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-          <h3 style={{ fontSize: 18, fontWeight: 900, margin: 0, flex: 1 }}>
+          <h3 id="doctor-modal-title" style={{ fontSize: 18, fontWeight: 900, margin: 0, flex: 1 }}>
             {editing ? 'تعديل طبيب' : 'إضافة طبيب جديد'}
           </h3>
           <button
@@ -771,7 +773,7 @@ const inputStyle: React.CSSProperties = {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 0 }}>
-      <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 3 }}>
+      <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 3 }}>
         {label}
       </label>
       {children}

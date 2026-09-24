@@ -90,7 +90,7 @@ export default function CosmeticAdminClient({ products: initial }: Props) {
       {feedback && (
         <div style={{
           padding: '10px 14px',
-          background: '#E6F3EF',
+          background: 'var(--emerald-soft, #E6F3EF)',
           color: '#04342C',
           borderRadius: 10,
           fontSize: 13,
@@ -190,14 +190,14 @@ export default function CosmeticAdminClient({ products: initial }: Props) {
                   {p.image_emoji || '🧴'}
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 10, color: '#5F6368', fontWeight: 700 }}>
+                  <div style={{ fontSize: 11, color: '#5F6368', fontWeight: 700 }}>
                     {p.brand}
                   </div>
                   <h3 style={{ fontSize: 13, fontWeight: 700, margin: '2px 0', color: '#202124' }}>
                     {p.name}
                   </h3>
                   <div style={{ 
-                    fontSize: 10, color: '#80868B',
+                    fontSize: 11, color: '#80868B',
                     padding: '1px 6px', background: '#F1F3F4',
                     borderRadius: 6, display: 'inline-block',
                   }}>
@@ -213,7 +213,7 @@ export default function CosmeticAdminClient({ products: initial }: Props) {
                     {p.price.toLocaleString('ar-IQ')} د.ع
                   </div>
                 )}
-                <div style={{ fontSize: 16, fontWeight: 900, color: '#01875F' }}>
+                <div style={{ fontSize: 16, fontWeight: 900, color: 'var(--emerald, #01875F)' }}>
                   {finalPrice.toLocaleString('ar-IQ')} د.ع
                 </div>
               </div>
@@ -224,7 +224,7 @@ export default function CosmeticAdminClient({ products: initial }: Props) {
                   <span style={{
                     display: 'inline-flex', alignItems: 'center', gap: 2,
                     padding: '2px 6px', background: '#FEF7E0',
-                    borderRadius: 6, fontSize: 10, fontWeight: 700, color: '#B06000',
+                    borderRadius: 6, fontSize: 11, fontWeight: 700, color: 'var(--amber, #B06000)',
                   }}>
                     <IconStar size={9} stroke={2.2} fill="currentColor" />
                     {p.rating_avg.toFixed(1)} ({p.rating_count})
@@ -233,8 +233,8 @@ export default function CosmeticAdminClient({ products: initial }: Props) {
                 {p.is_recommended && (
                   <span style={{
                     display: 'inline-flex', alignItems: 'center', gap: 2,
-                    padding: '2px 6px', background: '#E6F3EF',
-                    borderRadius: 6, fontSize: 10, fontWeight: 700, color: '#04342C',
+                    padding: '2px 6px', background: 'var(--emerald-soft, #E6F3EF)',
+                    borderRadius: 6, fontSize: 11, fontWeight: 700, color: '#04342C',
                   }}>
                     <IconAward size={9} stroke={2.2} />
                     موصى به
@@ -243,7 +243,7 @@ export default function CosmeticAdminClient({ products: initial }: Props) {
                 {!p.is_in_stock && (
                   <span style={{
                     padding: '2px 6px', background: '#FCE8E6', color: '#8B1240',
-                    borderRadius: 6, fontSize: 10, fontWeight: 700,
+                    borderRadius: 6, fontSize: 11, fontWeight: 700,
                   }}>
                     غير متوفّر
                   </span>
@@ -251,7 +251,7 @@ export default function CosmeticAdminClient({ products: initial }: Props) {
                 {!p.is_active && (
                   <span style={{
                     padding: '2px 6px', background: '#F1F3F4', color: '#5F6368',
-                    borderRadius: 6, fontSize: 10, fontWeight: 700,
+                    borderRadius: 6, fontSize: 11, fontWeight: 700,
                   }}>
                     معطّل
                   </span>
@@ -272,10 +272,10 @@ export default function CosmeticAdminClient({ products: initial }: Props) {
                   disabled={isPending}
                   style={{
                     padding: 6,
-                    background: p.is_active ? '#FCE8E6' : '#E6F3EF',
+                    background: p.is_active ? '#FCE8E6' : 'var(--emerald-soft, #E6F3EF)',
                     color: p.is_active ? '#8B1240' : '#04342C',
                     border: 0, borderRadius: 8,
-                    fontSize: 10, fontWeight: 700, cursor: 'pointer',
+                    fontSize: 11, fontWeight: 700, cursor: 'pointer',
                   }}
                 >
                   {p.is_active ? 'تعطيل' : 'تفعيل'}
@@ -290,9 +290,9 @@ export default function CosmeticAdminClient({ products: initial }: Props) {
                   style={{
                     padding: 6,
                     background: p.is_in_stock ? '#FEF7E0' : '#E8F0FE',
-                    color: p.is_in_stock ? '#B06000' : '#1A73E8',
+                    color: p.is_in_stock ? 'var(--amber, #B06000)' : '#1A73E8',
                     border: 0, borderRadius: 8,
-                    fontSize: 10, fontWeight: 700, cursor: 'pointer',
+                    fontSize: 11, fontWeight: 700, cursor: 'pointer',
                   }}
                 >
                   {p.is_in_stock ? 'تعليم نفاد' : 'متوفّر'}
@@ -308,9 +308,9 @@ export default function CosmeticAdminClient({ products: initial }: Props) {
                     gridColumn: '1/-1',
                     padding: 6,
                     background: p.is_recommended ? '#F1F3F4' : '#FEF7E0',
-                    color: p.is_recommended ? '#5F6368' : '#B06000',
+                    color: p.is_recommended ? '#5F6368' : 'var(--amber, #B06000)',
                     border: 0, borderRadius: 8,
-                    fontSize: 10, fontWeight: 700, cursor: 'pointer',
+                    fontSize: 11, fontWeight: 700, cursor: 'pointer',
                     display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 4,
                   }}
                 >
@@ -339,7 +339,7 @@ function FilterChip({
       onClick={onClick}
       style={{
         padding: '6px 12px',
-        background: active ? '#01875F' : '#F1F3F4',
+        background: active ? 'var(--emerald, #01875F)' : '#F1F3F4',
         color: active ? '#FFFFFF' : '#3C4043',
         border: 0,
         borderRadius: 8,

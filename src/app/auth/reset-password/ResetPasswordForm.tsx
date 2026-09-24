@@ -98,7 +98,7 @@ export default function ResetPasswordForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-emerald-600 text-white py-2.5 rounded-lg font-medium hover:bg-emerald-700 disabled:opacity-60"
+        className="w-full bg-emerald-700 text-white py-2.5 rounded-lg font-medium hover:bg-emerald-800 disabled:opacity-60"
       >
         {loading ? 'جاري الحفظ...' : 'حفظ كلمة المرور'}
       </button>

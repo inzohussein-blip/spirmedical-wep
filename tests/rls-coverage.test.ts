@@ -295,6 +295,35 @@ describe('🛡️ كل دالّة جديدة تُثبّت search_path', () => {
     expect(/ALTER FUNCTION %s SET search_path/.test(sql)).toBe(true);
     expect(/FOR fn IN[\s\S]{0,600}nspname = 'public'/.test(sql)).toBe(true);
   });
+
+  it('🚨 والسويب يشمل `private` أيضاً، لا `public` وحدها', () => {
+    // سويبُ 0014 قُيّد بـ`nspname = 'public'`، ومخطَّط `private` أُنشئ
+    // بعده في 0024 — فكلّ دالّةٍ وُضعت فيه منذئذٍ خارج المسح. أدرك
+    // المدقّقُ ذلك على مُشغِّلَي 0038 و0039. أُصلح في 0043.
+    expect(sql).toMatch(/nspname\s+IN\s*\(\s*'public',\s*'private'\s*\)/);
+  });
+
+  it('🚨 وكلّ دالّةٍ في ترحيلٍ بعد السويب تُعلن التثبيت في تعريفها', () => {
+    // السويبُ يعمل مرّةً عند النشر؛ ما يُكتب بعده يجب أن يحمل التثبيت
+    // بنفسه، وإلّا عاد الخللُ مع كلّ دالّةٍ جديدة. (الملفّات قبل 0014
+    // يشملها السويبُ نفسه فلا تُطالَب بذلك.)
+    const SWEEP = 14;
+    const offenders: string[] = [];
+    for (const f of readdirSync(MIGRATIONS_DIR).filter((x) => x.endsWith('.sql')).sort()) {
+      const num = Number(f.slice(0, 4));
+      if (!Number.isFinite(num) || num < SWEEP) continue;
+      const body = readFileSync(join(MIGRATIONS_DIR, f), 'utf8').replace(/^\s*--.*$/gm, '');
+      const re = /CREATE\s+(?:OR\s+REPLACE\s+)?FUNCTION\s+([\w.]+)\s*\(/gi;
+      let hit: RegExpExecArray | null;
+      while ((hit = re.exec(body)) !== null) {
+        // ترويسةُ الإعلان: ما بين القوس وأوّل `$` من جسم الدالّة
+        const dollar = body.indexOf('$', hit.index + hit[0].length);
+        const head = body.slice(hit.index, dollar > 0 ? dollar : hit.index + 400);
+        if (!/SET\s+search_path/i.test(head)) offenders.push(`${f}: ${hit[1]}`);
+      }
+    }
+    expect(offenders).toEqual([]);
+  });
 });
 
 describe('🔑 البوّابة الأولى: صلاحيات الجداول', () => {

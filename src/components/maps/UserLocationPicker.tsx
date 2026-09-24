@@ -31,6 +31,8 @@ const GOVERNORATES = [
   'كركوك', 'نينوى', 'أربيل', 'السليمانية', 'دهوك',
 ];
 
+import { useServiceCoverage } from '@/lib/hooks/useServiceCoverage';
+
 export interface LocationData {
   latitude: number;
   longitude: number;
@@ -76,6 +78,9 @@ export default function UserLocationPicker({
   const [mapState, setMapState] = useState<'loading' | 'ready' | 'failed'>('loading');
   // reverse geocoding (إحداثيات → عنوان تلقائياً)
   const [geocoding, setGeocoding] = useState(false);
+
+  // تغطية الخدمة للنقطة المختارة — تحذيرٌ قبل إتمام الحجز لا بعده
+  const coverage = useServiceCoverage(coords);
 
   // يملأ المحافظة + العنوان تلقائياً من الإحداثيات
   async function fillFromCoords(lat: number, lng: number) {
@@ -298,6 +303,40 @@ export default function UserLocationPicker({
         </div>
       )}
 
+      {/* تغطية الخدمة — لا شيء يُعرض ما لم يرسم المشرف نطاقاً */}
+      {coverage.status === 'outside' && (
+        <div
+          role="status"
+          style={{
+            display: 'flex', alignItems: 'flex-start', gap: 8,
+            padding: '10px 12px', marginBottom: 12, borderRadius: 10,
+            background: '#FEF7E0', border: '1px solid #F5D77E',
+            color: '#6B4E00', fontSize: 12.5, lineHeight: 1.7,
+          }}
+        >
+          <span aria-hidden="true">📍</span>
+          <span>
+            هذا الموقع خارج نطاق تغطيتنا الحالي. يمكنك المتابعة، وسيتواصل
+            معك فريقنا لتأكيد إمكانية الوصول.
+          </span>
+        </div>
+      )}
+
+      {coverage.status === 'inside' && (
+        <div
+          role="status"
+          style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            padding: '10px 12px', marginBottom: 12, borderRadius: 10,
+            background: '#E7F5EF', border: '1px solid #B6E0CF',
+            color: '#0B5B45', fontSize: 12.5, fontWeight: 700,
+          }}
+        >
+          <span aria-hidden="true">✓</span>
+          <span>ضمن نطاق الخدمة · {coverage.areaName}</span>
+        </div>
+      )}
+
       {/* Status */}
       {coords && (
         <div className="user-location-status">
@@ -308,7 +347,7 @@ export default function UserLocationPicker({
             </>
           ) : (
             <>
-              <Check size={14} aria-hidden style={{ color: '#0F6E56' }} />
+              <Check size={14} aria-hidden style={{ color: 'var(--emerald-mid, #0F6E56)' }} />
               الموقع محدّد
             </>
           )}

@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
 import { createCampaign, updateCampaign, deleteCampaign, sendCampaign } from './actions';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 interface Campaign {
   id: string;
@@ -207,7 +208,7 @@ export default function CampaignsClient({ campaigns }: Props) {
                         background: statusMeta.bg,
                         color: statusMeta.color,
                         borderRadius: 4,
-                        fontSize: 9,
+                        fontSize: 11,
                         fontWeight: 800,
                       }}>
                         {statusMeta.label}
@@ -238,7 +239,7 @@ export default function CampaignsClient({ campaigns }: Props) {
                       {c.message_content}
                     </div>
 
-                    <div style={{ display: 'flex', gap: 10, fontSize: 10, color: 'var(--ink-3)' }}>
+                    <div style={{ display: 'flex', gap: 10, fontSize: 11, color: 'var(--ink-3)' }}>
                       <span>
                         <Users size={9} style={{ display: 'inline', verticalAlign: -1 }} />
                         {' '}{c.recipients_count} مستهدف
@@ -376,11 +377,12 @@ function CampaignModal({
     });
   };
 
+  const dialogRef = useModalDialog(true, onClose);
   return (
     <div style={modalOverlay()} onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} style={modalContent()}>
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="campaign-modal-title" onClick={(e) => e.stopPropagation()} style={modalContent()}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-          <h3 style={{ fontSize: 18, fontWeight: 900, margin: 0, flex: 1 }}>
+          <h3 id="campaign-modal-title" style={{ fontSize: 18, fontWeight: 900, margin: 0, flex: 1 }}>
             {editing ? 'تعديل حملة' : 'حملة جديدة'}
           </h3>
           <button onClick={onClose} aria-label="إغلاق" style={closeBtn()}><X size={16} /></button>
@@ -554,7 +556,7 @@ function modalContent(): React.CSSProperties { return { background: 'var(--paper
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 10 }}>
-      <label style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 3 }}>{label}</label>
+      <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 3 }}>{label}</label>
       {children}
     </div>
   );

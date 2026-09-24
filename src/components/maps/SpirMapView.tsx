@@ -226,7 +226,7 @@ export default function SpirMapView({
             className="spir-map-view-recenter"
             aria-label="توسيط الخريطة"
           >
-            <Crosshair size={16} aria-hidden style={{ color: '#0F6E56' }} />
+            <Crosshair size={16} aria-hidden style={{ color: 'var(--emerald-mid, #0F6E56)' }} />
           </button>
         )}
 
@@ -243,7 +243,7 @@ export default function SpirMapView({
             </button>
 
             <div className="spir-map-view-card-header">
-              <MapPin size={16} aria-hidden style={{ color: '#0F6E56' }} />
+              <MapPin size={16} aria-hidden style={{ color: 'var(--emerald-mid, #0F6E56)' }} />
               <div style={{ flex: 1, minWidth: 0 }}>
                 {selected.title && (
                   <div className="spir-map-view-card-title">{selected.title}</div>

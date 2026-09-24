@@ -45,7 +45,7 @@ export default function PromoCardsV3() {
             <div style={{ flex: 1 }}>
               <div style={{ 
                 display: 'inline-block',
-                fontSize: 9, fontWeight: 700,
+                fontSize: 11, fontWeight: 700,
                 background: '#FBBC04', color: '#202124',
                 padding: '2px 8px', borderRadius: 9999,
                 marginBottom: 4,

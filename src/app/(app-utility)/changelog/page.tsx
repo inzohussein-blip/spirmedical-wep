@@ -76,7 +76,7 @@ export default async function ChangelogPage() {
                     color: 'var(--paper-3)',
                     padding: '2px 8px',
                     borderRadius: 100,
-                    fontSize: 9,
+                    fontSize: 11,
                     fontWeight: 900,
                   }}>
                     الأحدث ✨
@@ -175,7 +175,7 @@ export default async function ChangelogPage() {
           💡 هل لديك اقتراح؟
           <Link
             href="/feedback"
-            style={{ color: 'var(--emerald)', fontWeight: 800, marginInlineStart: 6 }}
+            style={{ color: 'var(--emerald)', fontWeight: 800, marginInlineStart: 6, paddingBlock: 8 }}
           >
             شاركنا رأيك
           </Link>

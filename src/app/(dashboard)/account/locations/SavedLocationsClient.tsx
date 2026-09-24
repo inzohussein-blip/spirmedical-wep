@@ -480,7 +480,7 @@ export default function SavedLocationsClient({ initialLocations }: Props) {
                   {loc.use_count > 0 && (
                     <p
                       style={{
-                        fontSize: 10,
+                        fontSize: 11,
                         color: 'var(--ink-4)',
                         margin: '4px 0 0',
                       }}

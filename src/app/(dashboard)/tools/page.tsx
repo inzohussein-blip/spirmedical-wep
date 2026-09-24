@@ -106,7 +106,7 @@ export default function ToolsPage() {
                   position: 'absolute',
                   top: 8,
                   insetInlineEnd: 8,
-                  fontSize: 9,
+                  fontSize: 11,
                   fontWeight: 900,
                   background: tool.variant === 'emerald' ? 'var(--amber)' : 'var(--emerald)',
                   color: 'var(--paper-3)',
@@ -129,7 +129,7 @@ export default function ToolsPage() {
                 {tool.title}
               </div>
               <div style={{
-                fontSize: 10,
+                fontSize: 11,
                 color: 'var(--ink-3)',
                 lineHeight: 1.5,
               }}>

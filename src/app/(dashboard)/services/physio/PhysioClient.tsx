@@ -82,6 +82,13 @@ export default function PhysioClient({ serviceTypes, specialists }: Props) {
           {serviceTypes.length} نوع · {specialists.length} أخصائي
         </p>
 
+        <div role="status" style={{
+          padding: '10px 12px', marginBottom: 14, borderRadius: 10,
+          background: '#F1F3F4', color: '#3C4043', fontSize: 13, fontWeight: 700,
+        }}>
+          حجز الجلسات قريباً — تصفّح الأخصائيين وخدماتهم الآن.
+        </div>
+
         {/* View toggle */}
         <div style={{
           display: 'flex',
@@ -210,7 +217,7 @@ function ServiceTypesView({
             {/* Conditions */}
             {t.conditions.length > 0 && (
               <div style={{ marginBottom: 10 }}>
-                <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--ink-3)', marginBottom: 4 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', marginBottom: 4 }}>
                   يُعالج:
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
@@ -218,7 +225,7 @@ function ServiceTypesView({
                     <span
                       key={i}
                       style={{
-                        fontSize: 10,
+                        fontSize: 11,
                         padding: '2px 8px',
                         background: 'var(--paper-3)',
                         borderRadius: 100,
@@ -236,7 +243,7 @@ function ServiceTypesView({
             <div style={{
               display: 'flex',
               gap: 10,
-              fontSize: 10,
+              fontSize: 11,
               color: 'var(--ink-3)',
               marginBottom: 10,
               flexWrap: 'wrap',
@@ -412,7 +419,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
             </p>
           )}
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10, color: 'var(--ink-3)', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--ink-3)', flexWrap: 'wrap' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
               <Award size={10} />
               {specialist.years_experience} سنة خبرة
@@ -441,7 +448,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
           display: 'flex',
           alignItems: 'center',
           gap: 4,
-          fontSize: 10,
+          fontSize: 11,
           color: 'var(--ink-3)',
           marginBottom: 10,
         }}>
@@ -460,7 +467,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
             borderRadius: 8,
             border: '1px solid var(--emerald)',
           }}>
-            <div style={{ fontSize: 9, color: 'var(--ink-3)', marginBottom: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
+            <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
               <Home size={10} />
               زيارة منزلية
             </div>
@@ -479,7 +486,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
             borderRadius: 8,
             border: '1px solid var(--amber)',
           }}>
-            <div style={{ fontSize: 9, color: 'var(--ink-3)', marginBottom: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
+            <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
               <Building2 size={10} />
               عيادة
             </div>
@@ -493,25 +500,25 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
       </div>
 
       {/* Action */}
-      <Link
-        href={`/appointments/new?service=physio&specialist=${specialist.id}`}
+      {/* الحجزُ «قريباً»: البطاقةُ للتصفّح، ولا رابطَ إلى صفحة الطلب */}
+      <div
+        aria-disabled="true"
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           gap: 6,
+          minHeight: 40,
           padding: '10px 14px',
-          background: 'var(--emerald)',
-          color: 'var(--paper-3)',
+          background: '#F1F3F4',
+          color: '#5F6368',
           borderRadius: 10,
-          textDecoration: 'none',
-          fontFamily: 'inherit',
           fontSize: 12,
           fontWeight: 800,
         }}
       >
-        احجز جلسة
-      </Link>
+        الحجز قريباً
+      </div>
     </article>
   );
 }

@@ -33,7 +33,7 @@ export default function HeroCardV3({
   return (
     <div
       style={{
-        background: '#01875F',
+        background: 'var(--emerald, #01875F)',
         margin: '6px 6px 14px',
         borderRadius: 20,
         padding: 16,
@@ -84,8 +84,8 @@ export default function HeroCardV3({
             width: 40,
             height: 40,
             borderRadius: '50%',
-            background: '#E6F3EF',
-            color: '#01875F',
+            background: 'var(--emerald-soft, #E6F3EF)',
+            color: 'var(--emerald, #01875F)',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -145,8 +145,8 @@ export default function HeroCardV3({
                 width: 8,
                 height: 8,
                 borderRadius: '50%',
-                background: '#C71C56',
-                border: '1.5px solid #01875F',
+                background: 'var(--rose, #C71C56)',
+                border: '1.5px solid var(--emerald, #01875F)',
               }}
             />
           )}

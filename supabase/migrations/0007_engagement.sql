@@ -128,7 +128,7 @@ ALTER TABLE public.ratings ENABLE ROW LEVEL SECURITY;
 -- ─── Payments ───
 DROP POLICY IF EXISTS "Users see own payments" ON public.payments;
 CREATE POLICY "Users see own payments" ON public.payments
-  FOR SELECT USING (auth.uid() = user_id);
+  FOR SELECT USING ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "Specialists see appointment payments" ON public.payments;
 CREATE POLICY "Specialists see appointment payments" ON public.payments
@@ -136,17 +136,17 @@ CREATE POLICY "Specialists see appointment payments" ON public.payments
     EXISTS (
       SELECT 1 FROM public.appointments
       WHERE appointments.id = payments.appointment_id
-      AND appointments.specialist_id = auth.uid()
+      AND appointments.specialist_id = (SELECT auth.uid())
     )
   );
 
 DROP POLICY IF EXISTS "Users create own payments" ON public.payments;
 CREATE POLICY "Users create own payments" ON public.payments
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+  FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "Users update own payments" ON public.payments;
 CREATE POLICY "Users update own payments" ON public.payments
-  FOR UPDATE USING (auth.uid() = user_id);
+  FOR UPDATE USING ((SELECT auth.uid()) = user_id);
 
 
 -- ─── Ratings ───
@@ -156,19 +156,19 @@ CREATE POLICY "Anyone reads published ratings" ON public.ratings
 
 DROP POLICY IF EXISTS "Users see own ratings" ON public.ratings;
 CREATE POLICY "Users see own ratings" ON public.ratings
-  FOR SELECT USING (auth.uid() = user_id);
+  FOR SELECT USING ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "Users create own ratings" ON public.ratings;
 CREATE POLICY "Users create own ratings" ON public.ratings
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+  FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "Users update own ratings" ON public.ratings;
 CREATE POLICY "Users update own ratings" ON public.ratings
-  FOR UPDATE USING (auth.uid() = user_id);
+  FOR UPDATE USING ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "Users delete own ratings" ON public.ratings;
 CREATE POLICY "Users delete own ratings" ON public.ratings
-  FOR DELETE USING (auth.uid() = user_id);
+  FOR DELETE USING ((SELECT auth.uid()) = user_id);
 
 
 -- ════════════════════════════════════════════════════════════════════
@@ -347,46 +347,46 @@ $$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
 DROP POLICY IF EXISTS admin_actions_view ON public.admin_actions;
 CREATE POLICY admin_actions_view ON public.admin_actions
   FOR SELECT USING (
-    admin_id = auth.uid() OR public.is_super_admin(auth.uid())
+    admin_id = (SELECT auth.uid()) OR public.is_super_admin((SELECT auth.uid()))
   );
 
 DROP POLICY IF EXISTS admin_actions_insert ON public.admin_actions;
 CREATE POLICY admin_actions_insert ON public.admin_actions
   FOR INSERT WITH CHECK (
-    admin_id = auth.uid() AND public.is_admin(auth.uid())
+    admin_id = (SELECT auth.uid()) AND public.is_admin((SELECT auth.uid()))
   );
 
 
 -- patient_tags: admins يقدرون يديرونها
 DROP POLICY IF EXISTS patient_tags_admin ON public.patient_tags;
 CREATE POLICY patient_tags_admin ON public.patient_tags
-  FOR ALL USING (public.is_admin(auth.uid()))
-  WITH CHECK (public.is_admin(auth.uid()));
+  FOR ALL USING (public.is_admin((SELECT auth.uid())))
+  WITH CHECK (public.is_admin((SELECT auth.uid())));
 
 
 -- patient_notes: admins يقدرون
 DROP POLICY IF EXISTS patient_notes_admin ON public.patient_notes;
 CREATE POLICY patient_notes_admin ON public.patient_notes
-  FOR ALL USING (public.is_admin(auth.uid()))
-  WITH CHECK (public.is_admin(auth.uid()));
+  FOR ALL USING (public.is_admin((SELECT auth.uid())))
+  WITH CHECK (public.is_admin((SELECT auth.uid())));
 
 
 -- campaigns: super_admin + manager فقط
 DROP POLICY IF EXISTS campaigns_manage ON public.campaigns;
 CREATE POLICY campaigns_manage ON public.campaigns
   FOR ALL USING (
-    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role IN ('super_admin', 'manager', 'admin'))
+    EXISTS (SELECT 1 FROM public.users WHERE id = (SELECT auth.uid()) AND role IN ('super_admin', 'manager', 'admin'))
   )
   WITH CHECK (
-    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role IN ('super_admin', 'manager', 'admin'))
+    EXISTS (SELECT 1 FROM public.users WHERE id = (SELECT auth.uid()) AND role IN ('super_admin', 'manager', 'admin'))
   );
 
 
 -- coupons: admins يقدرون يديرون، patients يقرأون الـ active
 DROP POLICY IF EXISTS coupons_admin_manage ON public.coupons;
 CREATE POLICY coupons_admin_manage ON public.coupons
-  FOR ALL USING (public.is_admin(auth.uid()))
-  WITH CHECK (public.is_admin(auth.uid()));
+  FOR ALL USING (public.is_admin((SELECT auth.uid())))
+  WITH CHECK (public.is_admin((SELECT auth.uid())));
 
 DROP POLICY IF EXISTS coupons_public_read ON public.coupons;
 CREATE POLICY coupons_public_read ON public.coupons
@@ -400,13 +400,13 @@ CREATE POLICY coupons_public_read ON public.coupons
 DROP POLICY IF EXISTS users_admin_view ON public.users;
 CREATE POLICY users_admin_view ON public.users
   FOR SELECT USING (
-    id = auth.uid() OR public.is_admin(auth.uid())
+    id = (SELECT auth.uid()) OR public.is_admin((SELECT auth.uid()))
   );
 
 DROP POLICY IF EXISTS users_admin_update ON public.users;
 CREATE POLICY users_admin_update ON public.users
   FOR UPDATE USING (
-    id = auth.uid() OR public.is_admin(auth.uid())
+    id = (SELECT auth.uid()) OR public.is_admin((SELECT auth.uid()))
   );
 
 
@@ -416,9 +416,9 @@ CREATE POLICY users_admin_update ON public.users
 DROP POLICY IF EXISTS appointments_admin_view ON public.appointments;
 CREATE POLICY appointments_admin_view ON public.appointments
   FOR SELECT USING (
-    user_id = auth.uid()
-    OR assigned_specialist_id = auth.uid()
-    OR public.is_admin(auth.uid())
+    user_id = (SELECT auth.uid())
+    OR assigned_specialist_id = (SELECT auth.uid())
+    OR public.is_admin((SELECT auth.uid()))
     OR (
       appointments.assigned_specialist_id IS NULL
       AND public.current_user_is_approved_specialist_type(appointments.required_specialist_type::text)
@@ -428,10 +428,16 @@ CREATE POLICY appointments_admin_view ON public.appointments
 DROP POLICY IF EXISTS appointments_admin_update ON public.appointments;
 CREATE POLICY appointments_admin_update ON public.appointments
   FOR UPDATE USING (
-    user_id = auth.uid()
-    OR assigned_specialist_id = auth.uid()
-    OR public.is_admin(auth.uid())
-    OR public.current_user_is_approved_specialist_type(appointments.required_specialist_type::text)
+    user_id = (SELECT auth.uid())
+    OR assigned_specialist_id = (SELECT auth.uid())
+    OR public.is_admin((SELECT auth.uid()))
+    -- تصحيحٌ لاحق (الترحيل 0036): كانت هذه الذراع بلا شرط
+    -- `assigned_specialist_id IS NULL`، فيستطيع أيّ مختصٍّ معتمَدٍ من النوع
+    -- المطلوب تعديلَ **كلّ** موعدٍ من نوعه — حتى المُسنَد لزميله وهو لا
+    -- يراه. وسياسةُ القراءة أضيقُ منها، لكنّ تعديلاً بلا شرطٍ ولا RETURNING
+    -- لا تُستدعى فيه القراءةُ أصلاً.
+    OR (assigned_specialist_id IS NULL
+        AND public.current_user_is_approved_specialist_type(appointments.required_specialist_type::text))
   );
 
 
@@ -566,7 +572,7 @@ CREATE POLICY stories_read_all_admin
   USING (
     EXISTS (
       SELECT 1 FROM public.users
-      WHERE id = auth.uid()
+      WHERE id = (SELECT auth.uid())
         AND role IN ('super_admin', 'admin', 'manager')
     )
   );
@@ -579,7 +585,7 @@ CREATE POLICY stories_insert_admin
   WITH CHECK (
     EXISTS (
       SELECT 1 FROM public.users
-      WHERE id = auth.uid()
+      WHERE id = (SELECT auth.uid())
         AND role IN ('super_admin', 'admin', 'manager')
     )
   );
@@ -591,7 +597,7 @@ CREATE POLICY stories_update_admin
   USING (
     EXISTS (
       SELECT 1 FROM public.users
-      WHERE id = auth.uid()
+      WHERE id = (SELECT auth.uid())
         AND role IN ('super_admin', 'admin', 'manager')
     )
   );
@@ -603,7 +609,7 @@ CREATE POLICY stories_delete_admin
   USING (
     EXISTS (
       SELECT 1 FROM public.users
-      WHERE id = auth.uid()
+      WHERE id = (SELECT auth.uid())
         AND role IN ('super_admin', 'admin', 'manager')
     )
   );
@@ -644,7 +650,7 @@ DROP POLICY IF EXISTS "analytics_admins_select" ON public.analytics_events;
 CREATE POLICY "analytics_admins_select"
   ON public.analytics_events FOR SELECT
   USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 DROP POLICY IF EXISTS "analytics_anyone_insert" ON public.analytics_events;
@@ -722,24 +728,24 @@ ALTER TABLE public.user_favorites ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "favorites_select_own" ON public.user_favorites;
 CREATE POLICY "favorites_select_own"
   ON public.user_favorites FOR SELECT
-  USING (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "favorites_insert_own" ON public.user_favorites;
 CREATE POLICY "favorites_insert_own"
   ON public.user_favorites FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
+  WITH CHECK ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "favorites_delete_own" ON public.user_favorites;
 CREATE POLICY "favorites_delete_own"
   ON public.user_favorites FOR DELETE
-  USING (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id);
 
 -- Admins يرون كل المفضّلات (للإحصائيات)
 DROP POLICY IF EXISTS "favorites_admin_select_all" ON public.user_favorites;
 CREATE POLICY "favorites_admin_select_all"
   ON public.user_favorites FOR SELECT
   USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 COMMENT ON TABLE public.user_favorites IS
@@ -811,14 +817,14 @@ ALTER TABLE public.wallet_transactions ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "wallet_select_own" ON public.wallet_transactions;
 CREATE POLICY "wallet_select_own"
   ON public.wallet_transactions FOR SELECT
-  USING (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id);
 
 -- Admins يقدرون يضيفون معاملات
 DROP POLICY IF EXISTS "wallet_admin_all" ON public.wallet_transactions;
 CREATE POLICY "wallet_admin_all"
   ON public.wallet_transactions FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 -- ─── 3. Function: إضافة معاملة + تحديث الرصيد ────────────
@@ -949,12 +955,12 @@ ALTER TABLE public.coupon_redemptions ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "coupon_redemptions_own_select" ON public.coupon_redemptions;
 CREATE POLICY "coupon_redemptions_own_select"
   ON public.coupon_redemptions FOR SELECT
-  USING (user_id = auth.uid() OR public.is_admin(auth.uid()));
+  USING (user_id = (SELECT auth.uid()) OR public.is_admin((SELECT auth.uid())));
 
 DROP POLICY IF EXISTS "coupon_redemptions_admin_all" ON public.coupon_redemptions;
 CREATE POLICY "coupon_redemptions_admin_all"
   ON public.coupon_redemptions FOR ALL
-  USING (public.is_admin(auth.uid()));
+  USING (public.is_admin((SELECT auth.uid())));
 
 -- ─── 3. معالم برنامج الولاء ──────────────────────────
 CREATE TABLE IF NOT EXISTS public.loyalty_milestones (
@@ -987,7 +993,7 @@ CREATE POLICY "milestones_public_read"
 DROP POLICY IF EXISTS "milestones_admin_manage" ON public.loyalty_milestones;
 CREATE POLICY "milestones_admin_manage"
   ON public.loyalty_milestones FOR ALL
-  USING (public.is_admin(auth.uid()));
+  USING (public.is_admin((SELECT auth.uid())));
 
 -- ─── 4. نظام الإحالة ──────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.referral_codes (
@@ -1010,12 +1016,12 @@ ALTER TABLE public.referral_codes ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "referral_own_select" ON public.referral_codes;
 CREATE POLICY "referral_own_select"
   ON public.referral_codes FOR SELECT
-  USING (user_id = auth.uid() OR public.is_admin(auth.uid()));
+  USING (user_id = (SELECT auth.uid()) OR public.is_admin((SELECT auth.uid())));
 
 DROP POLICY IF EXISTS "referral_own_insert" ON public.referral_codes;
 CREATE POLICY "referral_own_insert"
   ON public.referral_codes FOR INSERT
-  WITH CHECK (user_id = auth.uid());
+  WITH CHECK (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "referral_lookup_by_code" ON public.referral_codes;
 CREATE POLICY "referral_lookup_by_code"
@@ -1051,12 +1057,12 @@ ALTER TABLE public.referrals ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "referrals_own_select" ON public.referrals;
 CREATE POLICY "referrals_own_select"
   ON public.referrals FOR SELECT
-  USING (referrer_id = auth.uid() OR referred_id = auth.uid() OR public.is_admin(auth.uid()));
+  USING (referrer_id = (SELECT auth.uid()) OR referred_id = (SELECT auth.uid()) OR public.is_admin((SELECT auth.uid())));
 
 DROP POLICY IF EXISTS "referrals_admin_all" ON public.referrals;
 CREATE POLICY "referrals_admin_all"
   ON public.referrals FOR ALL
-  USING (public.is_admin(auth.uid()));
+  USING (public.is_admin((SELECT auth.uid())));
 
 -- ─── 6. Function: تحديث tier تلقائياً ─────────────────
 CREATE OR REPLACE FUNCTION public.update_loyalty_tier()
@@ -1322,7 +1328,7 @@ DROP POLICY IF EXISTS "checklist_admin" ON public.launch_checklist;
 CREATE POLICY "checklist_admin"
   ON public.launch_checklist FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 -- ─── 2. Beta Codes ───────────────────────────────────────
@@ -1347,7 +1353,7 @@ DROP POLICY IF EXISTS "beta_admin" ON public.beta_codes;
 CREATE POLICY "beta_admin"
   ON public.beta_codes FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 DROP POLICY IF EXISTS "beta_select_public" ON public.beta_codes;
@@ -1391,13 +1397,13 @@ CREATE POLICY "feedback_insert_any"
 DROP POLICY IF EXISTS "feedback_select_own" ON public.user_feedback;
 CREATE POLICY "feedback_select_own"
   ON public.user_feedback FOR SELECT
-  USING (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "feedback_admin" ON public.user_feedback;
 CREATE POLICY "feedback_admin"
   ON public.user_feedback FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 -- ─── 4. Bug Reports ──────────────────────────────────────
@@ -1435,13 +1441,13 @@ CREATE POLICY "bugs_insert_any"
 DROP POLICY IF EXISTS "bugs_select_own" ON public.bug_reports;
 CREATE POLICY "bugs_select_own"
   ON public.bug_reports FOR SELECT
-  USING (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "bugs_admin" ON public.bug_reports;
 CREATE POLICY "bugs_admin"
   ON public.bug_reports FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 -- ─── 5. Changelog ────────────────────────────────────────
@@ -1473,7 +1479,7 @@ DROP POLICY IF EXISTS "changelog_admin" ON public.changelog_entries;
 CREATE POLICY "changelog_admin"
   ON public.changelog_entries FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin'))
+    EXISTS (SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin'))
   );
 
 -- ════════════════════════════════════════════════════════════════════
@@ -1626,16 +1632,16 @@ ALTER TABLE public.admin_requests ENABLE ROW LEVEL SECURITY;
 -- المستخدم يرى طلبه، والأدمن يرى الكل
 DROP POLICY IF EXISTS "admin_requests_select" ON public.admin_requests;
 CREATE POLICY "admin_requests_select" ON public.admin_requests FOR SELECT
-  USING (user_id = auth.uid() OR public.is_admin(auth.uid()));
+  USING (user_id = (SELECT auth.uid()) OR public.is_admin((SELECT auth.uid())));
 
 -- المستخدم ينشئ طلبه فقط
 DROP POLICY IF EXISTS "admin_requests_insert" ON public.admin_requests;
 CREATE POLICY "admin_requests_insert" ON public.admin_requests FOR INSERT
-  WITH CHECK (user_id = auth.uid());
+  WITH CHECK (user_id = (SELECT auth.uid()));
 
 -- super_admin فقط يوافق/يرفض
 DROP POLICY IF EXISTS "admin_requests_update" ON public.admin_requests;
 CREATE POLICY "admin_requests_update" ON public.admin_requests FOR UPDATE
-  USING (public.is_super_admin(auth.uid()));
+  USING (public.is_super_admin((SELECT auth.uid())));
 
 

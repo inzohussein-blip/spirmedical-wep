@@ -4,10 +4,13 @@ import { useEffect, useState } from 'react';
 import { Bell, Loader2 } from 'lucide-react';
 import { subscribeToPush } from '@/lib/push-client';
 import { toast } from '@/components/ui/Toaster';
+import { usePathname } from 'next/navigation';
+import { isFocusedTaskRoute, isEmergencyRoute } from '@/lib/focused-routes';
 
 export default function PushPermissionPrompt() {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (typeof window === 'undefined' || !('Notification' in window)) return;
@@ -73,7 +76,9 @@ export default function PushPermissionPrompt() {
     setShow(false);
   };
 
-  if (!show) return null;
+  // لا يُقاطَع رفعُ الطلب ولا شاشةُ الطوارئ؛ الطلبُ يبقى معلّقاً فيظهر حين
+  // يغادر المريض — وبعد الإرسال يصل صفحةَ طلبه حيث يعني الإشعارُ شيئاً.
+  if (!show || isFocusedTaskRoute(pathname) || isEmergencyRoute(pathname)) return null;
 
   return (
     <div className="push-prompt">

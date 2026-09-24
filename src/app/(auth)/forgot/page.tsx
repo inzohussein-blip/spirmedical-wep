@@ -100,7 +100,7 @@ export default function ForgotPage({
       <style>{`
         .auth-divider-text {
           text-align: center;
-          color: var(--muted, #64748b);
+          color: var(--muted, #5F6368);
           font-size: 13px;
           margin: 18px 0 6px;
         }
@@ -117,7 +117,7 @@ export default function ForgotPage({
         .auth-alt-hint {
           font-size: 13px;
           line-height: 1.7;
-          color: var(--muted, #64748b);
+          color: var(--muted, #5F6368);
           margin: 10px 0 0;
         }
       `}</style>

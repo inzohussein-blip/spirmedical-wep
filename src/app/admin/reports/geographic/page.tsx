@@ -215,7 +215,7 @@ export default async function GeographicReportsPage() {
                       }}
                     >
                       <div>
-                        <div style={{ fontSize: 10, color: 'var(--ink-3)', fontWeight: 700 }}>
+                        <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>
                           ⏳ معلّق
                         </div>
                         <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--amber)' }}>
@@ -223,7 +223,7 @@ export default async function GeographicReportsPage() {
                         </div>
                       </div>
                       <div>
-                        <div style={{ fontSize: 10, color: 'var(--ink-3)', fontWeight: 700 }}>
+                        <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>
                           ✅ مكتمل
                         </div>
                         <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--emerald)' }}>
@@ -231,7 +231,7 @@ export default async function GeographicReportsPage() {
                         </div>
                       </div>
                       <div>
-                        <div style={{ fontSize: 10, color: 'var(--ink-3)', fontWeight: 700 }}>
+                        <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>
                           ❌ ملغى
                         </div>
                         <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--rose)' }}>
@@ -239,7 +239,7 @@ export default async function GeographicReportsPage() {
                         </div>
                       </div>
                       <div>
-                        <div style={{ fontSize: 10, color: 'var(--ink-3)', fontWeight: 700 }}>
+                        <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>
                           🎯 الإنجاز
                         </div>
                         <div
@@ -265,7 +265,7 @@ export default async function GeographicReportsPage() {
                       >
                         <div
                           style={{
-                            fontSize: 10,
+                            fontSize: 11,
                             color: 'var(--ink-3)',
                             fontWeight: 700,
                             marginBottom: 8,
@@ -281,7 +281,7 @@ export default async function GeographicReportsPage() {
                               <span
                                 key={svc}
                                 style={{
-                                  fontSize: 10,
+                                  fontSize: 11,
                                   padding: '3px 8px',
                                   background: 'var(--emerald-soft)',
                                   color: 'var(--emerald-deep)',

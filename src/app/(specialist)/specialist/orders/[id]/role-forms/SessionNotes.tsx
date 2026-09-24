@@ -45,7 +45,7 @@ export default function SessionNotes({ orderId, initialData }: { orderId: string
 
   return (
     <div style={{ marginTop: 16 }}>
-      <div style={{ background: 'var(--paper-3)', padding: 12, borderRadius: 10, marginBottom: 12, fontSize: 11, color: 'var(--ink-3)', display: 'flex', gap: 8, alignItems: 'center' }}>
+      <div style={{ background: 'var(--paper-3)', padding: 12, borderRadius: 10, marginBottom: 12, fontSize: 12, color: 'var(--ink-3)', display: 'flex', gap: 8, alignItems: 'center' }}>
         <Lock size={14} strokeWidth={2.2} aria-hidden />
         <span>ملاحظاتك سرية تماماً. لن يراها أحد غيرك ومدير النظام.</span>
       </div>
@@ -61,7 +61,7 @@ export default function SessionNotes({ orderId, initialData }: { orderId: string
           const Icon = f.icon;
           return (
             <div key={f.key} style={{ marginBottom: 12 }}>
-              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>
+              <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>
                 <Icon size={12} strokeWidth={2.2} aria-hidden />
                 {f.label}
               </label>
@@ -86,7 +86,7 @@ export default function SessionNotes({ orderId, initialData }: { orderId: string
           {isPending ? 'جارٍ الحفظ...' : 'حفظ الجلسة'}
         </button>
         {success && (
-          <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginTop: 8, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+          <div style={{ background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', padding: '8px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700, marginTop: 8, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             <CheckCircle2 size={14} strokeWidth={2.4} />
             تم الحفظ
           </div>

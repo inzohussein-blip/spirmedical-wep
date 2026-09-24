@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import { checkIsFavorite } from '@/components/services/favorites-actions';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 export const dynamic = 'force-dynamic';
 
@@ -112,7 +113,7 @@ export default async function DentalDetailPage({
               {clinic.is_featured && (
                 <span style={{
                   display: 'inline-block',
-                  fontSize: 10, fontWeight: 900,
+                  fontSize: 11, fontWeight: 900,
                   background: 'var(--amber)', color: 'var(--paper-3)',
                   padding: '2px 8px', borderRadius: 100,
                   marginBottom: 6,
@@ -265,7 +266,7 @@ export default async function DentalDetailPage({
               show={clinic.offers_implants}
             />
           </div>
-          <p style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 10, marginBottom: 0, lineHeight: 1.5 }}>
+          <p style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 10, marginBottom: 0, lineHeight: 1.5 }}>
             💡 الأسعار تقريبية وتتوقّف على الحالة. تأكّد من العيادة قبل الزيارة.
           </p>
         </div>
@@ -294,7 +295,7 @@ export default async function DentalDetailPage({
 
           <div style={{ display: 'flex', gap: 8 }}>
             {clinic.phone && (
-              <a
+              <PhoneLink phone={clinic.phone}
                 href={`tel:${clinic.phone}`}
                 style={{
                   flex: 1,
@@ -315,10 +316,10 @@ export default async function DentalDetailPage({
               >
                 <Phone size={14} />
                 اتصل
-              </a>
+              </PhoneLink>
             )}
             {(clinic.whatsapp || clinic.phone) && (
-              <a
+              <PhoneLink phone={(clinic.whatsapp || clinic.phone)}
                 href={`https://wa.me/${(clinic.whatsapp || clinic.phone)!.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('السلام عليكم - أود الاستفسار عبر Spir Medical')}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -341,7 +342,7 @@ export default async function DentalDetailPage({
               >
                 <MessageCircle size={14} />
                 WhatsApp
-              </a>
+              </PhoneLink>
             )}
           </div>
         </div>

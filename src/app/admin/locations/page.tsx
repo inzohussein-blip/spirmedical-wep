@@ -19,8 +19,8 @@ export default async function LocationsAdminPage() {
           href="/admin"
           style={{
             padding: '8px 12px', background: 'var(--white, #fff)',
-            border: '1px solid var(--line, #E8E6DE)', borderRadius: 8,
-            textDecoration: 'none', color: 'var(--ink-2, #5F5E5A)', fontSize: 13,
+            border: '1px solid var(--line, #DADCE0)', borderRadius: 8,
+            textDecoration: 'none', color: 'var(--ink-2, #3C4043)', fontSize: 13,
           }}
         >
           ← العودة

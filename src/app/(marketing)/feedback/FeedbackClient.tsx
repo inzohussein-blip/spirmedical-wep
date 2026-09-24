@@ -221,7 +221,7 @@ export default function FeedbackClient() {
             style={{ ...inputStyle, resize: 'vertical', fontFamily: 'inherit', minHeight: 100, borderColor: fe.hasError('message') ? 'var(--rose)' : undefined }}
             maxLength={1000}
           />
-          <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 4, textAlign: 'end' }}>
+          <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 4, textAlign: 'end' }}>
             {message.length}/1000
           </div>
           <FieldError message={fe.fieldErrors.message} />
@@ -239,7 +239,7 @@ export default function FeedbackClient() {
             placeholder="email@example.com"
             style={inputStyle}
           />
-          <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 4 }}>
+          <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 4 }}>
             إذا أردت ردّاً منّا
           </div>
         </div>

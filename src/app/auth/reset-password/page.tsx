@@ -55,7 +55,7 @@ export default async function ResetPasswordPage({
             </div>
             <Link
               href="/forgot"
-              className="inline-block w-full bg-emerald-600 text-white py-2.5 rounded-lg font-medium hover:bg-emerald-700"
+              className="inline-block w-full bg-emerald-700 text-white py-2.5 rounded-lg font-medium hover:bg-emerald-800"
             >
               اطلب رابطاً جديداً
             </Link>
@@ -65,7 +65,7 @@ export default async function ResetPasswordPage({
         )}
 
         <div className="text-center mt-6 text-sm text-gray-600">
-          <Link href="/login" className="text-emerald-700 hover:underline">
+          <Link href="/login" className="inline-flex items-center min-h-[44px] px-3 text-emerald-700 hover:underline">
             العودة لتسجيل الدخول
           </Link>
         </div>

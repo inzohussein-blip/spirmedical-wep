@@ -16,6 +16,19 @@ interface Props {
   /** عند النقر على بند: يمرّر/يركّز على الحقل */
   onJump: (field: string) => void;
   title?: string;
+  /**
+   * سطرٌ واحد ينقل إلى أوّل حقلٍ ناقص — للأشرطة الثابتة أسفل الشاشة، حيث
+   * كانت الرقائقُ تُضاعف ارتفاعَ الشريط فتحجب النموذجَ الذي يُطلب إكمالُه.
+   */
+  compact?: boolean;
+}
+
+/** «أكمل …»: العدد بصيغته العربية — المثنّى وتمييزُ ما فوق العشرة مفرد. */
+export function missingCountAr(n: number): string {
+  if (n === 1) return 'حقلاً واحداً';
+  if (n === 2) return 'حقلين';
+  if (n <= 10) return `${n} حقول`;
+  return `${n} حقلاً`;
 }
 
 export default function MissingFieldsSummary({
@@ -24,8 +37,47 @@ export default function MissingFieldsSummary({
   errors,
   onJump,
   title = 'لإتمام الطلب، أكمل هذه الحقول:',
+  compact = false,
 }: Props) {
   if (fields.length === 0) return null;
+
+  if (compact) {
+    return (
+      <div role="alert">
+        <button type="button" className="ffs-bar" onClick={() => onJump(fields[0])}>
+          <AlertTriangle size={14} strokeWidth={2.6} aria-hidden />
+          <span>
+            أكمل {missingCountAr(fields.length)}: {fields.map((f) => labels[f] || f).join('، ')}
+          </span>
+        </button>
+        <style jsx>{`
+          .ffs-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+            min-height: 40px;
+            padding: 8px 12px;
+            background: var(--rose-soft, #FCE8E6);
+            border: 1px solid var(--rose, #C71C56);
+            border-radius: 10px;
+            color: var(--rose, #C71C56);
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 800;
+            text-align: start;
+            cursor: pointer;
+          }
+          .ffs-bar span {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+        `}</style>
+      </div>
+    );
+  }
 
   return (
     <div className="ffs" role="alert">
@@ -50,7 +102,7 @@ export default function MissingFieldsSummary({
       <style jsx>{`
         .ffs {
           background: var(--rose-soft, #FCE8E6);
-          border: 1px solid var(--rose, #A82E3D);
+          border: 1px solid var(--rose, #C71C56);
           border-radius: 12px;
           padding: 10px 12px;
           margin-bottom: 10px;
@@ -59,7 +111,7 @@ export default function MissingFieldsSummary({
           display: flex;
           align-items: center;
           gap: 6px;
-          color: var(--rose, #A82E3D);
+          color: var(--rose, #C71C56);
           font-size: 12px;
           font-weight: 800;
           margin-bottom: 8px;
@@ -76,23 +128,23 @@ export default function MissingFieldsSummary({
           gap: 1px;
           padding: 6px 11px;
           background: var(--white, #FFFFFF);
-          border: 1px solid var(--rose, #A82E3D);
+          border: 1px solid var(--rose, #C71C56);
           border-radius: 10px;
           font-size: 12px;
           font-weight: 800;
-          color: var(--rose, #A82E3D);
+          color: var(--rose, #C71C56);
           cursor: pointer;
           transition: all 0.15s;
           font-family: inherit;
           text-align: start;
         }
         .ffs-chip:hover {
-          background: var(--rose, #A82E3D);
+          background: var(--rose, #C71C56);
           color: var(--white, #FFFFFF);
           transform: translateY(-1px);
         }
         .ffs-chip-hint {
-          font-size: 9px;
+          font-size: 11px;
           font-weight: 600;
           opacity: 0.85;
         }

@@ -1,8 +1,9 @@
 'use client';
 
+import ModalShell, { ModalCloseButton } from '@/components/ui/ModalShell';
 import { useState, useTransition } from 'react';
 import { 
-  Pill, Plus, Edit, Trash2, Power, X, Save, Bell, BellOff, 
+  Pill, Plus, Edit, Trash2, Power, Save, Bell, BellOff, 
   Clock, Calendar, AlertTriangle, CheckCircle2,
 } from 'lucide-react';
 import { useConfirm } from '@/components/ui';
@@ -82,7 +83,7 @@ export default function MyMedicationsClient({ medications }: Props) {
         style={{
           width: '100%',
           padding: 12,
-          background: '#0F6E56',
+          background: 'var(--emerald-mid, #0F6E56)',
           color: 'white',
           border: 0,
           borderRadius: 12,
@@ -153,7 +154,7 @@ export default function MyMedicationsClient({ medications }: Props) {
                   height: 38,
                   borderRadius: 10,
                   background: med.is_chronic ? '#FAEEDA' : '#E1F5EE',
-                  color: med.is_chronic ? '#A57100' : '#0F6E56',
+                  color: med.is_chronic ? '#A57100' : 'var(--emerald-mid, #0F6E56)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -182,7 +183,7 @@ export default function MyMedicationsClient({ medications }: Props) {
                             padding: '2px 6px',
                             background: 'var(--paper-2)',
                             borderRadius: 8,
-                            fontSize: 10,
+                            fontSize: 11,
                             color: 'var(--ink-2)',
                             fontWeight: 600,
                           }}
@@ -200,7 +201,7 @@ export default function MyMedicationsClient({ medications }: Props) {
                         background: '#FAEEDA',
                         color: '#412402',
                         borderRadius: 8,
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: 700,
                       }}>
                         مزمن
@@ -212,7 +213,7 @@ export default function MyMedicationsClient({ medications }: Props) {
                         background: '#E1F5EE',
                         color: '#04342C',
                         borderRadius: 8,
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: 700,
                         display: 'inline-flex',
                         alignItems: 'center',
@@ -321,36 +322,10 @@ function AddMedicationModal({ onClose, onSaved }: { onClose: () => void; onSaved
   }
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(0,0,0,0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000,
-        padding: 16,
-      }}
-      onClick={onClose}
-    >
-      <div
-        style={{
-          background: 'var(--white)',
-          borderRadius: 16,
-          padding: 20,
-          width: '100%',
-          maxWidth: 440,
-          maxHeight: '90vh',
-          overflowY: 'auto',
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
+    <ModalShell onClose={onClose} labelledBy="add-med-title" maxWidth={440}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-          <h2 style={{ fontSize: 17, fontWeight: 800, margin: 0 }}>إضافة دواء</h2>
-          <button onClick={onClose} style={{ background: 'transparent', border: 0, cursor: 'pointer' }}>
-            <X size={20} strokeWidth={2.2} />
-          </button>
+          <h2 id="add-med-title" style={{ fontSize: 17, fontWeight: 800, margin: 0 }}>إضافة دواء</h2>
+          <ModalCloseButton onClick={onClose} />
         </div>
 
         <div style={{ display: 'grid', gap: 12 }}>
@@ -406,8 +381,8 @@ function AddMedicationModal({ onClose, onSaved }: { onClose: () => void; onSaved
                       fontSize: 11,
                       fontWeight: 600,
                       border: '1px solid',
-                      borderColor: selected ? '#0F6E56' : 'var(--line)',
-                      background: selected ? '#0F6E56' : 'var(--white)',
+                      borderColor: selected ? 'var(--emerald-mid, #0F6E56)' : 'var(--line)',
+                      background: selected ? 'var(--emerald-mid, #0F6E56)' : 'var(--white)',
                       color: selected ? 'white' : 'var(--ink-2)',
                       cursor: 'pointer',
                     }}
@@ -485,7 +460,7 @@ function AddMedicationModal({ onClose, onSaved }: { onClose: () => void; onSaved
             style={{
               flex: 1,
               padding: 12,
-              background: '#0F6E56',
+              background: 'var(--emerald-mid, #0F6E56)',
               color: 'white',
               border: 0,
               borderRadius: 10,
@@ -519,8 +494,7 @@ function AddMedicationModal({ onClose, onSaved }: { onClose: () => void; onSaved
             إلغاء
           </button>
         </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }
 

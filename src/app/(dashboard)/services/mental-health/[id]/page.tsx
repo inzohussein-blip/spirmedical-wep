@@ -244,7 +244,7 @@ export default async function MentalDetailPage({
                 {onlinePrice ? (
                   <>
                     <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--emerald)' }}>{onlinePrice}</div>
-                    <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع / جلسة</div>
+                    <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>د.ع / جلسة</div>
                   </>
                 ) : (
                   <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>السعر عند التواصل</div>
@@ -262,7 +262,7 @@ export default async function MentalDetailPage({
                 {clinicPrice ? (
                   <>
                     <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--amber)' }}>{clinicPrice}</div>
-                    <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع / جلسة</div>
+                    <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>د.ع / جلسة</div>
                   </>
                 ) : (
                   <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>السعر عند التواصل</div>

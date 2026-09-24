@@ -108,7 +108,7 @@ export default async function ConsultationPage() {
           <>
             <div className="scr-section-head" style={{ marginTop: 16 }}>
               <div className="scr-section-title">
-                <Stethoscope size={14} strokeWidth={2.2} style={{ verticalAlign: -3, marginLeft: 4, color: '#0F6E56' }} aria-hidden />
+                <Stethoscope size={14} strokeWidth={2.2} style={{ verticalAlign: -3, marginLeft: 4, color: 'var(--emerald-mid, #0F6E56)' }} aria-hidden />
                 أطبائي السابقون
               </div>
             </div>
@@ -122,7 +122,7 @@ export default async function ConsultationPage() {
                   <div 
                     className="scr-list-item-icon" 
                     aria-hidden="true"
-                    style={{ background: '#E1F5EE', color: '#0F6E56' }}
+                    style={{ background: '#E1F5EE', color: 'var(--emerald-mid, #0F6E56)' }}
                   >
                     <Stethoscope size={20} strokeWidth={2} />
                   </div>
@@ -166,7 +166,7 @@ export default async function ConsultationPage() {
                     }}
                   >
                     <div style={{ fontSize: 13, fontWeight: 700 }}>{label}</div>
-                    <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 2 }}>
+                    <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 2 }}>
                       {count} طبيب
                     </div>
                   </Link>

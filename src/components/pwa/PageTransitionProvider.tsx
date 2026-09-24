@@ -1,24 +1,33 @@
 'use client';
 
-import { AnimatePresence, motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode } from 'react';
 
 /**
  * ════════════════════════════════════════════════════════════════════
- * 🎬 PageTransitionProvider (V25.32)
+ * 🎬 PageTransitionProvider — انتقالٌ بالدخول وحده
  * ════════════════════════════════════════════════════════════════════
  *
- * تأثير انتقال سلس بين الصفحات (slide + fade)
+ * كان هذا المزوّد يلفّ كلّ صفحةٍ بـ`AnimatePresence mode="wait"` من
+ * framer-motion. و`mode="wait"` تعني حرفياً: **لا تبدأ الصفحة الداخلة حتى
+ * تُكمل الخارجةُ خروجها**. فكلّ فتح شاشةٍ كان يدفع:
  *
- * يحترم prefers-reduced-motion (يستخدم fade خفيف للمستخدمين الحساسين)
+ *     خروج 0.28s  ثمّ  دخول 0.28s  =  0.56s
  *
- * Usage:
- *   في layout.tsx:
- *   <PageTransitionProvider>
- *     {children}
- *   </PageTransitionProvider>
- * ════════════════════════════════════════════════════════════════════
+ * تأخيراً مضافاً إلى زمن الخادم، لا يُخفيه شيء. والأسوأ أنّه يلفّ
+ * `children` — فيشمل هيكلَ التحميل (loading.tsx) نفسه: حتى «جارٍ التحميل»
+ * كان ينتظر خروج الصفحة السابقة قبل أن يظهر.
+ *
+ * ولا خروجَ هنا بعد اليوم. الصفحة السابقة تختفي فوراً — كما تفعل بلا أيّ
+ * مكتبة — والداخلة تدخل بحركةٍ قصيرة. فالانتقال يبقى محسوساً وقد سقط
+ * نصفُه الميّت.
+ *
+ * وحُذفت framer-motion كذلك: كانت هذه الوحدة مستهلكها الوحيد في المشروع،
+ * والحركة أدناه CSS خالص — لا جافاسكربت في المسار الحرج البتّة.
+ *
+ * `prefers-reduced-motion` مُحترَم في `shared.css` لا هنا: وسائط CSS تُطبَّق
+ * قبل أوّل رسمٍ، بينما `matchMedia` في `useEffect` لا تُقرأ إلّا بعده —
+ * فالنسخة السابقة كانت تعرض الحركة الكاملة أوّلَ مرّةٍ لمن طلب تقليلها.
  */
 export default function PageTransitionProvider({
   children,
@@ -26,47 +35,11 @@ export default function PageTransitionProvider({
   children: ReactNode;
 }) {
   const pathname = usePathname();
-  const [reduceMotion, setReduceMotion] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setReduceMotion(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setReduceMotion(e.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
-
-  // إعدادات الـ animation
-  const variants = reduceMotion
-    ? {
-        initial: { opacity: 0 },
-        animate: { opacity: 1 },
-        exit: { opacity: 0 },
-      }
-    : {
-        initial: { opacity: 0, x: 12 },
-        animate: { opacity: 1, x: 0 },
-        exit: { opacity: 0, x: -12 },
-      };
-
-  const transition = reduceMotion
-    ? { duration: 0.15 }
-    : { duration: 0.28, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] };
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      <motion.div
-        key={pathname}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        variants={variants}
-        transition={transition}
-        style={{ minHeight: '100%' }}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    // المفتاح يُعيد تركيب العنصر عند تغيّر المسار، فتُعاد الحركة من أوّلها
+    <div key={pathname} className="page-enter" style={{ minHeight: '100%' }}>
+      {children}
+    </div>
   );
 }

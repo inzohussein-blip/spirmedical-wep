@@ -1,23 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { signInWithEmail } from '@/lib/auth/email-auth';
 import { getRoleHomePath } from '@/lib/auth/home-path';
 import { submitErrorMessage } from '@/lib/forms/submit-error';
 import { createClient } from '@/lib/supabase/client';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 // ═══════════════════════════════════════════════════════════
 // 🔐 صفحة الدخول - Email-First
 // ═══════════════════════════════════════════════════════════
 
-export default function LoginPage() {
+/**
+ * الصفحة تعرض `error` منذ البداية، لكنّها لم تكن تقرأ `?error=` من المسار
+ * قطّ — بينما `PinLockScreen` يوجّه إليها بـ
+ * `/login?error=أعد+تسجيل+الدخول+لإعادة+تعيين+PIN`.
+ * فمن نسي رمز القفل يصل صفحة الدخول بلا تفسيرٍ لسبب وصوله.
+ *
+ * `useSearchParams` يوجب حدَّ Suspense في App Router، ولذا غُلِّف الجسم.
+ */
+function LoginPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(searchParams.get('error') ?? '');
   const [showPhone, setShowPhone] = useState(false);
 
   // ─────────────────────────────────────────────────────────
@@ -94,30 +103,37 @@ export default function LoginPage() {
 
             {/* Email Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 mb-2">
                 البريد الإلكتروني
               </label>
               <input
                 type="email"
+                id="login-email"
+                autoComplete="email"
+                inputMode="email"
+                dir="ltr"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="your@email.com"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 disabled={loading}
               />
             </div>
 
             {/* Password Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="login-password" className="block text-sm font-medium text-gray-700 mb-2">
                 كلمة المرور
               </label>
               <input
                 type="password"
+                id="login-password"
+                autoComplete="current-password"
+                dir="ltr"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 disabled={loading}
               />
             </div>
@@ -125,7 +141,7 @@ export default function LoginPage() {
             {/* Forgot Password Link */}
             <Link
               href="/forgot"
-              className="text-sm text-emerald-600 hover:underline"
+              className="inline-flex items-center min-h-[44px] text-sm text-emerald-700 hover:underline"
             >
               هل نسيت كلمة المرور؟
             </Link>
@@ -134,7 +150,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-emerald-600 text-white py-3 rounded-lg hover:bg-emerald-700 transition disabled:opacity-50 font-medium"
+              className="w-full bg-emerald-700 text-white py-3 rounded-lg hover:bg-emerald-800 transition disabled:opacity-50 font-medium"
             >
               {loading ? 'جاري الدخول...' : 'دخول'}
             </button>
@@ -184,7 +200,7 @@ export default function LoginPage() {
         {!showPhone && (
           <button
             onClick={() => setShowPhone(true)}
-            className="w-full mt-4 text-emerald-600 hover:underline text-sm"
+            className="w-full mt-4 text-emerald-700 hover:underline text-sm"
           >
             أفضل الدخول عبر الهاتف؟
           </button>
@@ -197,7 +213,7 @@ export default function LoginPage() {
               setShowPhone(false);
               setError('');
             }}
-            className="w-full text-emerald-600 hover:underline text-sm"
+            className="w-full text-emerald-700 hover:underline text-sm"
           >
             العودة للدخول عبر الإيميل
           </button>
@@ -206,22 +222,30 @@ export default function LoginPage() {
         {/* Sign Up Link */}
         <p className="text-center mt-6 text-gray-700">
           ليس لديك حساب؟{' '}
-          <Link href="/register" className="text-emerald-600 hover:underline font-medium">
+          <Link href="/register" className="py-2 text-emerald-700 hover:underline font-medium">
             انضم الآن
           </Link>
         </p>
 
         {/* Footer Links */}
-        <div className="text-center mt-6 text-xs text-gray-500 space-x-2">
-          <Link href="/legal/privacy" className="hover:underline">
+        <div className="flex items-center justify-center gap-2 mt-6 text-xs text-gray-600">
+          <Link href="/legal/privacy" className="inline-flex items-center min-h-[44px] px-2 hover:underline">
             الخصوصية
           </Link>
-          <span>•</span>
-          <Link href="/legal/terms" className="hover:underline">
+          <span aria-hidden="true">•</span>
+          <Link href="/legal/terms" className="inline-flex items-center min-h-[44px] px-2 hover:underline">
             الشروط
           </Link>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginPageInner />
+    </Suspense>
   );
 }

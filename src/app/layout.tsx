@@ -22,6 +22,14 @@ import '@fontsource/tajawal/400.css';
 import '@fontsource/tajawal/500.css';
 import '@fontsource/tajawal/700.css';
 import '@fontsource/tajawal/800.css';
+// ٩٠٠ يُستعمل ٢٤٧ مرّةً في الواجهة ولم يكن يُستورَد.
+//
+// ولا يعني ذلك تغليظاً حسابياً: خوارزمية المطابقة في CSS للوزن المطلوب
+// فوق ٥٠٠ تبحث صعوداً أوّلاً ثمّ نزولاً، فكان ٩٠٠ يهبط إلى ٨٠٠ **الحقيقيّ**
+// لا إلى تزويرٍ للحروف. العطب أدقّ من ذلك وأصعب رؤيةً: العنوان المكتوب
+// ٩٠٠ والنصّ المكتوب ٨٠٠ يظهران بالثقل نفسه، فيضيع تدرّجٌ كامل من
+// التسلسل البصريّ كان مقصوداً في ٢٤٧ موضعاً.
+import '@fontsource/tajawal/900.css';
 import '@fontsource/jetbrains-mono/500.css';
 
 // خرائط MapLibre — CSS الخرائط في وحدة مفصولة route-scoped
@@ -104,16 +112,11 @@ export const metadata: Metadata = {
   },
 
   // 🌍 اللغات والمناطق
-  alternates: {
-    canonical: SITE_URL,
-    languages: {
-      'ar-IQ': SITE_URL,
-      'ar': SITE_URL,
-      'en-US': `${SITE_URL}/en`,
-      'ku': `${SITE_URL}/ku`,
-      'x-default': SITE_URL,
-    },
-  },
+  // ⚠️ لا `alternates` هنا عمداً. كان الجذر يُعلن `canonical: SITE_URL`،
+  // وNext يُورّث حقول metadata إلى كلّ صفحةٍ لا تتجاوزها — فكانت /faq
+  // و/about و/blog وسائرُ الصفحات العامّة تُعلن الصفحةَ الرئيسية أصلاً لها،
+  // فيطويها Google فيها. وكانت `hreflang` تشير إلى /en و/ku ولا وجود لهما.
+  // كلُّ صفحةٍ عامّة تُعلن canonical نفسها (tests/seo-canonical.test.ts).
 
   // 📱 OpenGraph - معاينات السوشيال
   openGraph: {

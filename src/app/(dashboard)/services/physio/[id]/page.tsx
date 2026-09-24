@@ -98,7 +98,7 @@ export default async function PhysioSpecialistPage({
 
         {/* Hero */}
         <div style={{
-          background: 'linear-gradient(135deg, #0F6E56 0%, #04342C 100%)',
+          background: 'linear-gradient(135deg, var(--emerald-mid, #0F6E56) 0%, #04342C 100%)',
           color: 'white',
           borderRadius: 16,
           padding: 20,
@@ -225,10 +225,33 @@ export default async function PhysioSpecialistPage({
             <div className="scr-section-title">خيارات الحجز</div>
           </div>
 
+          {/* الحجزُ مغلقٌ مؤقّتاً والصفحةُ مفتوحةٌ للتصفّح (isBookingSoon) */}
+          <div
+            role="status"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '10px 12px',
+              marginBottom: 10,
+              background: '#F1F3F4',
+              borderRadius: 10,
+              fontSize: 13,
+              fontWeight: 700,
+              color: '#3C4043',
+            }}
+          >
+            <span style={{ padding: '2px 10px', borderRadius: 9999, background: '#fff', fontSize: 12, fontWeight: 800 }}>
+              قريباً
+            </span>
+            الحجز غير متاحٍ بعد — تصفّح الخدمات والأسعار الآن.
+          </div>
+
           {specialist.available_for_home && (
-            <Link
-              href={`/appointments/new?service=physio&specialist=${specialist.id}&type=home`}
+            <div
+              aria-disabled="true"
               style={{
+                opacity: 0.75,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 12,
@@ -246,7 +269,7 @@ export default async function PhysioSpecialistPage({
                 height: 44,
                 borderRadius: 12,
                 background: '#E1F5EE',
-                color: '#0F6E56',
+                color: 'var(--emerald-mid, #0F6E56)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -262,16 +285,17 @@ export default async function PhysioSpecialistPage({
               {homePrice && (
                 <div style={{ textAlign: 'end' }}>
                   <div style={{ fontSize: 14, fontWeight: 900, color: 'var(--emerald)' }}>{homePrice}</div>
-                  <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>د.ع · كاش</div>
                 </div>
               )}
-            </Link>
+            </div>
           )}
 
           {specialist.available_for_clinic && (
-            <Link
-              href={`/appointments/new?service=physio&specialist=${specialist.id}&type=clinic`}
+            <div
+              aria-disabled="true"
               style={{
+                opacity: 0.75,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 12,
@@ -304,10 +328,10 @@ export default async function PhysioSpecialistPage({
               {clinicPrice && (
                 <div style={{ textAlign: 'end' }}>
                   <div style={{ fontSize: 14, fontWeight: 900, color: '#A57100' }}>{clinicPrice}</div>
-                  <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>د.ع · كاش</div>
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>د.ع · كاش</div>
                 </div>
               )}
-            </Link>
+            </div>
           )}
 
           {count(specialist.package_discount_pct) > 0 && (
@@ -360,7 +384,7 @@ export default async function PhysioSpecialistPage({
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 12, fontWeight: 700 }}>{t.name_ar}</div>
                     {t.description && (
-                      <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>{t.description}</div>
+                      <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{t.description}</div>
                     )}
                   </div>
                   <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--emerald)' }}>
@@ -420,7 +444,7 @@ function Stat({ icon, value, label }: { icon: React.ReactNode; value: string; la
         {icon}
       </div>
       <div style={{ fontSize: 14, fontWeight: 900 }}>{value}</div>
-      <div style={{ fontSize: 9, opacity: 0.75, marginTop: 1 }}>{label}</div>
+      <div style={{ fontSize: 11, opacity: 0.75, marginTop: 1 }}>{label}</div>
     </div>
   );
 }

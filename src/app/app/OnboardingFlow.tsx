@@ -107,7 +107,9 @@ export default function OnboardingFlow({ onComplete }: Props) {
     } catch {
       /* ignore */
     }
-    router.replace('/login?mode=register');
+    // كان `/login?mode=register` — وصفحة الدخول لا تعرف `mode` ولا تملك
+    // وضعَ تسجيل، فينتهي من أنهى التعريف إلى نموذج **دخول** لا تسجيل.
+    router.replace('/register');
   };
 
   // Touch handlers (للـ swipe على الجوال)

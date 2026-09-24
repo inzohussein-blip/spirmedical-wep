@@ -9,7 +9,7 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, X } from 'lucide-react';
+import { ArrowRight, X, Search } from 'lucide-react';
 import type { Icon as TablerIcon } from '@tabler/icons-react';
 import {
   FEATURED_SERVICE,
@@ -32,6 +32,8 @@ interface SearchItem {
   Icon?: TablerIcon;
   emoji?: string;
   haystack: string;
+  /** معرّف الخدمة الأصليّ (بلا بادئة) — لمقابلته بمفاتيح التشغيل */
+  serviceId?: string;
 }
 
 // تطبيع عربي: أحرف صغيرة + إزالة التشكيل + توحيد الألف/الياء/الهمزة/التاء المربوطة.
@@ -59,6 +61,7 @@ function buildCatalog(): SearchItem[] {
     softBg: s.softBg,
     Icon: s.icon,
     haystack: normalize(`${s.title} ${s.description}`),
+    serviceId: s.id,
   }));
 
   const tools: SearchItem[] = SMART_TOOLS.map((t) => ({
@@ -71,6 +74,7 @@ function buildCatalog(): SearchItem[] {
     softBg: t.softBg,
     Icon: t.icon,
     haystack: normalize(`${t.title} ${t.description}`),
+    serviceId: t.id,
   }));
 
   const emergency: SearchItem = {
@@ -102,10 +106,17 @@ function buildCatalog(): SearchItem[] {
 
 const KIND_ORDER: ResultKind[] = ['خدمة', 'فحص', 'أداة'];
 
-export default function SearchClient({ initialQuery }: { initialQuery: string }) {
+export default function SearchClient({
+  initialQuery,
+  disabledIds = [],
+}: {
+  initialQuery: string;
+  disabledIds?: string[];
+}) {
   const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
   const catalog = useMemo(buildCatalog, []);
+  const disabled = useMemo(() => new Set(disabledIds), [disabledIds]);
 
   const results = useMemo(() => {
     const q = normalize(query);
@@ -140,7 +151,7 @@ export default function SearchClient({ initialQuery }: { initialQuery: string })
 
         {/* Search input */}
         <div className="scr-search" role="search" style={{ marginBottom: 16 }}>
-          <div className="scr-search-icon" aria-hidden="true">⌕</div>
+          <span className="scr-search-icon" aria-hidden="true"><Search size={13} strokeWidth={2.6} /></span>
           <input
             type="search"
             autoFocus
@@ -213,13 +224,32 @@ export default function SearchClient({ initialQuery }: { initialQuery: string })
               <span style={{ opacity: 0.6 }}>({items.length})</span>
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {items.map((item) => (
-                <Link
+              {items.map((item) => {
+                const isOff = !!item.serviceId && disabled.has(item.serviceId);
+                // نتيجةٌ لخدمةٍ مطفأة تبقى ظاهرةً بلا رابط — كبطاقتها في الشبكة
+                const Row = isOff
+                  ? ({ children, ...rest }: React.ComponentProps<'div'>) => (
+                      <div {...rest} aria-disabled="true">
+                        {children}
+                      </div>
+                    )
+                  : ({ children, ...rest }: React.ComponentProps<'div'>) => (
+                      <Link href={item.href} {...(rest as object)}>
+                        {children}
+                      </Link>
+                    );
+                return (
+                <Row
                   key={item.id}
-                  href={item.href}
-                  className="scr-list-item scr-list-item-clickable"
+                  className={
+                    isOff ? 'scr-list-item' : 'scr-list-item scr-list-item-clickable'
+                  }
                   aria-label={item.title}
-                  style={{ display: 'flex', alignItems: 'center', gap: 12 }}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 12,
+                    opacity: isOff ? 0.55 : 1,
+                    cursor: isOff ? 'default' : 'pointer',
+                  }}
                 >
                   <div
                     aria-hidden="true"
@@ -253,9 +283,22 @@ export default function SearchClient({ initialQuery }: { initialQuery: string })
                       {item.subtitle}
                     </div>
                   </div>
-                  <ArrowRight size={16} color="var(--ink-3)" style={{ transform: 'scaleX(-1)', flexShrink: 0 }} />
-                </Link>
-              ))}
+                  {isOff ? (
+                    <span
+                      style={{
+                        fontSize: 11, fontWeight: 700, flexShrink: 0,
+                        background: '#F1F3F4', color: '#5F6368',
+                        padding: '2px 7px', borderRadius: 9999,
+                      }}
+                    >
+                      قريباً
+                    </span>
+                  ) : (
+                    <ArrowRight size={16} color="var(--ink-3)" style={{ transform: 'scaleX(-1)', flexShrink: 0 }} />
+                  )}
+                </Row>
+                );
+              })}
             </div>
           </section>
         ))}

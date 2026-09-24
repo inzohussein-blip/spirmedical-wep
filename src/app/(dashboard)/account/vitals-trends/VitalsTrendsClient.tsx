@@ -175,20 +175,20 @@ function VitalChart({
           <Icon size={16} strokeWidth={2.2} style={{ color }} aria-hidden />
           <div>
             <div style={{ fontSize: 13, fontWeight: 700 }}>{title}</div>
-            <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>طبيعي: {rangeLow}-{rangeHigh} {unit}</div>
+            <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>طبيعي: {rangeLow}-{rangeHigh} {unit}</div>
           </div>
         </div>
         <div style={{ textAlign: 'left' }}>
           <div style={{
             fontSize: 18,
             fontWeight: 800,
-            color: isInRange ? '#0F6E56' : '#A57100',
+            color: isInRange ? 'var(--emerald-mid, #0F6E56)' : '#A57100',
           }}>
             {lastValue} <span style={{ fontSize: 11, fontWeight: 600 }}>{unit}</span>
           </div>
           <div style={{
-            fontSize: 10,
-            color: trend === 'up' ? '#A57100' : trend === 'down' ? '#0F6E56' : '#6B7280',
+            fontSize: 11,
+            color: trend === 'up' ? '#A57100' : trend === 'down' ? 'var(--emerald-mid, #0F6E56)' : '#6B7280',
             display: 'flex',
             alignItems: 'center',
             gap: 2,
@@ -258,7 +258,7 @@ function VitalChart({
       </svg>
       
       {secondData && (
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 14, marginTop: 6, fontSize: 10, color: 'var(--ink-3)' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 14, marginTop: 6, fontSize: 11, color: 'var(--ink-3)' }}>
           <span><span style={{ display: 'inline-block', width: 12, height: 2, background: color, marginLeft: 4 }}></span>انقباضي</span>
           {secondLabel && (
             <span><span style={{ display: 'inline-block', width: 12, height: 2, background: color, opacity: 0.4, marginLeft: 4 }}></span>{secondLabel}</span>

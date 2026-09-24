@@ -26,6 +26,11 @@ export interface ServiceConfig {
   softBg: string;
   badge?: ServiceBadge;
   route: string;
+  /**
+   * الحجزُ «قريباً» والصفحاتُ مفتوحة: يتصفّح المريضُ الأخصائيين ولا يرفع طلباً.
+   * يختلف عن شارة «قريباً» التي تمنع الدخول أصلاً.
+   */
+  bookingSoon?: boolean;
 }
 
 // ⭐ FEATURED - الخدمة المميّزة (سحب الدم - 90%)
@@ -50,7 +55,7 @@ export const CORE_SERVICES: ServiceConfig[] = [
   { id: 'reminders', title: 'تنبيهات', description: 'دواء · مواعيد', icon: IconBell, color: '#FBBC04', softBg: '#FEF7E0', route: '/account/reminders' },
   { id: 'prescriptions', title: 'وصفاتي', description: 'كل وصفاتك', icon: IconClipboardList, color: '#5F6368', softBg: '#F1F3F4', route: '/account/prescriptions' },
   { id: 'health', title: 'لوحة الصحة', description: 'ضغط · سكر', icon: IconChartLine, color: '#34A853', softBg: '#E8F5E9', route: '/account/health' },
-  { id: 'physio', title: 'العلاج الطبيعي', description: 'جلسات منزلية', icon: IconRun, color: '#7C4DFF', softBg: '#EDE7F6', route: '/services/physio' },
+  { id: 'physio', title: 'العلاج الطبيعي', description: 'جلسات منزلية', icon: IconRun, color: '#7C4DFF', softBg: '#EDE7F6', route: '/services/physio', bookingSoon: true },
   { id: 'dental', title: 'طب الأسنان', description: 'تقويم · زراعة', icon: IconDental, color: '#00838F', softBg: '#E0F7FA', badge: 'جديد', route: '/services/dental' },
   { id: 'optical', title: 'النظارات الطبية', description: 'فحص · إطارات', icon: IconEye, color: '#FF6D00', softBg: '#FFF3E0', badge: 'جديد', route: '/services/optical' },
   { id: 'mental-health', title: 'الصحة النفسية', description: 'سرية · علاج', icon: IconBrain, color: '#C71C56', softBg: '#FCE8E6', badge: 'جديد', route: '/services/mental-health' },
@@ -97,3 +102,12 @@ export const PROMO_CARDS: PromoCard[] = [
 // 📐 Aliases (legacy)
 export const BENTO_SERVICES = CORE_SERVICES;
 export const SERVICES_V3 = [FEATURED_SERVICE, ...CORE_SERVICES];
+
+/**
+ * هل حجزُ هذه الخدمة مُغلقٌ مؤقّتاً؟ يُقبل معرّفُ الخدمة أو قيمةُ `?service=`
+ * في صفحة الطلب (العلاج الطبيعي يصلها بـ`physio`).
+ */
+export function isBookingSoon(serviceId: string | null | undefined): boolean {
+  if (!serviceId) return false;
+  return CORE_SERVICES.some((s) => s.id === serviceId && s.bookingSoon === true);
+}

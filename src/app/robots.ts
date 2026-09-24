@@ -28,6 +28,11 @@ export default function robots(): MetadataRoute.Robots {
 
   const publicPaths = [
     '/',
+    '/home-blood-draw',
+    '/faq',
+    '/blog',
+    '/contact',
+    '/help',
     '/about',
     '/legal/terms',
     '/legal/privacy',

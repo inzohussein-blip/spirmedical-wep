@@ -109,41 +109,49 @@ export default function PatientRegisterPage() {
 
             {/* Full Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="reg-name" className="block text-sm font-medium text-gray-700 mb-2">
                 الاسم الكامل
               </label>
               <input
                 type="text"
+                id="reg-name"
+                autoComplete="name"
                 value={formData.fullName}
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                 placeholder="أحمد محمد"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 disabled={loading}
               />
             </div>
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="reg-email" className="block text-sm font-medium text-gray-700 mb-2">
                 البريد الإلكتروني
               </label>
               <input
                 type="email"
+                id="reg-email"
+                autoComplete="email"
+                inputMode="email"
+                dir="ltr"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="your@email.com"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 disabled={loading}
               />
             </div>
 
             {/* Gender */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">الجنس</label>
+              <label htmlFor="reg-gender" className="block text-sm font-medium text-gray-700 mb-2">الجنس</label>
               <select
+                id="reg-gender"
+                autoComplete="sex"
                 value={formData.gender}
                 onChange={(e) => setFormData({ ...formData, gender: e.target.value as 'male' | 'female' })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 disabled={loading}
               >
                 <option value="male">ذكر</option>
@@ -153,51 +161,59 @@ export default function PatientRegisterPage() {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="reg-password" className="block text-sm font-medium text-gray-700 mb-2">
                 كلمة المرور
               </label>
               <input
                 type="password"
+                id="reg-password"
+                autoComplete="new-password"
+                aria-describedby="reg-password-hint"
+                dir="ltr"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 placeholder="••••••••"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 disabled={loading}
               />
-              <p className="text-xs text-gray-500 mt-1">8 أحرف على الأقل</p>
+              <p id="reg-password-hint" className="text-sm text-gray-500 mt-1">8 أحرف على الأقل</p>
             </div>
 
             {/* Confirm Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="reg-password-confirm" className="block text-sm font-medium text-gray-700 mb-2">
                 تأكيد كلمة المرور
               </label>
               <input
                 type="password"
+                id="reg-password-confirm"
+                autoComplete="new-password"
+                dir="ltr"
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                 placeholder="••••••••"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 disabled={loading}
               />
             </div>
 
             {/* Terms */}
-            <div className="flex items-start gap-2">
+            <div className="flex items-start gap-3 py-1">
               <input
+                id="agreeTerms"
                 type="checkbox"
                 checked={formData.agreeTerms}
                 onChange={(e) => setFormData({ ...formData, agreeTerms: e.target.checked })}
-                className="mt-1"
+                className="mt-1 w-6 h-6 shrink-0 accent-emerald-700 cursor-pointer"
                 disabled={loading}
               />
-              <label className="text-sm text-gray-600">
+              <label htmlFor="agreeTerms" className="text-sm text-gray-600 py-1 cursor-pointer">
                 أوافق على{' '}
-                <Link href="/legal/terms" className="text-emerald-600 hover:underline">
+                <Link href="/legal/terms" className="py-2 text-emerald-700 hover:underline">
                   الشروط والأحكام
                 </Link>{' '}
                 و{' '}
-                <Link href="/legal/privacy" className="text-emerald-600 hover:underline">
+                <Link href="/legal/privacy" className="py-2 text-emerald-700 hover:underline">
                   سياسة الخصوصية
                 </Link>
               </label>
@@ -207,7 +223,7 @@ export default function PatientRegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-emerald-600 text-white py-3 rounded-lg hover:bg-emerald-700 transition disabled:opacity-50 font-medium"
+              className="w-full bg-emerald-700 text-white py-3 rounded-lg hover:bg-emerald-800 transition disabled:opacity-50 font-medium"
             >
               {loading ? 'جاري الإنشاء...' : 'إنشاء حساب'}
             </button>
@@ -216,14 +232,14 @@ export default function PatientRegisterPage() {
           {/* Already Have Account */}
           <p className="text-center mt-6 text-gray-700">
             لديك حساب بالفعل؟{' '}
-            <Link href="/login" className="text-emerald-600 hover:underline font-medium">
+            <Link href="/login" className="py-2 text-emerald-700 hover:underline font-medium">
               سجّل الدخول
             </Link>
           </p>
 
           {/* Back to Role Selection */}
           <p className="text-center mt-4">
-            <Link href="/register" className="text-sm text-gray-600 hover:underline">
+            <Link href="/register" className="inline-flex items-center min-h-[44px] px-3 text-sm text-gray-600 hover:underline">
               ← العودة
             </Link>
           </p>
@@ -259,7 +275,7 @@ export default function PatientRegisterPage() {
             onClick={() => {
               setStep('form');
             }}
-            className="text-emerald-600 hover:underline font-medium"
+            className="inline-flex items-center min-h-[44px] px-2 text-emerald-700 hover:underline font-medium"
           >
             انقر هنا لإعادة الإرسال
           </button>

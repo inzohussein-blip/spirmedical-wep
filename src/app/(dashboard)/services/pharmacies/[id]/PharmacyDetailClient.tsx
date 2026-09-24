@@ -11,6 +11,7 @@ import ShareButton from '@/components/pwa/ShareButton';
 import PharmacyReservationModal from '@/components/pharmacies/PharmacyReservationModal';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import PharmacyRatingCard from './PharmacyRatingCard';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 interface Pharmacy {
   id: string;
@@ -277,7 +278,7 @@ export default function PharmacyDetailClient({
               position: 'relative',
             }}
           >
-            <a
+            <PhoneLink phone={pharmacy.phone}
               href={`tel:${pharmacy.phone}`}
               style={{
                 flex: 1,
@@ -295,9 +296,9 @@ export default function PharmacyDetailClient({
               }}
             >
               <Phone size={14} /> اتصال
-            </a>
+            </PhoneLink>
             {pharmacy.whatsapp && (
-              <a
+              <PhoneLink phone={pharmacy.whatsapp}
                 href={`https://wa.me/${pharmacy.whatsapp.replace(/\D/g, '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -317,7 +318,7 @@ export default function PharmacyDetailClient({
                 }}
               >
                 <MessageCircle size={14} /> واتساب
-              </a>
+              </PhoneLink>
             )}
             <a
               href={`https://maps.google.com/?q=${encodeURIComponent(pharmacy.name + ' ' + pharmacy.district + ' ' + pharmacy.city)}`}
@@ -564,7 +565,7 @@ export default function PharmacyDetailClient({
                       {/* Status badge */}
                       <span
                         style={{
-                          fontSize: 9,
+                          fontSize: 11,
                           fontWeight: 800,
                           padding: '4px 8px',
                           borderRadius: 6,
@@ -637,7 +638,7 @@ export default function PharmacyDetailClient({
                         {item.notes && (
                           <span
                             style={{
-                              fontSize: 10,
+                              fontSize: 11,
                               color: 'var(--ink-3)',
                               flex: 1,
                             }}
@@ -716,7 +717,7 @@ export default function PharmacyDetailClient({
 
 function tagStyle(): React.CSSProperties {
   return {
-    fontSize: 10,
+    fontSize: 11,
     padding: '3px 8px',
     background: 'var(--paper-3)',
     borderRadius: 6,
@@ -739,7 +740,7 @@ function StatPill({ icon, label, sub }: { icon: React.ReactNode; label: string; 
         {icon}
       </div>
       <div style={{ fontSize: 12, fontWeight: 900 }}>{label}</div>
-      <div style={{ fontSize: 9, opacity: 0.75, marginTop: 1 }}>{sub}</div>
+      <div style={{ fontSize: 11, opacity: 0.75, marginTop: 1 }}>{sub}</div>
     </div>
   );
 }

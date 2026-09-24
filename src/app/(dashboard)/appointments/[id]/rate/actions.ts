@@ -68,7 +68,19 @@ export async function submitRating(input: RatingInput) {
 
   if (error) return { ok: false, error: error.message };
 
-  // ─── V25.47: حفظ أيضاً في الجدول الخاص (hospital/dental/optical) ───
+  // ─── حفظ أيضاً في جدول المزوّد الخاصّ ───
+  //
+  // لكلّ نوع مزوّدٍ جدولُ تقييمٍ خاصّ عليه مُشغِّلٌ يحدّث `rating_avg` و
+  // `rating_count` على صفّ المزوّد نفسه. و`ratings` العامّ **لا يُشغّل شيئاً**
+  // — فما لا يُفرَّع إلى جدوله الخاصّ لا يظهر متوسّطه في أيّ مكان.
+  //
+  // كانت الكتلة تغطّي ثلاثة أنواع (مستشفى/أسنان/بصريات)، فبقيت خمسة بلا
+  // كاتب: **الأطباء والتمريض والعلاج الطبيعي والصحة النفسية والتغذية**.
+  // ومعنى ذلك أنّ `doctors.rating_avg` صفرٌ أبداً — بينما صفحة الأطباء
+  // تُرتّب به (`.order('rating_avg')`) وتعرضه على كلّ بطاقة.
+  //
+  // (وهذا يُكمل ما أصلحه الترحيل 0019: هناك صُحّحت صلاحية المُشغِّل نفسه،
+  //  وهنا يُوصَل ما يُطلقه.)
   
   const supabaseAny = supabase as unknown as {
     from: (t: string) => {
@@ -84,7 +96,11 @@ export async function submitRating(input: RatingInput) {
   // إعادة جلب الـ appointment مع الأعمدة الإضافية (hospital_id, dental_clinic_id, optical_store_id)
   const { data: fullAppt } = await supabaseAny
     .from('appointments')
-    .select('id, hospital_id, dental_clinic_id, optical_store_id')
+    .select(
+      'id, hospital_id, dental_clinic_id, optical_store_id, doctor_id, ' +
+      'mental_specialist_id, nutritionist_id, physio_specialist_id, ' +
+      'assigned_specialist_id, required_specialist_type',
+    )
     .eq('id', input.appointment_id)
     .single();
 
@@ -92,6 +108,12 @@ export async function submitRating(input: RatingInput) {
     const hospitalId = fullAppt.hospital_id as string | null;
     const dentalClinicId = fullAppt.dental_clinic_id as string | null;
     const opticalStoreId = fullAppt.optical_store_id as string | null;
+    const doctorId = fullAppt.doctor_id as string | null;
+    const mentalSpecialistId = fullAppt.mental_specialist_id as string | null;
+    const nutritionistId = fullAppt.nutritionist_id as string | null;
+    const physioSpecialistId = fullAppt.physio_specialist_id as string | null;
+    const assignedSpecialistId = fullAppt.assigned_specialist_id as string | null;
+    const requiredType = fullAppt.required_specialist_type as string | null;
 
     // التقييم العام حُفظ في `ratings` أعلاه؛ النسخة المتخصّصة إضافية.
     // نُسجّل فشلها بدل ابتلاعه — فالصمت هنا هو ما أخفى خلل أسماء الأعمدة سابقاً.
@@ -146,6 +168,67 @@ export async function submitRating(input: RatingInput) {
         is_public: !input.is_anonymous,
       });
       logFacilityFailure('optical_ratings', facilityError);
+    } else if (doctorId) {
+      const { error: facilityError } = await supabaseAny.from('doctor_ratings').insert({
+        user_id: user.id,
+        doctor_id: doctorId,
+        appointment_id: input.appointment_id,
+        rating: input.overall_rating,
+        expertise_rating: input.professionalism_rating || null,
+        punctuality_rating: input.punctuality_rating || null,
+        comment: input.review_text?.trim() || null,
+        is_public: !input.is_anonymous,
+      });
+      logFacilityFailure('doctor_ratings', facilityError);
+    } else if (mentalSpecialistId) {
+      const { error: facilityError } = await supabaseAny.from('mental_health_ratings').insert({
+        user_id: user.id,
+        specialist_id: mentalSpecialistId,
+        appointment_id: input.appointment_id,
+        rating: input.overall_rating,
+        professionalism_rating: input.professionalism_rating || null,
+        comment: input.review_text?.trim() || null,
+        is_anonymous: input.is_anonymous ?? false,
+        is_public: !input.is_anonymous,
+      });
+      logFacilityFailure('mental_health_ratings', facilityError);
+    } else if (nutritionistId) {
+      const { error: facilityError } = await supabaseAny.from('nutritionist_ratings').insert({
+        user_id: user.id,
+        nutritionist_id: nutritionistId,
+        appointment_id: input.appointment_id,
+        rating: input.overall_rating,
+        comment: input.review_text?.trim() || null,
+        is_public: !input.is_anonymous,
+      });
+      logFacilityFailure('nutritionist_ratings', facilityError);
+    } else if (physioSpecialistId) {
+      const { error: facilityError } = await supabaseAny.from('physio_ratings').insert({
+        user_id: user.id,
+        specialist_id: physioSpecialistId,
+        appointment_id: input.appointment_id,
+        rating: input.overall_rating,
+        skill_rating: input.professionalism_rating || null,
+        punctuality_rating: input.punctuality_rating || null,
+        comment: input.review_text?.trim() || null,
+        is_public: !input.is_anonymous,
+      });
+      logFacilityFailure('physio_ratings', facilityError);
+    } else if (requiredType === 'nurse' && assignedSpecialistId) {
+      // `nurse_ratings.specialist_id` يشير إلى `users` لا إلى جدول ممرّضين
+      // (لا وجود له)، فالمعرّف هنا معرّفُ المستخدم المُسنَد.
+      const { error: facilityError } = await supabaseAny.from('nurse_ratings').insert({
+        user_id: user.id,
+        specialist_id: assignedSpecialistId,
+        appointment_id: input.appointment_id,
+        rating: input.overall_rating,
+        hygiene_rating: input.cleanliness_rating || null,
+        expertise_rating: input.professionalism_rating || null,
+        punctuality_rating: input.punctuality_rating || null,
+        comment: input.review_text?.trim() || null,
+        is_public: !input.is_anonymous,
+      });
+      logFacilityFailure('nurse_ratings', facilityError);
     }
   }
 

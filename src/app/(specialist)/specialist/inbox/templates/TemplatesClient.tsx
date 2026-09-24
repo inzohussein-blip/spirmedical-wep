@@ -95,7 +95,7 @@ export default function TemplatesClient({ templates }: { templates: Template[] }
           </div>
 
           <div style={{ marginBottom: 12 }}>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>
+            <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>
               الاختصار (مثال: /سلام)
             </label>
             <input
@@ -109,7 +109,7 @@ export default function TemplatesClient({ templates }: { templates: Template[] }
           </div>
 
           <div style={{ marginBottom: 12 }}>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>
+            <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>
               التصنيف
             </label>
             <input
@@ -122,7 +122,7 @@ export default function TemplatesClient({ templates }: { templates: Template[] }
           </div>
 
           <div style={{ marginBottom: 12 }}>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>
+            <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>
               نص الرد
             </label>
             <textarea
@@ -135,7 +135,7 @@ export default function TemplatesClient({ templates }: { templates: Template[] }
           </div>
 
           {error && (
-            <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '8px 12px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '8px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
               <AlertTriangle size={14} strokeWidth={2.4} />
               {error}
             </div>

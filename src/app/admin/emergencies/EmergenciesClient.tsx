@@ -169,7 +169,7 @@ export default function EmergenciesClient({
                   background: statusCfg.bg,
                   color: statusCfg.color,
                   borderRadius: 100,
-                  fontSize: 10,
+                  fontSize: 11,
                   fontWeight: 800,
                 }}>
                   {statusCfg.label}
@@ -259,7 +259,7 @@ export default function EmergenciesClient({
                       {e.latitude.toFixed(5)}, {e.longitude.toFixed(5)}
                       {e.accuracy_m && ` (دقة ${Math.round(e.accuracy_m)}م)`}
                     </span>
-                    <span style={{ marginInlineStart: 'auto', fontSize: 10 }}>← Maps</span>
+                    <span style={{ marginInlineStart: 'auto', fontSize: 11 }}>← Maps</span>
                   </a>
                 )}
 

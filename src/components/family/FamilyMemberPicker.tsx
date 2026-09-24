@@ -105,7 +105,7 @@ export default function FamilyMemberPicker({ value, onChange, ownerName }: Props
         <Users size={16} color="var(--emerald)" />
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 13, fontWeight: 800 }}>هذا الطلب لـ</div>
-          <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
+          <div style={{ fontSize: 12, color: 'var(--ink-3)' }}>
             اختر المعني بالخدمة
           </div>
         </div>
@@ -149,7 +149,7 @@ export default function FamilyMemberPicker({ value, onChange, ownerName }: Props
             لي شخصياً
           </div>
           {ownerName && (
-            <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 1 }}>
+            <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 1 }}>
               {ownerName}
             </div>
           )}
@@ -216,7 +216,7 @@ export default function FamilyMemberPicker({ value, onChange, ownerName }: Props
               <div style={{ fontSize: 13, fontWeight: 800 }}>
                 {m.full_name}
               </div>
-              <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 1 }}>
+              <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 1 }}>
                 {RELATION_LABELS[m.relation] || m.relation}
                 {age && ` · ${age}`}
               </div>

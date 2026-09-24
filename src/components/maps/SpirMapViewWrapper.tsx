@@ -26,7 +26,7 @@ const SpirMapView = dynamic(
               width: 32,
               height: 32,
               border: '3px solid #D3D1C7',
-              borderTopColor: '#0F6E56',
+              borderTopColor: 'var(--emerald-mid, #0F6E56)',
               borderRadius: '50%',
               animation: 'spin 0.8s linear infinite',
               margin: '0 auto 8px',

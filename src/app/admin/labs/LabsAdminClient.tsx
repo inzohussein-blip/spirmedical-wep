@@ -6,6 +6,7 @@ import {
   Plus, Edit, Trash2, Star, Power, MapPin, Phone, 
   Building2, X, Save, Search, CheckCircle2,
 } from 'lucide-react';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 interface PartnerLab {
   id: string;
@@ -125,7 +126,7 @@ export default function LabsAdminClient({ labs }: Props) {
           onClick={() => setShowCreate(true)}
           style={{
             padding: '10px 18px',
-            background: '#0F6E56',
+            background: 'var(--emerald-mid, #0F6E56)',
             color: 'white',
             border: 0,
             borderRadius: 10,
@@ -230,7 +231,7 @@ export default function LabsAdminClient({ labs }: Props) {
                       gap: 4,
                       padding: '2px 8px',
                       borderRadius: 12,
-                      fontSize: 10,
+                      fontSize: 11,
                       fontWeight: 700,
                       background: lab.is_active ? '#E1F5EE' : '#FCEBEB',
                       color: lab.is_active ? '#04342C' : '#791F1F',
@@ -358,6 +359,7 @@ function LabEditModal({
     });
   }
 
+  const dialogRef = useModalDialog(true, onClose);
   return (
     <div style={{
       position: 'fixed',
@@ -369,7 +371,7 @@ function LabEditModal({
       zIndex: 1000,
       padding: 16,
     }}>
-      <div style={{
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="lab-modal-title" style={{
         background: 'var(--white)',
         borderRadius: 16,
         padding: 20,
@@ -379,7 +381,7 @@ function LabEditModal({
         overflowY: 'auto',
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>
+          <h2 id="lab-modal-title" style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>
             {lab ? 'تعديل مختبر' : 'إضافة مختبر جديد'}
           </h2>
           <button onClick={onClose} style={{ background: 'transparent', border: 0, cursor: 'pointer' }}>
@@ -459,8 +461,8 @@ function LabEditModal({
                     fontSize: 11,
                     fontWeight: 600,
                     border: '1px solid',
-                    borderColor: formData.specialties.includes(s.value) ? '#0F6E56' : 'var(--line)',
-                    background: formData.specialties.includes(s.value) ? '#0F6E56' : 'var(--white)',
+                    borderColor: formData.specialties.includes(s.value) ? 'var(--emerald-mid, #0F6E56)' : 'var(--line)',
+                    background: formData.specialties.includes(s.value) ? 'var(--emerald-mid, #0F6E56)' : 'var(--white)',
                     color: formData.specialties.includes(s.value) ? 'white' : 'var(--ink-2)',
                     cursor: 'pointer',
                   }}
@@ -499,7 +501,7 @@ function LabEditModal({
             style={{
               flex: 1,
               padding: 12,
-              background: '#0F6E56',
+              background: 'var(--emerald-mid, #0F6E56)',
               color: 'white',
               border: 0,
               borderRadius: 10,

@@ -389,7 +389,7 @@ export default function NursingFlow({
 
   // ─── Render ─────────────────────────────────
   return (
-    <div style={{ paddingBottom: 80 }}>
+    <div style={{ paddingBottom: 132 }}>
       {/* Progress bar */}
       <div style={{
         position: 'sticky',
@@ -405,7 +405,7 @@ export default function NursingFlow({
           alignItems: 'center',
           marginBottom: 8,
         }}>
-          <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>
+          <div style={{ fontSize: 12, color: 'var(--ink-3)', fontWeight: 700 }}>
             الخطوة {step} من 6
           </div>
           <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--emerald)' }}>
@@ -483,7 +483,7 @@ export default function NursingFlow({
                     }}>
                       {proc.label}
                     </div>
-                    <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
+                    <div style={{ fontSize: 12, color: 'var(--ink-3)' }}>
                       {proc.desc}
                     </div>
                   </div>
@@ -498,7 +498,7 @@ export default function NursingFlow({
                     }}>
                       {proc.price.toLocaleString('ar-IQ')}
                     </div>
-                    <div style={{ fontSize: 9, color: 'var(--ink-3)' }}>د.ع</div>
+                    <div style={{ fontSize: 12, color: 'var(--ink-3)' }}>د.ع</div>
                   </div>
                   {isSelected && (
                     <CheckCircle2 size={20} color="var(--emerald)" strokeWidth={2.4} />
@@ -551,7 +551,7 @@ export default function NursingFlow({
                 </span>
                 {allergies[a.key] && (
                   <span style={{
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: 800,
                     background: 'var(--rose)',
                     color: 'var(--paper-3)',
@@ -607,7 +607,7 @@ export default function NursingFlow({
               <div style={{ fontSize: 13, fontWeight: 800 }}>
                 أُؤكّد أن المعلومات المُدخلة صحيحة
               </div>
-              <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 2 }}>
+              <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 2 }}>
                 للحماية القانونية وسلامة المريض
               </div>
             </div>
@@ -675,7 +675,7 @@ export default function NursingFlow({
                 <h4 style={{ fontSize: 13, fontWeight: 800, margin: '0 0 4px' }}>
                   ارفع صورة الوصفة الطبية
                 </h4>
-                <p style={{ fontSize: 11, color: 'var(--ink-3)', margin: '0 0 12px' }}>
+                <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '0 0 12px' }}>
                   PNG / JPG · الحد الأقصى 5 ميجا
                 </p>
                 <CameraCapture
@@ -720,7 +720,7 @@ export default function NursingFlow({
               />
               <div style={{ flex: 1, fontSize: 12 }}>
                 <div style={{ fontWeight: 700 }}>ليس لدي وصفة (سيراها الممرض)</div>
-                <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 2 }}>
+                <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 2 }}>
                   ⚠️ قد يرفض الممرض إعطاء حقن دون وصفة موقّعة
                 </div>
               </div>
@@ -731,7 +731,7 @@ export default function NursingFlow({
           <h3 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 8px' }}>
             هل يعاني المريض من أمراض معدية؟
           </h3>
-          <p style={{ fontSize: 11, color: 'var(--ink-3)', margin: '0 0 10px' }}>
+          <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '0 0 10px' }}>
             مهم لاتخاذ احتياطات الحماية للكادر
           </p>
 
@@ -844,7 +844,7 @@ export default function NursingFlow({
                     <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 2 }}>
                       {opt.label}
                     </div>
-                    <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{opt.desc}</div>
+                    <div style={{ fontSize: 12, color: 'var(--ink-3)' }}>{opt.desc}</div>
                   </div>
                   {opt.recommended && (
                     <span style={{
@@ -853,7 +853,7 @@ export default function NursingFlow({
                       insetInlineEnd: 8,
                       background: 'var(--amber)',
                       color: 'var(--paper-3)',
-                      fontSize: 9,
+                      fontSize: 12,
                       fontWeight: 800,
                       padding: '3px 8px',
                       borderRadius: 6,
@@ -872,7 +872,7 @@ export default function NursingFlow({
             padding: 12,
             background: 'var(--emerald-soft)',
             borderRadius: 10,
-            fontSize: 11,
+            fontSize: 12,
             color: 'var(--emerald-deep)',
             display: 'flex',
             gap: 8,
@@ -972,7 +972,7 @@ export default function NursingFlow({
                 <div style={{ fontSize: 13, fontWeight: 800 }}>
                   تكرار العلاج (كورس)
                 </div>
-                <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 2 }}>
+                <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 2 }}>
                   للمضادات الحيوية والإبر الدورية
                 </div>
               </div>
@@ -1006,13 +1006,13 @@ export default function NursingFlow({
                         fontFamily: 'inherit',
                       }}
                     >
-                      <div style={{ fontSize: 11, fontWeight: 800 }}>{r.label}</div>
-                      <div style={{ fontSize: 9, opacity: 0.8 }}>{r.sub}</div>
+                      <div style={{ fontSize: 12, fontWeight: 800 }}>{r.label}</div>
+                      <div style={{ fontSize: 12, opacity: 0.8 }}>{r.sub}</div>
                     </button>
                   ))}
                 </div>
 
-                <label style={{ fontSize: 11, fontWeight: 700, display: 'block', marginBottom: 4 }}>
+                <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 4 }}>
                   تاريخ انتهاء الكورس
                 </label>
                 <input
@@ -1057,7 +1057,7 @@ export default function NursingFlow({
           {/* Saved locations */}
           {savedLocations.length > 0 && (
             <div style={{ marginBottom: 12 }}>
-              <label style={{ fontSize: 11, fontWeight: 700, display: 'block', marginBottom: 6 }}>
+              <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6 }}>
                 المواقع المحفوظة
               </label>
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
@@ -1079,7 +1079,7 @@ export default function NursingFlow({
                       borderRadius: 100,
                       cursor: 'pointer',
                       fontFamily: 'inherit',
-                      fontSize: 11,
+                      fontSize: 12,
                       fontWeight: 700,
                     }}
                   >
@@ -1232,9 +1232,13 @@ export default function NursingFlow({
         bottom: 0,
         insetInlineStart: 0,
         insetInlineEnd: 0,
+        marginInline: 'auto',
+        maxWidth: 480,
+        boxSizing: 'border-box',
         background: 'var(--paper)',
         borderTop: '1px solid var(--line)',
-        padding: '12px 16px',
+        boxShadow: '0 -6px 16px -10px rgba(15, 26, 28, 0.25)',
+        padding: '10px 16px calc(10px + env(safe-area-inset-bottom))',
         display: 'flex',
         flexDirection: 'column',
         gap: 8,
@@ -1246,6 +1250,7 @@ export default function NursingFlow({
           labels={NURSING_FIELD_LABELS}
           errors={fe.fieldErrors}
           onJump={fe.jumpTo}
+          compact
         />
 
         <div style={{ display: 'flex', gap: 8 }}>

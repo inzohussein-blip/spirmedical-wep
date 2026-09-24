@@ -120,7 +120,7 @@ export default function OrderAdminActions({
                 <option key={s.id} value={s.id}>{s.name} · {s.phone}</option>
               ))}
             </select>
-            <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 4 }}>
+            <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 4 }}>
               {availableSpecialists.length} اختصاصي متاح للنوع المطلوب
             </div>
             {selectedSpecialist && selectedSpecialist !== currentSpecialistId && (

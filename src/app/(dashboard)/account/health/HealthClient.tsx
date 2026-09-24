@@ -103,9 +103,9 @@ export default function HealthClient({ latestByType, history }: Props) {
               <div style={{ fontSize: 16, fontWeight: 800, color: latest ? 'var(--ink)' : 'var(--ink-3)', marginTop: 4 }}>
                 {latest?.value ?? '--'}
               </div>
-              <div className="service-desc" style={{ fontSize: 10 }}>{m.unit}</div>
+              <div className="service-desc" style={{ fontSize: 11 }}>{m.unit}</div>
               {latest && (
-                <div style={{ fontSize: 9, color: 'var(--ink-3)', marginTop: 4 }}>
+                <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 4 }}>
                   {new Date(latest.measured_at).toLocaleDateString('ar-IQ', { day: 'numeric', month: 'short' })}
                 </div>
               )}

@@ -12,8 +12,8 @@ export const metadata = {
 };
 
 const STATUS_META: Record<string, { color: string; bg: string; label: string }> = {
-  pending: { color: 'var(--amber-deep, #6B3A08)', bg: 'var(--amber-soft, #F8E5C7)', label: 'بانتظار الإرسال' },
-  sending: { color: 'var(--amber-deep, #6B3A08)', bg: 'var(--amber-soft, #F8E5C7)', label: 'يُرسل الآن' },
+  pending: { color: 'var(--amber-deep, #6B3A08)', bg: 'var(--amber-soft, #FEF7E0)', label: 'بانتظار الإرسال' },
+  sending: { color: 'var(--amber-deep, #6B3A08)', bg: 'var(--amber-soft, #FEF7E0)', label: 'يُرسل الآن' },
   sent: { color: 'var(--emerald-deep)', bg: 'var(--emerald-soft)', label: 'أُرسل' },
   failed: { color: 'var(--rose)', bg: 'var(--rose-soft)', label: 'فشل' },
   cancelled: { color: 'var(--ink-3)', bg: 'var(--paper-3)', label: 'ملغى' },
@@ -115,7 +115,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
                   <tr key={m.id} style={{ borderTop: '1px solid var(--line)' }}>
                     <td style={td}>
                       <div style={{ fontFamily: 'monospace', fontWeight: 700 }} dir="ltr">{m.recipient_phone}</div>
-                      {m.template_key && <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>📑 {m.template_key}</div>}
+                      {m.template_key && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>📑 {m.template_key}</div>}
                     </td>
                     <td style={td}>
                       <span style={{ color: channel.color, fontWeight: 700 }}>{channel.icon} {m.channel}</span>
@@ -125,7 +125,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
                         {m.body.substring(0, 80)}{m.body.length > 80 ? '...' : ''}
                       </div>
                       {m.error_message && (
-                        <div style={{ fontSize: 10, color: 'var(--rose)', marginTop: 4 }}>
+                        <div style={{ fontSize: 11, color: 'var(--rose)', marginTop: 4 }}>
                           ⚠️ {m.error_message.substring(0, 100)}
                         </div>
                       )}
@@ -136,7 +136,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
                         background: status.bg, color: status.color, fontWeight: 800,
                       }}>{status.label}</span>
                       {m.attempts > 0 && (
-                        <div style={{ fontSize: 9, color: 'var(--ink-3)', marginTop: 4 }}>
+                        <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 4 }}>
                           محاولات: {m.attempts}/{m.max_attempts}
                         </div>
                       )}
@@ -146,7 +146,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
                         {new Date(m.created_at ?? Date.now()).toLocaleString('ar-IQ', { dateStyle: 'short', timeStyle: 'short' })}
                       </div>
                       {m.sent_at && (
-                        <div style={{ fontSize: 9, color: 'var(--emerald)', marginTop: 2 }}>
+                        <div style={{ fontSize: 11, color: 'var(--emerald)', marginTop: 2 }}>
                           ✅ {new Date(m.sent_at).toLocaleTimeString('ar-IQ', { timeStyle: 'short' })}
                         </div>
                       )}

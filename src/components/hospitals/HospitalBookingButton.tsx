@@ -30,7 +30,7 @@ export default function HospitalBookingButton({ hospital, userPhone }: Props) {
         style={{
           width: '100%',
           padding: 14,
-          background: 'linear-gradient(135deg, #0F6E56 0%, #04342C 100%)',
+          background: 'linear-gradient(135deg, var(--emerald-mid, #0F6E56) 0%, #04342C 100%)',
           color: 'white',
           border: 0,
           borderRadius: 12,

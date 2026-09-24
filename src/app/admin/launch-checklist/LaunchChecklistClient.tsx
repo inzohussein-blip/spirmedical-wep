@@ -360,7 +360,7 @@ export default function LaunchChecklistClient({ items }: Props) {
                           background: priorityMeta.bg,
                           color: priorityMeta.color,
                           borderRadius: 4,
-                          fontSize: 9,
+                          fontSize: 11,
                           fontWeight: 800,
                         }}>
                           {priorityMeta.label}

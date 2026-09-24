@@ -53,9 +53,6 @@ export {
 } from './Skeleton';
 export type { SkeletonProps, SkeletonTableProps } from './Skeleton';
 
-// Separator
-export { Separator } from './Separator';
-export type { SeparatorProps } from './Separator';
 
 // Field + FieldGroup (V25.1 - UX)
 export { Field, FieldGroup } from './Field';
@@ -90,32 +87,5 @@ export type { ConfirmOptions, ConfirmVariant } from './ConfirmDialog';
 export { MapHeatmapWrapper } from './MapHeatmapWrapper';
 export type { MapHeatmapProps, HeatmapPoint } from './MapHeatmap';
 
-// Shadcn primitives (already in place)
-export {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogTrigger,
-  DialogClose,
-} from './Dialog';
 
-export {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-} from './DropdownMenu';
 
-export {
-  Toast,
-  ToastProvider,
-  ToastViewport,
-  ToastTitle,
-  ToastDescription,
-  ToastClose,
-} from './Toast';

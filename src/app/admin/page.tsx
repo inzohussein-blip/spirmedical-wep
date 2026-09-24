@@ -36,7 +36,7 @@ function StatCard({ icon, label, value, sublabel, color, href }: StatCardProps) 
       </div>
       <div style={{ fontSize: 28, fontWeight: 900, color, lineHeight: 1 }}>{value}</div>
       {sublabel && (
-        <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 8 }}>{sublabel}</div>
+        <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 8 }}>{sublabel}</div>
       )}
     </div>
   );
@@ -144,7 +144,7 @@ export default async function AdminDashboard() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          background: 'linear-gradient(135deg, #01875F 0%, #073B30 100%)',
+          background: 'linear-gradient(135deg, var(--emerald, #01875F) 0%, #073B30 100%)',
           color: 'var(--white)',
           padding: '14px 20px',
           borderRadius: 14,
@@ -271,7 +271,7 @@ export default async function AdminDashboard() {
         style={{
           display: 'flex', alignItems: 'center', gap: 16,
           padding: '18px 20px', marginBottom: 24,
-          background: 'linear-gradient(135deg, #01875F, #073B30)',
+          background: 'linear-gradient(135deg, var(--emerald, #01875F), #073B30)',
           borderRadius: 16, textDecoration: 'none', color: '#fff',
           boxShadow: '0 4px 16px rgba(1,135,95,0.2)',
         }}
@@ -363,15 +363,15 @@ export default async function AdminDashboard() {
                     <div style={{ fontSize: 12, fontWeight: 700 }}>
                       {patientMap.get(o.user_id) ?? 'مريض'}
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>{o.service_type}</div>
+                    <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{o.service_type}</div>
                   </div>
                   <div style={{
-                    fontSize: 10,
+                    fontSize: 11,
                     padding: '3px 8px',
                     borderRadius: 100,
                     background: o.status === 'completed' ? 'var(--emerald-soft)' :
                                 o.status === 'cancelled' ? 'var(--rose-soft)' :
-                                'var(--amber-soft, #F8E5C7)',
+                                'var(--amber-soft, #FEF7E0)',
                     color: o.status === 'completed' ? 'var(--emerald-deep)' :
                            o.status === 'cancelled' ? 'var(--rose)' :
                            'var(--amber-deep, #6B3A08)',
@@ -428,10 +428,10 @@ export default async function AdminDashboard() {
                   />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 12, fontWeight: 700 }}>{u.full_name ?? 'بدون اسم'}</div>
-                    <div style={{ fontSize: 10, color: 'var(--ink-3)' }} dir="ltr">{u.phone}</div>
+                    <div style={{ fontSize: 11, color: 'var(--ink-3)' }} dir="ltr">{u.phone}</div>
                   </div>
                   <div style={{
-                    fontSize: 10,
+                    fontSize: 11,
                     padding: '4px 8px',
                     borderRadius: 100,
                     background: u.role === 'specialist' ? 'var(--amber-soft)' : 'var(--paper)',

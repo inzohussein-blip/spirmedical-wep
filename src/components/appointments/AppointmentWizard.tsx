@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { SERVICES, CATEGORIES, formatPrice, formatDuration, type Service } from '@/lib/services/services-data';
 import { generateAvailableDates, generateTimeSlotsForDate, groupTimeSlots, formatDateRelative, toArabicDigits, type TimeSlot } from '@/lib/services/time-slots';
-import OtpChannelSelector from './OtpChannelSelector';
 import UserLocationPickerWrapper from '@/components/maps/UserLocationPickerWrapper';
 import {
   Calendar, MapPin, Lightbulb, Monitor, Clock, FileText, ChevronUp,
@@ -45,9 +45,15 @@ interface Props {
   onSubmit: (data: BookingData) => Promise<WizardSubmitResult | void>;
 }
 
+/**
+ * خدماتٌ لها تدفّقٌ مخصّص في الصفحة نفسها. اختيارُها هنا كان يُكمل حجزاً عامّاً
+ * بلا اختيار تحاليل ولا إجراءٍ تمريضيّ، فيصل الطلبُ ناقصاً إلى المختبر.
+ */
+export const DEDICATED_FLOW_SERVICES = ['blood-draw', 'home-nursing'] as const;
+
 export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
+  const router = useRouter();
   const [step, setStep] = useState<Step>(1);
-  const [otpVerified, setOtpVerified] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const [data, setData] = useState<BookingData>({
@@ -102,7 +108,6 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
   };
 
   const handleConfirm = async () => {
-    if (!otpVerified) return;
     setSubmitting(true);
     try {
       const res = await onSubmit(data);
@@ -171,7 +176,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           </div>
 
           {/* قائمة الخدمات */}
-          <div className="services-list" ref={fe.registerRef('service')}>
+          <div className="aw-services-list" ref={fe.registerRef('service')}>
             {SERVICES
               .filter((s) => !selectedCategory || s.category === selectedCategory)
               .filter((s) => s.available)
@@ -179,29 +184,37 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
                 <button
                   key={service.id}
                   type="button"
-                  onClick={() => { setData({ ...data, service }); fe.clearError('service'); }}
-                  className={`service-card ${data.service?.id === service.id ? 'selected' : ''}`}
+                  onClick={() => {
+                    if ((DEDICATED_FLOW_SERVICES as readonly string[]).includes(service.id)) {
+                      router.push(`/appointments/new?service=${service.id}`);
+                      return;
+                    }
+                    setData({ ...data, service });
+                    fe.clearError('service');
+                  }}
+                  className={`aw-service-card ${data.service?.id === service.id ? 'selected' : ''}`}
+                  aria-pressed={data.service?.id === service.id}
                 >
-                  <div className="service-icon">{service.emoji}</div>
-                  <div className="service-info">
-                    <div className="service-header">
+                  <div className="aw-service-icon" aria-hidden="true">{service.emoji}</div>
+                  <div className="aw-service-info">
+                    <div className="aw-service-header">
                       <h3>{service.nameAr}</h3>
                       {service.badge && (
-                        <span className={`service-badge badge-${service.badgeColor || 'emerald'}`}>
+                        <span className={`aw-service-badge badge-${service.badgeColor || 'emerald'}`}>
                           {service.badge}
                         </span>
                       )}
                     </div>
-                    <p className="service-desc">{service.description}</p>
-                    <div className="service-meta">
-                      <span className="service-price">من {formatPrice(service.basePrice)}</span>
-                      <span className="service-duration" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                    <p className="aw-service-desc">{service.description}</p>
+                    <div className="aw-service-meta">
+                      <span className="aw-service-price">من {formatPrice(service.basePrice)}</span>
+                      <span className="aw-service-duration" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                         <Clock size={12} strokeWidth={2.2} />
                         {formatDuration(service.duration)}
                       </span>
                     </div>
                   </div>
-                  <div className="service-radio">
+                  <div className="aw-service-radio" aria-hidden="true">
                     {data.service?.id === service.id ? '●' : '○'}
                   </div>
                 </button>
@@ -320,7 +333,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
             </div>
           )}
 
-          <div className="field-group">
+          <div className="aw-field-group">
             <label>ملاحظات إضافية (اختياري)</label>
             <textarea
               value={data.notes}
@@ -333,7 +346,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           </div>
 
           {!data.service?.needsAddress && data.phone === '' && (
-            <div className="field-group" ref={fe.registerRef('phone')}>
+            <div className="aw-field-group" ref={fe.registerRef('phone')}>
               <label>رقم الهاتف للتواصل *</label>
               <div className="phone-input-wrap">
                 <span className="phone-prefix">🇮🇶 +964</span>
@@ -351,137 +364,124 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
         </div>
       )}
 
-      {/* === STEP 4: التأكيد + OTP === */}
+      {/* === STEP 4: التأكيد ===
+          لا رمزَ تحقّق عند رفع الطلب (قرار المالك): المريضُ مسجَّل الدخول،
+          وسحبُ الدم والتمريض بلا رمزٍ أصلاً. */}
       {step === 4 && (
         <div className="step-content">
-          {!otpVerified ? (
-            <OtpChannelSelector
-              phone={data.phone || userPhone}
-              purpose="appointment"
-              onVerified={() => setOtpVerified(true)}
-              onCancel={() => setStep(3)}
-            />
-          ) : (
-            <>
-              {/* ملخّص الحجز */}
-              <div className="summary-card">
-                <div className="summary-header">
-                  <div className="summary-icon">{data.service?.emoji}</div>
-                  <div>
-                    <h3>{data.service?.nameAr}</h3>
-                    <p>{data.service?.description}</p>
-                  </div>
-                </div>
+          {/* ملخّص الحجز */}
+          <div className="summary-card">
+            <div className="summary-header">
+              <div className="summary-icon">{data.service?.emoji}</div>
+              <div>
+                <h3>{data.service?.nameAr}</h3>
+                <p>{data.service?.description}</p>
+              </div>
+            </div>
 
-                <div className="summary-rows">
-                  <div className="summary-row">
-                    <span className="summary-label">
-                      <Calendar size={13} strokeWidth={2.2} aria-hidden />
-                      <span>التاريخ والوقت</span>
-                    </span>
-                    <span className="summary-value">
-                      {data.slot && `${data.slot.displayDate} · ${data.slot.displayTime}`}
-                    </span>
-                  </div>
-
-                  {data.service?.needsAddress && (
-                    <div className="summary-row">
-                      <span className="summary-label">
-                        <MapPin size={13} strokeWidth={2.2} aria-hidden />
-                        <span>العنوان</span>
-                      </span>
-                      <span className="summary-value">{data.address}</span>
-                    </div>
-                  )}
-
-                  <div className="summary-row">
-                    <span className="summary-label">
-                      <Clock size={13} strokeWidth={2.2} aria-hidden />
-                      <span>المدة المتوقعة</span>
-                    </span>
-                    <span className="summary-value">{formatDuration(data.service?.duration || 60)}</span>
-                  </div>
-
-                  {data.notes && (
-                    <div className="summary-row">
-                      <span className="summary-label">
-                        <FileText size={13} strokeWidth={2.2} aria-hidden />
-                        <span>ملاحظات</span>
-                      </span>
-                      <span className="summary-value">{data.notes}</span>
-                    </div>
-                  )}
-
-                </div>
-
-                <div className="summary-price">
-                  <div className="summary-price-row">
-                    <span>السعر التقديري</span>
-                    <strong>{formatPrice(data.service?.basePrice || 0)}</strong>
-                  </div>
-                  <div className="summary-price-note" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <Lightbulb size={12} strokeWidth={2.2} aria-hidden />
-                    السعر النهائي قد يختلف حسب المتطلبات الفعلية
-                  </div>
-                </div>
+            <div className="summary-rows">
+              <div className="summary-row">
+                <span className="summary-label">
+                  <Calendar size={13} strokeWidth={2.2} aria-hidden />
+                  <span>التاريخ والوقت</span>
+                </span>
+                <span className="summary-value">
+                  {data.slot && `${data.slot.displayDate} · ${data.slot.displayTime}`}
+                </span>
               </div>
 
-              {/* تأكيد + شروط */}
-              <div className="confirm-checkbox">
-                <input type="checkbox" id="confirm-terms" defaultChecked />
-                <label htmlFor="confirm-terms">
-                  أؤكّد أن المعلومات صحيحة وأوافق على
-                  <a href="/legal/terms" target="_blank" rel="noopener noreferrer"> شروط الخدمة</a>
-                </label>
+              {data.service?.needsAddress && (
+                <div className="summary-row">
+                  <span className="summary-label">
+                    <MapPin size={13} strokeWidth={2.2} aria-hidden />
+                    <span>العنوان</span>
+                  </span>
+                  <span className="summary-value">{data.address}</span>
+                </div>
+              )}
+
+              <div className="summary-row">
+                <span className="summary-label">
+                  <Clock size={13} strokeWidth={2.2} aria-hidden />
+                  <span>المدة المتوقعة</span>
+                </span>
+                <span className="summary-value">{formatDuration(data.service?.duration || 60)}</span>
               </div>
-            </>
-          )}
+
+              {data.notes && (
+                <div className="summary-row">
+                  <span className="summary-label">
+                    <FileText size={13} strokeWidth={2.2} aria-hidden />
+                    <span>ملاحظات</span>
+                  </span>
+                  <span className="summary-value">{data.notes}</span>
+                </div>
+              )}
+
+            </div>
+
+            <div className="summary-price">
+              <div className="summary-price-row">
+                <span>السعر التقديري</span>
+                <strong>{formatPrice(data.service?.basePrice || 0)}</strong>
+              </div>
+              <div className="summary-price-note" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Lightbulb size={12} strokeWidth={2.2} aria-hidden />
+                السعر النهائي قد يختلف حسب المتطلبات الفعلية
+              </div>
+            </div>
+          </div>
+
+          {/* تأكيد + شروط */}
+          <div className="confirm-checkbox">
+            <input type="checkbox" id="confirm-terms" defaultChecked />
+            <label htmlFor="confirm-terms">
+              أؤكّد أن المعلومات صحيحة وأوافق على
+              <a href="/legal/terms" target="_blank" rel="noopener noreferrer"> شروط الخدمة</a>
+            </label>
+          </div>
         </div>
       )}
 
       {/* صندوق «الحقول الناقصة» */}
-      {(step !== 4 || otpVerified) && (
-        <MissingFieldsSummary
-          fields={fe.missingFields}
-          labels={APPOINTMENT_FIELD_LABELS}
-          errors={fe.fieldErrors}
-          onJump={fe.jumpTo}
-        />
-      )}
+      <MissingFieldsSummary
+        fields={fe.missingFields}
+        labels={APPOINTMENT_FIELD_LABELS}
+        errors={fe.fieldErrors}
+        onJump={fe.jumpTo}
+      />
 
       {/* أزرار التنقّل */}
-      {(step !== 4 || otpVerified) && (
-        <div className="wizard-actions">
-          {step > 1 && (
-            <button type="button" onClick={goBack} className="btn-secondary">
-              ← السابق
-            </button>
-          )}
-          {step < 4 && (
-            <button
-              type="button"
-              onClick={goNext}
-              className="btn-primary"
-            >
-              التالي ←
-            </button>
-          )}
-          {step === 4 && otpVerified && (
-            <button
-              type="button"
-              onClick={handleConfirm}
-              disabled={submitting}
-              className="btn-primary btn-confirm"
-            >
-              {submitting ? 'جارٍ التأكيد...' : '✓ تأكيد الحجز'}
-            </button>
-          )}
-        </div>
-      )}
+      <div className="wizard-actions">
+        {step > 1 && (
+          <button type="button" onClick={goBack} className="btn-secondary">
+            → السابق
+          </button>
+        )}
+        {step < 4 && (
+          <button
+            type="button"
+            onClick={goNext}
+            className="btn-primary"
+          >
+            التالي ←
+          </button>
+        )}
+        {step === 4 && (
+          <button
+            type="button"
+            onClick={handleConfirm}
+            disabled={submitting}
+            className="btn-primary btn-confirm"
+          >
+            {submitting ? 'جارٍ التأكيد...' : '✓ تأكيد الحجز'}
+          </button>
+        )}
+      </div>
 
       <style jsx>{`
         .wizard {
-          background: var(--paper-3, #FAF6EB);
+          background: var(--paper-3, #FFFFFF);
           padding: 16px;
           border-radius: 16px;
           max-width: 720px;
@@ -509,31 +509,31 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           justify-content: center;
           font-size: 13px;
           font-weight: 800;
-          background: var(--paper-2, #EDE6D3);
-          color: var(--ink-3, #6E7878);
+          background: var(--paper-2, #F1F3F4);
+          color: var(--ink-3, #5F6368);
           border: 1px solid var(--line, rgba(15, 26, 28, 0.08));
           transition: all 0.3s;
           flex-shrink: 0;
         }
         .wizard-step-circle.active {
-          background: var(--emerald, #0E5C4D);
-          color: var(--paper-3, #FAF6EB);
-          border-color: var(--emerald, #0E5C4D);
+          background: var(--emerald, #01875F);
+          color: var(--paper-3, #FFFFFF);
+          border-color: var(--emerald, #01875F);
         }
         .wizard-step-circle.done {
-          background: var(--emerald, #0E5C4D);
-          color: var(--paper-3, #FAF6EB);
+          background: var(--emerald, #01875F);
+          color: var(--paper-3, #FFFFFF);
         }
         .wizard-step-line {
           flex: 1;
           height: 3px;
-          background: var(--paper-2, #EDE6D3);
+          background: var(--paper-2, #F1F3F4);
           margin: 0 8px;
           border-radius: 100px;
           transition: all 0.3s;
         }
         .wizard-step-line.active {
-          background: var(--emerald, #0E5C4D);
+          background: var(--emerald, #01875F);
         }
 
         .wizard-step-info {
@@ -541,15 +541,15 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           margin-bottom: 18px;
         }
         .wizard-step-num {
-          font-size: 11px;
-          color: var(--ink-3, #6E7878);
+          font-size: 12px;
+          color: var(--ink-3, #5F6368);
           font-weight: 600;
           margin-bottom: 4px;
         }
         .wizard-step-title {
           font-size: 18px;
           font-weight: 800;
-          color: var(--ink, #0F1A1C);
+          color: var(--ink, #202124);
         }
 
         .step-content {
@@ -576,19 +576,21 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           font-weight: 600;
           cursor: pointer;
           white-space: nowrap;
+          flex-shrink: 0;
+          min-height: 40px;
           transition: all 0.15s;
         }
         .category-pill.active {
-          background: var(--emerald, #0E5C4D);
-          color: var(--paper-3, #FAF6EB);
-          border-color: var(--emerald, #0E5C4D);
+          background: var(--emerald, #01875F);
+          color: var(--paper-3, #FFFFFF);
+          border-color: var(--emerald, #01875F);
         }
-        .services-list {
+        .aw-services-list {
           display: flex;
           flex-direction: column;
           gap: 10px;
         }
-        .service-card {
+        .aw-service-card {
           background: var(--white, #FFFFFF);
           border: 1.5px solid var(--line, rgba(15, 26, 28, 0.08));
           border-radius: 16px;
@@ -600,18 +602,18 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           transition: all 0.2s;
           text-align: right;
         }
-        .service-card:hover {
+        .aw-service-card:hover {
           transform: translateY(-2px);
           box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.1);
         }
-        .service-card.selected {
-          border-color: var(--emerald, #0E5C4D);
-          background: var(--emerald-soft, #D9E5DF);
+        .aw-service-card.selected {
+          border-color: var(--emerald, #01875F);
+          background: var(--emerald-soft, #E6F3EF);
         }
-        .service-icon {
+        .aw-service-icon {
           width: 56px;
           height: 56px;
-          background: var(--paper-2, #EDE6D3);
+          background: var(--paper-2, #F1F3F4);
           border-radius: 14px;
           display: flex;
           align-items: center;
@@ -619,62 +621,62 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           font-size: 28px;
           flex-shrink: 0;
         }
-        .service-card.selected .service-icon {
-          background: var(--emerald, #0E5C4D);
+        .aw-service-card.selected .aw-service-icon {
+          background: var(--emerald, #01875F);
         }
-        .service-info { flex: 1; min-width: 0; }
-        .service-header {
+        .aw-service-info { flex: 1; min-width: 0; }
+        .aw-service-header {
           display: flex;
           align-items: center;
           gap: 8px;
           flex-wrap: wrap;
           margin-bottom: 4px;
         }
-        .service-header h3 {
+        .aw-service-header h3 {
           font-size: 14px;
           font-weight: 800;
           margin: 0;
         }
-        .service-badge {
-          font-size: 9px;
+        .aw-service-badge {
+          font-size: 12px;
           padding: 2px 7px;
           border-radius: 100px;
           font-weight: 800;
         }
-        .badge-emerald { background: var(--emerald, #0E5C4D); color: var(--paper-3, #FAF6EB); }
-        .badge-amber { background: var(--amber, #B8540C); color: var(--paper-3, #FAF6EB); }
-        .badge-rose { background: var(--rose, #A82E3D); color: var(--paper-3, #FAF6EB); }
-        .service-desc {
-          font-size: 11px;
-          color: var(--ink-3, #6E7878);
+        .badge-emerald { background: var(--emerald, #01875F); color: var(--paper-3, #FFFFFF); }
+        .badge-amber { background: var(--amber, #B06000); color: var(--paper-3, #FFFFFF); }
+        .badge-rose { background: var(--rose, #C71C56); color: var(--paper-3, #FFFFFF); }
+        .aw-service-desc {
+          font-size: 12px;
+          color: var(--ink-3, #5F6368);
           margin: 0 0 6px;
           line-height: 1.5;
         }
-        .service-meta {
+        .aw-service-meta {
           display: flex;
           gap: 12px;
-          font-size: 11px;
+          font-size: 12px;
         }
-        .service-price {
+        .aw-service-price {
           font-weight: 800;
-          color: var(--emerald, #0E5C4D);
+          color: var(--emerald, #01875F);
         }
-        .service-duration {
-          color: var(--ink-3, #6E7878);
+        .aw-service-duration {
+          color: var(--ink-3, #5F6368);
         }
-        .service-radio {
+        .aw-service-radio {
           font-size: 22px;
-          color: var(--ink-4, #A4ACAA);
+          color: var(--ink-4, #80868B);
           flex-shrink: 0;
         }
-        .service-card.selected .service-radio {
-          color: var(--emerald, #0E5C4D);
+        .aw-service-card.selected .aw-service-radio {
+          color: var(--emerald, #01875F);
         }
 
         /* Step 2: Time */
         .info-banner {
-          background: var(--emerald-soft, #D9E5DF);
-          color: var(--emerald-deep, #073B30);
+          background: var(--emerald-soft, #E6F3EF);
+          color: var(--emerald-deep, #056559);
           padding: 10px 14px;
           border-radius: 11px;
           font-size: 12px;
@@ -703,12 +705,12 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           text-align: center;
         }
         .date-pill.active {
-          background: var(--emerald, #0E5C4D);
-          color: var(--paper-3, #FAF6EB);
-          border-color: var(--emerald, #0E5C4D);
+          background: var(--emerald, #01875F);
+          color: var(--paper-3, #FFFFFF);
+          border-color: var(--emerald, #01875F);
         }
         .date-pill-day {
-          font-size: 11px;
+          font-size: 12px;
           font-weight: 600;
           margin-bottom: 4px;
         }
@@ -741,24 +743,24 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           gap: 6px;
         }
         .time-slot {
-          background: var(--paper-3, #FAF6EB);
+          background: var(--paper-3, #FFFFFF);
           border: 1px solid var(--line, rgba(15, 26, 28, 0.08));
           border-radius: 10px;
           padding: 9px;
-          font-size: 11px;
+          font-size: 12px;
           font-weight: 600;
           cursor: pointer;
           position: relative;
           transition: all 0.15s;
         }
         .time-slot:hover:not(.disabled):not(.active) {
-          border-color: var(--emerald, #0E5C4D);
+          border-color: var(--emerald, #01875F);
           background: var(--white, #FFFFFF);
         }
         .time-slot.active {
-          background: var(--emerald, #0E5C4D);
-          color: var(--paper-3, #FAF6EB);
-          border-color: var(--emerald, #0E5C4D);
+          background: var(--emerald, #01875F);
+          color: var(--paper-3, #FFFFFF);
+          border-color: var(--emerald, #01875F);
         }
         .time-slot.disabled {
           opacity: 0.4;
@@ -772,27 +774,27 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           width: 5px;
           height: 5px;
           border-radius: 50%;
-          background: var(--amber, #B8540C);
+          background: var(--amber, #B06000);
         }
         .empty-hint {
           text-align: center;
           padding: 30px;
-          color: var(--ink-3, #6E7878);
+          color: var(--ink-3, #5F6368);
           font-size: 13px;
         }
 
         /* Step 3: Details */
-        .field-group {
+        .aw-field-group {
           display: flex;
           flex-direction: column;
           gap: 6px;
         }
-        .field-group label {
+        .aw-field-group label {
           font-size: 12px;
           font-weight: 700;
         }
-        .field-group input,
-        .field-group textarea {
+        .aw-field-group input,
+        .aw-field-group textarea {
           background: var(--white, #FFFFFF);
           border: 1.5px solid var(--line, rgba(15, 26, 28, 0.08));
           border-radius: 12px;
@@ -803,24 +805,24 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           transition: border-color 0.2s;
           resize: vertical;
         }
-        .field-group input:focus,
-        .field-group textarea:focus {
-          border-color: var(--emerald, #0E5C4D);
+        .aw-field-group input:focus,
+        .aw-field-group textarea:focus {
+          border-color: var(--emerald, #01875F);
         }
         .field-hint {
-          font-size: 11px;
-          color: var(--ink-3, #6E7878);
+          font-size: 12px;
+          color: var(--ink-3, #5F6368);
         }
         .field-counter {
-          font-size: 10px;
-          color: var(--ink-3, #6E7878);
+          font-size: 12px;
+          color: var(--ink-3, #5F6368);
           text-align: left;
           font-family: 'JetBrains Mono', monospace;
         }
         .gps-btn {
-          background: var(--amber-soft, #F0DBC2);
-          color: var(--amber, #B8540C);
-          border: 1px solid var(--amber, #B8540C);
+          background: var(--amber-soft, #FEF7E0);
+          color: var(--amber, #B06000);
+          border: 1px solid var(--amber, #B06000);
           border-radius: 10px;
           padding: 9px;
           font-size: 12px;
@@ -829,7 +831,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           margin-top: 4px;
         }
         .online-banner {
-          background: var(--emerald-soft, #D9E5DF);
+          background: var(--emerald-soft, #E6F3EF);
           border-radius: 14px;
           padding: 16px;
           display: flex;
@@ -841,19 +843,19 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           font-size: 14px;
           font-weight: 800;
           margin: 0 0 4px;
-          color: var(--emerald-deep, #073B30);
+          color: var(--emerald-deep, #056559);
         }
         .online-banner p {
           font-size: 12px;
           margin: 0;
-          color: var(--emerald-deep, #073B30);
+          color: var(--emerald-deep, #056559);
         }
         .phone-input-wrap {
           display: flex;
           gap: 8px;
         }
         .phone-prefix {
-          background: var(--paper-2, #EDE6D3);
+          background: var(--paper-2, #F1F3F4);
           padding: 12px;
           border-radius: 12px;
           font-weight: 700;
@@ -882,7 +884,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
         .summary-icon {
           width: 56px;
           height: 56px;
-          background: var(--emerald-soft, #D9E5DF);
+          background: var(--emerald-soft, #E6F3EF);
           border-radius: 14px;
           display: flex;
           align-items: center;
@@ -895,8 +897,8 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           margin: 0 0 3px;
         }
         .summary-header p {
-          font-size: 11px;
-          color: var(--ink-3, #6E7878);
+          font-size: 12px;
+          color: var(--ink-3, #5F6368);
           margin: 0;
         }
         .summary-rows {
@@ -910,9 +912,13 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           align-items: flex-start;
           gap: 12px;
         }
+        /* سطرٌ مرن: Tailwind يجعل <svg> كتلةً فكانت الأيقونة فوق التسمية */
         .summary-label {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
           font-size: 12px;
-          color: var(--ink-3, #6E7878);
+          color: var(--ink-3, #5F6368);
           font-weight: 600;
           flex-shrink: 0;
         }
@@ -922,7 +928,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           text-align: left;
         }
         .summary-price {
-          background: var(--emerald-soft, #D9E5DF);
+          background: var(--emerald-soft, #E6F3EF);
           border-radius: 12px;
           padding: 14px;
           margin-top: 4px;
@@ -933,7 +939,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           align-items: center;
           font-size: 14px;
           font-weight: 700;
-          color: var(--emerald-deep, #073B30);
+          color: var(--emerald-deep, #056559);
         }
         .summary-price-row strong {
           font-size: 18px;
@@ -941,8 +947,8 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           font-family: 'JetBrains Mono', monospace;
         }
         .summary-price-note {
-          font-size: 10px;
-          color: var(--emerald-deep, #073B30);
+          font-size: 12px;
+          color: var(--emerald-deep, #056559);
           opacity: 0.8;
           margin-top: 4px;
         }
@@ -950,27 +956,35 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           display: flex;
           gap: 10px;
           padding: 12px;
-          background: var(--paper-2, #EDE6D3);
+          background: var(--paper-2, #F1F3F4);
           border-radius: 11px;
           font-size: 12px;
         }
         .confirm-checkbox label {
-          color: var(--ink-2, #1F2A2C);
+          color: var(--ink-2, #3C4043);
           cursor: pointer;
         }
         .confirm-checkbox a {
-          color: var(--emerald, #0E5C4D);
+          color: var(--emerald, #01875F);
           font-weight: 700;
           text-decoration: none;
         }
 
         /* Actions */
+        /* لاصقٌ في الأسفل: كانت قائمةُ الخدمات أربعَ شاشات و«التالي» في
+           آخرها، فيختار المريضُ خدمةً ثمّ يبحث عن الزرّ. */
         .wizard-actions {
+          position: sticky;
+          bottom: 0;
+          z-index: 5;
           display: flex;
           gap: 8px;
-          margin-top: 24px;
-          padding-top: 16px;
+          margin: 24px -16px -16px;
+          padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+          background: var(--paper-3, #FFFFFF);
           border-top: 1px solid var(--line, rgba(15, 26, 28, 0.08));
+          border-radius: 0 0 16px 16px;
+          box-shadow: 0 -6px 16px -10px rgba(15, 26, 28, 0.25);
         }
         .btn-primary,
         .btn-secondary {
@@ -984,8 +998,8 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           transition: all 0.2s;
         }
         .btn-primary {
-          background: var(--emerald, #0E5C4D);
-          color: var(--paper-3, #FAF6EB);
+          background: var(--emerald, #01875F);
+          color: var(--paper-3, #FFFFFF);
           box-shadow: 0 6px 16px -4px rgba(14, 92, 77, 0.4);
         }
         .btn-primary:hover:not(:disabled) {
@@ -997,12 +1011,12 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           box-shadow: none;
         }
         .btn-confirm {
-          background: var(--emerald-deep, #073B30);
+          background: var(--emerald-deep, #056559);
         }
         .btn-secondary {
           background: var(--white, #FFFFFF);
           border: 1px solid var(--line, rgba(15, 26, 28, 0.08));
-          color: var(--ink, #0F1A1C);
+          color: var(--ink, #202124);
         }
       `}</style>
     </div>

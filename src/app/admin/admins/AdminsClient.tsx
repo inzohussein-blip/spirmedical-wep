@@ -116,7 +116,7 @@ export default function AdminsClient({ admins }: Props) {
                   placeholder="07XXXXXXXXX" dir="ltr"
                   style={{ ...inputStyle, width: '100%' }}
                 />
-                <div style={{ fontSize: 10, color: 'var(--ink-3)', marginTop: 4 }}>
+                <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 4 }}>
                   المستخدم يجب أن يكون مسجلاً في النظام
                 </div>
               </div>
@@ -176,7 +176,7 @@ export default function AdminsClient({ admins }: Props) {
                 <tr key={a.id} style={{ borderTop: '1px solid var(--line)' }}>
                   <td style={td}>
                     <div style={{ fontWeight: 700 }}>
-                      {a.name} {a.isMe && <span style={{ fontSize: 10, color: 'var(--emerald)', marginInlineStart: 6 }}>(أنت)</span>}
+                      {a.name} {a.isMe && <span style={{ fontSize: 11, color: 'var(--emerald)', marginInlineStart: 6 }}>(أنت)</span>}
                     </div>
                     {a.email && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{a.email}</div>}
                   </td>

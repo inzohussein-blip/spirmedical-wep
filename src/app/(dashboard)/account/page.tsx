@@ -43,6 +43,9 @@ const SECTION_RECORDS: SectionItem[] = [
   { id: 'medical-record', Icon: IconHeartbeat, color: '#EA4335', bg: '#FCE8E6', title: 'سجلي الطبي', desc: 'تاريخك الصحي ومؤشراتك', href: '/account/medical-record' },
   { id: 'family', Icon: IconUsers, color: '#FF6D00', bg: '#FFF3E0', title: 'أفراد العائلة', desc: 'سجّل خدمات لعائلتك', href: '/account/family' },
   { id: 'favorites', Icon: IconHeart, color: '#C71C56', bg: '#FCE8E6', title: 'المفضّلة', desc: 'الأماكن المحفوظة للوصول السريع', href: '/account/favorites' },
+  // قائمة أمنيات التجميل جدولٌ منفصل عن `service_favorites` (قيد CHECK فيها
+  // لا يشمل التجميل)، فلها مدخلها الخاصّ — وكانت بلا مدخلٍ إطلاقاً
+  { id: 'cosmetic-wishlist', Icon: IconHeart, color: '#B06000', bg: '#FEF7E0', title: 'قائمة أمنياتي', desc: 'منتجات التجميل المحفوظة', href: '/account/cosmetic-wishlist' },
 ];
 
 const SECTION_SETTINGS: SectionItem[] = [
@@ -130,7 +133,7 @@ export default async function AccountPage() {
 
         {/* Profile Card - V3 Hero style */}
         <div style={{
-          background: 'linear-gradient(135deg, #01875F 0%, #056559 100%)',
+          background: 'linear-gradient(135deg, var(--emerald, #01875F) 0%, var(--emerald-deep, #056559) 100%)',
           margin: 14,
           borderRadius: 20,
           padding: 18,
@@ -147,7 +150,7 @@ export default async function AccountPage() {
           <div style={{ display: 'flex', gap: 14, alignItems: 'center', position: 'relative' }}>
             <div style={{
               width: 64, height: 64, borderRadius: '50%',
-              background: '#E6F3EF', color: '#01875F',
+              background: 'var(--emerald-soft, #E6F3EF)', color: 'var(--emerald, #01875F)',
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 28, fontWeight: 900, fontFamily: 'Tajawal, sans-serif',
               flexShrink: 0,
@@ -164,7 +167,7 @@ export default async function AccountPage() {
               <div style={{
                 display: 'inline-block', padding: '2px 10px',
                 background: 'rgba(255,255,255,0.18)', borderRadius: 12,
-                fontSize: 10, fontWeight: 700,
+                fontSize: 11, fontWeight: 700,
               }}>
                 {roleLabel}
               </div>
@@ -280,7 +283,7 @@ export default async function AccountPage() {
         {/* Footer */}
         <div style={{
           textAlign: 'center', padding: '20px 14px 80px',
-          fontSize: 10, color: '#80868B', lineHeight: 1.6,
+          fontSize: 11, color: '#80868B', lineHeight: 1.6,
         }}>
           <div style={{ fontWeight: 700, marginBottom: 2 }}>Spir Medical · سباير ميديكال</div>
           <div>الإصدار 1.0.0 · صنع بعناية في النجف 🇮🇶</div>

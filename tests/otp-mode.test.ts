@@ -4,7 +4,7 @@
  * ═══════════════════════════════════════════════════════════════
  */
 
-import { readOtpMode, shouldUseOtp, canSkipOtp } from '@/features/auth/lib/otp-mode';
+import { readOtpMode, shouldUseOtp, canSkipOtp } from '@/lib/auth/otp-mode';
 
 describe('readOtpMode', () => {
   const originalEnv = process.env.NEXT_PUBLIC_OTP_MODE;

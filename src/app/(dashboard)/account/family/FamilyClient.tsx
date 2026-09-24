@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -189,7 +190,7 @@ export default function FamilyClient({ members, appointmentsCounts }: Props) {
                       {counts && counts.total > 0 && (
                         <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
                           <span style={{
-                            fontSize: 10,
+                            fontSize: 11,
                             padding: '2px 6px',
                             background: 'var(--emerald-soft)',
                             color: 'var(--emerald)',
@@ -200,7 +201,7 @@ export default function FamilyClient({ members, appointmentsCounts }: Props) {
                           </span>
                           {counts.pending > 0 && (
                             <span style={{
-                              fontSize: 10,
+                              fontSize: 11,
                               padding: '2px 6px',
                               background: 'var(--amber-soft)',
                               color: 'var(--amber)',
@@ -349,6 +350,7 @@ function MemberModal({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  const dialogRef = useModalDialog(true, onClose);
   const [fullName, setFullName] = useState(editing?.full_name ?? '');
   const [relation, setRelation] = useState(editing?.relation ?? 'son');
   const [gender, setGender] = useState<'male' | 'female' | ''>(editing?.gender ?? '');
@@ -426,21 +428,26 @@ function MemberModal({
       onClick={onClose}
     >
       <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="member-modal-title"
         onClick={(e) => e.stopPropagation()}
         style={{
           background: 'var(--paper)',
           width: '100%',
           maxWidth: 500,
-          maxHeight: '92vh',
+          maxHeight: '92dvh',
           borderRadius: '20px 20px 0 0',
-          padding: 16,
+          padding: '16px 16px calc(16px + env(safe-area-inset-bottom))',
+          outline: 'none',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-          <h3 style={{ fontSize: 16, fontWeight: 900, margin: 0, flex: 1 }}>
+          <h3 id="member-modal-title" style={{ fontSize: 16, fontWeight: 900, margin: 0, flex: 1 }}>
             {editing ? 'تعديل فرد العائلة' : 'إضافة فرد عائلة'}
           </h3>
           <button
@@ -448,8 +455,9 @@ function MemberModal({
             onClick={onClose}
             aria-label="إغلاق"
             style={{
-              width: 32,
-              height: 32,
+              width: 44,
+              height: 44,
+              flexShrink: 0,
               background: 'var(--paper-3)',
               border: 'none',
               borderRadius: '50%',
@@ -459,11 +467,11 @@ function MemberModal({
               justifyContent: 'center',
             }}
           >
-            <X size={16} />
+            <X size={18} aria-hidden />
           </button>
         </div>
 
-        <div style={{ overflowY: 'auto', flex: 1, paddingBottom: 60 }}>
+        <div style={{ overflowY: 'auto', overscrollBehavior: 'contain', flex: 1, paddingBottom: 60 }}>
           {/* Relation picker */}
           <Label>صلة القرابة *</Label>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 6, marginBottom: 14 }}>
@@ -487,7 +495,7 @@ function MemberModal({
                 }}
               >
                 <span style={{ fontSize: 18 }}>{r.emoji}</span>
-                <span style={{ fontSize: 9, fontWeight: 700 }}>{r.label}</span>
+                <span style={{ fontSize: 11, fontWeight: 700 }}>{r.label}</span>
               </button>
             ))}
           </div>

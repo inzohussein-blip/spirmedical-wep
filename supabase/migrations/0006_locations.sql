@@ -150,22 +150,22 @@ ALTER TABLE public.user_saved_locations ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "saved_locations_select_own" ON public.user_saved_locations;
 CREATE POLICY "saved_locations_select_own"
   ON public.user_saved_locations FOR SELECT
-  USING (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "saved_locations_insert_own" ON public.user_saved_locations;
 CREATE POLICY "saved_locations_insert_own"
   ON public.user_saved_locations FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
+  WITH CHECK ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "saved_locations_update_own" ON public.user_saved_locations;
 CREATE POLICY "saved_locations_update_own"
   ON public.user_saved_locations FOR UPDATE
-  USING (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "saved_locations_delete_own" ON public.user_saved_locations;
 CREATE POLICY "saved_locations_delete_own"
   ON public.user_saved_locations FOR DELETE
-  USING (auth.uid() = user_id);
+  USING ((SELECT auth.uid()) = user_id);
 
 -- Limit: 10 مواقع كحدّ أقصى لكل مستخدم
 CREATE OR REPLACE FUNCTION public.check_saved_locations_limit()
@@ -232,7 +232,7 @@ ALTER TABLE public.geocoding_cache ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "geocoding_cache_select_all" ON public.geocoding_cache;
 CREATE POLICY "geocoding_cache_select_all"
   ON public.geocoding_cache FOR SELECT
-  USING (auth.role() = 'authenticated');
+  USING ((SELECT auth.role()) = 'authenticated');
 
 -- ─── 3. تعليقات ──────────────────────────────────────────
 COMMENT ON TABLE public.user_saved_locations IS

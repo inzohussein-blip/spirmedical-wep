@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { Search } from 'lucide-react';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 interface Pharmacy {
   id: string;
@@ -13,12 +15,12 @@ interface Pharmacy {
 }
 
 const PHARMACIES: Pharmacy[] = [
-  { id: 'p1', name: 'صيدلية الشفاء', city: 'بغداد', district: 'الكرادة', phone: '07811000001', open24: true },
-  { id: 'p2', name: 'صيدلية الرحمة', city: 'بغداد', district: 'المنصور', phone: '07811000002', open24: false },
-  { id: 'p3', name: 'صيدلية النور', city: 'النجف', district: 'الكوفة', phone: '07811000003', open24: true },
-  { id: 'p4', name: 'صيدلية الأمل', city: 'البصرة', district: 'العشار', phone: '07811000004', open24: false },
-  { id: 'p5', name: 'صيدلية الحكمة', city: 'بغداد', district: 'الأعظمية', phone: '07811000005', open24: true },
-  { id: 'p6', name: 'صيدلية ابن البيطار', city: 'الموصل', district: 'الجامعة', phone: '07811000006', open24: false },
+  { id: 'p1', name: 'صيدلية الشفاء', city: 'بغداد', district: 'الكرادة', phone: '0781 xxx xxxx', open24: true },
+  { id: 'p2', name: 'صيدلية الرحمة', city: 'بغداد', district: 'المنصور', phone: '0781 xxx xxxx', open24: false },
+  { id: 'p3', name: 'صيدلية النور', city: 'النجف', district: 'الكوفة', phone: '0781 xxx xxxx', open24: true },
+  { id: 'p4', name: 'صيدلية الأمل', city: 'البصرة', district: 'العشار', phone: '0781 xxx xxxx', open24: false },
+  { id: 'p5', name: 'صيدلية الحكمة', city: 'بغداد', district: 'الأعظمية', phone: '0781 xxx xxxx', open24: true },
+  { id: 'p6', name: 'صيدلية ابن البيطار', city: 'الموصل', district: 'الجامعة', phone: '0781 xxx xxxx', open24: false },
 ];
 
 export default function GuestPharmaciesClient() {
@@ -45,8 +47,8 @@ export default function GuestPharmaciesClient() {
         </div>
 
         <div style={{ padding: '0 18px' }}>
-          <div className="scr-search" style={{ margin: '0 0 12px 0' }}>
-            <div className="scr-search-icon" aria-hidden="true">⌕</div>
+          <label className="scr-search" style={{ margin: '0 0 12px 0' }}>
+            <span className="scr-search-icon" aria-hidden="true"><Search size={13} strokeWidth={2.6} /></span>
             <input
               type="search"
               placeholder="ابحث عن صيدلية أو مدينة..."
@@ -54,7 +56,7 @@ export default function GuestPharmaciesClient() {
               onChange={(e) => setSearchQuery(e.target.value)}
               aria-label="البحث"
             />
-          </div>
+          </label>
 
           <div className="scr-tabs" style={{ padding: '4px 0 12px 0' }}>
             <button
@@ -101,10 +103,10 @@ export default function GuestPharmaciesClient() {
                     <span>{pharmacy.city} - {pharmacy.district}</span>
                   </div>
                   <div className="hospital-actions">
-                    <a href={`tel:${pharmacy.phone}`} className="hospital-action-btn">
+                    <PhoneLink phone={pharmacy.phone} href={`tel:${pharmacy.phone}`} className="hospital-action-btn">
                       <span aria-hidden="true">📞</span>
                       <span>اتصال</span>
-                    </a>
+                    </PhoneLink>
                   </div>
                 </div>
               ))

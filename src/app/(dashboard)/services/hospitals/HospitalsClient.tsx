@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import FreeMedicalMapWrapper from '@/components/maps/SpirMapViewWrapper';
 import type { MapMarker } from '@/types/location';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 interface Hospital {
   id: string;
@@ -325,7 +326,7 @@ export default function HospitalsClient({ hospitals }: Props) {
                               color: typeMeta.color,
                               borderRadius: 4,
                               fontWeight: 700,
-                              fontSize: 10,
+                              fontSize: 11,
                             }}
                           >
                             {typeMeta.label}
@@ -344,7 +345,7 @@ export default function HospitalsClient({ hospitals }: Props) {
                             flexWrap: 'wrap',
                             gap: 4,
                             marginTop: 6,
-                            fontSize: 10,
+                            fontSize: 11,
                           }}
                         >
                           {h.has_emergency && (
@@ -393,18 +394,18 @@ export default function HospitalsClient({ hospitals }: Props) {
                               </span>
                             </div>
                           ) : (
-                            <span style={{ fontSize: 10, color: 'var(--ink-3)' }}>لا تقييمات بعد</span>
+                            <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>لا تقييمات بعد</span>
                           )}
 
                           <div style={{ display: 'flex', gap: 4 }} onClick={(e) => e.preventDefault()}>
                             {h.phone && (
-                              <a
+                              <PhoneLink phone={h.phone}
                                 href={`tel:${h.phone}`}
                                 onClick={(e) => e.stopPropagation()}
                                 style={actionBtnStyle()}
                               >
                                 <Phone size={12} />
-                              </a>
+                              </PhoneLink>
                             )}
                             {h.latitude && h.longitude && (
                               <a

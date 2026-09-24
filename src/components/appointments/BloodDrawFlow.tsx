@@ -18,6 +18,7 @@ import { toast } from '@/components/ui/Toaster';
 import { markLocationUsed } from '@/app/(dashboard)/account/locations/actions';
 import { submitErrorMessage } from '@/lib/forms/submit-error';
 import FamilyMemberPicker from '@/components/family/FamilyMemberPicker';
+import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
 import {
   Droplet, Search, Star, User, MapPin, Building2, Calendar,
   TestTube, Clock, CheckCircle2, BarChart3, Lock, X, Loader2,
@@ -689,12 +690,6 @@ export default function BloodDrawFlow({
                 <div className="bd-lab-emoji">{lab.emoji}</div>
                 <div className="bd-lab-name">{lab.nameAr}</div>
                 <div className="bd-lab-city">{lab.city}</div>
-                {!isAny && lab.rating > 0 && (
-                  <div className="bd-lab-rating">
-                    <Star size={11} strokeWidth={2.4} fill="currentColor" aria-hidden />
-                    <span>{lab.rating} · {lab.reviewsCount}+ تقييم</span>
-                  </div>
-                )}
                 <div className="bd-lab-time">
                   <Clock size={11} strokeWidth={2.4} aria-hidden />
                   <span>{lab.resultTime}</span>
@@ -792,88 +787,91 @@ export default function BloodDrawFlow({
         )}
       </div>
 
-      {/* ═══ Sticky Footer للسعر والإرسال ═══ */}
+      {/* ═══ ملخّص الطلب — داخل الصفحة لا في الشريط الثابت ═══
+          كان التفصيلُ وملخّصُ الحقول الناقصة وسطرُ الثقة كلُّها في الشريط
+          الثابت، فبلغ ارتفاعُه ربعَ شاشة 640px ونما إلى ٢٥٠px عند الخطأ. */}
+      {selectedTests.length > 0 && (
+        <div className="bd-price-card">
+          <div className="bd-price-title">ملخّص الطلب</div>
+          {SHOW_PRICES ? (
+            <>
+              <div className="bd-price-line">
+                <span>التحاليل ({selectedTests.length})</span>
+                <span>{formatTestPrice(total)}</span>
+              </div>
+              <div className="bd-price-line">
+                <span>زيارة فني المختبر</span>
+                <span>{formatTestPrice(BLOOD_DRAW_PRICE)}</span>
+              </div>
+              <div className="bd-price-line bd-price-total">
+                <span>الإجمالي</span>
+                <strong>{formatTestPrice(totalWithDrawing)}</strong>
+              </div>
+            </>
+          ) : (
+            <div className="bd-price-line bd-price-total">
+              <span>التحاليل المختارة</span>
+              <strong>{selectedTests.length}</strong>
+            </div>
+          )}
+          {resultTime && (
+            <div className="bd-result-eta">
+              <BarChart3 size={14} strokeWidth={2.2} aria-hidden />
+              <span>النتيجة جاهزة خلال <strong>{resultTime}</strong> من السحب</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="bd-trust-row">
+        <Lock size={12} strokeWidth={2.2} aria-hidden />
+        <span>معلوماتك مشفّرة · صناعة عراقية ·</span>
+        <Star size={12} strokeWidth={2.4} fill="currentColor" aria-hidden />
+        <span>معتمد طبياً</span>
+      </div>
+
+      {/* ═══ الشريط الثابت: سطرٌ واحد — الملخّص وزرّ الإرسال ═══ */}
       <div className="bd-sticky-footer">
-        {/* ✨ صندوق «الحقول الناقصة» — يظهر عند محاولة إرسال ناقصة، وكل بند قابل للنقر */}
         {missingFields.length > 0 && (
-          <div className="bd-missing-summary" role="alert">
-            <div className="bd-missing-head">
-              <AlertTriangle size={14} strokeWidth={2.6} aria-hidden />
-              <span>لإتمام الطلب، أكمل هذه الحقول:</span>
-            </div>
-            <div className="bd-missing-chips">
-              {missingFields.map((f) => (
-                <button
-                  key={f}
-                  type="button"
-                  className="bd-missing-chip"
-                  onClick={() => {
-                    const el = fieldRefs[f]?.current;
-                    el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    setTimeout(
-                      () => (el as HTMLInputElement | null)?.focus?.({ preventScroll: true }),
-                      300,
-                    );
-                  }}
-                >
-                  {BLOOD_DRAW_FIELD_LABELS[f] || f}
-                  <span className="bd-missing-chip-hint">{fieldErrors[f]}</span>
-                </button>
-              ))}
-            </div>
+          <div className="bd-missing-wrap">
+            <MissingFieldsSummary
+              compact
+              fields={missingFields}
+              labels={BLOOD_DRAW_FIELD_LABELS}
+              errors={fieldErrors as Record<string, string>}
+              onJump={() => focusFirstError(fieldErrors)}
+            />
           </div>
         )}
 
-        {selectedTests.length > 0 && (
-          <div className="bd-price-card">
-            {SHOW_PRICES ? (
+        <div className="bd-footer-row">
+          <div className="bd-footer-sum" aria-live="polite">
+            {selectedTests.length === 0 ? (
+              <span>لم تختر تحليلاً بعد</span>
+            ) : SHOW_PRICES ? (
               <>
-                <div className="bd-price-line">
-                  <span>التحاليل ({selectedTests.length})</span>
-                  <span>{formatTestPrice(total)}</span>
-                </div>
-                <div className="bd-price-line">
-                  <span>زيارة فني المختبر</span>
-                  <span>{formatTestPrice(BLOOD_DRAW_PRICE)}</span>
-                </div>
-                <div className="bd-price-line bd-price-total">
-                  <span>الإجمالي</span>
-                  <strong>{formatTestPrice(totalWithDrawing)}</strong>
-                </div>
+                <span>الإجمالي</span>
+                <strong>{formatTestPrice(totalWithDrawing)}</strong>
               </>
             ) : (
-              <div className="bd-price-line bd-price-total">
+              <>
                 <span>التحاليل المختارة</span>
                 <strong>{selectedTests.length}</strong>
-              </div>
-            )}
-            {resultTime && (
-              <div className="bd-result-eta">
-                <BarChart3 size={14} strokeWidth={2.2} aria-hidden />
-                <span>النتيجة جاهزة خلال <strong>{resultTime}</strong> من السحب</span>
-              </div>
+              </>
             )}
           </div>
-        )}
-
-        <button
-          type="button"
-          className="bd-submit-btn"
-          disabled={submitting}
-          onClick={handleSubmit}
-        >
-          {submitting ? (
-            <><Loader2 size={16} strokeWidth={2.2} style={{ animation: 'spin-smooth 1s linear infinite' }} /> جارٍ إرسال الطلب...</>
-          ) : (
-            <><CheckCircle2 size={16} strokeWidth={2.2} /> اطلب الفحص</>
-          )}
-        </button>
-
-        <div className="bd-trust-row">
-          <Lock size={12} strokeWidth={2.2} aria-hidden />
-          <span>معلوماتك مشفّرة · صناعة عراقية ·</span>
-          <Star size={12} strokeWidth={2.4} fill="currentColor" aria-hidden />
-          <span>معتمد طبياً</span>
+          <button
+            type="button"
+            className="bd-submit-btn"
+            disabled={submitting}
+            onClick={handleSubmit}
+          >
+            {submitting ? (
+              <><Loader2 size={16} strokeWidth={2.2} style={{ animation: 'spin-smooth 1s linear infinite' }} /> جارٍ الإرسال...</>
+            ) : (
+              <><CheckCircle2 size={16} strokeWidth={2.2} /> اطلب الفحص</>
+            )}
+          </button>
         </div>
       </div>
 
@@ -882,7 +880,8 @@ export default function BloodDrawFlow({
           display: flex;
           flex-direction: column;
           gap: 14px;
-          padding-bottom: 130px;
+          /* ارتفاع الشريط الثابت (~76px) + سطر الحقول الناقصة إن ظهر */
+          padding-bottom: 136px;
           position: relative;
         }
 
@@ -892,8 +891,8 @@ export default function BloodDrawFlow({
           align-items: center;
           gap: 12px;
           padding: 16px;
-          background: linear-gradient(135deg, var(--emerald-deep, #073B30), var(--emerald, #0E5C4D));
-          color: var(--paper-3, #FAF6EB);
+          background: linear-gradient(135deg, var(--emerald-deep, #056559), var(--emerald, #01875F));
+          color: var(--paper-3, #FFFFFF);
           border-radius: 16px;
           box-shadow: 0 8px 22px -8px rgba(7, 59, 48, 0.4);
         }
@@ -914,7 +913,7 @@ export default function BloodDrawFlow({
           margin: 0 0 3px;
         }
         .bd-hero-text p {
-          font-size: 11px;
+          font-size: 12px;
           opacity: 0.85;
           margin: 0;
         }
@@ -929,15 +928,15 @@ export default function BloodDrawFlow({
         .bd-card-title {
           font-size: 14px;
           font-weight: 800;
-          color: var(--ink, #0F1A1C);
+          color: var(--ink, #202124);
           margin: 0 0 4px;
           display: flex;
           align-items: center;
           gap: 6px;
         }
         .bd-card-sub {
-          font-size: 11px;
-          color: var(--ink-3, #6E7878);
+          font-size: 12px;
+          color: var(--ink-3, #5F6368);
           margin: 0 0 12px;
         }
 
@@ -955,36 +954,36 @@ export default function BloodDrawFlow({
         }
         .bd-search-input {
           width: 100%;
-          background: var(--paper-3, #FAF6EB);
+          background: var(--paper-3, #FFFFFF);
           border: 1.5px solid var(--line, rgba(15, 26, 28, 0.08));
           border-radius: 12px;
           padding: 12px 38px 12px 14px;
           font-size: 13px;
           font-family: inherit;
-          color: var(--ink, #0F1A1C);
+          color: var(--ink, #202124);
           outline: none;
           transition: border-color 0.15s;
         }
         .bd-search-input:focus {
-          border-color: var(--emerald, #0E5C4D);
+          border-color: var(--emerald, #01875F);
           background: var(--white, #FFFFFF);
         }
         .bd-search-clear {
           position: absolute;
           left: 10px;
-          background: var(--paper-2, #EDE6D3);
+          background: var(--paper-2, #F1F3F4);
           border: 0;
           width: 22px;
           height: 22px;
           border-radius: 50%;
-          font-size: 10px;
+          font-size: 12px;
           cursor: pointer;
-          color: var(--ink-2, #1F2A2C);
+          color: var(--ink-2, #3C4043);
         }
 
         /* ─── SUGGESTIONS ─── */
         .bd-suggestions {
-          background: var(--paper-3, #FAF6EB);
+          background: var(--paper-3, #FFFFFF);
           border-radius: 12px;
           padding: 6px;
           margin-top: 8px;
@@ -1005,11 +1004,11 @@ export default function BloodDrawFlow({
           text-align: right;
         }
         .bd-suggestion:hover {
-          background: var(--emerald-soft, #D9E5DF);
+          background: var(--emerald-soft, #E6F3EF);
         }
         .bd-suggestion.selected {
-          background: var(--emerald-soft, #D9E5DF);
-          border: 1.5px solid var(--emerald, #0E5C4D);
+          background: var(--emerald-soft, #E6F3EF);
+          border: 1.5px solid var(--emerald, #01875F);
         }
         .bd-sug-emoji {
           font-size: 20px;
@@ -1022,18 +1021,18 @@ export default function BloodDrawFlow({
         .bd-sug-name {
           font-size: 12px;
           font-weight: 800;
-          color: var(--ink, #0F1A1C);
+          color: var(--ink, #202124);
         }
         .bd-sug-meta {
-          font-size: 10px;
-          color: var(--ink-3, #6E7878);
+          font-size: 12px;
+          color: var(--ink-3, #5F6368);
           display: flex;
           gap: 5px;
           margin-top: 2px;
         }
         .bd-sug-code {
-          background: var(--emerald-soft, #D9E5DF);
-          color: var(--emerald, #0E5C4D);
+          background: var(--emerald-soft, #E6F3EF);
+          color: var(--emerald, #01875F);
           padding: 1px 6px;
           border-radius: 100px;
           font-weight: 700;
@@ -1043,8 +1042,8 @@ export default function BloodDrawFlow({
           width: 26px;
           height: 26px;
           border-radius: 50%;
-          background: var(--emerald, #0E5C4D);
-          color: var(--paper-3, #FAF6EB);
+          background: var(--emerald, #01875F);
+          color: var(--paper-3, #FFFFFF);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -1056,17 +1055,17 @@ export default function BloodDrawFlow({
           padding: 14px;
           text-align: center;
           font-size: 12px;
-          color: var(--ink-3, #6E7878);
-          background: var(--paper-3, #FAF6EB);
+          color: var(--ink-3, #5F6368);
+          background: var(--paper-3, #FFFFFF);
           border-radius: 10px;
           margin-top: 8px;
         }
 
         /* ─── SECTION LABEL ─── */
         .bd-section-label {
-          font-size: 11px;
+          font-size: 12px;
           font-weight: 700;
-          color: var(--ink-2, #1F2A2C);
+          color: var(--ink-2, #3C4043);
           margin: 14px 0 8px;
         }
         .bd-section-label-2 {
@@ -1104,29 +1103,29 @@ export default function BloodDrawFlow({
           box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.1);
         }
         .bd-chip.selected {
-          background: var(--emerald-soft, #D9E5DF);
-          border-color: var(--emerald, #0E5C4D);
+          background: var(--emerald-soft, #E6F3EF);
+          border-color: var(--emerald, #01875F);
         }
         .bd-chip-emoji {
           font-size: 20px;
         }
         .bd-chip-name {
-          font-size: 11px;
+          font-size: 12px;
           font-weight: 700;
-          color: var(--ink, #0F1A1C);
+          color: var(--ink, #202124);
           text-align: center;
           line-height: 1.3;
         }
         .bd-chip-price {
-          font-size: 10px;
+          font-size: 12px;
           font-weight: 800;
-          color: var(--emerald, #0E5C4D);
+          color: var(--emerald, #01875F);
           font-family: 'JetBrains Mono', monospace;
         }
 
         /* ─── SELECTED LIST ─── */
         .bd-selected-list {
-          background: var(--emerald-soft, #D9E5DF);
+          background: var(--emerald-soft, #E6F3EF);
           border-radius: 12px;
           padding: 12px;
           margin-top: 14px;
@@ -1139,12 +1138,12 @@ export default function BloodDrawFlow({
         }
         .bd-selected-head strong {
           font-size: 12px;
-          color: var(--emerald-deep, #073B30);
+          color: var(--emerald-deep, #056559);
         }
         .bd-discount-badge {
-          background: var(--amber, #B8540C);
-          color: var(--paper-3, #FAF6EB);
-          font-size: 10px;
+          background: var(--amber, #B06000);
+          color: var(--paper-3, #FFFFFF);
+          font-size: 12px;
           padding: 3px 8px;
           border-radius: 100px;
           font-weight: 800;
@@ -1172,19 +1171,19 @@ export default function BloodDrawFlow({
           font-weight: 700;
         }
         .bd-sel-price {
-          font-size: 11px;
+          font-size: 12px;
           font-weight: 800;
-          color: var(--emerald, #0E5C4D);
+          color: var(--emerald, #01875F);
           font-family: 'JetBrains Mono', monospace;
         }
         .bd-sel-remove {
-          background: var(--rose-soft, #F0D7D8);
-          color: var(--rose, #A82E3D);
+          background: var(--rose-soft, #FCE8E6);
+          color: var(--rose, #C71C56);
           border: 0;
           width: 22px;
           height: 22px;
           border-radius: 50%;
-          font-size: 10px;
+          font-size: 12px;
           cursor: pointer;
           font-weight: 800;
         }
@@ -1205,17 +1204,17 @@ export default function BloodDrawFlow({
           margin-bottom: 0;
         }
         .bd-field label {
-          font-size: 11px;
+          font-size: 12px;
           font-weight: 700;
-          color: var(--ink-2, #1F2A2C);
+          color: var(--ink-2, #3C4043);
         }
         .bd-optional {
-          font-size: 9px;
-          color: var(--ink-3, #6E7878);
+          font-size: 12px;
+          color: var(--ink-3, #5F6368);
           font-weight: 600;
         }
         .bd-required {
-          color: var(--rose, #A82E3D);
+          color: var(--rose, #C71C56);
         }
         .bd-input,
         .bd-textarea {
@@ -1226,21 +1225,21 @@ export default function BloodDrawFlow({
           padding: 10px 12px;
           font-size: 13px;
           font-family: inherit;
-          color: var(--ink, #0F1A1C);
+          color: var(--ink, #202124);
           outline: none;
           transition: border-color 0.15s;
         }
         .bd-input:focus,
         .bd-textarea:focus {
-          border-color: var(--emerald, #0E5C4D);
+          border-color: var(--emerald, #01875F);
         }
         .bd-textarea {
           resize: vertical;
           line-height: 1.5;
         }
         .bd-hint {
-          font-size: 10px;
-          color: var(--ink-3, #6E7878);
+          font-size: 12px;
+          color: var(--ink-3, #5F6368);
           margin-top: 4px;
         }
 
@@ -1249,7 +1248,7 @@ export default function BloodDrawFlow({
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 4px;
-          background: var(--paper-2, #EDE6D3);
+          background: var(--paper-2, #F1F3F4);
           padding: 3px;
           border-radius: 10px;
         }
@@ -1260,13 +1259,13 @@ export default function BloodDrawFlow({
           border-radius: 7px;
           font-size: 12px;
           font-weight: 700;
-          color: var(--ink-3, #6E7878);
+          color: var(--ink-3, #5F6368);
           cursor: pointer;
           transition: all 0.15s;
         }
         .bd-toggle-btn.active {
           background: var(--white, #FFFFFF);
-          color: var(--ink, #0F1A1C);
+          color: var(--ink, #202124);
           box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
         }
 
@@ -1276,7 +1275,7 @@ export default function BloodDrawFlow({
           align-items: stretch;
         }
         .bd-phone-prefix {
-          background: var(--paper-2, #EDE6D3);
+          background: var(--paper-2, #F1F3F4);
           border: 1.5px solid var(--line, rgba(15, 26, 28, 0.08));
           border-left: 0;
           border-radius: 10px 0 0 10px;
@@ -1284,7 +1283,7 @@ export default function BloodDrawFlow({
           font-size: 12px;
           font-weight: 700;
           font-family: 'JetBrains Mono', monospace;
-          color: var(--ink-2, #1F2A2C);
+          color: var(--ink-2, #3C4043);
           white-space: nowrap;
         }
         .bd-phone-input {
@@ -1324,17 +1323,17 @@ export default function BloodDrawFlow({
           box-shadow: 0 8px 18px -8px rgba(0, 0, 0, 0.12);
         }
         .bd-lab-card.selected {
-          border-color: var(--emerald, #0E5C4D);
-          background: var(--emerald-soft, #D9E5DF);
+          border-color: var(--emerald, #01875F);
+          background: var(--emerald-soft, #E6F3EF);
         }
         .bd-lab-card.is-any {
-          background: linear-gradient(135deg, var(--amber-soft, #F0DBC2), var(--paper-3, #FAF6EB));
-          border-color: var(--amber, #B8540C);
+          background: linear-gradient(135deg, var(--amber-soft, #FEF7E0), var(--paper-3, #FFFFFF));
+          border-color: var(--amber, #B06000);
         }
         .bd-lab-card.is-any.selected {
-          background: var(--amber, #B8540C);
-          color: var(--paper-3, #FAF6EB);
-          border-color: var(--amber, #B8540C);
+          background: var(--amber, #B06000);
+          color: var(--paper-3, #FFFFFF);
+          border-color: var(--amber, #B06000);
         }
         .bd-lab-emoji {
           font-size: 26px;
@@ -1346,48 +1345,42 @@ export default function BloodDrawFlow({
           line-height: 1.3;
         }
         .bd-lab-city {
-          font-size: 10px;
-          color: var(--ink-3, #6E7878);
+          font-size: 12px;
+          color: var(--ink-3, #5F6368);
         }
         .bd-lab-card.selected .bd-lab-city {
-          color: var(--emerald-deep, #073B30);
+          color: var(--emerald-deep, #056559);
         }
         .bd-lab-card.is-any.selected .bd-lab-city {
-          color: var(--paper-3, #FAF6EB);
+          color: var(--paper-3, #FFFFFF);
           opacity: 0.85;
         }
-        .bd-lab-rating {
-          font-size: 10px;
-          color: var(--amber, #B8540C);
-          font-weight: 700;
-          margin-top: 3px;
-        }
         .bd-lab-time {
-          font-size: 10px;
-          color: var(--ink-3, #6E7878);
+          font-size: 12px;
+          color: var(--ink-3, #5F6368);
           margin-top: 3px;
         }
         .bd-lab-card.selected .bd-lab-time {
-          color: var(--emerald-deep, #073B30);
+          color: var(--emerald-deep, #056559);
         }
         .bd-lab-card.is-any.selected .bd-lab-time {
-          color: var(--paper-3, #FAF6EB);
+          color: var(--paper-3, #FFFFFF);
           opacity: 0.85;
         }
         .bd-lab-check {
           position: absolute;
           top: 8px;
           left: 8px;
-          background: var(--emerald, #0E5C4D);
-          color: var(--paper-3, #FAF6EB);
-          font-size: 9px;
+          background: var(--emerald, #01875F);
+          color: var(--paper-3, #FFFFFF);
+          font-size: 12px;
           font-weight: 800;
           padding: 3px 7px;
           border-radius: 100px;
         }
         .bd-lab-card.is-any.selected .bd-lab-check {
-          background: var(--paper-3, #FAF6EB);
-          color: var(--amber, #B8540C);
+          background: var(--paper-3, #FFFFFF);
+          color: var(--amber, #B06000);
         }
 
         /* ─── DATE/TIME ─── */
@@ -1401,8 +1394,8 @@ export default function BloodDrawFlow({
         .bd-fasting-box {
           display: flex;
           gap: 10px;
-          background: var(--amber-soft, #F0DBC2);
-          border: 1px solid var(--amber, #B8540C);
+          background: var(--amber-soft, #FEF7E0);
+          border: 1px solid var(--amber, #B06000);
           border-radius: 11px;
           padding: 11px;
           margin-top: 10px;
@@ -1413,14 +1406,14 @@ export default function BloodDrawFlow({
         }
         .bd-fasting-box strong {
           display: block;
-          color: var(--amber, #B8540C);
+          color: var(--amber, #B06000);
           font-size: 12px;
           font-weight: 800;
           margin-bottom: 3px;
         }
         .bd-fasting-box p {
-          font-size: 11px;
-          color: var(--ink-2, #1F2A2C);
+          font-size: 12px;
+          color: var(--ink-2, #3C4043);
           margin: 0;
           line-height: 1.5;
         }
@@ -1430,101 +1423,84 @@ export default function BloodDrawFlow({
         .bd-field.error .bd-input,
         .bd-field.error .bd-textarea,
         .bd-phone-wrap.error {
-          border-color: var(--rose, #A82E3D) !important;
+          border-color: var(--rose, #C71C56) !important;
           background: var(--rose-soft, #FCE8E6);
         }
         .bd-card-error {
-          box-shadow: 0 0 0 1.5px var(--rose, #A82E3D);
+          box-shadow: 0 0 0 1.5px var(--rose, #C71C56);
         }
         /* رسالة الخطأ تحت الحقل */
         .bd-field-error {
           display: flex;
           align-items: center;
           gap: 5px;
-          color: var(--rose, #A82E3D);
-          font-size: 11.5px;
+          color: var(--rose, #C71C56);
+          font-size: 12px;
           font-weight: 800;
           margin-top: 5px;
         }
 
-        /* ─── صندوق «الحقول الناقصة» (فوق زر الإرسال) ─── */
-        .bd-missing-summary {
-          background: var(--rose-soft, #FCE8E6);
-          border: 1px solid var(--rose, #A82E3D);
-          border-radius: 12px;
-          padding: 10px 12px;
-          margin-bottom: 10px;
-        }
-        .bd-missing-head {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          color: var(--rose, #A82E3D);
-          font-size: 12px;
-          font-weight: 800;
+        .bd-missing-wrap {
           margin-bottom: 8px;
-        }
-        .bd-missing-chips {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 6px;
-        }
-        .bd-missing-chip {
-          display: inline-flex;
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 1px;
-          padding: 6px 11px;
-          background: var(--white, #FFFFFF);
-          border: 1px solid var(--rose, #A82E3D);
-          border-radius: 10px;
-          font-size: 12px;
-          font-weight: 800;
-          color: var(--rose, #A82E3D);
-          cursor: pointer;
-          transition: all 0.15s;
-          font-family: inherit;
-          text-align: start;
-        }
-        .bd-missing-chip:hover {
-          background: var(--rose, #A82E3D);
-          color: var(--white, #FFFFFF);
-          transform: translateY(-1px);
-        }
-        .bd-missing-chip-hint {
-          font-size: 9px;
-          font-weight: 600;
-          opacity: 0.85;
         }
 
         /* ─── STICKY FOOTER (داخل حدود التطبيق 480px) ─── */
         .bd-sticky-footer {
           position: fixed;
-          bottom: 64px; /* فوق الـ bottom-nav مباشرة */
+          /* شريط التنقّل السفليّ مخفيّ في صفحة الطلب (AppShell)، فالشريط
+             يستقرّ على الحافّة ويتجنّب منطقة المؤشّر في iOS. */
+          bottom: 0;
           left: 0;
           right: 0;
           margin: 0 auto;
           width: 100%;
           max-width: 480px;
           background: var(--white, #FFFFFF);
-          padding: 10px 14px 12px;
+          padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
           z-index: 35;
           box-sizing: border-box;
           border-top: 1px solid var(--line, rgba(15, 26, 28, 0.08));
-          transition: all 0.2s ease;
+          box-shadow: 0 -6px 16px -10px rgba(15, 26, 28, 0.25);
+        }
+        .bd-footer-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .bd-footer-sum {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+          flex: 1;
+          font-size: 12px;
+          font-weight: 700;
+          color: var(--ink-3, #5F6368);
+          line-height: 1.3;
+        }
+        .bd-footer-sum strong {
+          font-size: 16px;
+          font-weight: 800;
+          color: var(--emerald, #01875F);
+          font-family: 'JetBrains Mono', monospace;
         }
         .bd-price-card {
-          background: var(--paper-3, #FAF6EB);
-          border-radius: 11px;
-          padding: 10px 12px;
-          margin-bottom: 10px;
+          background: var(--paper-3, #FFFFFF);
+          border: 1px solid var(--line, rgba(15, 26, 28, 0.08));
+          border-radius: 12px;
+          padding: 12px 14px;
+        }
+        .bd-price-title {
+          font-size: 13px;
+          font-weight: 800;
+          color: var(--ink, #202124);
+          margin-bottom: 6px;
         }
         .bd-price-line {
           display: flex;
           justify-content: space-between;
-          padding: 2px 0;
-          font-size: 11px;
-          color: var(--ink-2, #1F2A2C);
+          padding: 3px 0;
+          font-size: 12px;
+          color: var(--ink-2, #3C4043);
         }
         .bd-price-total {
           border-top: 1px solid var(--line, rgba(15, 26, 28, 0.08));
@@ -1538,20 +1514,24 @@ export default function BloodDrawFlow({
         .bd-price-total strong {
           font-size: 16px;
           font-weight: 800;
-          color: var(--emerald, #0E5C4D);
+          color: var(--emerald, #01875F);
           font-family: 'JetBrains Mono', monospace;
         }
         .bd-result-eta {
-          font-size: 10px;
-          color: var(--emerald-deep, #073B30);
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 12px;
+          color: var(--emerald-deep, #056559);
           margin-top: 6px;
           padding-top: 6px;
           border-top: 1px dashed var(--line, rgba(15, 26, 28, 0.08));
         }
         .bd-submit-btn {
-          width: 100%;
-          background: var(--emerald, #0E5C4D);
-          color: var(--paper-3, #FAF6EB);
+          flex: 1.4;
+          min-height: 48px;
+          background: var(--emerald, #01875F);
+          color: var(--paper-3, #FFFFFF);
           border: 0;
           border-radius: 12px;
           padding: 13px;
@@ -1567,7 +1547,7 @@ export default function BloodDrawFlow({
           gap: 6px;
         }
         .bd-submit-btn:hover:not(:disabled) {
-          background: var(--emerald-deep, #073B30);
+          background: var(--emerald-deep, #056559);
           transform: translateY(-1px);
         }
         .bd-submit-btn:disabled {
@@ -1575,11 +1555,17 @@ export default function BloodDrawFlow({
           cursor: wait;
           box-shadow: none;
         }
+        /* سطرٌ مرن لا نصٌّ مُوسَّط: Tailwind يجعل كلّ <svg> كتلةً
+           (display: block)، فكانت الأيقونتان تسقطان كلٌّ على سطرٍ عند حافّة
+           الشاشة بعيداً عن نصّهما. */
         .bd-trust-row {
-          text-align: center;
-          font-size: 9px;
-          color: var(--ink-3, #6E7878);
-          margin-top: 7px;
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: center;
+          gap: 4px;
+          font-size: 12px;
+          color: var(--ink-3, #5F6368);
         }
         /* ✨ V25.1: Saved Locations chips */
         .bd-saved-locations {
@@ -1593,7 +1579,7 @@ export default function BloodDrawFlow({
           display: flex;
           align-items: center;
           gap: 6px;
-          font-size: 11px;
+          font-size: 12px;
           font-weight: 800;
           color: var(--emerald-deep);
           margin-bottom: 8px;
@@ -1611,7 +1597,7 @@ export default function BloodDrawFlow({
           background: var(--white);
           border: 1px solid var(--emerald);
           border-radius: 100px;
-          font-size: 11px;
+          font-size: 12px;
           font-weight: 700;
           color: var(--emerald-deep);
           cursor: pointer;

@@ -16,6 +16,7 @@ import HospitalBookingButton from '@/components/hospitals/HospitalBookingButton'
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import { checkIsFavorite } from '@/components/services/favorites-actions';
 import { count, formatRating } from '@/lib/format/price';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 export const dynamic = 'force-dynamic';
 
@@ -200,25 +201,25 @@ export default async function HospitalDetailPage({
         {/* Contact actions */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6, marginBottom: 14 }}>
           {hospital.phone && (
-            <a
+            <PhoneLink phone={hospital.phone}
               href={`tel:${hospital.phone}`}
               style={contactBtn('var(--emerald)')}
             >
               <Phone size={16} />
               <span>اتصال</span>
-            </a>
+            </PhoneLink>
           )}
           {hospital.phone_emergency && (
-            <a
+            <PhoneLink phone={hospital.phone_emergency}
               href={`tel:${hospital.phone_emergency}`}
               style={contactBtn('var(--rose)')}
             >
               <AlertTriangle size={16} />
               <span>طوارئ</span>
-            </a>
+            </PhoneLink>
           )}
           {hospital.whatsapp && (
-            <a
+            <PhoneLink phone={hospital.whatsapp}
               href={`https://wa.me/${hospital.whatsapp.replace(/\D/g, '')}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -226,7 +227,7 @@ export default async function HospitalDetailPage({
             >
               <MessageCircle size={16} />
               <span>واتساب</span>
-            </a>
+            </PhoneLink>
           )}
         </div>
 
@@ -386,7 +387,7 @@ function StatBox({ icon, value, label }: { icon: React.ReactNode; value: string;
     <div style={{ padding: 8, background: 'rgba(255,255,255,0.12)', borderRadius: 10, textAlign: 'center' }}>
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 2, opacity: 0.85 }}>{icon}</div>
       <div style={{ fontSize: 13, fontWeight: 900 }}>{value}</div>
-      <div style={{ fontSize: 9, opacity: 0.75, marginTop: 1 }}>{label}</div>
+      <div style={{ fontSize: 11, opacity: 0.75, marginTop: 1 }}>{label}</div>
     </div>
   );
 }

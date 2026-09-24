@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Download, X, Smartphone, Sparkles, CheckCircle2 } from 'lucide-react';
 import { getDeferredPrompt, onInstallPromptChange, triggerInstall } from '@/lib/pwa';
+import { usePathname } from 'next/navigation';
+import { isFocusedTaskRoute, isEmergencyRoute } from '@/lib/focused-routes';
 
 /**
  * ═══════════════════════════════════════════════════════════════
@@ -32,6 +34,7 @@ interface BeforeInstallPromptEvent extends Event {
 
 export default function SmartInstallPrompt() {
   const [show, setShow] = useState(false);
+  const pathname = usePathname();
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isIOS, setIsIOS] = useState(false);
   const [showIOSInstructions, setShowIOSInstructions] = useState(false);
@@ -143,7 +146,8 @@ export default function SmartInstallPrompt() {
     setShow(false);
   };
 
-  if (!show) return null;
+  // لا ينبثق فوق نموذج الطلب ولا فوق شاشة الطوارئ
+  if (!show || isFocusedTaskRoute(pathname) || isEmergencyRoute(pathname)) return null;
 
   if (showIOSInstructions) {
     return <IOSInstructionsModal onClose={() => setShowIOSInstructions(false)} />;

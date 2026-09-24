@@ -11,6 +11,7 @@ import { haptic } from '@/lib/haptic';
 import { toast } from '@/components/ui/Toaster';
 import { createServiceBooking } from './actions';
 import type { BookingProvider } from './page';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 interface Props {
   provider: BookingProvider;
@@ -360,8 +361,8 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
                           fontSize: 12,
                           fontWeight: 600,
                           border: '1px solid',
-                          borderColor: selected ? '#0F6E56' : 'var(--line)',
-                          background: selected ? '#0F6E56' : 'var(--white)',
+                          borderColor: selected ? 'var(--emerald-mid, #0F6E56)' : 'var(--line)',
+                          background: selected ? 'var(--emerald-mid, #0F6E56)' : 'var(--white)',
                           color: selected ? 'white' : 'var(--ink-2)',
                           cursor: 'pointer',
                           fontFamily: 'inherit',
@@ -400,8 +401,8 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
                           fontSize: 12,
                           fontWeight: 600,
                           border: '1px solid',
-                          borderColor: selected ? '#0F6E56' : 'var(--line)',
-                          background: selected ? '#0F6E56' : 'var(--white)',
+                          borderColor: selected ? 'var(--emerald-mid, #0F6E56)' : 'var(--line)',
+                          background: selected ? 'var(--emerald-mid, #0F6E56)' : 'var(--white)',
                           color: selected ? 'white' : 'var(--ink-2)',
                           cursor: 'pointer',
                           fontFamily: 'inherit',
@@ -441,7 +442,7 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
                       padding: '3px 8px',
                       background: 'var(--white)',
                       borderRadius: 100,
-                      fontSize: 10,
+                      fontSize: 11,
                       fontWeight: 700,
                     }}>
                       ✓ {s}
@@ -627,7 +628,7 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
 
           {/* WhatsApp alternative */}
           {step === 'details' && provider.whatsapp && (
-            <a
+            <PhoneLink phone={provider.whatsapp}
               href={`https://wa.me/${provider.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`السلام عليكم - أود حجز موعد ${serviceLabel} عبر Spir Medical`)}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -650,7 +651,7 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
             >
               <MessageCircle size={14} />
               أو احجز مباشرة عبر WhatsApp
-            </a>
+            </PhoneLink>
           )}
         </div>
       </div>

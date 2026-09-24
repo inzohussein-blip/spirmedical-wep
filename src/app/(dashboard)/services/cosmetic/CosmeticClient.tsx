@@ -220,7 +220,7 @@ function ProductCard({ product, compact = false }: { product: Product; compact?:
           insetInlineStart: 8,
           background: 'var(--amber)',
           color: 'var(--paper-3)',
-          fontSize: 10,
+          fontSize: 11,
           fontWeight: 900,
           padding: '2px 6px',
           borderRadius: 4,
@@ -244,7 +244,7 @@ function ProductCard({ product, compact = false }: { product: Product; compact?:
         {product.name}
       </div>
 
-      <div style={{ fontSize: 10, color: 'var(--ink-3)', marginBottom: 6 }}>
+      <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 6 }}>
         {product.brand}
         {product.country_of_origin && ` · ${product.country_of_origin}`}
       </div>
@@ -257,10 +257,10 @@ function ProductCard({ product, compact = false }: { product: Product; compact?:
           marginBottom: 6,
         }}>
           <Star size={10} fill="var(--amber)" color="var(--amber)" />
-          <span style={{ fontSize: 10, fontWeight: 800, color: 'var(--amber)' }}>
+          <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--amber)' }}>
             {product.rating_avg.toFixed(1)}
           </span>
-          <span style={{ fontSize: 9, color: 'var(--ink-3)' }}>
+          <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>
             ({product.rating_count})
           </span>
         </div>
@@ -269,7 +269,7 @@ function ProductCard({ product, compact = false }: { product: Product; compact?:
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
         {hasDiscount && (
           <span style={{
-            fontSize: 10,
+            fontSize: 11,
             color: 'var(--ink-3)',
             textDecoration: 'line-through',
           }}>
@@ -283,13 +283,13 @@ function ProductCard({ product, compact = false }: { product: Product; compact?:
         }}>
           {finalPrice.toLocaleString('ar-IQ')}
         </span>
-        <span style={{ fontSize: 9, color: 'var(--ink-3)' }}>د.ع</span>
+        <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>د.ع</span>
       </div>
 
       {!product.is_in_stock && (
         <div style={{
           marginTop: 6,
-          fontSize: 9,
+          fontSize: 11,
           color: 'var(--rose)',
           fontWeight: 700,
         }}>

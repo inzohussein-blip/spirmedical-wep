@@ -84,42 +84,42 @@ ALTER TABLE public.health_vitals ENABLE ROW LEVEL SECURITY;
 
 -- Reminders policies
 DROP POLICY IF EXISTS reminders_select_own ON public.reminders;
-CREATE POLICY reminders_select_own ON public.reminders FOR SELECT USING (user_id = auth.uid());
+CREATE POLICY reminders_select_own ON public.reminders FOR SELECT USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS reminders_insert_own ON public.reminders;
-CREATE POLICY reminders_insert_own ON public.reminders FOR INSERT WITH CHECK (user_id = auth.uid());
+CREATE POLICY reminders_insert_own ON public.reminders FOR INSERT WITH CHECK (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS reminders_update_own ON public.reminders;
-CREATE POLICY reminders_update_own ON public.reminders FOR UPDATE USING (user_id = auth.uid());
+CREATE POLICY reminders_update_own ON public.reminders FOR UPDATE USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS reminders_delete_own ON public.reminders;
-CREATE POLICY reminders_delete_own ON public.reminders FOR DELETE USING (user_id = auth.uid());
+CREATE POLICY reminders_delete_own ON public.reminders FOR DELETE USING (user_id = (SELECT auth.uid()));
 
 -- Prescriptions policies
 DROP POLICY IF EXISTS prescriptions_select_own ON public.prescriptions;
-CREATE POLICY prescriptions_select_own ON public.prescriptions FOR SELECT USING (user_id = auth.uid());
+CREATE POLICY prescriptions_select_own ON public.prescriptions FOR SELECT USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS prescriptions_insert_own ON public.prescriptions;
-CREATE POLICY prescriptions_insert_own ON public.prescriptions FOR INSERT WITH CHECK (user_id = auth.uid());
+CREATE POLICY prescriptions_insert_own ON public.prescriptions FOR INSERT WITH CHECK (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS prescriptions_update_own ON public.prescriptions;
-CREATE POLICY prescriptions_update_own ON public.prescriptions FOR UPDATE USING (user_id = auth.uid());
+CREATE POLICY prescriptions_update_own ON public.prescriptions FOR UPDATE USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS prescriptions_delete_own ON public.prescriptions;
-CREATE POLICY prescriptions_delete_own ON public.prescriptions FOR DELETE USING (user_id = auth.uid());
+CREATE POLICY prescriptions_delete_own ON public.prescriptions FOR DELETE USING (user_id = (SELECT auth.uid()));
 
 -- Health vitals policies
 DROP POLICY IF EXISTS vitals_select_own ON public.health_vitals;
-CREATE POLICY vitals_select_own ON public.health_vitals FOR SELECT USING (user_id = auth.uid());
+CREATE POLICY vitals_select_own ON public.health_vitals FOR SELECT USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS vitals_insert_own ON public.health_vitals;
-CREATE POLICY vitals_insert_own ON public.health_vitals FOR INSERT WITH CHECK (user_id = auth.uid());
+CREATE POLICY vitals_insert_own ON public.health_vitals FOR INSERT WITH CHECK (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS vitals_update_own ON public.health_vitals;
-CREATE POLICY vitals_update_own ON public.health_vitals FOR UPDATE USING (user_id = auth.uid());
+CREATE POLICY vitals_update_own ON public.health_vitals FOR UPDATE USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS vitals_delete_own ON public.health_vitals;
-CREATE POLICY vitals_delete_own ON public.health_vitals FOR DELETE USING (user_id = auth.uid());
+CREATE POLICY vitals_delete_own ON public.health_vitals FOR DELETE USING (user_id = (SELECT auth.uid()));
 
 -- ═══════════════════════════════════════════════════════════════════
 -- Triggers لتحديث updated_at تلقائياً
@@ -399,7 +399,7 @@ CREATE POLICY "partner_labs_admin_all"
   USING (
     EXISTS (
       SELECT 1 FROM public.users 
-      WHERE id = auth.uid() AND role = 'admin'
+      WHERE id = (SELECT auth.uid()) AND role = 'admin'
     )
   );
 
@@ -409,12 +409,12 @@ ALTER TABLE public.lab_orders ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "lab_orders_user_own" ON public.lab_orders;
 CREATE POLICY "lab_orders_user_own"
   ON public.lab_orders FOR SELECT
-  USING (user_id = auth.uid());
+  USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "lab_orders_user_insert" ON public.lab_orders;
 CREATE POLICY "lab_orders_user_insert"
   ON public.lab_orders FOR INSERT
-  WITH CHECK (user_id = auth.uid());
+  WITH CHECK (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "lab_orders_specialist_read" ON public.lab_orders;
 CREATE POLICY "lab_orders_specialist_read"
@@ -423,7 +423,7 @@ CREATE POLICY "lab_orders_specialist_read"
     EXISTS (
       SELECT 1 FROM public.appointments a
       WHERE a.lab_order_id = lab_orders.id
-        AND a.specialist_id = auth.uid()
+        AND a.specialist_id = (SELECT auth.uid())
     )
   );
 
@@ -434,7 +434,7 @@ CREATE POLICY "lab_orders_specialist_update"
     EXISTS (
       SELECT 1 FROM public.appointments a
       WHERE a.lab_order_id = lab_orders.id
-        AND a.specialist_id = auth.uid()
+        AND a.specialist_id = (SELECT auth.uid())
     )
   );
 
@@ -442,7 +442,7 @@ DROP POLICY IF EXISTS "lab_orders_admin_all" ON public.lab_orders;
 CREATE POLICY "lab_orders_admin_all"
   ON public.lab_orders FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    EXISTS (SELECT 1 FROM public.users WHERE id = (SELECT auth.uid()) AND role = 'admin')
   );
 
 -- lab_results: المريض يرى نتائجه، الـ specialist يدخلها، الـ admin يدير
@@ -451,23 +451,86 @@ ALTER TABLE public.lab_results ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "lab_results_user_own" ON public.lab_results;
 CREATE POLICY "lab_results_user_own"
   ON public.lab_results FOR SELECT
-  USING (user_id = auth.uid());
+  USING (user_id = (SELECT auth.uid()));
 
+-- تصحيحٌ لاحق (الترحيل 0028): كانت هنا سياسةٌ واحدة باسم
+-- `lab_results_specialist_manage` تمنح `ALL` لكلّ من حمل
+-- `specialist_type = 'lab_analyst'` — بلا أيّ ربطٍ بطلبٍ ولا بمريض. فكان
+-- أيّ محلّل مختبراتٍ يقرأ ويعدّل ويحذف نتائج **كلّ** المرضى. أُثبت ذلك في
+-- معاملةٍ مُلغاة: محلّلٌ غريبٌ حذف نتيجة فحص HIV لمريضٍ لا صلة له به.
+-- والبديل أدناه يطابق ما يفرضه الكود أصلاً في
+-- `specialist/orders/[id]/actions.ts`: الإسناد إلى الموعد الحامل للطلب.
 DROP POLICY IF EXISTS "lab_results_specialist_manage" ON public.lab_results;
-CREATE POLICY "lab_results_specialist_manage"
-  ON public.lab_results FOR ALL
+
+DROP POLICY IF EXISTS "lab_results_analyst_read" ON public.lab_results;
+CREATE POLICY "lab_results_analyst_read"
+  ON public.lab_results FOR SELECT TO authenticated
   USING (
-    EXISTS (
-      SELECT 1 FROM public.users 
-      WHERE id = auth.uid() AND specialist_type = 'lab_analyst'
-    )
+    EXISTS (SELECT 1 FROM public.appointments a
+             WHERE a.lab_order_id = lab_results.lab_order_id
+               AND (a.specialist_id = (SELECT auth.uid()) OR a.assigned_specialist_id = (SELECT auth.uid())))
+    AND EXISTS (SELECT 1 FROM public.users u
+                 WHERE u.id = (SELECT auth.uid()) AND u.specialist_type = 'lab_analyst'
+                   AND u.approval_status = 'approved'
+                   AND COALESCE(u.is_suspended, false) = false)
+  );
+
+DROP POLICY IF EXISTS "lab_results_analyst_insert" ON public.lab_results;
+CREATE POLICY "lab_results_analyst_insert"
+  ON public.lab_results FOR INSERT TO authenticated
+  WITH CHECK (
+    entered_by = (SELECT auth.uid())
+    AND EXISTS (SELECT 1 FROM public.appointments a
+                 WHERE a.lab_order_id = lab_results.lab_order_id
+                   AND (a.specialist_id = (SELECT auth.uid()) OR a.assigned_specialist_id = (SELECT auth.uid()))
+                   AND a.user_id = lab_results.user_id)
+    AND EXISTS (SELECT 1 FROM public.users u
+                 WHERE u.id = (SELECT auth.uid()) AND u.specialist_type = 'lab_analyst'
+                   AND u.approval_status = 'approved'
+                   AND COALESCE(u.is_suspended, false) = false)
+  );
+
+DROP POLICY IF EXISTS "lab_results_analyst_update" ON public.lab_results;
+CREATE POLICY "lab_results_analyst_update"
+  ON public.lab_results FOR UPDATE TO authenticated
+  USING (
+    EXISTS (SELECT 1 FROM public.appointments a
+             WHERE a.lab_order_id = lab_results.lab_order_id
+               AND (a.specialist_id = (SELECT auth.uid()) OR a.assigned_specialist_id = (SELECT auth.uid())))
+    AND EXISTS (SELECT 1 FROM public.users u
+                 WHERE u.id = (SELECT auth.uid()) AND u.specialist_type = 'lab_analyst'
+                   AND u.approval_status = 'approved'
+                   AND COALESCE(u.is_suspended, false) = false)
+  )
+  WITH CHECK (
+    EXISTS (SELECT 1 FROM public.appointments a
+             WHERE a.lab_order_id = lab_results.lab_order_id
+               AND (a.specialist_id = (SELECT auth.uid()) OR a.assigned_specialist_id = (SELECT auth.uid()))
+               AND a.user_id = lab_results.user_id)
+    AND EXISTS (SELECT 1 FROM public.users u
+                 WHERE u.id = (SELECT auth.uid()) AND u.specialist_type = 'lab_analyst'
+                   AND u.approval_status = 'approved'
+                   AND COALESCE(u.is_suspended, false) = false)
+  );
+
+DROP POLICY IF EXISTS "lab_results_analyst_delete" ON public.lab_results;
+CREATE POLICY "lab_results_analyst_delete"
+  ON public.lab_results FOR DELETE TO authenticated
+  USING (
+    EXISTS (SELECT 1 FROM public.appointments a
+             WHERE a.lab_order_id = lab_results.lab_order_id
+               AND (a.specialist_id = (SELECT auth.uid()) OR a.assigned_specialist_id = (SELECT auth.uid())))
+    AND EXISTS (SELECT 1 FROM public.users u
+                 WHERE u.id = (SELECT auth.uid()) AND u.specialist_type = 'lab_analyst'
+                   AND u.approval_status = 'approved'
+                   AND COALESCE(u.is_suspended, false) = false)
   );
 
 DROP POLICY IF EXISTS "lab_results_admin_all" ON public.lab_results;
 CREATE POLICY "lab_results_admin_all"
   ON public.lab_results FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    EXISTS (SELECT 1 FROM public.users WHERE id = (SELECT auth.uid()) AND role = 'admin')
   );
 
 -- ─── 6. Trigger لتحديث updated_at ───
@@ -536,25 +599,33 @@ BEGIN
      (OLD.status != 'delivered' AND NEW.status = 'delivered') THEN
     
     -- أضِف إلى notification_queue
+    -- تصحيحٌ لاحق (الترحيل 0029): كانت هذه العبارة تكتب
+    -- `user_id, title, icon, data, scheduled_at` — وخمستها لا وجود لها في
+    -- `notification_queue` المعرَّف في 0002، بينما `recipient_phone` و
+    -- `channel` إلزاميّان وغائبان. والمشغِّل AFTER، فالخطأ كان يُسقط تحديث
+    -- `lab_orders` كلَّه لا الإشعارَ وحده. يحرس الشكلَ الصحيحَ الآن
+    -- `tests/insert-column-contracts.test.ts`.
     INSERT INTO public.notification_queue (
-      user_id,
+      recipient_user_id,
+      recipient_phone,
+      channel,
       template_key,
-      title,
       body,
-      icon,
-      data,
-      created_at,
-      scheduled_at
-    ) VALUES (
+      scheduled_for,
+      related_type,
+      related_id
+    )
+    SELECT
       NEW.user_id,
+      u.phone,
+      'push',
       'lab_results_ready',
-      'نتائج التحاليل جاهزة 🎉',
       'نتائج فحوصاتك جاهزة الآن! انقر لعرضها.',
-      '🩸',
-      jsonb_build_object('lab_order_id', NEW.id, 'url', '/account/lab-history/' || NEW.id),
       NOW(),
-      NOW()
-    );
+      'lab_order',
+      NEW.id
+    FROM public.users u
+    WHERE u.id = NEW.user_id AND u.phone IS NOT NULL AND u.phone <> '';
     
   END IF;
   

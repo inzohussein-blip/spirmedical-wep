@@ -39,6 +39,7 @@ export const IS_MARKETING_SITE = SITE_TYPE === 'marketing' || SITE_TYPE === 'all
  * المسارات الـ public (للموقع التسويقي فقط)
  */
 export const MARKETING_PATHS = [
+  '/home-blood-draw',
   '/about',
   '/blog',
   '/faq',

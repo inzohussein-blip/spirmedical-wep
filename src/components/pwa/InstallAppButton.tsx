@@ -7,6 +7,7 @@ import {
   getDeferredPrompt, onInstallPromptChange, triggerInstall,
 } from '@/lib/pwa';
 import { haptic } from '@/lib/haptic';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 /**
  * InstallAppButton (V32)
@@ -21,6 +22,7 @@ export default function InstallAppButton() {
   const [hasPrompt, setHasPrompt] = useState(false);
   const [installed, setInstalled] = useState(false);
   const [showIOSInstructions, setShowIOSInstructions] = useState(false);
+  const dialogRef = useModalDialog(showIOSInstructions, () => setShowIOSInstructions(false));
 
   useEffect(() => {
     setInstalled(isPWAInstalled());
@@ -156,8 +158,13 @@ export default function InstallAppButton() {
           }}
         >
           <div
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="install-help-title"
             onClick={(e) => e.stopPropagation()}
             style={{
+              outline: 'none',
               background: 'var(--paper)',
               borderRadius: 18,
               padding: 22,
@@ -165,7 +172,7 @@ export default function InstallAppButton() {
               width: '100%',
             }}
           >
-            <h3 style={{ fontSize: 16, fontWeight: 900, marginBottom: 12 }}>
+            <h3 id="install-help-title" style={{ fontSize: 16, fontWeight: 900, marginBottom: 12 }}>
               📱 {isIOSDevice() ? 'تثبيت على iPhone / iPad' : 'تثبيت التطبيق'}
             </h3>
             {isIOSDevice() ? (

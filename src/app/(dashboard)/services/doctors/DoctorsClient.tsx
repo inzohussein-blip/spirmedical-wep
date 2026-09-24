@@ -34,6 +34,14 @@ interface Doctor {
 
 interface Props {
   doctors: Doctor[];
+  /**
+   * قيمٌ ابتدائية من المسار. صفحة الاستشارات تربط رقائق الاختصاص بـ
+   * `/services/doctors?specialty=…` وزرَّ الفيديو بـ`?video=true`، وكانت
+   * الصفحة لا تقرأ أيّاً منهما — فكلّ رقاقةٍ تؤدّي إلى القائمة نفسها
+   * غير مُرشَّحة.
+   */
+  initialSpecialty?: string;
+  videoOnly?: boolean;
 }
 
 const SPECIALTIES: Record<string, { label: string; emoji: string }> = {
@@ -50,9 +58,9 @@ const SPECIALTIES: Record<string, { label: string; emoji: string }> = {
 
 const CITIES = ['الكل', 'بغداد', 'البصرة', 'الموصل', 'النجف', 'كربلاء', 'أربيل'];
 
-export default function DoctorsClient({ doctors }: Props) {
+export default function DoctorsClient({ doctors, initialSpecialty = '', videoOnly = false }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSpecialty, setSelectedSpecialty] = useState<string>('');
+  const [selectedSpecialty, setSelectedSpecialty] = useState<string>(initialSpecialty);
   const [selectedCity, setSelectedCity] = useState('الكل');
 
   const filtered = useMemo(() => {
@@ -61,9 +69,10 @@ export default function DoctorsClient({ doctors }: Props) {
         d.full_name.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesSpec = !selectedSpecialty || d.specialty === selectedSpecialty;
       const matchesCity = selectedCity === 'الكل' || d.clinic_city === selectedCity;
-      return matchesSearch && matchesSpec && matchesCity;
+      const matchesVideo = !videoOnly || d.available_for_video;
+      return matchesSearch && matchesSpec && matchesCity && matchesVideo;
     });
-  }, [doctors, searchQuery, selectedSpecialty, selectedCity]);
+  }, [doctors, searchQuery, selectedSpecialty, selectedCity, videoOnly]);
 
   const presentSpecialties = useMemo(() => {
     const set = new Set<string>();
@@ -255,7 +264,7 @@ export default function DoctorsClient({ doctors }: Props) {
                             flexWrap: 'wrap',
                             gap: 4,
                             marginTop: 6,
-                            fontSize: 10,
+                            fontSize: 11,
                           }}
                         >
                           {d.years_experience > 0 && (
@@ -292,7 +301,7 @@ export default function DoctorsClient({ doctors }: Props) {
                             <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--amber)' }}>
                               {d.rating_avg.toFixed(1)}
                             </span>
-                            <span style={{ fontSize: 10, color: 'var(--ink-3)' }}>
+                            <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                               ({d.rating_count} تقييم)
                             </span>
                           </div>
@@ -350,7 +359,7 @@ export default function DoctorsClient({ doctors }: Props) {
 
 function tagStyle(): React.CSSProperties {
   return {
-    fontSize: 10,
+    fontSize: 11,
     padding: '3px 8px',
     background: 'var(--paper-3)',
     color: 'var(--ink-3)',
@@ -368,7 +377,7 @@ function serviceTag(): React.CSSProperties {
     background: 'var(--paper-3)',
     color: 'var(--ink-2)',
     borderRadius: 6,
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: 700,
   };
 }

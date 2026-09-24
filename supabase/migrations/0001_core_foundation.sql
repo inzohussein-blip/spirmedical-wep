@@ -204,46 +204,46 @@ ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
 -- ─── Users Policies ───
 DROP POLICY IF EXISTS "Users can view their own profile" ON public.users;
 CREATE POLICY "Users can view their own profile" ON public.users
-  FOR SELECT USING (auth.uid() = id);
+  FOR SELECT USING ((SELECT auth.uid()) = id);
 
 DROP POLICY IF EXISTS "Specialists can view patients in their appointments" ON public.users;
 CREATE POLICY "Specialists can view patients in their appointments" ON public.users
   FOR SELECT USING (
     EXISTS (
       SELECT 1 FROM public.appointments
-      WHERE appointments.specialist_id = auth.uid()
+      WHERE appointments.specialist_id = (SELECT auth.uid())
       AND appointments.user_id = users.id
     )
   );
 
 DROP POLICY IF EXISTS "Users can update their own profile" ON public.users;
 CREATE POLICY "Users can update their own profile" ON public.users
-  FOR UPDATE USING (auth.uid() = id);
+  FOR UPDATE USING ((SELECT auth.uid()) = id);
 
 DROP POLICY IF EXISTS "Service role full access users" ON public.users;
 CREATE POLICY "Service role full access users" ON public.users
-  USING (auth.jwt()->>'role' = 'service_role')
-  WITH CHECK (auth.jwt()->>'role' = 'service_role');
+  USING ((SELECT auth.jwt())->>'role' = 'service_role')
+  WITH CHECK ((SELECT auth.jwt())->>'role' = 'service_role');
 
 
 -- ─── Appointments Policies ───
 DROP POLICY IF EXISTS "Users see own appointments" ON public.appointments;
 CREATE POLICY "Users see own appointments" ON public.appointments
-  FOR SELECT USING (auth.uid() = user_id OR auth.uid() = specialist_id);
+  FOR SELECT USING ((SELECT auth.uid()) = user_id OR (SELECT auth.uid()) = specialist_id);
 
 DROP POLICY IF EXISTS "Users create own appointments" ON public.appointments;
 CREATE POLICY "Users create own appointments" ON public.appointments
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+  FOR INSERT WITH CHECK ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "Users update own appointments" ON public.appointments;
 CREATE POLICY "Users update own appointments" ON public.appointments
-  FOR UPDATE USING (auth.uid() = user_id OR auth.uid() = specialist_id);
+  FOR UPDATE USING ((SELECT auth.uid()) = user_id OR (SELECT auth.uid()) = specialist_id);
 
 
 -- ─── Audit Logs (read-only للمستخدمين) ───
 DROP POLICY IF EXISTS "Users see own audit logs" ON public.audit_logs;
 CREATE POLICY "Users see own audit logs" ON public.audit_logs
-  FOR SELECT USING (auth.uid() = user_id);
+  FOR SELECT USING ((SELECT auth.uid()) = user_id);
 
 
 -- ════════════════════════════════════════════════════════════════════
@@ -323,8 +323,8 @@ ALTER TABLE public.idempotency_keys ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Service role only - idempotency" ON public.idempotency_keys;
 CREATE POLICY "Service role only - idempotency" ON public.idempotency_keys
-  USING (auth.jwt()->>'role' = 'service_role')
-  WITH CHECK (auth.jwt()->>'role' = 'service_role');
+  USING ((SELECT auth.jwt())->>'role' = 'service_role')
+  WITH CHECK ((SELECT auth.jwt())->>'role' = 'service_role');
 
 
 -- ════════════════════════════════════════════════════════════════════
@@ -345,8 +345,8 @@ ALTER TABLE public.rate_limit_buckets ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Service role only - rate limits" ON public.rate_limit_buckets;
 CREATE POLICY "Service role only - rate limits" ON public.rate_limit_buckets
-  USING (auth.jwt()->>'role' = 'service_role')
-  WITH CHECK (auth.jwt()->>'role' = 'service_role');
+  USING ((SELECT auth.jwt())->>'role' = 'service_role')
+  WITH CHECK ((SELECT auth.jwt())->>'role' = 'service_role');
 
 
 -- ════════════════════════════════════════════════════════════════════
@@ -370,8 +370,8 @@ ALTER TABLE public.otp_attempts ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Service role only - otp" ON public.otp_attempts;
 CREATE POLICY "Service role only - otp" ON public.otp_attempts
-  USING (auth.jwt()->>'role' = 'service_role')
-  WITH CHECK (auth.jwt()->>'role' = 'service_role');
+  USING ((SELECT auth.jwt())->>'role' = 'service_role')
+  WITH CHECK ((SELECT auth.jwt())->>'role' = 'service_role');
 
 
 -- ════════════════════════════════════════════════════════════════════
@@ -394,16 +394,16 @@ ALTER TABLE public.user_telegram_links ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Users see own telegram links" ON public.user_telegram_links;
 CREATE POLICY "Users see own telegram links" ON public.user_telegram_links
-  FOR SELECT USING (auth.uid() = user_id);
+  FOR SELECT USING ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "Users delete own telegram links" ON public.user_telegram_links;
 CREATE POLICY "Users delete own telegram links" ON public.user_telegram_links
-  FOR DELETE USING (auth.uid() = user_id);
+  FOR DELETE USING ((SELECT auth.uid()) = user_id);
 
 DROP POLICY IF EXISTS "Service role full access telegram" ON public.user_telegram_links;
 CREATE POLICY "Service role full access telegram" ON public.user_telegram_links
-  USING (auth.jwt()->>'role' = 'service_role')
-  WITH CHECK (auth.jwt()->>'role' = 'service_role');
+  USING ((SELECT auth.jwt())->>'role' = 'service_role')
+  WITH CHECK ((SELECT auth.jwt())->>'role' = 'service_role');
 
 
 -- ════════════════════════════════════════════════════════════════════
@@ -585,14 +585,14 @@ DROP POLICY IF EXISTS "family_members_select_own" ON public.family_members;
 CREATE POLICY "family_members_select_own"
   ON public.family_members FOR SELECT
   USING (
-    auth.uid() = owner_user_id
+    (SELECT auth.uid()) = owner_user_id
     OR EXISTS (
       SELECT 1 FROM public.appointments a
       WHERE a.family_member_id = family_members.id
-        AND a.specialist_id = auth.uid()
+        AND a.specialist_id = (SELECT auth.uid())
     )
     OR EXISTS (
-      SELECT 1 FROM users WHERE id = auth.uid() AND role IN ('admin', 'super_admin')
+      SELECT 1 FROM users WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin')
     )
   );
 
@@ -600,19 +600,19 @@ CREATE POLICY "family_members_select_own"
 DROP POLICY IF EXISTS "family_members_insert_own" ON public.family_members;
 CREATE POLICY "family_members_insert_own"
   ON public.family_members FOR INSERT
-  WITH CHECK (auth.uid() = owner_user_id);
+  WITH CHECK ((SELECT auth.uid()) = owner_user_id);
 
 -- تعديل: صاحب الحساب فقط
 DROP POLICY IF EXISTS "family_members_update_own" ON public.family_members;
 CREATE POLICY "family_members_update_own"
   ON public.family_members FOR UPDATE
-  USING (auth.uid() = owner_user_id);
+  USING ((SELECT auth.uid()) = owner_user_id);
 
 -- حذف: صاحب الحساب فقط
 DROP POLICY IF EXISTS "family_members_delete_own" ON public.family_members;
 CREATE POLICY "family_members_delete_own"
   ON public.family_members FOR DELETE
-  USING (auth.uid() = owner_user_id);
+  USING ((SELECT auth.uid()) = owner_user_id);
 
 -- ملاحظة: ربط nursing_visit_history.family_member_id يتم في الملف 05
 -- (حيث يُنشأ جدول nursing_visit_history).
@@ -745,7 +745,7 @@ CREATE POLICY theme_update_super_admin
   USING (
     EXISTS (
       SELECT 1 FROM public.users
-      WHERE id = auth.uid()
+      WHERE id = (SELECT auth.uid())
         AND role = 'super_admin'
     )
   );
@@ -758,7 +758,7 @@ CREATE POLICY theme_insert_super_admin
   WITH CHECK (
     EXISTS (
       SELECT 1 FROM public.users
-      WHERE id = auth.uid()
+      WHERE id = (SELECT auth.uid())
         AND role = 'super_admin'
     )
   );
@@ -846,29 +846,29 @@ $$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
 -- Admins يرون كل الـ users
 DROP POLICY IF EXISTS "Admins see all users" ON public.users;
 CREATE POLICY "Admins see all users" ON public.users
-  FOR SELECT USING (public.is_admin(auth.uid()));
+  FOR SELECT USING (public.is_admin((SELECT auth.uid())));
 
 DROP POLICY IF EXISTS "Admins update all users" ON public.users;
 CREATE POLICY "Admins update all users" ON public.users
-  FOR UPDATE USING (public.is_admin(auth.uid()));
+  FOR UPDATE USING (public.is_admin((SELECT auth.uid())));
 
 -- Admins يرون كل المواعيد
 DROP POLICY IF EXISTS "Admins see all appointments" ON public.appointments;
 CREATE POLICY "Admins see all appointments" ON public.appointments
-  FOR SELECT USING (public.is_admin(auth.uid()));
+  FOR SELECT USING (public.is_admin((SELECT auth.uid())));
 
 DROP POLICY IF EXISTS "Admins update all appointments" ON public.appointments;
 CREATE POLICY "Admins update all appointments" ON public.appointments
-  FOR UPDATE USING (public.is_admin(auth.uid()));
+  FOR UPDATE USING (public.is_admin((SELECT auth.uid())));
 
 DROP POLICY IF EXISTS "Admins delete appointments" ON public.appointments;
 CREATE POLICY "Admins delete appointments" ON public.appointments
-  FOR DELETE USING (public.is_admin(auth.uid()));
+  FOR DELETE USING (public.is_admin((SELECT auth.uid())));
 
 -- Admins يرون كل الـ audit logs
 DROP POLICY IF EXISTS "Admins see all audit logs" ON public.audit_logs;
 CREATE POLICY "Admins see all audit logs" ON public.audit_logs
-  FOR SELECT USING (public.is_admin(auth.uid()));
+  FOR SELECT USING (public.is_admin((SELECT auth.uid())));
 
 
 

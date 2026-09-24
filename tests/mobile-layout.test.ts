@@ -157,22 +157,87 @@ describe('حقول الإدخال على الهاتف', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────
-// ٦. لا فئة CSS جديدة بلا تعريف
+// ٦. لا خطّ أصغر من ١١px
+// ─────────────────────────────────────────────────────────────────
+/**
+ * قياسُ التطبيق على عرض ٣٩٠ أظهر ٣١ إعلاناً بين ٨px و٩px و٦٠ عند ١٠px —
+ * أصغرها وسمُ العرض في لافتة الشاشة الرئيسية (٨px) وشارةُ القصّة (٧px).
+ * وهذه منصّةٌ طبّية عربية يستعملها كبار السنّ: النصّ العربي المشكول عند
+ * ٩px غير مقروء عملياً على شاشة الهاتف.
+ *
+ * ١١px حدٌّ أدنى لا هدفٌ — ليس تنسيقاً بل سقفَ ضررٍ لا يُتجاوز.
+ */
+describe('حدّ أدنى لحجم الخطّ', () => {
+  const CSS = [...STYLE_FILES];
+
+  it('لا إعلان font-size دون ١١px في ملفّات CSS', () => {
+    const offenders: string[] = [];
+    for (const f of CSS) {
+      read(f).split('\n').forEach((line, i) => {
+        for (const m of line.matchAll(/font-size:\s*(\d+(?:\.\d+)?)px/g)) {
+          if (parseFloat(m[1]) < 11) offenders.push(`${relative(process.cwd(), f)}:${i + 1} → ${m[1]}px`);
+        }
+      });
+    }
+    expect(offenders).toEqual([]);
+  });
+
+  it('لا نمطٍ سطريّ بحجم خطٍّ دون ١١px في JSX', () => {
+    const offenders: string[] = [];
+    for (const file of TSX) {
+      read(file).split('\n').forEach((line, i) => {
+        const pats = [/fontSize:\s*(\d+(?:\.\d+)?)(?![\d.])/g, /fontSize:\s*'(\d+(?:\.\d+)?)px'/g,
+          /font-size:\s*(\d+(?:\.\d+)?)px/g];
+        for (const p of pats) {
+          for (const m of line.matchAll(p)) {
+            if (parseFloat(m[1]) < 11) offenders.push(`${relative(process.cwd(), file)}:${i + 1} → ${m[1]}`);
+          }
+        }
+      });
+    }
+    expect(offenders).toEqual([]);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────
+// ٧. تباينٌ لا يُكسَر بقاعدةٍ أعلى تخصيصاً
+// ─────────────────────────────────────────────────────────────────
+/**
+ * زرّ `.legal-link-btn` كان **غير مرئيّ**: خلفيتُه `--btn-primary-bg`
+ * ونصُّه `--paper-3`، لكنّه يقع داخل `.legal-content` فتفوز عليه قاعدة
+ * `.legal-content a { color: var(--emerald) }` — تخصيصها (0,1,1) أعلى من
+ * (0,1,0) — فيصير لون النصّ لونَ الخلفية بالضبط: نسبة تباين ١٫٠٠.
+ */
+describe('تباين الأزرار داخل النصّ القانونيّ', () => {
+  it('قاعدة .legal-content a لا تبتلع لون زرّ .legal-link-btn', () => {
+    const css = read(join(SRC, 'app', 'styles', 'marketing.css'));
+    expect(css).toMatch(/\.legal-content\s+a\.legal-link-btn\s*\{[^}]*color:/);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────
+// ٨. لا فئة CSS جديدة بلا تعريف
 // ─────────────────────────────────────────────────────────────────
 describe('تعريف فئات CSS', () => {
   /**
-   * الفئات المتبقّية المعروفة: أغلفةٌ تحمل تخطيطها في نمطٍ سطريّ، أو
-   * فئاتٌ لا تحتاج قواعد (`deletion-form` مثلاً — فُحصت الصفحة وتُعرض
-   * منسَّقةً بالكامل، والعناصر الداخلية تحمل فئاتها المعرَّفة).
+   * القائمة **فارغة**، وهذا هو المطلوب.
    *
-   * الغرض من القائمة منع **الجديد**، لا تثبيت القديم. عند تعريف أيٍّ
-   * منها احذفها من هنا.
+   * كانت اثنتي عشرة فئة، وتبيّن عند مراجعتها واحدةً واحدة أنّها ثلاثة
+   * أصناف لا صنفٌ واحد:
+   *
+   *   • تسعٌ ناقصةٌ فعلاً — عُرِّفت في `shared.css`. وأخطرها `.file-upload`:
+   *     كان الإطار المتقطّع مكتوباً على `.file-upload-content` بينما
+   *     الترميز يجعله غلافَ النصّ وحده، فالصندوق يحيط بالنصّ والأيقونة
+   *     خارجه؛ و`.error`/`.has-file` بلا قاعدةٍ أصلاً فلا يبدو الحقل
+   *     الخاطئ خاطئاً.
+   *   • واحدةٌ (`push-prompt`) كانت **معرَّفة** ومُدرَجةً سهواً.
+   *   • اثنتان (`wa-otp-card`, `consult-empty`) لم تعودا مستعملتين.
+   *   • و`self-center` أداةُ Tailwind، محلّها قائمةُ الأدوات أدناه.
+   *
+   * إبقاؤها فارغةً يعني أنّ الحارس صار مطلقاً: أيّ فئةٍ بلا تعريف تُفشل
+   * الاختبار. إن اضطُرّ أحدٌ لإضافة اسمٍ هنا فليكتب السبب.
    */
-  const KNOWN_UNDEFINED = new Set([
-    'spir-map-view', 'spir-map-empty', 'mh-wrap', 'deletion-form',
-    'legal-updated', 'file-upload', 'scr-form-card', 'service-emerald',
-    'self-center', 'push-prompt', 'wa-otp-card', 'consult-empty',
-  ]);
+  const KNOWN_UNDEFINED = new Set<string>([]);
 
   // فئات Tailwind وما شابهها ليست من مسؤولية ملفّات CSS
   const UTILITY = new RegExp(
@@ -181,7 +246,9 @@ describe('تعريف فئات CSS', () => {
       'text|bg|border|rounded|shadow|gap|space|items|justify|font|leading|tracking|opacity|z|max|min|overflow|' +
       'transition|transform|scale|translate|cursor|select|object|top|bottom|left|right|inset|order|col|row|' +
       'animate|duration|ease|delay|ring|outline|divide|placeholder|from|via|to|backdrop|filter|blur|truncate|' +
-      'aspect|container|sr|not|pointer)[-$]|' +
+      'aspect|container|sr|not|pointer|shrink|grow|basis|whitespace|break|self|place|list|fill|stroke|' +
+      // `accent-*` أداةُ Tailwind لـ accent-color (مربّعات الاختيار) — مُولَّدةٌ فعلاً في البناء
+      'accent)-|' +
       '^(flex|grid|hidden|block|truncate|container|sr-only|antialiased|shadow|transition|rounded|italic)$',
   );
 
@@ -209,9 +276,6 @@ describe('تعريف فئات CSS', () => {
     const offenders: string[] = [];
 
     for (const file of TSX) {
-      // وحدة features/ غير مستورَدة من أيّ صفحة (كود ميّت)
-      if (file.includes(`${'src'}/features/`)) continue;
-
       const src = read(file);
       const known = localClasses(src);
 

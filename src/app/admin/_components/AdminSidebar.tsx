@@ -25,10 +25,19 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/admin/pharmacies', icon: '💊', label: 'الصيدليات', permission: 'specialists.view' },
   { href: '/admin/medications', icon: '📋', label: 'كتالوج الأدوية', permission: 'specialists.view' },
   // ─── V25.21: الخدمات الجديدة ───
+  // كانت أربعاً من تسع، والخمس الباقية صفحاتٌ مبنيّة تعمل لكن لا رابط
+  // إليها في أيّ مكان — لا يبلغها المشرف إلّا بكتابة المسار يدوياً.
   { href: '/admin/dental', icon: '🦷', label: 'عيادات الأسنان', permission: 'specialists.view' },
   { href: '/admin/optical', icon: '👓', label: 'متاجر النظارات', permission: 'specialists.view' },
   { href: '/admin/mental-health', icon: '🧠', label: 'الصحة النفسية', permission: 'specialists.view' },
   { href: '/admin/nutrition', icon: '🥗', label: 'التغذية', permission: 'specialists.view' },
+  { href: '/admin/nurses', icon: '👩‍⚕️', label: 'الممرضون', permission: 'specialists.view' },
+  { href: '/admin/physio', icon: '🦵', label: 'العلاج الطبيعي', permission: 'specialists.view' },
+  { href: '/admin/labs', icon: '🔬', label: 'المختبرات', permission: 'specialists.view' },
+  { href: '/admin/cosmetic', icon: '💄', label: 'منتجات التجميل', permission: 'specialists.view' },
+  { href: '/admin/locations', icon: '📍', label: 'المواقع', permission: 'specialists.view' },
+  { href: '/admin/service-areas', icon: '🧭', label: 'مناطق الخدمة', permission: 'settings.edit' },
+  { href: '/admin/services', icon: '🔌', label: 'تشغيل الخدمات', permission: 'settings.edit' },
   { href: '/admin/patients', icon: '👤', label: 'المرضى (CRM)', permission: 'patients.view' },
   { href: '/admin/orders', icon: '📋', label: 'الطلبات', permission: 'orders.view' },
   { href: '/admin/notifications', icon: '💬', label: 'الإشعارات' },
@@ -121,7 +130,7 @@ export default function AdminSidebar({ userName, userRole, roleLabel, roleIcon }
               fontSize: 13,
               fontWeight: 700,
               textDecoration: 'none',
-              color: isActive ? 'var(--emerald-deep, #073B30)' : 'var(--white)',
+              color: isActive ? 'var(--emerald-deep, var(--emerald-deep, #056559))' : 'var(--white)',
               background: isActive ? 'var(--white)' : 'transparent',
               transition: 'all 0.15s',
             }}
@@ -132,7 +141,7 @@ export default function AdminSidebar({ userName, userRole, roleLabel, roleIcon }
               <span style={{
                 background: 'var(--amber)',
                 color: 'var(--white)',
-                fontSize: 10,
+                fontSize: 11,
                 padding: '2px 6px',
                 borderRadius: 100,
                 fontWeight: 800,
@@ -149,7 +158,7 @@ export default function AdminSidebar({ userName, userRole, roleLabel, roleIcon }
         marginTop: 'auto',
         paddingTop: 16,
         borderTop: '1px solid rgba(255,255,255,0.1)',
-        fontSize: 10,
+        fontSize: 11,
         opacity: 0.6,
         textAlign: 'center',
       }}>

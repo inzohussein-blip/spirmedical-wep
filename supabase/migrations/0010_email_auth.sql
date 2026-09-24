@@ -97,31 +97,33 @@ CREATE INDEX IF NOT EXISTS specialist_applications_created_at_idx
 -- Email verification tokens
 ALTER TABLE public.email_verification_tokens ENABLE ROW LEVEL SECURITY;
 
+-- لا سياسةَ إدراجٍ هنا عمداً. كانت `anyone_can_create_token` بـ
+-- `WITH CHECK (true)`، فأيّ مستخدمٍ مُسجَّلٍ يزرع رمزَ تحقّقٍ لحسابِ غيره
+-- ثمّ يُصدّق بريداً لا يملكه (أُسقطت في الترحيل 0040 مع سحب المنحة).
+-- والكتابةُ هنا لمفتاح الخدمة وحده، وهو يتخطّى RLS فلا يحتاج سياسة.
 DROP POLICY IF EXISTS "anyone_can_create_token" ON public.email_verification_tokens;
-CREATE POLICY "anyone_can_create_token" ON public.email_verification_tokens
-  FOR INSERT WITH CHECK (true);
 
 DROP POLICY IF EXISTS "token_owner_can_read" ON public.email_verification_tokens;
 CREATE POLICY "token_owner_can_read" ON public.email_verification_tokens
-  FOR SELECT USING (user_id = auth.uid());
+  FOR SELECT USING (user_id = (SELECT auth.uid()));
 
 -- Specialist applications
 ALTER TABLE public.specialist_applications ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "specialist_can_read_own_app" ON public.specialist_applications;
 CREATE POLICY "specialist_can_read_own_app" ON public.specialist_applications
-  FOR SELECT USING (user_id = auth.uid());
+  FOR SELECT USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "specialist_can_update_own_app" ON public.specialist_applications;
 CREATE POLICY "specialist_can_update_own_app" ON public.specialist_applications
-  FOR UPDATE USING (user_id = auth.uid());
+  FOR UPDATE USING (user_id = (SELECT auth.uid()));
 
 DROP POLICY IF EXISTS "admins_can_read_all_apps" ON public.specialist_applications;
 CREATE POLICY "admins_can_read_all_apps" ON public.specialist_applications
   FOR SELECT USING (
     EXISTS (
       SELECT 1 FROM public.users 
-      WHERE id = auth.uid() AND role IN ('admin', 'super_admin')
+      WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin')
     )
   );
 
@@ -130,7 +132,7 @@ CREATE POLICY "admins_can_update_apps" ON public.specialist_applications
   FOR UPDATE USING (
     EXISTS (
       SELECT 1 FROM public.users 
-      WHERE id = auth.uid() AND role IN ('admin', 'super_admin')
+      WHERE id = (SELECT auth.uid()) AND role IN ('admin', 'super_admin')
     )
   );
 

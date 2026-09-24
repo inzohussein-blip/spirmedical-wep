@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  useEffect,
   useRef,
   useState,
   type ReactNode,
@@ -9,6 +8,7 @@ import {
 } from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 /**
  * ═══════════════════════════════════════════════════════════════
@@ -54,32 +54,11 @@ export function BottomSheet({
   maxHeight = '85vh',
   className,
 }: BottomSheetProps) {
-  const sheetRef = useRef<HTMLDivElement>(null);
+  // قفلُ التمرير وEscape والتركيز — السلوكُ نفسه لكلّ النوافذ
+  const sheetRef = useModalDialog(open, onClose);
   const [translateY, setTranslateY] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const startYRef = useRef(0);
-
-  // Lock body scroll when open
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [open]);
-
-  // ESC key to close
-  useEffect(() => {
-    if (!open) return;
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [open, onClose]);
 
   // Touch handlers
   const handleTouchStart = (e: ReactTouchEvent) => {

@@ -218,7 +218,7 @@ export default function StatusClient() {
                   <XCircle size={20} color="var(--rose)" />
                 )}
                 {check.latency_ms != null && (
-                  <div style={{ fontSize: 9, color: 'var(--ink-3)', marginTop: 2 }}>
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 2 }}>
                     {check.latency_ms}ms
                   </div>
                 )}
@@ -266,7 +266,7 @@ export default function StatusClient() {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div style={{ fontSize: 10, color: 'var(--ink-3)' }}>{label}</div>
+      <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{label}</div>
       <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--ink-2)' }}>{value}</div>
     </div>
   );

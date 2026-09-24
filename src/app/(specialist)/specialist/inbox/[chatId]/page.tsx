@@ -33,29 +33,32 @@ export default async function SpecialistChatDetailPage({ params }: { params: { c
     notFound();
   }
 
-  // جلب معلومات المريض
-  const { data: patient } = await supabase
-    .from('users')
-    .select('id, full_name, phone, governorate')
-    .eq('id', chat.patient_id)
-    .single();
-
-  // جلب الرسائل
-  const { data: messagesRaw } = await supabase
-    .from('messages')
-    .select('*')
-    .eq('chat_id', params.chatId)
-    .order('created_at', { ascending: true })
-    .limit(100);
-
-  // جلب القوالب الجاهزة
-  const { data: quickRepliesRaw } = await supabase
-    .from('quick_replies')
-    .select('id, content')
-    .eq('specialist_id', user.id)
-    .eq('is_active', true)
-    .order('use_count', { ascending: false })
-    .limit(10);
+  // نداءاتٌ مستقلّة: لا يعتمد أيٌّ منها على نتيجة سابقه، وكانت تُنتظَر واحداً بعد واحد
+  // فتُدفع رحلةٌ شبكيّةٌ لكلٍّ منها قبل أن يُرسم شيء. الآن نافذةُ انتظارٍ واحدة.
+  const [{ data: patient }, { data: messagesRaw }, { data: quickRepliesRaw }] = await Promise.all([
+    // جلب المحادثة
+    // جلب معلومات المريض
+    supabase
+      .from('users')
+      .select('id, full_name, phone, governorate')
+      .eq('id', chat.patient_id)
+      .single(),
+    // جلب الرسائل
+    supabase
+      .from('messages')
+      .select('*')
+      .eq('chat_id', params.chatId)
+      .order('created_at', { ascending: true })
+      .limit(100),
+    // جلب القوالب الجاهزة
+    supabase
+      .from('quick_replies')
+      .select('id, content')
+      .eq('specialist_id', user.id)
+      .eq('is_active', true)
+      .order('use_count', { ascending: false })
+      .limit(10),
+  ]);
 
   const patientName = patient?.full_name || 'مريض';
   const participant: ChatParticipant = {

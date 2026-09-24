@@ -9,6 +9,7 @@ import {
 import { haptic } from '@/lib/haptic';
 import { formatPrice, formatPriceRange } from '@/lib/format/price';
 import ExternalMapButton from '@/components/maps/ExternalMapButton';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 interface Store {
   id: string;
@@ -161,7 +162,7 @@ function StoreCard({ store }: { store: Store }) {
           color: 'var(--paper-3)',
           padding: '2px 8px',
           borderRadius: 100,
-          fontSize: 9,
+          fontSize: 11,
           fontWeight: 900,
         }}>
           ⭐ مميّز
@@ -191,7 +192,7 @@ function StoreCard({ store }: { store: Store }) {
             </p>
           )}
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10, color: 'var(--ink-3)', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--ink-3)', flexWrap: 'wrap' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <MapPin size={10} />
               {store.city}{store.district ? ` · ${store.district}` : ''}
@@ -217,7 +218,7 @@ function StoreCard({ store }: { store: Store }) {
             <span
               key={i}
               style={{
-                fontSize: 10,
+                fontSize: 11,
                 padding: '3px 8px',
                 background: 'var(--paper-3)',
                 borderRadius: 100,
@@ -237,7 +238,7 @@ function StoreCard({ store }: { store: Store }) {
         borderRadius: 8,
         padding: '8px 10px',
         marginBottom: 10,
-        fontSize: 10,
+        fontSize: 11,
         color: 'var(--ink-2)',
         lineHeight: 1.7,
       }}>
@@ -279,7 +280,7 @@ function StoreCard({ store }: { store: Store }) {
         {/* Secondary actions */}
         <div style={{ display: 'flex', gap: 6 }}>
           {store.phone && (
-            <a
+            <PhoneLink phone={store.phone}
               href={`tel:${store.phone}`}
               onClick={() => haptic.light()}
               style={{
@@ -301,10 +302,10 @@ function StoreCard({ store }: { store: Store }) {
             >
               <Phone size={12} />
               اتصل
-            </a>
+            </PhoneLink>
           )}
           {store.phone && (
-            <a
+            <PhoneLink phone={store.phone}
               href={`https://wa.me/${store.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('السلام عليكم - أود الاستفسار عبر Spir Medical')}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -323,7 +324,7 @@ function StoreCard({ store }: { store: Store }) {
               }}
             >
               💬 WhatsApp
-            </a>
+            </PhoneLink>
           )}
           <ExternalMapButton
             lat={store.latitude}

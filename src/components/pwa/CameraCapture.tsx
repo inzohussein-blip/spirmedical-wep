@@ -231,7 +231,7 @@ export default function CameraCapture({
                   background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
                   color: 'var(--paper-3)',
                   padding: '8px 6px 4px',
-                  fontSize: 9,
+                  fontSize: 11,
                   textAlign: 'center',
                   fontWeight: 700,
                 }}
@@ -247,7 +247,7 @@ export default function CameraCapture({
       {totalSaved > 0 && (
         <div
           style={{
-            fontSize: 10,
+            fontSize: 11,
             color: 'var(--emerald)',
             textAlign: 'center',
             marginBottom: 10,

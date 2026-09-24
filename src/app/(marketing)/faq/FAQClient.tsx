@@ -159,17 +159,18 @@ export default function FAQClient() {
         </p>
 
         {/* Search */}
-        <div className="mkt-search" style={{ marginBottom: 12 }}>
-          <div className="mkt-search-icon">
+        <label className="mkt-search" style={{ marginBottom: 12 }}>
+          <span className="mkt-search-icon" aria-hidden="true">
             <Search size={16} strokeWidth={2.4} />
-          </div>
+          </span>
           <input
             type="search"
             placeholder="ابحث عن سؤالك..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            aria-label="ابحث في الأسئلة الشائعة"
           />
-        </div>
+        </label>
 
         {/* Categories */}
         <div
@@ -252,7 +253,7 @@ export default function FAQClient() {
                   >
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{
-                        fontSize: 10,
+                        fontSize: 12,
                         fontWeight: 700,
                         color: 'var(--ink-3)',
                         marginBottom: 4,

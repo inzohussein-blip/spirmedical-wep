@@ -70,7 +70,7 @@ export default async function AppointmentDetailsPage({ params, searchParams }: P
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--paper, #F4EFE2)', paddingBottom: '40px' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--paper, #F8F9FA)', paddingBottom: '40px' }}>
       <div style={{
         background: 'var(--white, #FFFFFF)',
         borderBottom: '1px solid var(--line, rgba(15, 26, 28, 0.08))',
@@ -90,12 +90,12 @@ export default async function AppointmentDetailsPage({ params, searchParams }: P
             display: 'inline-flex',
             alignItems: 'center',
             gap: '6px',
-            background: 'var(--paper-2, #EDE6D3)',
+            background: 'var(--paper-2, #F1F3F4)',
             border: '1px solid var(--line, rgba(15, 26, 28, 0.08))',
             borderRadius: '100px',
             padding: '7px 14px',
             fontSize: '13px',
-            color: 'var(--ink-2, #1F2A2C)',
+            color: 'var(--ink-2, #3C4043)',
             textDecoration: 'none',
             fontWeight: 600,
           }}>
@@ -105,13 +105,13 @@ export default async function AppointmentDetailsPage({ params, searchParams }: P
             تفاصيل الحجز
           </h1>
           <div style={{
-            background: 'var(--paper-2, #EDE6D3)',
+            background: 'var(--paper-2, #F1F3F4)',
             padding: '4px 10px',
             borderRadius: '6px',
             fontFamily: 'JetBrains Mono, monospace',
             fontSize: '11px',
             fontWeight: 700,
-            color: 'var(--ink-3, #6E7878)',
+            color: 'var(--ink-3, #5F6368)',
           }}>
             #{appointment.id.slice(0, 8).toUpperCase()}
           </div>
@@ -132,8 +132,8 @@ export default async function AppointmentDetailsPage({ params, searchParams }: P
           <div
             role="status"
             style={{
-              background: 'var(--emerald-soft, #D9E5DF)',
-              border: '1px solid var(--emerald, #0F6E56)',
+              background: 'var(--emerald-soft, var(--emerald-soft, #E6F3EF))',
+              border: '1px solid var(--emerald, var(--emerald-mid, #0F6E56))',
               borderRadius: '14px',
               padding: '14px 16px',
               display: 'flex',
@@ -142,9 +142,9 @@ export default async function AppointmentDetailsPage({ params, searchParams }: P
             }}
           >
             <CheckCircle2 size={20} strokeWidth={2.2} aria-hidden
-              style={{ color: 'var(--emerald-deep, #073B30)', flexShrink: 0, marginTop: 1 }} />
+              style={{ color: 'var(--emerald-deep, var(--emerald-deep, #056559))', flexShrink: 0, marginTop: 1 }} />
             <div>
-              <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--emerald-deep, #073B30)' }}>
+              <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--emerald-deep, var(--emerald-deep, #056559))' }}>
                 تمّ استلام طلبك بنجاح
               </div>
               <div style={{ fontSize: 12.5, color: 'var(--ink-2)', lineHeight: 1.7, marginTop: 2 }}>
@@ -173,12 +173,12 @@ export default async function AppointmentDetailsPage({ params, searchParams }: P
             <div style={{
               width: '56px',
               height: '56px',
-              background: 'var(--emerald-soft, #D9E5DF)',
+              background: 'var(--emerald-soft, var(--emerald-soft, #E6F3EF))',
               borderRadius: '14px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: 'var(--emerald-deep, #073B30)',
+              color: 'var(--emerald-deep, var(--emerald-deep, #056559))',
             }}>
               <Stethoscope size={28} strokeWidth={2} />
             </div>
@@ -186,7 +186,7 @@ export default async function AppointmentDetailsPage({ params, searchParams }: P
               <h2 style={{ fontSize: '18px', fontWeight: 800, margin: '0 0 4px' }}>
                 {appointment.service_type}
               </h2>
-              <div style={{ fontSize: '11px', color: 'var(--ink-3, #6E7878)', fontFamily: 'JetBrains Mono, monospace' }}>
+              <div style={{ fontSize: '11px', color: 'var(--ink-3, #5F6368)', fontFamily: 'JetBrains Mono, monospace' }}>
                 #{appointment.id.slice(0, 8).toUpperCase()}
               </div>
             </div>
@@ -197,10 +197,10 @@ export default async function AppointmentDetailsPage({ params, searchParams }: P
               display: 'flex',
               justifyContent: 'space-between',
               padding: '10px 12px',
-              background: 'var(--paper-3, #FAF6EB)',
+              background: 'var(--paper-3, #FFFFFF)',
               borderRadius: '10px',
             }}>
-              <span style={{ fontSize: '12px', color: 'var(--ink-3, #6E7878)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              <span style={{ fontSize: '12px', color: 'var(--ink-3, #5F6368)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                 <Calendar size={13} strokeWidth={2.2} aria-hidden />
                 الموعد
               </span>
@@ -212,10 +212,10 @@ export default async function AppointmentDetailsPage({ params, searchParams }: P
                 display: 'flex',
                 justifyContent: 'space-between',
                 padding: '10px 12px',
-                background: 'var(--paper-3, #FAF6EB)',
+                background: 'var(--paper-3, #FFFFFF)',
                 borderRadius: '10px',
               }}>
-                <span style={{ fontSize: '12px', color: 'var(--ink-3, #6E7878)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ fontSize: '12px', color: 'var(--ink-3, #5F6368)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                   <Clock size={13} strokeWidth={2.2} aria-hidden />
                   المدة
                 </span>
@@ -230,10 +230,10 @@ export default async function AppointmentDetailsPage({ params, searchParams }: P
                 display: 'flex',
                 justifyContent: 'space-between',
                 padding: '10px 12px',
-                background: 'var(--paper-3, #FAF6EB)',
+                background: 'var(--paper-3, #FFFFFF)',
                 borderRadius: '10px',
               }}>
-                <span style={{ fontSize: '12px', color: 'var(--ink-3, #6E7878)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ fontSize: '12px', color: 'var(--ink-3, #5F6368)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                   <Smartphone size={13} strokeWidth={2.2} aria-hidden />
                   قناة التواصل
                 </span>
@@ -263,11 +263,11 @@ export default async function AppointmentDetailsPage({ params, searchParams }: P
             </h3>
             <p style={{
               fontSize: '13px',
-              color: 'var(--ink-2, #1F2A2C)',
+              color: 'var(--ink-2, #3C4043)',
               lineHeight: 1.7,
               margin: '0 0 12px',
               padding: '12px',
-              background: 'var(--paper-3, #FAF6EB)',
+              background: 'var(--paper-3, #FFFFFF)',
               borderRadius: '10px',
             }}>
               {appointment.address}
@@ -298,19 +298,19 @@ export default async function AppointmentDetailsPage({ params, searchParams }: P
             </h3>
             <p style={{
               fontSize: '13px',
-              color: 'var(--ink-2, #1F2A2C)',
+              color: 'var(--ink-2, #3C4043)',
               lineHeight: 1.7,
               margin: 0,
               padding: '12px',
-              background: 'var(--paper-3, #FAF6EB)',
+              background: 'var(--paper-3, #FFFFFF)',
               borderRadius: '10px',
               whiteSpace: 'pre-wrap',
             }}>
               {decryptedNotes}
             </p>
             <div style={{
-              fontSize: '10px',
-              color: 'var(--ink-3, #6E7878)',
+              fontSize: '11px',
+              color: 'var(--ink-3, #5F6368)',
               marginTop: '8px',
               textAlign: 'center',
               display: 'flex',

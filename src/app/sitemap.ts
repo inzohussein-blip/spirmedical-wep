@@ -90,33 +90,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'yearly',
     },
     // ─────────────────────────────────────────
-    // 🏥 صفحات الخدمات (V25.21)
+    // 🩸 صفحةُ الخدمة العامّة — ما يبحث عنه الناس فعلاً
     // ─────────────────────────────────────────
     {
-      url: '/services/dental',
-      priority: 0.9,
+      url: '/home-blood-draw',
+      priority: 0.95,
       changeFrequency: 'weekly',
     },
     {
-      url: '/services/optical',
-      priority: 0.9,
-      changeFrequency: 'weekly',
+      url: '/help/install',
+      priority: 0.6,
+      changeFrequency: 'monthly',
     },
-    {
-      url: '/services/mental-health',
-      priority: 0.9,
-      changeFrequency: 'weekly',
-    },
-    {
-      url: '/services/nutrition',
-      priority: 0.9,
-      changeFrequency: 'weekly',
-    },
-    {
-      url: '/services/physio',
-      priority: 0.9,
-      changeFrequency: 'weekly',
-    },
+
+    // ⚠️ لا `/services/*` هنا. كانت الخريطة تُقدّم خمساً منها
+    // (dental/optical/mental-health/nutrition/physio) وهي صفحاتُ التطبيق
+    // المحجوبة في robots.ts بـ`/services/` — فيُبلّغ Search Console
+    // «Submitted URL blocked by robots.txt» ولا تُفهرس. يحرسه
+    // tests/seo-canonical.test.ts.
   ];
 
   // ─────────────────────────────────────────

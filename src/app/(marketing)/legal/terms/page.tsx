@@ -4,6 +4,7 @@ export const revalidate = 86400;
 import Link from 'next/link';
 
 export const metadata = {
+  alternates: { canonical: '/legal/terms' },
   title: 'الشروط والأحكام · سباير ميديكال',
   description: 'الشروط القانونية لاستخدام منصة سباير ميديكال',
 };
@@ -209,7 +210,7 @@ export default function TermsPage() {
               <Link href="/legal/privacy" className="legal-link-btn">
                 سياسة الخصوصية ←
               </Link>
-              <Link href="/" className="legal-link-btn outline">
+              <Link href="/" className="legal-link-btn legal-link-btn--ghost">
                 العودة للرئيسية
               </Link>
             </div>

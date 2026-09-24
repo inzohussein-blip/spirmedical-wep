@@ -508,3 +508,98 @@ describe('🛡️ الحارس نفسه يكشف الأخطاء الثلاثة �
     expect(extractWriteSites(dynamic, 'x.ts')).toEqual([]);
   });
 });
+
+describe('🔑 كلّ مفتاحٍ أجنبيٍّ يغطّيه فهرس', () => {
+  /**
+   * 🚨 مفتاحٌ أجنبيٌّ بلا فهرسٍ يغطّيه يجعل Postgres يمسح الجدولَ التابعَ
+   * كلَّه عند كلّ حذفٍ أو تحديثٍ في الجدول المرجعيّ، للتحقّق من التبعيّة.
+   *
+   * الترحيل 0033 فهرس ٥٦ مفتاحاً كذلك — ثمّ أضفتُ في 0042 جدول
+   * `app_settings` بعمود `updated_by` بلا فهرس، فعاد إنذار المدقّق من صفرٍ
+   * إلى واحد. لم يكن ثمّة حارسٌ لهذه العائلة أصلاً، فهذا هو.
+   *
+   * ═══ مصداقيّة المحلّل ═══
+   *
+   * عدَدُه يطابق ما تقوله القاعدة الحيّة بالحرف: ١٦٣ مفتاحاً، وواحدٌ بلا
+   * فهرس هو `app_settings.updated_by` نفسه الذي أبلغ عنه مدقّق Supabase.
+   *
+   * وأوّل صياغةٍ أبلغت عن اثنين: نافذةُ `[\s\S]{0,400}` في نمط
+   * `ALTER TABLE … ADD COLUMN` كانت تعبر إلى عبارةٍ تالية، فنسبت
+   * `appointments.family_member_id` إلى `family_members`. صُحّح المحلّل —
+   * ولم يُستثنَ الجدول.
+   */
+
+  function tableBodies(sql: string): { table: string; body: string }[] {
+    const out: { table: string; body: string }[] = [];
+    const re = /CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?:public\.)?"?(\w+)"?\s*\(/gi;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(sql)) !== null) {
+      let i = m.index + m[0].length;
+      let depth = 1;
+      while (i < sql.length && depth > 0) {
+        if (sql[i] === '(') depth++;
+        else if (sql[i] === ')') depth--;
+        i++;
+      }
+      out.push({ table: m[1], body: sql.slice(m.index + m[0].length, i - 1) });
+    }
+    return out;
+  }
+
+  const ALL = readdirSync(MIGRATIONS_DIR)
+    .filter((f) => f.endsWith('.sql'))
+    .sort()
+    .map((f) => readFileSync(join(MIGRATIONS_DIR, f), 'utf8'))
+    .join('\n')
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/^\s*--.*$/gm, '');
+
+  const bodies = tableBodies(ALL);
+
+  const fks = new Set<string>();
+  for (const { table, body } of bodies) {
+    for (const line of body.split('\n')) {
+      const c = /^\s*"?(\w+)"?\s+[\w[\]() ]+?\s+REFERENCES\b/i.exec(line);
+      if (c) fks.add(`${table}.${c[1]}`);
+    }
+    for (const c of body.matchAll(/FOREIGN\s+KEY\s*\(\s*"?(\w+)"?\s*\)\s*REFERENCES/gi)) {
+      fks.add(`${table}.${c[1]}`);
+    }
+  }
+  // `[^;]` يمنع العبور إلى عبارةٍ تالية — وهو خطأ الصياغة الأولى
+  for (const m of ALL.matchAll(
+    /ALTER\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:public\.)?"?(\w+)"?[^;]*?ADD\s+COLUMN\s+(?:IF\s+NOT\s+EXISTS\s+)?"?(\w+)"?[^,;]*?\bREFERENCES\b/gi,
+  )) {
+    fks.add(`${m[1]}.${m[2]}`);
+  }
+
+  const indexed = new Set<string>();
+  for (const m of ALL.matchAll(
+    /CREATE\s+(?:UNIQUE\s+)?INDEX\s+(?:CONCURRENTLY\s+)?(?:IF\s+NOT\s+EXISTS\s+)?\S+\s+ON\s+(?:public\.)?"?(\w+)"?\s*(?:USING\s+\w+\s*)?\(\s*"?(\w+)"?/gi,
+  )) {
+    indexed.add(`${m[1]}.${m[2]}`);
+  }
+  for (const { table, body } of bodies) {
+    for (const line of body.split('\n')) {
+      const c = /^\s*"?(\w+)"?\s+.*\b(?:PRIMARY\s+KEY|UNIQUE)\b/i.exec(line);
+      if (c) indexed.add(`${table}.${c[1]}`);
+    }
+    for (const c of body.matchAll(/(?:PRIMARY\s+KEY|UNIQUE)\s*\(\s*"?(\w+)"?/gi)) {
+      indexed.add(`${table}.${c[1]}`);
+    }
+  }
+
+  it('يقرأ الـ DDL قراءةً صحيحة (حارسُ الحارس)', () => {
+    // محلّلٌ مكسورٌ يجد صفراً فيمرّ الفحصُ التالي بلا معنى
+    expect(bodies.length).toBeGreaterThan(60);
+    expect(fks.size).toBeGreaterThan(150);
+    expect(fks.has('appointments.user_id')).toBe(true);
+    // والنمطُ الذي أخطأ أوّلاً: العمود في `appointments` لا في `family_members`
+    expect(fks.has('appointments.family_member_id')).toBe(true);
+    expect(fks.has('family_members.family_member_id')).toBe(false);
+  });
+
+  it('🚨 لا مفتاحَ أجنبياً بلا فهرسٍ يغطّيه', () => {
+    expect([...fks].filter((k) => !indexed.has(k)).sort()).toEqual([]);
+  });
+});

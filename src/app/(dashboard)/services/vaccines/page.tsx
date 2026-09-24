@@ -153,8 +153,8 @@ export default async function VaccinesPage() {
             gap: 12,
             margin: '0 14px 16px',
             padding: 14,
-            background: '#E6F3EF',
-            border: '1px solid #01875F',
+            background: 'var(--emerald-soft, #E6F3EF)',
+            border: '1px solid var(--emerald, #01875F)',
             borderRadius: 14,
             textDecoration: 'none',
           }}
@@ -164,7 +164,7 @@ export default async function VaccinesPage() {
             <div style={{ fontSize: 13, fontWeight: 800, color: '#04342C' }}>
               جدول التطعيمات الوطني
             </div>
-            <div style={{ fontSize: 11, color: '#0F6E56' }}>
+            <div style={{ fontSize: 11, color: 'var(--emerald-mid, #0F6E56)' }}>
               تابع جرعات طفلك حسب العمر
             </div>
           </div>
@@ -187,7 +187,7 @@ export default async function VaccinesPage() {
               }}>
                 <CatIcon size={14} stroke={2.2} color={meta.color} />
                 {meta.label}
-                <span style={{ marginInlineStart: 'auto', fontSize: 10, color: '#80868B' }}>
+                <span style={{ marginInlineStart: 'auto', fontSize: 11, color: '#80868B' }}>
                   {items.length}
                 </span>
               </div>
@@ -233,7 +233,7 @@ export default async function VaccinesPage() {
                           <span style={{
                             padding: '1px 6px',
                             background: '#FCE8E6', color: '#8B1240',
-                            borderRadius: 8, fontSize: 9, fontWeight: 700,
+                            borderRadius: 8, fontSize: 11, fontWeight: 700,
                           }}>
                             إلزامي
                           </span>
@@ -246,7 +246,7 @@ export default async function VaccinesPage() {
                         )}
                       </div>
                       {vaccine.diseases && vaccine.diseases.length > 0 && (
-                        <div style={{ fontSize: 10, color: '#80868B', marginTop: 2 }}>
+                        <div style={{ fontSize: 11, color: '#80868B', marginTop: 2 }}>
                           ضد: {vaccine.diseases.slice(0, 3).join('، ')}
                           {vaccine.diseases.length > 3 && '...'}
                         </div>
@@ -256,13 +256,13 @@ export default async function VaccinesPage() {
                       {vaccine.is_free ? (
                         <span style={{
                           padding: '3px 10px',
-                          background: '#E6F3EF', color: '#01875F',
-                          borderRadius: 10, fontSize: 10, fontWeight: 700,
+                          background: 'var(--emerald-soft, #E6F3EF)', color: 'var(--emerald, #01875F)',
+                          borderRadius: 10, fontSize: 11, fontWeight: 700,
                         }}>
                           مجاني
                         </span>
                       ) : (
-                        <div style={{ fontSize: 12, fontWeight: 800, color: '#01875F' }}>
+                        <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--emerald, #01875F)' }}>
                           {vaccine.price.toLocaleString('ar-IQ')} د.ع
                         </div>
                       )}
@@ -315,7 +315,7 @@ function StatBox({
         <Icon size={18} stroke={2} />
       </div>
       <div style={{ fontSize: 18, fontWeight: 900, color: '#202124' }}>{value}</div>
-      <div style={{ fontSize: 10, color: '#5F6368', fontWeight: 600 }}>{label}</div>
+      <div style={{ fontSize: 11, color: '#5F6368', fontWeight: 600 }}>{label}</div>
     </div>
   );
 }

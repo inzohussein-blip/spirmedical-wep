@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { isSuperAdmin } from '@/lib/admin-types';
+import AutoRejectClient from './AutoRejectClient';
+import { AUTO_REJECT_KEY } from '@/lib/app-settings';
 
 export const dynamic = 'force-dynamic';
 
@@ -39,6 +41,14 @@ export default async function SettingsPage() {
     supabase.from('coupons').select('*', { count: 'exact', head: true }),
   ]);
 
+  // مدّة الرفض التلقائيّ — غيابُ الصفّ يعني «موقوف»، لا قيمةً مفترَضة
+  const { data: autoRejectRow } = await (supabase as any)
+    .from('app_settings')
+    .select('value')
+    .eq('key', AUTO_REJECT_KEY)
+    .maybeSingle();
+  const autoRejectHours = Number(autoRejectRow?.value ?? 0);
+
   return (
     <>
       <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}>⚙️ الإعدادات</h1>
@@ -55,6 +65,14 @@ export default async function SettingsPage() {
           <StatBox label="الطلبات" value={(totalAppointments ?? 0).toLocaleString('ar-IQ')} />
           <StatBox label="الكوبونات" value={(totalCoupons ?? 0).toLocaleString('ar-IQ')} />
         </div>
+      </div>
+
+      {/* الرفض التلقائيّ للطلبات المعلَّقة */}
+      <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginBottom: 16 }}>
+        <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}>
+          ⏳ الرفض التلقائيّ للطلبات المعلَّقة
+        </h2>
+        <AutoRejectClient initialHours={Number.isFinite(autoRejectHours) ? autoRejectHours : 0} />
       </div>
 
       {/* روابط سريعة */}

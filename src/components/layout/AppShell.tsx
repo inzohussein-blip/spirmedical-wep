@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { isFocusedTaskRoute } from '@/lib/focused-routes';
 import { useState, useEffect } from 'react';
 import {
   IconHome, IconHome2, IconLayoutGrid, IconClipboardList,
@@ -102,6 +103,10 @@ export function AppShell({
   const PAGES_WITHOUT_APPSHELL_HEADER = ['/dashboard', '/guest', '/specialist'];
   const hideAppShellHeader = PAGES_WITHOUT_APPSHELL_HEADER.includes(pathname);
 
+  // مهامٌّ مُركَّزة: نموذج الطلب له شريطُ إرسالٍ ثابت في أسفله، فكان شريطُ
+  // التنقّل يأكل 71px من شاشة 640px ويتراكب معه. الرجوعُ متاحٌ من الرأس.
+  const hideBottomNav = isFocusedTaskRoute(pathname);
+
   return (
     <div className="app-viewport">
       <a href="#main-content" className="skip-link">
@@ -169,7 +174,7 @@ export function AppShell({
             <Link
               href="/login"
               className="app-sidebar-item"
-              style={{ background: '#01875F', color: '#fff', justifyContent: 'center' }}
+              style={{ background: 'var(--emerald, #01875F)', color: '#fff', justifyContent: 'center' }}
             >
               <span>تسجيل الدخول</span>
             </Link>
@@ -276,6 +281,7 @@ export function AppShell({
         </main>
 
         {/* === BOTTOM NAV === */}
+        {!hideBottomNav && (
         <nav
           className="app-bottom-nav"
           role="navigation"
@@ -300,6 +306,7 @@ export function AppShell({
             );
           })}
         </nav>
+        )}
       </div>
     </div>
   );

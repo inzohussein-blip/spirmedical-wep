@@ -154,7 +154,7 @@ export default async function ConsultationsPage() {
                             alignItems: 'center',
                             gap: 8,
                             marginTop: 4,
-                            fontSize: 10,
+                            fontSize: 11,
                           }}
                         >
                           <Clock size={10} color="var(--ink-3)" />

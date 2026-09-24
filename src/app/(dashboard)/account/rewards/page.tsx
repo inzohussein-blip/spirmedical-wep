@@ -20,34 +20,40 @@ export default async function RewardsPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 
-  // بيانات المستخدم
-  const { data: profile } = await supabase
-    .from('users')
-    .select('full_name, loyalty_points, loyalty_tier, wallet_balance')
-    .eq('id', user.id)
-    .single();
-
-  // معالم الولاء
-  const { data: milestones } = await supabase
-    .from('loyalty_milestones')
-    .select('*')
-    .eq('is_active', true)
-    .order('min_points', { ascending: true });
-
-  // كود الإحالة
-  const { data: referralCode } = await supabase
-    .from('referral_codes')
-    .select('*')
-    .eq('user_id', user.id)
-    .maybeSingle();
-
-  // الإحالات الناجحة
-  const { data: referrals, count: referralCount } = await supabase
-    .from('referrals')
-    .select('id, status, created_at, referrer_reward', { count: 'exact' })
-    .eq('referrer_id', user.id)
-    .order('created_at', { ascending: false })
-    .limit(10);
+  // نداءاتٌ مستقلّة: لا يعتمد أيٌّ منها على نتيجة سابقه، وكانت تُنتظَر واحداً بعد واحد
+  // فتُدفع رحلةٌ شبكيّةٌ لكلٍّ منها قبل أن يُرسم شيء. الآن نافذةُ انتظارٍ واحدة.
+  const [
+    { data: profile },
+    { data: milestones },
+    { data: referralCode },
+    { data: referrals, count: referralCount },
+  ] = await Promise.all([
+    // بيانات المستخدم
+    supabase
+      .from('users')
+      .select('full_name, loyalty_points, loyalty_tier, wallet_balance')
+      .eq('id', user.id)
+      .single(),
+    // معالم الولاء
+    supabase
+      .from('loyalty_milestones')
+      .select('*')
+      .eq('is_active', true)
+      .order('min_points', { ascending: true }),
+    // كود الإحالة
+    supabase
+      .from('referral_codes')
+      .select('*')
+      .eq('user_id', user.id)
+      .maybeSingle(),
+    // الإحالات الناجحة
+    supabase
+      .from('referrals')
+      .select('id, status, created_at, referrer_reward', { count: 'exact' })
+      .eq('referrer_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(10),
+  ]);
 
   return (
     <RewardsClient

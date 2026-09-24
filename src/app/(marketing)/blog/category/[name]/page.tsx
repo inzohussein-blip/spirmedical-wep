@@ -27,6 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${category.label} · المدونة الطبية`,
     description: category.description,
+    alternates: { canonical: `/blog/category/${params.name}` },
   };
 }
 

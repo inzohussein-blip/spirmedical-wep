@@ -104,8 +104,8 @@ CREATE POLICY "consultation_images_owner_select"
   USING (
     bucket_id = 'consultation-images'
     AND (
-      auth.uid()::text = (storage.foldername(name))[1]
-      OR public.is_admin(auth.uid())
+      (SELECT auth.uid())::text = (storage.foldername(name))[1]
+      OR public.is_admin((SELECT auth.uid()))
     )
   );
 
@@ -115,7 +115,7 @@ CREATE POLICY "consultation_images_owner_insert"
   ON storage.objects FOR INSERT
   WITH CHECK (
     bucket_id = 'consultation-images'
-    AND auth.uid()::text = (storage.foldername(name))[1]
+    AND (SELECT auth.uid())::text = (storage.foldername(name))[1]
   );
 
 -- ─── المستخدم يحذف صوره فقط ─────────────────────────
@@ -125,8 +125,8 @@ CREATE POLICY "consultation_images_owner_delete"
   USING (
     bucket_id = 'consultation-images'
     AND (
-      auth.uid()::text = (storage.foldername(name))[1]
-      OR public.is_admin(auth.uid())
+      (SELECT auth.uid())::text = (storage.foldername(name))[1]
+      OR public.is_admin((SELECT auth.uid()))
     )
   );
 
@@ -140,7 +140,7 @@ CREATE POLICY "consultation_images_doctor_select"
       SELECT 1 FROM public.consultations c
       WHERE c.patient_user_id::text = (storage.foldername(name))[1]
       AND c.doctor_id IN (
-        SELECT id FROM public.doctors WHERE user_id = auth.uid()
+        SELECT id FROM public.doctors WHERE user_id = (SELECT auth.uid())
       )
     )
   );
@@ -157,7 +157,7 @@ CREATE POLICY "avatars_owner_insert"
   ON storage.objects FOR INSERT
   WITH CHECK (
     bucket_id = 'avatars'
-    AND auth.uid()::text = (storage.foldername(name))[1]
+    AND (SELECT auth.uid())::text = (storage.foldername(name))[1]
   );
 
 -- ─── المستخدم يحدّث avatar الخاص به ──────────────────
@@ -166,7 +166,7 @@ CREATE POLICY "avatars_owner_update"
   ON storage.objects FOR UPDATE
   USING (
     bucket_id = 'avatars'
-    AND auth.uid()::text = (storage.foldername(name))[1]
+    AND (SELECT auth.uid())::text = (storage.foldername(name))[1]
   );
 
 -- ─── المستخدم يحذف avatar الخاص به ───────────────────
@@ -175,7 +175,7 @@ CREATE POLICY "avatars_owner_delete"
   ON storage.objects FOR DELETE
   USING (
     bucket_id = 'avatars'
-    AND auth.uid()::text = (storage.foldername(name))[1]
+    AND (SELECT auth.uid())::text = (storage.foldername(name))[1]
   );
 
 -- (SELECT تلقائي لأن bucket public=true)
@@ -191,8 +191,8 @@ CREATE POLICY "medical_records_owner_select"
   USING (
     bucket_id = 'medical-records'
     AND (
-      auth.uid()::text = (storage.foldername(name))[1]
-      OR public.is_admin(auth.uid())
+      (SELECT auth.uid())::text = (storage.foldername(name))[1]
+      OR public.is_admin((SELECT auth.uid()))
     )
   );
 
@@ -201,7 +201,7 @@ CREATE POLICY "medical_records_owner_insert"
   ON storage.objects FOR INSERT
   WITH CHECK (
     bucket_id = 'medical-records'
-    AND auth.uid()::text = (storage.foldername(name))[1]
+    AND (SELECT auth.uid())::text = (storage.foldername(name))[1]
   );
 
 DROP POLICY IF EXISTS "medical_records_owner_delete" ON storage.objects;
@@ -209,7 +209,7 @@ CREATE POLICY "medical_records_owner_delete"
   ON storage.objects FOR DELETE
   USING (
     bucket_id = 'medical-records'
-    AND auth.uid()::text = (storage.foldername(name))[1]
+    AND (SELECT auth.uid())::text = (storage.foldername(name))[1]
   );
 
 -- ═── الطبيب المعتمد يرى السجلات الطبية للمرضى ────────
@@ -221,7 +221,7 @@ CREATE POLICY "medical_records_doctor_select"
     AND EXISTS (
       SELECT 1 FROM public.appointments a
       WHERE a.user_id::text = (storage.foldername(name))[1]
-      AND a.specialist_id = auth.uid()
+      AND a.specialist_id = (SELECT auth.uid())
       AND a.status IN ('confirmed', 'in_progress', 'completed')
     )
   );
@@ -236,7 +236,7 @@ CREATE POLICY "nurse_credentials_nurse_insert"
   ON storage.objects FOR INSERT
   WITH CHECK (
     bucket_id = 'nurse-credentials'
-    AND auth.uid()::text = (storage.foldername(name))[1]
+    AND (SELECT auth.uid())::text = (storage.foldername(name))[1]
   );
 
 DROP POLICY IF EXISTS "nurse_credentials_nurse_select" ON storage.objects;
@@ -245,8 +245,8 @@ CREATE POLICY "nurse_credentials_nurse_select"
   USING (
     bucket_id = 'nurse-credentials'
     AND (
-      auth.uid()::text = (storage.foldername(name))[1]
-      OR public.is_admin(auth.uid())
+      (SELECT auth.uid())::text = (storage.foldername(name))[1]
+      OR public.is_admin((SELECT auth.uid()))
     )
   );
 
@@ -255,7 +255,7 @@ CREATE POLICY "nurse_credentials_admin_delete"
   ON storage.objects FOR DELETE
   USING (
     bucket_id = 'nurse-credentials'
-    AND public.is_admin(auth.uid())
+    AND public.is_admin((SELECT auth.uid()))
   );
 
 -- ════════════════════════════════════════════════════════════════════
@@ -268,8 +268,8 @@ CREATE POLICY "prescriptions_owner_select"
   USING (
     bucket_id = 'prescription-photos'
     AND (
-      auth.uid()::text = (storage.foldername(name))[1]
-      OR public.is_admin(auth.uid())
+      (SELECT auth.uid())::text = (storage.foldername(name))[1]
+      OR public.is_admin((SELECT auth.uid()))
     )
   );
 
@@ -278,7 +278,7 @@ CREATE POLICY "prescriptions_owner_insert"
   ON storage.objects FOR INSERT
   WITH CHECK (
     bucket_id = 'prescription-photos'
-    AND auth.uid()::text = (storage.foldername(name))[1]
+    AND (SELECT auth.uid())::text = (storage.foldername(name))[1]
   );
 
 DROP POLICY IF EXISTS "prescriptions_owner_delete" ON storage.objects;
@@ -286,7 +286,7 @@ CREATE POLICY "prescriptions_owner_delete"
   ON storage.objects FOR DELETE
   USING (
     bucket_id = 'prescription-photos'
-    AND auth.uid()::text = (storage.foldername(name))[1]
+    AND (SELECT auth.uid())::text = (storage.foldername(name))[1]
   );
 
 -- ─── الصيدلي يرى الوصفات للمعالجة ─────────────────────
@@ -297,7 +297,7 @@ CREATE POLICY "prescriptions_pharmacist_select"
     bucket_id = 'prescription-photos'
     AND EXISTS (
       SELECT 1 FROM public.users
-      WHERE id = auth.uid()
+      WHERE id = (SELECT auth.uid())
       AND role = 'specialist'
     )
   );
@@ -382,22 +382,22 @@ BEGIN
     DROP POLICY IF EXISTS "nursing_orders_select_own" ON public.nursing_orders;
     CREATE POLICY "nursing_orders_select_own"
       ON public.nursing_orders FOR SELECT
-      USING (user_id = auth.uid() OR nurse_id = auth.uid() OR public.is_admin(auth.uid()));
+      USING (user_id = (SELECT auth.uid()) OR nurse_id = (SELECT auth.uid()) OR public.is_admin((SELECT auth.uid())));
 
     DROP POLICY IF EXISTS "nursing_orders_insert_own" ON public.nursing_orders;
     CREATE POLICY "nursing_orders_insert_own"
       ON public.nursing_orders FOR INSERT
-      WITH CHECK (user_id = auth.uid() OR public.is_admin(auth.uid()));
+      WITH CHECK (user_id = (SELECT auth.uid()) OR public.is_admin((SELECT auth.uid())));
 
     DROP POLICY IF EXISTS "nursing_orders_update_own" ON public.nursing_orders;
     CREATE POLICY "nursing_orders_update_own"
       ON public.nursing_orders FOR UPDATE
-      USING (user_id = auth.uid() OR nurse_id = auth.uid() OR public.is_admin(auth.uid()));
+      USING (user_id = (SELECT auth.uid()) OR nurse_id = (SELECT auth.uid()) OR public.is_admin((SELECT auth.uid())));
 
     DROP POLICY IF EXISTS "nursing_orders_admin_delete" ON public.nursing_orders;
     CREATE POLICY "nursing_orders_admin_delete"
       ON public.nursing_orders FOR DELETE
-      USING (public.is_admin(auth.uid()));
+      USING (public.is_admin((SELECT auth.uid())));
   END IF;
 END $$;
 
@@ -412,7 +412,7 @@ BEGIN
     DROP POLICY IF EXISTS "audit_logs_admin_select" ON public.audit_logs;
     CREATE POLICY "audit_logs_admin_select"
       ON public.audit_logs FOR SELECT
-      USING (public.is_admin(auth.uid()));
+      USING (public.is_admin((SELECT auth.uid())));
   END IF;
 END $$;
 
@@ -423,7 +423,7 @@ BEGIN
     DROP POLICY IF EXISTS "system_logs_super_admin" ON public.system_logs;
     CREATE POLICY "system_logs_super_admin"
       ON public.system_logs FOR ALL
-      USING (public.is_super_admin(auth.uid()));
+      USING (public.is_super_admin((SELECT auth.uid())));
   END IF;
 END $$;
 

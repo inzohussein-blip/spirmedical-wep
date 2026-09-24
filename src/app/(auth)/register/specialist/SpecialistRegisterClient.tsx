@@ -10,7 +10,7 @@ import {
   type SpecialistRegisterInput,
 } from '@/lib/validations/auth-forms';
 import { registerSpecialist } from '../actions';
-import { readOtpMode } from '@/features/auth/lib/otp-mode';
+import { readOtpMode } from '@/lib/auth/otp-mode';
 
 type FormState = {
   fullName: string;

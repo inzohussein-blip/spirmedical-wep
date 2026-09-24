@@ -180,7 +180,7 @@ export default function CreateUserClient({ callerRole }: Props) {
             >
               <div style={{
                 width: 48, height: 48, borderRadius: 12,
-                background: '#E6F3EF', color: '#01875F',
+                background: 'var(--emerald-soft, #E6F3EF)', color: 'var(--emerald, #01875F)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 <IconUser size={24} stroke={1.75} />
@@ -208,7 +208,7 @@ export default function CreateUserClient({ callerRole }: Props) {
             >
               <div style={{
                 width: 48, height: 48, borderRadius: 12,
-                background: '#FEF7E0', color: '#B06000',
+                background: '#FEF7E0', color: 'var(--amber, #B06000)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 <IconStethoscope size={24} stroke={1.75} />
@@ -237,7 +237,7 @@ export default function CreateUserClient({ callerRole }: Props) {
               >
                 <div style={{
                   width: 48, height: 48, borderRadius: 12,
-                  background: '#FCE8E6', color: '#C71C56',
+                  background: '#FCE8E6', color: 'var(--rose, #C71C56)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
                   <IconShield size={24} stroke={1.75} />
@@ -451,7 +451,7 @@ export default function CreateUserClient({ callerRole }: Props) {
                 disabled={loading}
                 style={{
                   flex: 2, padding: '14px 16px',
-                  background: loading ? '#9AA0A6' : '#01875F',
+                  background: loading ? '#9AA0A6' : 'var(--emerald, #01875F)',
                   color: '#fff',
                   border: 0, borderRadius: 12,
                   fontSize: 14, fontWeight: 600,
@@ -469,13 +469,13 @@ export default function CreateUserClient({ callerRole }: Props) {
           <div>
             {result.success ? (
               <div style={{
-                background: '#E6F3EF', borderRadius: 12,
+                background: 'var(--emerald-soft, #E6F3EF)', borderRadius: 12,
                 padding: 20, marginBottom: 16,
-                border: '1px solid #01875F',
+                border: '1px solid var(--emerald, #01875F)',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
                   <IconCheck size={24} stroke={2} color="#01875F" />
-                  <h2 style={{ fontSize: 16, fontWeight: 600, color: '#01875F', margin: 0 }}>
+                  <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--emerald, #01875F)', margin: 0 }}>
                     تم إنشاء الحساب بنجاح!
                   </h2>
                 </div>
@@ -496,7 +496,7 @@ export default function CreateUserClient({ callerRole }: Props) {
                     {result.temp_password}
                   </div>
 
-                  <div style={{ fontSize: 11, color: '#B06000', marginBottom: 12 }}>
+                  <div style={{ fontSize: 11, color: 'var(--amber, #B06000)', marginBottom: 12 }}>
                     ⚠️ احفظ هذه البيانات وأرسلها للمستخدم بطريقة آمنة
                   </div>
 
@@ -505,7 +505,7 @@ export default function CreateUserClient({ callerRole }: Props) {
                     onClick={copyCredentials}
                     style={{
                       width: '100%', padding: 12,
-                      background: copied ? '#01875F' : '#202124',
+                      background: copied ? 'var(--emerald, #01875F)' : '#202124',
                       color: '#fff', border: 0, borderRadius: 8,
                       fontSize: 13, fontWeight: 600, cursor: 'pointer',
                       display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
@@ -529,11 +529,11 @@ export default function CreateUserClient({ callerRole }: Props) {
               <div style={{
                 background: '#FCE8E6', borderRadius: 12,
                 padding: 20, marginBottom: 16,
-                border: '1px solid #C71C56',
+                border: '1px solid var(--rose, #C71C56)',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
                   <IconAlertCircle size={24} stroke={2} color="#C71C56" />
-                  <h2 style={{ fontSize: 16, fontWeight: 600, color: '#C71C56', margin: 0 }}>
+                  <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--rose, #C71C56)', margin: 0 }}>
                     فشل إنشاء الحساب
                   </h2>
                 </div>
@@ -549,7 +549,7 @@ export default function CreateUserClient({ callerRole }: Props) {
                 onClick={resetForm}
                 style={{
                   flex: 1, padding: '14px 16px',
-                  background: '#01875F', color: '#fff',
+                  background: 'var(--emerald, #01875F)', color: '#fff',
                   border: 0, borderRadius: 12,
                   fontSize: 14, fontWeight: 600, cursor: 'pointer',
                 }}

@@ -19,10 +19,6 @@ import {
   notifyEligibleSpecialistsOfNewOrder,
 } from '@/lib/services/push-templates';
 import { sendAppointmentConfirmedWA, isWhatsAppEnabled } from '@/lib/services/whatsapp';
-import {
-  sendOtp as sendOtpService,
-  verifyOtp as verifyOtpService,
-} from '@/lib/whatsapp/otp-service';
 
 interface CreateAppointmentInput {
   service_id: string;
@@ -276,74 +272,6 @@ async function createAppointmentV2Impl(input: CreateAppointmentInput) {
       ? `تم تأكيد الحجز · ستصلك التفاصيل عبر ${channelLabel}`
       : 'تم تأكيد الحجز بنجاح',
   };
-}
-
-// ════════════════════════════════════════════════════════════════════
-// OTP تأكيد رقم الهاتف قبل الحجز — يستخدم الخدمة الحقيقية (Meta) لا محاكاة.
-// لا يوجد أي رمز خلفي؛ التوليد/التخزين/التحقق يتم في otp-service (bcrypt + DB).
-// ════════════════════════════════════════════════════════════════════
-
-const OTP_PURPOSE = 'verify_phone' as const;
-
-export async function sendOtpAction(
-  phone: string,
-  channel: 'whatsapp' | 'telegram'
-) {
-  const hdrs = headers();
-  const ip =
-    hdrs.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-    hdrs.get('x-real-ip') ||
-    'unknown';
-
-  // حد إضافي حسب الـ IP (فوق الحد لكل رقم داخل الخدمة)
-  const ipLimit = await checkRateLimit(`otp:send:ip:${ip}`, {
-    max: 10,
-    windowSeconds: 900,
-  });
-  if (!ipLimit.allowed) {
-    return {
-      success: false,
-      error: `محاولات كثيرة. حاول بعد ${Math.ceil(ipLimit.retryAfterSeconds / 60)} دقيقة`,
-    };
-  }
-
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const result = await sendOtpService({
-    phone,
-    channel,
-    userId: user?.id,
-    purpose: OTP_PURPOSE,
-    ipAddress: ip,
-    userAgent: hdrs.get('user-agent') ?? undefined,
-  });
-
-  if (!result.success) {
-    return { success: false, error: result.error || 'فشل إرسال الرمز' };
-  }
-
-  return {
-    success: true,
-    message: `تم إرسال الرمز إلى ${channel === 'whatsapp' ? 'WhatsApp' : 'Telegram'}`,
-    expiresIn: 300,
-  };
-}
-
-export async function verifyOtpAction(phone: string, code: string) {
-  const result = await verifyOtpService({
-    phone,
-    code,
-    purpose: OTP_PURPOSE,
-  });
-
-  if (!result.success) {
-    return { success: false, error: result.error || 'الرمز غير صحيح' };
-  }
-
-  return { success: true };
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

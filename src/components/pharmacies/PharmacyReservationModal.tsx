@@ -1,9 +1,10 @@
 'use client';
 
+import ModalShell, { ModalCloseButton } from '@/components/ui/ModalShell';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  X, Plus, Trash2, CheckCircle2, AlertTriangle,
+  Plus, Trash2, CheckCircle2, AlertTriangle,
   Clock, Pill, FileText,
 } from 'lucide-react';
 import { createPharmacyReservation, type ReservationItem } from '@/app/(dashboard)/services/pharmacies/actions';
@@ -107,44 +108,18 @@ export default function PharmacyReservationModal({
   const maxDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(0,0,0,0.5)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000,
-        padding: 16,
-      }}
-      onClick={onClose}
-    >
-      <div
-        style={{
-          background: 'var(--white)',
-          borderRadius: 16,
-          padding: 20,
-          width: '100%',
-          maxWidth: 480,
-          maxHeight: '90vh',
-          overflowY: 'auto',
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
+    <ModalShell onClose={onClose} labelledBy="prm-title">
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
           <div>
-            <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>
+            <h2 id="prm-title" style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>
               حجز دواء
             </h2>
             <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 2 }}>
               من {pharmacy.name} · {pharmacy.district}
             </div>
           </div>
-          <button onClick={onClose} style={{ background: 'transparent', border: 0, cursor: 'pointer' }}>
-            <X size={22} strokeWidth={2.2} />
-          </button>
+          <ModalCloseButton onClick={onClose} />
         </div>
 
         {/* معلومات */}
@@ -153,7 +128,7 @@ export default function PharmacyReservationModal({
           background: '#E1F5EE',
           color: '#04342C',
           borderRadius: 10,
-          fontSize: 11,
+          fontSize: 12,
           marginBottom: 16,
           lineHeight: 1.6,
         }}>
@@ -179,7 +154,7 @@ export default function PharmacyReservationModal({
                 }}
               >
                 <div style={{ display: 'flex', gap: 6 }}>
-                  <Pill size={16} strokeWidth={2.2} style={{ color: '#0F6E56', marginTop: 8 }} aria-hidden />
+                  <Pill size={16} strokeWidth={2.2} style={{ color: 'var(--emerald-mid, #0F6E56)', marginTop: 8 }} aria-hidden />
                   <input
                     type="text"
                     value={item.name}
@@ -236,7 +211,7 @@ export default function PharmacyReservationModal({
                     padding: '6px 10px',
                     border: '1px solid var(--line)',
                     borderRadius: 8,
-                    fontSize: 11,
+                    fontSize: 12,
                     fontFamily: 'inherit',
                     background: 'var(--white)',
                   }}
@@ -252,8 +227,8 @@ export default function PharmacyReservationModal({
               marginTop: 8,
               padding: '8px 14px',
               background: 'var(--white)',
-              color: '#0F6E56',
-              border: '1px dashed #0F6E56',
+              color: 'var(--emerald-mid, #0F6E56)',
+              border: '1px dashed var(--emerald-mid, #0F6E56)',
               borderRadius: 8,
               fontSize: 12,
               fontWeight: 700,
@@ -362,7 +337,7 @@ export default function PharmacyReservationModal({
           style={{
             width: '100%',
             padding: 14,
-            background: '#0F6E56',
+            background: 'var(--emerald-mid, #0F6E56)',
             color: 'white',
             border: 0,
             borderRadius: 12,
@@ -391,7 +366,7 @@ export default function PharmacyReservationModal({
           padding: 10,
           background: 'var(--paper-2)',
           borderRadius: 8,
-          fontSize: 10,
+          fontSize: 12,
           color: 'var(--ink-3)',
           lineHeight: 1.6,
         }}>
@@ -399,7 +374,6 @@ export default function PharmacyReservationModal({
           • الدفع كاش عند الاستلام في الصيدلية<br/>
           • يمكنك إلغاء الحجز قبل الاستلام
         </div>
-      </div>
-    </div>
+    </ModalShell>
   );
 }

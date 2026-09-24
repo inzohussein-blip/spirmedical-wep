@@ -4,6 +4,7 @@ export const revalidate = 86400;
 import Link from 'next/link';
 
 export const metadata = {
+  alternates: { canonical: '/legal/cookies' },
   title: 'سياسة الكوكيز · سباير ميديكال',
   description: 'سياسة استخدام ملفات تعريف الارتباط (الكوكيز) في منصة سباير ميديكال',
 };

@@ -9,6 +9,7 @@ import {
 import { formatPriceRange } from '@/lib/format/price';
 import { haptic } from '@/lib/haptic';
 import ExternalMapButton from '@/components/maps/ExternalMapButton';
+import PhoneLink from '@/components/ui/PhoneLink';
 
 interface DentalClinic {
   id: string;
@@ -227,7 +228,7 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
           color: 'var(--paper-3)',
           padding: '2px 8px',
           borderRadius: 100,
-          fontSize: 9,
+          fontSize: 11,
           fontWeight: 900,
         }}>
           ⭐ مميّز
@@ -259,7 +260,7 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
             </p>
           )}
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10, color: 'var(--ink-3)', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--ink-3)', flexWrap: 'wrap' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <MapPin size={10} />
               {clinic.city}{clinic.district ? ` · ${clinic.district}` : ''}
@@ -296,7 +297,7 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
             <span
               key={i}
               style={{
-                fontSize: 10,
+                fontSize: 11,
                 padding: '3px 8px',
                 background: 'var(--paper-3)',
                 borderRadius: 100,
@@ -316,7 +317,7 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
         borderRadius: 8,
         padding: '8px 10px',
         marginBottom: 10,
-        fontSize: 10,
+        fontSize: 11,
         color: 'var(--ink-2)',
         lineHeight: 1.6,
       }}>
@@ -358,7 +359,7 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
         {/* Secondary actions */}
         <div style={{ display: 'flex', gap: 6 }}>
           {clinic.phone && (
-            <a
+            <PhoneLink phone={clinic.phone}
               href={`tel:${clinic.phone}`}
               onClick={() => haptic.light()}
               style={{
@@ -380,10 +381,10 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
             >
               <Phone size={12} />
               اتصل
-            </a>
+            </PhoneLink>
           )}
           {clinic.phone && (
-            <a
+            <PhoneLink phone={clinic.phone}
               href={`https://wa.me/${clinic.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('السلام عليكم - أود حجز موعد عبر Spir Medical')}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -402,7 +403,7 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
               }}
             >
               💬 WhatsApp
-            </a>
+            </PhoneLink>
           )}
           <ExternalMapButton
             lat={clinic.latitude}

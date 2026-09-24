@@ -727,29 +727,29 @@ END $$;
 -- Admins يرون كل المحادثات
 DROP POLICY IF EXISTS "Admins see all chats" ON public.chats;
 CREATE POLICY "Admins see all chats" ON public.chats
-  FOR SELECT USING (public.is_admin(auth.uid()));
+  FOR SELECT USING (public.is_admin((SELECT auth.uid())));
 
 DROP POLICY IF EXISTS "Admins see all messages" ON public.messages;
 CREATE POLICY "Admins see all messages" ON public.messages
-  FOR SELECT USING (public.is_admin(auth.uid()));
+  FOR SELECT USING (public.is_admin((SELECT auth.uid())));
 
 -- Admins يرون كل المدفوعات
 DROP POLICY IF EXISTS "Admins see all payments" ON public.payments;
 CREATE POLICY "Admins see all payments" ON public.payments
-  FOR SELECT USING (public.is_admin(auth.uid()));
+  FOR SELECT USING (public.is_admin((SELECT auth.uid())));
 
 DROP POLICY IF EXISTS "Admins update all payments" ON public.payments;
 CREATE POLICY "Admins update all payments" ON public.payments
-  FOR UPDATE USING (public.is_admin(auth.uid()));
+  FOR UPDATE USING (public.is_admin((SELECT auth.uid())));
 
 -- Admins يرون كل التقييمات
 DROP POLICY IF EXISTS "Admins see all ratings" ON public.ratings;
 CREATE POLICY "Admins see all ratings" ON public.ratings
-  FOR SELECT USING (public.is_admin(auth.uid()));
+  FOR SELECT USING (public.is_admin((SELECT auth.uid())));
 
 DROP POLICY IF EXISTS "Admins update ratings" ON public.ratings;
 CREATE POLICY "Admins update ratings" ON public.ratings
-  FOR UPDATE USING (public.is_admin(auth.uid()));
+  FOR UPDATE USING (public.is_admin((SELECT auth.uid())));
 
 -- ════════════════════════════════════════════════════════════════════
 -- 🔧 V33: Admin Views (نُقلت من 01 — تحتاج جداول payments وغيرها)

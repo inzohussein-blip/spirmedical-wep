@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { useModalDialog } from '@/lib/hooks/useModalDialog';
 import {
   MessageCircle, Send, Smartphone, Check, X, Shield, Loader2,
   AlertTriangle, ChevronLeft,
@@ -40,6 +41,12 @@ export default function WhatsAppOtpSettings({
   const [verifyCode, setVerifyCode] = useState('');
   const [verifyError, setVerifyError] = useState<string | null>(null);
   const [verifySuccess, setVerifySuccess] = useState(false);
+  const cancelVerify = () => {
+    setVerifying(false);
+    setVerifyCode('');
+    setVerifyError(null);
+  };
+  const verifyDialogRef = useModalDialog(verifying, cancelVerify);
 
   const channels: ChannelOption[] = [
     {
@@ -52,12 +59,19 @@ export default function WhatsAppOtpSettings({
       disabled: !waVerified,
       disabledReason: 'يجب التحقق من رقم WhatsApp أولاً',
     },
+    // القناتان التاليتان **غير منفَّذتين** في الخادم: `sendOtpViaTelegram`
+    // و`sendOtpViaSms` تُرجعان `success: false` دائماً. وكانتا تُعرضان هنا
+    // قابلتين للاختيار بوصفٍ واثق («٥-٣٠ ثانية · يعمل بلا إنترنت»)، فمن
+    // يختار SMS يصير كلّ إرسال رمزٍ له فاشلاً — أي **خروجٌ كامل من التحقّق
+    // بخطوتين** في تطبيقٍ طبّي. تُعطَّلان حتى تُفعَّل القناة فعلاً.
     {
       id: 'telegram',
       label: 'Telegram',
       description: 'فوري · للحسابات المربوطة',
       icon: Send,
       brandColor: '#0088CC',
+      disabled: process.env.NEXT_PUBLIC_ENABLE_TELEGRAM_OTP !== 'true',
+      disabledReason: 'قناة تيليجرام غير مفعّلة بعد',
     },
     {
       id: 'sms',
@@ -65,6 +79,8 @@ export default function WhatsAppOtpSettings({
       description: '5-30 ثانية · يعمل بلا إنترنت',
       icon: Smartphone,
       brandColor: '#6E7878',
+      disabled: process.env.NEXT_PUBLIC_ENABLE_SMS_OTP !== 'true',
+      disabledReason: 'قناة SMS غير مفعّلة بعد',
     },
   ];
 
@@ -289,7 +305,7 @@ export default function WhatsAppOtpSettings({
                       {ch.recommended && (
                         <span
                           style={{
-                            fontSize: 9,
+                            fontSize: 11,
                             background: 'var(--emerald-soft)',
                             color: 'var(--emerald)',
                             padding: '2px 6px',
@@ -352,12 +368,19 @@ export default function WhatsAppOtpSettings({
           }}
         >
           <div
+            ref={verifyDialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="التحقّق من رقم واتساب"
             style={{
               background: '#fff',
               borderRadius: 16,
               padding: 24,
               maxWidth: 360,
               width: '100%',
+              maxHeight: 'calc(100dvh - 32px)',
+              overflowY: 'auto',
+              outline: 'none',
               textAlign: 'center',
             }}
           >
@@ -413,7 +436,10 @@ export default function WhatsAppOtpSettings({
 
                 <input
                   type="text"
+                  className="input-large-text"
                   inputMode="numeric"
+                  autoComplete="one-time-code"
+                  aria-label="رمز التحقّق"
                   pattern="[0-9]*"
                   maxLength={6}
                   value={verifyCode}
@@ -476,11 +502,7 @@ export default function WhatsAppOtpSettings({
 
                 <button
                   type="button"
-                  onClick={() => {
-                    setVerifying(false);
-                    setVerifyCode('');
-                    setVerifyError(null);
-                  }}
+                  onClick={cancelVerify}
                   style={{
                     background: 'transparent',
                     border: 0,
