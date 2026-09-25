@@ -118,8 +118,8 @@ export default function HeroCardV3({
         
         {/* Bell */}
         <Link
-          href="/account/notifications"
-          aria-label="الإشعارات"
+          href="/account/inbox"
+          aria-label={hasUnreadNotifications ? 'الإشعارات — لديك جديد' : 'الإشعارات'}
           style={{
             width: 38,
             height: 38,

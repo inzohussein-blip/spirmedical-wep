@@ -3,6 +3,15 @@ import { redirect } from 'next/navigation';
 import NewAppointmentClient from './NewAppointmentClient';
 import ServiceComingSoon from '@/components/services/ServiceComingSoon';
 import { isBookingSoon } from '@/lib/services-v3';
+import ServiceUnavailable from '@/components/services/ServiceUnavailable';
+import { isSpecialistAvailable, unavailableSpecialistTypes } from '@/lib/specialist-availability';
+import { SERVICES } from '@/lib/services/services-data';
+
+/** التدفّقان المخصّصان ومختصُّ كلٍّ منهما (يطابق createBloodDrawOrder/createNursingAppointment) */
+const DEDICATED_FLOW_SPECIALIST: Record<string, { type: string; title: string }> = {
+  'blood-draw': { type: 'lab_analyst', title: 'خدمة سحب الدم' },
+  'home-nursing': { type: 'nurse', title: 'خدمة التمريض المنزلي' },
+};
 
 export const metadata = {
   title: 'حجز موعد جديد · سباير ميديكال',
@@ -34,6 +43,31 @@ export default async function NewAppointmentPage({
       />
     );
   }
+
+  // 🩺 لا مختصَّ يستلم الطلب ⇒ لا نموذج. كان الطلبُ يبقى معلّقاً حتى يُلغيه
+  // الرفضُ التلقائيّ بعد ٤٨ ساعة؛ الآن يُقال للمريض ذلك ويُعرض عليه الإشعار.
+  const dedicated = searchParams.service ? DEDICATED_FLOW_SPECIALIST[searchParams.service] : undefined;
+  if (dedicated && !(await isSpecialistAvailable(dedicated.type))) {
+    const { data: waiting } = await supabase
+      .from('service_waitlist')
+      .select('id')
+      .eq('user_id', user!.id)
+      .eq('specialist_type', dedicated.type)
+      .maybeSingle();
+    return (
+      <ServiceUnavailable
+        title={dedicated.title}
+        specialistType={dedicated.type}
+        serviceId={searchParams.service}
+        alreadyJoined={!!waiting}
+      />
+    );
+  }
+
+  // المعالج العامّ: الخدماتُ التي لا مختصَّ لها تُعرض معطّلةً «غير متاحة حالياً»
+  const unavailableTypes = dedicated
+    ? []
+    : await unavailableSpecialistTypes(SERVICES.map((sv) => sv.specialistType ?? '').filter(Boolean));
 
   // نداءاتٌ مستقلّة: لا يعتمد أيٌّ منها على نتيجة سابقه، وكانت تُنتظَر واحداً بعد واحد
   // فتُدفع رحلةٌ شبكيّةٌ لكلٍّ منها قبل أن يُرسم شيء. الآن نافذةُ انتظارٍ واحدة.
@@ -72,6 +106,7 @@ export default async function NewAppointmentPage({
       clinicId={searchParams.clinic}
       consultationType={searchParams.type}
       savedLocations={savedLocations}
+      unavailableSpecialistTypes={unavailableTypes}
     />
   );
 }

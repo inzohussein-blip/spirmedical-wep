@@ -71,6 +71,45 @@ async function deliverPush(
   return { ok: false, error: NO_PUSH_SUBSCRIPTION, provider: 'web-push' };
 }
 
+/**
+ * 📥 نسخةٌ في صندوق التطبيق حين تتعثّر القناة الخارجيّة.
+ *
+ * في 25 أيلول أُلغيت ثلاثةُ طلباتٍ تلقائيّاً، وفشلت رسائلُ واتساب الثلاث
+ * بـ«Authentication Error» — فلم يعلم أيُّ مريضٍ أنّ طلبه أُلغي. صندوقُ
+ * التطبيق (`/account/inbox`) لا يعتمد على توكن Meta ولا على اشتراك دفع،
+ * فتُكتب فيه الرسالةُ نفسها عند **أوّل** تعثّر، لا بعد استنفاد المحاولات.
+ *
+ * مرّةً واحدة لكلّ رسالة: `metadata.queue_id` يمنع التكرار عبر المحاولات.
+ * ولا ترمي أبداً — عطبُ النسخة لا يُفسد حالةَ الطابور.
+ */
+export async function writeInAppFallback(client: DB, msg: QueueRow): Promise<boolean> {
+  if (!msg.recipient_user_id) return false;
+  try {
+    const { data: existing } = await client
+      .from('notifications')
+      .select('id')
+      .eq('metadata->>queue_id', msg.id)
+      .limit(1);
+    if (existing && existing.length > 0) return false;
+
+    const link =
+      msg.related_type === 'appointment' && msg.related_id
+        ? `/appointments/${msg.related_id}`
+        : null;
+    const { error } = await client.from('notifications').insert({
+      user_id: msg.recipient_user_id,
+      type: msg.template_key ?? 'general',
+      title: await pushTitle(client, msg.template_key),
+      body: msg.body,
+      link,
+      metadata: { queue_id: msg.id, channel: msg.channel, fallback: true },
+    });
+    return !error;
+  } catch {
+    return false;
+  }
+}
+
 async function deliverRow(
   client: DB,
   msg: QueueRow,
@@ -99,6 +138,7 @@ async function deliverRow(
         .from('notification_queue')
         .update({ status: 'cancelled', error_message: NO_PUSH_SUBSCRIPTION })
         .eq('id', msg.id);
+      await writeInAppFallback(client, msg);
       return 'cancelled';
     }
   } else {
@@ -129,6 +169,7 @@ async function deliverRow(
       provider: result.provider ?? null,
     })
     .eq('id', msg.id);
+  await writeInAppFallback(client, msg);
   return 'failed';
 }
 

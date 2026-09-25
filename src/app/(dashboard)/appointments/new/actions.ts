@@ -1,5 +1,7 @@
 'use server';
 
+import { isSpecialistAvailable } from '@/lib/specialist-availability';
+import { NO_SPECIALIST_MESSAGE } from '@/lib/service-availability-copy';
 import { createClient } from '@/lib/supabase/server';
 import { appointmentSchema, validateAppointmentV2Server } from '@/lib/validations/appointment';
 import { validateBloodDrawServer } from '@/lib/validations/blood-draw';
@@ -75,6 +77,12 @@ async function createAppointmentV2Impl(input: CreateAppointmentInput) {
       success: false,
       error: 'يجب تأكيد رقم الهاتف أولاً',
     };
+  }
+
+  // 🩺 لا يُقبل طلبٌ لا مختصَّ يستلمه (0048): كان يبقى معلّقاً حتى يُلغيه
+  // الرفضُ التلقائيّ بعد ٤٨ ساعة. الصفحة تمنع قبله؛ وهذا لمن يتجاوزها.
+  if (!(await isSpecialistAvailable(input.service_id ? getServiceById(input.service_id)?.specialistType : null))) {
+    return { success: false, error: NO_SPECIALIST_MESSAGE, code: 'NO_SPECIALIST' as const };
   }
 
   // Rate limit: ١٠ حجوزات / ساعة
@@ -370,6 +378,12 @@ async function createBloodDrawOrderImpl(input: CreateBloodDrawInput) {
     };
   }
 
+  // 🩺 لا يُقبل طلبٌ لا مختصَّ يستلمه (0048): كان يبقى معلّقاً حتى يُلغيه
+  // الرفضُ التلقائيّ بعد ٤٨ ساعة. الصفحة تمنع قبله؛ وهذا لمن يتجاوزها.
+  if (!(await isSpecialistAvailable('lab_analyst'))) {
+    return { success: false, error: NO_SPECIALIST_MESSAGE, code: 'NO_SPECIALIST' as const };
+  }
+
   // Rate limit
   const limit = await checkRateLimit(`blood-draw:create:${user.id}`, {
     max: 5,
@@ -659,6 +673,13 @@ async function createNursingAppointmentImpl(input: CreateNursingInput) {
   if (!input.otp_verified) {
     return { success: false, error: 'يجب تأكيد رقم الهاتف أولاً' };
   }
+
+  // 🩺 لا يُقبل طلبٌ لا مختصَّ يستلمه (0048): كان يبقى معلّقاً حتى يُلغيه
+  // الرفضُ التلقائيّ بعد ٤٨ ساعة. الصفحة تمنع قبله؛ وهذا لمن يتجاوزها.
+  if (!(await isSpecialistAvailable('nurse'))) {
+    return { success: false, error: NO_SPECIALIST_MESSAGE, code: 'NO_SPECIALIST' as const };
+  }
+
 
   // Rate limit
   const limit = await checkRateLimit(`nursing:create:${user.id}`, {

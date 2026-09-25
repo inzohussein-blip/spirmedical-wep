@@ -2,6 +2,7 @@
 
 import { sendPushToUser, sendPushToUsers } from './push';
 import { createAdminClient } from '@/lib/supabase/server';
+import { eligibleSpecialistIds } from '@/lib/specialist-availability';
 import { logger } from '@/lib/logger';
 
 /**
@@ -319,26 +320,13 @@ export async function notifyEligibleSpecialistsOfNewOrder(data: {
     // عميل خدمة: المريض لا يملك صلاحية قراءة قائمة المختصّين
     const supabase = createAdminClient();
 
-    const [{ data: specialists, error }, { data: patient }] = await Promise.all([
-      supabase
-        .from('users')
-        .select('id')
-        .eq('role', 'specialist')
-        .eq('specialist_type', data.requiredSpecialistType)
-        .eq('approval_status', 'approved')
-        .limit(100),
+    // المعيار الموحّد (lib/specialist-availability) — الحارسُ قبل الرفع يسأله نفسه
+    const [ids, { data: patient }] = await Promise.all([
+      eligibleSpecialistIds(data.requiredSpecialistType),
       supabase.from('users').select('full_name').eq('id', data.patientId).single(),
     ]);
 
-    if (error) {
-      logger.warn('notifyEligibleSpecialistsOfNewOrder lookup failed', {
-        orderId: data.orderId,
-        error: error.message,
-      });
-      return;
-    }
-
-    const ids = (specialists ?? []).map((s) => s.id);
+    if (ids === null) return; // سُجّل الفشل داخل eligibleSpecialistIds
     if (ids.length === 0) {
       // لا مختصّ معتمد لهذا النوع — إشارة تشغيلية مهمّة للمالك
       logger.warn('New order has no approved specialist to notify', {
