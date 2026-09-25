@@ -24,6 +24,10 @@
  * ═══════════════════════════════════════════════════════════════
  */
 
+import { notifyServiceWaitlist } from '@/lib/service-waitlist';
+// البريدُ الاصطناعيّ نفسُه الذي يستعمله دخولُ الهاتف: كان هنا `@spir.app`،
+// فحسابٌ تُنشئه الإدارة لا يطابقه دخولُ الرمز فيُنشئ حساباً يتيماً بلا ملفّ.
+import { phoneToEmail } from '@/lib/auth/phone-credentials';
 import { NextResponse } from 'next/server';
 import { createClient as createSbClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
@@ -67,11 +71,6 @@ function generateTempPassword(): string {
   return out;
 }
 
-function phoneToEmail(phone: string): string {
-  // +9647XX → 9647XX@spir.app (passwordless login)
-  const digits = phone.replace(/\D/g, '');
-  return `${digits}@spir.app`;
-}
 
 // ─── POST handler ───────────────────────────────────────────────
 
@@ -227,6 +226,12 @@ export async function POST(request: Request) {
         { success: false, error: `فشل إنشاء profile: ${insertRes.error.message}` },
         { status: 500 }
       );
+    }
+
+    // مختصٌّ معتمَدٌ فوراً قد يفتح نوعاً كان بلا مختصّ — أخطِر قائمةَ انتظاره (0048)
+    if (body.role === 'specialist' && body.specialist_type) {
+      await notifyServiceWaitlist(body.specialist_type).catch((e) =>
+        logger.warn('waitlist notify failed', { error: e instanceof Error ? e.message : String(e) }));
     }
 
     // ─── 7. Audit log ───

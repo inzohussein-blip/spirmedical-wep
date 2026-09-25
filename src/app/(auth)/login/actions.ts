@@ -483,7 +483,23 @@ export async function verifyOtp(formData: FormData) {
 
       let userId: string | undefined = signInData?.user?.id;
 
+      // ملفٌّ قائمٌ بهذا الرقم وكلمةُ سرٍّ أخرى (حسابٌ أنشأته الإدارة بكلمةٍ مؤقّتة):
+      // الرمزُ أثبت ملكيّة الرقم، فتُزامَن الكلمةُ ويُدخَل الحسابُ نفسُه — لا يُنشأ
+      // حسابٌ ثانٍ يتيم (البريدُ مأخوذ، فيفشل الإنشاء ويُردّ المختصّ).
       if (signInErr || !signInData?.user) {
+        const { data: existingByPhone } = await admin
+          .from('users')
+          .select('id')
+          .eq('phone', phone)
+          .maybeSingle();
+        if (existingByPhone?.id) {
+          await admin.auth.admin.updateUserById(existingByPhone.id, { password });
+          const retry = await supabase.auth.signInWithPassword({ email, password });
+          if (retry.data?.user) userId = retry.data.user.id;
+        }
+      }
+
+      if (!userId) {
         // حساب جديد → إنشاء
         const { data: newUser, error: createErr } = await admin.auth.admin.createUser({
           email,
