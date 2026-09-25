@@ -14,26 +14,28 @@
 | الجلسة والأدوار | `lib/auth/session.ts` (`requireSession`) · تخطيطُ كلّ مجموعة `app/(…)/layout.tsx` |
 | عملاء Supabase | `lib/supabase/server.ts` (RLS) · `server-service.ts` (service_role) · `client.ts` |
 | رفع الطلب (المريض) | `app/(dashboard)/appointments/new/` → `NewAppointmentClient.tsx` + `actions.ts` |
+| إتاحة الخدمة وقائمة الانتظار | `lib/specialist-availability.ts` · `lib/service-waitlist.ts` · `components/services/ServiceUnavailable.tsx` |
 | تدفّقات الطلب | `components/appointments/BloodDrawFlow.tsx` · `NursingFlow.tsx` · `AppointmentWizard.tsx` |
 | التحقّق من النماذج | `lib/validations/*` · `lib/forms/useFormErrors.ts` · `components/forms/MissingFieldsSummary.tsx` |
 | طلبات المختصّ وأفعاله | `app/(specialist)/specialist/orders/[id]/actions.ts` · `role-forms/*` |
 | إعداد الخدمات والشبكة | `lib/services-v3.ts` (`bookingSoon`، الشارات) · `lib/service-switches.ts` |
 | بيانات الخدمات والتحاليل | `lib/services/services-data.ts` · `blood-tests-data.ts` · `labs-data.ts` · `time-slots.ts` |
 | التغطية الجغرافية | `lib/service-areas.ts` · `lib/hooks/useServiceCoverage.ts` · الفهرسة `lib/seo/coverage.ts` |
-| الإشعارات | `lib/notifications.ts` (الطابور) · `lib/notifications-processor.ts` · `lib/services/push*.ts` · `lib/services/whatsapp.ts` |
-| رموز الدخول | `app/(auth)/login/actions.ts` · `lib/whatsapp/otp-service.ts` · `lib/auth/otp-mode.ts` |
+| الإشعارات | `lib/notifications.ts` (الطابور) · `lib/notifications-processor.ts` · `lib/services/push*.ts` · `lib/services/whatsapp.ts` · الصندوق `app/(dashboard)/account/inbox/` |
+| صحّة التشغيل والتنبيه | `lib/admin/ops-health.ts` → `app/admin/_components/OpsHealthCards.tsx` · `lib/ops/alert-owner.ts` |
+| رموز الدخول | `app/(auth)/login/actions.ts` · `lib/whatsapp/otp-service.ts` · `lib/auth/otp-mode.ts` · `lib/auth/phone-credentials.ts` · `lib/auth/login-identifier.ts` |
 | الغلاف والتنقّل | `components/layout/AppShell.tsx` · `AuthenticatedShell.tsx` · `lib/focused-routes.ts` |
 | النوافذ المنبثقة | `components/ui/ModalShell.tsx` · `BottomSheet.tsx` · `lib/hooks/useModalDialog.ts` |
 | هواتف المنشآت | `components/ui/PhoneLink.tsx` · `lib/format/phone.ts` |
 | التنسيق | `app/styles/shared.css` (رموز + حارس iOS) · `app.css` (شاشات التطبيق) · `marketing.css` · `admin.css` |
 | الفهرسة | `app/layout.tsx` · `components/seo/JsonLd.tsx` · `app/sitemap.ts` · `app/robots.ts` |
 | الكرون | `vercel.json` → `app/api/cron/*` · `app/api/notifications/process` |
-| قاعدة البيانات | `supabase/migrations/` (آخرها 0047) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
+| قاعدة البيانات | `supabase/migrations/` (آخرها 0048) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
 | الاختبارات | `tests/` — اسمُ الحارس يدلّ على مجاله (`rls-*`، `order-flow-modals`، `specialist-screens`…) |
 
-**أدوات التحقّق البصريّ** (خارج المستودع، أُعيد بناؤها كلَّ جلسة): خادمٌ
-يحاكي Supabase محلّياً + Playwright بـ`executablePath: '/opt/pw-browsers/chromium'`
-بعرض 360×640 — لا تُنشئ حساباً تجريبياً في الإنتاج بلا إذن المالك.
+**أدوات التحقّق البصريّ** في [`tools/mobile-audit/`](tools/mobile-audit/README.md):
+خادمٌ يحاكي Supabase + Playwright بعرضَي 360/390 (`up.sh` ← `audit.mjs` ← `down.sh`).
+لا تُنشئ حساباً تجريبياً في الإنتاج بلا إذن المالك.
 
 ## 📌 عملٌ مطلوبٌ لم يُنفَّذ بعد
 
@@ -184,6 +186,43 @@
   الواجهة وصُفّرت في 0047. تعود حين يوجد مصدرٌ يُحسب منه.
 - الحارس: `tests/app-live-numbers.test.ts`.
 
+## 🩺 إتاحةُ الخدمة و«أعلِمني حين تتوفّر» (0048)
+
+- **لا طلبَ لخدمةٍ بلا مختصٍّ معتمَد غير موقوف.** يُسأل `isSpecialistAvailable` في
+  الصفحة وفي الإجراءات الثلاثة **قبل الإدراج** (العميلُ لا يُصدَّق). والمعيارُ واحد
+  (`eligibleSpecialistIds`) مع إشعار المختصّين بالطلب الجديد — لا تكتب معياراً ثانياً.
+- **يفشل مفتوحاً**: عطبُ الاستعلام يُعدّ «متاحاً» (المنعُ الصامت أسوأ). لكنّ
+  **الإخطار** يستعمل المعيارَ الصارم، كي لا يُقال للمريض «متاحة» خطأً.
+- الإخطار عند: اعتماد مختصّ، تغيير نوعه، إنشائه من الإدارة. يحجز `notified_at` أوّلاً
+  ثمّ يكتب في `notifications` — فلا يُخطَر أحدٌ مرّتين.
+- الحارس: `tests/service-availability.test.ts`.
+
+## 📥 صندوقُ الإشعارات والنسخة عند التعثّر
+
+- `notifications` كان يُكتب ولا يُعرض (الجرس يذهب إلى الإعدادات). الآن `/account/inbox`،
+  ويُعلَّم المقروءُ من العميل بعد العرض لا في تصيير الخادم (الجلبُ المسبق).
+- **أوّلُ فشلٍ** لواتساب/الدفع يكتب الرسالةَ في الصندوق (`writeInAppFallback`)، مرّةً
+  لكلّ رسالة بـ`metadata.queue_id`. هكذا يعلم المريضُ بإلغاء طلبه ولو رُفض توكن Meta.
+- الحارس: `tests/inapp-fallback.test.ts`.
+
+## 👩‍⚕️ طريقُ المختصّ — ما كُسر ورُمّم
+
+- **بريدٌ اصطناعيٌّ واحد**: `phoneToEmail` في `lib/auth/phone-credentials.ts`. كان إنشاءُ
+  الإدارة يستعمل `@spir.app` فيُنشئ دخولُ الرمز حساباً يتيماً. لا تكتب نسخةً محلّية.
+- بعد الرمز: ملفٌّ قائمٌ بالرقم تُزامَن كلمتُه ويُدخَل — لا `createUser` ثانٍ.
+- حقلُ الدخول يقبل «الرقم + كلمة السرّ المؤقّتة» التي تعطيها الإدارة.
+- **التسجيلُ الذاتيّ يمرّ برمز واتساب** — فتوكن Meta المرفوض يسدّه. البديلُ الآن:
+  «إنشاء حساب مختصّ» من الإدارة.
+- الحارس: `tests/specialist-onboarding.test.tsx`.
+
+## 🚨 تنبيهُ المالك وبوّابة CI
+
+- كلُّ مسار كرون `export const GET = withCronAlert('<name>', handler)` — مسارٌ جديد
+  في `vercel.json` بلا لفٍّ يُسقط `tests/owner-alerts.test.ts`.
+- يصمت بلا `RESEND_API_KEY` أو `ADMIN_OWNER_EMAIL`، ولا يرمي.
+- **CI كان أحمرَ دائماً** (عتبة تغطية ٥٠٪ والمقيس ~١٦٪) والاختباراتُ ناجحة. العتبةُ الآن
+  أرضيّةٌ تحت المقيس: ارفعها مع التغطية، ولا تُنزلها (`tests/ci-gate.test.ts`).
+
 ## 🔑 معلّقٌ على المالك وحده
 
 (تحقّقتُ بعد نشر 8719bd1: لا أخطاءَ تشغيل في Vercel خلال ٧ أيّام، وصفحاتُ التسويق
@@ -196,6 +235,10 @@
   System User دائم في `META_ACCESS_TOKEN` على Vercel. الطابور يُعيد المحاولة
   يوميّاً حتى `max_attempts` (3) ثمّ `failed` — فإن أُصلح بعد ذلك أعِد الصفوفَ
   إلى `pending` و`attempts = 0` (بـ BEGIN … ROLLBACK أوّلاً).
+- **منعُ الدمج في `main` إن سقط CI**: GitHub ← Settings ← Branches ← قاعدةٌ لـ`main`
+  تشترط «Quality Gate» و«Build verification». لا أداةَ لي لضبطها.
+- **`RESEND_API_KEY` و`ADMIN_OWNER_EMAIL` في Vercel** — بدونهما لا يصل بريدُ التنبيه
+  (لم أستطع قراءة متغيّرات Vercel: 403).
 - تفعيل حماية كلمات المرور المسرَّبة في لوحة Supabase (إنذار المدقّق الأخير).
 - **159 فهرساً «غير مستعمَل»** لا تُحذف: القاعدة بلا حركة (٨ مستخدمين).
 - أرقامُ المنشآت مُقنَّعة (انظر 📞) — إدخالُ الأرقام الموثَّقة من لوحة الإدارة.

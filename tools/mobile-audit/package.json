@@ -1,0 +1,9 @@
+{
+  "name": "spir-mobile-audit",
+  "private": true,
+  "description": "تدقيقُ شاشات الهاتف محلّياً: خادمٌ يحاكي Supabase + Playwright — لا يمسّ الإنتاج",
+  "type": "module",
+  "dependencies": {
+    "playwright-core": "1.56"
+  }
+}
