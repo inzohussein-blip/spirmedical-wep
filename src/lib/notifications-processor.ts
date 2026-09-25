@@ -113,6 +113,7 @@ export async function writeInAppFallback(client: DB, msg: QueueRow): Promise<boo
 async function deliverRow(
   client: DB,
   msg: QueueRow,
+  onError?: (error: string) => void,
 ): Promise<'sent' | 'failed' | 'skipped' | 'cancelled'> {
   // مطالبة ذرّية: علّمها sending فقط إن كانت ما تزال pending (يمنع الإرسال المزدوج).
   const { data: claimed } = await client
@@ -159,6 +160,7 @@ async function deliverRow(
     return 'sent';
   }
 
+  onError?.(result.error ?? 'unknown');
   const maxReached = (msg.attempts ?? 0) + 1 >= (msg.max_attempts ?? 3);
   await client
     .from('notification_queue')
@@ -179,6 +181,8 @@ export interface ProcessResult {
   failed: number;
   /** أُنهيت بلا إرسالٍ ولا عطب — مستخدمٌ بلا اشتراك دفعٍ نشِط */
   cancelled?: number;
+  /** نصُّ آخر إخفاق تسليم — لبريد المالك */
+  lastError?: string;
   error?: string;
 }
 
@@ -205,13 +209,14 @@ export async function processNotificationQueue(limit = 100): Promise<ProcessResu
   let succeeded = 0;
   let failed = 0;
   let cancelled = 0;
+  let lastError: string | undefined;
   for (const msg of messages) {
-    const outcome = await deliverRow(client, msg);
+    const outcome = await deliverRow(client, msg, (e) => { lastError = e; });
     if (outcome === 'sent') succeeded++;
     else if (outcome === 'failed') failed++;
     else if (outcome === 'cancelled') cancelled++;
   }
-  return { processed: messages.length, succeeded, failed, cancelled };
+  return { processed: messages.length, succeeded, failed, cancelled, lastError };
 }
 
 /**

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { withCronAlert } from '@/lib/ops/alert-owner';
 import { createServiceClient } from '@/lib/supabase/server-service';
 import { notifyAppointmentReminder } from '@/lib/services/push-templates';
 import { logger } from '@/lib/logger';
@@ -28,7 +29,7 @@ import { baghdadDayWindow } from '@/lib/time/baghdad-day';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: NextRequest) {
+async function handler(request: NextRequest) {
   // 1. التحقق من Vercel Cron secret
   const authHeader = request.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
@@ -138,3 +139,6 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+// عطلٌ (5xx أو استثناء) → بريدٌ للمالك
+export const GET = withCronAlert('appointment-reminders', handler);
