@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { withCronAlert } from '@/lib/ops/alert-owner';
 import { createServiceClient } from '@/lib/supabase/server-service';
 import { logger } from '@/lib/logger';
 
@@ -19,7 +20,7 @@ export const maxDuration = 60;
  * الشروط كلُّها في SQL لا هنا: `pending` وحدها، وبلا إسناد، والطوارئ
  * (`nurse_emergency_logs`) مستثناة. فلا يتفرّق المنطقُ على موضعين.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest) {
   const secret = process.env.CRON_SECRET;
   const authHeader = req.headers.get('authorization');
   if (!secret || authHeader !== `Bearer ${secret}`) {
@@ -53,3 +54,6 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({ ok: true, rejected, notified });
 }
+
+// عطلٌ (5xx أو استثناء) → بريدٌ للمالك
+export const GET = withCronAlert('auto-reject-pending', handler);

@@ -23,6 +23,11 @@ jest.mock('@/lib/supabase/server', () => ({
     },
   }),
 }));
+// مختصّون متاحون: هذا الاختبار عن «الحجز قريباً» لا عن حارس الإتاحة
+jest.mock('@/lib/specialist-availability', () => ({
+  isSpecialistAvailable: async () => true,
+  unavailableSpecialistTypes: async () => [],
+}));
 jest.mock('next/navigation', () => ({
   redirect: jest.fn(),
   usePathname: () => '/appointments/new',

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { withCronAlert } from '@/lib/ops/alert-owner';
 import { createServiceClient } from '@/lib/supabase/server-service';
 import { logger } from '@/lib/logger';
 
@@ -25,7 +26,7 @@ interface RecurringSchedule {
   end_date?: string;
 }
 
-export async function GET(request: Request) {
+async function handler(request: Request) {
   // ─── 1. تحقق من CRON_SECRET ───
   const authHeader = request.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
@@ -157,3 +158,6 @@ export async function GET(request: Request) {
     errors,
   });
 }
+
+// عطلٌ (5xx أو استثناء) → بريدٌ للمالك
+export const GET = withCronAlert('nursing-recurring', handler);

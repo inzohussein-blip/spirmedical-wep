@@ -4,6 +4,8 @@ import { redirect } from 'next/navigation';
 import { isAdminRole } from '@/lib/admin-types';
 import { EmptyState, Avatar, StatusBadge } from '@/components/ui';
 import { baghdadDayWindow } from '@/lib/time/baghdad-day';
+import { getOpsHealth } from '@/lib/admin/ops-health';
+import OpsHealthCards from './_components/OpsHealthCards';
 
 export const dynamic = 'force-dynamic';
 
@@ -115,6 +117,9 @@ export default async function AdminDashboard() {
     supabase.from('nutritionists').select('*', { count: 'exact', head: true }).eq('is_active', true),
   ]);
 
+  // صحّةُ التشغيل: أنواعٌ بلا مختصّ + رسائلُ فاشلة (بعد التحقّق من الدور أعلاه)
+  const opsHealth = await getOpsHealth();
+
   // مقارنة اليوم بالأمس
   const todayVsYesterday = (todayOrders ?? 0) - (yesterdayOrders ?? 0);
   const completionRate = totalOrdersThisMonth && totalOrdersThisMonth > 0
@@ -136,6 +141,8 @@ export default async function AdminDashboard() {
       <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: '0 0 24px' }}>
         نظرة عامة على نشاط المنصة
       </p>
+
+      <OpsHealthCards health={opsHealth} />
 
       {/* ✨ Quick Action: Create User */}
       <Link

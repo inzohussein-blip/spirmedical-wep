@@ -109,9 +109,10 @@ spirmedical-wep/
 │   ├── lib/                     المنطق: auth, supabase, whatsapp, services, validations …
 │   └── types/database.ts        أنواع Supabase المولَّدة — npm run db:types
 ├── supabase/
-│   ├── migrations/              0001 → 0047 (انظر «قاعدة البيانات»)
+│   ├── migrations/              0001 → 0048 (انظر «قاعدة البيانات»)
 │   └── *.sql                    أدوات فحصٍ يدويّة (verify, health-check)
 ├── tests/                       حرّاسٌ ساكنة وسلوكية (npx jest)
+├── tools/mobile-audit/          تدقيقُ الهاتف محلّياً: محاكي Supabase + Playwright (انظر README فيه)
 ├── public/                      sw.js · manifest.json · llms.txt · ai.txt · أيقونات
 ├── docs/                        API · SETUP · RUNBOOK · DESIGN_TOKENS …
 ├── vercel.json                  رؤوس، تحويلات، ومهامّ الكرون
@@ -154,6 +155,8 @@ spirmedical-wep/
 | تغطية الخدمة جغرافياً | `lib/service-areas.ts` (اختبار الشعاع بلا PostGIS) · `lib/hooks/useServiceCoverage.ts` |
 | تفاصيل/تتبّع/إلغاء/تقييم الطلب | `app/(dashboard)/appointments/[id]/*` · `components/appointments/AppointmentActions.tsx` · `AppointmentTimeline.tsx` |
 | بطاقة حالة الطلب في الرئيسية | `components/dashboard/LiveStatusCard.tsx` · `ActiveAppointmentCard.tsx` |
+| إتاحةُ الخدمة (مختصٌّ معتمَد؟) | `lib/specialist-availability.ts` (المعيار الموحّد مع إشعار المختصّين) · يُسأل في `page.tsx` وفي الإجراءات الثلاثة قبل الإدراج |
+| «أعلِمني حين تتوفّر» | `components/services/ServiceUnavailable.tsx` · `appointments/new/waitlist-actions.ts` · الإخطار `lib/service-waitlist.ts` |
 
 > لا رمزَ تحقّق (OTP) في رفع الطلب — قرار المالك.
 > صفحة الطلب «مهمّةٌ مُركَّزة»: بلا شريط تنقّل سفليّ ولا نوافذ منبثقة (`lib/focused-routes.ts`).
@@ -194,7 +197,8 @@ spirmedical-wep/
 | الوصفات والسجلّ الطبّي | `account/prescriptions` · `account/medical-record` |
 | نتائج المختبر ومنحنياتها | `account/lab-history/*` · `account/lab-trends` · `account/vitals-trends` · `account/health` |
 | المواقع المحفوظة | `account/locations` |
-| الإشعارات وإعداداتها | `account/notifications/*` |
+| صندوقُ الإشعارات (الجرس) | `account/inbox` — يعرض جدول `notifications` |
+| إعداداتُ الإشعارات | `account/notifications/*` |
 | الأمان (PIN) | `account/settings/PinSection.tsx` · `components/security/PinGate.tsx` · `PinLockScreen.tsx` |
 | واتساب OTP | `account/whatsapp-otp` · `components/settings/WhatsAppOtpSettings.tsx` |
 | المفضّلة، المكافآت، الاشتراك، المحفظة | `account/favorites` · `account/rewards` · `account/subscription` · `tools/wallet` |
@@ -207,6 +211,7 @@ spirmedical-wep/
 | الدخول بالهاتف + OTP | `app/(auth)/login/actions.ts` (`sendOtp` `verifyOtp` `resendOtp` `signOut`) · `lib/auth/otp-mode.ts` (`NEXT_PUBLIC_OTP_MODE`) |
 | رموز واتساب | `lib/whatsapp/otp-service.ts` (توليد + bcrypt + حدّ محاولات) · `lib/whatsapp/meta-client.ts` |
 | البريد وتأكيده | `lib/auth/email-auth.ts` · `lib/email/*` (Resend) |
+| الدخول بالرقم + كلمة السرّ (حسابٌ أنشأته الإدارة) | `lib/auth/login-identifier.ts` · البريدُ الاصطناعيّ `lib/auth/phone-credentials.ts` (`phoneToEmail`) — واحدٌ لكلّ المسارات |
 | التسجيل | `app/(auth)/register/actions.ts` (`registerPatient` `registerSpecialist`) |
 | إعادة التوجيه الآمنة | `lib/auth/safe-redirect.ts` |
 | دخول الإدارة | `app/admin-login` · `app/admin-register` (`ADMIN_CREATE_KEY`) |
@@ -219,7 +224,9 @@ spirmedical-wep/
 | المعالج الوحيد للطابور | `lib/notifications-processor.ts` عبر كرون `/api/notifications/process` |
 | Web Push | `lib/services/push.ts` · `lib/services/push-templates.ts` · `api/push/*` · `lib/push-client.ts` · `public/sw.js` |
 | واتساب مباشر | `lib/services/whatsapp.ts` · `api/whatsapp/webhook` |
-| داخل التطبيق | `components/notifications/NotificationToast.tsx` (Realtime) · `PushPermissionPrompt.tsx` |
+| داخل التطبيق | `components/notifications/NotificationToast.tsx` (Realtime) · `PushPermissionPrompt.tsx` · الصندوق `account/inbox` |
+| نسخةُ الصندوق عند التعثّر | `writeInAppFallback` في المعالج: أوّلُ فشلٍ لواتساب/الدفع يكتب الرسالةَ في `notifications` مرّةً واحدة |
+| تنبيهُ المالك | `lib/ops/alert-owner.ts` — `withCronAlert` على كلّ كرون، وبريدٌ عند كلّ تسليمٍ فاشل (`ADMIN_OWNER_EMAIL` + `RESEND_API_KEY`) |
 
 > `sms` غير مُنفَّذة. و`cancelled` في الطابور تعني «لن يُسلَّم ولا عطب» (بلا اشتراك دفع).
 
@@ -248,6 +255,7 @@ spirmedical-wep/
 | السجلّات | `admin/audit-log` · `admin/bugs` · `admin/feedback` · `admin/notifications` |
 | البيانات الأوّلية | `admin/seed-data` · `api/admin/seed` · `lib/seed/*` (بيانات تطوير — الهواتف مُقنَّعة) |
 | قائمة الإطلاق | `admin/launch-checklist` |
+| صحّةُ التشغيل (أعلى اللوحة) | `admin/_components/OpsHealthCards.tsx` ← `lib/admin/ops-health.ts`: أنواعٌ بلا مختصٍّ معتمَد + رسائلُ فاشلة بنصّ آخر خطأ |
 
 ### 📱 PWA والتطبيق
 
@@ -295,7 +303,7 @@ spirmedical-wep/
 - **Supabase** — المشروع `ioulxemokusfeykjcaxg`.
 - `src/types/database.ts` مولَّدٌ من الإنتاج (93 جدولاً) — أعِد توليده بعد أيّ ترحيل
   بـ`npm run db:types`.
-- **الترحيلات** في `supabase/migrations/0001…0047`.
+- **الترحيلات** في `supabase/migrations/0001…0048`.
   - `0001–0010` ليست في سجلّ Supabase (أُنشئت الجداول بطريقةٍ أخرى): **كلُّ إصلاحٍ ترحيلٌ جديد**، لا تعديلٌ لملفٍّ قديم.
   - مخطَّط `private` للدوالّ المُفوَّضة (`SECURITY DEFINER`)، وكلُّ دالّةٍ تُعلن `SET search_path = public, pg_temp`.
   - PostGIS مُسقَط عمداً (0025)؛ مناطق الخدمة `jsonb` + اختبار الشعاع (0030).
@@ -312,6 +320,7 @@ spirmedical-wep/
 | `chats` · `messages` · `consultations` | المحادثات والاستشارات |
 | `hospitals` `doctors` `pharmacies` `partner_labs` `dental_clinics` `optical_stores` … | الدليل الطبّي |
 | `service_switches` · `service_areas` · `app_settings` | الإعدادات والتغطية |
+| `service_waitlist` | منتظرو خدمةٍ بلا مختصّ؛ يُخطَرون عند اعتماد أوّل مختصّ |
 | `audit_logs` | سجلّ التدقيق (لا يُعدَّل ولا يُحذف) — `lib/audit.ts` |
 
 أحدثُ الترحيلات:
@@ -326,6 +335,7 @@ spirmedical-wep/
 | 0045 | إخفاء أرقام المنشآت المُختلَقة («0770 xxx xxxx»)، و`122` باقٍ |
 | 0046 | دمج السياسات المتراكبة: سياسةٌ واحدة لكلّ (جدول، أمر) على 44 جدولاً — مكافئة بـOR؛ وإغلاق إدراج `bug_reports` |
 | 0047 | تصفير تقييمات المختبرات المبذورة (لا مصدرَ حيّاً لها) |
+| 0048 | `service_waitlist` — «أعلِمني حين تتوفّر» (منحٌ مضيَّقة: لا UPDATE للمريض) |
 
 ```bash
 npm run db:link     # ربط المشروع
@@ -348,7 +358,7 @@ npm run db:types    # توليد src/types/database.ts
 | `/api/analytics/track` · `/api/og` | التحليلات · صور المشاركة |
 | `/api/admin/*` | أفعال الإدارة (إنشاء مستخدم، بذور، طوارئ) |
 
-**مهامّ الكرون** (`vercel.json`، محميّةٌ بـ`CRON_SECRET`، التوقيت UTC):
+**مهامّ الكرون** (`vercel.json`، محميّةٌ بـ`CRON_SECRET`، التوقيت UTC، وكلُّها ملفوفةٌ بـ`withCronAlert`):
 
 | الوقت | المسار | الدور |
 |---|---|---|
@@ -368,10 +378,11 @@ npm run db:types    # توليد src/types/database.ts
 |---|---|
 | الأمان وRLS | `rls-coverage` `rls-initplan` `rls-shared-row-participants` `rls-update-scope` `rpc-authorization` `security` `phi-policy-scope` `email-verification-tokens` `safe-redirect` `policy-merge` |
 | قاعدة البيانات | `schema-conformance` `insert-column-contracts` `enum-values` `auto-reject-stale` `seed-data-honesty` |
-| الإشعارات | `notification-push-channel` `notification-toast` `whatsapp` |
+| الإشعارات | `notification-push-channel` `notification-toast` `whatsapp` `inapp-fallback` `owner-alerts` |
+| الإتاحة والمختصّون | `service-availability` `specialist-onboarding` |
 | رفع الطلب والنوافذ | `order-flow-modals` `physio-booking-soon` `order-visibility` `order-clinical-details` `checkout` `validations` |
 | الهاتف وواجهة المستخدم | `mobile-ux` `mobile-layout` `app-screens-ux` `specialist-screens` `facility-phones` `color-tokens` `font-weights` |
-| البناء والفهرسة | `use-server-exports` `seo-canonical` `route-links` `wired-features` `env-coverage` `landing-routing` `project-map` |
+| البناء والفهرسة و CI | `use-server-exports` `seo-canonical` `route-links` `wired-features` `env-coverage` `landing-routing` `project-map` `ci-gate` `mobile-audit-tooling` |
 | الأرقام الحيّة | `app-live-numbers` |
 
 ---
@@ -400,6 +411,7 @@ npm run db:types    # توليد src/types/database.ts
 ## 🚢 النشر
 
 - Vercel (المنطقة `fra1`)، البناء `next build`، والكرون من `vercel.json`.
+- **CI** (`.github/workflows/ci.yml`) على كلّ دفعةٍ وكلّ PR إلى `main`: الأنواع، الفحص، الاختبارات بالتغطية، البناء. عتبةُ التغطية أرضيّةٌ تحت المقيس تُرفع ولا تُنزل.
 - الترحيلات تُطبَّق على Supabase منفصلةً — **وكلُّ كتابةٍ على الإنتاج تُجرَّب أوّلاً في `BEGIN … ROLLBACK`**.
 - `docs/DEPLOYMENT.md` · `docs/PRODUCTION_CHECKLIST.md` · `docs/RUNBOOK.md`.
 

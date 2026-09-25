@@ -6694,6 +6694,55 @@ export type Database = {
           },
         ]
       }
+      service_waitlist: {
+        Row: {
+          created_at: string
+          id: string
+          notified_at: string | null
+          service_id: string | null
+          specialist_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notified_at?: string | null
+          service_id?: string | null
+          specialist_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notified_at?: string | null
+          service_id?: string | null
+          specialist_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_waitlist_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "expiring_credentials"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_waitlist_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "specialist_stats"
+            referencedColumns: ["specialist_id"]
+          },
+          {
+            foreignKeyName: "service_waitlist_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       specialist_applications: {
         Row: {
           admin_notes: string | null

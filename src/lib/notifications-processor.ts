@@ -71,9 +71,49 @@ async function deliverPush(
   return { ok: false, error: NO_PUSH_SUBSCRIPTION, provider: 'web-push' };
 }
 
+/**
+ * 📥 نسخةٌ في صندوق التطبيق حين تتعثّر القناة الخارجيّة.
+ *
+ * في 25 أيلول أُلغيت ثلاثةُ طلباتٍ تلقائيّاً، وفشلت رسائلُ واتساب الثلاث
+ * بـ«Authentication Error» — فلم يعلم أيُّ مريضٍ أنّ طلبه أُلغي. صندوقُ
+ * التطبيق (`/account/inbox`) لا يعتمد على توكن Meta ولا على اشتراك دفع،
+ * فتُكتب فيه الرسالةُ نفسها عند **أوّل** تعثّر، لا بعد استنفاد المحاولات.
+ *
+ * مرّةً واحدة لكلّ رسالة: `metadata.queue_id` يمنع التكرار عبر المحاولات.
+ * ولا ترمي أبداً — عطبُ النسخة لا يُفسد حالةَ الطابور.
+ */
+export async function writeInAppFallback(client: DB, msg: QueueRow): Promise<boolean> {
+  if (!msg.recipient_user_id) return false;
+  try {
+    const { data: existing } = await client
+      .from('notifications')
+      .select('id')
+      .eq('metadata->>queue_id', msg.id)
+      .limit(1);
+    if (existing && existing.length > 0) return false;
+
+    const link =
+      msg.related_type === 'appointment' && msg.related_id
+        ? `/appointments/${msg.related_id}`
+        : null;
+    const { error } = await client.from('notifications').insert({
+      user_id: msg.recipient_user_id,
+      type: msg.template_key ?? 'general',
+      title: await pushTitle(client, msg.template_key),
+      body: msg.body,
+      link,
+      metadata: { queue_id: msg.id, channel: msg.channel, fallback: true },
+    });
+    return !error;
+  } catch {
+    return false;
+  }
+}
+
 async function deliverRow(
   client: DB,
   msg: QueueRow,
+  onError?: (error: string) => void,
 ): Promise<'sent' | 'failed' | 'skipped' | 'cancelled'> {
   // مطالبة ذرّية: علّمها sending فقط إن كانت ما تزال pending (يمنع الإرسال المزدوج).
   const { data: claimed } = await client
@@ -99,6 +139,7 @@ async function deliverRow(
         .from('notification_queue')
         .update({ status: 'cancelled', error_message: NO_PUSH_SUBSCRIPTION })
         .eq('id', msg.id);
+      await writeInAppFallback(client, msg);
       return 'cancelled';
     }
   } else {
@@ -119,6 +160,7 @@ async function deliverRow(
     return 'sent';
   }
 
+  onError?.(result.error ?? 'unknown');
   const maxReached = (msg.attempts ?? 0) + 1 >= (msg.max_attempts ?? 3);
   await client
     .from('notification_queue')
@@ -129,6 +171,7 @@ async function deliverRow(
       provider: result.provider ?? null,
     })
     .eq('id', msg.id);
+  await writeInAppFallback(client, msg);
   return 'failed';
 }
 
@@ -138,6 +181,8 @@ export interface ProcessResult {
   failed: number;
   /** أُنهيت بلا إرسالٍ ولا عطب — مستخدمٌ بلا اشتراك دفعٍ نشِط */
   cancelled?: number;
+  /** نصُّ آخر إخفاق تسليم — لبريد المالك */
+  lastError?: string;
   error?: string;
 }
 
@@ -164,13 +209,14 @@ export async function processNotificationQueue(limit = 100): Promise<ProcessResu
   let succeeded = 0;
   let failed = 0;
   let cancelled = 0;
+  let lastError: string | undefined;
   for (const msg of messages) {
-    const outcome = await deliverRow(client, msg);
+    const outcome = await deliverRow(client, msg, (e) => { lastError = e; });
     if (outcome === 'sent') succeeded++;
     else if (outcome === 'failed') failed++;
     else if (outcome === 'cancelled') cancelled++;
   }
-  return { processed: messages.length, succeeded, failed, cancelled };
+  return { processed: messages.length, succeeded, failed, cancelled, lastError };
 }
 
 /**
