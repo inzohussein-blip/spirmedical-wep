@@ -247,8 +247,11 @@ describe('📋 كل مسار إنشاء يُشعر المختصّين المؤه
       'utf8'
     );
     expect(tpl).toContain('notifyEligibleSpecialistsOfNewOrder');
-    expect(tpl).toMatch(/\.eq\(\s*['"]approval_status['"]\s*,\s*['"]approved['"]/);
-    expect(tpl).toMatch(/\.eq\(\s*['"]role['"]\s*,\s*['"]specialist['"]/);
+    // المعيارُ انتقل إلى موضعٍ واحد يشترك فيه حارسُ الإتاحة (specialist-availability)
+    expect(tpl).toMatch(/eligibleSpecialistIds\(/);
+    const crit = readFileSync(join(process.cwd(), 'src/lib/specialist-availability.ts'), 'utf8');
+    expect(crit).toMatch(/\.eq\(\s*['"]approval_status['"]\s*,\s*['"]approved['"]/);
+    expect(crit).toMatch(/\.eq\(\s*['"]role['"]\s*,\s*['"]specialist['"]/);
   });
 });
 

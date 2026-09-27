@@ -20,6 +20,8 @@ interface Props {
   clinicId?: string;
   consultationType?: string;
   /** ✨ V25.1: المواقع المحفوظة للمستخدم */
+  /** أنواعُ المختصّين غير المتاحين — خدماتُها معطّلةٌ في المعالج العامّ */
+  unavailableSpecialistTypes?: string[];
   savedLocations?: Array<{
     id: string;
     label: string;
@@ -30,7 +32,7 @@ interface Props {
   }>;
 }
 
-export default function NewAppointmentClient({ service, userPhone, userAddress, clinicId, consultationType, savedLocations = [] }: Props) {
+export default function NewAppointmentClient({ service, userPhone, userAddress, clinicId, consultationType, savedLocations = [], unavailableSpecialistTypes = [] }: Props) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
@@ -352,6 +354,7 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
       ) : (
         <AppointmentWizard
           userPhone={userPhone}
+          unavailableSpecialistTypes={unavailableSpecialistTypes}
           onSubmit={handleGenericSubmit as never}
         />
       )}

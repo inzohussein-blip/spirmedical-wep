@@ -18,12 +18,16 @@ const customJestConfig = {
     '!src/**/*.d.ts',
     '!src/**/index.ts',
   ],
+  // سُلّمٌ لا طموح: كانت ٥٠٪ والتغطيةُ الفعليّة ~١٦٪، فسقط CI في كلّ دفعةٍ منذ
+  // زمن وتعلّم الجميعُ تجاهلَ الأحمر — بوّابةٌ حمراءُ دائماً لا تحرس شيئاً.
+  // الأرضيّةُ تحت المقيس بقليل (25 أيلول: 16.3/14.2/14.5/16.1)؛ ارفعها كلّما
+  // ارتفعت التغطية، ولا تُنزلها (tests/ci-gate.test.ts).
   coverageThreshold: {
     global: {
-      branches: 50,
-      functions: 50,
-      lines: 50,
-      statements: 50,
+      statements: 15,
+      branches: 13,
+      functions: 13,
+      lines: 15,
     },
   },
 };

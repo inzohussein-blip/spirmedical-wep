@@ -13,6 +13,8 @@ import {
   notifySpecialistRejected,
 } from '@/lib/services/push-templates';
 import type { SpecialistType } from '@/lib/specialist-types';
+import { notifyServiceWaitlist } from '@/lib/service-waitlist';
+import { eligibleSpecialistIds } from '@/lib/specialist-availability';
 
 async function requireAdmin() {
   const supabase = createClient();
@@ -67,6 +69,10 @@ export async function approveSpecialist(
   notifySpecialistApproved(specialistId, {
     specialistType,
   }).catch((err) => console.error('Push approval failed:', err));
+
+  // «أعلِمني حين تتوفّر» (0048): مَن انتظر هذا النوع يُخطَر داخل التطبيق
+  await notifyServiceWaitlist(specialistType).catch((err) =>
+    console.error('Waitlist notify failed:', err));
 
   revalidatePath('/admin/specialists/pending');
   revalidatePath('/admin/specialists');
@@ -168,6 +174,13 @@ export async function updateSpecialistType(specialistId: string, newType: Specia
     target_id: specialistId,
     details: { field: 'specialist_type', new_value: newType },
   });
+
+  // تغييرُ نوع مختصٍّ معتمَد قد يفتح نوعاً كان بلا مختصّ
+  // (لا يُستعمل isSpecialistAvailable: فتحُه عند الخطأ يُخطِر بخدمةٍ غير متاحة)
+  if (((await eligibleSpecialistIds(newType, 1)) ?? []).length > 0) {
+    await notifyServiceWaitlist(newType).catch((err) =>
+      console.error('Waitlist notify failed:', err));
+  }
 
   revalidatePath('/admin/specialists');
   revalidatePath(`/admin/specialists/${specialistId}`);

@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { withCronAlert } from '@/lib/ops/alert-owner';
 import { createServiceClient } from '@/lib/supabase/server-service';
 import { enqueueRawNotification } from '@/lib/notifications';
 import { sendQueuedNotification } from '@/lib/notifications-processor';
@@ -49,7 +50,7 @@ const TYPE_LABEL: Record<string, string> = {
   vaccine: '💉 تذكير لقاح',
 };
 
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest) {
   const secret = process.env.CRON_SECRET;
   const authHeader = req.headers.get('authorization');
   if (!secret || authHeader !== `Bearer ${secret}`) {
@@ -119,3 +120,6 @@ export async function GET(req: NextRequest) {
   logger.info('Reminders cron processed', { due: due.length, sent, purgedKeys });
   return NextResponse.json({ processed: due.length, sent, purgedKeys });
 }
+
+// عطلٌ (5xx أو استثناء) → بريدٌ للمالك
+export const GET = withCronAlert('reminders', handler);

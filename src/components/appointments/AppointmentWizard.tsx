@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { haptic } from '@/lib/haptic';
 import { toast } from '@/components/ui/Toaster';
+import { joinServiceWaitlist } from '@/app/(dashboard)/appointments/new/waitlist-actions';
 import { submitErrorMessage } from '@/lib/forms/submit-error';
 import { useFormErrors, type FieldErrors } from '@/lib/forms/useFormErrors';
 import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
@@ -42,6 +43,8 @@ interface BookingData {
 
 interface Props {
   userPhone?: string; // الرقم المُسجّل (إن وجد)
+  /** أنواعُ المختصّين غير المتاحين: خدماتُها «غير متاحة حالياً» مع «أعلِمني» */
+  unavailableSpecialistTypes?: string[];
   onSubmit: (data: BookingData) => Promise<WizardSubmitResult | void>;
 }
 
@@ -51,8 +54,22 @@ interface Props {
  */
 export const DEDICATED_FLOW_SERVICES = ['blood-draw', 'home-nursing'] as const;
 
-export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
+export default function AppointmentWizard({ userPhone = '', onSubmit, unavailableSpecialistTypes = [] }: Props) {
   const router = useRouter();
+  // خدمةٌ لا مختصَّ لها: لا تُختار، ويُعرض بدلها «أعلِمني حين تتوفّر» (0048)
+  const isUnavailable = (sv: Service) =>
+    !!sv.specialistType && unavailableSpecialistTypes.includes(sv.specialistType);
+  const [unavailablePick, setUnavailablePick] = useState<Service | null>(null);
+  const [waitlisted, setWaitlisted] = useState<Record<string, boolean>>({});
+  const [joining, setJoining] = useState(false);
+  const joinWaitlist = async (sv: Service) => {
+    if (!sv.specialistType) return;
+    setJoining(true);
+    const res = await joinServiceWaitlist(sv.specialistType, sv.id);
+    setJoining(false);
+    if (res.ok) setWaitlisted((w) => ({ ...w, [sv.specialistType as string]: true }));
+    else toast.error(res.error ?? 'تعذّر التسجيل');
+  };
   const [step, setStep] = useState<Step>(1);
   const [submitting, setSubmitting] = useState(false);
 
@@ -185,6 +202,11 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
                   key={service.id}
                   type="button"
                   onClick={() => {
+                    if (isUnavailable(service)) {
+                      setUnavailablePick(service);
+                      return;
+                    }
+                    setUnavailablePick(null);
                     if ((DEDICATED_FLOW_SERVICES as readonly string[]).includes(service.id)) {
                       router.push(`/appointments/new?service=${service.id}`);
                       return;
@@ -192,8 +214,9 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
                     setData({ ...data, service });
                     fe.clearError('service');
                   }}
-                  className={`aw-service-card ${data.service?.id === service.id ? 'selected' : ''}`}
+                  className={`aw-service-card ${data.service?.id === service.id ? 'selected' : ''} ${isUnavailable(service) ? 'unavailable' : ''}`}
                   aria-pressed={data.service?.id === service.id}
+                  aria-describedby={isUnavailable(service) ? `unavail-${service.id}` : undefined}
                 >
                   <div className="aw-service-icon" aria-hidden="true">{service.emoji}</div>
                   <div className="aw-service-info">
@@ -205,6 +228,9 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
                         </span>
                       )}
                     </div>
+                    {isUnavailable(service) && (
+                      <span id={`unavail-${service.id}`} className="aw-unavailable-tag">غير متاحة حالياً</span>
+                    )}
                     <p className="aw-service-desc">{service.description}</p>
                     <div className="aw-service-meta">
                       <span className="aw-service-price">من {formatPrice(service.basePrice)}</span>
@@ -221,6 +247,25 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
               ))}
           </div>
           <FieldError message={fe.fieldErrors.service} />
+
+          {unavailablePick && (
+            <div className="aw-unavailable-panel" role="status">
+              <strong>«{unavailablePick.nameAr}» غير متاحة حالياً</strong>
+              <p>لا يوجد مختصّ متاح لهذه الخدمة بعد، فلن نأخذ الطلب كي لا يبقى معلّقاً.</p>
+              {unavailablePick.specialistType && waitlisted[unavailablePick.specialistType] ? (
+                <span className="aw-unavailable-done">✓ سنُعلمك حين تتوفّر</span>
+              ) : (
+                <button
+                  type="button"
+                  className="aw-unavailable-btn"
+                  disabled={joining}
+                  onClick={() => joinWaitlist(unavailablePick)}
+                >
+                  {joining ? 'جارٍ التسجيل…' : 'أعلِمني حين تتوفّر'}
+                </button>
+              )}
+            </div>
+          )}
         </div>
       )}
 
@@ -668,6 +713,47 @@ export default function AppointmentWizard({ userPhone = '', onSubmit }: Props) {
           font-size: 22px;
           color: var(--ink-4, #80868B);
           flex-shrink: 0;
+        }
+        .aw-service-card.unavailable {
+          opacity: 0.6;
+        }
+        .aw-unavailable-tag {
+          display: inline-block;
+          margin-bottom: 4px;
+          padding: 2px 8px;
+          border-radius: 100px;
+          background: var(--amber-soft, #FEF7E0);
+          color: var(--amber, #B06000);
+          font-size: 12px;
+          font-weight: 800;
+        }
+        .aw-unavailable-panel {
+          padding: 14px;
+          border-radius: 12px;
+          background: var(--amber-soft, #FEF7E0);
+          border: 1px solid var(--amber, #B06000);
+          font-size: 13px;
+          color: var(--ink-2, #3C4043);
+        }
+        .aw-unavailable-panel p {
+          margin: 6px 0 10px;
+          line-height: 1.7;
+        }
+        .aw-unavailable-btn {
+          min-height: 44px;
+          padding: 0 18px;
+          border: 0;
+          border-radius: 10px;
+          background: var(--emerald, #01875F);
+          color: #fff;
+          font-family: inherit;
+          font-size: 14px;
+          font-weight: 800;
+          cursor: pointer;
+        }
+        .aw-unavailable-done {
+          font-weight: 800;
+          color: var(--emerald-deep, #056559);
         }
         .aw-service-card.selected .aw-service-radio {
           color: var(--emerald, #01875F);

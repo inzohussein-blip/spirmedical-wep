@@ -104,12 +104,12 @@ function LoginPageInner() {
             {/* Email Input */}
             <div>
               <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 mb-2">
-                البريد الإلكتروني
+                البريد الإلكتروني أو رقم الهاتف
               </label>
               <input
-                type="email"
+                type="text"
                 id="login-email"
-                autoComplete="email"
+                autoComplete="username"
                 inputMode="email"
                 dir="ltr"
                 value={email}

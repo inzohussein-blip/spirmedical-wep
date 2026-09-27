@@ -6,6 +6,7 @@ import { sendEmail, isEmailConfigured } from '@/lib/email/send';
 import { logger } from '@/lib/logger';
 import { resolveApprovalStatus } from '@/lib/auth/approval';
 import crypto from 'crypto';
+import { loginIdentifierToEmail } from '@/lib/auth/login-identifier';
 import { redirect } from 'next/navigation';
 
 // ═══════════════════════════════════════════════════════════
@@ -261,8 +262,10 @@ export async function signInWithEmail(
 
   try {
     // 1. تسجيل دخول
+    // رقمُ هاتفٍ بدل البريد: حسابٌ أنشأته الإدارة يُسلَّم «الرقم + كلمة سرّ مؤقّتة»،
+    // وبريدُه الاصطناعيّ لا يُعرض لأحد.
     const { error: signInErr } = await supabase.auth.signInWithPassword({
-      email,
+      email: loginIdentifierToEmail(email),
       password,
     });
 

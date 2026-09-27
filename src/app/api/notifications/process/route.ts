@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { processNotificationQueue } from '@/lib/notifications-processor';
+import { alertOwner, withCronAlert } from '@/lib/ops/alert-owner';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // Vercel: max 60s
@@ -29,13 +30,17 @@ async function handle(req: NextRequest) {
   if (result.error) {
     return NextResponse.json({ error: result.error }, { status: 500 });
   }
+  // تسليمٌ فاشل ليس عطلاً في المسار (200)، لكنّه ما يجب أن يعرفه المالك:
+  // هكذا مرّ توكنُ Meta المرفوض في 25 أيلول بلا أن يلاحظه أحد.
+  if (result.failed > 0) {
+    await alertOwner(`فشل تسليم ${result.failed} من ${result.processed} رسالة`, [
+      `آخر خطأ: ${result.lastError ?? 'غير معروف'}`,
+      'المرضى يجدون نسخةً في صندوق الإشعارات داخل التطبيق.',
+      'التفاصيل: لوحة الإدارة ← سجلّ الإشعارات.',
+    ]);
+  }
   return NextResponse.json({ ...result, timestamp: new Date().toISOString() });
 }
 
-export async function POST(req: NextRequest) {
-  return handle(req);
-}
-
-export async function GET(req: NextRequest) {
-  return handle(req);
-}
+export const POST = withCronAlert('notifications-process', handle);
+export const GET = withCronAlert('notifications-process', handle);
