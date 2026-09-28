@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/logger';
+import { sendPushToUsers } from '@/lib/services/push';
 import { SPECIALIST_META, toSpecialistType } from '@/lib/specialist-types';
 
 /**
@@ -45,5 +46,19 @@ export async function notifyServiceWaitlist(specialistType: string): Promise<num
     logger.error('notifyServiceWaitlist insert failed', { type, error: insErr.message });
     return 0;
   }
+
+  // دفعُ الويب: الرابط لكلّ مستخدمٍ حسب خدمته، فيُرسَل فرديّاً. فئةُ system_updates
+  // تحترم تفضيلات المستخدم (من أطفأها لا يصله).
+  await Promise.all(
+    rows.map((r) =>
+      sendPushToUsers([r.user_id], {
+        title: r.title,
+        body: r.body,
+        url: r.link,
+        tag: `service-available-${type}`,
+      }, 'system_updates').catch((err) =>
+        logger.warn('waitlist push failed', { error: err instanceof Error ? err.message : String(err) })),
+    ),
+  );
   return rows.length;
 }
