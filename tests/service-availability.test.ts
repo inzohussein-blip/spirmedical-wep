@@ -96,9 +96,21 @@ describe('⑥ notifyServiceWaitlist', () => {
   const calls: { table: string; op: string; payload?: unknown; filters: Record<string, unknown> }[] = [];
   let claimRows: { user_id: string; service_id: string | null }[] = [];
 
+  const pushed: { ids: string[]; payload: { url?: string; title: string }; category?: string }[] = [];
+  let pushFails = false;
+
   beforeEach(() => {
     calls.length = 0;
+    pushed.length = 0;
+    pushFails = false;
     jest.resetModules();
+    jest.doMock('@/lib/services/push', () => ({
+      sendPushToUsers: async (ids: string[], payload: { url?: string; title: string }, category?: string) => {
+        if (pushFails) throw new Error('vapid down');
+        pushed.push({ ids, payload, category });
+        return { sent: 1, failed: 0, removedSubscriptions: 0 };
+      },
+    }));
     jest.doMock('@/lib/supabase/server', () => ({
       createAdminClient: () => ({
         from(table: string) {
@@ -137,6 +149,23 @@ describe('⑥ notifyServiceWaitlist', () => {
     const rows = ins.payload as { user_id: string; link: string }[];
     expect(rows.map((r) => r.user_id)).toEqual(['p1', 'p2']);
     expect(rows[0].link).toBe('/appointments/new?service=blood-draw');
+  });
+
+  it('🚨 ودفعُ ويب لكلّ منتظر برابط خدمته، بفئةٍ تحترم تفضيلاته', async () => {
+    claimRows = [{ user_id: 'p1', service_id: 'blood-draw' }, { user_id: 'p2', service_id: null }];
+    const { notifyServiceWaitlist } = await import('@/lib/service-waitlist');
+    await notifyServiceWaitlist('lab_analyst');
+    expect(pushed.map((p) => p.ids)).toEqual([['p1'], ['p2']]);
+    expect(pushed[0].payload.url).toBe('/appointments/new?service=blood-draw');
+    expect(pushed.every((p) => p.category === 'system_updates')).toBe(true);
+  });
+
+  it('🚨 فشلُ الدفع لا يُسقط الإخطار (الصندوقُ كُتب أوّلاً)', async () => {
+    claimRows = [{ user_id: 'p1', service_id: null }];
+    pushFails = true;
+    const { notifyServiceWaitlist } = await import('@/lib/service-waitlist');
+    await expect(notifyServiceWaitlist('nurse')).resolves.toBe(1);
+    expect(calls.some((c) => c.table === 'notifications')).toBe(true);
   });
 
   it('لا منتظرين → لا إدراج', async () => {

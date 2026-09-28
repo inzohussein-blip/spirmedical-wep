@@ -379,7 +379,7 @@ npm run db:types    # توليد src/types/database.ts
 | الأمان وRLS | `rls-coverage` `rls-initplan` `rls-shared-row-participants` `rls-update-scope` `rpc-authorization` `security` `phi-policy-scope` `email-verification-tokens` `safe-redirect` `policy-merge` |
 | قاعدة البيانات | `schema-conformance` `insert-column-contracts` `enum-values` `auto-reject-stale` `seed-data-honesty` |
 | الإشعارات | `notification-push-channel` `notification-toast` `whatsapp` `inapp-fallback` `owner-alerts` |
-| الإتاحة والمختصّون | `service-availability` `specialist-onboarding` |
+| الإتاحة والمختصّون | `service-availability` `specialist-onboarding` `specialist-readiness` |
 | رفع الطلب والنوافذ | `order-flow-modals` `physio-booking-soon` `order-visibility` `order-clinical-details` `checkout` `validations` |
 | الهاتف وواجهة المستخدم | `mobile-ux` `mobile-layout` `app-screens-ux` `specialist-screens` `facility-phones` `color-tokens` `font-weights` |
 | البناء والفهرسة و CI | `use-server-exports` `seo-canonical` `route-links` `wired-features` `env-coverage` `landing-routing` `project-map` `ci-gate` `mobile-audit-tooling` |

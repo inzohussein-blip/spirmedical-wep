@@ -1,8 +1,10 @@
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient, createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { SPECIALIST_META, type SpecialistType } from '@/lib/specialist-types';
 import { baghdadDayWindow } from '@/lib/time/baghdad-day';
+import { specialistReadiness } from '@/lib/specialist-readiness';
+import SpecialistReadinessCard from '@/components/specialist/SpecialistReadinessCard';
 
 export const metadata = {
   title: 'لوحة الاختصاصي · سباير ميديكال',
@@ -17,7 +19,7 @@ export default async function SpecialistDashboard() {
 
   const { data: profile } = await supabase
     .from('users')
-    .select('full_name, specialist_type, approval_status')
+    .select('full_name, specialist_type, approval_status, governorate, specialist_bio')
     .eq('id', user.id)
     .single();
 
@@ -75,6 +77,21 @@ export default async function SpecialistDashboard() {
       .eq('specialist_id', user.id),
   ]);
 
+  // اشتراكاتُ الدفع لا يقرؤها صاحبُها تحت RLS — تُعدّ بعميل الخدمة لهذا المستخدم وحده
+  const { count: activePushSubs } = await createAdminClient()
+    .from('push_subscriptions')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .eq('is_active', true);
+  const readiness = specialistReadiness(
+    {
+      full_name: profile?.full_name ?? null,
+      governorate: profile?.governorate ?? null,
+      specialist_bio: profile?.specialist_bio ?? null,
+    },
+    activePushSubs ?? 0,
+  );
+
   const avgRating = ratings && ratings.length > 0
     ? (ratings.reduce((sum, r) => sum + r.overall_rating, 0) / ratings.length).toFixed(1)
     : '—';
@@ -102,6 +119,8 @@ export default async function SpecialistDashboard() {
             </div>
           </div>
         </div>
+
+        <SpecialistReadinessCard steps={readiness} />
 
         {/* الإحصائيات */}
         <div className="scr-section-head">
