@@ -16,6 +16,20 @@ updates:
     commit-message:
       prefix: 'chore'
       include: 'scope'
+    # ترقياتٌ كسرت المشروع فعلاً — تُجرى يدوياً بفرعٍ وتجربة، لا بدمجٍ آليّ:
+    #   • #11 (16 تشرين الأول): supabase-js 2.45→2.112 و@supabase/ssr 0.5→0.12 أسقطتا
+    #     فحصَ الأنواع فتوقّف كلُّ نشرٍ على Vercel. و`ssr` في 0.x: كلُّ «minor» يكسر
+    #     واجهةَ الكعكات (cookies) — يُقاس بدخولٍ حقيقيّ لا بالبناء وحده.
+    #   • #14: ESLint 10 يُسقط `next lint` في Next 14.
+    #   • #13: تعريفاتُ Node يجب أن تطابق إصدارَ التشغيل (engines: 24.x).
+    ignore:
+      - dependency-name: '@supabase/ssr'
+      - dependency-name: '@supabase/supabase-js'
+        update-types: ['version-update:semver-minor', 'version-update:semver-major']
+      - dependency-name: 'eslint'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
     groups:
       production-dependencies:
         patterns:
