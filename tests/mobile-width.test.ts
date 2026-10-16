@@ -32,3 +32,36 @@ describe('📱 عرضُ الصفحة على الهاتف', () => {
     expect(css('marketing.css')).toMatch(/\.landing, \.blog-page, \.mkt-screen \{ overflow-x: clip; \}/);
   });
 });
+
+describe('📱 لوحة الإدارة على الهاتف', () => {
+  /**
+   * قِيس على 47 صفحة إدارة بعرض 390 (جلسة مديرٍ محاكاة): كان <main> يتمرّر أفقياً في ثمانٍ (حتى 735px في
+   * صفحة المريض)، وجدولُ الممرّضين مقصوصاً. المصدر شبكاتٌ بأعمدةٍ ثابتة في النمط السطريّ (112 موضعاً).
+   */
+  const admin = css('admin.css');
+  const mobile = admin.slice(admin.indexOf('لا عرضَ زائد في لوحة الإدارة'));
+
+  it('🚨 العمودُ الجانبيّ الثابت ينطوي، والجانبُ لا يلتصق', () => {
+    for (const w of ['320px', '340px', '360px']) expect(mobile).toContain(`[style*="1fr ${w}"]`);
+    expect(mobile).toMatch(/position: static !important/);
+  });
+
+  it('🚨 أربعةُ أعمدة ← عمودان، وكلُّ عمودٍ يتقلّص (minmax(0, 1fr))', () => {
+    expect(mobile).toMatch(/\[style\*="repeat\(4, 1fr\)"\][^{]*\{ grid-template-columns: repeat\(2, minmax\(0, 1fr\)\) !important; \}/);
+    expect(mobile).toMatch(/\[style\*="flex: 1"\][^{]*\{ min-width: 0; \}/);
+  });
+
+  it('🚨 لا anywhere على المحتوى: يُكسّر جداولَ العربيّة حرفاً حرفاً', () => {
+    expect(mobile).not.toMatch(/overflow-wrap: anywhere/);
+    expect(mobile).toMatch(/main table \{ overflow-wrap: normal;/);
+  });
+
+  it('الجدولُ في حاويةٍ تقصّ يتمرّر، ولا نصَّ دون 12px', () => {
+    expect(mobile).toMatch(/:has\(> table\)[^{]*\{ overflow-x: auto !important; \}/);
+    expect(mobile).toMatch(/font-size: 11px"\][^{]*\{ font-size: 12px !important; \}/);
+  });
+
+  it('مقصورٌ على الهاتف — تصميمُ الحاسوب لا يتغيّر', () => {
+    expect(mobile).toMatch(/^[\s\S]*?@media \(max-width: 700px\) \{/);
+  });
+});

@@ -200,3 +200,51 @@
     padding-top: calc(64px + env(safe-area-inset-top)) !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   📱 لا عرضَ زائد في لوحة الإدارة على الهاتف (16 تشرين الأول)
+   ═══════════════════════════════════════════════════════════════════
+   قِيس بمحاكاة هاتفٍ بعرض 390 على كلّ صفحات الإدارة (47) بجلسة مديرٍ محاكاة: كان <main> يتمرّر أفقياً
+   في ثمانٍ منها — الرئيسية 443، والطلب 626، والمريض 735، والمختصّ 657، والأسنان/النفسيّة/التغذية/
+   النظّارات ~465 — ويُقصّ جدولُ الممرّضين. المصدر: شبكاتٌ بأعمدةٍ ثابتة في النمط السطريّ (112 موضعاً:
+   'repeat(4, 1fr)'، '1fr 1fr'، '1fr 320px'…) لا تنطوي، وعناصرُ flex لا تتقلّص دون محتواها.
+
+   النمطُ السطريّ يتغلّب على استعلامات الوسائط، فالتجاوزُ بـ!important هنا — كما في القاعدتين أعلاه —
+   ومقصورٌ على الهاتف، فتصميمُ الحاسوب لا يتغيّر. نطابق قيمةَ العمود لا الخاصّيّة: React يكتب
+   `grid-template-columns:…` في الخادم و`grid-template-columns: …` في المتصفّح.
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 700px) {
+  /* break-word لا anywhere: هذا يُدخل الكسرَ في حساب أصغر عرضٍ فتنكمش الجداولُ حرفاً حرفاً («قيد المراجعة»
+     سطراً لكلّ حرف). ذاك يكسر الكلمةَ الطويلة (بريد، هاتف) حين تفيض فقط. */
+  .admin-root > main { min-width: 0; overflow-wrap: break-word; }
+  /* الجدولُ يتمرّر داخل حاويته ولا تُكسر كلماتُه */
+  .admin-root main table { overflow-wrap: normal; word-break: normal; }
+  .admin-root main th { white-space: nowrap; }
+
+  /* عمودٌ جانبيّ ثابت (صفحاتُ التفاصيل) ← عمودٌ واحد، والجانبُ لا يلتصق */
+  .admin-root main [style*="1fr 320px"],
+  .admin-root main [style*="1fr 340px"],
+  .admin-root main [style*="1fr 360px"] { grid-template-columns: minmax(0, 1fr) !important; }
+  .admin-root main [style*="position: sticky"],
+  .admin-root main [style*="position:sticky"] { position: static !important; }
+
+  /* أربعةُ أعمدة ← عمودان؛ وما دونها يبقى عددُه ويتقلّص */
+  .admin-root main [style*="repeat(4, 1fr)"],
+  .admin-root main [style*="repeat(4,1fr)"] { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .admin-root main [style*="1fr 1fr"] { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .admin-root main [style*="1fr 1fr 1fr"],
+  .admin-root main [style*="repeat(3, 1fr)"],
+  .admin-root main [style*="repeat(3,1fr)"] { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  .admin-root main [style*="grid-template-columns"] > * { min-width: 0; }
+
+  /* عنصرُ flex لا يتقلّص دون محتواه افتراضياً */
+  .admin-root main [style*="flex: 1"],
+  .admin-root main [style*="flex:1"] { min-width: 0; }
+
+  /* لا نصَّ دون 12px على الهاتف (المعيارُ نفسُه في شاشات المختصّ) — الشاراتُ والتواريخ كانت 11px (284 موضعاً) */
+  .admin-root main [style*="font-size: 11px"], .admin-root main [style*="font-size:11px"] { font-size: 12px !important; }
+
+  /* جدولٌ في حاويةٍ تقصّ ← يتمرّر داخلها بدل أن يُقصّ */
+  .admin-root main [style*="overflow: hidden"]:has(> table),
+  .admin-root main [style*="overflow:hidden"]:has(> table) { overflow-x: auto !important; }
+}
