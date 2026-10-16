@@ -126,7 +126,7 @@ describe('📝 نماذج المصادقة تعمل مع الملء التلقا
 
   it('🚨 كلمةُ مرور الدخول current-password، والتسجيل new-password', () => {
     expect(read('src/app/(auth)/login/page.tsx')).toMatch(/autoComplete="current-password"/);
-    const reg = read('src/app/(auth)/register/patient/page.tsx');
+    const reg = read('src/app/(auth)/register/patient/PatientEmailRegister.tsx');
     expect(reg.match(/autoComplete="new-password"/g)?.length).toBe(2);
   });
 });
@@ -186,7 +186,7 @@ describe('👆 أهدافُ اللمس', () => {
   });
 
   it('🚨 مربّعُ الموافقة ≥ 24px', () => {
-    expect(read('src/app/(auth)/register/patient/page.tsx')).toMatch(/id="agreeTerms"[\s\S]{0,300}w-6 h-6/);
+    expect(read('src/app/(auth)/register/patient/PatientEmailRegister.tsx')).toMatch(/id="agreeTerms"[\s\S]{0,300}w-6 h-6/);
   });
 
   it('🚨 زرُّ التنقّل في الرئيسية لا ينكسر على سطرين في الهاتف', () => {

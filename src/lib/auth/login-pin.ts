@@ -1,3 +1,4 @@
+import { randomInt } from 'crypto';
 import bcrypt from 'bcryptjs';
 import { createAdminClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/logger';
@@ -121,4 +122,15 @@ export async function checkLoginPin(userId: string, pin: string, now = new Date(
 export const PHONE_AUTH_DOMAIN = '@phone.spirmedical.local';
 export function isPhoneAuthEmail(email: string | null | undefined): boolean {
   return !!email && email.toLowerCase().endsWith(PHONE_AUTH_DOMAIN);
+}
+
+/**
+ * رمزٌ مؤقّت تُعطيه الإدارة لصاحب حسابٍ نسي رمزه (واتساب معطّل فلا «نسيت الرمز»).
+ * عشوائيٌّ تشفيريّاً، ولا يُعطى رمزٌ ترفضه `loginPinProblem`.
+ */
+export function generateTemporaryPin(rand: (max: number) => number = randomInt): string {
+  for (;;) {
+    const pin = String(rand(10 ** PIN_LENGTH)).padStart(PIN_LENGTH, '0');
+    if (!loginPinProblem(pin)) return pin;
+  }
 }

@@ -238,6 +238,12 @@
 - التسجيلُ بلا واتساب يرفض الرمزَ الضعيف والرقمَ المسجَّل (`guardPinRegistration`).
 - «نسيت الرمز» = رمزُ واتساب صراحةً (`action=otp`) ثمّ `/login-pin` — يتعطّل ما دام توكن Meta معطّلاً.
 - الحارس: `tests/phone-pin-auth.test.ts`.
+- **نسي رمزه؟** ما دام واتساب معطّلاً: «إنشاء رمز دخولٍ مؤقّت» في صفحتَي المريض والمختصّ بالإدارة
+  (`app/admin/_actions/login-pin.ts`). للحساب الهاتفيّ وحده، يُعرض مرّةً، ويُسجَّل `reset_login_pin`.
+- **تسجيلُ المريض**: `/register/patient` بالرقم + الرمز افتراضيّاً (`registerPatient`، `action=skip`)،
+  والبريدُ بـ`?method=email`. الرمزُ في حقل `password` لأنّ `guardPinRegistration` يقرؤه.
+- **الدفع نقدٌ فقط**: `payments` فارغٌ ولا بوّابةَ في الكود — فلا تَعِد الشروطُ بزين كاش أو بطاقات.
+- الحارس: `tests/admin-pin-reset.test.ts`.
 
 ## 🚨 تنبيهُ المالك وبوّابة CI
 

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
+import ResetLoginPinButton from '@/app/admin/_components/ResetLoginPinButton';
 import { oneOfOr } from '@/lib/format/vocabulary';
 import { toSpecialistType, SPECIALIST_META } from '@/lib/specialist-types';
 import SpecialistActions from './SpecialistActions';
@@ -162,6 +163,7 @@ export default async function SpecialistDetailPage({ params }: { params: { id: s
             currentType={specialistType}
             isSuspended={specialist.is_suspended ?? false}
           />
+          <ResetLoginPinButton userId={specialist.id} />
         </div>
 
       </div>
