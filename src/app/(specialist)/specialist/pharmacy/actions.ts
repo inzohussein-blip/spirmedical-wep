@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import type { TablesUpdate } from '@/types/database';
 
 /**
  * تحقق من ملكية الصيدلية + الـ inventory
@@ -43,7 +44,7 @@ export async function toggleMedicationAvailability(
   const auth = await verifyOwnership(inventoryId);
   if (!auth.ok || !auth.supabase) return { success: false, error: auth.error };
 
-  const updates: Record<string, unknown> = {
+  const updates: TablesUpdate<'pharmacy_inventory'> = {
     is_available: newValue,
     updated_at: new Date().toISOString(),
   };
@@ -126,7 +127,7 @@ export async function updateInventoryItem(
   const auth = await verifyOwnership(inventoryId);
   if (!auth.ok || !auth.supabase) return { success: false, error: auth.error };
 
-  const updateData: Record<string, unknown> = {
+  const updateData: TablesUpdate<'pharmacy_inventory'> = {
     updated_at: new Date().toISOString(),
   };
 

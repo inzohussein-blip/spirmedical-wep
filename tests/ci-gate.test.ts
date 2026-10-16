@@ -33,19 +33,19 @@ describe('عتبةُ التغطية سُلّم', () => {
   const src = read('jest.config.js');
   const num = (k: string) => Number(new RegExp(`${k}:\\s*(\\d+)`).exec(src)?.[1]);
 
-  it('🚨 لا تُنزَل تحت أرضيّة 25 أيلول', () => {
-    expect(num('statements')).toBeGreaterThanOrEqual(15);
-    expect(num('branches')).toBeGreaterThanOrEqual(13);
-    expect(num('functions')).toBeGreaterThanOrEqual(13);
-    expect(num('lines')).toBeGreaterThanOrEqual(15);
+  it('🚨 لا تُنزَل تحت أرضيّة 16 تشرين الأول', () => {
+    expect(num('statements')).toBeGreaterThanOrEqual(21);
+    expect(num('branches')).toBeGreaterThanOrEqual(18);
+    expect(num('functions')).toBeGreaterThanOrEqual(18);
+    expect(num('lines')).toBeGreaterThanOrEqual(21);
   });
 
   it('🚨 ولا تُرفع فوق المقيس بلا اختباراتٍ تبلغها (وإلّا عاد الأحمر الدائم)', () => {
-    // المقيس في 25 أيلول: 16.3 / 14.2 / 14.5 / 16.1 — ارفع هذا السقفَ مع التغطية
-    expect(num('statements')).toBeLessThanOrEqual(16);
-    expect(num('branches')).toBeLessThanOrEqual(14);
-    expect(num('functions')).toBeLessThanOrEqual(14);
-    expect(num('lines')).toBeLessThanOrEqual(16);
+    // المقيس في 16 تشرين الأول: 22.5 / 19.8 / 19.4 / 22.2 — ارفع هذا السقفَ مع التغطية
+    expect(num('statements')).toBeLessThanOrEqual(22);
+    expect(num('branches')).toBeLessThanOrEqual(19);
+    expect(num('functions')).toBeLessThanOrEqual(19);
+    expect(num('lines')).toBeLessThanOrEqual(22);
   });
 });
 
@@ -63,7 +63,8 @@ describe('ترقياتٌ لا تُدمج آليّاً (Dependabot)', () => {
     expect(dep).toMatch(/dependency-name: '@types\/node'\n\s+update-types: \['version-update:semver-major'\]/);
   });
 
-  it.each(['typescript', 'next', 'eslint-config-next', 'jest', 'jest-environment-jsdom', '@types/jest', 'zod', 'maplibre-gl'])(
+  it.each(['typescript', 'next', 'eslint-config-next', 'jest', 'jest-environment-jsdom', '@types/jest', 'zod', 'maplibre-gl',
+    'react', 'react-dom', '@types/react', '@types/react-dom', '@sentry/nextjs', 'tailwindcss', 'tailwind-merge'])(
     '🚨 %s: لا قفزةَ رئيسيّة آليّة — #30 (TypeScript 7) أوقف النشر',
     (name) => {
       expect(dep).toContain(`- dependency-name: '${name}'\n        update-types: ['version-update:semver-major']`);
@@ -77,6 +78,14 @@ describe('ترقياتٌ لا تُدمج آليّاً (Dependabot)', () => {
 
   it('🚨 لا ملصقاتٍ غيرِ موجودة في dependabot.yml — كان يُعلّق بخطأٍ على كلّ طلب', () => {
     expect(dep).not.toMatch(/^\s+labels:/m);
+  });
+
+  it('🚨 React 18 مع Next 14 — React 19 (#42) أوقف npm ci والنشر', () => {
+    expect(pkg.dependencies.next).toMatch(/^14\./);
+    expect(pkg.dependencies.react).toMatch(/^18\./);
+    expect(pkg.dependencies['react-dom']).toMatch(/^18\./);
+    expect(pkg.dependencies['@sentry/nextjs']).toMatch(/^10\./);
+    expect(pkg.dependencies['tailwind-merge']).toMatch(/^2\./);
   });
 
   it('🚨 TypeScript مثبَّتٌ على 5.x — الإصدار 7 يحذف baseUrl فتنكسر مساراتُ @/', () => {

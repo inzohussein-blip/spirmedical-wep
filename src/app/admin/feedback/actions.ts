@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { headers } from 'next/headers';
+import type { TablesUpdate } from '@/types/database';
 
 export interface FeedbackInput {
   type: 'suggestion' | 'complaint' | 'praise' | 'feature_request' | 'other';
@@ -61,7 +62,7 @@ export async function updateFeedbackStatus(
   const auth = await verifyAdmin();
   if (!auth.ok || !auth.supabase) return { success: false, error: auth.error };
 
-  const updates: Record<string, unknown> = { status };
+  const updates: TablesUpdate<'user_feedback'> = { status };
   if (status === 'reviewed') updates.reviewed_at = new Date().toISOString();
   if (status === 'resolved') updates.resolved_at = new Date().toISOString();
   if (adminNotes !== undefined) updates.admin_notes = adminNotes;

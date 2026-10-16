@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import type { TablesUpdate } from '@/types/database';
 
 async function verifyAdmin() {
   const supabase = createClient();
@@ -85,7 +86,7 @@ export async function updatePharmacy(id: string, input: PharmacyInput) {
 
   const { owner_email, ...data } = input;
   void owner_email;
-  const updates: Record<string, unknown> = { ...data, updated_at: new Date().toISOString() };
+  const updates: TablesUpdate<'pharmacies'> = { ...data, updated_at: new Date().toISOString() };
   if (ownerUserId !== undefined) updates.owner_user_id = ownerUserId;
 
   const { error } = await auth.supabase

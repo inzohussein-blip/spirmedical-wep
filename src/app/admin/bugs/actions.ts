@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import type { TablesUpdate } from '@/types/database';
 
 // Admin functions
 async function verifyAdmin() {
@@ -25,7 +26,7 @@ export async function updateBugStatus(
   const auth = await verifyAdmin();
   if (!auth.ok || !auth.supabase) return { success: false, error: auth.error };
 
-  const updates: Record<string, unknown> = {
+  const updates: TablesUpdate<'bug_reports'> = {
     status,
     updated_at: new Date().toISOString(),
   };

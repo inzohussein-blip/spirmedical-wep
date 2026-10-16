@@ -50,6 +50,22 @@ updates:
         update-types: ['version-update:semver-major']
       - dependency-name: 'maplibre-gl'
         update-types: ['version-update:semver-major']
+      # #42/#49 (React 19) و#48 (Sentry 11) و#45 (tailwind-merge 3، لـTailwind 4) و#43 (Tailwind 4):
+      # كلُّها تتبع ترقيةَ Next 16 وتُجرى معها — React 19 مع Next 14 أوقف `npm ci` والنشر.
+      - dependency-name: 'react'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'react-dom'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@types/react'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@types/react-dom'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@sentry/nextjs'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'tailwindcss'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'tailwind-merge'
+        update-types: ['version-update:semver-major']
     groups:
       production-dependencies:
         patterns:

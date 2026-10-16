@@ -18,6 +18,12 @@ interface SearchParams {
   view?: 'list' | 'kanban';
 }
 
+const APPOINTMENT_STATUSES = ['pending', 'confirmed', 'in_progress', 'completed', 'cancelled'] as const;
+type AppointmentStatus = (typeof APPOINTMENT_STATUSES)[number];
+/** قيمةٌ من الرابط لا تُصدَّق: حالةٌ غيرُ معروفة لا تصل إلى الاستعلام. */
+const isAppointmentStatus = (s: string): s is AppointmentStatus =>
+  (APPOINTMENT_STATUSES as readonly string[]).includes(s);
+
 const STATUS_META: Record<string, { label: string; bg: string; color: string }> = {
   pending: { label: 'جديد', bg: 'var(--amber-soft, #FEF7E0)', color: 'var(--amber-deep, #6B3A08)' },
   confirmed: { label: 'مؤكّد', bg: 'var(--emerald-soft)', color: 'var(--emerald-deep)' },
@@ -36,7 +42,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
       required_specialist_type, assigned_specialist_id, address, created_at
     `, { count: 'exact' });
 
-  if (searchParams.status) query = query.eq('status', searchParams.status);
+  if (searchParams.status && isAppointmentStatus(searchParams.status)) query = query.eq('status', searchParams.status);
   if (searchParams.type) query = query.eq('required_specialist_type', searchParams.type);
 
   if (searchParams.from) query = query.gte('scheduled_at', searchParams.from);

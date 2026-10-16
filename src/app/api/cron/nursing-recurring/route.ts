@@ -67,7 +67,7 @@ async function handler(request: Request) {
 
   // ─── 3. معالجة كل طلب ───
   for (const order of (recurringOrders || [])) {
-    const schedule = order.recurring_schedule as RecurringSchedule | null;
+    const schedule = order.recurring_schedule as unknown as RecurringSchedule | null;
     if (!schedule?.enabled) {
       skippedCount++;
       continue;

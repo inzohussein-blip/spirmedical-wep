@@ -63,7 +63,6 @@ export async function sendAppointmentConfirmedEmail(appointmentId: string): Prom
     .single();
 
   if (!appt) return;
-  // @ts-expect-error - join field
   const userEmail = appt.users?.email;
   if (!userEmail) return;
 
@@ -102,7 +101,6 @@ export async function sendAppointmentReminderEmail(appointmentId: string): Promi
     .single();
 
   if (!appt) return;
-  // @ts-expect-error - join
   const userEmail = appt.users?.email;
   if (!userEmail) return;
 
@@ -135,7 +133,6 @@ export async function sendRatingRequestEmail(appointmentId: string): Promise<voi
     .single();
 
   if (!appt) return;
-  // @ts-expect-error - join
   const userEmail = appt.users?.email;
   if (!userEmail) return;
 

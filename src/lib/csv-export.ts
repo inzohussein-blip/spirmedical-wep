@@ -9,7 +9,11 @@ export function toCSV<T extends Record<string, unknown>>(
 
   const escape = (value: unknown): string => {
     if (value === null || value === undefined) return '';
-    const str = String(value);
+    let str = String(value);
+    // حقنُ الصيغ (CSV injection): نصٌّ يبدأ بـ = + - @ (أو Tab/CR) يُنفَّذ صيغةً حين تفتح الإدارةُ
+    // الملفَّ في Excel — والقيمُ من إدخال المستخدمين (الأسماء، الملاحظات). يُستثنى رقمٌ صرف
+    // (+9647701234567، ‎-5) فلا تُشوَّه الهواتفُ والمبالغ.
+    if (/^[=+\-@\t\r]/.test(str) && !/^[+-][\d\s.]+$/.test(str)) str = `'${str}`;
     if (str.includes(',') || str.includes('"') || str.includes('\n')) {
       return `"${str.replace(/"/g, '""')}"`;
     }

@@ -70,6 +70,8 @@ http.createServer((req, res) => {
   if (u.pathname === '/auth/v1/user') return send(res, 200, USER);
   if (u.pathname === '/auth/v1/token') return send(res, 200, { access_token: 'mock-access', token_type: 'bearer', expires_in: 360000, expires_at: Math.floor(Date.now() / 1000) + 360000, refresh_token: 'mock-refresh', user: USER });
   if (u.pathname === '/auth/v1/logout') return send(res, 204);
+  // حسابٌ هاتفيّ (بريدٌ اصطناعيّ) — كي يُجرَّب دخولُ «الرقم + PIN» محلّياً
+  if (u.pathname.startsWith('/auth/v1/admin/users/')) return send(res, 200, { ...USER, email: '9647700000000@phone.spirmedical.local' });
   if (u.pathname.startsWith('/auth/v1/')) return send(res, 200, {});
 
   if (u.pathname.startsWith('/rest/v1/rpc/')) return send(res, 200, null);

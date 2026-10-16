@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/logger';
+import type { TablesUpdate } from '@/types/database';
 
 /**
  * POST /api/admin/emergency-update
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid params' }, { status: 400 });
   }
 
-  const updates: Record<string, unknown> = { status };
+  const updates: TablesUpdate<'nurse_emergency_logs'> = { status };
   if (status === 'resolved' || status === 'false_alarm') {
     updates.resolved_at = new Date().toISOString();
   }

@@ -11,6 +11,7 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import type { TablesUpdate } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
 
@@ -55,7 +56,7 @@ export async function POST(request: Request) {
     }
 
     // ─── تحديث ───
-    const updates: Record<string, any> = {
+    const updates: TablesUpdate<'users'> = {
       wa_otp_enabled: enabled,
     };
 
