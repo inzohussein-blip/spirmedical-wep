@@ -33,19 +33,19 @@ describe('عتبةُ التغطية سُلّم', () => {
   const src = read('jest.config.js');
   const num = (k: string) => Number(new RegExp(`${k}:\\s*(\\d+)`).exec(src)?.[1]);
 
-  it('🚨 لا تُنزَل تحت أرضيّة 25 أيلول', () => {
-    expect(num('statements')).toBeGreaterThanOrEqual(15);
-    expect(num('branches')).toBeGreaterThanOrEqual(13);
-    expect(num('functions')).toBeGreaterThanOrEqual(13);
-    expect(num('lines')).toBeGreaterThanOrEqual(15);
+  it('🚨 لا تُنزَل تحت أرضيّة 16 تشرين الأول', () => {
+    expect(num('statements')).toBeGreaterThanOrEqual(21);
+    expect(num('branches')).toBeGreaterThanOrEqual(18);
+    expect(num('functions')).toBeGreaterThanOrEqual(18);
+    expect(num('lines')).toBeGreaterThanOrEqual(21);
   });
 
   it('🚨 ولا تُرفع فوق المقيس بلا اختباراتٍ تبلغها (وإلّا عاد الأحمر الدائم)', () => {
-    // المقيس في 25 أيلول: 16.3 / 14.2 / 14.5 / 16.1 — ارفع هذا السقفَ مع التغطية
-    expect(num('statements')).toBeLessThanOrEqual(16);
-    expect(num('branches')).toBeLessThanOrEqual(14);
-    expect(num('functions')).toBeLessThanOrEqual(14);
-    expect(num('lines')).toBeLessThanOrEqual(16);
+    // المقيس في 16 تشرين الأول: 22.5 / 19.8 / 19.4 / 22.2 — ارفع هذا السقفَ مع التغطية
+    expect(num('statements')).toBeLessThanOrEqual(22);
+    expect(num('branches')).toBeLessThanOrEqual(19);
+    expect(num('functions')).toBeLessThanOrEqual(19);
+    expect(num('lines')).toBeLessThanOrEqual(22);
   });
 });
 

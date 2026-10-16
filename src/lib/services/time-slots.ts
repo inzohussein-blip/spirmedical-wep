@@ -74,16 +74,15 @@ export function generateTimeSlotsForDate(date: Date, serviceDuration: number = 6
       const slotDate = new Date(date);
       slotDate.setHours(hour, minute, 0, 0);
 
-      // محاكاة: بعض الفترات محجوزة (للعرض)
-      const isBooked = Math.random() < 0.2;
-
+      // لا مصدرَ لحجوزات الفترات بعد: كانت ٢٠٪ منها تُعطَّل عشوائياً «للعرض»، وتتبدّل مع كلّ
+      // إعادة رسم — فيختار المريضُ وقتاً ثمّ يراه «محجوزاً». الفترةُ متاحةٌ حتى يوجد مصدرٌ حقيقيّ.
       slots.push({
         id: slotDate.toISOString(),
         date: slotDate.toISOString().split('T')[0],
         time: `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`,
         displayDate: dayName,
         displayTime: formatTimeArabic(hour, minute),
-        available: !isBooked,
+        available: true,
         isPopular: popularHours.includes(hour) && minute === 0,
       });
     }
