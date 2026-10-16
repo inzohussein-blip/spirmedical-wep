@@ -52,7 +52,7 @@ export async function sendOtp(formData: FormData) {
   const validation = phoneSchema.safeParse({ phone });
   if (!validation.success) {
     redirect(
-      '/login?error=' + encodeURIComponent(validation.error.errors[0].message)
+      '/login?error=' + encodeURIComponent(validation.error.issues[0].message)
     );
   }
 
@@ -195,7 +195,7 @@ export async function skipOtp(formData: FormData) {
   const validation = phoneSchema.safeParse({ phone });
   if (!validation.success) {
     redirect(
-      '/login?error=' + encodeURIComponent(validation.error.errors[0].message)
+      '/login?error=' + encodeURIComponent(validation.error.issues[0].message)
     );
   }
 
@@ -256,7 +256,7 @@ export async function verifyOtp(formData: FormData) {
   if (!validation.success) {
     redirect(
       `/otp?phone=${encodeURIComponent(phone)}&channel=${channel}&error=` +
-        encodeURIComponent(validation.error.errors[0].message)
+        encodeURIComponent(validation.error.issues[0].message)
     );
   }
 

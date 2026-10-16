@@ -60,7 +60,7 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
   const validation = appointmentUpdateSchema.safeParse(body);
   if (!validation.success) {
     return NextResponse.json(
-      { error: 'بيانات غير صحيحة', details: validation.error.errors },
+      { error: 'بيانات غير صحيحة', details: validation.error.issues },
       { status: 400 }
     );
   }

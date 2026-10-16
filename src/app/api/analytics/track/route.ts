@@ -13,7 +13,7 @@ import { checkRateLimit } from '@/lib/rate-limit';
 const trackSchema = z.object({
   event: z.string().trim().min(1).max(100),
   // نحدّ حجم الخصائص (منع تخزين JSON ضخم من مصدر غير مُصادق)
-  properties: z.record(z.unknown()).optional(),
+  properties: z.record(z.string(), z.unknown()).optional(),
 });
 
 export async function POST(request: NextRequest) {

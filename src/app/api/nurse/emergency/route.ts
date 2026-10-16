@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
   const parsed = emergencySchema.safeParse(raw);
   if (!parsed.success) {
     return NextResponse.json(
-      { error: parsed.error.errors[0]?.message || 'بيانات غير صالحة' },
+      { error: parsed.error.issues[0]?.message || 'بيانات غير صالحة' },
       { status: 400 }
     );
   }

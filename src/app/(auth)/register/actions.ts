@@ -63,7 +63,7 @@ export async function registerPatient(formData: FormData) {
   }
   const phoneValidation = phoneFieldSchema.safeParse(rawPhone);
   if (!phoneValidation.success) {
-    redirect('/register/patient?error=' + encodeURIComponent(phoneValidation.error.errors[0].message));
+    redirect('/register/patient?error=' + encodeURIComponent(phoneValidation.error.issues[0].message));
   }
   if (!rawTerms) {
     redirect('/register/patient?error=' + encodeURIComponent('يجب الموافقة على الشروط والأحكام'));
@@ -140,7 +140,7 @@ export async function registerSpecialist(formData: FormData) {
   }
   const phoneValidation = phoneFieldSchema.safeParse(rawPhone);
   if (!phoneValidation.success) {
-    redirect('/register/specialist?error=' + encodeURIComponent(phoneValidation.error.errors[0].message));
+    redirect('/register/specialist?error=' + encodeURIComponent(phoneValidation.error.issues[0].message));
   }
   if (!validSpecializations.includes(rawSpecialization)) {
     redirect('/register/specialist?error=' + encodeURIComponent('يرجى اختيار الاختصاص'));
