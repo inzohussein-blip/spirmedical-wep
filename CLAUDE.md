@@ -272,6 +272,9 @@
   الوهميّ: كعكةُ ssr 0.5 القديمة تُقرأ، ودخولُ البريد والرقم + PIN يكتبان كعكةً يقرؤها الخادم. أنواعُه الأدقّ
   كشفت «إضافة مستشفى» تُدرج `verified_at` غيرَ الموجود (كان يفشل دائماً). كائناتُ التحديث بـ`TablesUpdate<'t'>`.
   الحارس: `tests/supabase-upgrade.test.ts`.
+- **#42/#49 (React 19) و#48 (Sentry 11) و#45 (tailwind-merge 3)**: دُمجت آليّاً؛ React 19 مع Next 14 أسقط
+  `npm ci` (تعارضُ peer) فتوقّف النشر، وSentry 11 أسقط `next.config.js` (`withSentryConfig is not a function`).
+  أُرجعت إلى React 18.3.1 وSentry 10.62.0 وtailwind-merge 2.6.1 — **تُرقّى مع Next 16 لا قبله.**
 - القواعد في `.github/dependabot.yml` (`ignore`)، والحارس `tests/ci-gate.test.ts`.
 
 ## 🧪 التغطية والخللان اللذان كشفتهما (16 تشرين الأول)
