@@ -1,6 +1,7 @@
 'use server';
 
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient, createClient } from '@/lib/supabase/server';
+import { loginPinProblem, setLoginPin } from '@/lib/auth/login-pin';
 import { redirect } from 'next/navigation';
 import { getRoleHomePath } from '@/lib/auth/home-path';
 import { resolveApprovalStatus } from '@/lib/auth/approval';
@@ -71,14 +72,16 @@ export async function registerPatient(formData: FormData) {
   const fullName = rawFullName;
   const phone    = phoneValidation.data as string;
   const normalizedPhone = normalizePhone(phone);
+  const pin = await guardPinRegistration(formData, action, normalizedPhone, '/register/patient');
 
   try {
-    await createOrGetAccount({
+    const userId = await createOrGetAccount({
       phone: normalizedPhone,
       fullName,
       role: 'patient',
       ip,
     });
+    if (pin) await setLoginPin(userId, pin);
 
     await routeAfterRegister(normalizedPhone, 'patient', action);
   } catch (err) {
@@ -156,9 +159,10 @@ export async function registerSpecialist(formData: FormData) {
   const normalizedPhone = normalizePhone(phone);
 
   const specialistType = mapSpecializationToDbType(specialization);
+  const pin = await guardPinRegistration(formData, action, normalizedPhone, '/register/specialist');
 
   try {
-    await createOrGetAccount({
+    const userId = await createOrGetAccount({
       phone: normalizedPhone,
       fullName,
       role: 'specialist',
@@ -166,6 +170,7 @@ export async function registerSpecialist(formData: FormData) {
       specialistType,
       specializationDetails,
     });
+    if (pin) await setLoginPin(userId, pin);
 
     await routeAfterRegister(normalizedPhone, 'specialist', action);
   } catch (err) {
@@ -187,6 +192,41 @@ export async function registerSpecialist(formData: FormData) {
 // ─────────────────────────────────────────────────────────
 // منطق التوجيه بعد التسجيل
 // ─────────────────────────────────────────────────────────
+
+/** هل سيُرسَل رمزُ واتساب بعد التسجيل؟ — الشرطُ نفسه في `routeAfterRegister`. */
+function willUseOtp(action: string): boolean {
+  const mode = getOtpMode();
+  return mode === 'required' || (mode === 'optional' && action === 'otp') || !isPasswordlessLoginAllowed();
+}
+
+/**
+ * التسجيلُ بلا رمز واتساب (قرار المالك) يشترط رمزَ دخولٍ من ستّة أرقام — كان حقلُ
+ * «رمز الدخول (PIN)» يُرسَل ويُهمَل، فيُفتح الحسابُ برقمه وحده (0049).
+ * ورقمٌ مسجَّلٌ مسبقاً لا يُعاد تسجيلُه بلا رمز: كان ذلك يفتح الحسابَ القائم لمن
+ * كتب رقمه. يُعيد الرمزَ ليُحفظ بعد الإنشاء (أو null في مسار واتساب بلا رمز).
+ */
+async function guardPinRegistration(
+  formData: FormData,
+  action: string,
+  phone: string,
+  errorBase: string,
+): Promise<string | null> {
+  const pin = ((formData.get('password') as string | null) ?? '').trim();
+  const problem = loginPinProblem(pin);
+
+  if (!willUseOtp(action)) {
+    if (problem) redirect(errorBase + '?error=' + encodeURIComponent(`رمز الدخول: ${problem}`));
+    const { data: existing } = await createAdminClient()
+      .from('users')
+      .select('id')
+      .eq('phone', phone)
+      .maybeSingle();
+    if (existing) {
+      redirect(errorBase + '?error=' + encodeURIComponent('هذا الرقم مسجّل مسبقاً. سجّل الدخول برقمك ورمز الدخول.'));
+    }
+  }
+  return problem ? null : pin;
+}
 
 async function routeAfterRegister(
   phone: string,

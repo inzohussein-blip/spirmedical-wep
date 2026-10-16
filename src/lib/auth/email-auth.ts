@@ -6,7 +6,9 @@ import { sendEmail, isEmailConfigured } from '@/lib/email/send';
 import { logger } from '@/lib/logger';
 import { resolveApprovalStatus } from '@/lib/auth/approval';
 import crypto from 'crypto';
-import { loginIdentifierToEmail } from '@/lib/auth/login-identifier';
+import { loginIdentifierToEmail, loginIdentifierToPhone } from '@/lib/auth/login-identifier';
+import { phonePinLogin } from '@/lib/auth/phone-pin-login';
+import { getClientIp } from '@/lib/auth/request-helpers';
 import { redirect } from 'next/navigation';
 
 // ═══════════════════════════════════════════════════════════
@@ -270,8 +272,15 @@ export async function signInWithEmail(
     });
 
     if (signInErr) {
+      // رقمُ هاتف + ستّة أرقام: رمزُ الدخول (0049)، لا كلمةُ سرّ الحساب المشتقّة.
+      // (كلمةُ السرّ المؤقّتة من الإدارة جُرّبت أعلاه أوّلاً.)
+      const phone = loginIdentifierToPhone(email);
+      if (phone && /^\d{6}$/.test(password)) {
+        const res = await phonePinLogin(phone, password, getClientIp());
+        return res.ok ? { success: true, role: res.role } : { success: false, error: res.error };
+      }
       if (signInErr.message.includes('Invalid login')) {
-        return { success: false, error: 'البريد أو كلمة المرور خاطئة' };
+        return { success: false, error: phone ? 'رقم الهاتف أو رمز الدخول خاطئ' : 'البريد أو كلمة المرور خاطئة' };
       }
       return { success: false, error: signInErr.message };
     }

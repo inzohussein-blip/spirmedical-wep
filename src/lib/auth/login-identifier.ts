@@ -12,3 +12,11 @@ export function loginIdentifierToEmail(input: string): string {
   const phone = normalizePhone(v.replace(/[^\d+]/g, ''));
   return /^\+9647\d{9}$/.test(phone) ? phoneToEmail(phone) : v;
 }
+
+/** الرقمُ بصيغة E.164 إن كان المُدخَل رقمَ هاتفٍ عراقيّاً، وإلّا null. */
+export function loginIdentifierToPhone(input: string): string | null {
+  const v = input.trim();
+  if (v.includes('@')) return null;
+  const phone = normalizePhone(v.replace(/[^\d+]/g, ''));
+  return /^\+9647\d{9}$/.test(phone) ? phone : null;
+}

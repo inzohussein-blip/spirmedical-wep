@@ -12,6 +12,7 @@ import { logger } from '@/lib/logger';
 import { getOtpMode, canSkipOtp, isPasswordlessLoginAllowed } from '@/lib/flags';
 import { derivePhonePassword as derivePassword, phoneToEmail } from '@/lib/auth/phone-credentials';
 import { getClientIp as getIp, isNextRedirect } from '@/lib/auth/request-helpers';
+import { phonePinLogin } from '@/lib/auth/phone-pin-login';
 // ✅ FIX 1: static import بدلاً من dynamic
 import { verifyOtp as verifyWhatsAppOtp, sendOtp as sendWhatsAppOtpDirect } from '@/lib/whatsapp/otp-service';
 
@@ -62,7 +63,7 @@ export async function sendOtp(formData: FormData) {
     mode === 'required' || (mode === 'optional' && action === 'otp');
 
   if (!shouldUseOtp) {
-    return await loginWithoutOtp(normalizedPhone, ip);
+    return await loginWithoutOtp(normalizedPhone, ip, ((formData.get('pin') as string | null) ?? '').trim());
   }
 
   // تحديد قناة OTP المُفضّلة
@@ -199,18 +200,15 @@ export async function skipOtp(formData: FormData) {
   }
 
   const normalizedPhone = normalizePhone(validation.data.phone);
-  return await loginWithoutOtp(normalizedPhone, ip);
+  return await loginWithoutOtp(normalizedPhone, ip, ((formData.get('pin') as string | null) ?? '').trim());
 }
 
 // ─────────────────────────────────────────────────────────
-// دخول مباشر بدون OTP (مُصلح)
+// دخول بلا رمز واتساب: الرقم + رمز الدخول (PIN)
 // ─────────────────────────────────────────────────────────
-// ✅ FIX 2: إزالة listUsers() الثقيل
-// ✅ FIX 3: createUser مع معالجة duplicate (getUserByEmail غير موجودة في v2.45)
 
-async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
-  // 🔒 حاجز أمني: الدخول بدون رمز ممنوع في الإنتاج (ما لم يُفعَّل صراحةً).
-  // يمنع الوصول لسجلّ مريض بمجرد معرفة رقم هاتفه.
+async function loginWithoutOtp(phone: string, ip: string, pin: string): Promise<never> {
+  // 🔒 حاجز أمني: الدخول بدون رمز واتساب ممنوع إن ضُبط الوضع `required`.
   if (!isPasswordlessLoginAllowed()) {
     logger.warn('Passwordless login blocked', { ip });
     redirect(
@@ -218,194 +216,12 @@ async function loginWithoutOtp(phone: string, ip: string): Promise<never> {
     );
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!supabaseUrl || !serviceKey) {
-    logger.error('Missing Supabase env vars', {
-      hasUrl: !!supabaseUrl,
-      hasKey: !!serviceKey,
-    });
-    redirect('/login?error=' + encodeURIComponent('إعداد الخادم ناقص'));
+  // الرقم + رمز الدخول (PIN) — المنطقُ كلُّه في `phonePinLogin` (0049)
+  const result = await phonePinLogin(phone, pin, ip);
+  if (!result.ok) {
+    redirect('/login/phone?error=' + encodeURIComponent(result.error));
   }
-
-  const admin = createSbClient(supabaseUrl, serviceKey, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  });
-
-  const password = derivePassword(phone);
-  const email = phoneToEmail(phone);
-  const supabase = createClient();
-
-  try {
-    // 🚀 Fast Path: محاولة تسجيل دخول مباشرة
-    const { data: fastSignIn, error: fastErr } =
-      await supabase.auth.signInWithPassword({ email, password });
-
-    if (fastSignIn?.user && !fastErr) {
-      // ✅ الحساب موجود + password صحيح
-      const profilePromise = admin
-        .from('users')
-        .select('role, phone')
-        .eq('id', fastSignIn.user.id)
-        .maybeSingle();
-
-      // ⚠️ هذا دخولٌ **بلا رمز تحقّق** (مسار `skipOtp`): يعتمد على معرفة الرقم
-      // وحده. نُميّزه في سجلّ التدقيق كي يكون قابلاً للتتبّع والمراجعة، ونُحذّر
-      // في السجلّات ما دام مفعّلاً — فهو أضعف حلقة حتى يُضبط
-      // `NEXT_PUBLIC_OTP_MODE=required` بعد تفعيل قناة OTP.
-      logger.warn('Passwordless login succeeded (OTP not required)', {
-        ip,
-        user_id: fastSignIn.user.id,
-      });
-
-      logAuditEvent({
-        action: 'auth.login',
-        user_id: fastSignIn.user.id,
-        metadata: { ip, phone, method: 'passwordless_no_otp' },
-      }).catch(() => {});
-
-      const { data: profile } = await profilePromise;
-
-      if (profile && profile.phone !== phone) {
-        void admin
-          .from('users')
-          .update({ phone })
-          .eq('id', fastSignIn.user.id)
-          .then(() => null, () => null);
-      }
-
-      redirect(getRoleHomePath(profile?.role));
-    }
-
-    // 🐌 Slow Path: signIn فشل
-
-    // 1. ابحث في public.users بالـ phone
-    const { data: existingProfile } = await admin
-      .from('users')
-      .select('id, role')
-      .eq('phone', phone)
-      .maybeSingle();
-
-    let userId = existingProfile?.id;
-
-    if (userId) {
-      // ✅ FIX 2: profile موجود → حدّث password فقط
-      await admin.auth.admin.updateUserById(userId, { password });
-    } else {
-      // ✅ FIX 3: createUser مع معالجة duplicate (getUserByEmail غير موجودة في v2.45)
-      const { data: newUser, error: createErr } =
-        await admin.auth.admin.createUser({
-          email,
-          password,
-          email_confirm: true,
-          user_metadata: { phone, created_via: 'no_otp' },
-        });
-
-      if (newUser?.user) {
-        // ✅ مستخدم جديد أُنشئ بنجاح
-        userId = newUser.user.id;
-
-        await admin
-          .from('users')
-          .update({
-            phone,
-            full_name: 'مستخدم',
-            approval_status: 'approved',
-          })
-          .eq('id', userId)
-          .then(() => null, () => null);
-
-      } else if (createErr && (
-        createErr.message?.toLowerCase().includes('already been registered') ||
-        createErr.message?.toLowerCase().includes('already exists') ||
-        (createErr as any)?.status === 422
-      )) {
-        // ✅ الحساب موجود في auth.users → تسجيل دخول مؤقت للحصول على ID
-        const { data: tempSignIn } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (tempSignIn?.user) {
-          userId = tempSignIn.user.id;
-        } else {
-          // password قديم → حدّث عبر admin (نحتاج ID من public.users)
-          logger.warn('Existing auth user with wrong password, phone not in public.users', { phone });
-        }
-
-        if (userId) {
-          // تأكد من وجود row في public.users
-          const { data: pubExists } = await admin
-            .from('users')
-            .select('id')
-            .eq('id', userId)
-            .maybeSingle();
-
-          if (!pubExists) {
-            await admin.from('users').insert({
-              id: userId,
-              phone,
-              full_name: 'مستخدم',
-              role: 'patient',
-              approval_status: 'approved',
-            }).then(() => null, () => null);
-          } else {
-            await admin
-              .from('users')
-              .update({ phone, approval_status: 'approved' })
-              .eq('id', userId)
-              .then(() => null, () => null);
-          }
-        }
-      } else if (createErr) {
-        logger.error('createUser failed', { phone, error: createErr.message });
-        redirect(
-          '/login?error=' +
-            encodeURIComponent(
-              `فشل إنشاء الحساب: ${createErr.message ?? 'خطأ غير معروف'}`
-            )
-        );
-      }
-    }
-
-    // 3. تسجيل دخول الآن
-    const { data: signInData, error: signInErr } =
-      await supabase.auth.signInWithPassword({ email, password });
-
-    if (signInErr || !signInData?.user) {
-      logger.error('signIn failed after setup', {
-        phone,
-        error: signInErr?.message,
-      });
-      redirect(
-        '/login?error=' +
-          encodeURIComponent('فشل تسجيل الدخول، حاول مرة أخرى')
-      );
-    }
-
-    logAuditEvent({
-      action: 'auth.login',
-      user_id: signInData.user.id,
-      metadata: { ip, phone, method: 'slow' },
-    }).catch(() => {});
-
-    // 4. التوجيه
-    redirect(getRoleHomePath(existingProfile?.role));
-  } catch (err) {
-    if (isNextRedirect(err)) throw err;
-
-    logger.error('No-OTP flow failed', {
-      phone,
-      error: err instanceof Error ? err.message : String(err),
-    });
-    redirect(
-      '/login?error=' +
-        encodeURIComponent(
-          `خطأ: ${err instanceof Error ? err.message : 'غير معروف'}`
-        )
-    );
-  }
+  redirect(getRoleHomePath(result.role));
 }
 
 // ─────────────────────────────────────────────────────────
