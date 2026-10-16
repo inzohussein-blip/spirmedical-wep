@@ -29,7 +29,8 @@
 | النوافذ المنبثقة | `components/ui/ModalShell.tsx` · `BottomSheet.tsx` · `lib/hooks/useModalDialog.ts` |
 | هواتف المنشآت | `components/ui/PhoneLink.tsx` · `lib/format/phone.ts` |
 | التنسيق | `app/styles/shared.css` (رموز + حارس iOS) · `app.css` (شاشات التطبيق) · `marketing.css` · `admin.css` |
-| الفهرسة | `app/layout.tsx` · `components/seo/JsonLd.tsx` · `app/sitemap.ts` · `app/robots.ts` |
+| الفهرسة واكتشافُ النماذج | `app/layout.tsx` · `components/seo/JsonLd.tsx` · `app/sitemap.ts` · `app/robots.ts` · الأصل `lib/seo/origin.ts` · الحقائق `lib/seo/facts.ts` → `lib/seo/llms.ts` |
+| «عن التطبيق» | `components/landing/AboutApp.tsx` (الرئيسية `#about` و`/about`) |
 | الكرون | `vercel.json` → `app/api/cron/*` · `app/api/notifications/process` |
 | قاعدة البيانات | `supabase/migrations/` (آخرها 0052) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
 | الاختبارات | `tests/` — اسمُ الحارس يدلّ على مجاله (`rls-*`، `order-flow-modals`، `specialist-screens`…) |
@@ -162,6 +163,25 @@
   يختلف عن شارة `badge: 'قريباً'` التي تمنع الدخول أصلاً.
 - للتشغيل: احذف `bookingSoon` وأضف خدمةَ العلاج الطبيعي (سعر، مدّة) إلى المعالج.
 - الحارس: `tests/physio-booking-soon.test.tsx`.
+
+## 🌐 الموقع الرسميّ: الأصل، الخريطة، النماذج، «عن التطبيق»، الخطّ (16 تشرين الأول)
+
+- **الأصلُ الواحد `https://www.spir-medical.com`** (`lib/seo/origin.ts`): `spir-medical.com` يحوّل 308 إلى www على
+  Vercel، فكان كلُّ canonical وخريطة يشير إلى رابطٍ يُحوَّل. `canonicalOrigin` يرفعه إلى www حتى لو بقي
+  `NEXT_PUBLIC_SITE_URL` قديماً. و`spirmedical-wep.vercel.app` يُحوَّل في `proxy.ts` — للصفحات (GET/HEAD) وحدها،
+  لا `/api/` (Webhook Meta والبوّابة والكرون). الحارس: `tests/seo-origin.test.ts`.
+- **الحقائق في `lib/seo/facts.ts` وحده**: `/llms.txt` و`/llms-full.txt` و`/ai.txt` مسارات تُولَّد منه (لا ملفّات في
+  `public/`)، وJSON-LD يقرؤه، و`AboutApp` كذلك. كانت تقول «بغداد» و«40+ مستشفى» و«AI-assisted» وهاتفاً مُختلَقاً.
+  لا تكتب عدداً أو «24/7» أو مدّةً مضمونة. حقيقةٌ تتغيّر ← هنا، ثمّ `FACTS_REVIEWED`. الحارس: `tests/seo-facts.test.ts`.
+- **الخريطة بلا `new Date()`**: تاريخٌ حيث يُعرف (المقالات) وإلّا لا شيء — «عُدّلت الآن» في كلّ بناءٍ يعلّم Google
+  إهمالَ `lastmod`. ولا تصنيفَ مدوّنةٍ فارغ.
+- **«عن التطبيق»** (`components/landing/AboutApp.tsx`): قسمُ الرئيسية `#about` وجسمُ `/about` — نصٌّ واحد، وفيه فقرةُ
+  سحب الدم والخدمات الطبّية المنزلية. أصنافُه `ab-`. الحارس: `tests/about-app.test.tsx`.
+- **الخطّ IBM Plex Sans Arabic** (قرار المالك) عبر `--font-sans`؛ أوزانُه ٤٠٠–٧٠٠. ٨٠٠/٩٠٠ يُرسمان ٧٠٠ (لا أثقل في
+  العائلة)، و٦٠٠ حقيقيٌّ الآن. لا تكتب اسمَ خطٍّ في `style` — `var(--font-sans)`. الحارس: `tests/font-weights.test.ts`.
+- **على المالك:** Search Console — أضف رمزَ التحقّق في `layout.tsx` (`verification.google`) وارفع
+  `https://www.spir-medical.com/sitemap.xml`. وأرقامُ الرئيسية المرئيّة («18 محافظة»، «24/7») باقيةٌ بقراره؛ الأبوابُ
+  الآليّة وحدها صُحّحت.
 
 ## 📞 أرقام المنشآت
 

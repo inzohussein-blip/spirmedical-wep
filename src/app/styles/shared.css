@@ -130,7 +130,7 @@
   --tracking-normal: var(--tracking-normal);
   --tracking-wide: var(--tracking-wide);
 
-  --font-sans: Tajawal, system-ui, sans-serif;
+  --font-sans: 'IBM Plex Sans Arabic', system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
   --font-serif: Fraunces, serif;
   --font-mono: JetBrains Mono, monospace;
 
@@ -259,7 +259,7 @@
    ═══════════════════════════════════════════════════════════════════ */
   .leaflet-container {
     background: #e8eef1;
-    font-family: 'Tajawal', system-ui, sans-serif;
+    font-family: var(--font-sans);
     /* يضمن ألا تتجاوز الخريطة عرض حاويتها (مهم في الـ 480px shell) */
     max-width: 100%;
   }
@@ -299,7 +299,7 @@
 
   .leaflet-popup-content {
     margin: 12px 14px !important;
-    font-family: 'Tajawal', system-ui, sans-serif !important;
+    font-family: var(--font-sans) !important;
     line-height: 1.5 !important;
   }
 
@@ -532,21 +532,15 @@
     --weight-normal: 400;
     --weight-medium: 500;
     /*
-   * Tajawal لا تملك وزن ٦٠٠ (أوزانها ٢٠٠/٣٠٠/٤٠٠/٥٠٠/٧٠٠/٨٠٠/٩٠٠).
-   *
-   * وخوارزمية المطابقة في CSS تحسم ذلك بلا غموض: المطلوب فوق ٥٠٠ يُبحث
-   * له صعوداً أوّلاً، فينتهي ٦٠٠ إلى ٧٠٠ **دائماً وفي كلّ المتصفّحات**.
-   * أي أنّ `semibold` و`bold` في هذا المشروع الشيءُ نفسه بصرياً — درجةٌ
-   * في السلّم لا وجود لها، وإن كان الكود يظنّها موجودة.
-   *
-   * فالرمز يقول الآن ما يحدث فعلاً. لا يتغيّر شيءٌ في الشاشة، لكن من
-   * يقرأ الكود يعرف أنّ أمامه درجتين لا ثلاثاً — ومن أراد درجةً وسطى
-   * حقيقيّةً فأمامه ٥٠٠ وهو مُحمَّل.
+   * IBM Plex Sans Arabic تشحن ١٠٠–٧٠٠: فـ٦٠٠ حقيقيٌّ الآن (لم تملكه Tajawal فكان يصعد إلى ٧٠٠
+   * ويتطابق semibold وbold). أمّا ٨٠٠/٩٠٠ فيطابقهما ٧٠٠ الحقيقيّ — العائلةُ لا أثقلَ فيها —
+   * فالرمزان يقولان ما يُرسم فعلاً. الحارس: tests/font-weights.test.ts.
    */
-    --weight-semibold: 700;
+    --weight-semibold: 600;
     --weight-bold: 700;
-    --weight-extrabold: 800;
-    --weight-black: 900;
+    --weight-extrabold: 700;
+    --weight-black: 700;
+    --font-sans: 'IBM Plex Sans Arabic', system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
 
     /* Letter spacing */
     --tracking-tight: -0.02em;
@@ -608,7 +602,7 @@
 
   body {
     margin: 0;
-    font-family: 'Tajawal', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--font-sans);
     background: var(--paper);
     color: var(--ink);
     line-height: 1.6;
@@ -624,14 +618,14 @@
   input, textarea, select { font-family: inherit; }
 }
 
-/* جميع العناصر تستخدم Tajawal بشكل افتراضي */
-* { font-family: 'Tajawal', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; }
+/* جميع العناصر تستخدم IBM Plex Sans Arabic (‎--font-sans‎) افتراضياً */
+* { font-family: var(--font-sans); }
 
-.serif { font-family: 'Tajawal', sans-serif; font-style: italic; font-weight: 500; }
+.serif { font-family: var(--font-sans); font-style: italic; font-weight: 500; }
 
-.mono { font-family: 'JetBrains Mono', 'Tajawal', monospace; }
+.mono { font-family: 'JetBrains Mono', var(--font-sans), monospace; }
 
-.latin { font-family: 'Tajawal', system-ui, sans-serif; }
+.latin { font-family: var(--font-sans); }
 
 /* ─── 3. SKIP LINK ─── */
 .skip-link {
@@ -1181,7 +1175,7 @@
 
 .auth-brand {
   font-size: 18px; font-weight: 800;
-  font-family: 'Tajawal', sans-serif;
+  font-family: var(--font-sans);
   letter-spacing: -0.01em;
   margin: 0; color: var(--ink);
 }
@@ -1553,7 +1547,7 @@
 
 .app-logo-name {
   font-size: 13px; font-weight: 800;
-  font-family: 'Tajawal', sans-serif;
+  font-family: var(--font-sans);
   letter-spacing: -0.01em; line-height: 1.1;
 }
 

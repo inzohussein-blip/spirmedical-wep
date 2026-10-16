@@ -147,7 +147,7 @@ function emailWrapper(content: string, footerText?: string): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Spir Medical</title>
 </head>
-<body style="margin:0;padding:0;background:#F4EFE2;font-family:'Tajawal','Segoe UI',Arial,sans-serif;direction:rtl;">
+<body style="margin:0;padding:0;background:#F4EFE2;font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,Arial,sans-serif;direction:rtl;">
   <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F4EFE2;padding:40px 16px;">
     <tr>
       <td align="center">

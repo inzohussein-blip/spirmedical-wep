@@ -9,7 +9,7 @@ import { oneOfOr } from '@/lib/format/vocabulary';
 import { toSpecialistType, SPECIALIST_META } from '@/lib/specialist-types';
 import SpecialistActions from './SpecialistActions';
 import { signedSpecialistDocs, SPECIALIST_DOC_FIELDS } from '@/lib/specialist-documents';
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://spir-medical.com';
+import { SITE_ORIGIN as SITE_URL } from '@/lib/seo/origin';
 
 export const dynamic = 'force-dynamic';
 

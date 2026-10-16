@@ -8,7 +8,7 @@ import { resetPinUrl } from '@/lib/whatsapp/share';
 
 import PatientCRMClient from './PatientCRMClient';
 import { EmptyState } from '@/components/ui';
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://spir-medical.com';
+import { SITE_ORIGIN as SITE_URL } from '@/lib/seo/origin';
 
 export const dynamic = 'force-dynamic';
 

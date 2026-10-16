@@ -152,7 +152,7 @@ export default async function AccountPage() {
               width: 64, height: 64, borderRadius: '50%',
               background: 'var(--emerald-soft, #E6F3EF)', color: 'var(--emerald, #01875F)',
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 28, fontWeight: 900, fontFamily: 'Tajawal, sans-serif',
+              fontSize: 28, fontWeight: 900, fontFamily: 'var(--font-sans)',
               flexShrink: 0,
             }}>
               {initial}

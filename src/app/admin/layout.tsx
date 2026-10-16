@@ -45,7 +45,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       display: 'flex',
       minHeight: '100vh',
       background: 'var(--paper)',
-      fontFamily: 'Tajawal, -apple-system, sans-serif',
+      fontFamily: 'var(--font-sans)',
     }}>
       <AdminSidebar
         userName={profile?.full_name ?? 'مدير'}

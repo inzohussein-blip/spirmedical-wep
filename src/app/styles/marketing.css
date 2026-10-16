@@ -61,7 +61,7 @@
 
 .landing-logo-text strong {
   font-size: 16px; font-weight: 800;
-  font-family: 'Tajawal', sans-serif;
+  font-family: var(--font-sans);
   letter-spacing: -0.01em; line-height: 1.1;
   color: var(--ink);
 }
@@ -169,7 +169,7 @@
 }
 
 .landing-h1-italic, .landing-italic {
-  font-family: 'Tajawal', sans-serif;
+  font-family: var(--font-sans);
   font-style: italic;
   font-weight: 500;
   color: var(--emerald);
@@ -277,7 +277,7 @@
 
 .landing-mini-name {
   font-size: 14px; font-weight: 800; color: var(--ink);
-  font-family: 'Tajawal', sans-serif;
+  font-family: var(--font-sans);
 }
 
 .landing-mini-time {
@@ -817,7 +817,7 @@
 .landing-footer-logo strong {
   font-size: 16px;
   font-weight: 800;
-  font-family: 'Tajawal', sans-serif;
+  font-family: var(--font-sans);
   letter-spacing: -0.01em;
   line-height: 1.1;
   color: var(--ink);
@@ -2426,7 +2426,7 @@
 .blog-page {
   min-height: 100vh;
   background: var(--paper);
-  font-family: 'Tajawal', sans-serif;
+  font-family: var(--font-sans);
 }
 
 .blog-container {
@@ -2467,7 +2467,7 @@
 }
 
 .blog-hero-italic {
-  font-family: 'Tajawal', sans-serif;
+  font-family: var(--font-sans);
   font-style: italic;
   font-weight: 600;
   color: var(--emerald);
@@ -3801,7 +3801,7 @@ body.landing-nav-hidden .landing-nav {
   color: white;
   padding: 8px 12px;
   border-radius: 8px;
-  font-family: 'Tajawal', system-ui, sans-serif;
+  font-family: var(--font-sans);
   white-space: nowrap;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
@@ -4854,7 +4854,7 @@ html {
 .landing-logo-text .landing-logo-en {
   font-size: 16px;
   font-weight: 800;
-  font-family: 'Tajawal', sans-serif;
+  font-family: var(--font-sans);
   letter-spacing: -0.01em;
   line-height: 1.1;
   color: var(--ink);
@@ -4905,3 +4905,96 @@ html {
   .landing-logo-text strong { display: none; }
   .landing-logo-text span { font-size: 13px; color: var(--ink); font-weight: 800; margin-top: 0; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   ℹ️ «عن التطبيق» — components/landing/AboutApp.tsx (الرئيسية و/about)
+   البادئة `ab-`: الأصنافُ العامّة (.service-card…) تقلب التخطيط.
+   ═══════════════════════════════════════════════════════════════ */
+.ab { padding: 72px 0; background: var(--paper); }
+.ab-page { padding: 8px 0 32px; }
+.ab-wrap { max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+.ab-page .ab-wrap { padding: 0; }
+.ab-head { text-align: center; max-width: 760px; margin: 0 auto 36px; }
+.ab-title {
+  font-size: 40px; font-weight: 700; line-height: 1.25;
+  margin: 10px 0 14px; color: var(--ink); letter-spacing: 0;
+}
+.ab-lede { font-size: 16px; line-height: 1.9; color: var(--ink-2); margin: 0; }
+
+.ab-feature {
+  display: grid; grid-template-columns: 1.25fr 1fr; gap: 28px; align-items: start;
+}
+.ab-feature-text {
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: 18px; padding: 28px;
+}
+.ab-h3 { font-size: 20px; font-weight: 700; color: var(--ink); margin: 0 0 8px; }
+.ab-feature-text p { font-size: 15px; line-height: 1.95; color: var(--ink-2); margin: 0 0 20px; }
+.ab-feature-text .ab-note {
+  font-size: 14px; color: var(--emerald-deep, var(--emerald));
+  background: var(--emerald-soft); border-radius: 10px; padding: 10px 14px;
+}
+.ab-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.ab-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 48px; padding: 0 22px; border-radius: 999px;
+  font-size: 15px; font-weight: 700; text-decoration: none;
+}
+.ab-btn-primary { background: var(--btn-primary-bg); color: var(--btn-primary-fg, #fff); }
+.ab-btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--line-2, var(--line)); }
+
+.ab-services { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.ab-service {
+  display: flex; flex-direction: row; gap: 14px; align-items: flex-start;
+  background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 16px;
+}
+.ab-service-coming-soon, .ab-service-directory { background: var(--paper-2, var(--white)); }
+.ab-service-icon {
+  width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--emerald-soft); font-size: 22px;
+}
+.ab-service-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.ab-service-name {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  font-size: 15px; font-weight: 700; color: var(--ink);
+}
+.ab-service-desc { font-size: 13px; line-height: 1.75; color: var(--ink-3); }
+.ab-chip {
+  font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px;
+  background: var(--emerald-soft); color: var(--emerald);
+}
+.ab-service-coming-soon .ab-chip { background: var(--amber-soft, #FEF7E0); color: var(--amber, #B06000); }
+.ab-service-directory .ab-chip { background: var(--paper-3); color: var(--ink-3); }
+
+.ab-block { margin-top: 28px; }
+.ab-steps, .ab-policies { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.ab-steps li, .ab-policies li {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: var(--white); border: 1px solid var(--line); border-radius: 12px;
+  padding: 14px 16px; font-size: 14px; line-height: 1.85; color: var(--ink-2);
+}
+.ab-policies li::before { content: '•'; color: var(--emerald); font-weight: 700; }
+.ab-step-num {
+  width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--btn-primary-bg); color: var(--btn-primary-fg, #fff); font-weight: 700; font-size: 14px;
+}
+.ab-more { text-align: center; margin-top: 24px; }
+.ab-more a { color: var(--emerald); font-weight: 700; font-size: 15px; text-decoration: none; }
+
+@media (max-width: 860px) {
+  .ab { padding: 44px 0; }
+  .ab-wrap { padding: 0 16px; }
+  .ab-title { font-size: 28px; }
+  .ab-lede { font-size: 15px; }
+  .ab-feature { grid-template-columns: 1fr; gap: 16px; }
+  .ab-feature-text { padding: 20px; }
+  .ab-btn { flex: 1 1 100%; }
+}
+.ab-page-content { max-width: 1120px; margin: 0 auto; }
+.ab-contact { margin-top: 32px; padding: 0 !important; }
+.ab-contact-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 20px; }
+.ab-legal { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 14px; }
+.ab-legal a { color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; }
+.ab-foot { margin: 20px 0 40px; font-size: 13px; color: var(--ink-3); }

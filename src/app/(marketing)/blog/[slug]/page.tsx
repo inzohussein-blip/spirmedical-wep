@@ -10,6 +10,7 @@ import {
   getAllArticleSlugs,
   type ArticleSection,
 } from '@/lib/data/blog-articles';
+import { SITE_ORIGIN } from '@/lib/seo/origin';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -24,7 +25,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const article = getArticleBySlug(params.slug);
   if (!article) return {};
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spir-medical.com';
+  const baseUrl = SITE_ORIGIN;
   const url = `${baseUrl}/blog/${article.slug}`;
 
   return {
@@ -140,7 +141,7 @@ export default async function ArticlePage(props: Props) {
   }
 
   const related = getRelatedArticles(params.slug);
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spir-medical.com';
+  const baseUrl = SITE_ORIGIN;
 
   // Schema.org Article JSON-LD
   const articleSchema = {

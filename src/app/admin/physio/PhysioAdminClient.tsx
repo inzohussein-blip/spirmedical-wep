@@ -184,7 +184,7 @@ export default function PhysioAdminClient({ physios: initialPhysios }: Props) {
                 background: 'linear-gradient(135deg, var(--emerald, #01875F), var(--emerald-deep, #056559))',
                 color: '#fff',
                 display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 24, fontWeight: 900, fontFamily: 'Tajawal, sans-serif',
+                fontSize: 24, fontWeight: 900, fontFamily: 'var(--font-sans)',
                 flexShrink: 0,
               }}>
                 {p.gender === 'female' ? '👩‍⚕️' : '👨‍⚕️'}

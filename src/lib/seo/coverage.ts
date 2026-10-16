@@ -47,9 +47,9 @@ export function areaServedJsonLd() {
   ];
 }
 
-/** أصلُ الموقع — لروابط البيانات المنظَّمة، وهي لا تُحلّ نسبةً إلى metadataBase */
-export const SITE_ORIGIN =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spir-medical.com';
+/** أصلُ الموقع — لروابط البيانات المنظَّمة، وهي لا تُحلّ نسبةً إلى metadataBase (المصدرُ الواحد: seo/origin) */
+import { SITE_ORIGIN } from '@/lib/seo/origin';
+export { SITE_ORIGIN };
 
 export function absoluteUrl(path: string): string {
   return new URL(path, SITE_ORIGIN).toString();

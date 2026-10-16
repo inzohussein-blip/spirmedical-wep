@@ -7,6 +7,7 @@ import JsonLd from '@/components/seo/JsonLd';
 import LandingStats from '@/components/landing/Stats';
 import LandingCoverageMap from '@/components/landing/LandingCoverageMap';
 import LandingScrollEffects from '@/components/landing/LandingScrollEffects';
+import AboutApp from '@/components/landing/AboutApp';
 import { ARTICLES } from '@/lib/data/blog-articles';
 import { SITE_TYPE, getAppUrl } from '@/lib/site-config';
 import { getRoleHomePath } from '@/lib/auth/home-path';
@@ -224,6 +225,7 @@ export default async function HomePage(
             <a href="#services" className="landing-nav-link-section">الخدمات</a>
             <Link href="/home-blood-draw" className="landing-nav-link-section">سحب دم منزلي</Link>
             <a href="#how-it-works" className="landing-nav-link-section">كيف يعمل</a>
+            <a href="#about" className="landing-nav-link-section">عن التطبيق</a>
             <a href="#coverage-map" className="landing-nav-link-section">التغطية</a>
             <a href="#install" className="landing-nav-link-section">التطبيق</a>
             <Link href="/blog" className="landing-nav-link-section">المدونة</Link>
@@ -517,21 +519,24 @@ export default async function HomePage(
             <div className="landing-step">
               <div className="landing-step-num">١</div>
               <h3>سجّل بسرعة</h3>
-              <p>أدخل رقم هاتفك العراقي · رمز SMS · ادخل التطبيق فوراً.</p>
+              <p>أدخل رقم هاتفك العراقي واختر رمزَ دخولٍ من ستّة أرقام.</p>
             </div>
             <div className="landing-step">
               <div className="landing-step-num">٢</div>
               <h3>اختر الخدمة</h3>
-              <p>تصفّح ١٤ خدمة، اختر ما تحتاج، حدّد الموعد والعنوان.</p>
+              <p>اختر سحب الدم أو التمريض المنزلي، وحدّد الموعد والعنوان.</p>
             </div>
             <div className="landing-step">
               <div className="landing-step-num">٣</div>
               <h3>استلم في بيتك</h3>
-              <p>المختبر، الطبيب، أو الدواء يأتي لك. تابع الطلب من التطبيق.</p>
+              <p>يصلك مختصٌّ معتمَد إلى المنزل. تابع الطلب ونتائجه من التطبيق.</p>
             </div>
           </div>
         </div>
       </section>
+
+      {/* ============ ABOUT THE APP ============ */}
+      <AboutApp variant="home" />
 
       {/* ============ TESTIMONIALS (جديد) ============ */}
       <section id="testimonials" className="landing-testimonials">
@@ -963,6 +968,7 @@ export default async function HomePage(
             <div className="landing-footer-col">
               <h4>قانوني</h4>
               <ul>
+                <li><Link href="/about">عن التطبيق</Link></li>
                 <li><Link href="/legal/terms">الشروط والأحكام</Link></li>
                 <li><Link href="/legal/privacy">سياسة الخصوصية</Link></li>
                 <li><Link href="/legal/cookies">سياسة الكوكيز</Link></li>
@@ -973,7 +979,7 @@ export default async function HomePage(
             <div className="landing-footer-col">
               <h4>تواصل</h4>
               <ul>
-                <li>info@spir-medical.com</li>
+                <li><a href="mailto:support@spir-medical.com">support@spir-medical.com</a></li>
                 <li>الدعم الفني</li>
                 <li>+٩٦٤ ٧٨٠ ٣٩٩ ٣٥٨٥</li>
               </ul>

@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { ARTICLES, getAllCategorySlugs } from '@/lib/data/blog-articles';
+import { SITE_ORIGIN } from '@/lib/seo/origin';
 
 // ============================================================
 // 🗺️ Sitemap - خريطة الموقع الكاملة
@@ -9,10 +10,14 @@ import { ARTICLES, getAllCategorySlugs } from '@/lib/data/blog-articles';
 // ============================================================
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spir-medical.com';
+  const baseUrl = SITE_ORIGIN;
 
-  const now = new Date();
+  // ⚠️ لا `new Date()` للصفحات الثابتة: كان كلُّ بناءٍ يعلن «عُدّلت الآن» لكلّ صفحة، فيتعلّم
+  // Google أنّ `lastmod` هنا لا يُصدَّق ويُهمله حتى للمقالات. التاريخُ حيث يُعرف وحده.
+  const articleDate = (a: (typeof ARTICLES)[number]) => new Date(a.updatedAt || a.publishedAt);
+  const latestArticle = ARTICLES.length
+    ? new Date(Math.max(...ARTICLES.map((a) => articleDate(a).getTime())))
+    : undefined;
 
   type ChangeFreq = 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
 
@@ -58,6 +63,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       url: '/blog',
       priority: 0.9,
+      lastModified: latestArticle,
       changeFrequency: 'weekly',
     },
 
@@ -116,22 +122,28 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const articleRoutes: RouteConfig[] = ARTICLES.map((article) => ({
     url: `/blog/${article.slug}`,
     priority: 0.8,
-    lastModified: new Date(article.updatedAt || article.publishedAt),
+    lastModified: articleDate(article),
     changeFrequency: 'monthly' as const,
   }));
 
   // ─────────────────────────────────────────
   // 🏷️ صفحات التصنيفات
   // ─────────────────────────────────────────
-  const categoryRoutes: RouteConfig[] = getAllCategorySlugs().map((cat) => ({
-    url: `/blog/category/${cat}`,
-    priority: 0.7,
-    changeFrequency: 'weekly' as const,
-  }));
+  // تصنيفٌ بلا مقالات صفحةٌ فارغة — لا تُقدَّم للفهرسة.
+  const categoryRoutes: RouteConfig[] = getAllCategorySlugs().flatMap((cat) => {
+    const inCat = ARTICLES.filter((a) => a.category === cat);
+    if (!inCat.length) return [];
+    return [{
+      url: `/blog/category/${cat}`,
+      priority: 0.7,
+      lastModified: new Date(Math.max(...inCat.map((a) => articleDate(a).getTime()))),
+      changeFrequency: 'weekly' as const,
+    }];
+  });
 
   return [...routes, ...articleRoutes, ...categoryRoutes].map((route) => ({
     url: `${baseUrl}${route.url}`,
-    lastModified: route.lastModified || now,
+    ...(route.lastModified ? { lastModified: route.lastModified } : {}),
     changeFrequency: route.changeFrequency,
     priority: route.priority,
   }));

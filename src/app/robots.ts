@@ -1,13 +1,13 @@
 import { MetadataRoute } from 'next';
 import { SITE_TYPE } from '@/lib/site-config';
+import { SITE_ORIGIN } from '@/lib/seo/origin';
 
 // ============================================================
 // 🤖 Robots Configuration - مع دعم Vercel Screenshot Bot
 // ============================================================
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spir-medical.com';
+  const baseUrl = SITE_ORIGIN;
 
   // 📱 على App site - منع كل البوتات (التطبيق ليس للجمهور)
   if (SITE_TYPE === 'app') {
@@ -38,6 +38,11 @@ export default function robots(): MetadataRoute.Robots {
     '/legal/privacy',
     '/legal/cookies',
     '/legal/disclaimer',
+    '/legal/refund',
+    // 🤖 مولَّدةٌ من src/lib/seo/facts.ts للنماذج
+    '/llms.txt',
+    '/llms-full.txt',
+    '/ai.txt',
     '/api/og',
   ];
 

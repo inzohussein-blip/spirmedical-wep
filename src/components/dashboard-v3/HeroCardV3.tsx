@@ -91,7 +91,7 @@ export default function HeroCardV3({
             justifyContent: 'center',
             fontSize: 18,
             fontWeight: 900,
-            fontFamily: 'Tajawal, sans-serif',
+            fontFamily: 'var(--font-sans)',
             flexShrink: 0,
           }}
         >

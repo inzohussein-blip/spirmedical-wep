@@ -52,7 +52,7 @@ export default async function AdminCosmeticPage() {
   const recommendedCount = products.filter((p) => p.is_recommended).length;
 
   return (
-    <div style={{ padding: 16, maxWidth: 1280, margin: '0 auto', fontFamily: 'Tajawal, sans-serif' }}>
+    <div style={{ padding: 16, maxWidth: 1280, margin: '0 auto', fontFamily: 'var(--font-sans)' }}>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
         <Link 
