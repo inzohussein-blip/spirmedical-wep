@@ -12,6 +12,7 @@ import { revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { isSuperAdmin } from '@/lib/admin-types';
 import { validateStoryInput, type StoryInput } from '@/types/story';
+import type { TablesUpdate } from '@/types/database';
 
 export interface StoryActionResult {
   success: boolean;
@@ -98,7 +99,7 @@ export async function updateStory(
     return { success: false, message: 'بيانات غير صالحة', errors: validation.errors };
   }
 
-  const updateData: Record<string, unknown> = {};
+  const updateData: TablesUpdate<'stories'> = {};
   if (input.title !== undefined) updateData.title = input.title.trim();
   if (input.icon !== undefined) updateData.icon = input.icon.trim();
   if (input.description !== undefined) updateData.description = input.description?.trim() || null;

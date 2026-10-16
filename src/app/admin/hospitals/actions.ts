@@ -49,8 +49,8 @@ export async function createHospital(input: HospitalInput) {
   const { error } = await auth.supabase.from('hospitals').insert({
     ...input,
     is_active: true,
-    is_verified: true,  // إذا أضافه admin = موثّق
-    verified_at: new Date().toISOString(),
+    // إذا أضافه admin = موثّق. لا عمودَ verified_at في hospitals — كان الإدراجُ يفشل دائماً.
+    is_verified: true,
   });
 
   if (error) return { success: false, error: error.message };

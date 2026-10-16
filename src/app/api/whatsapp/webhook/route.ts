@@ -10,6 +10,7 @@
 import { NextResponse } from 'next/server';
 import { verifyWebhookSignature } from '@/lib/whatsapp/meta-client';
 import { createClient } from '@/lib/supabase/server';
+import type { TablesUpdate } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
 
@@ -104,7 +105,7 @@ async function processStatusUpdate(status: any): Promise<void> {
     : new Date().toISOString();
 
   // حدّث الـ whatsapp_otp
-  const otpUpdates: Record<string, any> = {};
+  const otpUpdates: TablesUpdate<'whatsapp_otp'> = {};
 
   if (newStatus === 'delivered') {
     otpUpdates.delivered_at = timestamp;
@@ -125,7 +126,7 @@ async function processStatusUpdate(status: any): Promise<void> {
   }
 
   // حدّث الـ notification_queue إذا موجود
-  const notifUpdates: Record<string, any> = {};
+  const notifUpdates: TablesUpdate<'notification_queue'> = {};
 
   if (newStatus === 'delivered' || newStatus === 'read') {
     notifUpdates.status = 'sent';

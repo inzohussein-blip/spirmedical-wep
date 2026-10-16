@@ -28,7 +28,7 @@ export default async function AuditLogPage({ searchParams }: { searchParams: Sea
   const { data: actions, count } = await query.order('created_at', { ascending: false }).limit(100);
 
   // أسماء المديرين
-  const adminIds = Array.from(new Set((actions ?? []).map((a) => a.admin_id)));
+  const adminIds = Array.from(new Set((actions ?? []).map((a) => a.admin_id).filter((id): id is string => !!id)));
   const { data: adminsData } = adminIds.length > 0
     ? await supabase.from('users').select('id, full_name, role').in('id', adminIds)
     : { data: [] };

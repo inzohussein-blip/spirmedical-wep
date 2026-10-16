@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { notifyConsultationReply, notifyMedicalRecordShared } from '@/lib/services/push-templates';
 import { sendConsultationReplyWA, isWhatsAppEnabled } from '@/lib/services/whatsapp';
+import type { TablesUpdate } from '@/types/database';
 
 interface SendMessageInput {
   consultationId: string;
@@ -100,7 +101,7 @@ export async function sendMessage(input: SendMessageInput) {
 
   // تحديث حالة الاستشارة
   const newStatus = isPatient ? 'awaiting_doctor' : 'awaiting_patient';
-  const updates: Record<string, unknown> = {
+  const updates: TablesUpdate<'consultations'> = {
     status: newStatus,
     updated_at: new Date().toISOString(),
   };
