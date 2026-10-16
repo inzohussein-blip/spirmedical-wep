@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import type { TablesUpdate } from '@/types/database';
 
 async function verifyAdmin() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'غير مصرّح' };
 

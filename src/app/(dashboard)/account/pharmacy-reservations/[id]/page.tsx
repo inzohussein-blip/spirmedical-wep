@@ -56,11 +56,12 @@ const STATUS_META: Record<string, {
 };
 
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-export default async function ReservationDetailPage({ params }: PageProps) {
-  const supabase = createClient();
+export default async function ReservationDetailPage(props: PageProps) {
+  const params = await props.params;
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 

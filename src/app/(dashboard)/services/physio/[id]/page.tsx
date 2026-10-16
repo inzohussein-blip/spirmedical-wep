@@ -15,8 +15,9 @@ import { formatPrice, count, formatRating, formatNumber } from '@/lib/format/pri
 
 export const dynamic = 'force-dynamic';
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const supabase = createClient();
+export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const supabase = await createClient();
   const { data: specialist } = await supabase
     .from('physio_specialists')
     .select('full_name, title, bio')
@@ -51,12 +52,13 @@ interface ServiceType {
   base_price: number;
 }
 
-export default async function PhysioSpecialistPage({ 
-  params,
-}: { 
-  params: { id: string };
-}) {
-  const supabase = createClient();
+export default async function PhysioSpecialistPage(
+  props: { 
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
+  const supabase = await createClient();
 
   const { data: specialist } = await supabase
     .from('physio_specialists')

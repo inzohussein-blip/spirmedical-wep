@@ -37,7 +37,7 @@ const QUICK_REPLIES = [
 ];
 
 export default async function SpecialistChatsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 

@@ -16,7 +16,7 @@ const CAMPAIGN_TYPE = ['whatsapp', 'sms', 'push', 'email'] as const;
 const CAMPAIGN_STATUS = ['draft', 'scheduled', 'sending', 'sent', 'failed'] as const;
 
 export default async function CampaignsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 

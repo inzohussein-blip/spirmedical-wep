@@ -8,7 +8,7 @@ import type { TablesUpdate } from '@/types/database';
  * تحقق من ملكية الصيدلية + الـ inventory
  */
 async function verifyOwnership(inventoryId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'غير مصرّح' };
 
@@ -72,7 +72,7 @@ export async function addMedicationToInventory(
   pharmacyId: string,
   medicationId: string
 ) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false, error: 'غير مصرّح' };
 

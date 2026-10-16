@@ -45,12 +45,13 @@ const DEPARTMENT_LABELS: Record<string, string> = {
   psychiatry: 'النفسية',
 };
 
-export default async function HospitalDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const supabase = createClient();
+export default async function HospitalDetailPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
+  const supabase = await createClient();
 
   const { data: hospital } = await supabase
     .from('hospitals')
@@ -372,8 +373,9 @@ export default async function HospitalDetailPage({
   );
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const supabase = createClient();
+export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const supabase = await createClient();
   const { data: h } = await supabase
     .from('hospitals')
     .select('name, city')

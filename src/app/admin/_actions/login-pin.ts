@@ -13,7 +13,7 @@ export type ResetLoginPinResult = { ok: true; pin: string } | { ok: false; error
  * حساباتُ البريد (ومنها الإدارة) لا تُمسّ: دخولُها بكلمة سرّها لا بالرمز.
  */
 export async function adminResetLoginPin(userId: string): Promise<ResetLoginPinResult> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'غير مصرّح' };
   const { data: profile } = await supabase.from('users').select('role').eq('id', user.id).single();

@@ -11,7 +11,7 @@ import { notifyNewMessage } from '@/lib/services/push-templates';
  * الصارم الذي يمنع الطرف الآخر من القراءة مباشرةً). آمن: العضوية تُفحص أولاً.
  */
 export async function getSignedChatImageUrl(chatId: string, path: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'يجب تسجيل الدخول' };
 
@@ -53,7 +53,7 @@ export async function sendMessage(
   attachmentUrl?: string,
   attachmentName?: string
 ) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) return { error: 'يجب تسجيل الدخول' };
@@ -135,7 +135,7 @@ export async function sendMessage(
  * تعليم الرسائل كمقروءة
  */
 export async function markChatAsRead(chatId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) return { error: 'يجب تسجيل الدخول' };
@@ -173,7 +173,7 @@ export async function markChatAsRead(chatId: string) {
  * تحديث حالة المحادثة (open/pending/resolved/archived)
  */
 export async function updateChatStatus(chatId: string, status: 'open' | 'pending' | 'resolved' | 'archived') {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) return { error: 'يجب تسجيل الدخول' };
@@ -197,7 +197,7 @@ export async function updateChatStatus(chatId: string, status: 'open' | 'pending
  * pin/unpin محادثة
  */
 export async function toggleChatPin(chatId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) return { error: 'يجب تسجيل الدخول' };
@@ -226,7 +226,7 @@ export async function toggleChatPin(chatId: string) {
  * تحديث أولوية المحادثة
  */
 export async function updateChatPriority(chatId: string, priority: 'low' | 'normal' | 'high' | 'urgent') {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) return { error: 'يجب تسجيل الدخول' };

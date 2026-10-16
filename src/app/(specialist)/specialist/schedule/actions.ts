@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 
 export async function saveSchedule(slots: Array<{ day_of_week: number; start_time: string; end_time: string; is_active: boolean }>) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 
@@ -30,7 +30,7 @@ export async function saveSchedule(slots: Array<{ day_of_week: number; start_tim
 }
 
 export async function saveAutoReply(message: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 

@@ -23,7 +23,7 @@ export interface StoryActionResult {
 /* ─── Helper: التحقق من الصلاحيات ──────────────────────────── */
 
 async function requireAdmin() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

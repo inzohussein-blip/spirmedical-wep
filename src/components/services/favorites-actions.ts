@@ -32,7 +32,7 @@ const SERVICE_PATH_SEGMENT: Record<ServiceType, string> = {
 };
 
 export async function toggleServiceFavorite(serviceType: ServiceType, serviceId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 
@@ -91,7 +91,7 @@ export async function toggleServiceFavorite(serviceType: ServiceType, serviceId:
 }
 
 export async function checkIsFavorite(serviceType: ServiceType, serviceId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return false;
 

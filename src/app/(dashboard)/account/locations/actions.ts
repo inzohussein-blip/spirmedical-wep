@@ -19,7 +19,7 @@ import type {
 /* ─── جلب المواقع المحفوظة ──────────────────────────────── */
 
 export async function getSavedLocations(): Promise<SavedLocation[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -56,7 +56,7 @@ export interface SaveLocationResult {
 export async function saveLocation(
   input: SavedLocationInput
 ): Promise<SaveLocationResult> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -152,7 +152,7 @@ export async function updateSavedLocation(
   id: string,
   updates: Partial<SavedLocationInput>
 ): Promise<SaveLocationResult> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -196,7 +196,7 @@ export async function updateSavedLocation(
 /* ─── حذف موقع ────────────────────────────────────────── */
 
 export async function deleteSavedLocation(id: string): Promise<SaveLocationResult> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -229,7 +229,7 @@ export async function deleteSavedLocation(id: string): Promise<SaveLocationResul
 /* ─── استخدام موقع (يزيد use_count) ─────────────────── */
 
 export async function markLocationUsed(id: string): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

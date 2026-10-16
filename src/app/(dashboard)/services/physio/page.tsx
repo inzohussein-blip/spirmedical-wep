@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 export const metadata = { title: 'العلاج الفيزيائي - Spir Medical' };
 
 export default async function PhysioPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const [{ data: serviceTypes }, { data: specialists }] = await Promise.all([
     supabase

@@ -16,8 +16,9 @@ export const metadata = {
   title: 'تفاصيل الطلب · إدارة',
 };
 
-export default async function AdminOrderDetailPage({ params }: { params: { id: string } }) {
-  const supabase = createClient();
+export default async function AdminOrderDetailPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const supabase = await createClient();
 
   const { data: order } = await supabase
     .from('appointments')

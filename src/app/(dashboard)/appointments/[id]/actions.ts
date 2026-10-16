@@ -9,7 +9,7 @@ import { checkRateLimit } from '@/lib/rate-limit';
 import { notifyOrderCancelled } from '@/lib/services/push-templates';
 
 export async function cancelAppointment(appointmentId: string, reason: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -80,7 +80,7 @@ export async function cancelAppointment(appointmentId: string, reason: string) {
   }
 
   // Audit log
-  const ip = headers().get('x-forwarded-for') ?? 'unknown';
+  const ip = (await headers()).get('x-forwarded-for') ?? 'unknown';
   await logAuditEvent({
     action: 'appointment.cancel',
     user_id: user.id,

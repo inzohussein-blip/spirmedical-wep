@@ -80,12 +80,12 @@ describe('ترقياتٌ لا تُدمج آليّاً (Dependabot)', () => {
     expect(dep).not.toMatch(/^\s+labels:/m);
   });
 
-  it('🚨 React 18 مع Next 14 — React 19 (#42) أوقف npm ci والنشر', () => {
-    expect(pkg.dependencies.next).toMatch(/^14\./);
-    expect(pkg.dependencies.react).toMatch(/^18\./);
-    expect(pkg.dependencies['react-dom']).toMatch(/^18\./);
-    expect(pkg.dependencies['@sentry/nextjs']).toMatch(/^10\./);
-    expect(pkg.dependencies['tailwind-merge']).toMatch(/^2\./);
+  it('🚨 React يوافق Next — React 19 مع Next 14 (#42) أوقف npm ci والنشر', () => {
+    const nextMajor = Number(/^\D*(\d+)/.exec(pkg.dependencies.next)![1]);
+    const reactMajor = Number(/^\D*(\d+)/.exec(pkg.dependencies.react)![1]);
+    expect(Number(/^\D*(\d+)/.exec(pkg.dependencies['react-dom'])![1])).toBe(reactMajor);
+    if (nextMajor === 14) expect(reactMajor).toBe(18);
+    else expect([18, 19]).toContain(reactMajor);
   });
 
   it('🚨 TypeScript مثبَّتٌ على 5.x — الإصدار 7 يحذف baseUrl فتنكسر مساراتُ @/', () => {

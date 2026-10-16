@@ -23,7 +23,7 @@ const QUICK_TIPS = [
 ];
 
 export default async function SosPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   let userName = '';

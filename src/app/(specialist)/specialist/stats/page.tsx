@@ -20,7 +20,7 @@ const SERVICE_ICONS: Record<string, LucideIcon> = {
 };
 
 export default async function SpecialistStatsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   // إحصاءات — الاستعلامات الأربعة مستقلّة، فنجلبها بالتوازي (رحلة واحدة بدل أربع)

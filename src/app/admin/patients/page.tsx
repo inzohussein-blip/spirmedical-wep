@@ -21,8 +21,9 @@ const GOVERNORATES = [
   'بابل', 'القادسية', 'واسط', 'المثنى', 'ميسان', 'ذي قار',
 ];
 
-export default async function PatientsListPage({ searchParams }: { searchParams: SearchParams }) {
-  const supabase = createClient();
+export default async function PatientsListPage(props: { searchParams: Promise<SearchParams> }) {
+  const searchParams = await props.searchParams;
+  const supabase = await createClient();
 
   let query = supabase
     .from('users')

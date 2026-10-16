@@ -12,14 +12,15 @@ import {
 } from '@/lib/data/blog-articles';
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
   return getAllArticleSlugs().map((slug) => ({ slug }));
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params;
   const article = getArticleBySlug(params.slug);
   if (!article) return {};
 
@@ -130,7 +131,8 @@ function ArticleSectionRenderer({ section }: { section: ArticleSection }) {
   }
 }
 
-export default function ArticlePage({ params }: Props) {
+export default async function ArticlePage(props: Props) {
+  const params = await props.params;
   const article = getArticleBySlug(params.slug);
 
   if (!article) {

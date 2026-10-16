@@ -15,7 +15,7 @@ export async function joinServiceWaitlist(
   const type = toSpecialistType(specialistType);
   if (!type) return { ok: false, error: 'نوع خدمة غير معروف' };
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'يجب تسجيل الدخول أولاً' };
 

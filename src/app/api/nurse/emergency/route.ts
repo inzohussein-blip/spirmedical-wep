@@ -29,7 +29,7 @@ const emergencySchema = z.object({
  */
 
 export async function POST(request: NextRequest) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // ─── 1. تحقق من تسجيل الدخول ───
   const {

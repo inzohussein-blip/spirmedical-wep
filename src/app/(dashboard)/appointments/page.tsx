@@ -12,7 +12,7 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 interface Props {
-  searchParams: { filter?: 'all' | 'upcoming' | 'completed' | 'cancelled' };
+  searchParams: Promise<{ filter?: 'all' | 'upcoming' | 'completed' | 'cancelled' }>;
 }
 
 const STATUS_LABELS: Record<string, { label: string; pillClass: string; icon?: string }> = {
@@ -71,8 +71,9 @@ function formatDateRelative(iso: string): string {
   return date.toLocaleDateString('ar-IQ', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-export default async function AppointmentsPage({ searchParams }: Props) {
-  const supabase = createClient();
+export default async function AppointmentsPage(props: Props) {
+  const searchParams = await props.searchParams;
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   const filter = searchParams.filter || 'all';

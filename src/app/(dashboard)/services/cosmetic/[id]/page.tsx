@@ -13,8 +13,9 @@ import CosmeticProductActions from './CosmeticProductActions';
 
 export const dynamic = 'force-dynamic';
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const supabase = createClient();
+export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const supabase = await createClient();
   const { data: product } = await supabase
     .from('cosmetic_products')
     .select('name, brand, description')
@@ -40,12 +41,13 @@ const CATEGORY_LABELS: Record<string, string> = {
   mens_care: 'منتجات الرجال',
 };
 
-export default async function CosmeticProductDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const supabase = createClient();
+export default async function CosmeticProductDetailPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 
@@ -59,7 +61,7 @@ export default async function CosmeticProductDetailPage({
   if (!product) notFound();
 
   // جلب reviews
-  
+
   const supabaseAny = supabase as unknown as {
     from: (t: string) => {
       
@@ -67,7 +69,7 @@ export default async function CosmeticProductDetailPage({
     };
   };
 
-  
+
   const reviewsRes = await supabaseAny
     .from('cosmetic_product_reviews')
     .select('id, rating, title, comment, would_recommend, created_at, user_id')
@@ -87,7 +89,7 @@ export default async function CosmeticProductDetailPage({
   }>) ?? [];
 
   // هل في wishlist؟
-  
+
   const wishlistRes = await supabaseAny
     .from('cosmetic_wishlist')
     .select('id')
@@ -98,7 +100,7 @@ export default async function CosmeticProductDetailPage({
   const isInWishlist = !!wishlistRes.data;
 
   // هل عرضه قبلاً؟
-  
+
   const myReviewRes = await supabaseAny
     .from('cosmetic_product_reviews')
     .select('*')

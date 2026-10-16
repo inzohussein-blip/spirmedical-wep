@@ -15,7 +15,7 @@ export const metadata = { title: 'إدارة الصحة النفسية - Admin' 
 const MH_TYPES = ['psychiatrist', 'psychologist', 'therapist', 'counselor', 'family_therapist'] as const;
 
 export default async function AdminMentalHealthPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 

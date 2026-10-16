@@ -96,7 +96,7 @@ export async function POST(request: Request) {
 // 📊 معالجة status update
 // ═══════════════════════════════════════════════════════════════════
 async function processStatusUpdate(status: any): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const messageId = status.id;
   const newStatus = status.status; // sent | delivered | read | failed
 

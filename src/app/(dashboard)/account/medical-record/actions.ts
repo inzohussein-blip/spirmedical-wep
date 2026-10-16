@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import type { MedicalInfo } from './types';
 
 export async function updateMedicalInfo(info: MedicalInfo) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 

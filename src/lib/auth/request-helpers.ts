@@ -6,8 +6,8 @@ import { headers } from 'next/headers';
  */
 
 /** أول IP من ترويسات الوكيل، أو 'unknown'. */
-export function getClientIp(): string {
-  const h = headers();
+export async function getClientIp(): Promise<string> {
+  const h = await headers();
   return (
     h.get('x-forwarded-for')?.split(',')[0]?.trim() ??
     h.get('x-real-ip') ??

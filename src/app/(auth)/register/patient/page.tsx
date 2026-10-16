@@ -11,11 +11,12 @@ export const metadata = { title: 'حساب مريض جديد · سباير مي�
 // واجهة، فلم يكن أمام المريض إلّا البريد. الرمزُ يُرسَل في حقل `password`
 // ويُحرس في `guardPinRegistration` (رمزٌ ضعيف أو رقمٌ مسجَّل يُرفضان).
 
-export default function PatientRegisterPage({
-  searchParams,
-}: {
-  searchParams: { error?: string; method?: string };
-}) {
+export default async function PatientRegisterPage(
+  props: {
+    searchParams: Promise<{ error?: string; method?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   if (searchParams.method === 'email') return <PatientEmailRegister />;
   const error = searchParams.error;
 

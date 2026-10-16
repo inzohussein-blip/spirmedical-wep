@@ -24,12 +24,13 @@ const FILTERS = [
   { id: 'completed', label: 'مكتمل', icon: '✅' },
 ];
 
-export default async function SpecialistOrdersPage({
-  searchParams,
-}: {
-  searchParams: { filter?: string };
-}) {
-  const supabase = createClient();
+export default async function SpecialistOrdersPage(
+  props: {
+    searchParams: Promise<{ filter?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 

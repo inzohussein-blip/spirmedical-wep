@@ -9,8 +9,8 @@ import { logAuditEvent } from '@/lib/audit';
 // 📧 إيميل الشركة الذي يستقبل طلبات حذف البيانات
 const COMPANY_EMAIL = 'inzohussein@gmail.com';
 
-function getIp(): string {
-  const h = headers();
+async function getIp(): Promise<string> {
+  const h = await headers();
   return (
     h.get('x-forwarded-for')?.split(',')[0]?.trim() ||
     h.get('x-real-ip') ||
@@ -62,7 +62,7 @@ export async function submitDeletionRequest(formData: FormData) {
   }
 
   // ─── rate limit صارم: 2 طلبات/ساعة لكل IP ───
-  const ip = getIp();
+  const ip = await getIp();
   const rl = await checkRateLimit(`data-deletion:${ip}`, { max: 2, windowSeconds: 3600 });
   if (!rl.allowed) {
     redirect('/data-deletion?error=' + encodeURIComponent('عدد كبير من المحاولات. حاول بعد ساعة.'));

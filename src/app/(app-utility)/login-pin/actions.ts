@@ -12,7 +12,7 @@ export async function changeLoginPin(
   pin: string,
   confirm: string,
 ): Promise<{ ok: boolean; error?: string }> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'يجب تسجيل الدخول أولاً' };
 

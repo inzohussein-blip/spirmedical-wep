@@ -14,7 +14,7 @@ export const metadata = {
 
 /** ضبطُ رمز الدخول أو تغييره — للمريض والمختصّ (خارج تخطيط لوحة المريض). */
 export default async function LoginPinPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login/phone');
 

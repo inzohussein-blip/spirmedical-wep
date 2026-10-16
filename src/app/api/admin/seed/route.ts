@@ -45,7 +45,7 @@ interface CategoryResult {
 export async function POST(request: Request) {
   try {
     // ─── 1. Auth check ───
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user: caller } } = await supabase.auth.getUser();
 
     if (!caller) {
@@ -232,7 +232,7 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user: caller } } = await supabase.auth.getUser();
     
     if (!caller) {

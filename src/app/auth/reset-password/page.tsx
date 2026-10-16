@@ -20,12 +20,13 @@ export const metadata = {
   description: 'اختر كلمة مرور جديدة لحسابك',
 };
 
-export default async function ResetPasswordPage({
-  searchParams,
-}: {
-  searchParams: { code?: string; error_description?: string };
-}) {
-  const supabase = createClient();
+export default async function ResetPasswordPage(
+  props: {
+    searchParams: Promise<{ code?: string; error_description?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const supabase = await createClient();
 
   // رابط الاستعادة يصل بـ`?code=` (تدفّق PKCE) — نبادله بجلسة
   if (searchParams.code) {

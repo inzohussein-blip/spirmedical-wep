@@ -15,7 +15,7 @@ interface ReminderInput {
 }
 
 export async function createReminder(input: ReminderInput) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 
@@ -35,7 +35,7 @@ export async function createReminder(input: ReminderInput) {
 }
 
 export async function toggleReminder(id: string, active: boolean) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 
@@ -51,7 +51,7 @@ export async function toggleReminder(id: string, active: boolean) {
 }
 
 export async function deleteReminder(id: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 

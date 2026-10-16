@@ -18,10 +18,10 @@ export interface FeedbackInput {
 
 // المستخدم العادي يُرسل ملاحظة
 export async function submitFeedback(input: FeedbackInput) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const ua = headers().get('user-agent') || null;
+  const ua = (await headers()).get('user-agent') || null;
 
   const { error } = await supabase.from('user_feedback').insert({
     user_id: user?.id || null,
@@ -42,7 +42,7 @@ export async function submitFeedback(input: FeedbackInput) {
 
 // Admin functions
 async function verifyAdmin() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'غير مصرّح' };
 

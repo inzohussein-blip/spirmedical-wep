@@ -32,7 +32,7 @@ export async function updateTheme(
   input: ThemeUpdateInput
 ): Promise<ThemeActionResult> {
   // 1. التحقق من المستخدم
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

@@ -14,8 +14,9 @@ export const metadata = {
 
 const NOTE_TYPE = ['general', 'warning', 'vip', 'follow_up'] as const;
 
-export default async function PatientDetailPage({ params }: { params: { id: string } }) {
-  const supabase = createClient();
+export default async function PatientDetailPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const supabase = await createClient();
 
   const { data: patient } = await supabase
     .from('users')

@@ -9,7 +9,7 @@ export async function searchMedicationAvailability(
   query: string,
   cityFilter: string | null
 ) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // 1. البحث في الكتالوج
   const { data: medications } = await supabase

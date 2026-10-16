@@ -12,7 +12,7 @@ import {
 } from '@/lib/services/push-templates';
 
 async function requireAdmin() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false as const, error: 'unauthorized', supabase: null };
 

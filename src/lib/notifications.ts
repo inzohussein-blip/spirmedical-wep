@@ -42,7 +42,7 @@ export async function enqueueNotification(
   params: EnqueueParams,
   client?: DB
 ): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
-  const supabase = client ?? createClient();
+  const supabase = client ?? await createClient();
 
   // 1. اجلب القالب
   const { data: template, error: tplError } = await supabase
@@ -100,7 +100,7 @@ export async function enqueueRawNotification(params: {
   scheduledFor?: Date;
   createdBy?: string;
 }, client?: DB): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
-  const supabase = client ?? createClient();
+  const supabase = client ?? await createClient();
 
   const { data, error } = await supabase
     .from('notification_queue')
@@ -133,7 +133,7 @@ export async function notifyAppointmentConfirmed(
   appointmentId: string,
   client?: DB
 ): Promise<void> {
-  const supabase = client ?? createClient();
+  const supabase = client ?? await createClient();
 
   const { data: appointment } = await supabase
     .from('appointments')
@@ -174,7 +174,7 @@ export async function notifyOrderAssigned(
   appointmentId: string,
   client?: DB
 ): Promise<void> {
-  const supabase = client ?? createClient();
+  const supabase = client ?? await createClient();
 
   const { data: appointment } = await supabase
     .from('appointments')
@@ -216,7 +216,7 @@ export async function notifyOrderCancelled(
   reason: string,
   client?: DB
 ): Promise<void> {
-  const supabase = client ?? createClient();
+  const supabase = client ?? await createClient();
 
   const { data: appointment } = await supabase
     .from('appointments')
@@ -257,7 +257,7 @@ export async function notifySpecialistApproved(
   specialistType: string,
   client?: DB
 ): Promise<void> {
-  const supabase = client ?? createClient();
+  const supabase = client ?? await createClient();
 
   const { data: specialist } = await supabase
     .from('users')
@@ -299,7 +299,7 @@ export async function notifySpecialistRejected(
   reason: string,
   client?: DB
 ): Promise<void> {
-  const supabase = client ?? createClient();
+  const supabase = client ?? await createClient();
 
   const { data: specialist } = await supabase
     .from('users')

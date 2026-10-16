@@ -16,7 +16,7 @@ export const metadata = {
 const TIERS = ['silver', 'gold', 'platinum', 'diamond'] as const;
 
 export default async function RewardsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 

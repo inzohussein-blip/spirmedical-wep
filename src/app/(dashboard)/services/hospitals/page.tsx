@@ -12,7 +12,7 @@ export const metadata = { title: 'المستشفيات - Spir Medical' };
 const HOSPITAL_TYPES = ['government', 'private', 'health_center', 'specialized'] as const;
 
 export default async function HospitalsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: hospitals } = await supabase
     .from('hospitals')

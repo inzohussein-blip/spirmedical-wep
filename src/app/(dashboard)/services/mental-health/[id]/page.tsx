@@ -31,8 +31,9 @@ const SPECIALTY_LABELS: Record<string, string> = {
   women_health: 'صحة المرأة', adhd: 'فرط الحركة', parenting: 'التربية',
 };
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const supabase = createClient();
+export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const supabase = await createClient();
   const { data: s } = await supabase
     .from('mental_health_specialists')
     .select('full_name, title, bio')
@@ -47,12 +48,13 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   };
 }
 
-export default async function MentalDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const supabase = createClient();
+export default async function MentalDetailPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
+  const supabase = await createClient();
 
   const { data: s } = await supabase
     .from('mental_health_specialists')

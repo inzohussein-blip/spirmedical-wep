@@ -29,7 +29,7 @@ export default async function SpecialistLayout({
   // فكان مختصٌّ **قيد المراجعة أو مرفوض** يفتح طابور الطلبات ويرى أسماء المرضى
   // وهواتفهم وعناوينهم وتفاصيلهم السريرية. الأفعال (قبول الطلب) كانت محميّة،
   // لكنّ **القراءة** لم تكن. نمنعها هنا لكل صفحات المختصّ دفعةً واحدة.
-  const pathname = headers().get('x-pathname') ?? '';
+  const pathname = (await headers()).get('x-pathname') ?? '';
   const isStatusPage =
     pathname.startsWith('/specialist/pending') ||
     pathname.startsWith('/specialist/rejected');

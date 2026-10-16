@@ -44,7 +44,7 @@ const CATEGORY_META: Record<string, { label: string; Icon: TablerIcon; color: st
 };
 
 export default async function VaccinesPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 

@@ -34,7 +34,7 @@ export async function sendOtp(formData: FormData) {
     | 'sms'
     | null;
 
-  const ip = getIp();
+  const ip = await getIp();
   const limit = await checkRateLimit(`otp:send:${ip}`, {
     max: 10,
     windowSeconds: 900,
@@ -135,7 +135,7 @@ export async function sendOtp(formData: FormData) {
   }
 
   // SMS fallback
-  const supabase = createClient();
+  const supabase = await createClient();
   const { error } = await supabase.auth.signInWithOtp({
     phone: normalizedPhone,
   });
@@ -176,7 +176,7 @@ export async function skipOtp(formData: FormData) {
   }
 
   const phone = formData.get('phone') as string;
-  const ip = getIp();
+  const ip = await getIp();
 
   const limit = await checkRateLimit(`otp:skip:${ip}`, {
     max: 10,
@@ -237,7 +237,7 @@ export async function verifyOtp(formData: FormData) {
     | 'telegram'
     | 'sms';
 
-  const ip = getIp();
+  const ip = await getIp();
   const limit = await checkRateLimit(`otp:verify:${ip}`, {
     max: 5,
     windowSeconds: 900,
@@ -289,7 +289,7 @@ export async function verifyOtp(formData: FormData) {
 
       const password = derivePassword(phone);
       const email = phoneToEmail(phone);
-      const supabase = createClient();
+      const supabase = await createClient();
 
       // محاولة تسجيل دخول مباشرة
       const { data: signInData, error: signInErr } = await supabase.auth.signInWithPassword({
@@ -394,7 +394,7 @@ export async function verifyOtp(formData: FormData) {
   }
 
   // SMS Verification
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.verifyOtp({
     phone,
     token,
@@ -447,7 +447,7 @@ export async function resendOtp(formData: FormData) {
 // ─────────────────────────────────────────────────────────
 
 export async function signOut() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

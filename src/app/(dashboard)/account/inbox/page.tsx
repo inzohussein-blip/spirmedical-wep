@@ -17,7 +17,7 @@ export const dynamic = 'force-dynamic';
  * إشعارُ إلغاء الطلب و«الخدمة متاحةٌ الآن» يصلان هنا دائماً.
  */
 export default async function InboxPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 

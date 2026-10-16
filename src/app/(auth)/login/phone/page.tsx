@@ -15,11 +15,12 @@ const searchParamsSchema = z.object({
   error: z.string().max(500).optional(),
 });
 
-export default function PhonePage({
-  searchParams,
-}: {
-  searchParams: { role?: string; error?: string };
-}) {
+export default async function PhonePage(
+  props: {
+    searchParams: Promise<{ role?: string; error?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const params = searchParamsSchema.safeParse(searchParams);
   const role = (params.success ? params.data.role : 'patient') ?? 'patient';
   const error = params.success ? params.data.error : undefined;

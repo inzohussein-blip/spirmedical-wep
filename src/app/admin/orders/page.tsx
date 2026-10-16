@@ -32,8 +32,9 @@ const STATUS_META: Record<string, { label: string; bg: string; color: string }> 
   cancelled: { label: 'ملغى', bg: 'var(--rose-soft)', color: 'var(--rose)' },
 };
 
-export default async function AdminOrdersPage({ searchParams }: { searchParams: SearchParams }) {
-  const supabase = createClient();
+export default async function AdminOrdersPage(props: { searchParams: Promise<SearchParams> }) {
+  const searchParams = await props.searchParams;
+  const supabase = await createClient();
 
   let query = supabase
     .from('appointments')

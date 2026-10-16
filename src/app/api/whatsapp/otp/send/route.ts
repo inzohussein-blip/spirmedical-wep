@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     }
 
     // ─── Get current user (لو مسجّل دخوله) ───
-    const supabase = createClient();
+    const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();

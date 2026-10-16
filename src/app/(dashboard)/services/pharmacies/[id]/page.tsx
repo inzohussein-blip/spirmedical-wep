@@ -9,12 +9,13 @@ import { checkIsFavorite } from '@/components/services/favorites-actions';
 
 export const dynamic = 'force-dynamic';
 
-export default async function PharmacyDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const supabase = createClient();
+export default async function PharmacyDetailPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
+  const supabase = await createClient();
 
   // ─── جلب بيانات الصيدلية ───
   const { data: pharmacy } = await supabase
@@ -136,12 +137,13 @@ export default async function PharmacyDetailPage({
   );
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const supabase = createClient();
+export async function generateMetadata(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
+  const supabase = await createClient();
   const { data: p } = await supabase
     .from('pharmacies')
     .select('name, city')

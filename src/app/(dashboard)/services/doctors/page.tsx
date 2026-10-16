@@ -11,12 +11,13 @@ import DoctorsClient from './DoctorsClient';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'أطباء العائلة - Spir Medical' };
 
-export default async function DoctorsPage({
-  searchParams,
-}: {
-  searchParams: { specialty?: string; video?: string };
-}) {
-  const supabase = createClient();
+export default async function DoctorsPage(
+  props: {
+    searchParams: Promise<{ specialty?: string; video?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const supabase = await createClient();
 
   const { data: doctors } = await supabase
     .from('doctors')

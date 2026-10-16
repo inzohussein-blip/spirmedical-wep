@@ -8,7 +8,7 @@ import { logger } from '@/lib/logger';
  * إرسال إيميل ترحيب لمريض جديد
  */
 export async function sendWelcomePatientEmail(userId: string): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: user } = await supabase
     .from('users')
     .select('email, full_name')
@@ -33,7 +33,7 @@ export async function sendWelcomePatientEmail(userId: string): Promise<void> {
  * إرسال إيميل ترحيب لأخصائي جديد
  */
 export async function sendWelcomeSpecialistEmail(userId: string): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: user } = await supabase
     .from('users')
     .select('email, full_name')
@@ -55,7 +55,7 @@ export async function sendWelcomeSpecialistEmail(userId: string): Promise<void> 
  * إرسال تأكيد موعد
  */
 export async function sendAppointmentConfirmedEmail(appointmentId: string): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: appt } = await supabase
     .from('appointments')
     .select('*, users:user_id(email, full_name)')
@@ -93,7 +93,7 @@ export async function sendAppointmentConfirmedEmail(appointmentId: string): Prom
  * إرسال تذكير قبل الموعد بيوم
  */
 export async function sendAppointmentReminderEmail(appointmentId: string): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: appt } = await supabase
     .from('appointments')
     .select('*, users:user_id(email)')
@@ -125,7 +125,7 @@ export async function sendAppointmentReminderEmail(appointmentId: string): Promi
  * طلب تقييم بعد إكمال الموعد
  */
 export async function sendRatingRequestEmail(appointmentId: string): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: appt } = await supabase
     .from('appointments')
     .select('*, users:user_id(email)')

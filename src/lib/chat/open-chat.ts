@@ -24,7 +24,7 @@ export type OpenChatResult =
 export async function openChatForAppointment(
   appointmentId: string
 ): Promise<OpenChatResult> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

@@ -40,8 +40,9 @@ function getDateRange(params: SearchParams): { from: string; to: string; label: 
   return { from: new Date(today.getTime() - 30 * 86400000).toISOString(), to: new Date().toISOString(), label: 'آخر 30 يوم' };
 }
 
-export default async function ReportsPage({ searchParams }: { searchParams: SearchParams }) {
-  const supabase = createClient();
+export default async function ReportsPage(props: { searchParams: Promise<SearchParams> }) {
+  const searchParams = await props.searchParams;
+  const supabase = await createClient();
   const range = getDateRange(searchParams);
 
   // === جمع البيانات ===

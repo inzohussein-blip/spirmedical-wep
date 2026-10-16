@@ -14,7 +14,7 @@ const CHAT_PRIORITY = ['normal', 'low', 'high', 'urgent'] as const;
 const CHAT_STATUS = ['open', 'pending', 'resolved', 'archived'] as const;
 
 export default async function SpecialistInboxPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {

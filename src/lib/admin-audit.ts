@@ -14,11 +14,11 @@ export interface LogActionInput {
  */
 export async function logAdminAction(input: LogActionInput): Promise<void> {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    const hdrs = headers();
+    const hdrs = await headers();
     const ip = hdrs.get('x-forwarded-for')?.split(',')[0]?.trim()
             ?? hdrs.get('x-real-ip')
             ?? null;

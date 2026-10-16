@@ -17,12 +17,13 @@ export const metadata = { title: 'الطوارئ الأمنية - Spir Medical' 
 
 const EMERGENCY_STATUS = ['open', 'responding', 'resolved', 'false_alarm'] as const;
 
-export default async function AdminEmergenciesPage({
-  searchParams,
-}: {
-  searchParams: { status?: string };
-}) {
-  const supabase = createClient();
+export default async function AdminEmergenciesPage(
+  props: {
+    searchParams: Promise<{ status?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const supabase = await createClient();
 
   // ─── تحقق من Admin ───
   const { data: { user } } = await supabase.auth.getUser();

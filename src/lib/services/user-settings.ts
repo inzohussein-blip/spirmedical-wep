@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import type { UserSettings } from './user-settings-types';
 
 export async function updateUserSettings(settings: UserSettings) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 

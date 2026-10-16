@@ -22,7 +22,7 @@ const STATUS_META: Record<string, { label: string; color: string; emoji: string 
 };
 
 export default async function ConsultationsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');

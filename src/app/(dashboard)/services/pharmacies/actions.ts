@@ -36,7 +36,7 @@ export interface CreateReservationInput {
 
 // ─── 1. حجز دواء ───
 export async function createPharmacyReservation(input: CreateReservationInput) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'يجب تسجيل الدخول' };
 
@@ -90,7 +90,7 @@ export async function createPharmacyReservation(input: CreateReservationInput) {
 
 // ─── 2. إلغاء حجز ───
 export async function cancelPharmacyReservation(reservationId: string, reason?: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 
@@ -127,7 +127,7 @@ interface PharmacyRatingInput {
 }
 
 export async function submitPharmacyRating(input: PharmacyRatingInput) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 
@@ -182,7 +182,7 @@ export interface UserMedicationInput {
 }
 
 export async function addUserMedication(input: UserMedicationInput) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 
@@ -221,7 +221,7 @@ export async function addUserMedication(input: UserMedicationInput) {
 }
 
 export async function removeUserMedication(medicationId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 
@@ -239,7 +239,7 @@ export async function removeUserMedication(medicationId: string) {
 }
 
 export async function toggleUserMedicationActive(medicationId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 

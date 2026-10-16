@@ -34,7 +34,7 @@ import { sendOtp as sendWhatsAppOtp, verifyOtp as verifyWhatsAppOtp } from '@/li
 export async function registerPatient(formData: FormData) {
   const action = (formData.get('action') as string) || 'auto';
 
-  const ip = getIp();
+  const ip = await getIp();
   const limit = await checkRateLimit(`register:${ip}`, {
     max: 5,
     windowSeconds: 3600,
@@ -107,7 +107,7 @@ export async function registerPatient(formData: FormData) {
 export async function registerSpecialist(formData: FormData) {
   const action = (formData.get('action') as string) || 'auto';
 
-  const ip = getIp();
+  const ip = await getIp();
   const limit = await checkRateLimit(`register:${ip}`, {
     max: 5,
     windowSeconds: 3600,
@@ -244,7 +244,7 @@ async function routeAfterRegister(
     await signInDirectly(phone, role);
     // 📧 إرسال إيميل ترحيب (fire-and-forget)
     try {
-      const sup = createClient();
+      const sup = await createClient();
       const { data: { user: signedUser } } = await sup.auth.getUser();
       if (signedUser?.id) {
         if (role === 'specialist') {
@@ -331,7 +331,7 @@ async function createOrGetAccount(opts: {
         (tryCreateErr as any)?.status === 422)
     ) {
       // الحساب موجود → تسجيل دخول مؤقت للحصول على ID
-      const supabaseTmp = createClient();
+      const supabaseTmp = await createClient();
       const { data: tmpSignIn } = await supabaseTmp.auth.signInWithPassword({ email, password });
       if (tmpSignIn?.user) {
         userId = tmpSignIn.user.id;
@@ -421,7 +421,7 @@ async function signInDirectly(
   phone: string,
   _role: 'patient' | 'specialist'
 ): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const password = derivePassword(phone);
   const email = phoneToEmail(phone);
 

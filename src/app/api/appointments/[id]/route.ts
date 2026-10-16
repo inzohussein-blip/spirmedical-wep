@@ -4,14 +4,15 @@ import { appointmentUpdateSchema } from '@/lib/validations/appointment';
 import { sendRatingRequestEmail } from '@/lib/email/actions';
 
 interface RouteContext {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 /**
  * GET /api/appointments/:id
  */
-export async function GET(_request: NextRequest, { params }: RouteContext) {
-  const supabase = createClient();
+export async function GET(_request: NextRequest, props: RouteContext) {
+  const params = await props.params;
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -40,8 +41,9 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
 /**
  * PATCH /api/appointments/:id
  */
-export async function PATCH(request: NextRequest, { params }: RouteContext) {
-  const supabase = createClient();
+export async function PATCH(request: NextRequest, props: RouteContext) {
+  const params = await props.params;
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -91,8 +93,9 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
 /**
  * DELETE /api/appointments/:id
  */
-export async function DELETE(_request: NextRequest, { params }: RouteContext) {
-  const supabase = createClient();
+export async function DELETE(_request: NextRequest, props: RouteContext) {
+  const params = await props.params;
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

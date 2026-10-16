@@ -19,9 +19,9 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
   /** `?new=1` يصل بعد رفع الطلب مباشرةً — يُستعمل لعرض تأكيد النجاح */
-  searchParams?: { new?: string };
+  searchParams?: Promise<{ new?: string }>;
 }
 
 function formatDateArabic(iso: string): string {
@@ -43,9 +43,11 @@ function formatDuration(minutes: number | null): string {
   return mins === 0 ? `${hours} ساعة` : `${hours}س ${mins}د`;
 }
 
-export default async function AppointmentDetailsPage({ params, searchParams }: Props) {
+export default async function AppointmentDetailsPage(props: Props) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const justCreated = searchParams?.new === '1';
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) notFound();

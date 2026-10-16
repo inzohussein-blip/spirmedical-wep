@@ -29,12 +29,13 @@ type SearchParams = {
   package?: string;
 };
 
-export default async function BookingPage({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}) {
-  const supabase = createClient();
+export default async function BookingPage(
+  props: {
+    searchParams: Promise<SearchParams>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 

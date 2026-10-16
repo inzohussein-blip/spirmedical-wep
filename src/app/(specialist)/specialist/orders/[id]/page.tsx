@@ -31,12 +31,13 @@ const STATUS_META: Record<string, { label: string; color: string }> = {
   cancelled: { label: 'ملغى', color: 'scr-tag-emergency' },
 };
 
-export default async function SpecialistOrderDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const supabase = createClient();
+export default async function SpecialistOrderDetailPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 
@@ -83,7 +84,7 @@ export default async function SpecialistOrderDetailPage({
     status: 'normal' | 'low' | 'high' | 'critical' | 'inconclusive';
     notes: string;
   }> = [];
-  
+
   if (labOrderId) {
     const { data: labOrder } = await supabaseAny
       .from('lab_orders')

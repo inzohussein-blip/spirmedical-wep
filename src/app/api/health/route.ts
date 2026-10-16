@@ -26,7 +26,7 @@ export async function GET() {
   // 1. فحص Supabase
   try {
     const t0 = Date.now();
-    const supabase = createClient();
+    const supabase = await createClient();
     const { error } = await supabase
       .from('users')
       .select('id', { count: 'exact', head: true })

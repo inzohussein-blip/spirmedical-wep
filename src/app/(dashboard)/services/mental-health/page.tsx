@@ -16,7 +16,7 @@ export const metadata = {
 const MH_TYPES = ['psychiatrist', 'psychologist', 'therapist', 'counselor', 'family_therapist'] as const;
 
 export default async function MentalHealthPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: specialists } = await supabase
     .from('mental_health_specialists')

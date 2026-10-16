@@ -11,7 +11,7 @@ import { revalidatePath } from 'next/cache';
 
 // ─── Wishlist ───
 export async function toggleCosmeticWishlist(productId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 
@@ -68,7 +68,7 @@ interface ReviewInput {
 }
 
 export async function submitCosmeticReview(input: ReviewInput) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 

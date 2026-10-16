@@ -39,7 +39,7 @@ export default async function DashboardLayout({
   // (`/services/dental/<id>` يُمنع بإطفاء `/services/dental`).
   //
   // ولا يُجلب محتوى الصفحة أصلاً: نُرجع شاشة «قريباً» مكان `children`.
-  const h = headers();
+  const h = await headers();
   const pathname = h.get('x-pathname') ?? '';
   const search = new URLSearchParams(h.get('x-search') ?? '');
   const serviceId = serviceIdForPath(pathname, search);

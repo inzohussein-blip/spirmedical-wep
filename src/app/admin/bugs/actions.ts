@@ -6,7 +6,7 @@ import type { TablesUpdate } from '@/types/database';
 
 // Admin functions
 async function verifyAdmin() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'غير مصرّح' };
 

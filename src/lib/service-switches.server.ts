@@ -14,7 +14,7 @@ import type { ServiceSwitch } from '@/lib/service-switches';
 export const getServiceSwitches = cache(async (): Promise<Map<string, ServiceSwitch>> => {
   const map = new Map<string, ServiceSwitch>();
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data, error } = await (supabase as any)
       .from('service_switches')
       .select('service_id, is_enabled, note_ar, updated_at');

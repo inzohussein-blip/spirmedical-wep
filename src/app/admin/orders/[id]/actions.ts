@@ -16,7 +16,7 @@ import { isValidCoordinates } from '@/types/location';
 /* ─── Helper: التحقق من admin ────────────────────────────── */
 
 async function requireAdmin() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

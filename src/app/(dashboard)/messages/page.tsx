@@ -15,12 +15,13 @@ export const metadata = {
 const CHAT_PRIORITY = ['normal', 'low', 'high', 'urgent'] as const;
 const CHAT_STATUS = ['open', 'pending', 'resolved', 'archived'] as const;
 
-export default async function PatientMessagesPage({
-  searchParams,
-}: {
-  searchParams: { appointment?: string; error?: string };
-}) {
-  const supabase = createClient();
+export default async function PatientMessagesPage(
+  props: {
+    searchParams: Promise<{ appointment?: string; error?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) return null;

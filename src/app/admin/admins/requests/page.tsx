@@ -13,12 +13,13 @@ interface AdminRequest {
   created_at: string;
 }
 
-export default async function AdminRequestsPage({
-  searchParams,
-}: {
-  searchParams: { approved?: string; rejected?: string; error?: string };
-}) {
-  const supabase = createClient();
+export default async function AdminRequestsPage(
+  props: {
+    searchParams: Promise<{ approved?: string; rejected?: string; error?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const supabase = await createClient();
   const sb = supabase as unknown as { from: (t: string) => any };
 
   const { data: requests } = await sb

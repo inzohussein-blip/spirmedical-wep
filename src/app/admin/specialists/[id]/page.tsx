@@ -14,8 +14,9 @@ export const metadata = {
 
 const APPROVAL_STATUS = ['pending', 'approved', 'rejected'] as const;
 
-export default async function SpecialistDetailPage({ params }: { params: { id: string } }) {
-  const supabase = createClient();
+export default async function SpecialistDetailPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const supabase = await createClient();
 
   const { data: specialist } = await supabase
     .from('users')

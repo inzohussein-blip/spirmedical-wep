@@ -6,7 +6,7 @@ import { logAuditEvent } from '@/lib/audit';
 import { allSwitchableServices, NON_SWITCHABLE } from '@/lib/service-switches';
 
 async function verifyAdmin() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false as const, error: 'غير مصرّح' };
 

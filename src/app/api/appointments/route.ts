@@ -9,7 +9,7 @@ import { logger } from '@/lib/logger';
  * يُرجع كل حجوزات المستخدم الحالي
  */
 export async function GET(request: NextRequest) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
  * إنشاء حجز جديد
  */
 export async function POST(request: NextRequest) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

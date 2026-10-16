@@ -16,7 +16,7 @@ const CHECKLIST_CATEGORY = ['technical', 'content', 'legal', 'marketing', 'opera
 const CHECKLIST_PRIORITY = ['critical', 'high', 'medium', 'low'] as const;
 
 export default async function LaunchChecklistPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 
