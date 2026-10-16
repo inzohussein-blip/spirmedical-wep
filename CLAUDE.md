@@ -277,8 +277,8 @@
     التطبيق** (`notifications.metadata.queue_id`) — قِيس: 3/3. فالمرضى علموا.
   - إعادتُها إلى واتساب بعد الإصلاح **اختياريّة**: `status='pending', attempts=0` (بـ
     BEGIN … ROLLBACK أوّلاً)؛ لن تتكرّر نسخةُ الصندوق.
-- **فصلُ Cloudflare Workers ومشروع Vercel `spirmedical-wep2`** عن المستودع — كلاهما
-  غيرُ مستعمَل ويفشل في كلّ دفعة (لا `wrangler` في المستودع). الإنتاج Vercel `spirmedical-wep` وحده.
+- **فصلُ مشروع Vercel `spirmedical-wep2`** عن المستودع — غيرُ مستعمَل ويفشل في كلّ دفعة
+  (لا صلاحيةَ لي لتعديله: 403). الإنتاج Vercel `spirmedical-wep` وحده، ولا استضافةَ أخرى.
 - **منعُ الدمج في `main` إن سقط CI**: GitHub ← Settings ← Branches ← قاعدةٌ لـ`main`
   تشترط «Quality Gate» و«Build verification». لا أداةَ لي لضبطها.
 - **`RESEND_API_KEY` و`ADMIN_OWNER_EMAIL` في Vercel** — بدونهما لا يصل بريدُ التنبيه

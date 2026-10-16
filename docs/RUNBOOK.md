@@ -66,10 +66,9 @@ curl https://spirmedical-wep.vercel.app/api/health
 - معدل ratelimit hits > 50%
 
 **الإجراء:**
-1. فعّل Vercel Firewall rules
-2. أضف Cloudflare في الأمام (إذا لم يكن مُفعّلاً)
-3. شدّد rate limits في `src/lib/rate-limit.ts`
-4. احظر IPs المُسيئة في Vercel firewall
+1. فعّل Vercel Firewall rules (وضع Attack Challenge عند الهجوم)
+2. شدّد rate limits في `src/lib/rate-limit.ts`
+3. احظر IPs المُسيئة في Vercel firewall
 
 ### 5) تسرّب بيانات (Suspected Breach)
 

@@ -66,7 +66,7 @@
 | Pen testing احترافي | ❌ لم يتم | 🔴 حرج |
 | Bug bounty program | ❌ لا | 🟡 موصى به |
 | Secrets rotation | ❌ يدوي | 🟡 موصى به |
-| WAF (Cloudflare) | ❌ غير مُفعّل | 🟡 موصى به |
+| WAF (Vercel Firewall) | ❌ غير مُفعّل | 🟡 موصى به |
 | Backup encryption verification | ❌ غير مُختبَر | 🟡 موصى به |
 
 ---

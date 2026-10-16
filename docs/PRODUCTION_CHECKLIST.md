@@ -23,7 +23,7 @@
 | Dependency Scanning | ❌ | **ينقص: Dependabot + npm audit** |
 | Secret Scanning | ❌ | **ينقص: Trufflehog في CI** |
 | CodeQL | ❌ | **ينقص: GitHub CodeQL workflow** |
-| DDoS Protection | ⚠️ Vercel basic | يُنصح بـ Cloudflare في الأمام |
+| DDoS Protection | ⚠️ Vercel basic | يُنصح بقواعد Vercel Firewall |
 
 ---
 
@@ -192,14 +192,13 @@
 
 ### الشهر الثالث
 11. Multi-region deployment
-12. Cloudflare في الأمام
-13. Load testing
-14. Accessibility audit (WCAG AA)
-15. A/B testing infrastructure
+12. Load testing
+13. Accessibility audit (WCAG AA)
+14. A/B testing infrastructure
 
 ### الشهر السادس
-16. Payment integration
-17. Subscription management
-18. Customer support tooling
-19. Advanced analytics
-20. Compliance audit (محلي عراقي)
+15. Payment integration
+16. Subscription management
+17. Customer support tooling
+18. Advanced analytics
+19. Compliance audit (محلي عراقي)
