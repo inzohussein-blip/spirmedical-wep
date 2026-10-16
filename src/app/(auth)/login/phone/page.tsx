@@ -47,9 +47,9 @@ export default function PhonePage({
       <div className="auth-title-section">
         <h2 className="auth-title">مرحباً بك</h2>
         <p className="auth-subtitle">
-          أدخل رقم هاتفك لنُرسل لك
+          أدخل رقم هاتفك
           <br />
-          رمز التحقق عبر WhatsApp
+          ورمز الدخول الذي اخترته
         </p>
       </div>
 
@@ -86,8 +86,29 @@ export default function PhonePage({
           <div className="auth-field-hint">مثال: ٠٧٧١٢٣٤٥٦٧٨ أو ٧٧١٢٣٤٥٦٧٨</div>
         </div>
 
+        {/* رمزُ الدخول يحلّ محلّ رمز واتساب (0049). الحسابُ القديم بلا رمز يضبطه هنا أوّلَ مرّة. */}
+        <div className="auth-field">
+          <label htmlFor="pin" className="auth-field-label">
+            رمز الدخول (PIN)
+          </label>
+          <input
+            id="pin"
+            type="password"
+            name="pin"
+            inputMode="numeric"
+            autoComplete="current-password"
+            placeholder="6 أرقام"
+            required
+            minLength={6}
+            maxLength={6}
+            pattern="[0-9]{6}"
+            className="auth-input"
+          />
+          <div className="auth-field-hint">الرمز الذي اخترته عند التسجيل</div>
+        </div>
+
         <button type="submit" className="auth-cta">
-          إرسال رمز التحقق ←
+          دخول ←
         </button>
       </form>
 

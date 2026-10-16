@@ -50,6 +50,7 @@ const FIX = {
   health_vitals: [], reminders: [], prescriptions: [], lab_orders: [], user_medications: [], vaccination_records: [],
   app_theme_settings: [],
   service_waitlist: [],
+  auth_login_pins: [],
 
 };
 
