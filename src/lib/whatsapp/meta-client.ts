@@ -64,7 +64,6 @@ async function sendToMeta(payload: Record<string, unknown>): Promise<MetaSendRes
     const data = await response.json();
 
     if (!response.ok) {
-      // eslint-disable-next-line no-console
       console.error('[Meta] API error:', data);
       return {
         success: false,
@@ -78,7 +77,6 @@ async function sendToMeta(payload: Record<string, unknown>): Promise<MetaSendRes
       messageId: data?.messages?.[0]?.id,
     };
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error('[Meta] Network error:', err);
     return {
       success: false,
@@ -134,7 +132,6 @@ export async function sendOtpMessage(
   // ─── محاولة 2 (احتياطي): نصّ حرّ ───
   // يعمل ضمن نافذة 24 ساعة (بعد تفاعل المستخدم) أو مع الأرقام التجريبية.
   // مفيد قبل اعتماد الـ template أو توثيق النشاط التجاري.
-  // eslint-disable-next-line no-console
   console.warn('[Meta] template "spir_otp" failed, trying free-text fallback:', templateResult.error);
   return sendOtpText(phone, otpCode);
 }
@@ -174,7 +171,6 @@ export function verifyWebhookSignature(
 
   const appSecret = process.env.META_APP_SECRET;
   if (!appSecret) {
-    // eslint-disable-next-line no-console
     console.error('[Meta] META_APP_SECRET not set');
     return false;
   }

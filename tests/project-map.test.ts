@@ -16,11 +16,11 @@ import { join, dirname, basename } from 'path';
 const ROOT = process.cwd();
 const SRC_RELATIVE = ['app/', 'components/', 'lib/', 'types/'];
 const ROOT_RELATIVE = ['src/', 'supabase/', 'tests/', 'public/', 'docs/'];
-const ROOT_FILES = ['middleware.ts', 'vercel.json', 'README.md', 'CLAUDE.md'];
+const ROOT_FILES = ['proxy.ts', 'vercel.json', 'README.md', 'CLAUDE.md'];
 
 function resolve(token: string): string | null {
   if (token.includes('…') || token.includes(' ')) return null; // عناصرُ نائبة ووصف
-  if (ROOT_FILES.includes(token)) return token === 'middleware.ts' ? 'src/middleware.ts' : token;
+  if (ROOT_FILES.includes(token)) return token === 'proxy.ts' ? 'src/proxy.ts' : token;
   if (ROOT_RELATIVE.some((p) => token.startsWith(p))) return token;
   if (SRC_RELATIVE.some((p) => token.startsWith(p))) return 'src/' + token;
   return null;

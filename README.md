@@ -68,7 +68,7 @@ npm run build                 # البناء — ضروريٌّ حين تمسّ 
 المتصفّح
   │
   ▼
-src/middleware.ts ──► lib/site-config.ts   (NEXT_PUBLIC_SITE_TYPE: app | marketing | all)
+src/proxy.ts ──► lib/site-config.ts   (NEXT_PUBLIC_SITE_TYPE: app | marketing | all)
   │                    يحوّل بين نطاق التسويق ونطاق التطبيق
   ▼
 lib/supabase/middleware.ts                  (تجديد جلسة Supabase في الكوكيز)
@@ -96,7 +96,7 @@ page.tsx (خادم) ──► lib/supabase/server.ts   (عميلٌ بجلسة ا
 ```
 spirmedical-wep/
 ├── src/
-│   ├── middleware.ts            توجيه النطاق + تجديد الجلسة
+│   ├── proxy.ts                 توجيه النطاق + تجديد الجلسة (middleware قبل Next 16)
 │   ├── instrumentation*.ts      تهيئة Sentry (خادم/متصفّح)
 │   ├── app/                     الصفحات (App Router) — انظر «المسارات»
 │   │   ├── layout.tsx           الجذر: الخطوط، metadata، CookieConsent، DeferredGlobals

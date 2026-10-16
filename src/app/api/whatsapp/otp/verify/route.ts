@@ -67,7 +67,6 @@ export async function POST(request: Request) {
       userId: result.userId,
     });
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error('[OTP/verify] Error:', err);
     return NextResponse.json(
       { success: false, error: 'خطأ في النظام' },

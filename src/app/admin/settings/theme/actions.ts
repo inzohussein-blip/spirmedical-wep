@@ -8,11 +8,12 @@
  * - يتحقق من super_admin
  * - validates input
  * - يحدّث DB
- * - يعيد build cache (revalidateTag('theme'))
+ * - يعيد build cache (updateTag('theme'))
  */
 
 import { createClient } from '@/lib/supabase/server';
-import { revalidateTag } from 'next/cache';
+// Next 16: updateTag يُبطل فوراً فيرى المديرُ تعديله (revalidateTag صار stale-while-revalidate)
+import { updateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { isSuperAdmin } from '@/lib/admin-types';
 import { validateThemeInput, type ThemeUpdateInput } from '@/types/theme';
@@ -95,7 +96,6 @@ export async function updateTheme(
     .eq('id', activeTheme.id);
 
   if (updateError) {
-    // eslint-disable-next-line no-console
     console.error('[Theme] Update failed:', updateError);
     return {
       success: false,
@@ -117,7 +117,7 @@ export async function updateTheme(
   });
 
   // 7. إعادة build cache → كل المنصة تحدّث ألوانها فوراً
-  revalidateTag('theme');
+  updateTag('theme');
 
   return {
     success: true,

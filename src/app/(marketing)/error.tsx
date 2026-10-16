@@ -18,7 +18,6 @@ export default function MarketingError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // eslint-disable-next-line no-console
     console.error('[(marketing)/error]', error);
   }, [error]);
 

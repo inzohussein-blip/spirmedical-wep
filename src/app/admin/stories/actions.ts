@@ -8,7 +8,8 @@
  */
 
 import { createClient } from '@/lib/supabase/server';
-import { revalidateTag } from 'next/cache';
+// Next 16: updateTag يُبطل فوراً فيرى المديرُ تعديله (revalidateTag صار stale-while-revalidate)
+import { updateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { isSuperAdmin } from '@/lib/admin-types';
 import { validateStoryInput, type StoryInput } from '@/types/story';
@@ -73,12 +74,11 @@ export async function createStory(input: StoryInput): Promise<StoryActionResult>
   });
 
   if (error) {
-    // eslint-disable-next-line no-console
     console.error('[Stories] Insert failed:', error);
     return { success: false, message: 'فشل الإضافة: ' + error.message };
   }
 
-  revalidateTag('stories');
+  updateTag('stories');
   return { success: true, message: 'تمت إضافة القصة بنجاح' };
 }
 
@@ -113,12 +113,11 @@ export async function updateStory(
   const { error } = await supabase.from('stories').update(updateData).eq('id', id);
 
   if (error) {
-    // eslint-disable-next-line no-console
     console.error('[Stories] Update failed:', error);
     return { success: false, message: 'فشل التحديث: ' + error.message };
   }
 
-  revalidateTag('stories');
+  updateTag('stories');
   return { success: true, message: 'تم تحديث القصة بنجاح' };
 }
 
@@ -142,7 +141,7 @@ export async function toggleStoryActive(
     return { success: false, message: 'فشل التحديث: ' + error.message };
   }
 
-  revalidateTag('stories');
+  updateTag('stories');
   return {
     success: true,
     message: isActive ? 'تم تفعيل القصة' : 'تم إخفاء القصة',
@@ -163,7 +162,7 @@ export async function deleteStory(id: string): Promise<StoryActionResult> {
     return { success: false, message: 'فشل الحذف: ' + error.message };
   }
 
-  revalidateTag('stories');
+  updateTag('stories');
   return { success: true, message: 'تم حذف القصة' };
 }
 
@@ -192,6 +191,6 @@ export async function reorderStories(
     return { success: false, message: 'فشل إعادة الترتيب' };
   }
 
-  revalidateTag('stories');
+  updateTag('stories');
   return { success: true, message: 'تم تحديث الترتيب' };
 }

@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const { withSentryConfig } = require('@sentry/nextjs');
+const { withSentryConfig } = require('@sentry/nextjs/config');
 
 const nextConfig = {
   reactStrictMode: true,
@@ -118,15 +118,8 @@ const nextConfig = {
       process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
   },
 
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        punycode: false,
-      };
-    }
-    return config;
-  },
+  // Next 16 يبني بـTurbopack، وهو يُقصي وحداتِ Node (punycode) من حزمة المتصفّح وحده؛
+  // كان هنا `webpack.resolve.fallback.punycode = false` ولا يقرؤه Turbopack.
 
   onDemandEntries: {
     maxInactiveAge: 25 * 1000,

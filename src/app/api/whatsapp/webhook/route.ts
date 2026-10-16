@@ -41,7 +41,6 @@ export async function POST(request: Request) {
   const signature = request.headers.get('x-hub-signature-256');
 
   if (!verifyWebhookSignature(rawBody, signature)) {
-    // eslint-disable-next-line no-console
     console.warn('[Webhook] Invalid signature');
     return new Response('Unauthorized', { status: 401 });
   }
@@ -71,7 +70,6 @@ export async function POST(request: Request) {
           try {
             await processStatusUpdate(status);
           } catch (err) {
-            // eslint-disable-next-line no-console
             console.error('[Webhook] Error processing status:', err);
           }
         }
@@ -80,7 +78,6 @@ export async function POST(request: Request) {
       // ملاحظة: الرسائل الواردة (value.messages) تُتجاهل حالياً
       // ستُعالج عند إضافة البوت في مرحلة مستقبلية
       if (value.messages?.length) {
-        // eslint-disable-next-line no-console
         console.warn(
           `[Webhook] Received ${value.messages.length} message(s) - bot not enabled yet`
         );

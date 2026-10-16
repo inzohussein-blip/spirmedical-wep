@@ -69,7 +69,7 @@ describe('🌐 فخّ إعداد النطاق الواحد', () => {
    * إلا بنطاقين مختلفين فعلاً.
    */
   const config = read('lib/site-config.ts');
-  const middleware = strip(read('middleware.ts'));
+  const middleware = strip(read('proxy.ts'));
 
   it('الفصل يعتمد على اختلاف النطاقين', () => {
     expect(config).toContain('NEXT_PUBLIC_MARKETING_URL');

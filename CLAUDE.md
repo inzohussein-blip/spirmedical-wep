@@ -10,7 +10,7 @@
 
 | أبحث عن… | اذهب إلى |
 |---|---|
-| توجيه النطاق والجلسة | `middleware.ts` · `lib/site-config.ts` · `lib/supabase/middleware.ts` |
+| توجيه النطاق والجلسة | `proxy.ts` (كان middleware.ts قبل Next 16) · `lib/site-config.ts` · `lib/supabase/middleware.ts` |
 | الجلسة والأدوار | `lib/auth/session.ts` (`requireSession`) · تخطيطُ كلّ مجموعة `app/(…)/layout.tsx` |
 | عملاء Supabase | `lib/supabase/server.ts` (RLS) · `server-service.ts` (service_role) · `client.ts` |
 | رفع الطلب (المريض) | `app/(dashboard)/appointments/new/` → `NewAppointmentClient.tsx` + `actions.ts` |

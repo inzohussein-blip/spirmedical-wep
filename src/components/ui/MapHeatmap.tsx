@@ -89,7 +89,6 @@ export default function MapHeatmap({
       } catch (err) {
         if (!cancelled) {
           setError('فشل تحميل الخريطة');
-          // eslint-disable-next-line no-console
           console.error('[MapHeatmap] init failed:', err);
         }
       }

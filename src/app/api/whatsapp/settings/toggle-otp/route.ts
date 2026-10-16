@@ -87,7 +87,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, enabled, preferredChannel });
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error('[Settings/toggle-otp] Error:', err);
     return NextResponse.json(
       { success: false, error: 'خطأ في النظام' },

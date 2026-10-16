@@ -18,7 +18,6 @@ export default function AppUtilityError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // eslint-disable-next-line no-console
     console.error('[(app-utility)/error]', error);
   }, [error]);
 

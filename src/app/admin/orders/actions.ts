@@ -97,7 +97,6 @@ export async function assignOrderToSpecialist(orderId: string, specialistId: str
       }
     }
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error('Push notification failed:', err);
   }
 
@@ -153,7 +152,6 @@ export async function adminCancelOrder(orderId: string, reason: string) {
       }).catch(console.error);
     }
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error('Push notification failed:', err);
   }
 

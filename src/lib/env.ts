@@ -114,7 +114,6 @@ function parseEnv() {
       .map(([key, msgs]) => `  ${key}: ${msgs?.join(', ')}`)
       .join('\n');
 
-    // eslint-disable-next-line no-console
     console.error(`\n❌ Invalid environment variables:\n${errorMessages}\n`);
 
     if (typeof window === 'undefined') {

@@ -94,7 +94,6 @@ export default function ShareButton({
       const error = e as Error;
       // المستخدم ألغى - ليس خطأ
       if (error.name === 'AbortError') return;
-      // eslint-disable-next-line no-console
       console.error('Share error:', e);
       toast.error('فشلت المشاركة');
     } finally {

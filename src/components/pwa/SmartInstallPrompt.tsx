@@ -136,7 +136,6 @@ export default function SmartInstallPrompt() {
       setDeferredPrompt(null);
       setShow(false);
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error('Install failed:', e);
     }
   };

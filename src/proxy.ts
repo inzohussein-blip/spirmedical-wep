@@ -10,7 +10,7 @@ import {
 
 /**
  * ════════════════════════════════════════════════════════════════════
- * 🌐 Middleware (V25.35)
+ * 🌐 Proxy (V25.35 — كان middleware.ts؛ Next 16 سمّاه proxy ويُشغّله على Node)
  * ════════════════════════════════════════════════════════════════════
  *
  * يقوم بـ:
@@ -26,7 +26,7 @@ import {
  *   - NEXT_PUBLIC_MARKETING_URL = 'https://spir-medical.com'
  * ════════════════════════════════════════════════════════════════════
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (SITE_TYPE !== 'all') {
