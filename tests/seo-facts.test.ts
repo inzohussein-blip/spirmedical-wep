@@ -112,7 +112,7 @@ describe('🗺️ الخريطة لـGoogle', () => {
   const entries = sitemap();
 
   it('🚨 كلُّ رابطٍ على الأصل الواحد', () => {
-    for (const e of entries) expect(e.url.startsWith('https://www.spir-medical.com')).toBe(true);
+    for (const e of entries) expect(new URL(e.url).origin).toBe('https://www.spir-medical.com');
   });
 
   it('🚨 لا lastModified مختلَق: الصفحاتُ الثابتة بلا تاريخ، والمقالاتُ بتاريخها', () => {

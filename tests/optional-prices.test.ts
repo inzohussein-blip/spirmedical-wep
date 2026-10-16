@@ -47,7 +47,7 @@ describe('💰 دوالّ التنسيق تُميّز «غير محدَّد» ع
   });
 
   it('المدى يتحمّل غياب أحد طرفيه', () => {
-    expect(formatPriceRange(5000, 12000)).toMatch(/5|5/);
+    expect(formatPriceRange(5000, 12000)).toMatch(/5,000|5٬000/);
     expect(formatPriceRange(5000, null)).toContain('من');
     expect(formatPriceRange(null, 12000)).toContain('حتى');
     expect(formatPriceRange(null, null)).toBeNull();

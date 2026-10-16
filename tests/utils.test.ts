@@ -22,7 +22,7 @@ describe('formatDate', () => {
   it('ينسّق تاريخ بالعربية', () => {
     const result = formatDate('2026-05-06');
     // قد يحتوي على أرقام عربية (2026) أو إنجليزية (2026)
-    expect(result).toMatch(/[22][00][22][66]/);
+    expect(result).toMatch(/2026/);
   });
 
   it('يتعامل مع Date object', () => {
@@ -34,7 +34,7 @@ describe('formatDate', () => {
 describe('formatDateTime', () => {
   it('يحتوي على وقت', () => {
     const result = formatDateTime('2026-05-06T14:30:00Z');
-    expect(result).toMatch(/[\d0-9]/);
+    expect(result).toMatch(/\d{2}:\d{2}/);
   });
 });
 
@@ -42,7 +42,7 @@ describe('formatCurrency', () => {
   it('ينسّق المبلغ بالدينار', () => {
     const result = formatCurrency(50000);
     // يقبل 50 أو 50
-    expect(result).toMatch(/[55]/);
+    expect(result).toMatch(/50,000|50٬000/);
   });
 
   it('بدون كسور', () => {
