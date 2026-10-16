@@ -82,12 +82,12 @@ export function SkeletonCard() {
 export function SkeletonListItem() {
   return (
     <div className="flex items-center gap-3 p-3 bg-white rounded-md border border-line">
-      <Skeleton variant="circle" className="w-12 h-12 flex-shrink-0" />
+      <Skeleton variant="circle" className="w-12 h-12 shrink-0" />
       <div className="flex-1 flex flex-col gap-2">
         <Skeleton className="w-3/4" />
         <Skeleton className="w-1/2 h-2" />
       </div>
-      <Skeleton variant="rect" className="w-16 h-7 flex-shrink-0" />
+      <Skeleton variant="rect" className="w-16 h-7 shrink-0" />
     </div>
   );
 }
@@ -163,7 +163,7 @@ export function SkeletonDoctorCard() {
       aria-hidden="true"
     >
       <div style={{ display: 'flex', gap: 12 }}>
-        <Skeleton variant="circle" className="w-14 h-14 flex-shrink-0" />
+        <Skeleton variant="circle" className="w-14 h-14 shrink-0" />
         <div style={{ flex: 1 }}>
           <Skeleton className="w-3/4 h-4 mb-2" />
           <Skeleton className="w-1/2 h-3 mb-1" />
@@ -234,7 +234,7 @@ export function SkeletonChatItem() {
       aria-hidden="true"
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <Skeleton variant="circle" className="w-11 h-11 flex-shrink-0" />
+        <Skeleton variant="circle" className="w-11 h-11 shrink-0" />
         <div style={{ flex: 1 }}>
           <Skeleton className="w-2/5 h-3 mb-2" />
           <Skeleton className="w-4/5 h-2.5 mb-1" />

@@ -133,7 +133,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             disabled={disabled}
             className={cn(
-              'flex-1 bg-transparent outline-none border-0',
+              'flex-1 bg-transparent outline-hidden border-0',
               'placeholder:text-ink-4',
               'font-medium text-ink',
               'disabled:cursor-not-allowed',
@@ -226,7 +226,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           rows={rows}
           disabled={disabled}
           className={cn(
-            'w-full rounded-md transition-base p-3 text-base outline-none resize-y min-h-[80px]',
+            'w-full rounded-md transition-base p-3 text-base outline-hidden resize-y min-h-[80px]',
             'placeholder:text-ink-4 font-medium text-ink',
             VARIANT_CLASSES[variant],
             error

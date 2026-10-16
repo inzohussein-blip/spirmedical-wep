@@ -37,6 +37,22 @@ describe('Next 16', () => {
     expect(read('next.config.js')).toMatch(/require\('@sentry\/nextjs\/config'\)/);
   });
 
+  it('🚨 Tailwind 4: الإعدادُ في CSS (@theme)، وtailwind-merge من الإصدار نفسه', () => {
+    const css = read('src/app/styles/shared.css');
+    expect(css).toMatch(/@import 'tailwindcss';/);
+    expect(css).toMatch(/@theme \{/);
+    expect(existsSync('tailwind.config.ts')).toBe(false);
+    const major = (v: string) => Number(/^\D*(\d+)/.exec(v)![1]);
+    expect(major(pkg.devDependencies.tailwindcss ?? pkg.dependencies.tailwindcss)).toBe(4);
+    expect(major(pkg.dependencies['tailwind-merge'])).toBe(3);
+    expect(read('postcss.config.js')).toMatch(/'@tailwindcss\/postcss'/);
+  });
+
+  it('🚨 أداةُ ترقية Tailwind لا تُعيد تسميةَ أسماء المتغيّرات (outline ← outline-solid)', () => {
+    expect(read('src/components/ui/Button.tsx')).not.toMatch(/'outline-solid'/);
+    expect(read('src/components/ui/Badge.tsx')).not.toMatch(/'outline-solid'/);
+  });
+
   it('أخطاءُ مكوّنات الخادم تصل Sentry (onRequestError)', () => {
     expect(read('src/instrumentation.ts')).toMatch(/captureRequestError as onRequestError/);
   });

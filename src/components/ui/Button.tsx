@@ -51,8 +51,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary: cn(
-    'bg-[var(--btn-primary-bg,#01875F)] text-[var(--btn-primary-fg, #FFFFFF)]',
-    'hover:bg-[var(--btn-primary-bg-hover,#056559)]',
+    'bg-(--btn-primary-bg,#01875F) text-[var(--btn-primary-fg, #FFFFFF)]',
+    'hover:bg-(--btn-primary-bg-hover,#056559)',
     'shadow-[0_4px_12px_-4px_rgba(14,92,77,0.35)]',
     'hover:shadow-[0_6px_16px_-4px_rgba(14,92,77,0.45)]',
     'active:translate-y-px',
@@ -60,7 +60,7 @@ const variantClasses: Record<ButtonVariant, string> = {
   ),
   secondary: cn(
     'bg-[var(--btn-secondary-bg, #F8F9FA)] text-[var(--btn-secondary-fg, #202124)]',
-    'border border-[var(--line,rgba(15,26,28,0.08))]',
+    'border border-(--line,rgba(15,26,28,0.08))',
     'hover:bg-[var(--paper, #F8F9FA)]',
     'disabled:opacity-50'
   ),
@@ -70,19 +70,19 @@ const variantClasses: Record<ButtonVariant, string> = {
     'disabled:opacity-50'
   ),
   outline: cn(
-    'bg-transparent text-[var(--btn-primary-bg,#01875F)]',
-    'border-2 border-[var(--btn-primary-bg,#01875F)]',
-    'hover:bg-[var(--btn-primary-bg,#01875F)] hover:text-[var(--btn-primary-fg, #FFFFFF)]',
+    'bg-transparent text-(--btn-primary-bg,#01875F)',
+    'border-2 border-(--btn-primary-bg,#01875F)',
+    'hover:bg-(--btn-primary-bg,#01875F) hover:text-[var(--btn-primary-fg, #FFFFFF)]',
     'disabled:opacity-50'
   ),
   danger: cn(
     'bg-[var(--btn-danger-bg, #C71C56)] text-[var(--btn-danger-fg, #FFFFFF)]',
-    'hover:bg-[var(--btn-danger-bg-hover,#8A2532)]',
+    'hover:bg-(--btn-danger-bg-hover,#8A2532)',
     'shadow-[0_4px_12px_-4px_rgba(168,46,61,0.35)]',
     'disabled:opacity-50 disabled:shadow-none'
   ),
   link: cn(
-    'bg-transparent text-[var(--btn-primary-bg,#01875F)]',
+    'bg-transparent text-(--btn-primary-bg,#01875F)',
     'underline-offset-4 hover:underline',
     'p-0 shadow-none',
     'disabled:opacity-50'
@@ -113,8 +113,8 @@ const baseClasses = cn(
   'transition-all duration-150 ease-out',
   'select-none whitespace-nowrap',
   'disabled:cursor-not-allowed',
-  'focus-visible:outline-none focus-visible:ring-2',
-  'focus-visible:ring-[var(--btn-primary-bg,#01875F)] focus-visible:ring-offset-2',
+  'focus-visible:outline-hidden focus-visible:ring-2',
+  'focus-visible:ring-(--btn-primary-bg,#01875F) focus-visible:ring-offset-2',
   'focus-visible:ring-offset-[var(--paper-3, #FFFFFF)]'
 );
 

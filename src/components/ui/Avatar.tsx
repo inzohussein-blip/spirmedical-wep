@@ -109,7 +109,7 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
       <div ref={ref} className={cn('relative inline-flex', className)} {...props}>
         <div
           className={cn(
-            'flex items-center justify-center rounded-full font-extrabold overflow-hidden flex-shrink-0',
+            'flex items-center justify-center rounded-full font-extrabold overflow-hidden shrink-0',
             sizeClasses.box,
             sizeClasses.text,
             VARIANT_CLASSES[variant]
@@ -132,7 +132,7 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
         {status && (
           <span
             className={cn(
-              'absolute -bottom-0.5 -end-0.5 rounded-full ring-2 ring-white',
+              'absolute -bottom-0.5 -inset-e-0.5 rounded-full ring-2 ring-white',
               sizeClasses.status,
               STATUS_CLASSES[status]
             )}
