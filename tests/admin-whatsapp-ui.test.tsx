@@ -73,11 +73,11 @@ describe('إنشاءُ الحساب', () => {
     expect(screen.getByTestId('wa-credentials').textContent).toMatch(/إرسال بيانات الدخول/);
   });
 
-  it('المديرُ (لا العامّ) لا يرى إنشاءَ مدير، ويرى المشرفَ والدعم', () => {
+  it('المديرُ (لا العامّ) ينشئ مديراً ومشرفاً ودعماً — لا مديراً عامّاً', () => {
     render(<CreateUserClient callerRole="admin" />);
     fireEvent.click(screen.getByText('فريق الإدارة'));
     const opts = Array.from((document.getElementById('staffRole') as HTMLSelectElement).options).map((o) => o.value);
-    expect(opts).toEqual(['manager', 'support']);
+    expect(opts).toEqual(['admin', 'manager', 'support']);
   });
 });
 

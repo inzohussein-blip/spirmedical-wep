@@ -109,7 +109,7 @@ spirmedical-wep/
 │   ├── lib/                     المنطق: auth, supabase, whatsapp, services, validations …
 │   └── types/database.ts        أنواع Supabase المولَّدة — npm run db:types
 ├── supabase/
-│   ├── migrations/              0001 → 0051 (انظر «قاعدة البيانات»)
+│   ├── migrations/              0001 → 0052 (انظر «قاعدة البيانات»)
 │   └── *.sql                    أدوات فحصٍ يدويّة (verify, health-check)
 ├── tests/                       حرّاسٌ ساكنة وسلوكية (npx jest)
 ├── tools/mobile-audit/          تدقيقُ الهاتف محلّياً: محاكي Supabase + Playwright (انظر README فيه)
@@ -304,7 +304,7 @@ spirmedical-wep/
 - **Supabase** — المشروع `ioulxemokusfeykjcaxg`.
 - `src/types/database.ts` مولَّدٌ من الإنتاج (93 جدولاً) — أعِد توليده بعد أيّ ترحيل
   بـ`npm run db:types`.
-- **الترحيلات** في `supabase/migrations/0001…0051`.
+- **الترحيلات** في `supabase/migrations/0001…0052`.
   - `0001–0010` ليست في سجلّ Supabase (أُنشئت الجداول بطريقةٍ أخرى): **كلُّ إصلاحٍ ترحيلٌ جديد**، لا تعديلٌ لملفٍّ قديم.
   - مخطَّط `private` للدوالّ المُفوَّضة (`SECURITY DEFINER`)، وكلُّ دالّةٍ تُعلن `SET search_path = public, pg_temp`.
   - PostGIS مُسقَط عمداً (0025)؛ مناطق الخدمة `jsonb` + اختبار الشعاع (0030).
@@ -340,6 +340,7 @@ spirmedical-wep/
 | 0049 | `auth_login_pins` — رمزُ الدخول (PIN) للحسابات الهاتفيّة، للخادم وحده |
 | 0050 | `phone_verifications` و`wa_gateway_status` — التحقّق العكسيّ عبر واتساب، للخادم وحده |
 | 0051 | فهرسُ `phone_verifications.user_id` |
+| 0052 | سياستا `app_theme_settings`: المديرُ يحفظ الألوان كالمدير العامّ |
 
 ```bash
 npm run db:link     # ربط المشروع

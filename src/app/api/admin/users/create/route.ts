@@ -119,10 +119,10 @@ export async function POST(request: Request) {
       );
     }
 
-    // فقط super_admin يستطيع إنشاء super_admin أو admin
-    if ((body.role === 'super_admin' || body.role === 'admin') && caller.role !== 'super_admin') {
+    // المديرُ ينشئ مديراً ومشرفاً ودعماً؛ والمديرُ العامّ وحده ينشئ مديراً عامّاً (لا ترقيةَ فوق الذات)
+    if (body.role === 'super_admin' && caller.role !== 'super_admin') {
       return NextResponse.json(
-        { success: false, error: 'إنشاءُ مديرٍ للمدير العام وحده' },
+        { success: false, error: 'إنشاءُ مديرٍ عامٍّ للمدير العام وحده' },
         { status: 403 }
       );
     }

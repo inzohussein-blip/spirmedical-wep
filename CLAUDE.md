@@ -31,7 +31,7 @@
 | التنسيق | `app/styles/shared.css` (رموز + حارس iOS) · `app.css` (شاشات التطبيق) · `marketing.css` · `admin.css` |
 | الفهرسة | `app/layout.tsx` · `components/seo/JsonLd.tsx` · `app/sitemap.ts` · `app/robots.ts` |
 | الكرون | `vercel.json` → `app/api/cron/*` · `app/api/notifications/process` |
-| قاعدة البيانات | `supabase/migrations/` (آخرها 0051) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
+| قاعدة البيانات | `supabase/migrations/` (آخرها 0052) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
 | الاختبارات | `tests/` — اسمُ الحارس يدلّ على مجاله (`rls-*`، `order-flow-modals`، `specialist-screens`…) |
 
 **أدوات التحقّق البصريّ** في [`tools/mobile-audit/`](tools/mobile-audit/README.md):
@@ -296,8 +296,11 @@
   الحساب رقمه ويختار رمزه — لا يعرفه المدير)، وإلّا **الرمزُ المؤقّت**. و`/admin/whatsapp` يعرض الوضعَ والبوّابةَ
   وحركةَ ٢٤ ساعة. و«نسيت الرمز» (`/forgot`) يعرض «استعادة عبر واتساب» حين يعمل.
 - `/login/reset-pin`: لا بدءَ والتحقّقُ معطّل، ولا مسَّ لحساب بريد، والرمزُ الجديد يُفحص **قبل** استهلاك التحقّق.
-- **معلَّقٌ على المالك:** حسابُه `admin` لا `super_admin`، و`admin-types.ts` يمنح الدورين الصلاحياتِ نفسها، لكنّ
-  الإعدادات (ومنها مدّة الرفض التلقائيّ) والألوانَ والبيانات الأوّليّة وإنشاءَ المديرين تشترط `super_admin` بالاسم.
+- **المديرُ (`admin`) = المديرُ العامّ (قرار المالك):** كلُّ بوّابةٍ تستعمل `isSuperAdmin()` (يقبل الدورين) لا
+  `role === 'super_admin'`. **الاستثناءُ الوحيد:** منحُ دور «مدير عام» أو المسُّ بصاحبه للمدير العامّ وحده (الإنشاء،
+  والتعيين، والتغيير، والإزالة — `topRoleBlocked`)؛ كان في `admins/actions.ts` شرطٌ فارغٌ يدّعي ذلك.
+  وحفظُ الألوان يَعُدّ الصفوف (سياسةٌ ترفض بصمت كانت تعطي «تمّ»)، و0052 يوسّع سياستيها للمدير.
+  الحارس: `tests/admin-role-parity.test.ts`.
 - الحرّاس: `admin-create-user`، `whatsapp-pin-reset`، `admin-whatsapp-ui`، `admin-schema-refs`.
 
 ## 🚨 تنبيهُ المالك وبوّابة CI

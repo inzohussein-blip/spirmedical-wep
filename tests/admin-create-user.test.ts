@@ -177,9 +177,16 @@ describe('③ حسابُ الإدارة يدخل بالبريد', () => {
     expect(r.data.error).toMatch(/البريد/);
   });
 
-  it('🚨 بالبريد ← كلمةُ سرٍّ مؤقّتة (لا رمز)، والمديرُ العامّ وحده ينشئ مديراً', async () => {
+  it('🚨 المديرُ ينشئ مديراً (صلاحيّاتُه كالعامّ)، والمديرُ العامّ وحده ينشئ مديراً عامّاً', async () => {
     const asAdmin = await create({ role: 'admin', phone: '07701234567', full_name: 'م', email: 'm@x.io' });
-    expect(asAdmin.status).toBe(403);
+    expect(asAdmin.status).toBe(200);
+    expect(asAdmin.data).toMatchObject({ success: true, login_method: 'email_password' });
+    state.users = [];
+    const superByAdmin = await create({ role: 'super_admin', phone: '07701234568', full_name: 'ع', email: 's@x.io' });
+    expect(superByAdmin.status).toBe(403);
+  });
+
+  it('🚨 بالبريد ← كلمةُ سرٍّ مؤقّتة (لا رمز)', async () => {
     state.caller = { id: 's', role: 'super_admin' };
     const { data } = await create({ role: 'manager', phone: '07701234567', full_name: 'مشرف', email: 'm@x.io' });
     expect(data).toMatchObject({ success: true, login_method: 'email_password', email: 'm@x.io' });

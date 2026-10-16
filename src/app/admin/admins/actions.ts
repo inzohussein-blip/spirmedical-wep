@@ -14,7 +14,20 @@ async function requireSuperAdmin() {
     .from('users').select('role').eq('id', user.id).single();
 
   if (!isSuperAdmin(profile?.role)) return { ok: false as const, error: 'forbidden', supabase: null };
-  return { ok: true as const, user, supabase };
+  return { ok: true as const, user, supabase, callerIsTop: profile?.role === 'super_admin' };
+}
+
+
+/** منحُ «مدير عام» أو المسُّ بمديرٍ عامّ للمدير العامّ وحده (المديرُ كالعامّ في غير ذلك). */
+async function topRoleBlocked(
+  auth: { supabase: Awaited<ReturnType<typeof createClient>>; callerIsTop: boolean },
+  userId: string,
+  newRole?: string,
+): Promise<string | null> {
+  if (auth.callerIsTop) return null;
+  if (newRole === 'super_admin') return 'منحُ دور المدير العامّ للمدير العام وحده';
+  const { data: target } = await auth.supabase.from('users').select('role').eq('id', userId).single();
+  return target?.role === 'super_admin' ? 'تغييرُ دور المدير العامّ للمدير العام وحده' : null;
 }
 
 /**
@@ -33,11 +46,10 @@ export async function promoteToAdmin(phone: string, role: AdminRole) {
 
   if (!target) return { ok: false, error: 'لم يتم العثور على مستخدم بهذا الرقم' };
 
-  // لا يمكن تخفيض super_admin إلا super_admin آخر
-  if (target.role === 'super_admin' || target.role === 'admin') {
-    if (role !== 'super_admin' && role !== 'admin') {
-      // okay - allow demotion
-    }
+  // المديرُ كالمدير العامّ في كلّ شيء إلّا هذا: منحُ دور «مدير عام» أو المسُّ بمديرٍ عامّ
+  // للمدير العامّ وحده — وإلّا رقّى المديرُ نفسَه أو غيرَه فوق دوره. (كان هنا شرطٌ فارغ.)
+  if ((role === 'super_admin' || target.role === 'super_admin') && !auth.callerIsTop) {
+    return { ok: false, error: 'منحُ دور المدير العامّ أو تغييرُه للمدير العام وحده' };
   }
 
   const { error } = await auth.supabase
@@ -67,6 +79,8 @@ export async function revokeAdminRole(userId: string) {
 
   // لا يمكن إزالة نفسك
   if (userId === auth.user!.id) return { ok: false, error: 'لا يمكن إزالة صلاحياتك بنفسك' };
+  const blocked = await topRoleBlocked(auth, userId);
+  if (blocked) return { ok: false, error: blocked };
 
   const { error } = await auth.supabase
     .from('users')
@@ -92,6 +106,8 @@ export async function revokeAdminRole(userId: string) {
 export async function changeAdminRole(userId: string, newRole: AdminRole) {
   const auth = await requireSuperAdmin();
   if (!auth.ok) return { ok: false, error: auth.error };
+  const blocked = await topRoleBlocked(auth, userId, newRole);
+  if (blocked) return { ok: false, error: blocked };
 
   const { error } = await auth.supabase
     .from('users')

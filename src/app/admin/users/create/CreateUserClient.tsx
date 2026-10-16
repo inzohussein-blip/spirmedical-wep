@@ -59,7 +59,7 @@ const GOVERNORATES = [
 
 const STAFF_ROLES: { value: Role; label: string; description: string; superOnly: boolean }[] = [
   { value: 'super_admin', label: '👑 مدير عام', description: 'صلاحيات كاملة', superOnly: true },
-  { value: 'admin', label: '🛡️ مدير', description: 'إدارة عامة', superOnly: true },
+  { value: 'admin', label: '🛡️ مدير', description: 'إدارة عامة', superOnly: false },
   { value: 'manager', label: '📊 مشرف', description: 'إدارة العمليات', superOnly: false },
   { value: 'support', label: '💬 دعم', description: 'دعم العملاء', superOnly: false },
 ];

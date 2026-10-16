@@ -82,7 +82,8 @@ export async function updateTheme(
   }
 
   // 5. تحديث
-  const { error: updateError } = await supabase
+  // `.select` يعدّ الصفوف: سياسةٌ ترفض بصمت (0 صفّ) كانت تعطي «تمّ» ولا يُحفظ شيء
+  const { data: updatedRows, error: updateError } = await supabase
     .from('app_theme_settings')
     .update({
       primary_color: input.primary_color,
@@ -93,7 +94,8 @@ export async function updateTheme(
       theme_name: input.theme_name ?? 'Custom',
       updated_by: user.id,
     })
-    .eq('id', activeTheme.id);
+    .eq('id', activeTheme.id)
+    .select('id');
 
   if (updateError) {
     console.error('[Theme] Update failed:', updateError);
@@ -101,6 +103,10 @@ export async function updateTheme(
       success: false,
       message: 'فشل التحديث: ' + updateError.message,
     };
+  }
+
+  if (!updatedRows || updatedRows.length === 0) {
+    return { success: false, message: 'لم يُحفظ شيء — لا صلاحيةَ كتابةٍ على ألوان المنصّة' };
   }
 
   // 6. تسجيل العملية في admin_actions
