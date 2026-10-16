@@ -2,10 +2,14 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import ResetLoginPinButton from '@/app/admin/_components/ResetLoginPinButton';
+import { isWaVerifyAvailable } from '@/lib/whatsapp/inbound-verify';
+import { resetPinUrl } from '@/lib/whatsapp/share';
+
 import { oneOfOr } from '@/lib/format/vocabulary';
 import { toSpecialistType, SPECIALIST_META } from '@/lib/specialist-types';
 import SpecialistActions from './SpecialistActions';
 import { signedSpecialistDocs, SPECIALIST_DOC_FIELDS } from '@/lib/specialist-documents';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://spir-medical.com';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,6 +31,12 @@ export default async function SpecialistDetailPage(props: { params: Promise<{ id
     .single();
 
   if (!specialist) notFound();
+
+  // رابطُ استعادة الرمز عبر واتساب — حين يعمل التحقّقُ العكسيّ ويكون للحساب رقمٌ صالح
+  const waResetUrl =
+    specialist.phone && /^\+9647\d{9}$/.test(specialist.phone) && (await isWaVerifyAvailable().catch(() => false))
+      ? resetPinUrl(SITE_URL, specialist.phone)
+      : null;
 
   // إحصائيات
   const [{ count: totalOrders }, { count: completedOrders }, { data: ratings }] = await Promise.all([
@@ -200,7 +210,14 @@ export default async function SpecialistDetailPage(props: { params: Promise<{ id
             currentType={specialistType}
             isSuspended={specialist.is_suspended ?? false}
           />
-          <ResetLoginPinButton userId={specialist.id} />
+          <ResetLoginPinButton
+            userId={specialist.id}
+            phone={specialist.phone}
+            name={specialist.full_name}
+            role={specialist.role}
+            activationUrl={waResetUrl}
+            loginUrl={`${SITE_URL}/login/phone`}
+          />
         </div>
 
       </div>

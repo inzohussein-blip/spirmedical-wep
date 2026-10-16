@@ -58,9 +58,9 @@ export async function assignOrderToSpecialist(orderId: string, specialistId: str
     const { data: order } = await auth.supabase
       .from('appointments')
       .select(`
-        id, user_id, service_type, scheduled_at,
+        id, user_id, assigned_specialist_id, service_type, scheduled_at,
         users:user_id (full_name),
-        specialist:assigned_specialist_id (full_name, user_id)
+        specialist:assigned_specialist_id (full_name)
       `)
       .eq('id', orderId)
       .single();
@@ -68,10 +68,13 @@ export async function assignOrderToSpecialist(orderId: string, specialistId: str
     if (order) {
       const orderRow = order as unknown as {
         user_id: string;
+        assigned_specialist_id: string | null;
         service_type: string;
         scheduled_at: string;
         users: { full_name: string | null } | null;
-        specialist: { full_name: string | null; user_id: string | null } | null;
+        // `users` بلا عمود user_id: كان طلبُه يُسقط الاستعلامَ كلَّه فلا يصل إشعارٌ لأحد.
+        // معرّفُ المختصّ هو `assigned_specialist_id` نفسُه.
+        specialist: { full_name: string | null } | null;
       };
 
       const specialistName = orderRow.specialist?.full_name || 'أخصائي';
@@ -87,8 +90,8 @@ export async function assignOrderToSpecialist(orderId: string, specialistId: str
       }
 
       // Push للأخصائي
-      if (orderRow.specialist?.user_id) {
-        notifyNewOrderForSpecialist(orderRow.specialist.user_id, {
+      if (orderRow.assigned_specialist_id) {
+        notifyNewOrderForSpecialist(orderRow.assigned_specialist_id, {
           orderId,
           serviceName: orderRow.service_type,
           patientName,

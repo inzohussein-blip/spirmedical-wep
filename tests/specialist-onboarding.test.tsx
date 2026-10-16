@@ -20,7 +20,7 @@ const read = (p: string) => readFileSync(join(process.cwd(), p), 'utf8');
 describe('① بريدٌ اصطناعيّ واحد', () => {
   it('🚨 إنشاءُ الإدارة يستعمل phoneToEmail المشترك', () => {
     const route = read('src/app/api/admin/users/create/route.ts');
-    expect(route).toMatch(/import \{ phoneToEmail \} from '@\/lib\/auth\/phone-credentials'/);
+    expect(route).toMatch(/import \{[^}]*\bphoneToEmail\b[^}]*\} from '@\/lib\/auth\/phone-credentials'/);
     expect(route).not.toMatch(/function phoneToEmail/);
     const code = route.split('\n').filter((l) => !/^\s*(\/\/|\*)/.test(l)).join('\n');
     expect(code).not.toContain('@spir.app');

@@ -86,6 +86,9 @@ export default function OpsHealthCards({ health }: { health: OpsHealth }) {
               : 'لم تصل أيُّ نبضةٍ بعد'}{' '}
             · افتح صفحةَ <code dir="ltr">/qr</code> في خدمة Railway وأعد ربطَ الرقم إن طُلب.
           </p>
+          <div style={{ marginTop: 10 }}>
+            <Link href="/admin/whatsapp" style={linkBtn}>حالة واتساب</Link>
+          </div>
         </div>
       )}
     </section>

@@ -314,3 +314,45 @@ export async function consumeVerification(
   const row = data?.[0];
   return row ? { phone: row.phone, userId: row.user_id } : null;
 }
+
+// ─────────────────────────────────────────────────────────
+// لوحةُ الإدارة: حالةُ البوّابة وحركةُ الرموز
+// ─────────────────────────────────────────────────────────
+
+export interface WaOverview {
+  mode: WaVerifyMode;
+  provider: WaVerifyProvider;
+  number: string | null;
+  secretSet: boolean;
+  available: boolean;
+  gateway: { connected: boolean; lastSeenAt: string; detail: Record<string, unknown> } | null;
+  /** آخر ٢٤ ساعة: طُلب، وتحقّق، واستُعمل، وانتهى/أُبطل */
+  last24h: { started: number; verified: number; consumed: number; expired: number };
+}
+
+export async function getWaOverview(now: Date = new Date()): Promise<WaOverview> {
+  const cfg = getWaVerifyConfig();
+  const sb = createAdminClient();
+  const since = new Date(now.getTime() - 86_400_000).toISOString();
+  const [{ data: gw }, { data: rows }] = await Promise.all([
+    sb.from('wa_gateway_status').select('connected, last_seen_at, detail').eq('provider', 'baileys').maybeSingle(),
+    sb.from('phone_verifications').select('status').gte('created_at', since),
+  ]);
+  const count = (s: string) => (rows ?? []).filter((r) => r.status === s).length;
+  return {
+    mode: cfg.mode,
+    provider: cfg.provider,
+    number: cfg.number,
+    secretSet: cfg.secret !== null,
+    available: await isWaVerifyAvailable(cfg, now.getTime()).catch(() => false),
+    gateway: gw
+      ? { connected: gw.connected, lastSeenAt: gw.last_seen_at, detail: (gw.detail as Record<string, unknown>) ?? {} }
+      : null,
+    last24h: {
+      started: rows?.length ?? 0,
+      verified: count('verified'),
+      consumed: count('consumed'),
+      expired: count('expired'),
+    },
+  };
+}

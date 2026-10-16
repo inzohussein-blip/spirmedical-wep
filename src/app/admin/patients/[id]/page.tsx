@@ -3,8 +3,12 @@ import { oneOfOr } from '@/lib/format/vocabulary';
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import ResetLoginPinButton from '@/app/admin/_components/ResetLoginPinButton';
+import { isWaVerifyAvailable } from '@/lib/whatsapp/inbound-verify';
+import { resetPinUrl } from '@/lib/whatsapp/share';
+
 import PatientCRMClient from './PatientCRMClient';
 import { EmptyState } from '@/components/ui';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://spir-medical.com';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,6 +30,12 @@ export default async function PatientDetailPage(props: { params: Promise<{ id: s
     .single();
 
   if (!patient) notFound();
+
+  // رابطُ استعادة الرمز عبر واتساب — حين يعمل التحقّقُ العكسيّ ويكون للحساب رقمٌ صالح
+  const waResetUrl =
+    patient.phone && /^\+9647\d{9}$/.test(patient.phone) && (await isWaVerifyAvailable().catch(() => false))
+      ? resetPinUrl(SITE_URL, patient.phone)
+      : null;
 
   // إحصائيات + بيانات إضافية
   const [
@@ -168,7 +178,14 @@ export default async function PatientDetailPage(props: { params: Promise<{ id: s
             }))}
             isSuspended={patient.is_suspended ?? false}
           />
-          <ResetLoginPinButton userId={patient.id} />
+          <ResetLoginPinButton
+            userId={patient.id}
+            phone={patient.phone}
+            name={patient.full_name}
+            role={patient.role}
+            activationUrl={waResetUrl}
+            loginUrl={`${SITE_URL}/login/phone`}
+          />
         </div>
 
       </div>

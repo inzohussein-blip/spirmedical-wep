@@ -41,6 +41,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/admin/patients', icon: '👤', label: 'المرضى (CRM)', permission: 'patients.view' },
   { href: '/admin/orders', icon: '📋', label: 'الطلبات', permission: 'orders.view' },
   { href: '/admin/notifications', icon: '💬', label: 'الإشعارات' },
+  { href: '/admin/whatsapp', icon: '📲', label: 'التحقّق عبر واتساب' },
   { href: '/admin/stories', icon: '📸', label: 'القصص الترويجية' },
   { href: '/admin/reports', icon: '📈', label: 'التقارير', permission: 'reports.view' },
   { href: '/admin/campaigns', icon: '📧', label: 'الحملات', permission: 'campaigns.manage' },

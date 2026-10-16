@@ -5282,3 +5282,32 @@ html {
 @media (prefers-reduced-motion: reduce) {
   .spreg-spinner { animation-duration: 2.4s; }
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   📲 التحقّق عبر واتساب (استعادة رمز الدخول / تفعيل حساب الإدارة)
+   ════════════════════════════════════════════════════════════════════ */
+.wa-verify { display: grid; gap: 14px; text-align: center; }
+.wa-verify-lead { font-size: 14px; color: var(--ink-2); line-height: 1.8; margin: 0; }
+.wa-verify-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 56px; padding: 14px 18px; border-radius: 14px;
+  background: #1FA855; color: #fff; font-size: 16px; font-weight: 800; text-decoration: none;
+}
+.wa-verify-btn:active { transform: scale(0.98); }
+.wa-verify-wait {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-size: 13px; color: var(--ink-3);
+}
+.wa-verify-dot {
+  width: 10px; height: 10px; border-radius: 50%; background: #1FA855;
+  animation: wa-pulse 1.2s ease-in-out infinite;
+}
+@keyframes wa-pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .wa-verify-dot { animation: none; } }
+.wa-verify-manual { font-size: 13px; color: var(--ink-3); text-align: start; }
+.wa-verify-manual > summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; }
+.wa-verify-manual p { margin: 0; line-height: 1.9; }
+.wa-verify-ok {
+  padding: 10px 14px; border-radius: 12px; margin-bottom: 12px;
+  background: var(--emerald-soft); color: var(--emerald-deep); font-weight: 800; font-size: 14px; text-align: center;
+}
