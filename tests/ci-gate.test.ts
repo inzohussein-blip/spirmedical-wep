@@ -66,8 +66,7 @@ describe('ترقياتٌ لا تُدمج آليّاً (Dependabot)', () => {
   it.each(['typescript', 'next', 'eslint-config-next', 'jest', 'jest-environment-jsdom', '@types/jest'])(
     '🚨 %s: لا قفزةَ رئيسيّة آليّة — #30 (TypeScript 7) أوقف النشر',
     (name) => {
-      const esc = name.replace(/[/.]/g, '\\$&');
-      expect(dep).toMatch(new RegExp(`dependency-name: '${esc}'\n\\s+update-types: \\['version-update:semver-major'\\]`));
+      expect(dep).toContain(`- dependency-name: '${name}'\n        update-types: ['version-update:semver-major']`);
     },
   );
 
