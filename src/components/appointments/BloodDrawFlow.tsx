@@ -158,7 +158,7 @@ export default function BloodDrawFlow({
   const dateRef = useRef<HTMLInputElement>(null);
   const timeRef = useRef<HTMLInputElement>(null);
 
-  const fieldRefs: Record<string, RefObject<HTMLElement>> = {
+  const fieldRefs: Record<string, RefObject<HTMLElement | null>> = {
     tests: testsRef,
     address: addressRef,
     phone: phoneRef,
