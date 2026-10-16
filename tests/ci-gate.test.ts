@@ -48,3 +48,23 @@ describe('عتبةُ التغطية سُلّم', () => {
     expect(num('lines')).toBeLessThanOrEqual(16);
   });
 });
+
+describe('ترقياتٌ لا تُدمج آليّاً (Dependabot)', () => {
+  const dep = read('.github/dependabot.yml');
+  const pkg = JSON.parse(read('package.json'));
+
+  it('🚨 Supabase لا يُرقّى آليّاً — #11 أوقف النشر على Vercel', () => {
+    expect(dep).toMatch(/- dependency-name: '@supabase\/ssr'\n(?!\s+update-types)/);
+    expect(dep).toMatch(/dependency-name: '@supabase\/supabase-js'\n\s+update-types: \['version-update:semver-minor', 'version-update:semver-major'\]/);
+  });
+
+  it('🚨 ESLint وتعريفاتُ Node: لا قفزةَ رئيسيّة آليّة', () => {
+    expect(dep).toMatch(/dependency-name: 'eslint'\n\s+update-types: \['version-update:semver-major'\]/);
+    expect(dep).toMatch(/dependency-name: '@types\/node'\n\s+update-types: \['version-update:semver-major'\]/);
+  });
+
+  it('🚨 إصدارا Supabase مثبَّتان بدقّة (بلا ^) على المجرَّب', () => {
+    expect(pkg.dependencies['@supabase/supabase-js']).toMatch(/^\d+\.\d+\.\d+$/);
+    expect(pkg.dependencies['@supabase/ssr']).toMatch(/^\d+\.\d+\.\d+$/);
+  });
+});
