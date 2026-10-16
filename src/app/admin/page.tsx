@@ -62,7 +62,7 @@ export default async function AdminDashboard() {
 
   // === جمع الإحصائيات ===
   // «اليوم» بتوقيت بغداد لا بتوقيت الخادم (UTC على Vercel) — وإلّا بدأ اليوم
-  // الساعة ٠٣:٠٠ بغداد وسقطت طلبات ما بعد منتصف الليل في حصيلة الأمس.
+  // الساعة 03:00 بغداد وسقطت طلبات ما بعد منتصف الليل في حصيلة الأمس.
   const todayStartDate = baghdadDayWindow().start;
   const todayStart = todayStartDate.toISOString();
   const yesterdayStart = new Date(todayStartDate.getTime() - 86400000).toISOString();
@@ -232,7 +232,7 @@ export default async function AdminDashboard() {
         <StatCard
           icon="📥"
           label="طلبات اليوم"
-          value={(todayOrders ?? 0).toLocaleString('ar-IQ')}
+          value={(todayOrders ?? 0).toLocaleString('ar-IQ-u-nu-latn')}
           sublabel={todayVsYesterday >= 0 ? `↑ ${todayVsYesterday} من الأمس` : `↓ ${Math.abs(todayVsYesterday)} من الأمس`}
           color="#0E5C4D"
           href="/admin/orders?filter=today"
@@ -240,20 +240,20 @@ export default async function AdminDashboard() {
         <StatCard
           icon="✅"
           label="مكتمل اليوم"
-          value={(todayCompleted ?? 0).toLocaleString('ar-IQ')}
+          value={(todayCompleted ?? 0).toLocaleString('ar-IQ-u-nu-latn')}
           color="#0E5C4D"
         />
         <StatCard
           icon="👤"
           label="إجمالي المرضى"
-          value={(totalPatients ?? 0).toLocaleString('ar-IQ')}
+          value={(totalPatients ?? 0).toLocaleString('ar-IQ-u-nu-latn')}
           color="#534AB7"
           href="/admin/patients"
         />
         <StatCard
           icon="👨‍⚕️"
           label="اختصاصيون نشطون"
-          value={(totalSpecialists ?? 0).toLocaleString('ar-IQ')}
+          value={(totalSpecialists ?? 0).toLocaleString('ar-IQ-u-nu-latn')}
           color="#B8540C"
           href="/admin/specialists"
         />
@@ -261,13 +261,13 @@ export default async function AdminDashboard() {
           icon="📊"
           label="معدل الإنجاز"
           value={`${completionRate}%`}
-          sublabel={`من ${(totalOrdersThisMonth ?? 0).toLocaleString('ar-IQ')} طلب هذا الشهر`}
+          sublabel={`من ${(totalOrdersThisMonth ?? 0).toLocaleString('ar-IQ-u-nu-latn')} طلب هذا الشهر`}
           color="#0E5C4D"
         />
         <StatCard
           icon="🚫"
           label="ملغاة (شهر)"
-          value={(cancelledThisMonth ?? 0).toLocaleString('ar-IQ')}
+          value={(cancelledThisMonth ?? 0).toLocaleString('ar-IQ-u-nu-latn')}
           color="#A82E3D"
         />
       </div>
@@ -303,28 +303,28 @@ export default async function AdminDashboard() {
         <StatCard
           icon="🦷"
           label="عيادات أسنان"
-          value={(dentalCount ?? 0).toLocaleString('ar-IQ')}
+          value={(dentalCount ?? 0).toLocaleString('ar-IQ-u-nu-latn')}
           color="#0F6B58"
           href="/admin/dental"
         />
         <StatCard
           icon="👓"
           label="متاجر نظارات"
-          value={(opticalCount ?? 0).toLocaleString('ar-IQ')}
+          value={(opticalCount ?? 0).toLocaleString('ar-IQ-u-nu-latn')}
           color="#C97916"
           href="/admin/optical"
         />
         <StatCard
           icon="🧠"
           label="أخصائيو نفس"
-          value={(mentalCount ?? 0).toLocaleString('ar-IQ')}
+          value={(mentalCount ?? 0).toLocaleString('ar-IQ-u-nu-latn')}
           color="#0F6B58"
           href="/admin/mental-health"
         />
         <StatCard
           icon="🥗"
           label="أخصائيو تغذية"
-          value={(nutritionCount ?? 0).toLocaleString('ar-IQ')}
+          value={(nutritionCount ?? 0).toLocaleString('ar-IQ-u-nu-latn')}
           color="#C97916"
           href="/admin/nutrition"
         />

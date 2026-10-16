@@ -298,7 +298,7 @@ export default function SearchClient() {
                                     fontWeight: 800,
                                   }}
                                 >
-                                  ٢٤/٧
+                                  24/7
                                 </span>
                               )}
                             </div>
@@ -351,7 +351,7 @@ export default function SearchClient() {
                                 flexShrink: 0,
                               }}
                             >
-                              {p.custom_price.toLocaleString('ar-IQ')} د.ع
+                              {p.custom_price.toLocaleString('ar-IQ-u-nu-latn')} د.ع
                             </div>
                           )}
                           <PhoneLink phone={p.phone}

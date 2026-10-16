@@ -60,7 +60,7 @@ function formatDateRelative(iso: string): string {
   const target = new Date(date.getFullYear(), date.getMonth(), date.getDate());
   const diffDays = Math.round((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
-  const time = date.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' });
+  const time = date.toLocaleTimeString('ar-IQ-u-nu-latn', { hour: '2-digit', minute: '2-digit' });
 
   if (diffDays === 0) return `اليوم · ${time}`;
   if (diffDays === 1) return `غداً · ${time}`;
@@ -68,7 +68,7 @@ function formatDateRelative(iso: string): string {
   if (diffDays > 0 && diffDays < 7) return `بعد ${diffDays} أيام · ${time}`;
   if (diffDays < 0 && diffDays > -7) return `قبل ${Math.abs(diffDays)} أيام`;
 
-  return date.toLocaleDateString('ar-IQ', { day: 'numeric', month: 'long', year: 'numeric' });
+  return date.toLocaleDateString('ar-IQ-u-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 export default async function AppointmentsPage(props: Props) {
@@ -80,7 +80,7 @@ export default async function AppointmentsPage(props: Props) {
   // 🔧 V32 FIX: نستخدم بداية اليوم (وليس اللحظة الحالية) لفلتر "القادمة".
   // المشكلة: طلب أُنشئ لوقت اليوم لكنه مضى بساعات كان يختفي من "القادمة".
   // «اليوم» بتوقيت بغداد لا بتوقيت الخادم (UTC على Vercel) — وإلّا بدأ اليوم
-  // الساعة ٠٣:٠٠ بغداد وسقطت مواعيد ما بعد منتصف الليل.
+  // الساعة 03:00 بغداد وسقطت مواعيد ما بعد منتصف الليل.
   const upcomingFrom = baghdadDayWindow().start.toISOString();
 
   let query = supabase

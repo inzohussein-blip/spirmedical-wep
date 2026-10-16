@@ -199,10 +199,10 @@ export default function SpecialistRegisterClient({ initialError }: { initialErro
         noValidate
         aria-busy={busy}
       >
-        {/* ─── ١. بياناتك ─── */}
+        {/* ─── 1. بياناتك ─── */}
         <fieldset className="spreg-section" disabled={busy}>
           <legend className="spreg-section-head">
-            <span className="spreg-step" aria-hidden="true">١</span>
+            <span className="spreg-step" aria-hidden="true">1</span>
             <span>بياناتك</span>
           </legend>
 
@@ -256,10 +256,10 @@ export default function SpecialistRegisterClient({ initialError }: { initialErro
           </div>
         </fieldset>
 
-        {/* ─── ٢. الدخول ─── */}
+        {/* ─── 2. الدخول ─── */}
         <fieldset className="spreg-section" disabled={busy}>
           <legend className="spreg-section-head">
-            <span className="spreg-step" aria-hidden="true">٢</span>
+            <span className="spreg-step" aria-hidden="true">2</span>
             <span>بيانات الدخول</span>
           </legend>
 
@@ -315,10 +315,10 @@ export default function SpecialistRegisterClient({ initialError }: { initialErro
           </div>
         </fieldset>
 
-        {/* ─── ٣. الاختصاص ─── */}
+        {/* ─── 3. الاختصاص ─── */}
         <fieldset className="spreg-section" disabled={busy}>
           <legend className="spreg-section-head">
-            <span className="spreg-step" aria-hidden="true">٣</span>
+            <span className="spreg-step" aria-hidden="true">3</span>
             <span>اختصاصك</span>
           </legend>
 
@@ -370,10 +370,10 @@ export default function SpecialistRegisterClient({ initialError }: { initialErro
           )}
         </fieldset>
 
-        {/* ─── ٤. الوثائق ─── */}
+        {/* ─── 4. الوثائق ─── */}
         <fieldset className="spreg-section" disabled={busy}>
           <legend className="spreg-section-head">
-            <span className="spreg-step" aria-hidden="true">٤</span>
+            <span className="spreg-step" aria-hidden="true">4</span>
             <span>إثبات الشخصية</span>
           </legend>
 

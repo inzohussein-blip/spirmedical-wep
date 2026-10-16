@@ -75,7 +75,7 @@ export default function GuestSymptomCheckerClient() {
         urgency: 'emergency',
         title: 'حالة طارئة محتملة',
         message: 'الأعراض تستوجب تقييماً طبياً فورياً',
-        specialist: 'إسعاف فوري ١٢٢',
+        specialist: 'إسعاف فوري 122',
         action: 'اتصل بالإسعاف الآن',
       };
     }
@@ -85,7 +85,7 @@ export default function GuestSymptomCheckerClient() {
       return {
         urgency: 'urgent',
         title: 'يُستحسن استشارة عاجلة',
-        message: 'يُنصح بمراجعة طبيب خلال ٢٤ ساعة',
+        message: 'يُنصح بمراجعة طبيب خلال 24 ساعة',
         specialist: ids.includes('chest-pain') ? 'طبيب قلب' : 'طبيب باطنية',
         action: 'احجز استشارة طبية',
       };
@@ -96,7 +96,7 @@ export default function GuestSymptomCheckerClient() {
       return {
         urgency: 'moderate',
         title: 'مراجعة طبيب موصى بها',
-        message: 'الأعراض قد تستدعي تقييماً طبياً خلال ٢-٣ أيام',
+        message: 'الأعراض قد تستدعي تقييماً طبياً خلال 2-3 أيام',
         specialist: 'طبيب عام',
         action: 'احجز موعد',
       };

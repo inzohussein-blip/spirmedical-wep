@@ -214,7 +214,7 @@ describe('③ توقيعُ البوّابة', () => {
 
   it('رسائلُ بلا رمز لا تغادر البوّابة', () => {
     expect(gw.looksLikeCode('مرحبا، كم السعر؟')).toBe(false);
-    expect(gw.looksLikeCode('رمز التحقّق: ٤٨٢٩١٣')).toBe(true);
+    expect(gw.looksLikeCode('رمز التحقّق: 482913')).toBe(true);
     expect(gw.messageText({ extendedTextMessage: { text: 'x 482913' } })).toBe('x 482913');
   });
 

@@ -155,7 +155,7 @@ export default function NursesAdminClient({ nurses }: Props) {
             <tbody>
               {filtered.map((nurse) => {
                 const status = STATUS_META[nurse.approval_status] ?? STATUS_META.pending;
-                const regDate = new Date(nurse.created_at).toLocaleDateString('ar-IQ', { 
+                const regDate = new Date(nurse.created_at).toLocaleDateString('ar-IQ-u-nu-latn', { 
                   day: 'numeric', month: 'short', year: 'numeric' 
                 });
                 

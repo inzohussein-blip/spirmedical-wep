@@ -1,5 +1,7 @@
 import { areaServedJsonLd } from '@/lib/seo/coverage';
 import JsonLd from './JsonLd';
+import { SITE_ORIGIN } from '@/lib/seo/origin';
+import { BRAND, SERVICES, SUMMARY_AR } from '@/lib/seo/facts';
 
 // ============================================================
 // 🏷️ Structured Data (JSON-LD) - Schema.org
@@ -8,25 +10,29 @@ import JsonLd from './JsonLd';
 // تطبق Schema.org/MedicalBusiness + Organization + WebSite
 // ============================================================
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spir-medical.com';
+const SITE_URL = SITE_ORIGIN;
 
-// 1. Organization Schema
+// 1. Organization Schema — حقائقُه من src/lib/seo/facts.ts (المصدرُ نفسُه لـllms.txt)
+// كان الوصف «15 خدمة · 18 محافظة · 24/7»، والتحاليل «أكثر من 200 نوع»، وتخصّصاتٌ تسعة
+// بلا مصدر — تعارضُ coverage.ts (ثماني محافظات) وما يُطلب فعلاً من التطبيق.
 const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'MedicalBusiness',
-  name: 'Spir Medical',
-  alternateName: 'سباير ميديكال',
-  description:
-    'منصة طبية رقمية متكاملة في العراق · 15 خدمة طبية · 18 محافظة · 24/7 · سحب دم منزلي · تحاليل · استشارات · صناعة عراقية',
+  '@id': `${SITE_URL}/#organization`,
+  name: BRAND.name,
+  alternateName: BRAND.nameAr,
+  description: SUMMARY_AR,
   url: SITE_URL,
   logo: `${SITE_URL}/logo.png`,
   image: `${SITE_URL}/api/og`,
-  telephone: '+9647803993585',
-  email: 'support@spir-medical.com',
+  telephone: BRAND.telephone,
+  email: BRAND.email,
+  paymentAccepted: 'Cash',
+  currenciesAccepted: 'IQD',
   address: {
     '@type': 'PostalAddress',
-    addressLocality: 'النجف',
-    addressRegion: 'النجف',
+    addressLocality: BRAND.locality,
+    addressRegion: BRAND.locality,
     addressCountry: 'IQ',
   },
   geo: {
@@ -34,65 +40,25 @@ const organizationSchema = {
     latitude: 32.0000,
     longitude: 44.3333,
   },
-  // مُشتقّةٌ من المرجع الواحد. كانت هنا ١٧ مُدخلاً مكتوبةً باليد: «بابل»
-  // مكرّرة، و«الديوانية» و«القادسية» وهما المحافظةُ نفسها باسمين —
-  // وتعارضُ بقيّةَ ادّعاءات الموقع عن التغطية (src/lib/seo/coverage.ts).
+  // مُشتقّةٌ من المرجع الواحد (src/lib/seo/coverage.ts).
   areaServed: areaServedJsonLd(),
-  medicalSpecialty: [
-    'GeneralPractice',
-    'Pediatric',
-    'Cardiovascular',
-    'Dermatologic',
-    'Nutritionist',
-    'Dentistry',
-    'Ophthalmologic',
-    'Psychiatric',
-    'Physiotherapy',
-  ],
-  availableService: [
-    {
-      '@type': 'MedicalProcedure',
-      name: 'سحب دم منزلي',
-      description: 'خدمة سحب الدم في منزل المريض',
-    },
-    {
-      '@type': 'MedicalTest',
-      name: 'تحاليل مختبرية',
-      description: 'أكثر من 200 نوع فحص مختبري',
-    },
-    {
-      '@type': 'MedicalProcedure',
-      name: 'تمريض منزلي',
-      description: 'زرق إبر، عناية بالجروح، خدمات صحية سريعة',
-    },
-    {
-      '@type': 'MedicalTherapy',
-      name: 'استشارة طبية',
-      description: 'استشارات طبية فورية مع أطباء متخصصين',
-    },
-  ],
-  sameAs: [
-    // 'https://www.facebook.com/spirmedical',
-    // 'https://twitter.com/spirmedical',
-    // 'https://www.instagram.com/spirmedical',
-  ],
+  availableService: SERVICES.filter((s) => s.status === 'available').map((s) => ({
+    '@type': 'MedicalProcedure',
+    name: s.nameAr,
+    description: s.descriptionAr,
+    ...(s.publicPath ? { url: `${SITE_URL}${s.publicPath}` } : {}),
+  })),
 };
 
-// 2. WebSite Schema (for SearchAction)
+// 2. WebSite Schema — بلا SearchAction: الرئيسية لا تقرأ `?q=`، فكان يَعِد Google ببحثٍ غير موجود.
 const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'Spir Medical · سباير ميديكال',
+  '@id': `${SITE_URL}/#website`,
+  name: BRAND.citeAs,
   url: SITE_URL,
-  inLanguage: ['ar', 'en', 'ku'],
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: {
-      '@type': 'EntryPoint',
-      urlTemplate: `${SITE_URL}/?q={search_term_string}`,
-    },
-    'query-input': 'required name=search_term_string',
-  },
+  inLanguage: BRAND.language,
+  publisher: { '@id': `${SITE_URL}/#organization` },
 };
 
 // 3. BreadcrumbList Schema

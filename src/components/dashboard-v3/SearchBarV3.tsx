@@ -34,8 +34,8 @@ export default function SearchBarV3({
         margin: '0 14px 14px',
         background: '#F1F3F4',
         borderRadius: 14,
-        // لا حشوةَ رأسيّة: الحقلُ يملأ الارتفاع كلّه. كان ~٢١px داخل صندوقٍ
-        // ~٦٤px، فاللمسُ فوقه أو تحته لا يُركّزه.
+        // لا حشوةَ رأسيّة: الحقلُ يملأ الارتفاع كلّه. كان ~21px داخل صندوقٍ
+        // ~64px، فاللمسُ فوقه أو تحته لا يُركّزه.
         padding: '0 12px',
         display: 'flex',
         alignItems: 'center',

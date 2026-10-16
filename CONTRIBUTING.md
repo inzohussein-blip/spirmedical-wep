@@ -88,7 +88,7 @@ security(rate-limit): tighten OTP attempts
 
 أرسل تفاصيل لـ: `security@spirmedical.iq`
 
-سنرد خلال ٤٨ ساعة.
+سنرد خلال 48 ساعة.
 
 ---
 

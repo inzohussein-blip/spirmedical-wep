@@ -16,20 +16,16 @@ import StandaloneAppGuard from '@/components/pwa/StandaloneAppGuard';
 // الرئيسية وتُحمَّل بعد الـ hydration (أخفّ على كل صفحة).
 import DeferredGlobals from '@/components/pwa/DeferredGlobals';
 
-// خطوط — Tajawal فقط (وحّدنا الخط في V15)
+// خطوط — IBM Plex Sans Arabic (قرار المالك، 16 تشرين الأول: «خطٌّ احترافيّ أوضح» بدل Tajawal)
 // JetBrains-Mono للأرقام والوقت فقط
-import '@fontsource/tajawal/400.css';
-import '@fontsource/tajawal/500.css';
-import '@fontsource/tajawal/700.css';
-import '@fontsource/tajawal/800.css';
-// ٩٠٠ يُستعمل ٢٤٧ مرّةً في الواجهة ولم يكن يُستورَد.
 //
-// ولا يعني ذلك تغليظاً حسابياً: خوارزمية المطابقة في CSS للوزن المطلوب
-// فوق ٥٠٠ تبحث صعوداً أوّلاً ثمّ نزولاً، فكان ٩٠٠ يهبط إلى ٨٠٠ **الحقيقيّ**
-// لا إلى تزويرٍ للحروف. العطب أدقّ من ذلك وأصعب رؤيةً: العنوان المكتوب
-// ٩٠٠ والنصّ المكتوب ٨٠٠ يظهران بالثقل نفسه، فيضيع تدرّجٌ كامل من
-// التسلسل البصريّ كان مقصوداً في ٢٤٧ موضعاً.
-import '@fontsource/tajawal/900.css';
+// العائلة تشحن 100–700 ولا 800/900. فالمطلوبُ 800/900 (مئاتُ المواضع) يُطابَق بـ700 **الحقيقيّ**
+// (لا تغليظَ حسابيّ ما دام في العائلة وزنٌ ≥ 600). وكسبنا 600 الحقيقيّ الذي لم تملكه Tajawal،
+// فصار `--weight-semibold` 600 فعلاً. الحارس: tests/font-weights.test.ts.
+import '@fontsource/ibm-plex-sans-arabic/400.css';
+import '@fontsource/ibm-plex-sans-arabic/500.css';
+import '@fontsource/ibm-plex-sans-arabic/600.css';
+import '@fontsource/ibm-plex-sans-arabic/700.css';
 import '@fontsource/jetbrains-mono/500.css';
 
 // خرائط MapLibre — CSS الخرائط في وحدة مفصولة route-scoped
@@ -37,9 +33,9 @@ import '@fontsource/jetbrains-mono/500.css';
 // فيُحمَّل مع chunk الخريطة فقط بدل كل صفحة (أخفّ على الحزمة العامة).
 import './styles/shared.css';
 import './pwa.css';
+import { SITE_ORIGIN } from '@/lib/seo/origin';
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spir-medical.com';
+const SITE_URL = SITE_ORIGIN;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -48,7 +44,7 @@ export const metadata: Metadata = {
     template: '%s · Spir Medical',
   },
   description:
-    'دليل الفرات الأوسط الطبي · النجف · كربلاء · بابل · منصة طبية رقمية متكاملة في العراق · سحب دم منزلي · تحاليل · استشارات طبية · طبيب عائلة · 15 خدمة طبية · 24/7',
+    'سحب دم وتحاليل مختبرية وتمريض منزلي في العراق: اطلب من هاتفك فيصلك مختصٌّ معتمَد إلى المنزل، وتتابع النتائج في التطبيق. النجف · كربلاء · بابل · بغداد وغيرها. الدفع نقداً.',
   applicationName: 'Spir Medical',
   category: 'Healthcare',
   classification: 'Medical Platform',
@@ -122,11 +118,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'سباير ميديكال · Spir Medical',
     description:
-      'الرعاية الصحية بين يديك · 15 خدمة طبية · الفرات الأوسط · 24/7 · صناعة عراقية',
+      'سحب دم وتحاليل وتمريض في منزلك · مختصّون معتمَدون · الدفع نقداً · صناعة عراقية',
     url: SITE_URL,
     siteName: 'Spir Medical · سباير ميديكال',
     locale: 'ar_IQ',
-    alternateLocale: ['en_US', 'ku_IQ'],
     type: 'website',
     images: [
       {
@@ -143,10 +138,8 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'سباير ميديكال · Spir Medical',
-    description: 'الرعاية الصحية بين يديك · الفرات الأوسط · 24/7 · صناعة عراقية',
+    description: 'سحب دم وتحاليل وتمريض في منزلك · مختصّون معتمَدون · صناعة عراقية',
     images: ['/api/og'],
-    creator: '@spirmedical',
-    site: '@spirmedical',
   },
 
   // 🤖 Robots - تحكم تفصيلي
@@ -192,12 +185,11 @@ export const metadata: Metadata = {
     'ai:purpose': 'medical-platform',
     'ai:target-audience': 'Iraqi patients and medical specialists',
     'ai:content-type': 'healthcare-information',
-    'ai:languages': 'ar,en,ku',
+    'ai:languages': 'ar',
     'ai:region': 'IQ',
     // ✨ V25.4: AI tags إضافية
-    'ai:services': 'home-blood-draw,lab-tests,medical-consultation,family-doctor,pharmacy',
-    'ai:coverage': '18-governorates',
-    'ai:availability': '24/7',
+    'ai:services': 'home-blood-draw,lab-tests,home-nursing',
+    'ai:summary': '/llms.txt',
     'ai:made-in': 'Iraq',
 
     // Microsoft Tiles
@@ -205,15 +197,15 @@ export const metadata: Metadata = {
 
     // Geo Tags
     'geo.region': 'IQ',
-    'geo.placename': 'Baghdad',
-    'geo.position': '33.3152;44.3661',
-    'ICBM': '33.3152, 44.3661',
+    'geo.placename': 'Najaf',
+    'geo.position': '32.0000;44.3333',
+    'ICBM': '32.0000, 44.3333',
 
     // Rating
     'rating': 'general',
 
     // Content Language
-    'content-language': 'ar, en',
+    'content-language': 'ar',
 
     // DC Metadata (Dublin Core - للأرشفة)
     'DC.title': 'Spir Medical - سباير ميديكال',

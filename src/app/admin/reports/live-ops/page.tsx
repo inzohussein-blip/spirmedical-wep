@@ -31,7 +31,7 @@ export default async function LiveOpsPage() {
 
   // جلب الطلبات النشطة اليوم (pending + confirmed + in_progress)
   // «اليوم» بتوقيت بغداد لا بتوقيت الخادم (UTC على Vercel) — وإلّا بدأ اليوم
-  // الساعة ٠٣:٠٠ بغداد وسقطت طلبات ما بعد منتصف الليل في حصيلة الأمس.
+  // الساعة 03:00 بغداد وسقطت طلبات ما بعد منتصف الليل في حصيلة الأمس.
   const today = baghdadDayWindow().start.toISOString();
   const tomorrow = new Date(Date.now() + 24 * 3600 * 1000).toISOString();
 
@@ -39,7 +39,7 @@ export default async function LiveOpsPage() {
   // فتُدفع رحلةٌ شبكيّةٌ لكلٍّ منها قبل أن يُرسم شيء. الآن نافذةُ انتظارٍ واحدة.
   const [{ data: activeOrders }, { data: activeSpecialists }] = await Promise.all([
     // «اليوم» بتوقيت بغداد لا بتوقيت الخادم (UTC على Vercel) — وإلّا بدأ اليوم
-    // الساعة ٠٣:٠٠ بغداد وسقطت طلبات ما بعد منتصف الليل في حصيلة الأمس.
+    // الساعة 03:00 بغداد وسقطت طلبات ما بعد منتصف الليل في حصيلة الأمس.
     supabase
       .from('appointments')
       .select(
@@ -79,7 +79,7 @@ export default async function LiveOpsPage() {
         lat: Number(o.location_lat),
         lng: Number(o.location_lng),
         title: o.service_type ?? 'طلب',
-        subtitle: `حالة: ${o.status} · ${new Date(o.scheduled_at).toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' })}`,
+        subtitle: `حالة: ${o.status} · ${new Date(o.scheduled_at).toLocaleTimeString('ar-IQ-u-nu-latn', { hour: '2-digit', minute: '2-digit' })}`,
         variant: 'patient',
       });
     }
@@ -252,7 +252,7 @@ export default async function LiveOpsPage() {
                   </div>
                 </div>
                 <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>
-                  {new Date(o.scheduled_at).toLocaleTimeString('ar-IQ', {
+                  {new Date(o.scheduled_at).toLocaleTimeString('ar-IQ-u-nu-latn', {
                     hour: '2-digit',
                     minute: '2-digit',
                   })}

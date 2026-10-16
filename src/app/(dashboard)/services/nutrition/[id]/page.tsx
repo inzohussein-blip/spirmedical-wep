@@ -118,7 +118,7 @@ export default async function NutritionDetailPage(
               <Award size={12} />{n.years_experience} سنة
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-              <Users size={12} />{count(n.total_clients).toLocaleString('ar-IQ')} عميل
+              <Users size={12} />{count(n.total_clients).toLocaleString('ar-IQ-u-nu-latn')} عميل
             </span>
             {count(n.success_rate) > 0 && (
               <span style={{ display: 'flex', alignItems: 'center', gap: 3, color: 'var(--emerald)', fontWeight: 700 }}>

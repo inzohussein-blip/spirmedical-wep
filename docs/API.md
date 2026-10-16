@@ -276,7 +276,7 @@ curl http://localhost:3000/api/health
 سيُضاف:
 - [ ] `/api/users` (إدارة الملف الشخصي)
 - [ ] `/api/specialists` (قائمة الأخصائيين)
-- [ ] `/api/services` (الخدمات الـ ١٤)
+- [ ] `/api/services` (الخدمات الـ 14)
 - [ ] `/api/admin/*` (للأدمن فقط)
 - [ ] WebSocket للمحادثات الفورية
 - [ ] Webhooks للأحداث الخارجية

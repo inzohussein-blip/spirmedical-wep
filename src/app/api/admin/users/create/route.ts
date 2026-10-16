@@ -25,6 +25,7 @@ import { isWaVerifyAvailable } from '@/lib/whatsapp/inbound-verify';
 import { resetPinUrl } from '@/lib/whatsapp/share';
 import { randomInt } from 'crypto';
 import { isEmail } from '@/lib/validations/is-email';
+import { SITE_ORIGIN } from '@/lib/seo/origin';
 import { NextResponse } from 'next/server';
 import { createClient as createSbClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
@@ -285,7 +286,7 @@ export async function POST(request: Request) {
     });
 
     // ─── 8. بيانات الدخول ───
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://spir-medical.com';
+    const baseUrl = SITE_ORIGIN;
     let tempPin: string | null = null;
     if (phoneLogin) {
       // بلا رمزٍ كان أوّلُ من يكتب الرقمَ يمتلك الحساب — رمزٌ مؤقّتٌ يُغلق ذلك فوراً

@@ -2,7 +2,7 @@ import VaccinationsClient from './VaccinationsClient';
 
 export const metadata = {
   title: 'جدول التطعيمات · سباير ميديكال',
-  description: '١٨ لقاح حسب العمر',
+  description: '18 لقاح حسب العمر',
 };
 
 export default function Page() {

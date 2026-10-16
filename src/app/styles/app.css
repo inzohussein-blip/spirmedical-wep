@@ -183,7 +183,7 @@
 
 .scr-h1 {
   font-size: 13px; font-weight: 800;
-  letter-spacing: -0.01em; color: var(--ink);
+  letter-spacing: 0; color: var(--ink);
 }
 
 .scr-loc { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
@@ -332,7 +332,7 @@
 
 .scr-banner-tag {
   font-size: 12px; color: var(--amber-on-dark);
-  letter-spacing: 0.05em; text-transform: uppercase;
+  letter-spacing: 0; text-transform: uppercase;
   font-weight: 700; margin-bottom: 2px;
 }
 
@@ -2172,7 +2172,7 @@
   font-weight: 800;
   line-height: 1;
   margin-bottom: 16px;
-  letter-spacing: -1px;
+  letter-spacing: 0;
   display: flex;
   align-items: baseline;
   gap: 8px;
@@ -2674,7 +2674,7 @@
 .spec-day-off {
   font-size: 11px;
   color: var(--ink-3);
-  font-style: italic;
+  font-style: normal;
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -2702,7 +2702,7 @@
   font-size: 40px;
   font-weight: 800;
   line-height: 1;
-  letter-spacing: -1.5px;
+  letter-spacing: 0;
   margin-bottom: 8px;
 }
 
@@ -2793,13 +2793,13 @@
   font-weight: 800;
   color: var(--emerald);
   line-height: 1;
-  letter-spacing: -2px;
+  letter-spacing: 0;
 }
 
 .spec-rating-stars {
   font-size: 18px;
   color: var(--amber);
-  letter-spacing: 2px;
+  letter-spacing: 0;
   margin-bottom: 4px;
 }
 
@@ -3247,7 +3247,7 @@
 /* Typing indicator */
 .inbox-chat-typing {
   color: var(--emerald);
-  font-style: italic;
+  font-style: normal;
 }
 
 .inbox-chat-typing span {
@@ -3603,7 +3603,7 @@
 }
 
 .chat-msg-edited {
-  font-style: italic;
+  font-style: normal;
 }
 
 .chat-msg-read {
@@ -3820,7 +3820,7 @@
   font-weight: 800;
   color: var(--ink-3);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0;
   margin-bottom: 4px;
 }
 
@@ -5494,7 +5494,7 @@
   font-size: 12px;
   font-weight: 800;
   color: var(--ink);
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -6256,7 +6256,7 @@
     font-weight: 600;
     color: var(--ink-3);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0;
     padding: 8px 12px 6px;
   }
 
@@ -6367,7 +6367,7 @@
    صفحة الإسعافات (للضيف وللمستخدم) تستعمل عائلة `first-aid-*` و`tool-*`
    كاملةً، **ولم تكن معرَّفة في أيّ ملفّ CSS**. النتيجة على الهاتف: الحالات
    الستّ تُعرض نصّاً متلاصقاً في سطرٍ واحد بلا بطاقات ولا مساحات لمس،
-   و«اتصل بالإسعاف ١٢٢» رابطٌ نصّيّ ارتفاعه ١٦px لا زرّ.
+   و«اتصل بالإسعاف 122» رابطٌ نصّيّ ارتفاعه 16px لا زرّ.
 
    هذه صفحة تُفتح في لحظة طوارئ. تُعرَّف هنا بالرموز القائمة في shared.css.
    ═══════════════════════════════════════════════════════════════════ */
@@ -6397,7 +6397,7 @@
 }
 .first-aid-quick-call span { font-size: 18px; }
 .first-aid-emergency-title { font-size: 14px; font-weight: 800; }
-.first-aid-emergency-number { font-size: 20px; font-weight: 900; letter-spacing: 1px; }
+.first-aid-emergency-number { font-size: 20px; font-weight: 900; letter-spacing: 0; }
 
 /* ── شبكة الحالات: بطاقتان في الصفّ على الهاتف ── */
 .first-aid-grid {
@@ -6521,7 +6521,7 @@
    ═══════════════════════════════════════════════════════════════════
    نفس عطل صفحة الإسعافات: عائلة `sos-*` و`emergency-*` و`quick-tip-*`
    مستعملة في صفحتَي الطوارئ (المسجَّل والضيف) وغير معرَّفة في أيّ CSS.
-   فيظهر «اتصل بالإسعاف الآن ١٢٢» — وهو الإجراء الأوّل في الصفحة — نصّاً
+   فيظهر «اتصل بالإسعاف الآن 122» — وهو الإجراء الأوّل في الصفحة — نصّاً
    عادياً بلا زرّ ولا لون، وأرقام الطوارئ قائمةً نصّية متلاصقة.
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -6541,7 +6541,7 @@
 .sos-big-icon { font-size: 38px; line-height: 1; flex-shrink: 0; }
 .sos-big-content { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .sos-big-title { font-size: 17px; font-weight: 800; }
-.sos-big-number { font-size: 24px; font-weight: 900; letter-spacing: 2px; }
+.sos-big-number { font-size: 24px; font-weight: 900; letter-spacing: 0; }
 
 .emergency-numbers-grid {
   display: grid;
@@ -6628,7 +6628,7 @@
 .symptom-chip-readonly {
   display: inline-flex;
   align-items: center;
-  /* ٤٠ أقلّ من حدّ هدف اللمس؛ والرقائق هنا هي أداة الإدخال الوحيدة
+  /* 40 أقلّ من حدّ هدف اللمس؛ والرقائق هنا هي أداة الإدخال الوحيدة
      في مدقّق الأعراض فلا بديل عنها */
   min-height: 44px;
   padding: 8px 14px;
@@ -7030,7 +7030,7 @@
 }
 .radio-option.selected { background: var(--emerald); border-color: var(--emerald); color: #fff; }
 
-/* الحقلُ يملأ ارتفاعَ المربّع كلّه: كان المربّع ~٥٠px والحقل ~٢٦px، فاللمسُ
+/* الحقلُ يملأ ارتفاعَ المربّع كلّه: كان المربّع ~50px والحقل ~26px، فاللمسُ
    على حافّته العليا أو السفلى لا يُركّزه. يعمل أيّاً كان الغلاف (div أو label).
    في آخر الملفّ عمداً: `.scr-search` معرَّفٌ مرّتين أعلاه، والأخيرُ يغلب. */
 .scr-search { padding-block: 0; }
@@ -7038,7 +7038,7 @@
 
 /* ─── بطاقات إحصاء المختص: الرقمُ هو المعلومة ───
    كانت تستعير .service-title (12px) للرقم و.service-desc للتسمية، فبدا
-   «١ طلب جديد» أصغرَ من كلمة «طلبات جديدة». */
+   «1 طلب جديد» أصغرَ من كلمة «طلبات جديدة». */
 .service-card.spec-stat { min-height: 0; }
 .service-card.spec-stat .service-icon { font-size: 22px; margin-bottom: 6px; }
 .service-card.spec-stat .spec-stat-value {

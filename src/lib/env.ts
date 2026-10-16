@@ -24,7 +24,7 @@ const envSchema = z.object({
     .regex(/^[a-f0-9]{64}$/i, 'ENCRYPTION_KEY يجب أن يكون 64 hex character (32 bytes)'),
 
   // الموقع
-  NEXT_PUBLIC_SITE_URL: z.string().url().default('https://spir-medical.com'),
+  NEXT_PUBLIC_SITE_URL: z.string().url().default('https://www.spir-medical.com'),
 
   // البيئة
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),

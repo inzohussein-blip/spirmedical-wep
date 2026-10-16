@@ -7,7 +7,7 @@ import { specialistReadiness } from '@/lib/specialist-readiness';
  * 🧭 جاهزيّةُ المختصّ الجديد
  *
  * المختصُّ المعتمَد يرى الطلبات فوراً، لكنّه لا يعلم بها إلّا بدفع الويب (واتساب معطّل).
- * وطلبٌ لا يُلتقط يُلغى بعد ٤٨ ساعة. فالبطاقةُ أعلى لوحته تقول ما ينقصه، وتختفي حين يكتمل.
+ * وطلبٌ لا يُلتقط يُلغى بعد 48 ساعة. فالبطاقةُ أعلى لوحته تقول ما ينقصه، وتختفي حين يكتمل.
  */
 
 jest.mock('next/navigation', () => ({ useRouter: () => ({ refresh: jest.fn() }) }));
@@ -17,7 +17,7 @@ jest.mock('next/link', () => {
 });
 jest.mock('@/lib/push-client', () => ({ subscribeToPush: jest.fn() }));
 
-const complete = { full_name: 'زينب علي', governorate: 'النجف', specialist_bio: 'محلّلة مختبر، ٥ سنوات' };
+const complete = { full_name: 'زينب علي', governorate: 'النجف', specialist_bio: 'محلّلة مختبر، 5 سنوات' };
 
 describe('specialistReadiness', () => {
   it('🚨 بلا اشتراك دفع → خطوةُ الإشعارات ناقصة', () => {

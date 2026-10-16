@@ -46,7 +46,7 @@ export default async function NewAppointmentPage(
   }
 
   // 🩺 لا مختصَّ يستلم الطلب ⇒ لا نموذج. كان الطلبُ يبقى معلّقاً حتى يُلغيه
-  // الرفضُ التلقائيّ بعد ٤٨ ساعة؛ الآن يُقال للمريض ذلك ويُعرض عليه الإشعار.
+  // الرفضُ التلقائيّ بعد 48 ساعة؛ الآن يُقال للمريض ذلك ويُعرض عليه الإشعار.
   const dedicated = searchParams.service ? DEDICATED_FLOW_SPECIALIST[searchParams.service] : undefined;
   if (dedicated && !(await isSpecialistAvailable(dedicated.type))) {
     const { data: waiting } = await supabase

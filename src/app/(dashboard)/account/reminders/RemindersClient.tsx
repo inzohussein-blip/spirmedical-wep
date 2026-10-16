@@ -282,8 +282,8 @@ export default function RemindersClient({ reminders }: { reminders: Reminder[] }
               const meta = TYPE_META[r.type] ?? TYPE_META.medication;
               const Icon = meta.icon;
               const date = new Date(r.scheduled_at);
-              const dateStr = date.toLocaleDateString('ar-IQ', { day: 'numeric', month: 'long' });
-              const timeStr = date.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' });
+              const dateStr = date.toLocaleDateString('ar-IQ-u-nu-latn', { day: 'numeric', month: 'long' });
+              const timeStr = date.toLocaleTimeString('ar-IQ-u-nu-latn', { hour: '2-digit', minute: '2-digit' });
               return (
                 <article key={r.id} className="scr-list-item" style={{ opacity: r.active ? 1 : 0.5 }}>
                   <div className="scr-list-item-icon" aria-hidden="true">

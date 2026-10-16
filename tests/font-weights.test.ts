@@ -8,8 +8,11 @@ import { join } from 'path';
  * فيه — خوارزمية المطابقة في CSS تختار وزناً **حقيقياً** — لكنّ النتيجة
  * أنّ درجاتٍ من السلّم البصريّ تنطبق على بعضها:
  *
- *   • ٩٠٠ (٢٤٧ موضعاً) كان يهبط إلى ٨٠٠، فالعنوان والنصّ بثقلٍ واحد.
- *   • ٦٠٠ (١٤٧ موضعاً) يصعد إلى ٧٠٠ دائماً، لأنّ Tajawal لا تملك ٦٠٠.
+ *   • 900 (247 موضعاً) كان يهبط إلى 800، فالعنوان والنصّ بثقلٍ واحد.
+ *   • 600 (147 موضعاً) يصعد إلى 700 دائماً، لأنّ Tajawal لا تملك 600.
+ *
+ * (16 تشرين الأول) بُدّلت العائلة إلى IBM Plex Sans Arabic بقرار المالك: تشحن 100–700، فصار
+ * 600 حقيقياً، وصار 800/900 يُطابَقان بـ700. فالحارس يقرأ ما تشحنه الحزمة لا قائمةً مكتوبة.
  *
  * ملاحظةٌ على تشخيصٍ أوّل خاطئ: ظننتُ أنّ الوزن الغائب يُصطنع بتغليظٍ
  * حسابيّ يشوّه وصلات الحروف العربية. وذلك لا يحدث ما دام في العائلة وزنٌ
@@ -18,13 +21,14 @@ import { join } from 'path';
  */
 
 const ROOT = process.cwd();
+const FAMILY = 'ibm-plex-sans-arabic';
 
 /** الأوزان التي تشحنها الحزمة فعلاً (من ملفّات woff2 العربية) */
 function shippedByPackage(): Set<number> {
-  const dir = join(ROOT, 'node_modules', '@fontsource', 'tajawal', 'files');
+  const dir = join(ROOT, 'node_modules', '@fontsource', FAMILY, 'files');
   const out = new Set<number>();
   for (const f of readdirSync(dir)) {
-    const m = f.match(/^tajawal-arabic-(\d+)-normal\.woff2$/);
+    const m = f.match(new RegExp(`^${FAMILY}-arabic-(\\d+)-normal\\.woff2$`));
     if (m) out.add(Number(m[1]));
   }
   return out;
@@ -34,7 +38,7 @@ function shippedByPackage(): Set<number> {
 function imported(): Set<number> {
   const layout = readFileSync(join(ROOT, 'src', 'app', 'layout.tsx'), 'utf8');
   const out = new Set<number>();
-  for (const m of layout.matchAll(/@fontsource\/tajawal\/(\d+)\.css/g)) {
+  for (const m of layout.matchAll(new RegExp(`@fontsource/${FAMILY}/(\\d+)\\.css`, 'g'))) {
     out.add(Number(m[1]));
   }
   return out;
@@ -64,21 +68,45 @@ describe('أوزان الخطّ المطلوبة تُقابلها أوزانٌ �
   const imp = imported();
   const req = requested();
 
-  it('الحزمة لا تملك وزن ٦٠٠ — فالرمز لا يجوز أن يَعِد به', () => {
-    expect(ship.has(600)).toBe(false);
-    const css = readFileSync(join(ROOT, 'src', 'app', 'styles', 'shared.css'), 'utf8');
-    const m = css.match(/--weight-semibold:\s*(\d{3})/);
-    expect(m).not.toBeNull();
-    expect(ship.has(Number(m![1]))).toBe(true);
+  it('الحزمةُ قُرئت والخطُّ المستورَد واحد (حارسُ الحارس)', () => {
+    expect(ship.size).toBeGreaterThan(3);
+    const layout = readFileSync(join(ROOT, 'src', 'app', 'layout.tsx'), 'utf8');
+    expect(layout).not.toMatch(/@fontsource\/tajawal/);
+    expect(imp.size).toBeGreaterThan(2);
   });
 
-  it('الوزن ٩٠٠ مستورَد — وهو مطلوبٌ في مئات المواضع', () => {
-    expect(imp.has(900)).toBe(true);
-    expect(req.get(900) ?? 0).toBeGreaterThan(100);
+  it('رموزُ الأوزان تقول ما يُرسم: كلٌّ منها وزنٌ تشحنه العائلة', () => {
+    const css = readFileSync(join(ROOT, 'src', 'app', 'styles', 'shared.css'), 'utf8');
+    for (const t of ['semibold', 'bold', 'extrabold', 'black']) {
+      const m = css.match(new RegExp(`--weight-${t}:\\s*(\\d{3})`));
+      expect(m).not.toBeNull();
+      expect(ship.has(Number(m![1]))).toBe(true);
+      expect(imp.has(Number(m![1]))).toBe(true);
+    }
+  });
+
+  it('600 حقيقيٌّ ومستورَد — semibold لم يعد يصعد إلى bold', () => {
+    expect(ship.has(600)).toBe(true);
+    expect(imp.has(600)).toBe(true);
+  });
+
+  it('🚨 لا خطَّ قديم في الكود: Tajawal غيرُ محمَّلة فتهبط إلى خطّ النظام', () => {
+    const offenders: string[] = [];
+    const walk = (dir: string) => {
+      for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        const p = join(dir, entry.name);
+        if (entry.isDirectory()) { walk(p); continue; }
+        if (!/\.(tsx?|css)$/.test(entry.name)) continue;
+        const src = readFileSync(p, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+        if (/font-?[Ff]amily[^;\n]*Tajawal/.test(src)) offenders.push(p);
+      }
+    };
+    walk(join(ROOT, 'src'));
+    expect(offenders).toEqual([]);
   });
 
   it('كلّ وزنٍ مطلوبٍ كثيراً له وزنٌ مُحمَّل', () => {
-    // «كثيراً» = أكثر من ٢٠ موضعاً؛ ما دون ذلك لا يُبرّر ملفّ خطٍّ إضافياً
+    // «كثيراً» = أكثر من 20 موضعاً؛ ما دون ذلك لا يُبرّر ملفّ خطٍّ إضافياً
     const heavy = [...req.entries()].filter(([, n]) => n > 20).map(([w]) => w);
     const missing = heavy.filter((w) => !imp.has(w) && ship.has(w));
     expect(missing).toEqual([]);

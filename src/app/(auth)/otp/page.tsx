@@ -60,7 +60,7 @@ export default async function OtpPage(
       <div className="auth-title-section">
         <h2 className="auth-title">تحقّق من رقمك</h2>
         <p className="auth-subtitle">
-          أرسلنا رمزاً مكوّناً من ٦ أرقام عبر{' '}
+          أرسلنا رمزاً مكوّناً من 6 أرقام عبر{' '}
           <strong style={{ color: channelInfo.color }}>{channelInfo.label}</strong>
           {' '}إلى
         </p>
@@ -76,7 +76,7 @@ export default async function OtpPage(
 
       <OtpForm phone={phone} channel={channel} redirectTo={redirectTo} />
 
-      <div className="auth-expiry">⏱ ينتهي خلال ٥ دقائق</div>
+      <div className="auth-expiry">⏱ ينتهي خلال 5 دقائق</div>
     </main>
   );
 }

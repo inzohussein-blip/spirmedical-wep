@@ -226,7 +226,7 @@ export default async function ServicesPage() {
               سحب دم + تحاليل
             </div>
             <div style={{ fontSize: 11, color: '#5F6368', lineHeight: 1.4, position: 'relative', zIndex: 1 }}>
-              +٢٠٠ فحص · في منزلك
+              +200 فحص · في منزلك
             </div>
             <div style={{ position: 'absolute', bottom: 10, left: 10, color: '#80868B' }}>
               <IconArrowLeft size={14} stroke={2} />

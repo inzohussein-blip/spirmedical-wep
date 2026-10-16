@@ -180,7 +180,7 @@ function ListView({ orders, usersMap }: { orders: Array<Record<string, unknown>>
                   {o.service_type}
                 </td>
                 <td style={td}>
-                  {new Date(o.scheduled_at).toLocaleString('ar-IQ', { dateStyle: 'short', timeStyle: 'short' })}
+                  {new Date(o.scheduled_at).toLocaleString('ar-IQ-u-nu-latn', { dateStyle: 'short', timeStyle: 'short' })}
                 </td>
                 <td style={td}>{specialist?.full_name ?? <span style={{ color: 'var(--rose)', fontSize: 11 }}>غير معيّن</span>}</td>
                 <td style={td}>
@@ -247,7 +247,7 @@ function KanbanView({ orders, usersMap }: { orders: Array<Record<string, unknown
                     </div>
                     <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{o.service_type}</div>
                     <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 4 }}>
-                      📅 {new Date(o.scheduled_at).toLocaleDateString('ar-IQ', { day: 'numeric', month: 'short' })}
+                      📅 {new Date(o.scheduled_at).toLocaleDateString('ar-IQ-u-nu-latn', { day: 'numeric', month: 'short' })}
                     </div>
                   </Link>
                 );

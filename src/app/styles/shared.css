@@ -130,7 +130,7 @@
   --tracking-normal: var(--tracking-normal);
   --tracking-wide: var(--tracking-wide);
 
-  --font-sans: Tajawal, system-ui, sans-serif;
+  --font-sans: 'IBM Plex Sans Arabic', system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
   --font-serif: Fraunces, serif;
   --font-mono: JetBrains Mono, monospace;
 
@@ -259,7 +259,7 @@
    ═══════════════════════════════════════════════════════════════════ */
   .leaflet-container {
     background: #e8eef1;
-    font-family: 'Tajawal', system-ui, sans-serif;
+    font-family: var(--font-sans);
     /* يضمن ألا تتجاوز الخريطة عرض حاويتها (مهم في الـ 480px shell) */
     max-width: 100%;
   }
@@ -299,7 +299,7 @@
 
   .leaflet-popup-content {
     margin: 12px 14px !important;
-    font-family: 'Tajawal', system-ui, sans-serif !important;
+    font-family: var(--font-sans) !important;
     line-height: 1.5 !important;
   }
 
@@ -410,17 +410,17 @@
     --emerald-soft: #e6f3ef; /* V3 Primary Soft */
 
     /*
-   * أخضرُ وسيطٌ كان يُكتب `var(--emerald-mid, #0F6E56)` حرفياً في ٢٩ ملفّاً (٧٨ موضعاً) بلا
-   * رمزٍ يمثّله — فتغييرُه كان يعني تعديل ٢٩ ملفّاً، ولا يستجيب لتخصيص
+   * أخضرُ وسيطٌ كان يُكتب `var(--emerald-mid, #0F6E56)` حرفياً في 29 ملفّاً (78 موضعاً) بلا
+   * رمزٍ يمثّله — فتغييرُه كان يعني تعديل 29 ملفّاً، ولا يستجيب لتخصيص
    * الألوان في لوحة المشرف كما تستجيب بقيّة اللوحة.
    *
    * سُمّي هنا ولم تُغيَّر قيمته: توحيدُه مع `--emerald` تغييرٌ بصريٌّ في
-   * ٧٨ موضعاً، وذلك قرارُ صاحب المنصّة لا قرارُ تنظيفٍ آليّ.
+   * 78 موضعاً، وذلك قرارُ صاحب المنصّة لا قرارُ تنظيفٍ آليّ.
    */
     --emerald-mid: #0f6e56;
     --amber: #b06000; /* V3 Yellow Deep — للنصّ على خلفيةٍ فاتحة */
     --amber-soft: #fef7e0; /* V3 Yellow Soft */
-    /* عنبرٌ للنصّ فوق الأخضر الداكن: ‎--amber‎ عليه نسبة ١٫٦٢ فقط (المطلوب ٣)
+    /* عنبرٌ للنصّ فوق الأخضر الداكن: ‎--amber‎ عليه نسبة 1٫62 فقط (المطلوب 3)
      لأنّ اللونين داكنان معاً، فالأرقام تكاد تختفي داخل البطاقة */
     --amber-on-dark: #ffdfa1;
 
@@ -507,8 +507,8 @@
      خطوط متناسقة لكل المنصة
   */
     /* أرضيّةُ الخطّ: الحرف العربيّ يبدو أصغر من اللاتينيّ بالحجم نفسه، فكان
-     ٩px و١١px عسيرَي القراءة على الهاتف. قيس في تدقيق الهاتف: نصٌّ دون
-     ١٢px في كلّ صفحةٍ تقريباً، منه تسميات شريط التنقّل السفليّ. */
+     9px و11px عسيرَي القراءة على الهاتف. قيس في تدقيق الهاتف: نصٌّ دون
+     12px في كلّ صفحةٍ تقريباً، منه تسميات شريط التنقّل السفليّ. */
     --text-2xs: 11px; /* tiny - footer fine print (كان 9px) */
     --text-xs: 12px; /* extra small - labels (كان 11px) */
     --text-sm: 12px; /* small - metadata */
@@ -532,26 +532,20 @@
     --weight-normal: 400;
     --weight-medium: 500;
     /*
-   * Tajawal لا تملك وزن ٦٠٠ (أوزانها ٢٠٠/٣٠٠/٤٠٠/٥٠٠/٧٠٠/٨٠٠/٩٠٠).
-   *
-   * وخوارزمية المطابقة في CSS تحسم ذلك بلا غموض: المطلوب فوق ٥٠٠ يُبحث
-   * له صعوداً أوّلاً، فينتهي ٦٠٠ إلى ٧٠٠ **دائماً وفي كلّ المتصفّحات**.
-   * أي أنّ `semibold` و`bold` في هذا المشروع الشيءُ نفسه بصرياً — درجةٌ
-   * في السلّم لا وجود لها، وإن كان الكود يظنّها موجودة.
-   *
-   * فالرمز يقول الآن ما يحدث فعلاً. لا يتغيّر شيءٌ في الشاشة، لكن من
-   * يقرأ الكود يعرف أنّ أمامه درجتين لا ثلاثاً — ومن أراد درجةً وسطى
-   * حقيقيّةً فأمامه ٥٠٠ وهو مُحمَّل.
+   * IBM Plex Sans Arabic تشحن 100–700: فـ600 حقيقيٌّ الآن (لم تملكه Tajawal فكان يصعد إلى 700
+   * ويتطابق semibold وbold). أمّا 800/900 فيطابقهما 700 الحقيقيّ — العائلةُ لا أثقلَ فيها —
+   * فالرمزان يقولان ما يُرسم فعلاً. الحارس: tests/font-weights.test.ts.
    */
-    --weight-semibold: 700;
+    --weight-semibold: 600;
     --weight-bold: 700;
-    --weight-extrabold: 800;
-    --weight-black: 900;
+    --weight-extrabold: 700;
+    --weight-black: 700;
+    --font-sans: 'IBM Plex Sans Arabic', system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
 
     /* Letter spacing */
-    --tracking-tight: -0.02em;
+    --tracking-tight: 0; /* العربيّة لا تُباعَد حروفُها: التباعدُ يقطع الوصل */
     --tracking-normal: 0;
-    --tracking-wide: 0.025em;
+    --tracking-wide: 0;
 
     /* ═══════════════════════════════════════════════════════════════
      ⏱️ TRANSITIONS & EASINGS — V25
@@ -608,7 +602,7 @@
 
   body {
     margin: 0;
-    font-family: 'Tajawal', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--font-sans);
     background: var(--paper);
     color: var(--ink);
     line-height: 1.6;
@@ -624,14 +618,14 @@
   input, textarea, select { font-family: inherit; }
 }
 
-/* جميع العناصر تستخدم Tajawal بشكل افتراضي */
-* { font-family: 'Tajawal', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; }
+/* جميع العناصر تستخدم IBM Plex Sans Arabic (‎--font-sans‎) افتراضياً */
+* { font-family: var(--font-sans); }
 
-.serif { font-family: 'Tajawal', sans-serif; font-style: italic; font-weight: 500; }
+.serif { font-family: var(--font-sans); font-style: normal; font-weight: 500; }
 
-.mono { font-family: 'JetBrains Mono', 'Tajawal', monospace; }
+.mono { font-family: 'JetBrains Mono', var(--font-sans), monospace; }
 
-.latin { font-family: 'Tajawal', system-ui, sans-serif; }
+.latin { font-family: var(--font-sans); }
 
 /* ─── 3. SKIP LINK ─── */
 .skip-link {
@@ -1181,8 +1175,8 @@
 
 .auth-brand {
   font-size: 18px; font-weight: 800;
-  font-family: 'Tajawal', sans-serif;
-  letter-spacing: -0.01em;
+  font-family: var(--font-sans);
+  letter-spacing: 0;
   margin: 0; color: var(--ink);
 }
 
@@ -1198,7 +1192,7 @@
   color: var(--emerald);
   font-weight: 700;
   margin-top: 6px;
-  letter-spacing: 0.2px;
+  letter-spacing: 0;
 }
 
 .auth-role-badge {
@@ -1215,7 +1209,7 @@
 
 .auth-title {
   font-size: 24px; font-weight: 900;
-  margin: 0; color: var(--ink); letter-spacing: -0.01em;
+  margin: 0; color: var(--ink); letter-spacing: 0;
 }
 
 .auth-subtitle {
@@ -1391,8 +1385,8 @@
 
 .auth-helper a, .auth-inline-link { color: var(--emerald); font-weight: 700; }
 
-/* رابطٌ منفردٌ في سطره هدفُ لمسه ارتفاع النصّ وحده (١٢px) — نجعله كتلةً
-   بارتفاعٍ لا يقلّ عن ٤٤ (WCAG 2.5.5). الروابط داخل جملةٍ مستثناة
+/* رابطٌ منفردٌ في سطره هدفُ لمسه ارتفاع النصّ وحده (12px) — نجعله كتلةً
+   بارتفاعٍ لا يقلّ عن 44 (WCAG 2.5.5). الروابط داخل جملةٍ مستثناة
    بحكم القاعدة نفسها، ولذا لا نلمس `.auth-inline-link`. */
 .auth-helper > a {
   display: inline-flex;
@@ -1553,8 +1547,8 @@
 
 .app-logo-name {
   font-size: 13px; font-weight: 800;
-  font-family: 'Tajawal', sans-serif;
-  letter-spacing: -0.01em; line-height: 1.1;
+  font-family: var(--font-sans);
+  letter-spacing: 0; line-height: 1.1;
 }
 
 .app-logo-sub { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
@@ -1691,7 +1685,7 @@
 .featured-meta {
   font-size: 12px; font-weight: 800;
   color: var(--amber-on-dark);
-  letter-spacing: 0.05em; text-transform: uppercase;
+  letter-spacing: 0; text-transform: uppercase;
   margin-bottom: 4px;
 }
 
@@ -2779,7 +2773,7 @@ html {
   font-weight: 900;
   color: var(--emerald);
   line-height: 1;
-  letter-spacing: -5px;
+  letter-spacing: 0;
   margin: 16px 0 24px;
   opacity: 0.15;
 }
@@ -4975,7 +4969,7 @@ html {
    إلّا `input` — فأيّ صنفٍ يغلبهما: `.auth-input` (13px) على قائمة المحافظة،
    و`.bd-textarea` (13px) على عنوان حجز سحب الدم، و`.services-map-gov-select`
    (12px). فكلّها كانت تُكبّر iOS.
-   وأكثرُ من ذلك: نحو ٨٥ حقلاً تضع `style={{ fontSize: 13 }}` مضمَّناً — في
+   وأكثرُ من ذلك: نحو 85 حقلاً تضع `style={{ fontSize: 13 }}` مضمَّناً — في
    حجز التمريض، ونافذتَي حجز الطبيب والصيدلية، والوصفات والتذكيرات — والنمطُ
    المضمَّن لا يغلبه إلّا `!important`. وهذا ما فعله admin.css للوحة الإدارة
    ولسببه نفسه؛ فيُعمَّم هنا، مقصوراً على الشاشات الصغيرة.

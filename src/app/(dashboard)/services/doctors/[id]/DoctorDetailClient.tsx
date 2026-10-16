@@ -89,7 +89,7 @@ export default function DoctorDetailClient({ doctor, activeSubscription, initial
 
     const ok = await confirm({
       title: `الاشتراك ${plan === 'monthly' ? 'الشهري' : 'السنوي'}`,
-      message: `الاشتراك مع ${doctor.title} ${doctor.full_name} — السعر: ${price.toLocaleString('ar-IQ')} د.ع · الدفع كاش عند الاستلام. هل تريد المتابعة؟`,
+      message: `الاشتراك مع ${doctor.title} ${doctor.full_name} — السعر: ${price.toLocaleString('ar-IQ-u-nu-latn')} د.ع · الدفع كاش عند الاستلام. هل تريد المتابعة؟`,
       confirmText: 'تأكيد الاشتراك',
     });
     if (!ok) return;
@@ -263,7 +263,7 @@ export default function DoctorDetailClient({ doctor, activeSubscription, initial
                 لديك اشتراك نشط {activeSubscription.plan === 'monthly' ? 'شهري' : 'سنوي'}
               </div>
               <div style={{ fontSize: 11, color: 'var(--emerald)', marginTop: 2 }}>
-                ينتهي في {new Date(activeSubscription.expires_at).toLocaleDateString('ar-IQ')}
+                ينتهي في {new Date(activeSubscription.expires_at).toLocaleDateString('ar-IQ-u-nu-latn')}
                 {' · '}{activeSubscription.consultations_used} استشارات مُستخدمة
               </div>
             </div>

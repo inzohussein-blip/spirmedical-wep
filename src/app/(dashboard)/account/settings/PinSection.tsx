@@ -29,7 +29,7 @@ export default function PinSection({ pinEnabled: initialEnabled }: Props) {
     setError('');
     if (mode === 'enable-1') {
       if (!/^\d{4}$/.test(pin1)) {
-        setError('الـ PIN يجب أن يكون ٤ أرقام');
+        setError('الـ PIN يجب أن يكون 4 أرقام');
         return;
       }
       setMode('enable-2');
@@ -86,7 +86,7 @@ export default function PinSection({ pinEnabled: initialEnabled }: Props) {
     }
     if (mode === 'change-new1') {
       if (!/^\d{4}$/.test(pin1)) {
-        setError('PIN يجب أن يكون ٤ أرقام');
+        setError('PIN يجب أن يكون 4 أرقام');
         return;
       }
       setMode('change-new2');
@@ -189,7 +189,7 @@ export default function PinSection({ pinEnabled: initialEnabled }: Props) {
                 {mode === 'disable' && 'أدخل PIN لتعطيله'}
               </h2>
               <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: 0 }}>
-                ٤ أرقام للحماية
+                4 أرقام للحماية
               </p>
             </div>
 

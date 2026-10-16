@@ -36,7 +36,7 @@ const ADMIN_USERS = [
   PROFILE,
   { ...PROFILE, ...PATIENT, role: 'patient', email: null, approval_status: 'approved' },
   { ...PROFILE, id: SID, full_name: 'علي حسين', phone: '+9647722222222', role: 'specialist', specialist_type: 'nurse',
-    approval_status: 'pending', specialist_bio: 'ممرّض بخبرة ٥ سنوات', specialist_years_exp: 5, specialist_languages: ['ar'], is_suspended: false },
+    approval_status: 'pending', specialist_bio: 'ممرّض بخبرة 5 سنوات', specialist_years_exp: 5, specialist_languages: ['ar'], is_suspended: false },
 ];
 const ADMIN_APPTS = [
   { ...SPEC_APPTS[0], id: '44444444-4444-4444-8444-444444444444', user_id: PID, assigned_specialist_id: SID, specialist_id: SID, status: 'confirmed',
@@ -52,7 +52,7 @@ const FIX = {
     { id: 'a3', user_id: UID, service_type: 'سحب دم + تحاليل', status: 'confirmed', scheduled_at: iso(3), address: 'النجف · حي الغدير', created_at: iso(-2), updated_at: iso(-1), assigned_specialist_id: 's1' },
   ],
   notifications: [
-    { id: 'n1', user_id: UID, title: 'تمّ تأكيد موعدك', body: 'موعد سحب الدم غداً الساعة ٩ صباحاً', type: 'appointment', is_read: false, created_at: iso(-0.1) },
+    { id: 'n1', user_id: UID, title: 'تمّ تأكيد موعدك', body: 'موعد سحب الدم غداً الساعة 9 صباحاً', type: 'appointment', is_read: false, created_at: iso(-0.1) },
     { id: 'n2', user_id: UID, title: 'نتائج فحوصاتك جاهزة', body: 'انقر لعرض النتائج', type: 'lab_results', is_read: true, created_at: iso(-3) },
   ],
   service_switches: [],

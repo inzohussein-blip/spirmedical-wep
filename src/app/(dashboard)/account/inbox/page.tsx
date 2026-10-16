@@ -30,7 +30,7 @@ export default async function InboxPage() {
 
   const items = data ?? [];
   const hasUnread = items.some((n) => !n.is_read);
-  const fmt = new Intl.DateTimeFormat('ar-IQ', { dateStyle: 'medium', timeStyle: 'short' });
+  const fmt = new Intl.DateTimeFormat('ar-IQ-u-nu-latn', { dateStyle: 'medium', timeStyle: 'short' });
 
   return (
     <main className="app-screen">

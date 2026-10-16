@@ -191,7 +191,7 @@ export default function CouponsClient({ coupons }: Props) {
                       {c.usedCount}{c.maxUses ? ` / ${c.maxUses}` : ''}
                     </td>
                     <td style={td}>
-                      {c.validUntil ? new Date(c.validUntil).toLocaleDateString('ar-IQ') : 'دائم'}
+                      {c.validUntil ? new Date(c.validUntil).toLocaleDateString('ar-IQ-u-nu-latn') : 'دائم'}
                     </td>
                     <td style={td}>
                       {expired ? (

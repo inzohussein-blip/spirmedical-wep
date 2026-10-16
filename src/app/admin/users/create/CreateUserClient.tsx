@@ -174,7 +174,7 @@ export default function CreateUserClient({ callerRole }: Props) {
           <h1 style={{ fontSize: 18, fontWeight: 700, color: '#202124', margin: 0 }}>إنشاء حساب جديد</h1>
         </div>
 
-        {/* ─── ١. نوع الحساب ─── */}
+        {/* ─── 1. نوع الحساب ─── */}
         {!result && !kind && (
           <div>
             <p style={{ fontSize: 14, color: '#5F6368', marginBottom: 16 }}>اختر نوع الحساب:</p>
@@ -207,7 +207,7 @@ export default function CreateUserClient({ callerRole }: Props) {
           </div>
         )}
 
-        {/* ─── ٢. البيانات ─── */}
+        {/* ─── 2. البيانات ─── */}
         {!result && kind && role && (
           <form onSubmit={handleSubmit} noValidate>
             {failure && (
@@ -312,7 +312,7 @@ export default function CreateUserClient({ callerRole }: Props) {
           </form>
         )}
 
-        {/* ─── ٣. النتيجة والتسليم ─── */}
+        {/* ─── 3. النتيجة والتسليم ─── */}
         {result && <ResultCard result={result} copied={copied} copy={copy} />}
 
         {result && (

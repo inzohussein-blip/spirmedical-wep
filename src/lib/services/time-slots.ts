@@ -3,8 +3,8 @@ export interface TimeSlot {
   id: string; // ISO date
   date: string; // YYYY-MM-DD
   time: string; // HH:mm
-  displayDate: string; // عربي مثل: "غداً" أو "الخميس ٢٢"
-  displayTime: string; // عربي مثل: "١٠:٠٠ ص"
+  displayDate: string; // عربي مثل: "غداً" أو "الخميس 22"
+  displayTime: string; // عربي مثل: "10:00 ص"
   available: boolean;
   isPopular?: boolean;
 }
@@ -13,18 +13,14 @@ export interface TimeSlot {
 const ARABIC_DAYS = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
 const ARABIC_MONTHS = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
 
-// تحويل الأرقام الإنجليزية لعربية
-export function toArabicDigits(num: number | string): string {
-  const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-  return String(num).replace(/[0-9]/g, (d) => arabicDigits[parseInt(d)]);
-}
+// الأرقامُ لاتينيّة (1 2 3) في المشروع كلّه — قرار المالك. كانت هنا toArabicDigits.
 
-// عرض الوقت بصيغة ١٢ ساعة عربية
+// عرض الوقت بصيغة 12 ساعة عربية
 export function formatTimeArabic(hour: number, minute: number = 0): string {
   const period = hour >= 12 ? 'م' : 'ص';
   const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
-  const minuteStr = minute === 0 ? '٠٠' : toArabicDigits(minute.toString().padStart(2, '0'));
-  return `${toArabicDigits(displayHour)}:${minuteStr} ${period}`;
+  const minuteStr = minute === 0 ? '00' : String(minute.toString().padStart(2, '0'));
+  return `${String(displayHour)}:${minuteStr} ${period}`;
 }
 
 // عرض التاريخ نسبياً (اليوم/غداً/بعد غد) أو الاسم
@@ -41,10 +37,10 @@ export function formatDateRelative(date: Date): string {
   if (diffDays === 2) return 'بعد غد';
   if (diffDays < 7) return ARABIC_DAYS[date.getDay()];
 
-  return `${ARABIC_DAYS[date.getDay()]} ${toArabicDigits(date.getDate())}`;
+  return `${ARABIC_DAYS[date.getDay()]} ${String(date.getDate())}`;
 }
 
-// إنشاء قائمة الأيام المتاحة (٧ أيام قادمة)
+// إنشاء قائمة الأيام المتاحة (7 أيام قادمة)
 export function generateAvailableDates(daysAhead: number = 7): Date[] {
   const dates: Date[] = [];
   const now = new Date();
@@ -60,7 +56,7 @@ export function generateAvailableDates(daysAhead: number = 7): Date[] {
   return dates;
 }
 
-// إنشاء فترات زمنية ليوم محدد (٨ صباحاً - ٨ مساءً، كل ٣٠ دقيقة)
+// إنشاء فترات زمنية ليوم محدد (8 صباحاً - 8 مساءً، كل 30 دقيقة)
 export function generateTimeSlotsForDate(date: Date, serviceDuration: number = 60): TimeSlot[] {
   const slots: TimeSlot[] = [];
   const dayName = formatDateRelative(date);
@@ -68,13 +64,13 @@ export function generateTimeSlotsForDate(date: Date, serviceDuration: number = 6
   // فترات شائعة (تظهر بشكل بارز)
   const popularHours = [9, 10, 11, 16, 17, 18];
 
-  // من ٨ صباحاً إلى ٨ مساءً
+  // من 8 صباحاً إلى 8 مساءً
   for (let hour = 8; hour < 20; hour++) {
     for (let minute of [0, 30]) {
       const slotDate = new Date(date);
       slotDate.setHours(hour, minute, 0, 0);
 
-      // لا مصدرَ لحجوزات الفترات بعد: كانت ٢٠٪ منها تُعطَّل عشوائياً «للعرض»، وتتبدّل مع كلّ
+      // لا مصدرَ لحجوزات الفترات بعد: كانت 20٪ منها تُعطَّل عشوائياً «للعرض»، وتتبدّل مع كلّ
       // إعادة رسم — فيختار المريضُ وقتاً ثمّ يراه «محجوزاً». الفترةُ متاحةٌ حتى يوجد مصدرٌ حقيقيّ.
       slots.push({
         id: slotDate.toISOString(),

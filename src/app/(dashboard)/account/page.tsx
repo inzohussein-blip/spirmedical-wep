@@ -84,7 +84,7 @@ export default async function AccountPage() {
     : phone;
   const roleLabel = profile?.role === 'specialist' ? 'أخصائي' : 'مراجع';
   const memberSince = profile?.created_at
-    ? new Date(profile.created_at).toLocaleDateString('ar-IQ', {
+    ? new Date(profile.created_at).toLocaleDateString('ar-IQ-u-nu-latn', {
         year: 'numeric',
         month: 'long',
       })
@@ -152,7 +152,7 @@ export default async function AccountPage() {
               width: 64, height: 64, borderRadius: '50%',
               background: 'var(--emerald-soft, #E6F3EF)', color: 'var(--emerald, #01875F)',
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 28, fontWeight: 900, fontFamily: 'Tajawal, sans-serif',
+              fontSize: 28, fontWeight: 900, fontFamily: 'var(--font-sans)',
               flexShrink: 0,
             }}>
               {initial}
@@ -299,7 +299,7 @@ function SectionGroup({ title, items }: { title: string; items: SectionItem[] })
       <div style={{
         padding: '0 16px 6px',
         fontSize: 11, fontWeight: 700, color: '#5F6368',
-        textTransform: 'uppercase', letterSpacing: '0.5px',
+        textTransform: 'uppercase',
       }}>
         {title}
       </div>

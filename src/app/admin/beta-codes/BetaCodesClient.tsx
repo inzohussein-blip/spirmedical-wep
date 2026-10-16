@@ -204,7 +204,7 @@ export default function BetaCodesClient({ codes }: Props) {
                     {isExpired && <span style={{ color: 'var(--rose)' }}>⏰ منتهي</span>}
                     {c.expires_at && !isExpired && (
                       <span>
-                        ينتهي {new Date(c.expires_at).toLocaleDateString('ar-IQ')}
+                        ينتهي {new Date(c.expires_at).toLocaleDateString('ar-IQ-u-nu-latn')}
                       </span>
                     )}
                   </div>
@@ -239,7 +239,7 @@ function StatCard({ label, value, color, icon }: {
         {icon}
         <span style={{ fontSize: 11, fontWeight: 700 }}>{label}</span>
       </div>
-      <div style={{ fontSize: 20, fontWeight: 900 }}>{value.toLocaleString('ar-IQ')}</div>
+      <div style={{ fontSize: 20, fontWeight: 900 }}>{value.toLocaleString('ar-IQ-u-nu-latn')}</div>
     </div>
   );
 }

@@ -16,15 +16,15 @@
 
 ### الطريقة الصحيحة:
 
-١. **أرسل تفاصيل لـ:** `security@spirmedical.iq`
-٢. **ضمّن:**
+1. **أرسل تفاصيل لـ:** `security@spirmedical.iq`
+2. **ضمّن:**
    - وصف الثغرة
    - خطوات إعادة إنتاجها
    - الأثر المحتمل
    - PoC إن أمكن (بدون استغلال فعلي)
 
 ### ما تتوقّعه:
-- ✅ رد خلال ٤٨ ساعة
+- ✅ رد خلال 48 ساعة
 - ✅ تحديث حالة كل أسبوع
 - ✅ شكر عام (إن وافقت) بعد الإصلاح
 
@@ -94,17 +94,17 @@
 **لا تضع أسراراً في الكود أبداً.** ولا في GitHub، ولا في Slack.
 
 ### إذا تسرّب مفتاح:
-١. **اعتبره مكشوفاً فوراً** (حتى لو لم تتأكد)
-٢. **Regenerate** فوراً:
+1. **اعتبره مكشوفاً فوراً** (حتى لو لم تتأكد)
+2. **Regenerate** فوراً:
    - Supabase: Settings → API → Generate new keys
    - Twilio: Console → Auth Token → Regenerate
    - Vercel: Settings → Environment Variables
-٣. **حدّث Vercel env vars**
-٤. **Redeploy**
-٥. **راجع logs** لأي وصول مشبوه
+3. **حدّث Vercel env vars**
+4. **Redeploy**
+5. **راجع logs** لأي وصول مشبوه
 
 ### دوران المفاتيح (Rotation)
-- 🔄 Supabase service_role: كل ٦ شهور
+- 🔄 Supabase service_role: كل 6 شهور
 - 🔄 ENCRYPTION_KEY: ⚠️ **لا يُغيّر أبداً** (البيانات المشفّرة لن تُفَك)
 - 🔄 SMS provider tokens: عند تغيير المزوّد
 

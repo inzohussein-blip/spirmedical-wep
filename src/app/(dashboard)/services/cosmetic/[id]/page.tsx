@@ -193,7 +193,7 @@ export default async function CosmeticProductDetailPage(
                 textDecoration: 'line-through',
                 marginBottom: 2,
               }}>
-                {product.price.toLocaleString('ar-IQ')} د.ع
+                {product.price.toLocaleString('ar-IQ-u-nu-latn')} د.ع
               </div>
             )}
             <div style={{
@@ -201,7 +201,7 @@ export default async function CosmeticProductDetailPage(
               fontWeight: 900,
               color: 'var(--emerald-mid, #0F6E56)',
             }}>
-              {finalPrice.toLocaleString('ar-IQ')} د.ع
+              {finalPrice.toLocaleString('ar-IQ-u-nu-latn')} د.ع
             </div>
             {hasDiscount && (
               <div style={{
@@ -384,7 +384,7 @@ export default async function CosmeticProductDetailPage(
         ) : (
           <div className="scr-list-stack">
             {reviews.map((r) => {
-              const date = new Date(r.created_at).toLocaleDateString('ar-IQ', {
+              const date = new Date(r.created_at).toLocaleDateString('ar-IQ-u-nu-latn', {
                 day: 'numeric', month: 'short', year: 'numeric',
               });
               return (

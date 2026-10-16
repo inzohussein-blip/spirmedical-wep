@@ -17,7 +17,7 @@ export async function cancelAppointment(appointmentId: string, reason: string) {
     return { success: false, error: 'يجب تسجيل الدخول' };
   }
 
-  // Rate limit: ٥ إلغاءات / ساعة
+  // Rate limit: 5 إلغاءات / ساعة
   const limit = await checkRateLimit(`appointment:cancel:${user.id}`, {
     max: 5,
     windowSeconds: 3600,

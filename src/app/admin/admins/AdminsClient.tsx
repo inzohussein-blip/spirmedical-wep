@@ -199,7 +199,7 @@ export default function AdminsClient({ admins }: Props) {
                       <option value="support">🎧 دعم فني</option>
                     </select>
                   </td>
-                  <td style={td}>{new Date(a.createdAt).toLocaleDateString('ar-IQ')}</td>
+                  <td style={td}>{new Date(a.createdAt).toLocaleDateString('ar-IQ-u-nu-latn')}</td>
                   <td style={td}>
                     {a.isMe ? (
                       <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>—</span>

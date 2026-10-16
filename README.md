@@ -13,8 +13,8 @@
 
 | الخدمة | الرابط |
 |---|---|
-| 🌐 الموقع | [spir-medical.com](https://spir-medical.com) |
-| 🔧 لوحة الإدارة | [spir-medical.com/admin](https://spir-medical.com/admin) |
+| 🌐 الموقع | [www.spir-medical.com](https://www.spir-medical.com) (الأصلُ الواحد: `lib/seo/origin.ts`) |
+| 🔧 لوحة الإدارة | [www.spir-medical.com/admin](https://www.spir-medical.com/admin) |
 | 🗄️ Supabase | [project ioulxemokusfeykjcaxg](https://supabase.com/dashboard/project/ioulxemokusfeykjcaxg) |
 | 📊 Vercel | [spirmedical-wep](https://vercel.com/inzohussein-blip/spirmedical-wep) |
 | 🐛 Sentry | [inzohussein-blip-ip](https://inzohussein-blip-ip.sentry.io/issues/?project=4511479851843664) |
@@ -102,7 +102,7 @@ spirmedical-wep/
 │   │   ├── layout.tsx           الجذر: الخطوط، metadata، CookieConsent، DeferredGlobals
 │   │   ├── page.tsx             الصفحة الرئيسية التسويقية
 │   │   ├── styles/              shared.css · app.css · marketing.css · admin.css
-│   │   ├── sitemap.ts · robots.ts
+│   │   ├── sitemap.ts · robots.ts · llms.txt/ · llms-full.txt/ · ai.txt/ (مولَّدة من lib/seo/facts.ts)
 │   │   └── (auth) (dashboard) (specialist) (marketing) (app-utility)
 │   │       admin/ admin-login/ admin-register/ guest/ onboarding/ offline/ auth/ api/
 │   ├── components/              مكوّناتٌ مشتركة حسب الميزة (انظر الجدول أدناه)
@@ -113,7 +113,7 @@ spirmedical-wep/
 │   └── *.sql                    أدوات فحصٍ يدويّة (verify, health-check)
 ├── tests/                       حرّاسٌ ساكنة وسلوكية (npx jest)
 ├── tools/mobile-audit/          تدقيقُ الهاتف محلّياً: محاكي Supabase + Playwright (انظر README فيه)
-├── public/                      sw.js · manifest.json · llms.txt · ai.txt · أيقونات
+├── public/                      sw.js · manifest.json · أيقونات
 ├── docs/                        API · SETUP · RUNBOOK · DESIGN_TOKENS …
 ├── vercel.json                  رؤوس، تحويلات، ومهامّ الكرون
 └── CLAUDE.md                    ملاحظاتُ العمل والقرارات
@@ -277,7 +277,7 @@ spirmedical-wep/
 | `components/seo/JsonLd.tsx` | بيانات منظَّمة تُرسم في الخادم (تراها زواحف الذكاء الاصطناعي) |
 | `components/seo/StructuredData.tsx` | Organization + WebSite |
 | `lib/seo/coverage.ts` | **المصدر الوحيد** للمدن المخدومة (`SERVED_CITIES`) |
-| `app/sitemap.ts` · `app/robots.ts` · `public/llms.txt` · `public/ai.txt` | الفهرسة |
+| `app/sitemap.ts` · `app/robots.ts` · `app/llms.txt/route.ts` · `app/llms-full.txt/route.ts` · `app/ai.txt/route.ts` ← `lib/seo/facts.ts` · `lib/seo/origin.ts` | الفهرسة واكتشافُ النماذج |
 | `lib/site-config.ts` | أنواع النطاق (`app` / `marketing` / `all`) |
 
 ---
@@ -433,6 +433,6 @@ npm run db:types    # توليد src/types/database.ts
 ## 📞 التواصل
 
 - **المالك:** حسين · **البريد:** inzohussein@gmail.com · **الهاتف/واتساب:** 07803993585
-- **الموقع:** النجف، العراق · **النطاق:** spir-medical.com
+- **الموقع:** النجف، العراق · **النطاق:** www.spir-medical.com
 
 > 🌿 **سباير ميديكال** — بُني بعناية في النجف 🇮🇶

@@ -165,7 +165,7 @@ export default function OrderClinicalDetails({ order }: { order: ClinicalOrder }
       body: [
         recurring.interval_hours ? `كل ${recurring.interval_hours} ساعة` : null,
         recurring.end_date
-          ? `حتى ${new Date(recurring.end_date).toLocaleDateString('ar-IQ')}`
+          ? `حتى ${new Date(recurring.end_date).toLocaleDateString('ar-IQ-u-nu-latn')}`
           : null,
       ]
         .filter(Boolean)
@@ -205,8 +205,8 @@ export default function OrderClinicalDetails({ order }: { order: ClinicalOrder }
       key: 'price',
       icon: <Receipt size={22} strokeWidth={2} />,
       title: 'المبلغ المقدّر',
-      body: `${order.estimated_price.toLocaleString('ar-IQ')} د.ع${
-        supplies?.total ? ` (منها ${supplies.total.toLocaleString('ar-IQ')} مستلزمات)` : ''
+      body: `${order.estimated_price.toLocaleString('ar-IQ-u-nu-latn')} د.ع${
+        supplies?.total ? ` (منها ${supplies.total.toLocaleString('ar-IQ-u-nu-latn')} مستلزمات)` : ''
       }`,
     });
   }

@@ -408,7 +408,7 @@ export default function NursingFlow({
             الخطوة {step} من 6
           </div>
           <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--emerald)' }}>
-            {procedure && `${procedure.price.toLocaleString('ar-IQ')} د.ع`}
+            {procedure && `${procedure.price.toLocaleString('ar-IQ-u-nu-latn')} د.ع`}
           </div>
         </div>
         <div style={{
@@ -495,7 +495,7 @@ export default function NursingFlow({
                       fontWeight: 900,
                       color: isSelected ? 'var(--emerald)' : 'var(--ink)',
                     }}>
-                      {proc.price.toLocaleString('ar-IQ')}
+                      {proc.price.toLocaleString('ar-IQ-u-nu-latn')}
                     </div>
                     <div style={{ fontSize: 12, color: 'var(--ink-3)' }}>د.ع</div>
                   </div>
@@ -1218,7 +1218,7 @@ export default function NursingFlow({
                 color: 'var(--emerald-deep)',
               }}>
                 <span>المجموع</span>
-                <span>{procedure?.price.toLocaleString('ar-IQ')} د.ع</span>
+                <span>{procedure?.price.toLocaleString('ar-IQ-u-nu-latn')} د.ع</span>
               </div>
             </div>
           </div>

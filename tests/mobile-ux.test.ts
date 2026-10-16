@@ -9,7 +9,7 @@ import { join } from 'path';
  *
  * ① شعارُ الكوكيز غطّى ثلثَ الشاشة **في صفحة الطوارئ** فوق أرقام الإسعاف،
  *    وأعلن `aria-modal="true"` وهو ليس مشروطاً — فحبس قارئ الشاشة داخله —
- *    وسرق التركيز بـ`autoFocus` بعد ١.٥ ثانية إلى «قبول الكل». وكان خيارُ
+ *    وسرق التركيز بـ`autoFocus` بعد 1.5 ثانية إلى «قبول الكل». وكان خيارُ
  *    التحليلات مُعلَّماً مسبقاً خلافاً لنصّه «الضرورية فقط مُفعّلة افتراضياً».
  *
  * ② الصنفُ الدلاليّ `outline` يصطدم بأداة Tailwind `.outline{outline-style:
@@ -21,7 +21,7 @@ import { join } from 'path';
  * ④ نصٌّ دون 12px في كلّ صفحةٍ تقريباً، منه **تسمياتُ شريط التنقّل السفليّ**.
  *    والرموز نفسها كانت `--text-2xs: 9px` و`--text-xs: 11px`.
  *
- * ⑤ مربّعُ البحث ~٥٠px وحقلُه ~٢٦px: اللمسُ على حافّته لم يُركّز الحقل.
+ * ⑤ مربّعُ البحث ~50px وحقلُه ~26px: اللمسُ على حافّته لم يُركّز الحقل.
  */
 
 const ROOT = process.cwd();
@@ -153,7 +153,7 @@ describe('🔤 أرضيّةُ الخطّ', () => {
   it('🚨 تسمياتُ التنقّل السفليّ ولافتاتُ الخدمات ≥ 12px', () => {
     const all = read('src/app/styles/app.css') + read('src/app/styles/shared.css') + read('src/app/styles/marketing.css');
     // ومحتوى الصفحات لا زخرفتُها: وصفُ أرقام الطوارئ، وعناوينُ أقسام صفحات
-    // التسويق ونصوصُ قوائمها (كانت صفحة سحب الدم كلُّها بـ١١px).
+    // التسويق ونصوصُ قوائمها (كانت صفحة سحب الدم كلُّها بـ11px).
     for (const c of ['app-bottom-label', 'story-label', 'service-sub', 'service-badge', 'scr-banner-cta',
                      'emergency-desc', 'app-logo-sub', 'mkt-section-title', 'mkt-list-item-subtitle',
                      'scr-account-cta', 'scr-account-desc', 'service-desc']) {

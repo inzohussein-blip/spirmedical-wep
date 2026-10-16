@@ -241,7 +241,7 @@ export default function StatusClient() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
           <Stat label="الإصدار" value={data.version} />
           <Stat label="مدّة التشغيل" value={uptimeDays > 0 ? `${uptimeDays} يوم` : `${uptimeHours} ساعة`} />
-          <Stat label="آخر فحص" value={lastUpdate ? lastUpdate.toLocaleTimeString('ar-IQ') : '-'} />
+          <Stat label="آخر فحص" value={lastUpdate ? lastUpdate.toLocaleTimeString('ar-IQ-u-nu-latn') : '-'} />
         </div>
       </div>
 

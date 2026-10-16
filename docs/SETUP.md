@@ -4,7 +4,7 @@
 
 ---
 
-## ١. المتطلبات
+## 1. المتطلبات
 
 | الأداة | الحد الأدنى | تنزيل |
 |--------|--------------|-------|
@@ -21,7 +21,7 @@ git --version
 
 ---
 
-## ٢. استنسخ المشروع
+## 2. استنسخ المشروع
 
 ```bash
 git clone https://github.com/inzohussein-blip/spirmedical-wep.git
@@ -30,37 +30,37 @@ cd spirmedical-wep
 
 ---
 
-## ٣. ثبّت التبعيات
+## 3. ثبّت التبعيات
 
 ```bash
 npm install
 ```
 
-⏱️ هذا قد يستغرق ١-٢ دقيقة.
+⏱️ هذا قد يستغرق 1-2 دقيقة.
 
 ---
 
-## ٤. أعدّ Supabase
+## 4. أعدّ Supabase
 
-### ٤.١ افتح المشروع
+### 4.1 افتح المشروع
 ```
 https://supabase.com/dashboard/project/ioulxemokusfeykjcaxg
 ```
 
-### ٤.٢ شغّل المخطط
+### 4.2 شغّل المخطط
 1. **SQL Editor** → **New query**
 2. الصق محتوى `supabase/schema.sql`
 3. **Run**
 
-### ٤.٣ احصل على المفاتيح
+### 4.3 احصل على المفاتيح
 **Settings** → **API** — انسخ `URL`, `anon key`, `service_role key`.
 
-### ٤.٤ فعّل Phone Auth
+### 4.4 فعّل Phone Auth
 **Authentication** → **Providers** → **Phone** → فعّل وأضف بيانات Twilio.
 
 ---
 
-## ٥. متغيرات البيئة
+## 5. متغيرات البيئة
 
 ```bash
 cp .env.example .env.local
@@ -79,7 +79,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 ---
 
-## ٦. شغّل الخادم
+## 6. شغّل الخادم
 
 ```bash
 npm run dev

@@ -61,8 +61,8 @@
 
 .landing-logo-text strong {
   font-size: 16px; font-weight: 800;
-  font-family: 'Tajawal', sans-serif;
-  letter-spacing: -0.01em; line-height: 1.1;
+  font-family: var(--font-sans);
+  letter-spacing: 0; line-height: 1.1;
   color: var(--ink);
 }
 
@@ -119,7 +119,7 @@
 .landing-eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
   font-size: 12px;
-  letter-spacing: 0.2em;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: var(--emerald);
   font-weight: 700;
@@ -161,17 +161,19 @@
 /* h1 — V3 EXACT 72px */
 .landing-h1 {
   font-size: 72px;
-  font-weight: 900;
-  line-height: 1.02;
-  letter-spacing: -0.04em;
+  font-weight: 700;
+  line-height: 1.3; /* Plex Arabic: للحروف الصاعدة والنازلة مدى أطول — 1.02 كان يُطبق السطرين */
+  letter-spacing: 0;
   margin: 0 0 24px;
   color: var(--ink);
 }
 
 .landing-h1-italic, .landing-italic {
-  font-family: 'Tajawal', sans-serif;
-  font-style: italic;
-  font-weight: 500;
+  /* الإبرازُ باللون وحده. كان مائلاً بوزن 500 داخل عنوانٍ بوزن 800: العائلةُ بلا مائل فيُصطنع
+     الميلان، فتبدو حروفُ العنوان الواحد بسماكتين وشكلين. */
+  font-family: inherit;
+  font-style: normal;
+  font-weight: inherit;
   color: var(--emerald);
 }
 
@@ -244,7 +246,7 @@
 }
 
 .landing-trust-item strong {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-sans); font-variant-numeric: tabular-nums;
   color: var(--emerald);
   font-weight: 800; font-size: 13px;
 }
@@ -277,12 +279,12 @@
 
 .landing-mini-name {
   font-size: 14px; font-weight: 800; color: var(--ink);
-  font-family: 'Tajawal', sans-serif;
+  font-family: var(--font-sans);
 }
 
 .landing-mini-time {
   font-size: 12px; color: var(--ink-3); margin-top: 2px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-sans); font-variant-numeric: tabular-nums;
 }
 
 /* Section heads — V3 EXACT */
@@ -298,7 +300,7 @@
   font-size: 44px; font-weight: 800;
   margin: 0 0 14px;
   color: var(--ink);
-  letter-spacing: -0.02em; line-height: 1.1;
+  letter-spacing: 0; line-height: 1.35;
 }
 
 .landing-section-lede {
@@ -404,7 +406,7 @@
   background: var(--btn-primary-bg); color: var(--paper-3);
   display: flex; align-items: center; justify-content: center;
   font-weight: 900; font-size: 16px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-sans); font-variant-numeric: tabular-nums;
   flex-shrink: 0;
 }
 
@@ -558,7 +560,7 @@
 
 .landing-cta-h2 {
   font-size: 44px; font-weight: 800; margin: 0 0 14px;
-  color: var(--ink); letter-spacing: -0.02em; line-height: 1.1;
+  color: var(--ink); letter-spacing: 0; line-height: 1.35;
 }
 
 .landing-cta-text {
@@ -767,7 +769,7 @@
 
 .landing-footer-col h4 {
   font-size: 13px; font-weight: 800; color: var(--emerald);
-  margin: 0 0 14px; letter-spacing: 0.04em;
+  margin: 0 0 14px; letter-spacing: 0;
 }
 
 .landing-footer-col ul {
@@ -779,7 +781,7 @@
   gap: 4px;
 }
 
-/* الحشو هنا كان على الـli لا على الرابط، فهدف اللمس ارتفاعه ١٣px فقط
+/* الحشو هنا كان على الـli لا على الرابط، فهدف اللمس ارتفاعه 13px فقط
    (سطر النصّ وحده) بينما المساحة المريحة حوله غير قابلة للنقر */
 .landing-footer-col li {
   font-size: 13px;
@@ -817,8 +819,8 @@
 .landing-footer-logo strong {
   font-size: 16px;
   font-weight: 800;
-  font-family: 'Tajawal', sans-serif;
-  letter-spacing: -0.01em;
+  font-family: var(--font-sans);
+  letter-spacing: 0;
   line-height: 1.1;
   color: var(--ink);
 }
@@ -838,7 +840,7 @@
   padding-top: 24px;
   border-top: 1px solid var(--line);
   font-size: 12px; color: var(--ink-3);
-  text-align: center; font-family: 'JetBrains Mono', monospace;
+  text-align: center; font-family: var(--font-sans);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -895,7 +897,7 @@
   font-weight: 800;
   color: var(--emerald);
   margin: 0 0 12px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
 }
 
 .legal-toc ol {
@@ -942,7 +944,7 @@
 .legal-eyebrow {
   display: inline-block;
   font-size: 11px;
-  letter-spacing: 0.2em;
+  letter-spacing: 0;
   text-transform: uppercase;
   color: var(--emerald);
   font-weight: 700;
@@ -955,7 +957,7 @@
 .legal-content h1 {
   font-size: 36px;
   font-weight: 900;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   line-height: 1.2;
   margin: 0 0 12px;
   color: var(--ink);
@@ -964,7 +966,7 @@
 .legal-meta {
   font-size: 13px;
   color: var(--ink-3);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-sans); font-variant-numeric: tabular-nums;
 }
 
 .legal-content section {
@@ -977,7 +979,7 @@
   font-weight: 800;
   color: var(--ink);
   margin: 0 0 14px;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   line-height: 1.3;
 }
 
@@ -1001,7 +1003,7 @@
 }
 
 /* الحشو الرأسيّ على عنصرٍ سطريّ يوسّع مساحة النقر دون أن يزيح السطر —
-   فروابط النصّ ترتفع من ١٤px إلى ٣٠px مع بقاء الفقرة كما هي */
+   فروابط النصّ ترتفع من 14px إلى 30px مع بقاء الفقرة كما هي */
 .legal-content a {
   color: var(--emerald);
   font-weight: 700;
@@ -1134,7 +1136,7 @@
   padding: 12px 14px;
   text-align: right;
   font-size: 12px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
 }
 
 .legal-table tbody td {
@@ -1223,7 +1225,7 @@
 
 /* الزرّ يقع داخل `.legal-content`، وقاعدة `.legal-content a` أعلى تخصيصاً
    (0,1,1) من `.legal-link-btn` (0,1,0) فتفرض `color: var(--emerald)` فوق
-   خلفيةٍ خضراء — نصٌّ بلون خلفيته تماماً، نسبة تباين ١٫٠٠. */
+   خلفيةٍ خضراء — نصٌّ بلون خلفيته تماماً، نسبة تباين 1٫00. */
 .legal-content a.legal-link-btn {
   color: var(--paper-3);
   text-decoration: none;
@@ -1818,13 +1820,13 @@
 
 .landing-float-card-1 {
   top: 10%;
-  inset-inline-start: -8%;
+  inset-inline-start: 0;
   animation-delay: 0s;
 }
 
 .landing-float-card-2 {
   top: 40%;
-  inset-inline-end: -8%;
+  inset-inline-end: 0; /* كان -8%: في RTL يخرج عن يسار الصفحة فيُقصّ («4.8/5») */
   animation-delay: 1.5s;
 }
 
@@ -2016,7 +2018,7 @@
   line-height: 1.7;
   color: var(--ink-2);
   margin-bottom: 16px;
-  font-style: italic;
+  font-style: normal;
 }
 
 .landing-testimonial-author {
@@ -2153,9 +2155,9 @@
 
 /* كلمة التمييز المائلة داخل بطاقة الأطبّاء كانت **غير مرئية**: قاعدة
    `.landing-italic` تلوّنها بـ‎--emerald‎ (var(--emerald, #01875F)) وخلفية البطاقة تبدأ
-   بالتدرّج من اللون نفسه — نسبة تباينٍ ١٫٠٠ بالضبط. و`.on-light` تُفتِّح
+   بالتدرّج من اللون نفسه — نسبة تباينٍ 1٫00 بالضبط. و`.on-light` تُفتِّح
    الـh2 دون أن تصل إلى الـspan لأنّ للـspan قاعدته الخاصّة.
-   الأبيض النقيّ يعطي ٤٫٥٣ على أفتح طرفي التدرّج، والحرف المائل يبقى
+   الأبيض النقيّ يعطي 4٫53 على أفتح طرفي التدرّج، والحرف المائل يبقى
    مميِّزاً للكلمة كما أُريد لها. */
 .landing-doctors-content .landing-italic {
   color: #FFFFFF;
@@ -2426,7 +2428,7 @@
 .blog-page {
   min-height: 100vh;
   background: var(--paper);
-  font-family: 'Tajawal', sans-serif;
+  font-family: var(--font-sans);
 }
 
 .blog-container {
@@ -2461,14 +2463,14 @@
   font-size: clamp(32px, 5vw, 56px);
   font-weight: 900;
   color: var(--ink);
-  line-height: 1.1;
-  letter-spacing: -1px;
+  line-height: 1.35;
+  letter-spacing: 0;
   margin: 0 0 16px;
 }
 
 .blog-hero-italic {
-  font-family: 'Tajawal', sans-serif;
-  font-style: italic;
+  font-family: var(--font-sans);
+  font-style: normal;
   font-weight: 600;
   color: var(--emerald);
 }
@@ -2547,7 +2549,7 @@
   color: var(--emerald);
   margin-bottom: 16px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0;
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -2955,10 +2957,10 @@
 .article-title {
   font-size: clamp(28px, 4vw, 44px);
   font-weight: 900;
-  line-height: 1.2;
+  line-height: 1.35;
   color: var(--ink);
   margin: 0 0 16px;
-  letter-spacing: -1px;
+  letter-spacing: 0;
 }
 
 .article-lede {
@@ -3056,7 +3058,7 @@
   font-weight: 800;
   color: var(--ink);
   margin: 40px 0 16px;
-  letter-spacing: -0.5px;
+  letter-spacing: 0;
 }
 
 .article-paragraph {
@@ -3801,7 +3803,7 @@ body.landing-nav-hidden .landing-nav {
   color: white;
   padding: 8px 12px;
   border-radius: 8px;
-  font-family: 'Tajawal', system-ui, sans-serif;
+  font-family: var(--font-sans);
   white-space: nowrap;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
@@ -3936,7 +3938,7 @@ body.landing-nav-hidden .landing-nav {
   /* Typography responsive */
   .landing-h1 {
     font-size: clamp(28px, 8vw, 40px) !important;
-    line-height: 1.2 !important;
+    line-height: 1.3 !important;
   }
   
   .landing-h2 {
@@ -4854,8 +4856,8 @@ html {
 .landing-logo-text .landing-logo-en {
   font-size: 16px;
   font-weight: 800;
-  font-family: 'Tajawal', sans-serif;
-  letter-spacing: -0.01em;
+  font-family: var(--font-sans);
+  letter-spacing: 0;
   line-height: 1.1;
   color: var(--ink);
   margin-top: 0;
@@ -4890,7 +4892,7 @@ html {
 
 /* ═══ شريطُ التنقّل على الهاتف: لا انكسارَ أسطر ═══
    قيس على 360px: الزرّ والاسم اللاتينيّ كلاهما على سطرين، فارتفع الشريط
-   إلى ~٩٥px من شاشةٍ ارتفاعها ٨٠٠. */
+   إلى ~95px من شاشةٍ ارتفاعها 800. */
 @media (max-width: 480px) {
   .landing-nav-cta {
     white-space: nowrap;
@@ -4905,3 +4907,110 @@ html {
   .landing-logo-text strong { display: none; }
   .landing-logo-text span { font-size: 13px; color: var(--ink); font-weight: 800; margin-top: 0; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   ℹ️ «عن التطبيق» — components/landing/AboutApp.tsx (الرئيسية و/about)
+   البادئة `ab-`: الأصنافُ العامّة (.service-card…) تقلب التخطيط.
+   ═══════════════════════════════════════════════════════════════ */
+.ab { padding: 72px 0; background: var(--paper); }
+.ab-page { padding: 8px 0 32px; }
+.ab-wrap { max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+.ab-page .ab-wrap { padding: 0; }
+.ab-head { text-align: center; max-width: 760px; margin: 0 auto 36px; }
+.ab-title {
+  font-size: 40px; font-weight: 700; line-height: 1.25;
+  margin: 10px 0 14px; color: var(--ink); letter-spacing: 0;
+}
+.ab-lede { font-size: 16px; line-height: 1.9; color: var(--ink-2); margin: 0; }
+
+.ab-feature {
+  display: grid; grid-template-columns: 1.25fr 1fr; gap: 28px; align-items: start;
+}
+.ab-feature-text {
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: 18px; padding: 28px;
+}
+.ab-h3 { font-size: 20px; font-weight: 700; color: var(--ink); margin: 0 0 8px; }
+.ab-feature-text p { font-size: 15px; line-height: 1.95; color: var(--ink-2); margin: 0 0 20px; }
+.ab-feature-text .ab-note {
+  font-size: 14px; color: var(--emerald-deep, var(--emerald));
+  background: var(--emerald-soft); border-radius: 10px; padding: 10px 14px;
+}
+.ab-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.ab-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 48px; padding: 0 22px; border-radius: 999px;
+  font-size: 15px; font-weight: 700; text-decoration: none;
+}
+.ab-btn-primary { background: var(--btn-primary-bg); color: var(--btn-primary-fg, #fff); }
+.ab-btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--line-2, var(--line)); }
+
+.ab-services { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.ab-service {
+  display: flex; flex-direction: row; gap: 14px; align-items: flex-start;
+  background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 16px;
+}
+.ab-service-coming-soon, .ab-service-directory { background: var(--paper-2, var(--white)); }
+.ab-service-icon {
+  width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--emerald-soft); font-size: 22px;
+}
+.ab-service-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.ab-service-name {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  font-size: 15px; font-weight: 700; color: var(--ink);
+}
+.ab-service-desc { font-size: 13px; line-height: 1.75; color: var(--ink-3); }
+.ab-chip {
+  font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px;
+  background: var(--emerald-soft); color: var(--emerald);
+}
+.ab-service-coming-soon .ab-chip { background: var(--amber-soft, #FEF7E0); color: var(--amber, #B06000); }
+.ab-service-directory .ab-chip { background: var(--paper-3); color: var(--ink-3); }
+
+.ab-block { margin-top: 28px; }
+.ab-steps, .ab-policies { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.ab-steps li, .ab-policies li {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: var(--white); border: 1px solid var(--line); border-radius: 12px;
+  padding: 14px 16px; font-size: 14px; line-height: 1.85; color: var(--ink-2);
+}
+.ab-policies li::before { content: '•'; color: var(--emerald); font-weight: 700; }
+.ab-step-num {
+  width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--btn-primary-bg); color: var(--btn-primary-fg, #fff); font-weight: 700; font-size: 14px;
+}
+.ab-more { text-align: center; margin-top: 24px; }
+.ab-more a { color: var(--emerald); font-weight: 700; font-size: 15px; text-decoration: none; }
+
+@media (max-width: 860px) {
+  .ab { padding: 44px 0; }
+  .ab-wrap { padding: 0 16px; }
+  .ab-title { font-size: 28px; }
+  .ab-lede { font-size: 15px; }
+  .ab-feature { grid-template-columns: 1fr; gap: 16px; }
+  .ab-feature-text { padding: 20px; }
+  .ab-btn { flex: 1 1 100%; }
+}
+.ab-page-content { max-width: 1120px; margin: 0 auto; }
+.ab-contact { margin-top: 32px; padding: 0 !important; }
+.ab-contact-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 20px; }
+.ab-legal { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 14px; }
+.ab-legal a { color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; }
+.ab-foot { margin: 20px 0 40px; font-size: 13px; color: var(--ink-3); }
+
+/* ═══ ترتيبُ الصفحة الرئيسية (16 تشرين الأول) ═══ */
+/* «كيف يعمل»: الرقمُ عمود، والعنوانُ والوصفُ تحته معاً — كانت ثلاثةُ أعمدة فيُعصَر العنوانُ إلى ثلاثة أسطر */
+.landing-step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 16px;
+  row-gap: 6px;
+  align-items: start;
+}
+.landing-step-num { grid-row: span 2; }
+.landing-step h3, .landing-step p { margin: 0; }
+/* الشارةُ بعرض محتواها لا بعرض العمود */
+.landing-eyebrow { width: fit-content; }

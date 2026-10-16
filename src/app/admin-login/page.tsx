@@ -22,7 +22,7 @@ export default async function AdminLoginPage(
         background:
           'radial-gradient(1000px 500px at 50% -10%, rgba(14,92,77,0.18), transparent 60%), #0F1A1C',
         padding: 24,
-        fontFamily: 'Tajawal, system-ui, sans-serif',
+        fontFamily: 'var(--font-sans)',
         direction: 'rtl',
       }}
     >

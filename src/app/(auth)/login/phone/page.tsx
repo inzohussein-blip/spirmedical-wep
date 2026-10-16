@@ -84,7 +84,7 @@ export default async function PhonePage(
               pattern="0?7[0-9]{9}"
             />
           </div>
-          <div className="auth-field-hint">مثال: ٠٧٧١٢٣٤٥٦٧٨ أو ٧٧١٢٣٤٥٦٧٨</div>
+          <div className="auth-field-hint">مثال: 07712345678 أو 7712345678</div>
         </div>
 
         {/* رمزُ الدخول يحلّ محلّ رمز واتساب (0049). الحسابُ القديم بلا رمز يضبطه هنا أوّلَ مرّة. */}

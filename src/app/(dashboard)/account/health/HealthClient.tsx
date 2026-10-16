@@ -106,7 +106,7 @@ export default function HealthClient({ latestByType, history }: Props) {
               <div className="service-desc" style={{ fontSize: 11 }}>{m.unit}</div>
               {latest && (
                 <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 4 }}>
-                  {new Date(latest.measured_at).toLocaleDateString('ar-IQ', { day: 'numeric', month: 'short' })}
+                  {new Date(latest.measured_at).toLocaleDateString('ar-IQ-u-nu-latn', { day: 'numeric', month: 'short' })}
                 </div>
               )}
             </div>
@@ -206,7 +206,7 @@ export default function HealthClient({ latestByType, history }: Props) {
                     <div className="scr-list-item-title">{m.label}: {h.value} {h.unit}</div>
                     <div className="scr-list-item-meta">
                       <Calendar size={12} strokeWidth={2.2} aria-hidden style={{ verticalAlign: '-2px', marginLeft: 2 }} />
-                      {date.toLocaleDateString('ar-IQ', { day: 'numeric', month: 'long' })} · {date.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' })}
+                      {date.toLocaleDateString('ar-IQ-u-nu-latn', { day: 'numeric', month: 'long' })} · {date.toLocaleTimeString('ar-IQ-u-nu-latn', { hour: '2-digit', minute: '2-digit' })}
                     </div>
                     {h.notes && <div className="scr-list-item-meta" style={{ marginTop: 4, fontStyle: 'italic' }}>{h.notes}</div>}
                     <div className="scr-list-item-actions">

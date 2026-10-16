@@ -543,7 +543,7 @@ function InventoryRow({
                     fontWeight: 700,
                   }}
                 >
-                  {item.custom_price.toLocaleString('ar-IQ')} د.ع
+                  {item.custom_price.toLocaleString('ar-IQ-u-nu-latn')} د.ع
                 </span>
               )}
               {item.notes && (

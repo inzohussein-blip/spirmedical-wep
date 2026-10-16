@@ -201,7 +201,7 @@ export default function BugsClient({ bugs, usersMap }: Props) {
                           {b.page_url}
                         </code>
                       )}
-                      <span>· {new Date(b.created_at).toLocaleDateString('ar-IQ')}</span>
+                      <span>· {new Date(b.created_at).toLocaleDateString('ar-IQ-u-nu-latn')}</span>
                     </div>
                   </div>
 
@@ -269,7 +269,7 @@ function StatCard({ label, value, color, icon }: {
         {icon}
         <span style={{ fontSize: 11, fontWeight: 700 }}>{label}</span>
       </div>
-      <div style={{ fontSize: 20, fontWeight: 900 }}>{value.toLocaleString('ar-IQ')}</div>
+      <div style={{ fontSize: 20, fontWeight: 900 }}>{value.toLocaleString('ar-IQ-u-nu-latn')}</div>
     </div>
   );
 }

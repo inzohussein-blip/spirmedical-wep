@@ -139,7 +139,7 @@ describe('③ النموذج: ترتيب، اختياريّ، شاشةُ تحم�
   it('أربعةُ أقسامٍ مرقّمة بالترتيب', () => {
     render(<Client />);
     const legends = Array.from(document.querySelectorAll('legend')).map((l) => l.textContent);
-    expect(legends).toEqual(['١بياناتك', '٢بيانات الدخول', '٣اختصاصك', '٤إثبات الشخصية']);
+    expect(legends).toEqual(['1بياناتك', '2بيانات الدخول', '3اختصاصك', '4إثبات الشخصية']);
   });
 
   it('🚨 الهويّة وحدها مُعلَّمة مطلوبة، والبقيّة «اختياري»', () => {

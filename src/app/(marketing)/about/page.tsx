@@ -1,132 +1,91 @@
-// ⚡ V27 Performance: ISR caching (86400s)
+// ⚡ ISR: نصٌّ ثابت يُبنى من lib/seo/facts.ts
 export const revalidate = 86400;
 
 import Link from 'next/link';
+import AboutApp from '@/components/landing/AboutApp';
+import JsonLd from '@/components/seo/JsonLd';
+import { BRAND, SUMMARY_AR } from '@/lib/seo/facts';
+import { absoluteUrl } from '@/lib/seo/coverage';
+
+/**
+ * ℹ️ عن التطبيق — صفحةٌ تسويقيّة قابلةٌ للفهرسة.
+ *
+ * كانت شاشةً من التطبيق: زرُّ رجوعٍ إلى `/account` (يطلب الدخولَ من الزائر)، و«الإصدار 1.0.0»،
+ * و«+200 نوع فحص» و«استجابة فورية» بلا مصدر، وبلا وصفٍ في metadata. الآن جسمُها `AboutApp`
+ * نفسُه الذي في الرئيسية، ومادّتُه من `lib/seo/facts.ts`.
+ */
+const PATH = '/about';
 
 export const metadata = {
   alternates: { canonical: '/about' },
-  title: 'حول التطبيق · سباير ميديكال',
+  title: 'عن التطبيق — سحب دم وخدمات طبية منزلية',
+  description: SUMMARY_AR,
+  openGraph: {
+    title: 'عن تطبيق سباير ميديكال',
+    description: SUMMARY_AR,
+    url: PATH,
+    type: 'website',
+  },
 };
 
-const FEATURES = [
-  { icon: '🩸', title: 'سحب الدم المنزلي', desc: 'فني مدرّب يأتي إليك' },
-  { icon: '🧪', title: 'تحاليل شاملة', desc: '+200 نوع فحص' },
-  { icon: '💊', title: 'دليل الصيدليات', desc: 'إرشاد لا بيع' },
-  { icon: '⌬', title: 'طبيب العائلة', desc: 'رعاية شاملة' },
-  { icon: '💬', title: 'استشارات طبية', desc: 'فورية وآمنة' },
-  { icon: '🚨', title: 'طوارئ SOS', desc: 'استجابة سريعة' },
-];
-
-const TEAM_VALUES = [
-  { icon: '🔒', title: 'الخصوصية أولاً', desc: 'بياناتك مُشفّرة ومحمية' },
-  { icon: '⚡', title: 'سريع وموثوق', desc: 'استجابة فورية' },
-  { icon: '🇮🇶', title: 'صُنع في العراق', desc: 'للعراقيين وبأيديهم' },
-  { icon: '💚', title: 'يهمنا صحتك', desc: 'مهمتنا الأولى' },
+const LEGAL = [
+  { href: '/legal/terms', label: 'الشروط والأحكام' },
+  { href: '/legal/privacy', label: 'سياسة الخصوصية' },
+  { href: '/legal/disclaimer', label: 'إخلاء المسؤولية الطبية' },
+  { href: '/legal/refund', label: 'الإلغاء والاسترداد' },
+  { href: '/legal/cookies', label: 'سياسة الكوكيز' },
 ];
 
 export default function AboutPage() {
   return (
     <main className="mkt-screen">
-      <div className="mkt-content">
+      <div className="mkt-content ab-page-content">
         <div className="mkt-page-header">
-          <Link href="/account" className="mkt-back-btn" aria-label="العودة"><span aria-hidden="true">→</span></Link>
-          <h1 className="mkt-page-title">حول التطبيق</h1>
+          <Link href="/" className="mkt-back-btn" aria-label="الرئيسية"><span aria-hidden="true">→</span></Link>
+          <div className="mkt-page-title" aria-hidden="true">عن التطبيق</div>
           <div className="mkt-page-spacer" />
         </div>
 
-        {/* Logo + Brand */}
-        <div style={{ textAlign: 'center', marginTop: 16, marginBottom: 24 }}>
-          <div className="auth-logo" style={{ margin: '0 auto 12px' }}>س</div>
-          <div className="auth-brand">Spir Medical</div>
-          <div className="auth-brand-sub">سباير ميديكال</div>
-          <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 8 }}>الإصدار 1.0.0</div>
-        </div>
+        <AboutApp variant="page" />
 
-        {/* الرؤية */}
-        <div className="mkt-section-head" style={{ marginTop: 8 }}>
-          <div className="mkt-section-title">رؤيتنا</div>
-        </div>
-        <div className="mkt-info-banner" style={{ background: 'var(--paper-3)', display: 'block', padding: 16 }}>
-          <p style={{ margin: 0, lineHeight: 1.7, fontSize: 13 }}>
-            <strong>سباير ميديكال</strong> منصة طبية رقمية عراقية تهدف إلى تسهيل الوصول للخدمات الصحية. 
-            من سحب الدم المنزلي إلى الاستشارات الطبية والصيدليات، نوفّر كل ما تحتاجه في مكان واحد.
-          </p>
-        </div>
-
-        {/* خدماتنا */}
-        <div className="mkt-section-head" style={{ marginTop: 24 }}>
-          <div className="mkt-section-title">ما نقدمه</div>
-        </div>
-        <div className="services-grid">
-          {FEATURES.map((f) => (
-            <div key={f.title} className="service-card service-default">
-              <div className="service-icon" aria-hidden="true">{f.icon}</div>
-              <div className="service-title">{f.title}</div>
-              <div className="service-desc">{f.desc}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* قيمنا */}
-        <div className="mkt-section-head" style={{ marginTop: 24 }}>
-          <div className="mkt-section-title">قيمنا</div>
-        </div>
-        <div className="mkt-list-stack">
-          {TEAM_VALUES.map((v) => (
-            <div key={v.title} className="mkt-list-item">
-              <div className="mkt-list-item-icon" aria-hidden="true">{v.icon}</div>
-              <div className="mkt-list-item-content">
-                <div className="mkt-list-item-title">{v.title}</div>
-                <div className="mkt-list-item-subtitle">{v.desc}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* روابط قانونية */}
-        <div className="mkt-section-head" style={{ marginTop: 24 }}>
-          <div className="mkt-section-title">معلومات قانونية</div>
-        </div>
-        <div className="mkt-list-stack">
-          <Link href="/legal/terms" className="mkt-list-item mkt-list-item-clickable">
-            <div className="mkt-list-item-icon" aria-hidden="true">📜</div>
-            <div className="mkt-list-item-content">
-              <div className="mkt-list-item-title">الشروط والأحكام</div>
-            </div>
-            <div style={{ color: 'var(--ink-3)', fontSize: 18 }} aria-hidden="true">←</div>
-          </Link>
-          <Link href="/legal/privacy" className="mkt-list-item mkt-list-item-clickable">
-            <div className="mkt-list-item-icon" aria-hidden="true">🔒</div>
-            <div className="mkt-list-item-content">
-              <div className="mkt-list-item-title">سياسة الخصوصية</div>
-            </div>
-            <div style={{ color: 'var(--ink-3)', fontSize: 18 }} aria-hidden="true">←</div>
-          </Link>
-          <Link href="/legal/disclaimer" className="mkt-list-item mkt-list-item-clickable">
-            <div className="mkt-list-item-icon" aria-hidden="true">⚠️</div>
-            <div className="mkt-list-item-content">
-              <div className="mkt-list-item-title">إخلاء المسؤولية الطبية</div>
-            </div>
-            <div style={{ color: 'var(--ink-3)', fontSize: 18 }} aria-hidden="true">←</div>
-          </Link>
-          <Link href="/legal/cookies" className="mkt-list-item mkt-list-item-clickable">
-            <div className="mkt-list-item-icon" aria-hidden="true">🍪</div>
-            <div className="mkt-list-item-content">
-              <div className="mkt-list-item-title">سياسة الكوكيز</div>
-            </div>
-            <div style={{ color: 'var(--ink-3)', fontSize: 18 }} aria-hidden="true">←</div>
-          </Link>
-        </div>
-
-        {/* Footer */}
-        <div className="account-footer" style={{ marginTop: 32 }}>
-          <div>Spir Medical · سباير ميديكال</div>
-          <div>صُنع بعناية في النجف 🇮🇶</div>
-          <div style={{ marginTop: 8 }}>© 2026 جميع الحقوق محفوظة</div>
-        </div>
-
-        <div style={{ height: 80 }} />
+        <section className="ab-wrap ab-contact" aria-labelledby="ab-contact">
+          <h2 id="ab-contact" className="ab-h3">تواصل معنا</h2>
+          <div className="ab-contact-row">
+            <a href={`tel:${BRAND.telephone}`} className="ab-btn ab-btn-ghost" dir="ltr">{BRAND.telephoneLocal}</a>
+            <a href={`https://wa.me/${BRAND.whatsapp}`} className="ab-btn ab-btn-ghost" target="_blank" rel="noopener noreferrer">واتساب</a>
+            <a href={`mailto:${BRAND.email}`} className="ab-btn ab-btn-ghost">{BRAND.email}</a>
+          </div>
+          <nav aria-label="معلومات قانونية" className="ab-legal">
+            {LEGAL.map((l) => <Link key={l.href} href={l.href}>{l.label}</Link>)}
+          </nav>
+          <p className="ab-foot">{BRAND.citeAs} · صُنع في {BRAND.locality}، {BRAND.country}</p>
+        </section>
       </div>
+
+      <JsonLd
+        id="ld-about"
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'AboutPage',
+          name: 'عن تطبيق سباير ميديكال',
+          description: SUMMARY_AR,
+          url: absoluteUrl(PATH),
+          inLanguage: BRAND.language,
+          about: { '@id': `${BRAND.url}/#organization` },
+          isPartOf: { '@id': `${BRAND.url}/#website` },
+        }}
+      />
+      <JsonLd
+        id="ld-breadcrumb"
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'الرئيسية', item: absoluteUrl('/') },
+            { '@type': 'ListItem', position: 2, name: 'عن التطبيق', item: absoluteUrl(PATH) },
+          ],
+        }}
+      />
     </main>
   );
 }

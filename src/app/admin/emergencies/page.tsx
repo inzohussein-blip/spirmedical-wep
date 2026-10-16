@@ -70,7 +70,7 @@ export default async function AdminEmergenciesPage(
     .select('status, created_at');
 
   // «اليوم» بتوقيت بغداد لا بتوقيت الخادم (UTC على Vercel) — وإلّا بدأ اليوم
-  // الساعة ٠٣:٠٠ بغداد وسقطت طلبات ما بعد منتصف الليل في حصيلة الأمس.
+  // الساعة 03:00 بغداد وسقطت طلبات ما بعد منتصف الليل في حصيلة الأمس.
   const { start: today } = baghdadDayWindow();
 
   const stats24h = (stats || []).filter(s =>

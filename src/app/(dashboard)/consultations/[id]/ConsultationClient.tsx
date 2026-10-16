@@ -396,7 +396,7 @@ export default function ConsultationClient({
                       textAlign: 'end',
                     }}
                   >
-                    {new Date(msg.created_at).toLocaleTimeString('ar-IQ', {
+                    {new Date(msg.created_at).toLocaleTimeString('ar-IQ-u-nu-latn', {
                       hour: '2-digit',
                       minute: '2-digit',
                     })}
@@ -754,7 +754,7 @@ function ShareRecordModal({
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 13, fontWeight: 800 }}>{r.title}</div>
                       <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 1 }}>
-                        {new Date(r.date).toLocaleDateString('ar-IQ')}
+                        {new Date(r.date).toLocaleDateString('ar-IQ-u-nu-latn')}
                         {r.summary && ` · ${r.summary}`}
                       </div>
                     </div>

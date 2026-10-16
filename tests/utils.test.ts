@@ -21,8 +21,8 @@ describe('cn (className merger)', () => {
 describe('formatDate', () => {
   it('ينسّق تاريخ بالعربية', () => {
     const result = formatDate('2026-05-06');
-    // قد يحتوي على أرقام عربية (٢٠٢٦) أو إنجليزية (2026)
-    expect(result).toMatch(/[٢2][٠0][٢2][٦6]/);
+    // قد يحتوي على أرقام عربية (2026) أو إنجليزية (2026)
+    expect(result).toMatch(/2026/);
   });
 
   it('يتعامل مع Date object', () => {
@@ -34,15 +34,15 @@ describe('formatDate', () => {
 describe('formatDateTime', () => {
   it('يحتوي على وقت', () => {
     const result = formatDateTime('2026-05-06T14:30:00Z');
-    expect(result).toMatch(/[\d٠-٩]/);
+    expect(result).toMatch(/\d{2}:\d{2}/);
   });
 });
 
 describe('formatCurrency', () => {
   it('ينسّق المبلغ بالدينار', () => {
     const result = formatCurrency(50000);
-    // يقبل ٥٠ أو 50
-    expect(result).toMatch(/[٥5]/);
+    // يقبل 50 أو 50
+    expect(result).toMatch(/50,000|50٬000/);
   });
 
   it('بدون كسور', () => {

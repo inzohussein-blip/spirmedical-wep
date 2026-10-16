@@ -1,3 +1,4 @@
+import { DISPLAY_LOCALE } from '@/lib/format/locale';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -11,7 +12,7 @@ export function cn(...inputs: ClassValue[]) {
 /**
  * تنسيق التاريخ باللغة العربية
  */
-export function formatDate(date: string | Date, locale = 'ar-IQ'): string {
+export function formatDate(date: string | Date, locale = DISPLAY_LOCALE): string {
   return new Intl.DateTimeFormat(locale, {
     year: 'numeric',
     month: 'long',
@@ -22,7 +23,7 @@ export function formatDate(date: string | Date, locale = 'ar-IQ'): string {
 /**
  * تنسيق التاريخ والوقت
  */
-export function formatDateTime(date: string | Date, locale = 'ar-IQ'): string {
+export function formatDateTime(date: string | Date, locale = DISPLAY_LOCALE): string {
   return new Intl.DateTimeFormat(locale, {
     year: 'numeric',
     month: 'short',
@@ -35,7 +36,7 @@ export function formatDateTime(date: string | Date, locale = 'ar-IQ'): string {
 /**
  * تنسيق المبلغ بالدينار العراقي
  */
-export function formatCurrency(amount: number, locale = 'ar-IQ'): string {
+export function formatCurrency(amount: number, locale = DISPLAY_LOCALE): string {
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: 'IQD',

@@ -166,7 +166,7 @@ export default async function VaccineDetailPage(
               </div>
             ) : (
               <div style={{ fontSize: 22, fontWeight: 900 }}>
-                {vaccine.price.toLocaleString('ar-IQ')} <span style={{ fontSize: 12, fontWeight: 600 }}>د.ع / جرعة</span>
+                {vaccine.price.toLocaleString('ar-IQ-u-nu-latn')} <span style={{ fontSize: 12, fontWeight: 600 }}>د.ع / جرعة</span>
               </div>
             )}
           </div>
@@ -250,7 +250,7 @@ export default async function VaccineDetailPage(
               borderBottom: '1px solid #E8EAED',
             }}>
               {records.map((r) => {
-                const date = new Date(r.administered_at).toLocaleDateString('ar-IQ', {
+                const date = new Date(r.administered_at).toLocaleDateString('ar-IQ-u-nu-latn', {
                   day: 'numeric', month: 'long', year: 'numeric',
                 });
                 return (
@@ -392,5 +392,5 @@ export default async function VaccineDetailPage(
 const sectionTitleStyle: React.CSSProperties = {
   padding: '0 16px 8px',
   fontSize: 11, fontWeight: 700, color: '#5F6368',
-  textTransform: 'uppercase', letterSpacing: '0.3px',
+  textTransform: 'uppercase',
 };

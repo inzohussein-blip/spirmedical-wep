@@ -263,11 +263,11 @@ export default function DoctorsAdminClient({ doctors }: Props) {
                       {d.clinic_city || '—'}
                     </td>
                     <td style={tdStyle}>
-                      {d.home_visit_price ? `${d.home_visit_price.toLocaleString('ar-IQ')} د.ع` : '—'}
+                      {d.home_visit_price ? `${d.home_visit_price.toLocaleString('ar-IQ-u-nu-latn')} د.ع` : '—'}
                     </td>
                     <td style={tdStyle}>
                       {d.monthly_subscription_price
-                        ? `${d.monthly_subscription_price.toLocaleString('ar-IQ')}/شهر`
+                        ? `${d.monthly_subscription_price.toLocaleString('ar-IQ-u-nu-latn')}/شهر`
                         : '—'}
                     </td>
                     <td style={tdStyle}>

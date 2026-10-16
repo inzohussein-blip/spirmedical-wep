@@ -32,7 +32,7 @@
     "phonePlaceholder": "07XX XXX XXXX",
     "sendOtp": "إرسال الرمز",
     "otpTitle": "تحقّق من رقم هاتفك",
-    "otpSubtitle": "أدخل الرمز المكوّن من ٦ أرقام الذي أُرسل إليك",
+    "otpSubtitle": "أدخل الرمز المكوّن من 6 أرقام الذي أُرسل إليك",
     "otpLabel": "رمز التحقق",
     "otpPlaceholder": "000000",
     "verify": "تحقّق",

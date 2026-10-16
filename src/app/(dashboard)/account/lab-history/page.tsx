@@ -222,7 +222,7 @@ export default async function LabHistoryPage() {
                 
                 const date = new Date(
                   order.appointments?.scheduled_at || order.created_at
-                ).toLocaleDateString('ar-IQ', {
+                ).toLocaleDateString('ar-IQ-u-nu-latn', {
                   day: 'numeric', month: 'long', year: 'numeric',
                 });
                 
@@ -248,7 +248,7 @@ export default async function LabHistoryPage() {
                     <div className="scr-list-item-content">
                       <div className="scr-list-item-title">
                         {order.test_ids.length} فحص
-                        {SHOW_PRICES && ` · ${order.total_price.toLocaleString('ar-IQ')} د.ع`}
+                        {SHOW_PRICES && ` · ${order.total_price.toLocaleString('ar-IQ-u-nu-latn')} د.ع`}
                       </div>
                       <div className="scr-list-item-subtitle" style={{ fontSize: 11, color: 'var(--ink-2)' }}>
                         {testNames.join('، ')}
@@ -287,7 +287,7 @@ export default async function LabHistoryPage() {
               {fallbackAppointments.map((lab) => {
                 const status = STATUS_META[lab.status] ?? STATUS_META.pending;
                 const StatusIcon = status.icon;
-                const date = new Date(lab.scheduled_at).toLocaleDateString('ar-IQ', {
+                const date = new Date(lab.scheduled_at).toLocaleDateString('ar-IQ-u-nu-latn', {
                   day: 'numeric', month: 'long', year: 'numeric',
                 });
                 return (

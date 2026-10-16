@@ -137,11 +137,11 @@ export default async function SpecialistStatsPage() {
         <div className="spec-stats-hero">
           <div className="spec-stats-hero-label">إجمالي الطلبات المكتملة</div>
           <div className="spec-stats-hero-amount">
-            {(completedCount || 0).toLocaleString('ar-IQ')}
+            {(completedCount || 0).toLocaleString('ar-IQ-u-nu-latn')}
             <span>طلب</span>
           </div>
           <div className="spec-stats-hero-meta">
-            من أصل {(totalAppointments || 0).toLocaleString('ar-IQ')} طلب
+            من أصل {(totalAppointments || 0).toLocaleString('ar-IQ-u-nu-latn')} طلب
           </div>
         </div>
 

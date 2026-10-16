@@ -91,7 +91,7 @@ export default async function AuditLogPage(props: { searchParams: Promise<Search
                 return (
                   <tr key={a.id} style={{ borderTop: '1px solid var(--line)' }}>
                     <td style={{ ...td, whiteSpace: 'nowrap' }}>
-                      {new Date(a.created_at).toLocaleString('ar-IQ', { dateStyle: 'short', timeStyle: 'short' })}
+                      {new Date(a.created_at).toLocaleString('ar-IQ-u-nu-latn', { dateStyle: 'short', timeStyle: 'short' })}
                     </td>
                     <td style={td}>
                       <div style={{ fontWeight: 700, fontSize: 12 }}>{admin?.full_name ?? '—'}</div>

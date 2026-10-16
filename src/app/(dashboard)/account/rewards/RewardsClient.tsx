@@ -156,7 +156,7 @@ export default function RewardsClient({
               lineHeight: 1,
               marginBottom: 8,
             }}>
-              {loyaltyPoints.toLocaleString('ar-IQ')}
+              {loyaltyPoints.toLocaleString('ar-IQ-u-nu-latn')}
             </div>
             <div style={{ fontSize: 11, opacity: 0.9 }}>نقطة ولاء</div>
 
@@ -186,7 +186,7 @@ export default function RewardsClient({
                   }} />
                 </div>
                 <div style={{ fontSize: 11, opacity: 0.8, marginTop: 4 }}>
-                  تحتاج {pointsToNext.toLocaleString('ar-IQ')} نقطة أخرى
+                  تحتاج {pointsToNext.toLocaleString('ar-IQ-u-nu-latn')} نقطة أخرى
                 </div>
               </div>
             )}
@@ -208,7 +208,7 @@ export default function RewardsClient({
               💰 رصيد المحفظة
             </div>
             <div style={{ fontSize: 20, fontWeight: 900, color: 'var(--emerald)' }}>
-              {walletBalance.toLocaleString('ar-IQ')} د.ع
+              {walletBalance.toLocaleString('ar-IQ-u-nu-latn')} د.ع
             </div>
           </div>
           <Sparkles size={28} color="var(--emerald)" />
@@ -281,7 +281,7 @@ export default function RewardsClient({
                       {achieved && !isCurrent && <CheckCircle2 size={12} color="var(--emerald)" style={{ marginInlineStart: 8 }} />}
                     </div>
                     <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
-                      {m.min_points.toLocaleString('ar-IQ')} نقطة
+                      {m.min_points.toLocaleString('ar-IQ-u-nu-latn')} نقطة
                     </div>
                     <div style={{ fontSize: 11, color: 'var(--ink-2)', marginTop: 2 }}>
                       {m.description_ar}
@@ -458,12 +458,12 @@ export default function RewardsClient({
                       {r.status === 'pending' && '📝 سجّل لكن لم يستخدم'}
                     </div>
                     <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
-                      {new Date(r.created_at).toLocaleDateString('ar-IQ')}
+                      {new Date(r.created_at).toLocaleDateString('ar-IQ-u-nu-latn')}
                     </div>
                   </div>
                   {r.referrer_reward > 0 && (
                     <div style={{ fontWeight: 900, color: 'var(--emerald)' }}>
-                      +{r.referrer_reward.toLocaleString('ar-IQ')}
+                      +{r.referrer_reward.toLocaleString('ar-IQ-u-nu-latn')}
                     </div>
                   )}
                 </div>

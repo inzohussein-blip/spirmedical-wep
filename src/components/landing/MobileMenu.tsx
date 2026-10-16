@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import {
-  Menu, X, Stethoscope, Settings, MessageCircle, HelpCircle, UserCog,
+  Menu, X, Stethoscope, Settings, MessageCircle, HelpCircle, UserCog, Info,
 } from 'lucide-react';
 
 /** `appHomePath` غير فارغ ⇒ الزائر مُسجّل، فتُبدَّل دعوة الدخول بدعوة الفتح */
@@ -64,6 +64,10 @@ export default function LandingMobileMenu({ appHomePath }: { appHomePath?: strin
               <a href="#how-it-works" onClick={close}>
                 <Settings size={18} strokeWidth={2.2} aria-hidden />
                 <span>كيف يعمل</span>
+              </a>
+              <a href="#about" onClick={close}>
+                <Info size={18} strokeWidth={2.2} aria-hidden />
+                <span>عن التطبيق</span>
               </a>
               <a href="#testimonials" onClick={close}>
                 <MessageCircle size={18} strokeWidth={2.2} aria-hidden />

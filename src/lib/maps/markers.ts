@@ -145,7 +145,7 @@ export function buildMarkerSvg(type: ServiceMarkerType, size: number = 40): stri
       <svg viewBox="0 0 ${pinWidth} ${pinHeight}" width="${pinWidth}" height="${pinHeight}" style="display: block; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">
         <path d="M${pinWidth / 2} 0 C${pinWidth * 0.18} 0 0 ${pinWidth * 0.22} 0 ${pinWidth * 0.5} C0 ${pinHeight * 0.85} ${pinWidth / 2} ${pinHeight} ${pinWidth / 2} ${pinHeight} S${pinWidth} ${pinHeight * 0.85} ${pinWidth} ${pinWidth * 0.5} C${pinWidth} ${pinWidth * 0.22} ${pinWidth * 0.82} 0 ${pinWidth / 2} 0 Z" fill="${style.color}" stroke="white" stroke-width="2"/>
         <circle cx="${pinWidth / 2}" cy="${circleY}" r="${circleRadius}" fill="white"/>
-        <text x="${pinWidth / 2}" y="${circleY + symbolFontSize * 0.35}" text-anchor="middle" fill="${style.color}" font-size="${symbolFontSize}" font-weight="500" font-family="Tajawal, system-ui">${style.symbol}</text>
+        <text x="${pinWidth / 2}" y="${circleY + symbolFontSize * 0.35}" text-anchor="middle" fill="${style.color}" font-size="${symbolFontSize}" font-weight="500" font-family="IBM Plex Sans Arabic, system-ui">${style.symbol}</text>
       </svg>
     </div>
   `;
@@ -163,7 +163,7 @@ export function buildClusterSvg(count: number, type?: ServiceMarkerType): string
   else if (count >= 20) size = 42;
 
   return `
-    <div style="width: ${size}px; height: ${size}px; background: ${style.color}; border: 3px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: ${Math.floor(size * 0.32)}px; font-weight: 500; font-family: Tajawal, system-ui; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+    <div style="width: ${size}px; height: ${size}px; background: ${style.color}; border: 3px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: ${Math.floor(size * 0.32)}px; font-weight: 500; font-family: 'IBM Plex Sans Arabic', system-ui; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
       ${count}
     </div>
   `;

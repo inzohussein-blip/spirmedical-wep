@@ -259,7 +259,7 @@ function ServiceTypesView({
               </span>
               <span>·</span>
               <span style={{ fontWeight: 700, color: 'var(--emerald)' }}>
-                من {t.base_price.toLocaleString('ar-IQ')} د.ع
+                من {t.base_price.toLocaleString('ar-IQ-u-nu-latn')} د.ع
               </span>
             </div>
 
@@ -425,7 +425,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
               {specialist.years_experience} سنة خبرة
             </span>
             <span>·</span>
-            <span>{specialist.total_sessions.toLocaleString('ar-IQ')} جلسة</span>
+            <span>{specialist.total_sessions.toLocaleString('ar-IQ-u-nu-latn')} جلسة</span>
             {specialist.rating_count > 0 && (
               <>
                 <span>·</span>

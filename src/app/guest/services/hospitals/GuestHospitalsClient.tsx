@@ -83,7 +83,7 @@ export default function GuestHospitalsClient() {
               className={`scr-tab ${filter === 'emergency' ? 'active' : ''}`}
               onClick={() => setFilter('emergency')}
               type="button"
-            >طوارئ ٢٤/٧</button>
+            >طوارئ 24/7</button>
           </div>
 
           <div className="hospitals-list">
@@ -105,7 +105,7 @@ export default function GuestHospitalsClient() {
                           {hospital.type}
                         </span>
                         {hospital.emergency && (
-                          <span className="hospital-emergency-badge">طوارئ ٢٤/٧</span>
+                          <span className="hospital-emergency-badge">طوارئ 24/7</span>
                         )}
                       </div>
                     </div>

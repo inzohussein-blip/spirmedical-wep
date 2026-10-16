@@ -58,7 +58,7 @@ export default async function AdminPhysioPage() {
     : '0.0';
 
   return (
-    <div style={{ padding: 16, maxWidth: 1280, margin: '0 auto', fontFamily: 'Tajawal, sans-serif' }}>
+    <div style={{ padding: 16, maxWidth: 1280, margin: '0 auto', fontFamily: 'var(--font-sans)' }}>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
         <Link 

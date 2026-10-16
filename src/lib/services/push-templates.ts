@@ -25,12 +25,12 @@ export async function notifyOrderConfirmed(
 ): Promise<void> {
   try {
     const date = new Date(data.scheduledAt);
-    const dateStr = date.toLocaleDateString('ar-IQ', {
+    const dateStr = date.toLocaleDateString('ar-IQ-u-nu-latn', {
       weekday: 'short',
       day: 'numeric',
       month: 'long',
     });
-    const timeStr = date.toLocaleTimeString('ar-IQ', {
+    const timeStr = date.toLocaleTimeString('ar-IQ-u-nu-latn', {
       hour: '2-digit',
       minute: '2-digit',
     });
@@ -265,11 +265,11 @@ export async function notifyNewOrderForSpecialist(
 ): Promise<void> {
   try {
     const date = new Date(data.scheduledAt);
-    const dateStr = date.toLocaleDateString('ar-IQ', {
+    const dateStr = date.toLocaleDateString('ar-IQ-u-nu-latn', {
       day: 'numeric',
       month: 'short',
     });
-    const timeStr = date.toLocaleTimeString('ar-IQ', {
+    const timeStr = date.toLocaleTimeString('ar-IQ-u-nu-latn', {
       hour: '2-digit',
       minute: '2-digit',
     });
@@ -337,8 +337,8 @@ export async function notifyEligibleSpecialistsOfNewOrder(data: {
     }
 
     const date = new Date(data.scheduledAt);
-    const dateStr = date.toLocaleDateString('ar-IQ', { day: 'numeric', month: 'short' });
-    const timeStr = date.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' });
+    const dateStr = date.toLocaleDateString('ar-IQ-u-nu-latn', { day: 'numeric', month: 'short' });
+    const timeStr = date.toLocaleTimeString('ar-IQ-u-nu-latn', { hour: '2-digit', minute: '2-digit' });
 
     const patientName = patient?.full_name || 'مريض';
 

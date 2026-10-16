@@ -133,14 +133,14 @@ export const BLOOD_TESTS: BloodTest[] = [
   {
     id: 'vit-b12',
     code: 'Vitamin B12',
-    nameAr: 'فيتامين ب١٢',
+    nameAr: 'فيتامين ب12',
     description: 'مستوى فيتامين B12 (لفقر الدم والأعصاب)',
     category: 'vitamins',
     price: 18000,
     fastingRequired: false,
     resultTime: '48 ساعة',
     emoji: '💊',
-    keywords: ['فيتامين b12', 'b12', 'ب12', 'ب١٢', 'cobalamin', 'أعصاب'],
+    keywords: ['فيتامين b12', 'b12', 'ب12', 'ب12', 'cobalamin', 'أعصاب'],
   },
   {
     id: 'crp',
@@ -338,7 +338,7 @@ export function longestResultTime(testIds: string[]): string {
  * تنسيق سعر بالدينار العراقي
  */
 export function formatTestPrice(amount: number): string {
-  return `${amount.toLocaleString('ar-IQ')} د.ع`;
+  return `${amount.toLocaleString('ar-IQ-u-nu-latn')} د.ع`;
 }
 
 /**

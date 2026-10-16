@@ -169,7 +169,7 @@ export default async function HospitalDetailPage(
             }}
           >
             {hospital.is_24h && (
-              <StatBox icon={<Clock size={14} />} value="٢٤/٧" label="ساعات العمل" />
+              <StatBox icon={<Clock size={14} />} value="24/7" label="ساعات العمل" />
             )}
             {hospital.beds_count && (
               <StatBox icon={<BedDouble size={14} />} value={String(hospital.beds_count)} label="سرير" />

@@ -1,13 +1,14 @@
 import { MetadataRoute } from 'next';
 import { SITE_TYPE } from '@/lib/site-config';
+import { SITE_ORIGIN } from '@/lib/seo/origin';
+import { CRAWL_BLOCKED } from '@/lib/seo/indexable';
 
 // ============================================================
 // 🤖 Robots Configuration - مع دعم Vercel Screenshot Bot
 // ============================================================
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://spir-medical.com';
+  const baseUrl = SITE_ORIGIN;
 
   // 📱 على App site - منع كل البوتات (التطبيق ليس للجمهور)
   if (SITE_TYPE === 'app') {
@@ -22,8 +23,7 @@ export default function robots(): MetadataRoute.Robots {
           disallow: '/',
         },
       ],
-      host: baseUrl,
-    };
+      };
   }
 
   const publicPaths = [
@@ -38,34 +38,19 @@ export default function robots(): MetadataRoute.Robots {
     '/legal/privacy',
     '/legal/cookies',
     '/legal/disclaimer',
+    '/legal/refund',
+    // 🤖 مولَّدةٌ من src/lib/seo/facts.ts للنماذج
+    '/llms.txt',
+    '/llms-full.txt',
+    '/ai.txt',
     '/api/og',
   ];
 
-  const privatePaths = [
-    '/api/',
-    '/dashboard/',
-    '/specialist/',
-    '/admin',     // ← V22 admin panel (hidden)
-    '/admin/',
-    '/appointments/',
-    '/account/',
-    '/services/',
-    '/tools/',
-    '/sos/',
-    '/notifications/',
-    '/favorites/',
-    '/otp',
-    '/login',
-    '/login/phone',
-    '/register',
-    '/register/patient',
-    '/register/specialist',
-    '/forgot',
-    '/gate',
-    '/guest/',
-  ];
+  // ⚠️ robots.txt لإدارة الزحف لا لإخفاء الصفحات. كان يحجب صفحاتِ التطبيق التي تربط بها الصفحاتُ
+  // العامّة، فامتلأت Search Console بـ«تمّ الحظر باستخدام robots.txt». صفحاتُ التطبيق الآن مسموحٌ
+  // زحفُها وتُرسَل بـ`X-Robots-Tag: noindex` من proxy.ts (lib/seo/indexable.ts).
+  const privatePaths = [...CRAWL_BLOCKED];
 
-  const apiAllowed = ['/api/og'];
 
   return {
     rules: [
@@ -124,7 +109,7 @@ export default function robots(): MetadataRoute.Robots {
           'MistralAI-User',
           'xAI',
         ],
-        allow: [...publicPaths, ...apiAllowed],
+        allow: publicPaths,
         disallow: privatePaths,
       },
 
@@ -146,7 +131,7 @@ export default function robots(): MetadataRoute.Robots {
           'Exabot',
           'facebot',
         ],
-        allow: [...publicPaths, ...apiAllowed],
+        allow: publicPaths,
         disallow: privatePaths,
       },
 
@@ -168,7 +153,7 @@ export default function robots(): MetadataRoute.Robots {
           'Snapchat',
           'TikTokBot',
         ],
-        allow: [...publicPaths, ...apiAllowed],
+        allow: publicPaths,
         disallow: privatePaths,
       },
 
@@ -183,7 +168,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: '/',
       },
     ],
+    // لا `Host:` — توجيهٌ لـYandex وحده (أُهمل منذ 2018)، وGoogle يعدّه سطراً مجهولاً.
     sitemap: `${baseUrl}/sitemap.xml`,
-    host: baseUrl,
   };
 }

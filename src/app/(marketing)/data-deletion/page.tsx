@@ -27,23 +27,23 @@ export default async function DataDeletionPage(
           <h3>المحتويات</h3>
           <nav aria-label="Table of contents">
             <ol>
-              <li><a href="#intro">١. مقدمة</a></li>
-              <li><a href="#what-data">٢. البيانات المخزّنة</a></li>
-              <li><a href="#how-to-request">٣. كيفية طلب الحذف</a></li>
-              <li><a href="#verification">٤. التحقّق من الهوية</a></li>
-              <li><a href="#timeline">٥. المدة الزمنية</a></li>
-              <li><a href="#retention">٦. الاحتفاظ القانوني</a></li>
-              <li><a href="#request-form">٧. نموذج الطلب</a></li>
+              <li><a href="#intro">1. مقدمة</a></li>
+              <li><a href="#what-data">2. البيانات المخزّنة</a></li>
+              <li><a href="#how-to-request">3. كيفية طلب الحذف</a></li>
+              <li><a href="#verification">4. التحقّق من الهوية</a></li>
+              <li><a href="#timeline">5. المدة الزمنية</a></li>
+              <li><a href="#retention">6. الاحتفاظ القانوني</a></li>
+              <li><a href="#request-form">7. نموذج الطلب</a></li>
             </ol>
           </nav>
         </aside>
 
         <article className="legal-content">
           <h1>سياسة حذف البيانات</h1>
-          <p className="legal-updated">آخر تحديث: يونيو ٢٠٢٦</p>
+          <p className="legal-updated">آخر تحديث: يونيو 2026</p>
 
           <section id="intro">
-            <h2>١. مقدمة</h2>
+            <h2>1. مقدمة</h2>
             <p>
               في سباير ميديكال، نحترم حقّك في التحكّم ببياناتك. تشرح هذه الصفحة كيف يمكنك
               طلب حذف بياناتك الشخصية، والإجراءات التي نتّبعها لحماية حسابك من الحذف
@@ -57,7 +57,7 @@ export default async function DataDeletionPage(
           </section>
 
           <section id="what-data">
-            <h2>٢. البيانات التي نخزّنها</h2>
+            <h2>2. البيانات التي نخزّنها</h2>
             <p>قد تشمل بياناتك في سباير ميديكال:</p>
             <ul>
               <li>معلومات الحساب: الاسم، رقم الهاتف، البريد الإلكتروني.</li>
@@ -69,7 +69,7 @@ export default async function DataDeletionPage(
           </section>
 
           <section id="how-to-request">
-            <h2>٣. كيفية طلب الحذف</h2>
+            <h2>3. كيفية طلب الحذف</h2>
             <p>
               لطلب حذف بياناتك، املأ النموذج في أسفل هذه الصفحة بدقّة. سيصل طلبك مباشرةً
               إلى فريق الشركة عبر البريد الإلكتروني الرسمي، وسنتولّى مراجعته يدوياً.
@@ -81,7 +81,7 @@ export default async function DataDeletionPage(
           </section>
 
           <section id="verification">
-            <h2>٤. التحقّق من الهوية</h2>
+            <h2>4. التحقّق من الهوية</h2>
             <p>
               لحماية بياناتك الطبية، <strong>لن نحذف أيّ بيانات قبل التحقّق من هويتك.</strong>{' '}
               قد نطلب منك:
@@ -98,15 +98,15 @@ export default async function DataDeletionPage(
           </section>
 
           <section id="timeline">
-            <h2>٥. المدة الزمنية</h2>
+            <h2>5. المدة الزمنية</h2>
             <p>
               بعد التحقّق من هويتك والموافقة على الطلب، نحذف بياناتك خلال مدّة أقصاها{' '}
-              <strong>٣٠ يوماً</strong>. سنُرسل لك تأكيداً عند اكتمال الحذف.
+              <strong>30 يوماً</strong>. سنُرسل لك تأكيداً عند اكتمال الحذف.
             </p>
           </section>
 
           <section id="retention">
-            <h2>٦. الاحتفاظ القانوني</h2>
+            <h2>6. الاحتفاظ القانوني</h2>
             <p>
               قد نحتفظ ببعض البيانات لفترة محدودة بعد طلب الحذف إذا كان ذلك مطلوباً
               بموجب القانون العراقي (مثل السجلّات المالية للفواتير، أو البيانات المتعلّقة
@@ -115,7 +115,7 @@ export default async function DataDeletionPage(
           </section>
 
           <section id="request-form">
-            <h2>٧. نموذج طلب الحذف</h2>
+            <h2>7. نموذج طلب الحذف</h2>
             <p>
               املأ الحقول التالية بدقّة. جميع الحقول مطلوبة، وستحتاج لكتابة عبارة تأكيد
               صريحة لإتمام الطلب.

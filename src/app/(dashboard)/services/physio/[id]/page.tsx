@@ -390,7 +390,7 @@ export default async function PhysioSpecialistPage(
                     )}
                   </div>
                   <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--emerald)' }}>
-                    {t.base_price.toLocaleString('ar-IQ')} د.ع
+                    {t.base_price.toLocaleString('ar-IQ-u-nu-latn')} د.ع
                   </div>
                 </div>
               ))}

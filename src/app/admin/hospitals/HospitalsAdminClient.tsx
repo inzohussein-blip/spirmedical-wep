@@ -191,7 +191,7 @@ export default function HospitalsAdminClient({ hospitals }: Props) {
                     <td style={tdStyle}>
                       <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', fontSize: 11 }}>
                         {h.has_emergency && <span style={featureTag('var(--rose)')}>طوارئ</span>}
-                        {h.is_24h && <span style={featureTag('var(--emerald)')}>٢٤/٧</span>}
+                        {h.is_24h && <span style={featureTag('var(--emerald)')}>24/7</span>}
                         {h.has_lab && <span style={featureTag('var(--ink-3)')}>مختبر</span>}
                         {h.has_radiology && <span style={featureTag('var(--ink-3)')}>أشعة</span>}
                       </div>
@@ -429,7 +429,7 @@ function HospitalModal({
         <div style={{ marginTop: 12, padding: 12, background: 'var(--paper-3)', borderRadius: 10 }}>
           <h4 style={{ fontSize: 12, fontWeight: 800, margin: '0 0 8px' }}>الخدمات</h4>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-            <CheckLabel checked={is24h} onChange={setIs24h} label="٢٤/٧" />
+            <CheckLabel checked={is24h} onChange={setIs24h} label="24/7" />
             <CheckLabel checked={hasEmergency} onChange={setHasEmergency} label="طوارئ" />
             <CheckLabel checked={hasAmbulance} onChange={setHasAmbulance} label="إسعاف" />
             <CheckLabel checked={hasPharmacy} onChange={setHasPharmacy} label="صيدلية" />

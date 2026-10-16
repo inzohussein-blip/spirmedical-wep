@@ -31,7 +31,7 @@ interface Service {
 }
 
 // ============================================================
-// قسم ١: الخدمة المميزة (طبيب العائلة)
+// قسم 1: الخدمة المميزة (طبيب العائلة)
 // ============================================================
 const FEATURED_SERVICE: Service = {
   id: 'family-doctor',
@@ -46,7 +46,7 @@ const FEATURED_SERVICE: Service = {
 };
 
 // ============================================================
-// قسم ٢: الخدمات الطبية الأساسية (٨ خدمات)
+// قسم 2: الخدمات الطبية الأساسية (8 خدمات)
 // ============================================================
 const CORE_SERVICES: Service[] = [
   {
@@ -62,7 +62,7 @@ const CORE_SERVICES: Service[] = [
     id: 'lab-tests',
     icon: '🧪',
     title: 'تحاليل مختبرية',
-    desc: '+٢٠٠ نوع فحص',
+    desc: '+200 نوع فحص',
     variant: 'amber',
     guestLocked: true,
     guestLockedDesc: 'يتطلب التسجيل',
@@ -80,7 +80,7 @@ const CORE_SERVICES: Service[] = [
     id: 'consultation',
     icon: '💬',
     title: 'استشارة طبية',
-    desc: '١٢ طبيب متاح الآن',
+    desc: '12 طبيب متاح الآن',
     variant: 'amber',
     guestLocked: true,
     guestLockedDesc: 'يتطلب التسجيل',
@@ -89,7 +89,7 @@ const CORE_SERVICES: Service[] = [
     id: 'hospitals',
     icon: '🏥',
     title: 'المستشفيات',
-    desc: '+٤٠ مستشفى · دليل ومعلومات',
+    desc: '+40 مستشفى · دليل ومعلومات',
     variant: 'default',
     guestLocked: false,
     href: '/guest/services/hospitals',
@@ -124,14 +124,14 @@ const CORE_SERVICES: Service[] = [
 ];
 
 // ============================================================
-// قسم ٣: أدوات الصحة الذكية (٥ أدوات للضيف)
+// قسم 3: أدوات الصحة الذكية (5 أدوات للضيف)
 // ============================================================
 const SMART_TOOLS: Service[] = [
   {
     id: 'risk-calculator',
     icon: '🧮',
     title: 'حاسبة المخاطر الصحية',
-    desc: 'قيّم حالتك في ٣٠ ثانية',
+    desc: 'قيّم حالتك في 30 ثانية',
     variant: 'amber',
     guestLocked: false,
     href: '/guest/tools/risk-calculator',
@@ -149,7 +149,7 @@ const SMART_TOOLS: Service[] = [
     id: 'first-aid',
     icon: '🚑',
     title: 'الإسعافات الأولية',
-    desc: 'دليل ٦ حالات طارئة',
+    desc: 'دليل 6 حالات طارئة',
     variant: 'rose',
     guestLocked: false,
     href: '/guest/tools/first-aid',
@@ -175,7 +175,7 @@ const SMART_TOOLS: Service[] = [
 ];
 
 // ============================================================
-// قسم ٤: ميزات قادمة (٤ ميزات - badge "قريباً")
+// قسم 4: ميزات قادمة (4 ميزات - badge "قريباً")
 // ============================================================
 const COMING_SOON: Service[] = [
   {
@@ -221,13 +221,13 @@ const COMING_SOON: Service[] = [
 ];
 
 // ============================================================
-// قسم ٥: الطوارئ (متاح للجميع)
+// قسم 5: الطوارئ (متاح للجميع)
 // ============================================================
 const EMERGENCY_SERVICE: Service = {
   id: 'sos',
   icon: '🚨',
   title: 'طوارئ SOS',
-  desc: 'استجابة فورية ١٢٢',
+  desc: 'استجابة فورية 122',
   variant: 'rose',
   guestLocked: false,
   href: '/guest/sos',
@@ -253,7 +253,7 @@ export default function GuestClient() {
         </div>
 
         {/* Search */}
-        {/* `<label>` لا `<div>`: المربّع المرئيّ ~٥٠px والحقلُ نفسه ~٢٦px، فكان
+        {/* `<label>` لا `<div>`: المربّع المرئيّ ~50px والحقلُ نفسه ~26px، فكان
             اللمسُ على حافّة المربّع لا يُركّز الحقل. */}
         <label className="scr-search">
           <span className="scr-search-icon" aria-hidden="true">
@@ -310,7 +310,7 @@ export default function GuestClient() {
           <div className="scr-banner-cta">سجّل ‹</div>
         </Link>
 
-        {/* القسم ١: الخدمة المميزة */}
+        {/* القسم 1: الخدمة المميزة */}
         <div className="scr-section-head">
           <div className="scr-section-title">المُميّز</div>
         </div>
@@ -318,10 +318,10 @@ export default function GuestClient() {
           <ServiceCard service={FEATURED_SERVICE} />
         </div>
 
-        {/* القسم ٢: الخدمات الطبية الأساسية */}
+        {/* القسم 2: الخدمات الطبية الأساسية */}
         <div className="scr-section-head" style={{ marginTop: 16 }}>
           <div className="scr-section-title">خدماتنا الطبية</div>
-          <div className="scr-section-link">٨ خدمات</div>
+          <div className="scr-section-link">8 خدمات</div>
         </div>
         <div className="services-grid">
           {CORE_SERVICES.map((service) => (
@@ -329,10 +329,10 @@ export default function GuestClient() {
           ))}
         </div>
 
-        {/* القسم ٣: أدوات الصحة الذكية */}
+        {/* القسم 3: أدوات الصحة الذكية */}
         <div className="scr-section-head" style={{ marginTop: 16 }}>
           <div className="scr-section-title">أدوات الصحة الذكية</div>
-          <div className="scr-section-link">٣ مجانية</div>
+          <div className="scr-section-link">3 مجانية</div>
         </div>
         <div className="services-grid">
           {SMART_TOOLS.map((service) => (
@@ -340,10 +340,10 @@ export default function GuestClient() {
           ))}
         </div>
 
-        {/* القسم ٤: ميزات قادمة */}
+        {/* القسم 4: ميزات قادمة */}
         <div className="scr-section-head" style={{ marginTop: 16 }}>
           <div className="scr-section-title">قريباً</div>
-          <div className="scr-section-link">٤ ميزات</div>
+          <div className="scr-section-link">4 ميزات</div>
         </div>
         <div className="services-grid">
           {COMING_SOON.map((service) => (
@@ -351,7 +351,7 @@ export default function GuestClient() {
           ))}
         </div>
 
-        {/* القسم ٥: الطوارئ */}
+        {/* القسم 5: الطوارئ */}
         <div className="scr-section-head" style={{ marginTop: 16 }}>
           <div className="scr-section-title">طوارئ</div>
         </div>
@@ -372,7 +372,7 @@ export default function GuestClient() {
           justifyContent: 'center',
         }}>
           <span style={{ opacity: 0.5 }} aria-hidden="true">🔒</span>
-          <span>الخدمات المقفلة تتطلب التسجيل · إجمالي ١٧ خدمة</span>
+          <span>الخدمات المقفلة تتطلب التسجيل · إجمالي 17 خدمة</span>
         </div>
       </div>
 

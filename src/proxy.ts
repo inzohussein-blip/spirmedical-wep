@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { updateSession } from '@/lib/supabase/middleware';
+import { SITE_ORIGIN, VERCEL_PRODUCTION_HOST } from '@/lib/seo/origin';
+import { NOINDEX_HEADER, isIndexablePath } from '@/lib/seo/indexable';
 import {
   SITE_TYPE,
   isMarketingPath,
@@ -28,6 +30,17 @@ import {
  */
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // 🔁 spirmedical-wep.vercel.app نسخةٌ مطابقة للموقع بلا تحويل = محتوى مكرَّر عند Google.
+  // الصفحاتُ وحدها (GET/HEAD) — لا /api: Webhook Meta وبوّابةُ واتساب والكرون قد تستعمله.
+  if (
+    request.headers.get('host') === VERCEL_PRODUCTION_HOST &&
+    new URL(SITE_ORIGIN).host !== VERCEL_PRODUCTION_HOST &&
+    !pathname.startsWith('/api/') &&
+    (request.method === 'GET' || request.method === 'HEAD')
+  ) {
+    return NextResponse.redirect(new URL(pathname + request.nextUrl.search, SITE_ORIGIN), 308);
+  }
 
   if (SITE_TYPE !== 'all') {
     // 🌐 على Marketing site - منع صفحات التطبيق
@@ -61,6 +74,8 @@ export async function proxy(request: NextRequest) {
   // ومعه سلسلة الاستعلام: خدمتان تتقاسمان `/appointments/new` ولا تفترقان
   // إلّا بـ`?service=`، فحارسُ الإطفاء في التخطيط يحتاجها ليعرف أيّهما.
   response.headers.set('x-search', request.nextUrl.search);
+  // 🔎 صفحاتُ التطبيق تُزحَف ولا تُفهرَس (بدل حجبها في robots.txt — lib/seo/indexable.ts)
+  if (!isIndexablePath(pathname)) response.headers.set('X-Robots-Tag', NOINDEX_HEADER);
   return response;
 }
 
