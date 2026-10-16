@@ -25,6 +25,8 @@ updates:
     #   • #30 (16 تشرين الأول): TypeScript 7 حذف `baseUrl` فلم تُحلّ مساراتُ `@/…` وسقط
     #     `next build` — فتوقّف النشرُ ثانيةً. و#32: eslint-config-next 16 لـNext 16.
     #     و#31: بيئةُ jsdom 30 لا تعمل مع jest 29 — تُرقّى معه لا وحدها.
+    #   • #39 وَ#38 (16 تشرين الأول): zod 4 (‏`error.errors` صار `issues`) وmaplibre-gl 6
+    #     أسقطا فحصَ الأنواع بـ24 خطأً. ترقيتُهما تعديلٌ للكود لا رفعُ رقم.
     ignore:
       - dependency-name: '@supabase/ssr'
       - dependency-name: '@supabase/supabase-js'
@@ -44,6 +46,10 @@ updates:
       - dependency-name: 'jest-environment-jsdom'
         update-types: ['version-update:semver-major']
       - dependency-name: '@types/jest'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'zod'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'maplibre-gl'
         update-types: ['version-update:semver-major']
     groups:
       production-dependencies:

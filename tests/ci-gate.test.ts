@@ -63,12 +63,17 @@ describe('ترقياتٌ لا تُدمج آليّاً (Dependabot)', () => {
     expect(dep).toMatch(/dependency-name: '@types\/node'\n\s+update-types: \['version-update:semver-major'\]/);
   });
 
-  it.each(['typescript', 'next', 'eslint-config-next', 'jest', 'jest-environment-jsdom', '@types/jest'])(
+  it.each(['typescript', 'next', 'eslint-config-next', 'jest', 'jest-environment-jsdom', '@types/jest', 'zod', 'maplibre-gl'])(
     '🚨 %s: لا قفزةَ رئيسيّة آليّة — #30 (TypeScript 7) أوقف النشر',
     (name) => {
       expect(dep).toContain(`- dependency-name: '${name}'\n        update-types: ['version-update:semver-major']`);
     },
   );
+
+  it('🚨 zod 3 وmaplibre-gl 5 مثبَّتان — #39 و#38 أسقطا فحصَ الأنواع بـ24 خطأً', () => {
+    expect(pkg.dependencies.zod).toMatch(/^3\.\d+\.\d+$/);
+    expect(pkg.dependencies['maplibre-gl']).toMatch(/^5\.\d+\.\d+$/);
+  });
 
   it('🚨 TypeScript مثبَّتٌ على 5.x — الإصدار 7 يحذف baseUrl فتنكسر مساراتُ @/', () => {
     expect(pkg.devDependencies.typescript).toMatch(/^5\.\d+\.\d+$/);
