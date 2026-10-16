@@ -81,7 +81,7 @@ export function buildLlmsFullTxt(): string {
     '',
     '## ما لا يُقرأ',
     '',
-    'صفحاتُ التطبيق بعد الدخول خاصّةٌ ومحجوبةٌ في robots.txt: ' + PRIVATE_PREFIXES.map((p) => `\`${p}\``).join('، ') + '.',
+    'صفحاتُ التطبيق بعد الدخول خاصّةٌ ولا تُفهرَس (noindex): ' + PRIVATE_PREFIXES.map((p) => `\`${p}\``).join('، ') + '.',
     '',
     '## عند الاستشهاد',
     '',

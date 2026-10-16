@@ -105,17 +105,23 @@ describe('🗺️ الخريطة وrobots لا يتناقضان', () => {
   const sitemap = read(join(APP, 'sitemap.ts'));
   const robots = read(join(APP, 'robots.ts'));
   const urls = [...sitemap.matchAll(/url:\s*'([^']*)'/g)].map((m) => m[1]);
-  const priv = robots.slice(robots.indexOf('const privatePaths'), robots.indexOf('];', robots.indexOf('const privatePaths')));
-  const disallowed = [...priv.matchAll(/'([^']+)'/g)].map((m) => m[1]);
+  // الحجبُ صار في lib/seo/indexable.ts (CRAWL_BLOCKED)، وصفحاتُ التطبيق تُرسَل بـnoindex
+  const { CRAWL_BLOCKED, isIndexablePath } = require('@/lib/seo/indexable');
+  const disallowed: string[] = [...CRAWL_BLOCKED];
 
   it('يقرأ الخريطة والحجب (حارسُ الحارس)', () => {
     expect(urls.length).toBeGreaterThan(8);
-    expect(disallowed).toContain('/services/');
+    expect(disallowed).toContain('/api/');
+    expect(robots).toMatch(/CRAWL_BLOCKED/);
   });
 
   it('🚨 لا مسارَ في الخريطة يحجبه robots', () => {
     const blocked = urls.filter((u) => u && disallowed.some((d) => (u + '/').startsWith(d.endsWith('/') ? d : d + '/') || u === d));
     expect(blocked).toEqual([]);
+  });
+
+  it('🚨 كلُّ مسارٍ في الخريطة قابلٌ للفهرسة (لا noindex على ما نقدّمه لـGoogle)', () => {
+    expect(urls.map((u) => u || '/').filter((u) => !isIndexablePath(u))).toEqual([]);
   });
 
   it('🚨 كلُّ مسارٍ في الخريطة له صفحةٌ عامّة', () => {

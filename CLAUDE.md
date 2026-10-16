@@ -179,6 +179,10 @@
   سحب الدم والخدمات الطبّية المنزلية. أصنافُه `ab-`. الحارس: `tests/about-app.test.tsx`.
 - **الخطّ IBM Plex Sans Arabic** (قرار المالك) عبر `--font-sans`؛ أوزانُه ٤٠٠–٧٠٠. ٨٠٠/٩٠٠ يُرسمان ٧٠٠ (لا أثقل في
   العائلة)، و٦٠٠ حقيقيٌّ الآن. لا تكتب اسمَ خطٍّ في `style` — `var(--font-sans)`. الحارس: `tests/font-weights.test.ts`.
+- **robots.txt يحجب `/api/` و`/admin` وحدهما** (`CRAWL_BLOCKED` في `lib/seo/indexable.ts`). كان يحجب صفحاتِ التطبيق التي
+  تربط بها الصفحاتُ العامّة، فامتلأت Search Console بـ«تمّ الحظر باستخدام robots.txt». ما ليس في قائمة السماح
+  (`isIndexablePath`) يُرسَل بـ`X-Robots-Tag: noindex` من `proxy.ts`. لا تُعِد مساراً إلى الحجب لإخفائه — الحجبُ يمنع
+  Google من رؤية noindex. وحُذف `X-Robots-Tag: index, follow` العامّ من vercel.json. الحارس: `tests/robots-indexing.test.ts`.
 - **على المالك:** Search Console — أضف رمزَ التحقّق في `layout.tsx` (`verification.google`) وارفع
   `https://www.spir-medical.com/sitemap.xml`. وأرقامُ الرئيسية المرئيّة («18 محافظة»، «24/7») باقيةٌ بقراره؛ الأبوابُ
   الآليّة وحدها صُحّحت.

@@ -86,10 +86,9 @@ describe('🚨 الحقائق تطابق الكود', () => {
     for (const t of ['/llms.txt', '/llms-full.txt', '/ai.txt']) expect(pub).toContain(`'${t}'`);
   });
 
-  it('ما يُعلَن خاصّاً للنماذج محجوبٌ فعلاً في robots', () => {
-    const robots = read('src/app/robots.ts');
-    const priv = robots.slice(robots.indexOf('const privatePaths'), robots.indexOf('];', robots.indexOf('const privatePaths')));
-    for (const p of facts.PRIVATE_PREFIXES) expect(priv).toContain(`'${p}'`);
+  it('ما يُعلَن خاصّاً للنماذج لا يُفهرَس (noindex من proxy)', () => {
+    const { isIndexablePath } = require('@/lib/seo/indexable');
+    for (const p of facts.PRIVATE_PREFIXES) expect(isIndexablePath(p + 'x')).toBe(false);
   });
 });
 
