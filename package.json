@@ -21,7 +21,7 @@
   "dependencies": {
     "@fontsource/jetbrains-mono": "^5.0.20",
     "@fontsource/tajawal": "^5.0.20",
-    "@sentry/nextjs": "^10.54.0",
+    "@sentry/nextjs": "^11.7.0",
     "@supabase/ssr": "0.5.2",
     "@supabase/supabase-js": "2.45.6",
     "@tabler/icons-react": "^3.49.0",
