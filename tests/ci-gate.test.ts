@@ -63,6 +63,17 @@ describe('ترقياتٌ لا تُدمج آليّاً (Dependabot)', () => {
     expect(dep).toMatch(/dependency-name: '@types\/node'\n\s+update-types: \['version-update:semver-major'\]/);
   });
 
+  it.each(['typescript', 'next', 'eslint-config-next', 'jest', 'jest-environment-jsdom', '@types/jest'])(
+    '🚨 %s: لا قفزةَ رئيسيّة آليّة — #30 (TypeScript 7) أوقف النشر',
+    (name) => {
+      expect(dep).toContain(`- dependency-name: '${name}'\n        update-types: ['version-update:semver-major']`);
+    },
+  );
+
+  it('🚨 TypeScript مثبَّتٌ على 5.x — الإصدار 7 يحذف baseUrl فتنكسر مساراتُ @/', () => {
+    expect(pkg.devDependencies.typescript).toMatch(/^5\.\d+\.\d+$/);
+  });
+
   it('🚨 إصدارا Supabase مثبَّتان بدقّة (بلا ^) على المجرَّب', () => {
     expect(pkg.dependencies['@supabase/supabase-js']).toMatch(/^\d+\.\d+\.\d+$/);
     expect(pkg.dependencies['@supabase/ssr']).toMatch(/^\d+\.\d+\.\d+$/);
