@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition, useEffect } from 'react';
+import { useState, useTransition } from 'react';
 import { saveLabResults, updateLabOrderStatus, type LabResultInput } from '../actions';
 import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
 import {
@@ -52,35 +52,26 @@ const STATUS_OPTIONS: Array<{ value: LabResultData['status']; label: string; col
 ];
 
 export default function LabResultsForm({ orderId, expectedTests = [], existingResults = [] }: Props) {
-  const [results, setResults] = useState<LabResultData[]>([]);
+  // ─── القيمة الابتدائية: النتائج المحفوظة، وإلّا التحاليلُ المطلوبة فارغةً ───
+  // في مُهيِّئ الحالة لا في أثرٍ بعد الرسم: كان النموذج يُرسم فارغاً ثمّ يمتلئ.
+  const [results, setResults] = useState<LabResultData[]>(() => {
+    if (existingResults.length > 0) return existingResults;
+    return expectedTests.map((testId) => {
+      const test = BLOOD_TESTS.find((t) => t.id === testId);
+      return {
+        test_id: testId,
+        test_name: test?.nameAr || testId,
+        result_value: '',
+        unit: '',
+        normal_range_text: '',
+        status: 'normal' as const,
+        notes: '',
+      };
+    });
+  });
   const [isPending, startTransition] = useTransition();
   const [success, setSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  // ─── Initial setup: استيراد من expectedTests أو existingResults ───
-  useEffect(() => {
-    if (existingResults.length > 0) {
-      setResults(existingResults);
-      return;
-    }
-    
-    if (expectedTests.length > 0) {
-      const imported: LabResultData[] = expectedTests.map((testId) => {
-        const test = BLOOD_TESTS.find((t) => t.id === testId);
-        return {
-          test_id: testId,
-          test_name: test?.nameAr || testId,
-          result_value: '',
-          unit: '',
-          normal_range_text: '',
-          status: 'normal' as const,
-          notes: '',
-        };
-      });
-      setResults(imported);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   function updateResult(i: number, field: keyof LabResultData, value: string) {
     const next = [...results];

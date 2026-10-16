@@ -21,6 +21,33 @@ interface Props {
   priceFrom?: number;    // e.g. 15
 }
 
+// الخدمة المميّزة تُطفأ كغيرها: تبقى في مكانها بلا رابط.
+// خارج المكوّن: مكوّنٌ يُعرَّف داخل الرسم يُنشأ جديداً كلَّ مرّة.
+function CardWrapper({
+  disabled,
+  href,
+  children,
+  style,
+}: {
+  disabled: boolean;
+  href: string;
+  children: React.ReactNode;
+  style: React.CSSProperties;
+}) {
+  if (disabled) {
+    return (
+      <div style={{ ...style, cursor: 'default', opacity: 0.55 }} aria-disabled="true">
+        {children}
+      </div>
+    );
+  }
+  return (
+    <Link href={href} style={style}>
+      {children}
+    </Link>
+  );
+}
+
 export default async function FeaturedServiceCardV3({
   duration = '30 دقيقة',
   priceFrom = 15,
@@ -30,21 +57,10 @@ export default async function FeaturedServiceCardV3({
   const switches = await getServiceSwitches();
   const disabled = !isEnabled(switches, service.id);
 
-  // الخدمة المميّزة تُطفأ كغيرها: تبقى في مكانها بلا رابط
-  const Wrapper = disabled
-    ? ({ children, style }: { children: React.ReactNode; style: React.CSSProperties }) => (
-        <div style={{ ...style, cursor: 'default', opacity: 0.55 }} aria-disabled="true">
-          {children}
-        </div>
-      )
-    : ({ children, style }: { children: React.ReactNode; style: React.CSSProperties }) => (
-        <Link href={service.route} style={style}>
-          {children}
-        </Link>
-      );
-
   return (
-    <Wrapper
+    <CardWrapper
+      disabled={disabled}
+      href={service.route}
       style={{
         display: 'block',
         margin: '0 14px 14px',
@@ -185,6 +201,6 @@ export default async function FeaturedServiceCardV3({
           <IconArrowLeft size={16} stroke={2.2} />
         </div>
       </div>
-    </Wrapper>
+    </CardWrapper>
   );
 }

@@ -117,7 +117,6 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
           aria-label={alt || name}
         >
           {showImage ? (
-            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={src}
               alt={alt || name}

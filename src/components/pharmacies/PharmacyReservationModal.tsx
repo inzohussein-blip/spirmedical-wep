@@ -11,6 +11,7 @@ import { createPharmacyReservation, type ReservationItem } from '@/app/(dashboar
 import { useFormErrors } from '@/lib/forms/useFormErrors';
 import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
 import FieldError from '@/components/forms/FieldError';
+import { baghdadDateOffset } from '@/lib/time/baghdad-day';
 
 const PHARMACY_FIELD_LABELS: Record<string, string> = {
   items: 'الأدوية المطلوبة',
@@ -104,8 +105,8 @@ export default function PharmacyReservationModal({
     });
   }
 
-  const minDate = new Date().toISOString().split('T')[0];
-  const maxDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  const minDate = baghdadDateOffset(0);
+  const maxDate = baghdadDateOffset(1);
 
   return (
     <ModalShell onClose={onClose} labelledBy="prm-title">

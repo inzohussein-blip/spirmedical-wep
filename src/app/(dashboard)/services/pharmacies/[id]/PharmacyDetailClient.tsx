@@ -527,7 +527,6 @@ export default function PharmacyDetailClient({
                     }}
                   >
                     {med.image_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={med.image_url}
                         alt={med.name_ar}

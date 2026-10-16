@@ -7,6 +7,7 @@ import {
   Building2, Calendar, Clock, AlertTriangle, CheckCircle2, Stethoscope,
 } from 'lucide-react';
 import { createServiceBooking } from '@/app/(dashboard)/services/booking/actions';
+import { baghdadDateOffset } from '@/lib/time/baghdad-day';
 
 interface Hospital {
   id: string;
@@ -101,8 +102,8 @@ export default function HospitalBookingModal({ hospital, onClose, userPhone }: P
     });
   }
 
-  const minDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-  const maxDate = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  const minDate = baghdadDateOffset(1);
+  const maxDate = baghdadDateOffset(60);
 
   return (
     <ModalShell onClose={onClose} labelledBy="hbm-title">

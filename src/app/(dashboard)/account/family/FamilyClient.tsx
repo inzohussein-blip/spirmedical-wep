@@ -14,6 +14,7 @@ import { useFormErrors } from '@/lib/forms/useFormErrors';
 import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
 import FieldError from '@/components/forms/FieldError';
 import { addFamilyMember, updateFamilyMember, deleteFamilyMember } from './actions';
+import { ageInYears, baghdadDateOffset } from '@/lib/time/baghdad-day';
 
 const FAMILY_FIELD_LABELS: Record<string, string> = {
   fullName: 'الاسم الكامل',
@@ -81,8 +82,8 @@ export default function FamilyClient({ members, appointmentsCounts }: Props) {
   };
 
   const calculateAge = (dob: string | null): string => {
-    if (!dob) return '';
-    const years = Math.floor((Date.now() - new Date(dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+    const years = ageInYears(dob);
+    if (years === null) return '';
     if (years < 1) return 'أقل من سنة';
     return `${years} سنة`;
   };
@@ -549,7 +550,7 @@ function MemberModal({
             type="date"
             value={dob}
             onChange={(e) => setDob(e.target.value)}
-            max={new Date().toISOString().split('T')[0]}
+            max={baghdadDateOffset(0)}
           />
 
           {/* Phone */}

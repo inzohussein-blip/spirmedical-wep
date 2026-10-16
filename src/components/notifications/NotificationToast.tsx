@@ -22,6 +22,14 @@ interface Props {
 export default function NotificationToast({ userId, userRole }: Props) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
+  // قبل الأثر الذي يستدعيها: لا تلمس إلّا `setToasts` الثابتة، فالتقاطُها من أيّ رسمٍ سليم.
+  const showToast = (toast: Toast) => {
+    setToasts(prev => [...prev, toast]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== toast.id));
+    }, 5000);
+  };
+
   useEffect(() => {
     const supabase = createClient();
 
@@ -131,13 +139,6 @@ export default function NotificationToast({ userId, userRole }: Props) {
       if (appointmentsChannel) supabase.removeChannel(appointmentsChannel);
     };
   }, [userId, userRole]);
-
-  const showToast = (toast: Toast) => {
-    setToasts(prev => [...prev, toast]);
-    setTimeout(() => {
-      setToasts(prev => prev.filter(t => t.id !== toast.id));
-    }, 5000);
-  };
 
   const dismissToast = (id: string) => {
     setToasts(prev => prev.filter(t => t.id !== id));

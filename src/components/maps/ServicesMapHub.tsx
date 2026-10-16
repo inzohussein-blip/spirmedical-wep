@@ -141,8 +141,35 @@ export default function ServicesMapHub({
         .slice(0, 3)
     : [];
 
-  // حدّث lookup النقاط لمعالج النقر (يعمل مع الفلتر الحالي)
-  locationsByIdRef.current = new Map(filteredLocations.map((l) => [l.id, l]));
+  // آخرُ قائمةٍ مفلترة لمعالجات الخريطة. تُحدَّث في أثرٍ لا أثناء الرسم، وقبل أثر المزامنة
+  // (الآثار تجري بترتيب تعريفها). كانت `syncData` تُلتقط من الرسم الأوّل في معالج `load`:
+  // يغيّر المستخدمُ الفلترَ قبل تحميل الخريطة فيُرسَم عليها الفلترُ الابتدائيّ.
+  const filteredRef = useRef<ServiceLocation[]>(filteredLocations);
+  useEffect(() => {
+    filteredRef.current = filteredLocations;
+    // lookup النقاط لمعالج النقر (يعمل مع الفلتر الحالي)
+    locationsByIdRef.current = new Map(filteredLocations.map((l) => [l.id, l]));
+  });
+
+  // مزامنة بيانات المصدر + ضبط الحدود — تقرأ آخرَ قائمةٍ من المرجع، فلا قيمةَ قديمة فيها.
+  function syncData() {
+    const map = mapRef.current;
+    if (!map || !loadedRef.current) return;
+    const src = map.getSource(SOURCE_ID) as GeoJSONSource | undefined;
+    if (!src) return;
+    const current = filteredRef.current;
+    src.setData(toGeoJSON(current));
+
+    if (current.length > 0) {
+      (async () => {
+        const maplibregl = await loadMapLibre();
+        if (!mapRef.current) return;
+        const bounds = new maplibregl.LngLatBounds();
+        current.forEach((l) => bounds.extend([l.longitude, l.latitude]));
+        mapRef.current.fitBounds(bounds, { padding: 48, maxZoom: 13, duration: 400 });
+      })();
+    }
+  }
 
   // تهيئة الخريطة (مرّة واحدة)
   useEffect(() => {
@@ -278,32 +305,11 @@ export default function ServicesMapHub({
         mapRef.current = null;
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // مزامنة بيانات المصدر + ضبط الحدود
-  function syncData() {
-    const map = mapRef.current;
-    if (!map || !loadedRef.current) return;
-    const src = map.getSource(SOURCE_ID) as GeoJSONSource | undefined;
-    if (!src) return;
-    src.setData(toGeoJSON(filteredLocations));
-
-    if (filteredLocations.length > 0) {
-      (async () => {
-        const maplibregl = await loadMapLibre();
-        if (!mapRef.current) return;
-        const bounds = new maplibregl.LngLatBounds();
-        filteredLocations.forEach((l) => bounds.extend([l.longitude, l.latitude]));
-        mapRef.current.fitBounds(bounds, { padding: 48, maxZoom: 13, duration: 400 });
-      })();
-    }
-  }
 
   // إعادة المزامنة عند تغيّر الفلتر
   useEffect(() => {
     syncData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filteredLocations.length, selectedFilter, selectedGovernorate]);
 
   // زر "موقعي الحالي"

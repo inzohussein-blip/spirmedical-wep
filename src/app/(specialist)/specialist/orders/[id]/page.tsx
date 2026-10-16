@@ -127,8 +127,8 @@ export default async function SpecialistOrderDetailPage(
   const isCompleted = order.status === 'completed';
   const isCancelled = order.status === 'cancelled';
 
-  // اختر الفورم الخاص بالاختصاص
-  function RoleForm() {
+  // اختر الفورم الخاص بالاختصاص — دالّةُ رسمٍ تُستدعى لا مكوّنٌ يُنشأ في كلّ رسم
+  function renderRoleForm() {
     if (!isMine || isCompleted || isCancelled) return null;
     if (!order) return null; // safeguard
 
@@ -286,7 +286,7 @@ export default async function SpecialistOrderDetailPage(
         )}
 
         {/* الفورم الخاص بالاختصاص */}
-        <RoleForm />
+        {renderRoleForm()}
 
         {/* أزرار الإجراءات */}
         <OrderActionsBar

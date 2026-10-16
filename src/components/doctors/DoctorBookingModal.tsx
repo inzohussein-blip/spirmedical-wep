@@ -7,6 +7,7 @@ import { Home, Building2, Video, Calendar, AlertTriangle, CheckCircle2 } from 'l
 import { formatPrice } from '@/lib/format/price';
 import { createDoctorAppointment } from '@/app/(dashboard)/services/doctors/[id]/actions';
 import HapticButton from '@/components/pwa/HapticButton';
+import { baghdadDateOffset } from '@/lib/time/baghdad-day';
 
 interface Doctor {
   id: string;
@@ -134,8 +135,8 @@ export default function DoctorBookingModal({ doctor, defaultType, onClose, userA
   }
 
   // التاريخ الأدنى = غداً
-  const minDate = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-  const maxDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  const minDate = baghdadDateOffset(1);
+  const maxDate = baghdadDateOffset(30);
 
   return (
     <ModalShell onClose={onClose} labelledBy="dbm-title">

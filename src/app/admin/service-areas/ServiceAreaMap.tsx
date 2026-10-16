@@ -2,7 +2,7 @@
 
 // أنماط MapLibre مفصولة (route-scoped) — تُحمَّل مع chunk الخريطة وحدها.
 import '@/components/maps/maplibre-styles';
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import type { Map as MlMap, MapMouseEvent } from 'maplibre-gl';
 import {
   IRAQ_CENTER,
@@ -54,10 +54,13 @@ export default function ServiceAreaMap({
   const cleanupResizeRef = useRef<(() => void) | null>(null);
 
   // النقر يقرأ أحدث مسوّدة: نحفظها في ref كي لا يُعاد تركيب المستمع مع كل رأس
+  // يُحدَّثان بعد الرسم لا أثناءه، ومتزامناً قبل أيّ نقرة.
   const draftRef = useRef<Ring>(draft);
-  draftRef.current = draft;
   const onChangeRef = useRef(onDraftChange);
-  onChangeRef.current = onDraftChange;
+  useLayoutEffect(() => {
+    draftRef.current = draft;
+    onChangeRef.current = onDraftChange;
+  });
 
   /** مسافةٌ بالبكسل تُعدّ «نقرةً على الرأس» لا رأساً جديداً */
   const HIT_PX = 12;

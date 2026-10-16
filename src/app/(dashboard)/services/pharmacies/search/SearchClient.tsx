@@ -65,7 +65,6 @@ export default function SearchClient() {
       performSearch(searchQuery, selectedCity);
     }, 400);
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, selectedCity]);
 
   return (
@@ -216,7 +215,6 @@ export default function SearchClient() {
                         }}
                       >
                         {result.medication.image_url ? (
-                          // eslint-disable-next-line @next/next/no-img-element
                           <img
                             src={result.medication.image_url}
                             alt={result.medication.name_ar}

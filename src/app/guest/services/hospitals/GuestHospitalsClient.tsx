@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Search } from 'lucide-react';
 import PhoneLink from '@/components/ui/PhoneLink';
@@ -25,6 +26,7 @@ const HOSPITALS: Hospital[] = [
 ];
 
 export default function GuestHospitalsClient() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState<'all' | 'public' | 'private' | 'emergency'>('all');
 
@@ -120,7 +122,7 @@ export default function GuestHospitalsClient() {
                     <button
                       className="hospital-action-btn locked"
                       type="button"
-                      onClick={() => window.location.href = '/register'}
+                      onClick={() => router.push('/register')}
                     >
                       <span aria-hidden="true">🔒</span>
                       <span>حجز موعد</span>

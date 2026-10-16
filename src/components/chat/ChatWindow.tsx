@@ -94,7 +94,6 @@ function ChatImage({ chatId, path, name }: { chatId: string; path: string; name?
   }
   return (
     <a href={url} target="_blank" rel="noopener noreferrer">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={url}
         alt={name || 'صورة'}

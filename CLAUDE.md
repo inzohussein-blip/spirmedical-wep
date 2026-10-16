@@ -1,6 +1,6 @@
 # سباير ميديكال — ملاحظاتٌ للجلسات القادمة
 
-منصّة طبّية عربية (RTL) — Next.js 14 App Router + Supabase.
+منصّة طبّية عربية (RTL) — Next.js 16 App Router + Supabase.
 
 ## 🗺️ خريطة سريعة — أين تجد ماذا
 
@@ -289,20 +289,33 @@
 ## ⬆️ الانتقال إلى Next 16 (16 تشرين الأول) — ما يجب معرفته
 
 - **الإصدارات:** Next 16.4.2 (Turbopack)، React 19.3، Sentry 11، Tailwind 4 + tailwind-merge 3، Jest 30،
-  ESLint 10، أنواع Node 24. **TypeScript باقٍ 5.9**: الإصدار 7 يبني (وأسرع ×9) لكنّ typescript-eslint
-  لا يدعمه بعد. `baseUrl` أُزيل من tsconfig تمهيداً.
+  ESLint 10، أنواع Node 24. **TypeScript 6.0** (جسرُ 7، بلا تحذيرات إهمال): الإصدار 7 يبني (وأسرع ×9) لكنّ
+  typescript-eslint يدعم `<6.1` حتى في نسخته التجريبيّة. الحارس يقرأ مداه من حزمته — حين يتّسع ارفع الإصدار.
 - **`createClient()` من الخادم async**: `await createClient()` في كلّ موضع (301). وكذلك `cookies()`
   و`headers()` و`params` و`searchParams` و`getClientIp()`. لا `UnsafeUnwrapped…` (يعمل في 15 وينكسر في 16).
   الحارس: `tests/async-request-apis.test.ts`.
 - **`src/proxy.ts`** بدل `middleware.ts` (يعمل على Node). **`updateTag(tag)`** للإبطال الفوريّ في
   الإجراءات؛ `revalidateTag` صار يطلب profile.
-- **`next lint` أُزيل**: `npm run lint` = `eslint .` بإعداد `eslint.config.mjs`. قواعدُ React Compiler
-  (purity، set-state-in-effect…) **تحذير** — 49 موضعاً تُراجَع قبل تفعيل المُصرِّف.
+- **`next lint` أُزيل**: `npm run lint` = `eslint .` بإعداد `eslint.config.mjs`.
+- **قواعدُ React Compiler رُوجعت** (انظر 🧹 أدناه): refs وimmutability وstatic-components وuse-memo وpurity
+  **أخطاء**؛ وset-state-in-effect تحذيرٌ لـ17 موضعاً تقرأ المتصفّح بعد التركيب (نقلُها يكسر الترطيب).
 - **Tailwind 4**: الإعدادُ في `shared.css` (`@import 'tailwindcss'` و`@theme`)، لا `tailwind.config.ts`.
   أداةُ الترقية أعادت تسميةَ متغيّر `'outline'` في Button/Badge إلى `'outline-solid'` خطأً — أُرجع.
 - **أداةُ التدقيق** (`audit.mjs`) تنتظر `load` ثمّ الهدوءَ بسقف 5 ث: Playwright لا يرى جلبَ Next 15+
   المسبق «منتهياً». ولقطاتُ ما قبل الانتقال وبعده تختلف < 0.25٪ بكسلاً (40 شاشة).
 - الحارس: `tests/next16-migration.test.ts`.
+
+## 🧹 مراجعةُ تحذيرات React Compiler (16 تشرين الأول) — ما كان عطلاً
+
+- **العمرُ والتاريخ بيوم بغداد** (`ageInYears`، `baghdadDateOffset` في `lib/time/baghdad-day.ts`). كان العمرُ
+  `/ 365.25 يوماً` (يومَ الميلاد يُعرض أقلَّ بسنة)، وحدودُ حقول التاريخ `toISOString()` أي UTC: بين ٠٠:٠٠
+  و٠٣:٠٠ بغداد اقترح التمريضُ «الأمس» وسحبُ الدم «اليوم» بدل الغد. لا تكتب `toISOString().split('T')[0]`
+  لحقل تاريخ، ولا منطقةَ الجهاز: الحقلُ يُرسم على الخادم (UTC) ثمّ يُرطَّب.
+- **قفلُ PIN** (`PinLockScreen`): رميُ `verifyPin` (انقطاع) كان يُبقي اللوحةَ معطّلةً. والتحقّقُ من الحدث لا من أثر.
+- **خريطةُ الخدمات**: `syncData` تقرأ `filteredRef` — معالجُ `load` التقطها من الرسم الأوّل.
+- مراجعُ «آخر قيمة» (`useModalDialog`، `ServiceAreaMap`) تُحدَّث في `useLayoutEffect` لا أثناء الرسم.
+- صفحاتُ App Router (مكوّناتُ خادم) مستثناةٌ من purity: `Date.now()` فيها لكلّ طلب، وهو المقصود.
+- الحارس: `tests/react-compiler-review.test.tsx`.
 
 ## 🔑 معلّقٌ على المالك وحده
 
