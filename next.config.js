@@ -13,7 +13,8 @@ const nextConfig = {
         'spir-medical.com',
         'www.spir-medical.com',
       ],
-      bodySizeLimit: '2mb',
+      // وثائقُ المختصّ (الهويّة + اختياريّتان، كلٌّ ≤ 1.2MB بعد الضغط في المتصفّح) — دون حدّ Vercel 4.5MB.
+      bodySizeLimit: '4.5mb',
     },
     optimizePackageImports: [
       'lucide-react',

@@ -1330,6 +1330,7 @@
 
 .auth-phone-wrap input {
   flex: 1;
+  min-width: 0; /* بدونه يفيض الحقلُ خارج بطاقته في عرض 360 */
   background: var(--white); border: 1px solid var(--line);
   border-radius: 10px; padding: 12px;
   font-size: 13px; color: var(--ink);
@@ -5140,3 +5141,144 @@ html {
 
 /* المربّعُ كلّه يُركّز الحقل (صار <label>) — فالمؤشّر مؤشّرُ كتابة */
 .scr-search, .mkt-search { cursor: text; }
+
+/* ════════════════════════════════════════════════════════════════════
+   🩺 تسجيلُ المختصّ — أقسامٌ مرقّمة، وثائقُ اختياريّة، وشاشةُ تحميل
+   (البادئة `spreg-`: لا تُصادم الأصنافَ العامّة)
+   ════════════════════════════════════════════════════════════════════ */
+.spreg-section {
+  border: 1px solid var(--paper-3);
+  border-radius: 16px;
+  padding: 14px 14px 4px;
+  margin: 0 0 14px;
+  min-width: 0;
+  background: var(--white);
+}
+.spreg-section:disabled { opacity: 0.7; }
+.spreg-section-head + * { clear: both; }
+.spreg-section-head {
+  /* float يُدخل العنوانَ في البطاقة بدل أن يقطع إطارها (سلوكُ legend الافتراضيّ) */
+  float: right;
+  width: 100%;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.spreg-step {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--emerald);
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.spreg-optional {
+  border-top: 1px dashed var(--paper-3);
+  margin-top: 4px;
+  padding-top: 10px;
+}
+.spreg-optional > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-2);
+  list-style: none;
+}
+.spreg-optional > summary::-webkit-details-marker { display: none; }
+.spreg-optional > summary::after {
+  content: '▾';
+  margin-inline-start: auto;
+  color: var(--ink-3);
+  transition: transform 0.2s;
+}
+.spreg-optional[open] > summary::after { transform: rotate(180deg); }
+.spreg-optional-badge {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--paper-2);
+  color: var(--ink-3);
+}
+.spreg-optional-hint {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin: 0 0 10px;
+}
+
+.spreg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  height: 100dvh;
+  background: rgba(7, 59, 48, 0.55);
+  backdrop-filter: blur(3px);
+}
+.spreg-overlay-card {
+  width: 100%;
+  max-width: 320px;
+  background: var(--white);
+  border-radius: 20px;
+  padding: 24px 20px;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+.spreg-spinner {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  border: 4px solid var(--emerald-soft);
+  border-top-color: var(--emerald);
+  animation: spin 0.9s linear infinite;
+}
+.spreg-overlay-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+.spreg-overlay-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px;
+  display: grid;
+  gap: 6px;
+  text-align: start;
+}
+.spreg-overlay-steps li {
+  font-size: 13px;
+  color: var(--ink-3);
+  padding-inline-start: 22px;
+  position: relative;
+}
+.spreg-overlay-steps li::before {
+  content: '○';
+  position: absolute;
+  inset-inline-start: 0;
+}
+.spreg-overlay-steps li.active { color: var(--ink); font-weight: 700; }
+.spreg-overlay-steps li.active::before { content: '●'; color: var(--emerald); }
+.spreg-overlay-steps li.done::before { content: '✓'; color: var(--emerald); }
+.spreg-overlay-hint { font-size: 12px; color: var(--ink-3); }
+@media (prefers-reduced-motion: reduce) {
+  .spreg-spinner { animation-duration: 2.4s; }
+}
