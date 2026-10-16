@@ -1,4 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/server';
+import { getWaVerifyConfig, GATEWAY_STALE_MS } from '@/lib/whatsapp/inbound-verify';
 import { SERVICES } from '@/lib/services/services-data';
 import { SPECIALIST_META, toSpecialistType } from '@/lib/specialist-types';
 
@@ -39,9 +40,18 @@ export interface QueueHealth {
   lastErrorQueuedAt: string | null;
 }
 
+/** بوّابةُ واتساب الواردة (0050) — تُحسب فقط حين يكون التحقّقُ مفعّلاً عبر Baileys */
+export interface WaGatewayHealth {
+  connected: boolean;
+  lastSeenAt: string | null;
+  /** لا نبضةَ منذ أكثر من دقيقتين — الزرّ مخفيٌّ عن العملاء */
+  stale: boolean;
+}
+
 export interface OpsHealth {
   coverage: SpecialistCoverage[];
   queue: QueueHealth | null;
+  waGateway: WaGatewayHealth | null;
 }
 
 export async function getOpsHealth(now = new Date()): Promise<OpsHealth> {
@@ -81,6 +91,7 @@ export async function getOpsHealth(now = new Date()): Promise<OpsHealth> {
   }));
 
   const queueOk = !failedRes.error && !retryRes.error;
+  const waGateway = await gatewayHealth(sb, now);
   const last = lastErrRes.data?.[0];
   return {
     coverage,
@@ -93,5 +104,22 @@ export async function getOpsHealth(now = new Date()): Promise<OpsHealth> {
           lastErrorQueuedAt: last?.created_at ?? null,
         }
       : null,
+    waGateway,
   };
+}
+
+async function gatewayHealth(
+  sb: ReturnType<typeof createAdminClient>,
+  now: Date,
+): Promise<WaGatewayHealth | null> {
+  const cfg = getWaVerifyConfig();
+  if (cfg.mode === 'off' || cfg.provider !== 'baileys') return null;
+  const { data } = await sb
+    .from('wa_gateway_status')
+    .select('connected, last_seen_at')
+    .eq('provider', 'baileys')
+    .maybeSingle();
+  if (!data) return { connected: false, lastSeenAt: null, stale: true };
+  const stale = now.getTime() - new Date(data.last_seen_at).getTime() > GATEWAY_STALE_MS;
+  return { connected: data.connected && !stale, lastSeenAt: data.last_seen_at, stale };
 }

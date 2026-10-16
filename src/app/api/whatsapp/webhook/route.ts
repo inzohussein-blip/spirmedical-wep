@@ -11,6 +11,7 @@ import { NextResponse } from 'next/server';
 import { verifyWebhookSignature } from '@/lib/whatsapp/meta-client';
 import { createClient } from '@/lib/supabase/server';
 import type { TablesUpdate } from '@/types/database';
+import { getWaVerifyConfig, handleInboundMessage } from '@/lib/whatsapp/inbound-verify';
 
 export const dynamic = 'force-dynamic';
 
@@ -75,12 +76,20 @@ export async function POST(request: Request) {
         }
       }
 
-      // ملاحظة: الرسائل الواردة (value.messages) تُتجاهل حالياً
-      // ستُعالج عند إضافة البوت في مرحلة مستقبلية
+      // الرسائلُ الواردة: التحقّقُ العكسيّ (0050) حين يكون Meta هو المصدر المختار.
+      // المنطقُ نفسُه الذي تستدعيه بوّابةُ Baileys — لا ردَّ على المرسِل.
       if (value.messages?.length) {
-        console.warn(
-          `[Webhook] Received ${value.messages.length} message(s) - bot not enabled yet`
-        );
+        const cfg = getWaVerifyConfig();
+        if (cfg.mode !== 'off' && cfg.provider === 'meta') {
+          for (const msg of value.messages) {
+            if (msg.type !== 'text') continue;
+            try {
+              await handleInboundMessage({ from: msg.from, text: msg.text?.body, provider: 'meta' });
+            } catch (err) {
+              console.error('[Webhook] inbound verification failed:', err);
+            }
+          }
+        }
       }
     }
   }

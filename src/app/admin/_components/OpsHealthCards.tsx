@@ -9,8 +9,10 @@ export default function OpsHealthCards({ health }: { health: OpsHealth }) {
   const uncovered = health.coverage.filter((c) => c.approved === 0);
   const q = health.queue;
   const queueTrouble = q && (q.failed24h > 0 || q.retrying > 0);
+  const wa = health.waGateway;
+  const waDown = !!wa && !wa.connected;
 
-  if (uncovered.length === 0 && !queueTrouble) return null;
+  if (uncovered.length === 0 && !queueTrouble && !waDown) return null;
 
   const card: React.CSSProperties = {
     background: 'var(--white)',
@@ -68,6 +70,22 @@ export default function OpsHealthCards({ health }: { health: OpsHealth }) {
             المرضى يجدون نسخةً في صندوق الإشعارات داخل التطبيق.
           </p>
           <Link href="/admin/notifications" style={linkBtn}>سجلّ الإشعارات</Link>
+        </div>
+      )}
+      {wa && waDown && (
+        <div role="alert" style={card} data-testid="ops-wa-gateway">
+          <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--ink)', marginBottom: 6 }}>
+            📲 بوّابة واتساب منقطعة
+          </div>
+          <p style={{ fontSize: 13, color: 'var(--ink-2)', margin: '0 0 8px', lineHeight: 1.7 }}>
+            زرُّ «تحقّق عبر واتساب» مخفيٌّ عن العملاء الآن — رمزُ الدخول والرمزُ المؤقّت من الإدارة يعملان.
+          </p>
+          <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: 0, lineHeight: 1.7 }}>
+            {wa.lastSeenAt
+              ? `آخر نبضة: ${new Date(wa.lastSeenAt).toLocaleString('ar-IQ')}`
+              : 'لم تصل أيُّ نبضةٍ بعد'}{' '}
+            · افتح صفحةَ <code dir="ltr">/qr</code> في خدمة Railway وأعد ربطَ الرقم إن طُلب.
+          </p>
         </div>
       )}
     </section>

@@ -12,6 +12,8 @@ export default defineConfig([
     '.audit/',
     'public/vendor/', // ملفّاتٌ مُصغَّرة من مكتباتٍ خارجيّة (عامل الخريطة، إضافة RTL)
     'public/sw.js',
+    // دوالُّ البوّابة الصافية (CommonJS كي يختبرها jest) — خارج أنماط إعداد Next
+    'services/**/*.cjs',
   ]),
   {
     extends: [...nextCoreWebVitals],
@@ -39,8 +41,13 @@ export default defineConfig([
     rules: { 'react-hooks/purity': 'off' },
   },
   {
-    // أدواتُ سطر الأوامر تكتب للطرفيّة عمداً.
-    files: ['tools/**'],
+    // أدواتُ سطر الأوامر وبوّابةُ واتساب (خدمةٌ مستقلّة على Railway) تكتب للطرفيّة عمداً.
+    files: ['tools/**', 'services/**'],
     rules: { 'no-console': 'off' },
+  },
+  {
+    // البوّابةُ ليست React: `useMultiFileAuthState` من Baileys يشبه اسمُه الخطّافات فقط.
+    files: ['services/**'],
+    rules: { 'react-hooks/rules-of-hooks': 'off' },
   },
 ]);

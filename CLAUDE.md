@@ -23,6 +23,7 @@
 | التغطية الجغرافية | `lib/service-areas.ts` · `lib/hooks/useServiceCoverage.ts` · الفهرسة `lib/seo/coverage.ts` |
 | الإشعارات | `lib/notifications.ts` (الطابور) · `lib/notifications-processor.ts` · `lib/services/push*.ts` · `lib/services/whatsapp.ts` · الصندوق `app/(dashboard)/account/inbox/` |
 | صحّة التشغيل والتنبيه | `lib/admin/ops-health.ts` → `app/admin/_components/OpsHealthCards.tsx` · `lib/ops/alert-owner.ts` |
+| التحقّق العكسيّ عبر واتساب | `lib/whatsapp/inbound-verify.ts` · `api/whatsapp/{inbound,heartbeat,verify}` · البوّابة `services/wa-inbound/` (Railway) |
 | رموز الدخول | `app/(auth)/login/actions.ts` · `lib/auth/phone-pin-login.ts` + `login-pin.ts` (الرقم + PIN) · `lib/whatsapp/otp-service.ts` · `lib/auth/otp-mode.ts` · `lib/auth/phone-credentials.ts` · `lib/auth/login-identifier.ts` |
 | الغلاف والتنقّل | `components/layout/AppShell.tsx` · `AuthenticatedShell.tsx` · `lib/focused-routes.ts` |
 | النوافذ المنبثقة | `components/ui/ModalShell.tsx` · `BottomSheet.tsx` · `lib/hooks/useModalDialog.ts` |
@@ -30,7 +31,7 @@
 | التنسيق | `app/styles/shared.css` (رموز + حارس iOS) · `app.css` (شاشات التطبيق) · `marketing.css` · `admin.css` |
 | الفهرسة | `app/layout.tsx` · `components/seo/JsonLd.tsx` · `app/sitemap.ts` · `app/robots.ts` |
 | الكرون | `vercel.json` → `app/api/cron/*` · `app/api/notifications/process` |
-| قاعدة البيانات | `supabase/migrations/` (آخرها 0049) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
+| قاعدة البيانات | `supabase/migrations/` (آخرها 0051) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
 | الاختبارات | `tests/` — اسمُ الحارس يدلّ على مجاله (`rls-*`، `order-flow-modals`، `specialist-screens`…) |
 
 **أدوات التحقّق البصريّ** في [`tools/mobile-audit/`](tools/mobile-audit/README.md):
@@ -258,6 +259,23 @@
   والبريدُ بـ`?method=email`. الرمزُ في حقل `password` لأنّ `guardPinRegistration` يقرؤه.
 - **الدفع نقدٌ فقط**: `payments` فارغٌ ولا بوّابةَ في الكود — فلا تَعِد الشروطُ بزين كاش أو بطاقات.
 - الحارس: `tests/admin-pin-reset.test.ts`.
+
+## 📲 التحقّق العكسيّ عبر واتساب (0050، قرار المالك — **مطفأ حتى يُجرَّب**)
+
+- **العميلُ يرسل الرمزَ إلى رقمنا** (`wa.me/<رقمنا>?text=…`)، ولا نرسل شيئاً — بديلُ توكن Meta المرفوض.
+  الإثبات = رمزٌ معلَّق غيرُ منتهٍ **و** رقمُ المرسِل هو الرقمُ المطلوب له. رقمٌ آخر أو رقمٌ مخفيّ (LID)
+  لا يُتحقَّق به، وخمسُ محاولاتٍ تُبطل الرمز. مرّةٌ واحدة: pending → verified → consumed.
+- **المنطقُ كلُّه في `lib/whatsapp/inbound-verify.ts`.** البوّابةُ ناقلٌ موقَّع (HMAC، نافذة 5 دقائق) بلا مفتاح
+  قاعدة. مصدران بمفتاحٍ واحد `WA_VERIFY_PROVIDER`: `baileys` (`/api/whatsapp/inbound`) أو `meta`
+  (`/api/whatsapp/webhook` القائم). لا تكتب منطقَ مطابقةٍ ثانياً في البوّابة.
+- **البوّابة لا ترسل رسالةً أبداً** (لا `sendMessage`/`readMessages`) — هكذا يقلّ خطرُ حظر الرقم.
+  ورسائلُ بلا ستّة أرقام لا تغادرها. تعمل على Railway بقرصٍ دائم `/data` للجلسة؛ `PROBE_ONLY=1` للمرحلة 0.
+- **`WA_VERIFY_MODE` مطفأ افتراضياً.** والزرُّ يختفي إن غابت نبضةُ البوّابة دقيقتين (`isWaVerifyAvailable`)،
+  وتظهر بطاقةُ «بوّابة واتساب منقطعة» في صحّة التشغيل. رمزُ الدخول ورمزُ الإدارة المؤقّت يبقيان.
+- **ما لم يُبنَ بعد (المرحلتان 4–5):** شاشةُ «تحقّق عبر واتساب» وربطُها بـ«نسيت الرمز» وتوثيق الرقم وتسجيل
+  المختصّ — تنتظر نتيجةَ المرحلة 0 (هل يصل رقمُ المرسِل صريحاً؟).
+- الحارس: `tests/whatsapp-inbound-verify.test.ts` (أُثبت بكسر عشرة مواضع). ودليلُ النشر
+  `services/wa-inbound/README.md`.
 
 ## 🚨 تنبيهُ المالك وبوّابة CI
 
