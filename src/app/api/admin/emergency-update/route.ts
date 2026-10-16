@@ -8,7 +8,7 @@ import type { TablesUpdate } from '@/types/database';
  * تحديث حالة طوارئ من قِبل Admin
  */
 export async function POST(request: NextRequest) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {

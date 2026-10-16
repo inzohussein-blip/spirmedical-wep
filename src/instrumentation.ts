@@ -15,3 +15,9 @@ export async function register() {
     await import('../sentry.edge.config');
   }
 }
+
+/**
+ * أخطاءُ مكوّنات الخادم المتداخلة وServer Actions تصل إلى Sentry عبر هذا الخطّاف (Next 15+).
+ * بدونه كانت تُبتلع في `error.tsx` بلا أثرٍ في Sentry.
+ */
+export { captureRequestError as onRequestError } from '@sentry/nextjs';

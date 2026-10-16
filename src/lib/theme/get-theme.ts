@@ -64,7 +64,7 @@ function getDefaultTheme(): ThemeSettings {
 /**
  * نسخة مكشّوفة من fetchActiveTheme
  * - cached لمدة 5 دقائق
- * - tagged بـ 'theme' لإمكانية التحديث الفوري عبر revalidateTag('theme')
+ * - tagged بـ 'theme' لإمكانية التحديث الفوري عبر updateTag('theme')
  */
 export const getActiveTheme = unstable_cache(
   fetchActiveTheme,

@@ -10,7 +10,7 @@ import { logger } from '@/lib/logger';
  * قبول طلب: تعيين الاختصاصي للطلب
  */
 export async function acceptOrder(orderId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 
@@ -77,7 +77,7 @@ export async function acceptOrder(orderId: string) {
  * بدء التنفيذ
  */
 export async function startOrder(orderId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 
@@ -106,7 +106,7 @@ export async function startOrder(orderId: string) {
  * إكمال الطلب
  */
 export async function completeOrder(orderId: string, specialistNotes?: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 
@@ -152,7 +152,7 @@ export async function updateOrderRoleData(
   field: 'lab_results_data' | 'nursing_actions' | 'prescription_data' | 'session_plan',
   data: object
 ) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 
@@ -236,7 +236,7 @@ export async function saveLabResults(
   appointmentId: string,
   results: LabResultInput[]
 ) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 
@@ -355,7 +355,7 @@ export async function updateLabOrderStatus(
   appointmentId: string,
   newStatus: 'pending' | 'sample_collected' | 'sent_to_lab' | 'processing' | 'results_ready' | 'delivered' | 'cancelled'
 ) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 

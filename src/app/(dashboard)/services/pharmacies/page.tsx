@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 export const metadata = { title: 'دليل الصيدليات - Spir Medical' };
 
 export default async function PharmaciesPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // جلب الصيدليات المُفعّلة
   const { data: pharmacies } = await supabase

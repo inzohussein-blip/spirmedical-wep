@@ -30,8 +30,9 @@ const SPECIALTY_LABELS: Record<string, { label: string; icon: string }> = {
   women_health:     { label: 'صحة المرأة',      icon: '👩' },
 };
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const supabase = createClient();
+export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const supabase = await createClient();
   const { data: n } = await supabase
     .from('nutritionists')
     .select('full_name, title, bio')
@@ -46,12 +47,13 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   };
 }
 
-export default async function NutritionDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const supabase = createClient();
+export default async function NutritionDetailPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
+  const supabase = await createClient();
 
   const { data: n } = await supabase
     .from('nutritionists')

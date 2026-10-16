@@ -9,7 +9,7 @@ import { AUTO_REJECT_KEY } from '@/lib/app-settings';
 const MAX_HOURS = 24 * 365;
 
 async function verifySuperAdmin() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false as const, error: 'غير مصرّح' };
 

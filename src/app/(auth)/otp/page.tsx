@@ -25,11 +25,12 @@ const CHANNEL_INFO: Record<string, { icon: string; label: string; color: string 
   sms: { icon: '📱', label: 'رسالة نصية', color: '#5F6368' },
 };
 
-export default function OtpPage({
-  searchParams,
-}: {
-  searchParams: { phone?: string; error?: string; redirect?: string; channel?: string };
-}) {
+export default async function OtpPage(
+  props: {
+    searchParams: Promise<{ phone?: string; error?: string; redirect?: string; channel?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const params = searchParamsSchema.safeParse(searchParams);
   if (!params.success) redirect('/login');
 

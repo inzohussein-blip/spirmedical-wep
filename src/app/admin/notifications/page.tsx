@@ -25,8 +25,9 @@ const CHANNEL_META: Record<string, { icon: string; color: string }> = {
   push: { icon: '🔔', color: 'var(--amber)' },
 };
 
-export default async function NotificationsPage({ searchParams }: { searchParams: { status?: string } }) {
-  const supabase = createClient();
+export default async function NotificationsPage(props: { searchParams: Promise<{ status?: string }> }) {
+  const searchParams = await props.searchParams;
+  const supabase = await createClient();
 
   let query = supabase
     .from('notification_queue')

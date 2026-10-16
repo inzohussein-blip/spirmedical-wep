@@ -111,7 +111,6 @@ export default function CameraCapture({
           compressedSize: compressed.size,
         });
       } catch (e) {
-        // eslint-disable-next-line no-console
         console.error('Compress error:', e);
         toast.error(`فشل معالجة ${file.name}`);
       }
@@ -145,7 +144,6 @@ export default function CameraCapture({
       files.forEach((f) => URL.revokeObjectURL(f.preview));
       setFiles([]);
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error('Upload failed:', e);
     } finally {
       setIsProcessing(false);

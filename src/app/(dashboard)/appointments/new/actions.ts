@@ -45,7 +45,7 @@ interface CreateAppointmentInput {
  * فتُنفَّذ العملية مرّة واحدة وتُعاد نتيجتها. الفشل لا يُخزَّن (انظر `withIdempotency`).
  */
 export async function createAppointmentV2(input: CreateAppointmentInput) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   // فوّض للدالة الأصلية كي تبقى رسالة «غير مسجّل» في مكان واحد وتتطابق الأنواع
   if (!user) return createAppointmentV2Impl(input);
@@ -59,7 +59,7 @@ export async function createAppointmentV2(input: CreateAppointmentInput) {
 }
 
 async function createAppointmentV2Impl(input: CreateAppointmentInput) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -198,7 +198,7 @@ async function createAppointmentV2Impl(input: CreateAppointmentInput) {
   }
 
   // Audit log
-  const ip = headers().get('x-forwarded-for') ?? 'unknown';
+  const ip = (await headers()).get('x-forwarded-for') ?? 'unknown';
   await logAuditEvent({
     action: 'appointment.create',
     user_id: user.id,
@@ -343,7 +343,7 @@ export interface CreateBloodDrawInput {
  * فتُنفَّذ العملية مرّة واحدة وتُعاد نتيجتها. الفشل لا يُخزَّن (انظر `withIdempotency`).
  */
 export async function createBloodDrawOrder(input: CreateBloodDrawInput) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   // فوّض للدالة الأصلية كي تبقى رسالة «غير مسجّل» في مكان واحد وتتطابق الأنواع
   if (!user) return createBloodDrawOrderImpl(input);
@@ -358,7 +358,7 @@ export async function createBloodDrawOrder(input: CreateBloodDrawInput) {
 }
 
 async function createBloodDrawOrderImpl(input: CreateBloodDrawInput) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -648,7 +648,7 @@ export interface CreateNursingInput {
  * فتُنفَّذ العملية مرّة واحدة وتُعاد نتيجتها. الفشل لا يُخزَّن (انظر `withIdempotency`).
  */
 export async function createNursingAppointment(input: CreateNursingInput) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   // فوّض للدالة الأصلية كي تبقى رسالة «غير مسجّل» في مكان واحد وتتطابق الأنواع
   if (!user) return createNursingAppointmentImpl(input);
@@ -663,7 +663,7 @@ export async function createNursingAppointment(input: CreateNursingInput) {
 }
 
 async function createNursingAppointmentImpl(input: CreateNursingInput) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {

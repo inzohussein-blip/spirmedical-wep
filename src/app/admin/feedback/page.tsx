@@ -16,7 +16,7 @@ const FEEDBACK_TYPE = ['suggestion', 'complaint', 'praise', 'feature_request', '
 const FEEDBACK_STATUS = ['new', 'reviewed', 'in_progress', 'resolved', 'archived'] as const;
 
 export default async function FeedbackPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 

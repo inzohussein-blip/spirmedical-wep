@@ -6,7 +6,7 @@ import { logAdminAction } from '@/lib/admin-audit';
 import { isSuperAdmin, type AdminRole } from '@/lib/admin-types';
 
 async function requireSuperAdmin() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false as const, error: 'unauthorized', supabase: null };
 

@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic';
 export const metadata = { title: 'العائلة - Spir Medical' };
 
 export default async function FamilyPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');

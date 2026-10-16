@@ -21,7 +21,7 @@ interface LabFormData {
 }
 
 async function ensureAdmin() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized', supabase, user: null };
   

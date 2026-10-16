@@ -155,7 +155,7 @@ describe('المنع في التخطيط لا في البطاقة', () => {
     // بلا `x-search` لا تُميَّز `blood-draw` من `nursing`
     expect(layout).toContain("x-pathname");
     expect(layout).toContain("x-search");
-    const mw = readFileSync(join(process.cwd(), 'src', 'middleware.ts'), 'utf8');
+    const mw = readFileSync(join(process.cwd(), 'src', 'proxy.ts'), 'utf8');
     expect(mw).toContain("response.headers.set('x-search'");
   });
 

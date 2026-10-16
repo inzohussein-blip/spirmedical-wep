@@ -13,7 +13,7 @@ export const metadata = {
 };
 
 export default async function NutritionPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: nutritionists } = await supabase
     .from('nutritionists')

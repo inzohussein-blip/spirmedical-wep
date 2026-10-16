@@ -166,11 +166,12 @@ const BLOG_POSTS = [
   },
 ];
 
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams: { source?: string; utm_source?: string };
-}) {
+export default async function HomePage(
+  props: {
+    searchParams: Promise<{ source?: string; utm_source?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   // 🎯 V25.35: لو هذا App site → /dashboard (middleware يتولّى الأمر)
   // لكن نُضيف safety check هنا
   if (SITE_TYPE === 'app') {
@@ -183,7 +184,7 @@ export default async function HomePage({
   // العامّة (الخدمات، التغطية، الأسئلة) جمهورها يشمل المسجّلين أيضاً.
   //
   // بدل التحويل: تتكيّف أزرار الدعوة — «ادخل التطبيق» بدل «تسجيل دخول».
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   let appHomePath: string | null = null;

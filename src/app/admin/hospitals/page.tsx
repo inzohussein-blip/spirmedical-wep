@@ -14,7 +14,7 @@ export const metadata = { title: 'إدارة المستشفيات - Admin' };
 const HOSPITAL_TYPE = ['government', 'private', 'health_center', 'specialized'] as const;
 
 export default async function AdminHospitalsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 

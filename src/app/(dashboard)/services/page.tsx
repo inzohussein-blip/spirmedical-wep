@@ -37,7 +37,7 @@ type _UnusedCategoryCard = CategoryCard;
 
 
 export default async function ServicesPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // جلب كل المواقع من قواعد البيانات (مع graceful fallback)
   const [

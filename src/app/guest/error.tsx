@@ -18,7 +18,6 @@ export default function GuestError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // eslint-disable-next-line no-console
     console.error('[guest/error]', error);
   }, [error]);
 

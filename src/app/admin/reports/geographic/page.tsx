@@ -33,7 +33,7 @@ function findClosestGovernorate(lat: number, lng: number): string {
 }
 
 export default async function GeographicReportsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

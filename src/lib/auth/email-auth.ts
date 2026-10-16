@@ -260,7 +260,7 @@ export async function signInWithEmail(
   email: string,
   password: string
 ): Promise<{ success: boolean; error?: string; role?: string | null }> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   try {
     // 1. تسجيل دخول
@@ -276,7 +276,7 @@ export async function signInWithEmail(
       // (كلمةُ السرّ المؤقّتة من الإدارة جُرّبت أعلاه أوّلاً.)
       const phone = loginIdentifierToPhone(email);
       if (phone && /^\d{6}$/.test(password)) {
-        const res = await phonePinLogin(phone, password, getClientIp());
+        const res = await phonePinLogin(phone, password, await getClientIp());
         return res.ok ? { success: true, role: res.role } : { success: false, error: res.error };
       }
       if (signInErr.message.includes('Invalid login')) {
@@ -326,7 +326,7 @@ export async function signInWithEmail(
 // ─────────────────────────────────────────────────────────
 
 export async function signOut(): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase.auth.signOut();
   redirect('/');
 }
@@ -339,7 +339,7 @@ export async function requestPasswordReset(email: string): Promise<{
   success: boolean;
   error?: string;
 }> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // ⚠️ كان يُركّب الرابط من `NEXT_PUBLIC_APP_URL` وحده؛ فحين لا يكون مضبوطاً
   // يصير الرابط `undefined/auth/reset-password`. نستعمل سلسلة الاحتياط نفسها
@@ -376,7 +376,7 @@ export async function requestPasswordReset(email: string): Promise<{
 export async function resetPassword(
   newPassword: string
 ): Promise<{ success: boolean; error?: string }> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const {
     data: { user },

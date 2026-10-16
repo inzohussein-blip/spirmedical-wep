@@ -43,7 +43,7 @@ export async function reverseGeocode(
     return null;
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { lat_rounded, lng_rounded } = roundForCache({ lat, lng });
 
   // ─── 1. ابحث في الـ cache أولاً ───

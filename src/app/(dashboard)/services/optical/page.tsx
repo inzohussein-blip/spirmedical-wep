@@ -12,7 +12,7 @@ export const metadata = {
 };
 
 export default async function OpticalPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: stores } = await supabase
     .from('optical_stores')

@@ -10,7 +10,7 @@ interface TemplateInput {
 }
 
 export async function createTemplate(input: TemplateInput) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 
@@ -31,7 +31,7 @@ export async function createTemplate(input: TemplateInput) {
 }
 
 export async function updateTemplate(id: string, input: TemplateInput) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 
@@ -51,7 +51,7 @@ export async function updateTemplate(id: string, input: TemplateInput) {
 }
 
 export async function deleteTemplate(id: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 

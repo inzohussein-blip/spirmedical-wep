@@ -52,7 +52,7 @@ const START_TIME = Date.now();
 async function checkDatabase(): Promise<CheckResult> {
   const start = Date.now();
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     // فحص بسيط - عدّ في جدول users
     const { error } = await supabase
       .from('users')
@@ -76,7 +76,7 @@ async function checkDatabase(): Promise<CheckResult> {
 async function checkAuth(): Promise<CheckResult> {
   const start = Date.now();
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     // فحص الـ auth service (getSession آمن - لا يفشل)
     const { error } = await supabase.auth.getSession();
 
@@ -97,7 +97,7 @@ async function checkAuth(): Promise<CheckResult> {
 async function checkStorage(): Promise<CheckResult> {
   const start = Date.now();
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { error } = await supabase.storage.listBuckets();
 
     if (error) {

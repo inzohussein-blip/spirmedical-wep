@@ -34,7 +34,7 @@ interface WishlistRow {
 }
 
 export default async function CosmeticWishlistPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');

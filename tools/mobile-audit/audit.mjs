@@ -28,8 +28,11 @@ for (const w of widths) {
     page.on('pageerror', (e) => errors.push(String(e.message).slice(0, 140)));
     let status = 0;
     try {
-      const r = await page.goto(BASE + path, { waitUntil: 'networkidle', timeout: 30000 });
+      // Next 15+: طلباتُ الجلب المسبق (prefetch) قد لا يراها Playwright «منتهية» وإن وصلت كاملة،
+      // فلا تبلغ الصفحةُ networkidle أبداً. ننتظر التحميلَ ثمّ الهدوءَ بسقفٍ قصير.
+      const r = await page.goto(BASE + path, { waitUntil: 'load', timeout: 30000 });
       status = r?.status() ?? 0;
+      await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
     } catch (e) { errors.push('goto: ' + String(e.message).slice(0, 100)); }
     await page.waitForTimeout(600);
     const finalPath = new URL(page.url()).pathname;

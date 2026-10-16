@@ -33,7 +33,7 @@ const SERVICE_LABELS: Record<string, string> = {
 };
 
 export default async function ActiveAppointmentCard() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) return null;

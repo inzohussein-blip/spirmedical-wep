@@ -7,11 +7,12 @@ export const metadata = {
   title: 'دخول بالبريد · سباير ميديكال',
 };
 
-export default function EmailLoginPage({
-  searchParams,
-}: {
-  searchParams: { error?: string };
-}) {
+export default async function EmailLoginPage(
+  props: {
+    searchParams: Promise<{ error?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const error = searchParams.error;
 
   return (

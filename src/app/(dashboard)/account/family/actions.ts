@@ -18,7 +18,7 @@ interface FamilyMemberInput {
 }
 
 export async function addFamilyMember(input: FamilyMemberInput) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false, error: 'غير مصرّح' };
 
@@ -50,7 +50,7 @@ export async function addFamilyMember(input: FamilyMemberInput) {
 }
 
 export async function updateFamilyMember(id: string, input: FamilyMemberInput) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false, error: 'غير مصرّح' };
 
@@ -80,7 +80,7 @@ export async function updateFamilyMember(id: string, input: FamilyMemberInput) {
 }
 
 export async function deleteFamilyMember(id: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false, error: 'غير مصرّح' };
 

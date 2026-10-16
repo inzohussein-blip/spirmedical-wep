@@ -15,11 +15,12 @@ const searchParamsSchema = z.object({
   error: z.string().max(500).optional(),
 });
 
-export default function ForgotPage({
-  searchParams,
-}: {
-  searchParams: { error?: string };
-}) {
+export default async function ForgotPage(
+  props: {
+    searchParams: Promise<{ error?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const params = searchParamsSchema.safeParse(searchParams);
   const error = params.success ? params.data.error : undefined;
 

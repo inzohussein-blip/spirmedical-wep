@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 
 /** يُعلِّم إشعاراتِ المستخدم كلَّها مقروءة — RLS يحصر التحديث في صفوفه. */
 export async function markInboxRead(): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
   await supabase

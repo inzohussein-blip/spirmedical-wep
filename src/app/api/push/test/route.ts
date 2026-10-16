@@ -9,7 +9,7 @@ import { sendPushToUser } from '@/lib/services/push';
  * يُستخدم لاختبار الاشتراك في صفحة الإعدادات
  */
 export async function POST() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const {
     data: { user },

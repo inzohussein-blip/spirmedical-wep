@@ -16,7 +16,7 @@ export async function subscribeToDoctor(
   doctorId: string,
   plan: 'monthly' | 'yearly'
 ) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false, error: 'غير مصرّح - سجّل دخول أولاً' };
 
@@ -78,7 +78,7 @@ export async function subscribeToDoctor(
  * بدء استشارة جديدة مع طبيب
  */
 export async function startConsultation(doctorId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false, error: 'غير مصرّح - سجّل دخول أولاً' };
 
@@ -159,7 +159,7 @@ export interface CreateDoctorAppointmentInput {
 }
 
 export async function createDoctorAppointment(input: CreateDoctorAppointmentInput) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   
   if (!user) {

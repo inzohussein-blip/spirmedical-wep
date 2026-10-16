@@ -24,16 +24,17 @@ const CATEGORY_LABELS: Record<string, string> = {
   optional: 'اختيارية',
 };
 
-export default async function VaccineDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const supabase = createClient();
+export default async function VaccineDetailPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 
-  
+
   const supabaseAny = supabase as unknown as {
     from: (t: string) => {
       
@@ -41,7 +42,7 @@ export default async function VaccineDetailPage({
     };
   };
 
-  
+
   const vaccineRes = await supabaseAny
     .from('vaccines')
     .select('*')
@@ -51,7 +52,7 @@ export default async function VaccineDetailPage({
 
   if (!vaccineRes.data) notFound();
 
-  
+
   const vaccine = vaccineRes.data as {
     id: string;
     name_ar: string;
@@ -70,7 +71,7 @@ export default async function VaccineDetailPage({
     icon: string | null;
   };
 
-  
+
   const recordsRes = await supabaseAny
     .from('vaccination_records')
     .select('id, dose_number, administered_at, clinic_name')

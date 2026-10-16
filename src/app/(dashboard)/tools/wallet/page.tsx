@@ -15,7 +15,7 @@ export const metadata = { title: 'المحفظة - Spir Medical' };
 const TX_TYPES = ['credit', 'debit', 'refund', 'reward', 'points_redeem'] as const;
 
 export default async function WalletPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 

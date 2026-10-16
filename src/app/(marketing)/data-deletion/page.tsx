@@ -9,11 +9,12 @@ export const metadata = {
   description: 'كيفية طلب حذف بياناتك الشخصية من سباير ميديكال — آلية موثّقة وآمنة.',
 };
 
-export default function DataDeletionPage({
-  searchParams,
-}: {
-  searchParams: { error?: string; success?: string };
-}) {
+export default async function DataDeletionPage(
+  props: {
+    searchParams: Promise<{ error?: string; success?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   return (
     <main className="legal-page">
       <Link href="/" className="legal-back">

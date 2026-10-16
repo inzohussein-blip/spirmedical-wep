@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 export const metadata = { title: 'العناية والتجميل - Spir Medical' };
 
 export default async function CosmeticPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: products } = await supabase
     .from('cosmetic_products')

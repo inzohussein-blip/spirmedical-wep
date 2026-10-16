@@ -17,7 +17,7 @@ interface SendMessageInput {
  * إرسال رسالة في الاستشارة
  */
 export async function sendMessage(input: SendMessageInput) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false, error: 'غير مصرّح' };
 
@@ -176,7 +176,7 @@ export async function attachMedicalRecord(input: {
   recordType: string;
   recordId: string;
 }) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false, error: 'غير مصرّح' };
 
@@ -264,7 +264,7 @@ export async function attachMedicalRecord(input: {
  * إغلاق الاستشارة
  */
 export async function closeConsultation(consultationId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { success: false, error: 'غير مصرّح' };
 

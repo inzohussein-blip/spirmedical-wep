@@ -19,7 +19,7 @@ export default function DetailLoading() {
           marginBottom: 14,
         }}>
           <div style={{ display: 'flex', gap: 14, marginBottom: 12 }}>
-            <Skeleton variant="rect" className="w-18 h-18 rounded-xl flex-shrink-0" style={{ width: 72, height: 72 }} />
+            <Skeleton variant="rect" className="w-18 h-18 rounded-xl shrink-0" style={{ width: 72, height: 72 }} />
             <div style={{ flex: 1 }}>
               <Skeleton className="w-40 h-5 mb-2" />
               <Skeleton className="w-56 h-3 mb-1" />

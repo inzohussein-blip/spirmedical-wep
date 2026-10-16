@@ -18,7 +18,7 @@ export const metadata = {
 };
 
 export default async function ChangelogPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: entries } = await supabase
     .from('changelog_entries')
     .select('*')

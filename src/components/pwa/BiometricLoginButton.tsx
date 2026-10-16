@@ -95,7 +95,6 @@ export default function BiometricLoginButton({
         }
       }
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.error('Biometric error:', e);
       haptic.error();
       toast.error('حدث خطأ');

@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic';
 export const metadata = { title: 'العيادات - Spir Medical' };
 
 export default async function ClinicsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // العيادات = الأطباء الذين عندهم clinic_name
   // و available_for_clinic = true

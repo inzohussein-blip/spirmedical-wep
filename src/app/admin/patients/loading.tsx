@@ -42,7 +42,7 @@ export default function AdminLoading() {
             padding: '14px 16px',
             borderBottom: i < 8 ? '1px solid var(--line)' : 'none',
           }}>
-            <Skeleton variant="circle" className="w-10 h-10 flex-shrink-0" />
+            <Skeleton variant="circle" className="w-10 h-10 shrink-0" />
             <div style={{ flex: 1 }}>
               <Skeleton className="w-40 h-3 mb-1" />
               <Skeleton className="w-24 h-2" />

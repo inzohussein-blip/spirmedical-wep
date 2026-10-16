@@ -5,11 +5,12 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function AdminRegisterPage({
-  searchParams,
-}: {
-  searchParams: { error?: string; success?: string };
-}) {
+export default async function AdminRegisterPage(
+  props: {
+    searchParams: Promise<{ error?: string; success?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const error = searchParams.error;
   const success = searchParams.success === '1';
 

@@ -6,11 +6,247 @@
    src/components/maps/leaflet-styles.ts (تُستورد من مكوّنات الخريطة الديناميكية
    فتُحمَّل مع chunk الخريطة فقط — لا على كل صفحة). القواعد أدناه تخصيصات فوقها. */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-/* ═══════════════════════════════════════════════════════════════════
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-emerald: var(--emerald);
+  --color-emerald-deep: var(--emerald-deep);
+  --color-emerald-soft: var(--emerald-soft);
+
+  --color-amber: var(--amber);
+  --color-amber-soft: var(--amber-soft);
+
+  --color-rose: var(--rose);
+  --color-rose-soft: var(--rose-soft);
+
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-ink-4: var(--ink-4);
+  --color-ink: var(--ink);
+
+  --color-paper-2: var(--paper-2);
+  --color-paper-3: var(--paper-3);
+  --color-paper: var(--paper);
+
+  --color-border: hsl(var(--border, 0 0% 89%));
+  --color-input: hsl(var(--input, 0 0% 89%));
+  --color-ring: hsl(var(--ring, 160 73% 21%));
+  --color-background: hsl(var(--background, 45 45% 92%));
+  --color-foreground: hsl(var(--foreground, 195 17% 9%));
+
+  --color-primary: hsl(var(--primary, 167 74% 21%));
+  --color-primary-foreground: hsl(var(--primary-foreground, 45 75% 95%));
+
+  --color-secondary: hsl(var(--secondary, 45 40% 92%));
+  --color-secondary-foreground: hsl(var(--secondary-foreground, 195 17% 9%));
+
+  --color-destructive: hsl(var(--destructive, 350 56% 42%));
+  --color-destructive-foreground: hsl(var(--destructive-foreground, 0 0% 98%));
+
+  --color-muted: hsl(var(--muted, 45 30% 88%));
+  --color-muted-foreground: hsl(var(--muted-foreground, 185 4% 45%));
+
+  --color-accent: hsl(var(--accent, 45 40% 92%));
+  --color-accent-foreground: hsl(var(--accent-foreground, 195 17% 9%));
+
+  --color-popover: hsl(var(--popover, 0 0% 100%));
+  --color-popover-foreground: hsl(var(--popover-foreground, 195 17% 9%));
+
+  --color-card: hsl(var(--card, 0 0% 100%));
+  --color-card-foreground: hsl(var(--card-foreground, 195 17% 9%));
+
+  --spacing-0: var(--space-0);
+  --spacing-1: var(--space-1);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-8: var(--space-8);
+  --spacing-10: var(--space-10);
+  --spacing-12: var(--space-12);
+  --spacing-16: var(--space-16);
+  --spacing-20: var(--space-20);
+
+  --radius-none: var(--radius-none);
+  --radius-sm: var(--radius-sm);
+  --radius: var(--radius-md);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --radius-full: var(--radius-full);
+
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow: var(--shadow-md);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-2xl: var(--shadow-2xl);
+  --shadow-inner: var(--shadow-inner);
+  --shadow-focus: var(--shadow-focus);
+  --shadow-none: none;
+
+  --text-2xs: var(--text-2xs);
+  --text-2xs--line-height: var(--leading-normal);
+  --text-xs: var(--text-xs);
+  --text-xs--line-height: var(--leading-normal);
+  --text-sm: var(--text-sm);
+  --text-sm--line-height: var(--leading-normal);
+  --text-base: var(--text-base);
+  --text-base--line-height: var(--leading-relaxed);
+  --text-md: var(--text-md);
+  --text-md--line-height: var(--leading-relaxed);
+  --text-lg: var(--text-lg);
+  --text-lg--line-height: var(--leading-snug);
+  --text-xl: var(--text-xl);
+  --text-xl--line-height: var(--leading-snug);
+  --text-2xl: var(--text-2xl);
+  --text-2xl--line-height: var(--leading-tight);
+  --text-3xl: var(--text-3xl);
+  --text-3xl--line-height: var(--leading-tight);
+  --text-4xl: var(--text-4xl);
+  --text-4xl--line-height: var(--leading-tight);
+  --text-5xl: var(--text-5xl);
+  --text-5xl--line-height: var(--leading-tight);
+
+  --font-weight-normal: var(--weight-normal);
+  --font-weight-medium: var(--weight-medium);
+  --font-weight-semibold: var(--weight-semibold);
+  --font-weight-bold: var(--weight-bold);
+  --font-weight-extrabold: var(--weight-extrabold);
+  --font-weight-black: var(--weight-black);
+
+  --leading-tight: var(--leading-tight);
+  --leading-snug: var(--leading-snug);
+  --leading-normal: var(--leading-normal);
+  --leading-relaxed: var(--leading-relaxed);
+  --leading-loose: var(--leading-loose);
+
+  --tracking-tight: var(--tracking-tight);
+  --tracking-normal: var(--tracking-normal);
+  --tracking-wide: var(--tracking-wide);
+
+  --font-sans: Tajawal, system-ui, sans-serif;
+  --font-serif: Fraunces, serif;
+  --font-mono: JetBrains Mono, monospace;
+
+  --transition-duration-fast: 150ms;
+  --transition-duration-base: 200ms;
+  --transition-duration-slow: 300ms;
+  --transition-duration-slower: 500ms;
+
+  --ease-out: var(--ease-out);
+  --ease-in-out: var(--ease-in-out);
+  --ease-spring: var(--ease-spring);
+
+  --z-index-base: var(--z-base);
+  --z-index-dropdown: var(--z-dropdown);
+  --z-index-sticky: var(--z-sticky);
+  --z-index-overlay: var(--z-overlay);
+  --z-index-modal: var(--z-modal);
+  --z-index-popover: var(--z-popover);
+  --z-index-toast: var(--z-toast);
+  --z-index-tooltip: var(--z-tooltip);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-fade-in: fade-in 0.15s ease-out;
+  --animate-fade-out: fade-out 0.15s ease-out;
+  --animate-slide-in-from-top: slide-in-from-top 0.2s ease-out;
+  --animate-slide-out-to-top: slide-out-to-top 0.2s ease-out;
+  --animate-zoom-in: zoom-in 0.15s ease-out;
+  --animate-spin-slow: spin-slow 0.7s linear infinite;
+
+  --container-shell: var(--shell-max-width);
+  --container-landing: var(--landing-max-width);
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes slide-in-from-top {
+    from {
+      transform: translateY(-100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+  @keyframes slide-out-to-top {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-100%);
+    }
+  }
+  @keyframes zoom-in {
+    from {
+      transform: scale(0.95);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+  @keyframes spin-slow {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@layer utilities {
+  /* ═══════════════════════════════════════════════════════════════════
    🔧 V31 FIX (مُصحّح): قواعد Leaflet آمنة ومحدّدة.
    
    ❌ تجنّبنا: .leaflet-container { height: 100% !important } لأنّها تكسر
@@ -21,70 +257,70 @@
       والخطّ صحيح. الأبعاد تأتي من الـ inline styles (height محدّد لكل خريطة)
       ومن leaflet.css الأصلي.
    ═══════════════════════════════════════════════════════════════════ */
-.leaflet-container {
-  background: #E8EEF1;
-  font-family: 'Tajawal', system-ui, sans-serif;
-  /* يضمن ألا تتجاوز الخريطة عرض حاويتها (مهم في الـ 480px shell) */
-  max-width: 100%;
-}
+  .leaflet-container {
+    background: #e8eef1;
+    font-family: 'Tajawal', system-ui, sans-serif;
+    /* يضمن ألا تتجاوز الخريطة عرض حاويتها (مهم في الـ 480px shell) */
+    max-width: 100%;
+  }
 
-/* 🔧 V31: حاويات الخرائط — ارتفاع responsive ومتناسق.
+  /* 🔧 V31: حاويات الخرائط — ارتفاع responsive ومتناسق.
    كل خريطة تُلفّ في .spir-map-shell التي تتحكّم بالارتفاع حسب الشاشة. */
-.spir-map-shell {
-  position: relative;
-  width: 100%;
-  border-radius: 12px;
-  overflow: hidden;
-}
-.spir-map-shell > .spir-map-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  background: #E8EEF1;
-}
+  .spir-map-shell {
+    position: relative;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .spir-map-shell > .spir-map-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: #e8eef1;
+  }
 
-/* ═══════════════════════════════════════════════════════════════════
+  /* ═══════════════════════════════════════════════════════════════════
    Leaflet Map Styles (V25 — Free Medical Map)
    ═══════════════════════════════════════════════════════════════════ */
 
-/* Custom marker container - يخفي background الافتراضي للـ divIcon */
-.free-medical-map-marker {
-  background: transparent !important;
-  border: none !important;
-}
+  /* Custom marker container - يخفي background الافتراضي للـ divIcon */
+  .free-medical-map-marker {
+    background: transparent !important;
+    border: none !important;
+  }
 
-/* تحسين شكل الـ popup */
-.leaflet-popup-content-wrapper {
-  border-radius: 12px !important;
-  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.15) !important;
-  padding: 4px !important;
-}
+  /* تحسين شكل الـ popup */
+  .leaflet-popup-content-wrapper {
+    border-radius: 12px !important;
+    box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.15) !important;
+    padding: 4px !important;
+  }
 
-.leaflet-popup-content {
-  margin: 12px 14px !important;
-  font-family: 'Tajawal', system-ui, sans-serif !important;
-  line-height: 1.5 !important;
-}
+  .leaflet-popup-content {
+    margin: 12px 14px !important;
+    font-family: 'Tajawal', system-ui, sans-serif !important;
+    line-height: 1.5 !important;
+  }
 
-.leaflet-popup-tip {
-  box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.1) !important;
-}
+  .leaflet-popup-tip {
+    box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.1) !important;
+  }
 
-/* تحسين شكل أزرار التحكم */
-.leaflet-control-zoom a {
-  border-radius: 8px !important;
-  font-weight: 700 !important;
-}
+  /* تحسين شكل أزرار التحكم */
+  .leaflet-control-zoom a {
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+  }
 
-/* attribution أصغر وأنيق */
-.leaflet-control-attribution {
-  font-size: 11px !important;
-  background: rgba(255, 255, 255, 0.85) !important;
-  padding: 2px 6px !important;
-}
+  /* attribution أصغر وأنيق */
+  .leaflet-control-attribution {
+    font-size: 11px !important;
+    background: rgba(255, 255, 255, 0.85) !important;
+    padding: 2px 6px !important;
+  }
 
-/* ═══════════════════════════════════════════════════════════════════
+  /* ═══════════════════════════════════════════════════════════════════
    Spir Medical · سباير ميديكال
    مطابق 100% لـ spir-medical-screens-V3.html
    ⚠️ Light Mode فقط — لا يوجد Dark Mode
@@ -94,86 +330,86 @@
    • App (guest/dashboard) → phone shape (480px) + AppShell
    ═══════════════════════════════════════════════════════════════════ */
 
-/* ─── 1. DESIGN TOKENS — V3 EXACT (Light only) ─── */
-:root {
-  /* ═══════════════════════════════════════════════════════════════
+  /* ─── 1. DESIGN TOKENS — V3 EXACT (Light only) ─── */
+  :root {
+    /* ═══════════════════════════════════════════════════════════════
      🎨 V26.0 — DESIGN SYSTEM V3 (Google Play Palette)
      ═══════════════════════════════════════════════════════════════
      المرجع: docs/spir-v3-design-reference.md
      استخدم --spir-* للواجهة الجديدة
      ═══════════════════════════════════════════════════════════════ */
-  
-  /* Brand Colors (Google Play) */
-  --spir-primary:        #01875F;  /* Spanish Green */
-  --spir-primary-deep:   #056559;
-  --spir-primary-soft:   #E6F3EF;
-  
-  --spir-yellow:         #FBBC04;  /* Cyber Yellow */
-  --spir-yellow-soft:    #FEF7E0;
-  --spir-yellow-deep:    #B06000;
-  
-  --spir-pink:           #C71C56;  /* Carmine Pink */
-  --spir-pink-soft:      #FCE8E6;
-  --spir-pink-deep:      #8B1240;
-  
-  --spir-blue:           #1A73E8;  /* Google Blue */
-  --spir-blue-soft:      #E8F0FE;
-  
-  --spir-purple:         #9334E6;
-  --spir-purple-soft:    #F3E8FD;
-  
-  /* Neutrals (V3) */
-  --spir-bg:             #FFFFFF;
-  --spir-surface:        #F8F9FA;
-  --spir-surface-2:      #F1F3F4;
-  --spir-border:         #DADCE0;
-  --spir-border-soft:    #E8EAED;
-  
-  --spir-text:           #202124;
-  --spir-text-2:         #3C4043;
-  --spir-text-3:         #5F6368;
-  --spir-text-4:         #80868B;
-  
-  /* Service Colors (14) */
-  --svc-blood:           #EA4335;
-  --svc-blood-soft:      #FCE8E6;
-  --svc-nursing:         #B06000;
-  --svc-nursing-soft:    #FEF7E0;
-  --svc-doctor:          #01875F;
-  --svc-doctor-soft:     #E6F3EF;
-  --svc-hospital:        #1A73E8;
-  --svc-hospital-soft:   #E8F0FE;
-  --svc-pharmacy:        #9334E6;
-  --svc-pharmacy-soft:   #F3E8FD;
-  --svc-consult:         #00BCD4;
-  --svc-consult-soft:    #E0F7FA;
-  --svc-dental:          #00838F;
-  --svc-dental-soft:     #E0F7FA;
-  --svc-nutrition:       #34A853;
-  --svc-nutrition-soft:  #E8F5E9;
-  --svc-vaccines:        #FF6D00;
-  --svc-vaccines-soft:   #FFF3E0;
-  --svc-emergency:       #8B0000;
-  --svc-emergency-soft:  #FCE8E6;
-  --svc-video:           #7C4DFF;
-  --svc-video-soft:      #EDE7F6;
-  --svc-symptom:         #00897B;
-  --svc-symptom-soft:    #E0F2F1;
-  --svc-risk:            #FF7043;
-  --svc-risk-soft:       #FBE9E7;
-  --svc-vaccine-table:   #26A69A;
-  --svc-vaccine-table-soft: #E0F2F1;
-  
-  /* ═══════════════════════════════════════════════════════════════
+
+    /* Brand Colors (Google Play) */
+    --spir-primary: #01875f; /* Spanish Green */
+    --spir-primary-deep: #056559;
+    --spir-primary-soft: #e6f3ef;
+
+    --spir-yellow: #fbbc04; /* Cyber Yellow */
+    --spir-yellow-soft: #fef7e0;
+    --spir-yellow-deep: #b06000;
+
+    --spir-pink: #c71c56; /* Carmine Pink */
+    --spir-pink-soft: #fce8e6;
+    --spir-pink-deep: #8b1240;
+
+    --spir-blue: #1a73e8; /* Google Blue */
+    --spir-blue-soft: #e8f0fe;
+
+    --spir-purple: #9334e6;
+    --spir-purple-soft: #f3e8fd;
+
+    /* Neutrals (V3) */
+    --spir-bg: #ffffff;
+    --spir-surface: #f8f9fa;
+    --spir-surface-2: #f1f3f4;
+    --spir-border: #dadce0;
+    --spir-border-soft: #e8eaed;
+
+    --spir-text: #202124;
+    --spir-text-2: #3c4043;
+    --spir-text-3: #5f6368;
+    --spir-text-4: #80868b;
+
+    /* Service Colors (14) */
+    --svc-blood: #ea4335;
+    --svc-blood-soft: #fce8e6;
+    --svc-nursing: #b06000;
+    --svc-nursing-soft: #fef7e0;
+    --svc-doctor: #01875f;
+    --svc-doctor-soft: #e6f3ef;
+    --svc-hospital: #1a73e8;
+    --svc-hospital-soft: #e8f0fe;
+    --svc-pharmacy: #9334e6;
+    --svc-pharmacy-soft: #f3e8fd;
+    --svc-consult: #00bcd4;
+    --svc-consult-soft: #e0f7fa;
+    --svc-dental: #00838f;
+    --svc-dental-soft: #e0f7fa;
+    --svc-nutrition: #34a853;
+    --svc-nutrition-soft: #e8f5e9;
+    --svc-vaccines: #ff6d00;
+    --svc-vaccines-soft: #fff3e0;
+    --svc-emergency: #8b0000;
+    --svc-emergency-soft: #fce8e6;
+    --svc-video: #7c4dff;
+    --svc-video-soft: #ede7f6;
+    --svc-symptom: #00897b;
+    --svc-symptom-soft: #e0f2f1;
+    --svc-risk: #ff7043;
+    --svc-risk-soft: #fbe9e7;
+    --svc-vaccine-table: #26a69a;
+    --svc-vaccine-table-soft: #e0f2f1;
+
+    /* ═══════════════════════════════════════════════════════════════
      🎨 COLORS — V26.3 رفع كل الـ legacy vars لـ V3 (rebrand)
      ═══════════════════════════════════════════════════════════════
      النتيجة: كل الصفحات القديمة تأخذ ألوان V3 تلقائياً
      ═══════════════════════════════════════════════════════════════ */
-  --emerald: #01875F;          /* V3 Primary */
-  --emerald-deep: #056559;     /* V3 Primary Deep */
-  --emerald-soft: #E6F3EF;     /* V3 Primary Soft */
+    --emerald: #01875f; /* V3 Primary */
+    --emerald-deep: #056559; /* V3 Primary Deep */
+    --emerald-soft: #e6f3ef; /* V3 Primary Soft */
 
-  /*
+    /*
    * أخضرُ وسيطٌ كان يُكتب `var(--emerald-mid, #0F6E56)` حرفياً في ٢٩ ملفّاً (٧٨ موضعاً) بلا
    * رمزٍ يمثّله — فتغييرُه كان يعني تعديل ٢٩ ملفّاً، ولا يستجيب لتخصيص
    * الألوان في لوحة المشرف كما تستجيب بقيّة اللوحة.
@@ -181,121 +417,121 @@
    * سُمّي هنا ولم تُغيَّر قيمته: توحيدُه مع `--emerald` تغييرٌ بصريٌّ في
    * ٧٨ موضعاً، وذلك قرارُ صاحب المنصّة لا قرارُ تنظيفٍ آليّ.
    */
-  --emerald-mid: #0F6E56;
-  --amber: #B06000;            /* V3 Yellow Deep — للنصّ على خلفيةٍ فاتحة */
-  --amber-soft: #FEF7E0;       /* V3 Yellow Soft */
-  /* عنبرٌ للنصّ فوق الأخضر الداكن: ‎--amber‎ عليه نسبة ١٫٦٢ فقط (المطلوب ٣)
+    --emerald-mid: #0f6e56;
+    --amber: #b06000; /* V3 Yellow Deep — للنصّ على خلفيةٍ فاتحة */
+    --amber-soft: #fef7e0; /* V3 Yellow Soft */
+    /* عنبرٌ للنصّ فوق الأخضر الداكن: ‎--amber‎ عليه نسبة ١٫٦٢ فقط (المطلوب ٣)
      لأنّ اللونين داكنان معاً، فالأرقام تكاد تختفي داخل البطاقة */
-  --amber-on-dark: #FFDFA1;
+    --amber-on-dark: #ffdfa1;
 
-  /* كهرمانٌ داكنٌ لنصّ الحالات في لوحة الإدارة — كان يُستعمل بلا تعريف */
-  --amber-deep: #6B3A08;
+    /* كهرمانٌ داكنٌ لنصّ الحالات في لوحة الإدارة — كان يُستعمل بلا تعريف */
+    --amber-deep: #6b3a08;
 
-  /*
+    /*
    * `--brand` اسمٌ مضلِّل: قيمتُه زرقاء (`#185FA5`) وعلامةُ المشروع
    * زمرّديّة. كان يُستعمل في محرّر مواقع الطلبات بلا تعريف، فيُحلّ دائماً
    * إلى احتياطه. عُرّف هنا بقيمته الحالية كي لا يتغيّر شيءٌ في الشاشة،
    * لكنّ إعادة تسميته إلى `--admin-accent` أو ضمّه إلى `--spir-blue`
    * (#1A73E8) تنظيفٌ يستحقّ النظر — وهو قرارٌ بصريٌّ لا آليّ.
    */
-  --brand: #185FA5;
-  --rose: #C71C56;             /* V3 Pink */
-  --rose-soft: #FCE8E6;        /* V3 Pink Soft */
-  --paper: #F8F9FA;            /* V3 Surface */
-  --paper-2: #F1F3F4;          /* V3 Surface 2 */
-  --paper-3: #FFFFFF;          /* V3 BG (kept white for compat) */
-  --white: #FFFFFF;
-  --ink: #202124;              /* V3 Text */
-  --ink-2: #3C4043;            /* V3 Text 2 */
-  --ink-3: #5F6368;            /* V3 Text 3 */
-  --ink-4: #80868B;            /* V3 Text 4 */
+    --brand: #185fa5;
+    --rose: #c71c56; /* V3 Pink */
+    --rose-soft: #fce8e6; /* V3 Pink Soft */
+    --paper: #f8f9fa; /* V3 Surface */
+    --paper-2: #f1f3f4; /* V3 Surface 2 */
+    --paper-3: #ffffff; /* V3 BG (kept white for compat) */
+    --white: #ffffff;
+    --ink: #202124; /* V3 Text */
+    --ink-2: #3c4043; /* V3 Text 2 */
+    --ink-3: #5f6368; /* V3 Text 3 */
+    --ink-4: #80868b; /* V3 Text 4 */
 
-  /*
+    /*
    * `--muted` كان يُستعمل في أربعة مواضع بلا تعريف، فيُحلّ دائماً إلى
    * احتياطه `#64748B` — وهو رماديٌّ مائلٌ للأزرق من لوحةٍ أخرى (Tailwind
    * slate) لا صلة له بلوحة المشروع. يُعرَّف هنا إحالةً إلى `--ink-3`،
    * وهو رماديُّ النصّ الخافت في هذا المشروع. الفارق بين اللونين طفيف،
    * والمكسب أنّ الرمادي صار واحداً لا اثنين.
    */
-  --muted: var(--ink-3);
-  --line: #DADCE0;             /* V3 Border */
-  --line-2: #E8EAED;           /* V3 Border Soft */
-  --header-bg: rgba(255, 255, 255, 0.95);
-  --viewport-bg: #F8F9FA;
+    --muted: var(--ink-3);
+    --line: #dadce0; /* V3 Border */
+    --line-2: #e8eaed; /* V3 Border Soft */
+    --header-bg: rgba(255, 255, 255, 0.95);
+    --viewport-bg: #f8f9fa;
 
-  /* ═══════════════════════════════════════════════════════════════
+    /* ═══════════════════════════════════════════════════════════════
      📏 SPACING SCALE — V25 (4px base)
      ═══════════════════════════════════════════════════════════════
      استخدام موحّد للمسافات في كل المنصة.
      padding, margin, gap — كلها تستخدم هذا الـ scale
   */
-  --space-0: 0;
-  --space-1: 4px;     /* xs - tiny gaps */
-  --space-2: 8px;     /* sm - inline gaps */
-  --space-3: 12px;    /* md - default padding */
-  --space-4: 16px;    /* base - card padding */
-  --space-5: 20px;    /* lg - section padding */
-  --space-6: 24px;    /* xl - large sections */
-  --space-8: 32px;    /* 2xl - hero spacing */
-  --space-10: 40px;   /* 3xl - landing sections */
-  --space-12: 48px;   /* 4xl */
-  --space-16: 64px;   /* 5xl */
-  --space-20: 80px;   /* 6xl - hero gaps */
+    --space-0: 0;
+    --space-1: 4px; /* xs - tiny gaps */
+    --space-2: 8px; /* sm - inline gaps */
+    --space-3: 12px; /* md - default padding */
+    --space-4: 16px; /* base - card padding */
+    --space-5: 20px; /* lg - section padding */
+    --space-6: 24px; /* xl - large sections */
+    --space-8: 32px; /* 2xl - hero spacing */
+    --space-10: 40px; /* 3xl - landing sections */
+    --space-12: 48px; /* 4xl */
+    --space-16: 64px; /* 5xl */
+    --space-20: 80px; /* 6xl - hero gaps */
 
-  /* ═══════════════════════════════════════════════════════════════
+    /* ═══════════════════════════════════════════════════════════════
      🔲 BORDER RADIUS SCALE — V25
      ═══════════════════════════════════════════════════════════════ */
-  --radius-none: 0;
-  --radius-sm: 6px;       /* inputs صغيرة */
-  --radius-md: 10px;      /* default - inputs, buttons */
-  --radius-lg: 14px;      /* cards */
-  --radius-xl: 20px;      /* large cards */
-  --radius-2xl: 24px;     /* hero sections */
-  --radius-full: 9999px;  /* pills, badges */
+    --radius-none: 0;
+    --radius-sm: 6px; /* inputs صغيرة */
+    --radius-md: 10px; /* default - inputs, buttons */
+    --radius-lg: 14px; /* cards */
+    --radius-xl: 20px; /* large cards */
+    --radius-2xl: 24px; /* hero sections */
+    --radius-full: 9999px; /* pills, badges */
 
-  /* ═══════════════════════════════════════════════════════════════
+    /* ═══════════════════════════════════════════════════════════════
      🌑 SHADOW SCALE — V25
      ═══════════════════════════════════════════════════════════════ */
-  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-  --shadow-md: 0 4px 12px -2px rgba(0,0,0,0.08);
-  --shadow-lg: 0 12px 32px -8px rgba(0,0,0,0.15);
-  --shadow-xl: 0 24px 60px -12px rgba(0,0,0,0.3);
-  --shadow-2xl: 0 32px 80px -16px rgba(0,0,0,0.4);
-  --shadow-inner: inset 0 1px 2px rgba(0,0,0,0.05);
-  --shadow-focus: 0 0 0 3px rgba(14, 92, 77, 0.25);
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 12px 32px -8px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 24px 60px -12px rgba(0, 0, 0, 0.3);
+    --shadow-2xl: 0 32px 80px -16px rgba(0, 0, 0, 0.4);
+    --shadow-inner: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-focus: 0 0 0 3px rgba(14, 92, 77, 0.25);
 
-  /* ═══════════════════════════════════════════════════════════════
+    /* ═══════════════════════════════════════════════════════════════
      ✍️ TYPOGRAPHY SCALE — V25
      ═══════════════════════════════════════════════════════════════
      خطوط متناسقة لكل المنصة
   */
-  /* أرضيّةُ الخطّ: الحرف العربيّ يبدو أصغر من اللاتينيّ بالحجم نفسه، فكان
+    /* أرضيّةُ الخطّ: الحرف العربيّ يبدو أصغر من اللاتينيّ بالحجم نفسه، فكان
      ٩px و١١px عسيرَي القراءة على الهاتف. قيس في تدقيق الهاتف: نصٌّ دون
      ١٢px في كلّ صفحةٍ تقريباً، منه تسميات شريط التنقّل السفليّ. */
-  --text-2xs: 11px;      /* tiny - footer fine print (كان 9px) */
-  --text-xs: 12px;       /* extra small - labels (كان 11px) */
-  --text-sm: 12px;       /* small - metadata */
-  --text-base: 13px;     /* base - body text */
-  --text-md: 14px;       /* medium - subheadings */
-  --text-lg: 16px;       /* large - section headings */
-  --text-xl: 18px;       /* extra large - h3 */
-  --text-2xl: 22px;      /* 2x - h2 */
-  --text-3xl: 28px;      /* 3x - h1 mobile */
-  --text-4xl: 36px;      /* 4x - hero mobile */
-  --text-5xl: 48px;      /* 5x - hero desktop */
+    --text-2xs: 11px; /* tiny - footer fine print (كان 9px) */
+    --text-xs: 12px; /* extra small - labels (كان 11px) */
+    --text-sm: 12px; /* small - metadata */
+    --text-base: 13px; /* base - body text */
+    --text-md: 14px; /* medium - subheadings */
+    --text-lg: 16px; /* large - section headings */
+    --text-xl: 18px; /* extra large - h3 */
+    --text-2xl: 22px; /* 2x - h2 */
+    --text-3xl: 28px; /* 3x - h1 mobile */
+    --text-4xl: 36px; /* 4x - hero mobile */
+    --text-5xl: 48px; /* 5x - hero desktop */
 
-  /* Line heights */
-  --leading-tight: 1.2;
-  --leading-snug: 1.35;
-  --leading-normal: 1.5;
-  --leading-relaxed: 1.6;
-  --leading-loose: 1.75;
+    /* Line heights */
+    --leading-tight: 1.2;
+    --leading-snug: 1.35;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.6;
+    --leading-loose: 1.75;
 
-  /* Font weights */
-  --weight-normal: 400;
-  --weight-medium: 500;
-  /*
+    /* Font weights */
+    --weight-normal: 400;
+    --weight-medium: 500;
+    /*
    * Tajawal لا تملك وزن ٦٠٠ (أوزانها ٢٠٠/٣٠٠/٤٠٠/٥٠٠/٧٠٠/٨٠٠/٩٠٠).
    *
    * وخوارزمية المطابقة في CSS تحسم ذلك بلا غموض: المطلوب فوق ٥٠٠ يُبحث
@@ -307,60 +543,61 @@
    * يقرأ الكود يعرف أنّ أمامه درجتين لا ثلاثاً — ومن أراد درجةً وسطى
    * حقيقيّةً فأمامه ٥٠٠ وهو مُحمَّل.
    */
-  --weight-semibold: 700;
-  --weight-bold: 700;
-  --weight-extrabold: 800;
-  --weight-black: 900;
+    --weight-semibold: 700;
+    --weight-bold: 700;
+    --weight-extrabold: 800;
+    --weight-black: 900;
 
-  /* Letter spacing */
-  --tracking-tight: -0.02em;
-  --tracking-normal: 0;
-  --tracking-wide: 0.025em;
+    /* Letter spacing */
+    --tracking-tight: -0.02em;
+    --tracking-normal: 0;
+    --tracking-wide: 0.025em;
 
-  /* ═══════════════════════════════════════════════════════════════
+    /* ═══════════════════════════════════════════════════════════════
      ⏱️ TRANSITIONS & EASINGS — V25
      ═══════════════════════════════════════════════════════════════ */
-  --transition-fast: 150ms ease;
-  --transition-base: 200ms ease;
-  --transition-slow: 300ms ease;
-  --transition-slower: 500ms ease;
+    --transition-fast: 150ms ease;
+    --transition-base: 200ms ease;
+    --transition-slow: 300ms ease;
+    --transition-slower: 500ms ease;
 
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  /* ═══════════════════════════════════════════════════════════════
+    /* ═══════════════════════════════════════════════════════════════
      📐 LAYOUT TOKENS — V25
      ═══════════════════════════════════════════════════════════════ */
-  --shell-max-width: 480px;       /* app shell width */
-  --landing-max-width: 1280px;    /* landing wrap */
-  --header-height: 64px;
-  --bottom-nav-height: 72px;
+    --shell-max-width: 480px; /* app shell width */
+    --landing-max-width: 1280px; /* landing wrap */
+    --header-height: 64px;
+    --bottom-nav-height: 72px;
 
-  /* Z-index scale */
-  --z-base: 1;
-  --z-dropdown: 10;
-  --z-sticky: 20;
-  --z-overlay: 30;
-  --z-modal: 40;
-  --z-popover: 50;
-  --z-toast: 60;
-  --z-tooltip: 70;
+    /* Z-index scale */
+    --z-base: 1;
+    --z-dropdown: 10;
+    --z-sticky: 20;
+    --z-overlay: 30;
+    --z-modal: 40;
+    --z-popover: 50;
+    --z-toast: 60;
+    --z-tooltip: 70;
 
-  /* ═══════════════════════════════════════════════════════════════
+    /* ═══════════════════════════════════════════════════════════════
      🔘 BUTTON TOKENS — V25 (Dynamic Theme Ready)
      ═══════════════════════════════════════════════════════════════ */
-  --btn-primary-bg: var(--emerald);
-  --btn-primary-bg-hover: var(--emerald-deep);
-  --btn-primary-fg: var(--paper-3);
-  --btn-secondary-bg: var(--paper);
-  --btn-secondary-fg: var(--ink);
-  --btn-danger-bg: var(--rose);
-  --btn-danger-bg-hover: #8A2532;
-  --btn-danger-fg: var(--paper-3);
-}
+    --btn-primary-bg: var(--emerald);
+    --btn-primary-bg-hover: var(--emerald-deep);
+    --btn-primary-fg: var(--paper-3);
+    --btn-secondary-bg: var(--paper);
+    --btn-secondary-fg: var(--ink);
+    --btn-danger-bg: var(--rose);
+    --btn-danger-bg-hover: #8a2532;
+    --btn-danger-fg: var(--paper-3);
+  }
 
-/* ─── 2. BASE — V3 EXACT ─── */
+  /* ─── 2. BASE — V3 EXACT ─── */
+}
 @layer base {
   *, *::before, *::after { box-sizing: border-box; }
   html {

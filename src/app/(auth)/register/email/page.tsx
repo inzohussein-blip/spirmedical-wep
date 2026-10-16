@@ -7,11 +7,12 @@ export const metadata = {
   title: 'تسجيل بالبريد · سباير ميديكال',
 };
 
-export default function EmailRegisterPage({
-  searchParams,
-}: {
-  searchParams: { error?: string; pending?: string; email?: string };
-}) {
+export default async function EmailRegisterPage(
+  props: {
+    searchParams: Promise<{ error?: string; pending?: string; email?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const error = searchParams.error;
   const pending = searchParams.pending === '1';
   const pendingEmail = searchParams.email;

@@ -27,7 +27,7 @@ export async function adminLogin(formData: FormData) {
   }
 
   // 🔒 حدّ محاولات الدخول (منع تخمين كلمة السر)
-  const ip = getIp();
+  const ip = await getIp();
   const rl = await checkRateLimit(`admin:login:${ip}`, {
     max: 10,
     windowSeconds: 900,
@@ -39,7 +39,7 @@ export async function adminLogin(formData: FormData) {
     );
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
@@ -87,7 +87,7 @@ export async function adminCreate(formData: FormData) {
   const secretKey = String(formData.get('secretKey') ?? '');
 
   // 🔒 حدّ الإنشاء (منع تخمين المفتاح السرّي / الإساءة)
-  const ip = getIp();
+  const ip = await getIp();
   const rl = await checkRateLimit(`admin:create:${ip}`, {
     max: 5,
     windowSeconds: 3600,
@@ -100,7 +100,7 @@ export async function adminCreate(formData: FormData) {
   }
 
   // من هو المُنشئ؟ (لو توجد جلسة أدمن قائمة)
-  const sessionClient = createClient();
+  const sessionClient = await createClient();
   const {
     data: { user: caller },
   } = await sessionClient.auth.getUser();

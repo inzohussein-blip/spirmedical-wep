@@ -6,7 +6,7 @@ import type { Database } from '@/types/database';
  * Supabase client للاستخدام من جانب الخادم.
  * يقرأ ويكتب الـ session من cookies.
  */
-export function createClient() {
+export async function createClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -17,7 +17,7 @@ export function createClient() {
     );
   }
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   return createServerClient<Database>(supabaseUrl, supabaseKey, {
     // PKCE مطابق للعميل — يضمن أن exchangeCodeForSession يجد الـ code-verifier

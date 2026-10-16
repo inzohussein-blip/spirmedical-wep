@@ -22,8 +22,8 @@ import { logger } from '@/lib/logger';
 //   3. حماية redirect المفتوح (open redirect) في المعامل next
 // ════════════════════════════════════════════════════════════════════
 
-function getIp(): string {
-  const h = headers();
+async function getIp(): Promise<string> {
+  const h = await headers();
   return (
     h.get('x-forwarded-for')?.split(',')[0]?.trim() ??
     h.get('x-real-ip') ??
@@ -63,7 +63,7 @@ export async function registerWithEmail(formData: FormData) {
   const email = String(formData.get('email') ?? '').trim().toLowerCase();
   const password = String(formData.get('password') ?? '');
 
-  const ip = getIp();
+  const ip = await getIp();
   const limit = await checkRateLimit(`register-email:${ip}`, {
     max: 5,
     windowSeconds: 3600,
@@ -92,7 +92,7 @@ export async function registerWithEmail(formData: FormData) {
     );
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
 
   try {
     const { data, error } = await supabase.auth.signUp({
@@ -154,7 +154,7 @@ export async function loginWithEmail(formData: FormData) {
   const password = String(formData.get('password') ?? '');
   const redirectTo = formData.get('redirect') as string | null;
 
-  const ip = getIp();
+  const ip = await getIp();
   const limit = await checkRateLimit(`login-email:${ip}`, {
     max: 10,
     windowSeconds: 900,
@@ -172,7 +172,7 @@ export async function loginWithEmail(formData: FormData) {
     redirect('/login/email?error=' + encodeURIComponent('أدخل البريد وكلمة المرور'));
   }
 
-  const supabase = createClient();
+  const supabase = await createClient();
 
   try {
     const { data, error } = await supabase.auth.signInWithPassword({

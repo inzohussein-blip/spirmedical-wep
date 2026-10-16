@@ -6,7 +6,7 @@ import { logAuditEvent } from '@/lib/audit';
 import { validateRing, type ServiceArea, type Ring } from '@/lib/service-areas';
 
 async function verifyAdmin() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false as const, error: 'غير مصرّح' };
 

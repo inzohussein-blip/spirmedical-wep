@@ -22,12 +22,13 @@ const CONSULTATION_STATUS = ['open', 'awaiting_doctor', 'awaiting_patient', 'clo
 const SENDER_ROLES = ['patient', 'doctor', 'system'] as const;
 const MESSAGE_TYPES = ['text', 'image', 'medical_record', 'voice'] as const;
 
-export default async function ConsultationDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const supabase = createClient();
+export default async function ConsultationDetailPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
+  const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');

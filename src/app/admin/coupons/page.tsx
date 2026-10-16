@@ -11,7 +11,7 @@ export const metadata = {
 const DISCOUNT_TYPE = ['percentage', 'fixed'] as const;
 
 export default async function CouponsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: coupons } = await supabase
     .from('coupons')

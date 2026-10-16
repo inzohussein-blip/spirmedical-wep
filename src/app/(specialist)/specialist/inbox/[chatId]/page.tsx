@@ -15,8 +15,9 @@ export const metadata = {
 
 const MESSAGE_TYPES = ['text', 'image', 'file', 'audio', 'system'] as const;
 
-export default async function SpecialistChatDetailPage({ params }: { params: { chatId: string } }) {
-  const supabase = createClient();
+export default async function SpecialistChatDetailPage(props: { params: Promise<{ chatId: string }> }) {
+  const params = await props.params;
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) return null;

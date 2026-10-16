@@ -58,7 +58,6 @@ function saveConsentEverywhere(consent: ConsentState) {
   try {
     localStorage.setItem(CONSENT_KEY, JSON.stringify(consent));
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.warn('localStorage not available');
   }
 
@@ -67,7 +66,6 @@ function saveConsentEverywhere(consent: ConsentState) {
     const expires = new Date(Date.now() + CONSENT_DURATION);
     document.cookie = `${CONSENT_KEY}=1; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.warn('cookies not available');
   }
 }

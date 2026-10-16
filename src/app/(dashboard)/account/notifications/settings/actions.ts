@@ -34,7 +34,7 @@ const DEFAULT_PREFS: NotificationPreferences = {
 };
 
 export async function getNotificationPreferences(): Promise<NotificationPreferences> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -64,7 +64,7 @@ export async function getNotificationPreferences(): Promise<NotificationPreferen
 }
 
 export async function getActiveSubscriptions(): Promise<ActiveSubscription[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -85,7 +85,7 @@ export async function getActiveSubscriptions(): Promise<ActiveSubscription[]> {
 export async function updateNotificationPreferences(
   prefs: Partial<NotificationPreferences>
 ): Promise<{ success: boolean; error?: string }> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -115,7 +115,7 @@ export async function updateNotificationPreferences(
 export async function removeSubscription(
   subscriptionId: string
 ): Promise<{ success: boolean; error?: string }> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

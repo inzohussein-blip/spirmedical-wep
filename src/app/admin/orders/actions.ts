@@ -12,7 +12,7 @@ import {
 } from '@/lib/services/push-templates';
 
 async function requireAdmin() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false as const, error: 'unauthorized', supabase: null };
 
@@ -97,7 +97,6 @@ export async function assignOrderToSpecialist(orderId: string, specialistId: str
       }
     }
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error('Push notification failed:', err);
   }
 
@@ -153,7 +152,6 @@ export async function adminCancelOrder(orderId: string, reason: string) {
       }).catch(console.error);
     }
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error('Push notification failed:', err);
   }
 

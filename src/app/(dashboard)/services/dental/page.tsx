@@ -12,7 +12,7 @@ export const metadata = {
 };
 
 export default async function DentalPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: clinics } = await supabase
     .from('dental_clinics')

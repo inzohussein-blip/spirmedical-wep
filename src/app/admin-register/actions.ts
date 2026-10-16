@@ -50,7 +50,7 @@ export async function requestAdminAccess(formData: FormData) {
   const reason = String(formData.get('reason') ?? '').trim();
 
   // 🔒 حدّ الطلبات (منع إغراق طلبات الأدمن — endpoint غير مُصادق)
-  const rl = await checkRateLimit(`admin:request:${getIp()}`, {
+  const rl = await checkRateLimit(`admin:request:${await getIp()}`, {
     max: 5,
     windowSeconds: 3600,
   });
@@ -65,7 +65,7 @@ export async function requestAdminAccess(formData: FormData) {
   if (!email.includes('@')) redirect('/admin-register?error=' + encodeURIComponent('بريد إلكتروني غير صالح'));
   if (password.length < 8) redirect('/admin-register?error=' + encodeURIComponent('كلمة المرور 8 أحرف على الأقل'));
 
-  const supabase = createClient();
+  const supabase = await createClient();
 
   try {
     const { data, error } = await supabase.auth.signUp({
@@ -117,7 +117,7 @@ export async function approveAdminRequest(formData: FormData) {
   const requestId = String(formData.get('requestId') ?? '');
   const grantedRole = String(formData.get('role') ?? 'support');
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/admin-login');
 
@@ -155,7 +155,7 @@ export async function approveAdminRequest(formData: FormData) {
 export async function rejectAdminRequest(formData: FormData) {
   const requestId = String(formData.get('requestId') ?? '');
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/admin-login');
 

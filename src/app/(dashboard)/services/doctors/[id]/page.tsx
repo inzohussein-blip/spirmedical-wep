@@ -13,12 +13,13 @@ export const dynamic = 'force-dynamic';
 
 const PLANS = ['monthly', 'yearly'] as const;
 
-export default async function DoctorDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const supabase = createClient();
+export default async function DoctorDetailPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
+  const supabase = await createClient();
 
   const { data: doctor } = await supabase
     .from('doctors')
@@ -62,8 +63,9 @@ export default async function DoctorDetailPage({
   );
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const supabase = createClient();
+export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
+  const supabase = await createClient();
   const { data: d } = await supabase
     .from('doctors')
     .select('full_name, specialty, title')

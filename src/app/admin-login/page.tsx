@@ -6,11 +6,12 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function AdminLoginPage({
-  searchParams,
-}: {
-  searchParams: { error?: string; tab?: string; created?: string };
-}) {
+export default async function AdminLoginPage(
+  props: {
+    searchParams: Promise<{ error?: string; tab?: string; created?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   return (
     <div
       style={{

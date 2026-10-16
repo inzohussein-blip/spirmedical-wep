@@ -15,8 +15,9 @@ interface SearchParams {
   q?: string;
 }
 
-export default async function AuditLogPage({ searchParams }: { searchParams: SearchParams }) {
-  const supabase = createClient();
+export default async function AuditLogPage(props: { searchParams: Promise<SearchParams> }) {
+  const searchParams = await props.searchParams;
+  const supabase = await createClient();
 
   let query = supabase
     .from('admin_actions')

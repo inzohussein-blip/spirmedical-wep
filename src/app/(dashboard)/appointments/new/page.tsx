@@ -20,12 +20,13 @@ export const metadata = {
 
 export const dynamic = 'force-dynamic';
 
-export default async function NewAppointmentPage({
-  searchParams,
-}: {
-  searchParams: { service?: string; clinic?: string; type?: string };
-}) {
-  const supabase = createClient();
+export default async function NewAppointmentPage(
+  props: {
+    searchParams: Promise<{ service?: string; clinic?: string; type?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {

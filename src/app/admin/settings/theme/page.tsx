@@ -12,7 +12,7 @@ export const metadata = {
 
 export default async function ThemeSettingsPage() {
   // 1. التحقق من المستخدم
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

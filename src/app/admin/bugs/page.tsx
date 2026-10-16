@@ -16,7 +16,7 @@ const SEVERITY = ['critical', 'high', 'medium', 'low'] as const;
 const BUG_STATUS = ['open', 'in_progress', 'fixed', 'wont_fix', 'duplicate'] as const;
 
 export default async function BugsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 

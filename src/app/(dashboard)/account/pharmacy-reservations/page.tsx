@@ -37,7 +37,7 @@ interface Reservation {
 }
 
 export default async function PharmacyReservationsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 

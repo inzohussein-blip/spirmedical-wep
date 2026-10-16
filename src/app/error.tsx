@@ -11,7 +11,6 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // eslint-disable-next-line no-console
     console.error('App Error:', error);
     // 🚀 V29: أرسل لـ Sentry
     void import('@/lib/error-tracking')

@@ -77,7 +77,7 @@ function generateTempPassword(): string {
 export async function POST(request: Request) {
   try {
     // ─── 1. تحقّق من صلاحية المُنفّذ (super_admin only) ───
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: { user: callerAuth } } = await supabase.auth.getUser();
 
     if (!callerAuth) {

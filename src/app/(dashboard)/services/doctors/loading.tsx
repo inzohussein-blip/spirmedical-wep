@@ -22,7 +22,7 @@ export default function DoctorsLoading() {
             <Skeleton
               key={i}
               variant="rect"
-              className={`h-8 rounded-full flex-shrink-0`}
+              className={`h-8 rounded-full shrink-0`}
               style={{ width: w }}
             />
           ))}

@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
 
   // ─── تبديل code بـ session ──────────────────────────────
   if (code) {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {

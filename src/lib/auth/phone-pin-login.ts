@@ -71,7 +71,7 @@ export async function phonePinLogin(phone: string, pin: string, ip: string): Pro
 
     // الرمزُ صحيح: الدخولُ بكلمة السرّ المشتقّة (تُزامَن إن تغيّرت، كحسابٍ أنشأته الإدارة)
     const password = derivePhonePassword(phone);
-    const supabase = createClient();
+    const supabase = await createClient();
     let { data: signed } = await supabase.auth.signInWithPassword({ email: authEmail!, password });
     if (!signed?.user) {
       await admin.auth.admin.updateUserById(profile.id, { password });

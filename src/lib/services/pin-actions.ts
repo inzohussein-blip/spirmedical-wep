@@ -40,7 +40,7 @@ async function matchesPin(pin: string, userId: string, stored: string): Promise<
 }
 
 export async function setPin(pin: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 
@@ -76,7 +76,7 @@ export async function setPin(pin: string) {
 }
 
 export async function verifyPin(pin: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 
@@ -146,7 +146,7 @@ export async function verifyPin(pin: string) {
 }
 
 export async function disablePin(currentPin: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: 'unauthorized' };
 

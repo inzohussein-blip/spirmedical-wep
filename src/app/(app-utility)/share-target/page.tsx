@@ -13,11 +13,12 @@ export const metadata = {
   title: 'مشاركة محتوى · Spir Medical',
 };
 
-export default function ShareTargetPage({
-  searchParams,
-}: {
-  searchParams: { title?: string; text?: string; url?: string };
-}) {
+export default async function ShareTargetPage(
+  props: {
+    searchParams: Promise<{ title?: string; text?: string; url?: string }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const hasContent = !!(searchParams.title || searchParams.text || searchParams.url);
 
   return (

@@ -10,7 +10,7 @@
 
 | أبحث عن… | اذهب إلى |
 |---|---|
-| توجيه النطاق والجلسة | `middleware.ts` · `lib/site-config.ts` · `lib/supabase/middleware.ts` |
+| توجيه النطاق والجلسة | `proxy.ts` (كان middleware.ts قبل Next 16) · `lib/site-config.ts` · `lib/supabase/middleware.ts` |
 | الجلسة والأدوار | `lib/auth/session.ts` (`requireSession`) · تخطيطُ كلّ مجموعة `app/(…)/layout.tsx` |
 | عملاء Supabase | `lib/supabase/server.ts` (RLS) · `server-service.ts` (service_role) · `client.ts` |
 | رفع الطلب (المريض) | `app/(dashboard)/appointments/new/` → `NewAppointmentClient.tsx` + `actions.ts` |
@@ -274,7 +274,7 @@
   الحارس: `tests/supabase-upgrade.test.ts`.
 - **#42/#49 (React 19) و#48 (Sentry 11) و#45 (tailwind-merge 3)**: دُمجت آليّاً؛ React 19 مع Next 14 أسقط
   `npm ci` (تعارضُ peer) فتوقّف النشر، وSentry 11 أسقط `next.config.js` (`withSentryConfig is not a function`).
-  أُرجعت إلى React 18.3.1 وSentry 10.62.0 وtailwind-merge 2.6.1 — **تُرقّى مع Next 16 لا قبله.**
+  أُرجعت مؤقّتاً، ثمّ **رُقّيت يدوياً مع Next 16** (انظر ⬆️ أدناه).
 - القواعد في `.github/dependabot.yml` (`ignore`)، والحارس `tests/ci-gate.test.ts`.
 
 ## 🧪 التغطية والخللان اللذان كشفتهما (16 تشرين الأول)
@@ -285,6 +285,24 @@
   يختار المريضُ وقتاً فيراه «محجوزاً». لا مصدرَ لحجز الفترات — فكلُّها متاحة حتى يوجد.
 - **تصديرُ CSV كان عرضةً لحقن الصيغ**: اسمٌ يبدأ بـ`=` يُنفَّذ في Excel الإدارة. يُسبق بـ`'`، ويُستثنى
   الرقمُ الصرف (الهواتف بـ`+964`).
+
+## ⬆️ الانتقال إلى Next 16 (16 تشرين الأول) — ما يجب معرفته
+
+- **الإصدارات:** Next 16.4.2 (Turbopack)، React 19.3، Sentry 11، Tailwind 4 + tailwind-merge 3، Jest 30،
+  ESLint 10، أنواع Node 24. **TypeScript باقٍ 5.9**: الإصدار 7 يبني (وأسرع ×9) لكنّ typescript-eslint
+  لا يدعمه بعد. `baseUrl` أُزيل من tsconfig تمهيداً.
+- **`createClient()` من الخادم async**: `await createClient()` في كلّ موضع (301). وكذلك `cookies()`
+  و`headers()` و`params` و`searchParams` و`getClientIp()`. لا `UnsafeUnwrapped…` (يعمل في 15 وينكسر في 16).
+  الحارس: `tests/async-request-apis.test.ts`.
+- **`src/proxy.ts`** بدل `middleware.ts` (يعمل على Node). **`updateTag(tag)`** للإبطال الفوريّ في
+  الإجراءات؛ `revalidateTag` صار يطلب profile.
+- **`next lint` أُزيل**: `npm run lint` = `eslint .` بإعداد `eslint.config.mjs`. قواعدُ React Compiler
+  (purity، set-state-in-effect…) **تحذير** — 49 موضعاً تُراجَع قبل تفعيل المُصرِّف.
+- **Tailwind 4**: الإعدادُ في `shared.css` (`@import 'tailwindcss'` و`@theme`)، لا `tailwind.config.ts`.
+  أداةُ الترقية أعادت تسميةَ متغيّر `'outline'` في Button/Badge إلى `'outline-solid'` خطأً — أُرجع.
+- **أداةُ التدقيق** (`audit.mjs`) تنتظر `load` ثمّ الهدوءَ بسقف 5 ث: Playwright لا يرى جلبَ Next 15+
+  المسبق «منتهياً». ولقطاتُ ما قبل الانتقال وبعده تختلف < 0.25٪ بكسلاً (40 شاشة).
+- الحارس: `tests/next16-migration.test.ts`.
 
 ## 🔑 معلّقٌ على المالك وحده
 

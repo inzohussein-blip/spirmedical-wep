@@ -11,7 +11,7 @@ import { SHOW_PRICES } from '@/lib/config/pricing';
 export const dynamic = 'force-dynamic';
 
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps) {
@@ -80,13 +80,14 @@ const RESULT_STATUS_META: Record<string, { label: string; color: string; bgColor
   inconclusive: { label: 'غير حاسم', color: '#6B7280', bgColor: '#F3F4F6' },
 };
 
-export default async function LabOrderDetailPage({ params }: PageProps) {
-  const supabase = createClient();
+export default async function LabOrderDetailPage(props: PageProps) {
+  const params = await props.params;
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login');
 
-    const supabaseAny = supabase as any;
-  
+  const supabaseAny = supabase as any;
+
   // جلب الطلب مع كل التفاصيل
   const { data: order } = await supabaseAny
     .from('lab_orders')
@@ -105,14 +106,14 @@ export default async function LabOrderDetailPage({ params }: PageProps) {
 
   const status = STATUS_META[order.status] ?? STATUS_META.pending;
   const appointment = order.appointments;
-  
-    const results = (order.lab_results || []) as Array<any>;
-  
+
+  const results = (order.lab_results || []) as Array<any>;
+
   // تواريخ
   const orderDate = new Date(order.created_at).toLocaleDateString('ar-IQ', {
     day: 'numeric', month: 'long', year: 'numeric',
   });
-  
+
   const scheduledDate = appointment?.scheduled_at 
     ? new Date(appointment.scheduled_at).toLocaleDateString('ar-IQ', {
         day: 'numeric', month: 'long', year: 'numeric', 
