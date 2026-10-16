@@ -55,6 +55,9 @@ export default function ForgotPage({
       )}
 
       <form action={sendOtp} className="auth-form">
+        {/* رمزُ واتساب صراحةً — وإلّا سلك الطلبُ مسارَ الرقم + رمز الدخول */}
+        <input type="hidden" name="action" value="otp" />
+        <input type="hidden" name="redirect" value="/login-pin" />
         <div className="auth-field">
           <label htmlFor="phone" className="auth-field-label">
             رقم الهاتف المُسجّل

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { oneOfOr } from '@/lib/format/vocabulary';
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
+import ResetLoginPinButton from '@/app/admin/_components/ResetLoginPinButton';
 import PatientCRMClient from './PatientCRMClient';
 import { EmptyState } from '@/components/ui';
 
@@ -166,6 +167,7 @@ export default async function PatientDetailPage({ params }: { params: { id: stri
             }))}
             isSuspended={patient.is_suspended ?? false}
           />
+          <ResetLoginPinButton userId={patient.id} />
         </div>
 
       </div>

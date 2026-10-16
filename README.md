@@ -109,7 +109,7 @@ spirmedical-wep/
 │   ├── lib/                     المنطق: auth, supabase, whatsapp, services, validations …
 │   └── types/database.ts        أنواع Supabase المولَّدة — npm run db:types
 ├── supabase/
-│   ├── migrations/              0001 → 0048 (انظر «قاعدة البيانات»)
+│   ├── migrations/              0001 → 0049 (انظر «قاعدة البيانات»)
 │   └── *.sql                    أدوات فحصٍ يدويّة (verify, health-check)
 ├── tests/                       حرّاسٌ ساكنة وسلوكية (npx jest)
 ├── tools/mobile-audit/          تدقيقُ الهاتف محلّياً: محاكي Supabase + Playwright (انظر README فيه)
@@ -211,6 +211,7 @@ spirmedical-wep/
 | الدخول بالهاتف + OTP | `app/(auth)/login/actions.ts` (`sendOtp` `verifyOtp` `resendOtp` `signOut`) · `lib/auth/otp-mode.ts` (`NEXT_PUBLIC_OTP_MODE`) |
 | رموز واتساب | `lib/whatsapp/otp-service.ts` (توليد + bcrypt + حدّ محاولات) · `lib/whatsapp/meta-client.ts` |
 | البريد وتأكيده | `lib/auth/email-auth.ts` · `lib/email/*` (Resend) |
+| الدخول بالرقم + رمز الدخول (PIN) بلا واتساب | `lib/auth/phone-pin-login.ts` · `lib/auth/login-pin.ts` · ضبطُ الرمز `app/(app-utility)/login-pin` |
 | الدخول بالرقم + كلمة السرّ (حسابٌ أنشأته الإدارة) | `lib/auth/login-identifier.ts` · البريدُ الاصطناعيّ `lib/auth/phone-credentials.ts` (`phoneToEmail`) — واحدٌ لكلّ المسارات |
 | التسجيل | `app/(auth)/register/actions.ts` (`registerPatient` `registerSpecialist`) |
 | إعادة التوجيه الآمنة | `lib/auth/safe-redirect.ts` |
@@ -303,7 +304,7 @@ spirmedical-wep/
 - **Supabase** — المشروع `ioulxemokusfeykjcaxg`.
 - `src/types/database.ts` مولَّدٌ من الإنتاج (93 جدولاً) — أعِد توليده بعد أيّ ترحيل
   بـ`npm run db:types`.
-- **الترحيلات** في `supabase/migrations/0001…0048`.
+- **الترحيلات** في `supabase/migrations/0001…0049`.
   - `0001–0010` ليست في سجلّ Supabase (أُنشئت الجداول بطريقةٍ أخرى): **كلُّ إصلاحٍ ترحيلٌ جديد**، لا تعديلٌ لملفٍّ قديم.
   - مخطَّط `private` للدوالّ المُفوَّضة (`SECURITY DEFINER`)، وكلُّ دالّةٍ تُعلن `SET search_path = public, pg_temp`.
   - PostGIS مُسقَط عمداً (0025)؛ مناطق الخدمة `jsonb` + اختبار الشعاع (0030).
@@ -336,6 +337,7 @@ spirmedical-wep/
 | 0046 | دمج السياسات المتراكبة: سياسةٌ واحدة لكلّ (جدول، أمر) على 44 جدولاً — مكافئة بـOR؛ وإغلاق إدراج `bug_reports` |
 | 0047 | تصفير تقييمات المختبرات المبذورة (لا مصدرَ حيّاً لها) |
 | 0048 | `service_waitlist` — «أعلِمني حين تتوفّر» (منحٌ مضيَّقة: لا UPDATE للمريض) |
+| 0049 | `auth_login_pins` — رمزُ الدخول (PIN) للحسابات الهاتفيّة، للخادم وحده |
 
 ```bash
 npm run db:link     # ربط المشروع
@@ -376,7 +378,7 @@ npm run db:types    # توليد src/types/database.ts
 
 | المجال | الحرّاس |
 |---|---|
-| الأمان وRLS | `rls-coverage` `rls-initplan` `rls-shared-row-participants` `rls-update-scope` `rpc-authorization` `security` `phi-policy-scope` `email-verification-tokens` `safe-redirect` `policy-merge` |
+| الأمان وRLS | `phone-pin-auth` `rls-coverage` `rls-initplan` `rls-shared-row-participants` `rls-update-scope` `rpc-authorization` `security` `phi-policy-scope` `email-verification-tokens` `safe-redirect` `policy-merge` |
 | قاعدة البيانات | `schema-conformance` `insert-column-contracts` `enum-values` `auto-reject-stale` `seed-data-honesty` |
 | الإشعارات | `notification-push-channel` `notification-toast` `whatsapp` `inapp-fallback` `owner-alerts` |
 | الإتاحة والمختصّون | `service-availability` `specialist-onboarding` `specialist-readiness` |

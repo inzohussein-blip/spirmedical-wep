@@ -23,14 +23,14 @@
 | التغطية الجغرافية | `lib/service-areas.ts` · `lib/hooks/useServiceCoverage.ts` · الفهرسة `lib/seo/coverage.ts` |
 | الإشعارات | `lib/notifications.ts` (الطابور) · `lib/notifications-processor.ts` · `lib/services/push*.ts` · `lib/services/whatsapp.ts` · الصندوق `app/(dashboard)/account/inbox/` |
 | صحّة التشغيل والتنبيه | `lib/admin/ops-health.ts` → `app/admin/_components/OpsHealthCards.tsx` · `lib/ops/alert-owner.ts` |
-| رموز الدخول | `app/(auth)/login/actions.ts` · `lib/whatsapp/otp-service.ts` · `lib/auth/otp-mode.ts` · `lib/auth/phone-credentials.ts` · `lib/auth/login-identifier.ts` |
+| رموز الدخول | `app/(auth)/login/actions.ts` · `lib/auth/phone-pin-login.ts` + `login-pin.ts` (الرقم + PIN) · `lib/whatsapp/otp-service.ts` · `lib/auth/otp-mode.ts` · `lib/auth/phone-credentials.ts` · `lib/auth/login-identifier.ts` |
 | الغلاف والتنقّل | `components/layout/AppShell.tsx` · `AuthenticatedShell.tsx` · `lib/focused-routes.ts` |
 | النوافذ المنبثقة | `components/ui/ModalShell.tsx` · `BottomSheet.tsx` · `lib/hooks/useModalDialog.ts` |
 | هواتف المنشآت | `components/ui/PhoneLink.tsx` · `lib/format/phone.ts` |
 | التنسيق | `app/styles/shared.css` (رموز + حارس iOS) · `app.css` (شاشات التطبيق) · `marketing.css` · `admin.css` |
 | الفهرسة | `app/layout.tsx` · `components/seo/JsonLd.tsx` · `app/sitemap.ts` · `app/robots.ts` |
 | الكرون | `vercel.json` → `app/api/cron/*` · `app/api/notifications/process` |
-| قاعدة البيانات | `supabase/migrations/` (آخرها 0048) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
+| قاعدة البيانات | `supabase/migrations/` (آخرها 0049) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
 | الاختبارات | `tests/` — اسمُ الحارس يدلّ على مجاله (`rls-*`، `order-flow-modals`، `specialist-screens`…) |
 
 **أدوات التحقّق البصريّ** في [`tools/mobile-audit/`](tools/mobile-audit/README.md):
@@ -222,6 +222,28 @@
   يعلم بالطلب والرفضُ التلقائيّ يلغيه — ثمّ الاسم والمحافظة والنبذة. تختفي حين تكتمل.
   اشتراكاتُ الدفع بلا سياسة قراءة لصاحبها، فتُعدّ بعميل الخدمة مقيّدةً بـ`user.id`.
   الحارس: `tests/specialist-readiness.test.tsx`.
+
+## 🔑 التسجيل والدخول بلا رمز واتساب — الرقم + PIN (0049)
+
+- **قرار المالك: لا OTP في التسجيل.** فالعاملُ الثاني رمزُ دخولٍ من 6 أرقام يختاره صاحبُ
+  الحساب، مجزّأٌ بـbcrypt في `auth_login_pins` (RLS بلا سياسة، المنحُ لـservice_role وحده:
+  صفوفُ `users` يقرؤها غيرُ صاحبها). خمسُ محاولاتٍ خاطئة تقفل ربعَ ساعة، وحدٌّ لكلّ رقم.
+- **ما قِيس قبله على الإنتاج (16 تشرين الأول):** `/login/phone` كان يُدخل أيَّ حسابٍ هاتفيّ
+  **برقمه وحده** (كلمةُ السرّ مشتقّةٌ من الرقم)، ويُنشئ حساباً لأيّ رقم، ويكتب كلمةَ السرّ
+  المشتقّة فوق كلمة سرّ حسابات البريد — ومنها الإدارة — إن عُرف رقمُها. وحقلُ PIN في تسجيل
+  المختصّ كان يُهمَل.
+- **المنطقُ في `phonePinLogin` وحده**، يستدعيه `/login/phone` و`/login` (رقم + 6 أرقام). لا
+  إنشاءَ حساب منه، ولا مسَّ لحساب بريد (`isPhoneAuthEmail`).
+- **حسابٌ قديم بلا رمز** يضبط رمزَه في أوّل دخول (`claimed`) — نافذةٌ متبقّية تُغلق بأوّل دخولٍ لصاحبه.
+- التسجيلُ بلا واتساب يرفض الرمزَ الضعيف والرقمَ المسجَّل (`guardPinRegistration`).
+- «نسيت الرمز» = رمزُ واتساب صراحةً (`action=otp`) ثمّ `/login-pin` — يتعطّل ما دام توكن Meta معطّلاً.
+- الحارس: `tests/phone-pin-auth.test.ts`.
+- **نسي رمزه؟** ما دام واتساب معطّلاً: «إنشاء رمز دخولٍ مؤقّت» في صفحتَي المريض والمختصّ بالإدارة
+  (`app/admin/_actions/login-pin.ts`). للحساب الهاتفيّ وحده، يُعرض مرّةً، ويُسجَّل `reset_login_pin`.
+- **تسجيلُ المريض**: `/register/patient` بالرقم + الرمز افتراضيّاً (`registerPatient`، `action=skip`)،
+  والبريدُ بـ`?method=email`. الرمزُ في حقل `password` لأنّ `guardPinRegistration` يقرؤه.
+- **الدفع نقدٌ فقط**: `payments` فارغٌ ولا بوّابةَ في الكود — فلا تَعِد الشروطُ بزين كاش أو بطاقات.
+- الحارس: `tests/admin-pin-reset.test.ts`.
 
 ## 🚨 تنبيهُ المالك وبوّابة CI
 

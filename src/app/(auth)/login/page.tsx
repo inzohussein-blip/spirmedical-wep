@@ -123,7 +123,7 @@ function LoginPageInner() {
             {/* Password Input */}
             <div>
               <label htmlFor="login-password" className="block text-sm font-medium text-gray-700 mb-2">
-                كلمة المرور
+                كلمة المرور أو رمز الدخول
               </label>
               <input
                 type="password"

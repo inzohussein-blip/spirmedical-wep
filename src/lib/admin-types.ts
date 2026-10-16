@@ -134,6 +134,7 @@ export const ACTION_TYPE_LABELS: Record<string, { label: string; icon: string }>
   'suspend_user': { label: 'تعليق مستخدم', icon: '⛔' },
   'unsuspend_user': { label: 'إلغاء التعليق', icon: '▶️' },
   'edit_user': { label: 'تعديل مستخدم', icon: '✏️' },
+  'reset_login_pin': { label: 'إعادة ضبط رمز الدخول', icon: '🔑' },
   'add_patient_tag': { label: 'إضافة تصنيف', icon: '🏷️' },
   'remove_patient_tag': { label: 'حذف تصنيف', icon: '🗑️' },
   'add_patient_note': { label: 'إضافة ملاحظة', icon: '📝' },
