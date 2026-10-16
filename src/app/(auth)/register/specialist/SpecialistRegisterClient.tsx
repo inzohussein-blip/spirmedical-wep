@@ -57,7 +57,7 @@ export default function SpecialistRegisterClient() {
     const fieldErrors: Record<string, string> = {};
 
     if (!result.success) {
-      result.error.errors.forEach((err) => {
+      result.error.issues.forEach((err) => {
         const field = err.path[0] as string;
         if (!fieldErrors[field]) fieldErrors[field] = err.message;
       });

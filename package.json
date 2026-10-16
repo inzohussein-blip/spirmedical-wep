@@ -33,14 +33,14 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^1.17.0",
-    "maplibre-gl": "5.24.0",
+    "maplibre-gl": "6.14.0",
     "next": "14.2.35",
     "posthog-js": "^1.376.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tailwind-merge": "^2.5.2",
     "web-push": "^3.6.7",
-    "zod": "3.25.76"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@mapbox/mapbox-gl-rtl-text": "^0.2.3",

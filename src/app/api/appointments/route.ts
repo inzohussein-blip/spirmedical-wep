@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
   const validation = appointmentSchema.safeParse(body);
   if (!validation.success) {
     return NextResponse.json(
-      { error: 'بيانات غير صحيحة', details: validation.error.errors },
+      { error: 'بيانات غير صحيحة', details: validation.error.issues },
       { status: 400 }
     );
   }

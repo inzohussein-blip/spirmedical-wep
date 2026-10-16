@@ -49,6 +49,8 @@ export default function ServiceAreaMap({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MlMap | null>(null);
   const readyRef = useRef(false);
+  // الرسمُ الأخير — يُستدعى عند اكتمال التحميل (MapLibre 6 لا يقبل أحداثاً مخصّصة كـ'sa:ready').
+  const paintRef = useRef<(() => void) | null>(null);
   const cleanupResizeRef = useRef<(() => void) | null>(null);
 
   // النقر يقرأ أحدث مسوّدة: نحفظها في ref كي لا يُعاد تركيب المستمع مع كل رأس
@@ -142,7 +144,7 @@ export default function ServiceAreaMap({
         readyRef.current = true;
         map.getCanvas().style.cursor = 'crosshair';
         // نُجبر أوّل رسمٍ للبيانات الموجودة وقت اكتمال التحميل
-        map.fire('sa:ready');
+        paintRef.current?.();
       });
 
       map.on('click', handleClick);
@@ -194,10 +196,10 @@ export default function ServiceAreaMap({
       });
     };
 
+    paintRef.current = paint;
     paint();
-    map.on('sa:ready', paint);
     return () => {
-      map.off('sa:ready', paint);
+      if (paintRef.current === paint) paintRef.current = null;
     };
   }, [draft, saved, color]);
 

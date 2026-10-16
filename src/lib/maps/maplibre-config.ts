@@ -56,10 +56,19 @@ function ensureRtlPlugin(maplibregl: typeof import('maplibre-gl')) {
 }
 
 /** تحميل مكتبة MapLibre ديناميكياً (client-only، تبقى خارج حزمة الخادم) */
+/**
+ * عاملُ MapLibre 6 مُستضافٌ ذاتياً. المكتبةُ تشتقّ عنوانَه من `import.meta.url`، وwebpack يجعله
+ * `file://` فيفشل العامل («Worker failed to load») ولا تُرسم الخريطة. الملفّ نسخةٌ من
+ * `node_modules/maplibre-gl/dist/maplibre-gl-worker.mjs` — يُحدَّث مع كلّ ترقية (حارسُه في
+ * tests/maplibre-worker.test.ts).
+ */
+export const MAPLIBRE_WORKER_URL = '/vendor/maplibre-gl-worker.mjs';
+
 export async function loadMapLibre() {
   const mod = await import('maplibre-gl');
+  if (mod.getWorkerUrl() !== MAPLIBRE_WORKER_URL) mod.setWorkerUrl(MAPLIBRE_WORKER_URL);
   ensureRtlPlugin(mod);
-  return mod.default;
+  return mod;
 }
 
 /**

@@ -70,9 +70,13 @@ describe('ترقياتٌ لا تُدمج آليّاً (Dependabot)', () => {
     },
   );
 
-  it('🚨 zod 3 وmaplibre-gl 5 مثبَّتان — #39 و#38 أسقطا فحصَ الأنواع بـ24 خطأً', () => {
-    expect(pkg.dependencies.zod).toMatch(/^3\.\d+\.\d+$/);
-    expect(pkg.dependencies['maplibre-gl']).toMatch(/^5\.\d+\.\d+$/);
+  it('🚨 zod 4 وmaplibre-gl 6 مثبَّتان بدقّة على ما رُقّي إليه يدوياً (#38 و#39 دُمجا آليّاً فسقط البناء)', () => {
+    expect(pkg.dependencies.zod).toMatch(/^4\.\d+\.\d+$/);
+    expect(pkg.dependencies['maplibre-gl']).toMatch(/^6\.\d+\.\d+$/);
+  });
+
+  it('🚨 لا ملصقاتٍ غيرِ موجودة في dependabot.yml — كان يُعلّق بخطأٍ على كلّ طلب', () => {
+    expect(dep).not.toMatch(/^\s+labels:/m);
   });
 
   it('🚨 TypeScript مثبَّتٌ على 5.x — الإصدار 7 يحذف baseUrl فتنكسر مساراتُ @/', () => {

@@ -76,7 +76,7 @@ export const patientRegisterSchema = z.object({
     .max(50, { message: messages.nameLong })
     .regex(nameRegex, { message: messages.nameInvalid }),
   gender: z.enum(['male', 'female'], {
-    errorMap: () => ({ message: messages.selectRequired }),
+    message: messages.selectRequired,
   }),
   phone: phoneFieldSchema,
   password: z
@@ -117,7 +117,7 @@ export const specialistRegisterSchema = z
       .max(50, { message: messages.nameLong })
       .regex(nameRegex, { message: messages.nameInvalid }),
     gender: z.enum(['male', 'female'], {
-      errorMap: () => ({ message: messages.selectRequired }),
+      message: messages.selectRequired,
     }),
     phone: phoneFieldSchema,
     password: z
@@ -127,7 +127,7 @@ export const specialistRegisterSchema = z
       .min(6, { message: messages.passwordShort })
       .max(6, { message: messages.passwordLong }),
     specialization: z.enum(specializations, {
-      errorMap: () => ({ message: messages.selectRequired }),
+      message: messages.selectRequired,
     }),
     // مطلوب فقط لو الاختصاص "other"
     specializationDetails: z

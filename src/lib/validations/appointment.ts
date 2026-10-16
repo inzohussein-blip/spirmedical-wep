@@ -61,7 +61,7 @@ export function validateAppointmentV2Server(
   if (result.success) return { ok: true, fieldErrors: {} };
 
   const fieldErrors: AppointmentFieldErrors = {};
-  for (const err of result.error.errors) {
+  for (const err of result.error.issues) {
     const field = err.path[0] as string;
     if (field && !fieldErrors[field]) fieldErrors[field] = err.message;
   }
