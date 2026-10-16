@@ -227,11 +227,8 @@ export default async function HomePage(
             <a href="#how-it-works" className="landing-nav-link-section">كيف يعمل</a>
             <a href="#about" className="landing-nav-link-section">عن التطبيق</a>
             <a href="#coverage-map" className="landing-nav-link-section">التغطية</a>
-            <a href="#install" className="landing-nav-link-section">التطبيق</a>
             <Link href="/blog" className="landing-nav-link-section">المدونة</Link>
-            <a href="#testimonials" className="landing-nav-link-section">آراء المستخدمين</a>
             <a href="#faq" className="landing-nav-link-section">الأسئلة</a>
-            <a href="#doctors" className="landing-nav-link-section">للأطباء</a>
           </div>
 
           <div className="landing-nav-actions">
@@ -538,6 +535,79 @@ export default async function HomePage(
       {/* ============ ABOUT THE APP ============ */}
       <AboutApp variant="home" />
 
+      {/* ============ COVERAGE MAP ============ */}
+      <section id="coverage-map" className="landing-coverage-map">
+        <div className="landing-wrap">
+          <div className="landing-section-head">
+            <span className="landing-eyebrow">🗺️ تغطية واسعة</span>
+            <h2 className="landing-section-title">
+              مناطق <span className="landing-italic">تغطيتنا</span> في العراق
+            </h2>
+            <p className="landing-section-subtitle">
+              خدماتنا الطبية متاحة في {ACTIVE_CITIES.length} محافظات رئيسية وأكثر · اطلب من أي مكان
+            </p>
+          </div>
+
+          <div className="landing-coverage-grid">
+            {/* الخريطة - محسّنة V25.41 */}
+            <div className="landing-coverage-map-wrap">
+              <LandingCoverageMap cities={ACTIVE_CITIES} height={420} />
+            </div>
+
+            {/* قائمة المدن */}
+            <div className="landing-coverage-cities">
+              <h3 className="landing-coverage-cities-title">
+                <span aria-hidden="true">📍</span>
+                <span>المحافظات المغطّاة</span>
+              </h3>
+              <ul className="landing-coverage-cities-list">
+                {ACTIVE_CITIES.map((city) => (
+                  <li key={city.name} className="landing-coverage-city">
+                    <div className="landing-coverage-city-name">
+                      <span aria-hidden="true" className="landing-coverage-dot"></span>
+                      <strong>{city.name}</strong>
+                    </div>
+                    <div className="landing-coverage-city-stats">
+                      <span>{city.doctors} طبيب</span>
+                      <span>·</span>
+                      <span>{city.labs} مختبر</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <Link href={appHomePath ?? '/gate'} className="landing-coverage-cta">
+                <span>ابدأ من مدينتك</span>
+                <span aria-hidden="true">←</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ TRUST BADGES (الأمان) ============ */}
+      <section className="landing-trust-section">
+        <div className="landing-wrap">
+          <div className="landing-section-head">
+            <span className="landing-eyebrow">الأمان والثقة</span>
+            <h2 className="landing-h2">
+              بياناتك الطبية
+              <br />
+              <span className="landing-italic">محمية بالكامل</span>
+            </h2>
+          </div>
+
+          <div className="landing-trust-grid">
+            {TRUST_BADGES.map((badge) => (
+              <div key={badge.title} className="landing-trust-card">
+                <div className="landing-trust-icon">{badge.icon}</div>
+                <h3>{badge.title}</h3>
+                <p>{badge.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ============ TESTIMONIALS (جديد) ============ */}
       <section id="testimonials" className="landing-testimonials">
         <div className="landing-wrap">
@@ -575,85 +645,6 @@ export default async function HomePage(
                 </div>
               </article>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============ TRUST BADGES (الأمان) ============ */}
-      <section className="landing-trust-section">
-        <div className="landing-wrap">
-          <div className="landing-section-head">
-            <span className="landing-eyebrow">الأمان والثقة</span>
-            <h2 className="landing-h2">
-              بياناتك الطبية
-              <br />
-              <span className="landing-italic">محمية بالكامل</span>
-            </h2>
-          </div>
-
-          <div className="landing-trust-grid">
-            {TRUST_BADGES.map((badge) => (
-              <div key={badge.title} className="landing-trust-card">
-                <div className="landing-trust-icon">{badge.icon}</div>
-                <h3>{badge.title}</h3>
-                <p>{badge.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============ BLOG / المدونة الطبية ============ */}
-      <section id="blog" className="landing-blog">
-        <div className="landing-wrap">
-          <div className="landing-section-head">
-            <span className="landing-eyebrow">المدونة الطبية</span>
-            <h2 className="landing-h2">
-              معلومات صحية موثوقة،
-              <br />
-              <span className="landing-italic">من أطبائنا إليك</span>
-            </h2>
-            <p className="landing-section-lede">
-              مقالات طبية مكتوبة من أخصائيي سباير ميديكال — تعرّف على صحتك بلغة بسيطة ومُختصرة
-            </p>
-          </div>
-
-          <div className="landing-blog-grid">
-            {ARTICLES.slice(0, 4).map((article) => (
-              <Link
-                key={article.slug}
-                href={`/blog/${article.slug}`}
-                className="landing-blog-card"
-              >
-                <div
-                  className="landing-blog-thumb"
-                  style={{ background: article.coverGradient }}
-                >
-                  <span className="landing-blog-thumb-emoji" aria-hidden="true">
-                    {article.coverEmoji}
-                  </span>
-                  <span className="landing-blog-reading">
-                    {article.readingMinutes} دقائق قراءة
-                  </span>
-                </div>
-                <div className="landing-blog-body">
-                  <span className="landing-blog-tag">{article.categoryLabel}</span>
-                  <h3 className="landing-blog-title">{article.title}</h3>
-                  <p className="landing-blog-excerpt">{article.excerpt}</p>
-                  <div className="landing-blog-meta">
-                    <span>{article.author}</span>
-                    <span aria-hidden="true">·</span>
-                    <span>{new Date(article.publishedAt).toLocaleDateString('ar-IQ-u-nu-latn', { month: 'long', day: 'numeric' })}</span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          <div className="landing-blog-cta">
-            <Link href="/blog" className="landing-cta-secondary">
-              تصفّح كل المقالات ←
-            </Link>
           </div>
         </div>
       </section>
@@ -726,66 +717,57 @@ export default async function HomePage(
         </div>
       </section>
 
-      {/* ============ FEATURES BAR ============ */}
-      <section className="landing-features">
-        <div className="landing-wrap">
-          <div className="landing-features-grid">
-            <div className="landing-feature">
-              <div className="landing-feature-icon">🔒</div>
-              <strong>مشفّر بالكامل</strong>
-              <span>بياناتك الطبية محمية بـ AES-256</span>
-            </div>
-            <div className="landing-feature">
-              <div className="landing-feature-icon">⚡</div>
-              <strong>سريع كالبرق</strong>
-              <span>الطلبات تصل خلال ساعتين في النجف</span>
-            </div>
-            <div className="landing-feature">
-              <div className="landing-feature-icon">🇮🇶</div>
-              <strong>صناعة عراقية</strong>
-              <span>بُني محلياً، يفهم احتياجاتك</span>
-            </div>
-            <div className="landing-feature">
-              <div className="landing-feature-icon">💳</div>
-              <strong>دفع مرن</strong>
-              <span>زين كاش · آسيا · فيزا · كاش</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============ CITIES MAP (المحافظات النشطة) ============ */}
-      <section className="landing-cities">
+      {/* ============ BLOG / المدونة الطبية ============ */}
+      <section id="blog" className="landing-blog">
         <div className="landing-wrap">
           <div className="landing-section-head">
-            <span className="landing-eyebrow">التغطية</span>
+            <span className="landing-eyebrow">المدونة الطبية</span>
             <h2 className="landing-h2">
-              نخدم
-              <span className="landing-italic"> 18 محافظة </span>
-              عراقية
+              معلومات صحية موثوقة،
+              <br />
+              <span className="landing-italic">من أطبائنا إليك</span>
             </h2>
             <p className="landing-section-lede">
-              من أقصى الشمال إلى أقصى الجنوب · نمو مستمر
+              مقالات طبية مكتوبة من أخصائيي سباير ميديكال — تعرّف على صحتك بلغة بسيطة ومُختصرة
             </p>
           </div>
 
-          <div className="landing-cities-grid">
-            {ACTIVE_CITIES.map((city) => (
-              <div key={city.name} className="landing-city-card">
-                <div className="landing-city-pin" aria-hidden="true">📍</div>
-                <div className="landing-city-name">{city.name}</div>
-                <div className="landing-city-stats">
-                  <span>{city.doctors} طبيب</span>
-                  <span>·</span>
-                  <span>{city.labs} مختبر</span>
+          <div className="landing-blog-grid">
+            {ARTICLES.slice(0, 3).map((article) => (
+              <Link
+                key={article.slug}
+                href={`/blog/${article.slug}`}
+                className="landing-blog-card"
+              >
+                <div
+                  className="landing-blog-thumb"
+                  style={{ background: article.coverGradient }}
+                >
+                  <span className="landing-blog-thumb-emoji" aria-hidden="true">
+                    {article.coverEmoji}
+                  </span>
+                  <span className="landing-blog-reading">
+                    {article.readingMinutes} دقائق قراءة
+                  </span>
                 </div>
-              </div>
+                <div className="landing-blog-body">
+                  <span className="landing-blog-tag">{article.categoryLabel}</span>
+                  <h3 className="landing-blog-title">{article.title}</h3>
+                  <p className="landing-blog-excerpt">{article.excerpt}</p>
+                  <div className="landing-blog-meta">
+                    <span>{article.author}</span>
+                    <span aria-hidden="true">·</span>
+                    <span>{new Date(article.publishedAt).toLocaleDateString('ar-IQ-u-nu-latn', { month: 'long', day: 'numeric' })}</span>
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
 
-          <div className="landing-cities-more">
-            <span>والمزيد قادم...</span>
-            <span>كركوك · دهوك · ديالى · الأنبار · صلاح الدين · بابل · القادسية · واسط · المثنى · ميسان · ذي قار</span>
+          <div className="landing-blog-cta">
+            <Link href="/blog" className="landing-cta-secondary">
+              تصفّح كل المقالات ←
+            </Link>
           </div>
         </div>
       </section>
@@ -817,81 +799,6 @@ export default async function HomePage(
               })),
             }}
           />
-        </div>
-      </section>
-
-      {/* ============ BLOG (جديد) ============ */}
-      {/* ============ MAP COVERAGE SECTION ============ */}
-      <section id="coverage-map" className="landing-coverage-map">
-        <div className="landing-wrap">
-          <div className="landing-section-head">
-            <span className="landing-eyebrow">🗺️ تغطية واسعة</span>
-            <h2 className="landing-section-title">
-              مناطق <span className="landing-italic">تغطيتنا</span> في العراق
-            </h2>
-            <p className="landing-section-subtitle">
-              خدماتنا الطبية متاحة في {ACTIVE_CITIES.length} محافظات رئيسية وأكثر · اطلب من أي مكان
-            </p>
-          </div>
-
-          <div className="landing-coverage-grid">
-            {/* الخريطة - محسّنة V25.41 */}
-            <div className="landing-coverage-map-wrap">
-              <LandingCoverageMap cities={ACTIVE_CITIES} height={420} />
-            </div>
-
-            {/* قائمة المدن */}
-            <div className="landing-coverage-cities">
-              <h3 className="landing-coverage-cities-title">
-                <span aria-hidden="true">📍</span>
-                <span>المحافظات المغطّاة</span>
-              </h3>
-              <ul className="landing-coverage-cities-list">
-                {ACTIVE_CITIES.map((city) => (
-                  <li key={city.name} className="landing-coverage-city">
-                    <div className="landing-coverage-city-name">
-                      <span aria-hidden="true" className="landing-coverage-dot"></span>
-                      <strong>{city.name}</strong>
-                    </div>
-                    <div className="landing-coverage-city-stats">
-                      <span>{city.doctors} طبيب</span>
-                      <span>·</span>
-                      <span>{city.labs} مختبر</span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-              <Link href={appHomePath ?? '/gate'} className="landing-coverage-cta">
-                <span>ابدأ من مدينتك</span>
-                <span aria-hidden="true">←</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============ FINAL CTA ============ */}
-      <section className="landing-cta-section">
-        <div className="landing-wrap">
-          <div className="landing-cta-card">
-            <div className="landing-cta-bg" aria-hidden="true"></div>
-            <div className="landing-cta-content">
-              <h2 className="landing-cta-h2">
-                ابدأ <span className="landing-italic">رحلتك الصحية</span> اليوم
-              </h2>
-              <p className="landing-cta-text">
-                مجاناً تماماً للتسجيل · بدون التزامات · ادخل عبر هاتفك في 30 ثانية
-              </p>
-              <div className="landing-cta-buttons">
-                <Link href={appHomePath ?? '/gate'} className="landing-cta-primary big">
-                  ابدأ الآن ←
-                </Link>
-                <Link href="/guest" className="landing-cta-secondary on-dark">
-                  تصفّح كضيف
-                </Link>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -937,6 +844,31 @@ export default async function HomePage(
         </div>
       </section>
 
+      {/* ============ FINAL CTA ============ */}
+      <section className="landing-cta-section">
+        <div className="landing-wrap">
+          <div className="landing-cta-card">
+            <div className="landing-cta-bg" aria-hidden="true"></div>
+            <div className="landing-cta-content">
+              <h2 className="landing-cta-h2">
+                ابدأ <span className="landing-italic">رحلتك الصحية</span> اليوم
+              </h2>
+              <p className="landing-cta-text">
+                مجاناً تماماً للتسجيل · بدون التزامات · ادخل عبر هاتفك في 30 ثانية
+              </p>
+              <div className="landing-cta-buttons">
+                <Link href={appHomePath ?? '/gate'} className="landing-cta-primary big">
+                  ابدأ الآن ←
+                </Link>
+                <Link href="/guest" className="landing-cta-secondary on-dark">
+                  تصفّح كضيف
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ============ FOOTER ============ */}
       <footer className="landing-footer">
         <div className="landing-wrap">
@@ -958,15 +890,15 @@ export default async function HomePage(
             <div className="landing-footer-col">
               <h4>الخدمات</h4>
               <ul>
-                <li><a href="#services">سحب الدم المنزلي</a></li>
-                <li><a href="#services">الفحوصات المختبرية</a></li>
-                <li><a href="#services">الاستشارات الطبية</a></li>
-                <li><a href="#services">الصيدليات</a></li>
-                <li><a href="#coverage-map">🗺️ مناطق التغطية</a></li>
+                <li><Link href="/home-blood-draw">سحب الدم المنزلي</Link></li>
+                <li><a href="#services">التمريض المنزلي</a></li>
+                <li><a href="#coverage-map">مناطق التغطية</a></li>
+                <li><a href="#doctors">للأطباء والمختصّين</a></li>
+                <li><Link href="/blog">المدوّنة الطبية</Link></li>
               </ul>
             </div>
             <div className="landing-footer-col">
-              <h4>قانوني</h4>
+              <h4>الشركة</h4>
               <ul>
                 <li><Link href="/about">عن التطبيق</Link></li>
                 <li><Link href="/legal/terms">الشروط والأحكام</Link></li>
@@ -980,8 +912,9 @@ export default async function HomePage(
               <h4>تواصل</h4>
               <ul>
                 <li><a href="mailto:support@spir-medical.com">support@spir-medical.com</a></li>
-                <li>الدعم الفني</li>
-                <li>+964 780 399 3585</li>
+                <li><a href="tel:+9647803993585" dir="ltr">+964 780 399 3585</a></li>
+                <li><a href="https://wa.me/9647803993585" target="_blank" rel="noopener noreferrer">واتساب</a></li>
+                <li><Link href="/contact">صفحة التواصل</Link></li>
               </ul>
             </div>
           </div>

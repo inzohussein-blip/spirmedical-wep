@@ -32,7 +32,7 @@
 | الفهرسة واكتشافُ النماذج | `app/layout.tsx` · `components/seo/JsonLd.tsx` · `app/sitemap.ts` · `app/robots.ts` · الأصل `lib/seo/origin.ts` · الحقائق `lib/seo/facts.ts` → `lib/seo/llms.ts` |
 | «عن التطبيق» | `components/landing/AboutApp.tsx` (الرئيسية `#about` و`/about`) |
 | الكرون | `vercel.json` → `app/api/cron/*` · `app/api/notifications/process` |
-| قاعدة البيانات | `supabase/migrations/` (آخرها 0052) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
+| قاعدة البيانات | `supabase/migrations/` (آخرها 0053) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
 | الاختبارات | `tests/` — اسمُ الحارس يدلّ على مجاله (`rls-*`، `order-flow-modals`، `specialist-screens`…) |
 
 **أدوات التحقّق البصريّ** في [`tools/mobile-audit/`](tools/mobile-audit/README.md):
@@ -183,6 +183,13 @@
   تربط بها الصفحاتُ العامّة، فامتلأت Search Console بـ«تمّ الحظر باستخدام robots.txt». ما ليس في قائمة السماح
   (`isIndexablePath`) يُرسَل بـ`X-Robots-Tag: noindex` من `proxy.ts`. لا تُعِد مساراً إلى الحجب لإخفائه — الحجبُ يمنع
   Google من رؤية noindex. وحُذف `X-Robots-Tag: index, follow` العامّ من vercel.json. الحارس: `tests/robots-indexing.test.ts`.
+- **الأرقامُ لاتينيّة (1 2 3) في المشروع كلّه** (قرار المالك): التنسيقُ بـ`DISPLAY_LOCALE = 'ar-IQ-u-nu-latn'`
+  (`lib/format/locale.ts`) — `'ar-IQ'` وحدها تُخرج الهنديّة. والقاعدةُ حُوّلت في 0053 (14 صفّاً). يبقى قبولُ ما يكتبه
+  المستخدمُ بالهنديّة (inbound-verify). الحارس: `tests/latin-digits.test.ts`.
+- **طباعةُ الرئيسية:** العناوين بارتفاع سطرٍ ≥ 1.3 (Plex Arabic أطولُ صواعد)، والإبرازُ باللون وحده (لا مائلَ — العائلةُ
+  بلا مائل فيُصطنع)، ولا `letter-spacing` على العربيّة (يقطع الوصل)، وخطٌّ واحد للأرقام. والترتيب: الخدمات ← كيف يعمل ←
+  عن التطبيق ← التغطية ← الأمان ← الآراء ← للأطباء ← المدوّنة ← الأسئلة ← التثبيت. حُذف شريطُ «المزايا» (يَعِد بزين كاش
+  وفيزا) وشبكةُ المدن المكرّرة (أرقامُها باقيةٌ في قسم الخريطة). الحارس: `tests/landing-typography.test.ts`.
 - **على المالك:** Search Console — أضف رمزَ التحقّق في `layout.tsx` (`verification.google`) وارفع
   `https://www.spir-medical.com/sitemap.xml`. وأرقامُ الرئيسية المرئيّة («18 محافظة»، «24/7») باقيةٌ بقراره؛ الأبوابُ
   الآليّة وحدها صُحّحت.

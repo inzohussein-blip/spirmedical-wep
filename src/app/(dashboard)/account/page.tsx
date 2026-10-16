@@ -299,7 +299,7 @@ function SectionGroup({ title, items }: { title: string; items: SectionItem[] })
       <div style={{
         padding: '0 16px 6px',
         fontSize: 11, fontWeight: 700, color: '#5F6368',
-        textTransform: 'uppercase', letterSpacing: '0.5px',
+        textTransform: 'uppercase',
       }}>
         {title}
       </div>

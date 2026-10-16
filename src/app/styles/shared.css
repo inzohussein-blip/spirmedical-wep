@@ -543,9 +543,9 @@
     --font-sans: 'IBM Plex Sans Arabic', system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
 
     /* Letter spacing */
-    --tracking-tight: -0.02em;
+    --tracking-tight: 0; /* العربيّة لا تُباعَد حروفُها: التباعدُ يقطع الوصل */
     --tracking-normal: 0;
-    --tracking-wide: 0.025em;
+    --tracking-wide: 0;
 
     /* ═══════════════════════════════════════════════════════════════
      ⏱️ TRANSITIONS & EASINGS — V25
@@ -621,7 +621,7 @@
 /* جميع العناصر تستخدم IBM Plex Sans Arabic (‎--font-sans‎) افتراضياً */
 * { font-family: var(--font-sans); }
 
-.serif { font-family: var(--font-sans); font-style: italic; font-weight: 500; }
+.serif { font-family: var(--font-sans); font-style: normal; font-weight: 500; }
 
 .mono { font-family: 'JetBrains Mono', var(--font-sans), monospace; }
 
@@ -1176,7 +1176,7 @@
 .auth-brand {
   font-size: 18px; font-weight: 800;
   font-family: var(--font-sans);
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   margin: 0; color: var(--ink);
 }
 
@@ -1192,7 +1192,7 @@
   color: var(--emerald);
   font-weight: 700;
   margin-top: 6px;
-  letter-spacing: 0.2px;
+  letter-spacing: 0;
 }
 
 .auth-role-badge {
@@ -1209,7 +1209,7 @@
 
 .auth-title {
   font-size: 24px; font-weight: 900;
-  margin: 0; color: var(--ink); letter-spacing: -0.01em;
+  margin: 0; color: var(--ink); letter-spacing: 0;
 }
 
 .auth-subtitle {
@@ -1548,7 +1548,7 @@
 .app-logo-name {
   font-size: 13px; font-weight: 800;
   font-family: var(--font-sans);
-  letter-spacing: -0.01em; line-height: 1.1;
+  letter-spacing: 0; line-height: 1.1;
 }
 
 .app-logo-sub { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
@@ -1685,7 +1685,7 @@
 .featured-meta {
   font-size: 12px; font-weight: 800;
   color: var(--amber-on-dark);
-  letter-spacing: 0.05em; text-transform: uppercase;
+  letter-spacing: 0; text-transform: uppercase;
   margin-bottom: 4px;
 }
 
@@ -2773,7 +2773,7 @@ html {
   font-weight: 900;
   color: var(--emerald);
   line-height: 1;
-  letter-spacing: -5px;
+  letter-spacing: 0;
   margin: 16px 0 24px;
   opacity: 0.15;
 }

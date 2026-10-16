@@ -392,5 +392,5 @@ export default async function VaccineDetailPage(
 const sectionTitleStyle: React.CSSProperties = {
   padding: '0 16px 8px',
   fontSize: 11, fontWeight: 700, color: '#5F6368',
-  textTransform: 'uppercase', letterSpacing: '0.3px',
+  textTransform: 'uppercase',
 };

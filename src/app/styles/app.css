@@ -183,7 +183,7 @@
 
 .scr-h1 {
   font-size: 13px; font-weight: 800;
-  letter-spacing: -0.01em; color: var(--ink);
+  letter-spacing: 0; color: var(--ink);
 }
 
 .scr-loc { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
@@ -332,7 +332,7 @@
 
 .scr-banner-tag {
   font-size: 12px; color: var(--amber-on-dark);
-  letter-spacing: 0.05em; text-transform: uppercase;
+  letter-spacing: 0; text-transform: uppercase;
   font-weight: 700; margin-bottom: 2px;
 }
 
@@ -2172,7 +2172,7 @@
   font-weight: 800;
   line-height: 1;
   margin-bottom: 16px;
-  letter-spacing: -1px;
+  letter-spacing: 0;
   display: flex;
   align-items: baseline;
   gap: 8px;
@@ -2674,7 +2674,7 @@
 .spec-day-off {
   font-size: 11px;
   color: var(--ink-3);
-  font-style: italic;
+  font-style: normal;
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -2702,7 +2702,7 @@
   font-size: 40px;
   font-weight: 800;
   line-height: 1;
-  letter-spacing: -1.5px;
+  letter-spacing: 0;
   margin-bottom: 8px;
 }
 
@@ -2793,13 +2793,13 @@
   font-weight: 800;
   color: var(--emerald);
   line-height: 1;
-  letter-spacing: -2px;
+  letter-spacing: 0;
 }
 
 .spec-rating-stars {
   font-size: 18px;
   color: var(--amber);
-  letter-spacing: 2px;
+  letter-spacing: 0;
   margin-bottom: 4px;
 }
 
@@ -3247,7 +3247,7 @@
 /* Typing indicator */
 .inbox-chat-typing {
   color: var(--emerald);
-  font-style: italic;
+  font-style: normal;
 }
 
 .inbox-chat-typing span {
@@ -3603,7 +3603,7 @@
 }
 
 .chat-msg-edited {
-  font-style: italic;
+  font-style: normal;
 }
 
 .chat-msg-read {
@@ -3820,7 +3820,7 @@
   font-weight: 800;
   color: var(--ink-3);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0;
   margin-bottom: 4px;
 }
 
@@ -5494,7 +5494,7 @@
   font-size: 12px;
   font-weight: 800;
   color: var(--ink);
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -6256,7 +6256,7 @@
     font-weight: 600;
     color: var(--ink-3);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0;
     padding: 8px 12px 6px;
   }
 
@@ -6397,7 +6397,7 @@
 }
 .first-aid-quick-call span { font-size: 18px; }
 .first-aid-emergency-title { font-size: 14px; font-weight: 800; }
-.first-aid-emergency-number { font-size: 20px; font-weight: 900; letter-spacing: 1px; }
+.first-aid-emergency-number { font-size: 20px; font-weight: 900; letter-spacing: 0; }
 
 /* ── شبكة الحالات: بطاقتان في الصفّ على الهاتف ── */
 .first-aid-grid {
@@ -6541,7 +6541,7 @@
 .sos-big-icon { font-size: 38px; line-height: 1; flex-shrink: 0; }
 .sos-big-content { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .sos-big-title { font-size: 17px; font-weight: 800; }
-.sos-big-number { font-size: 24px; font-weight: 900; letter-spacing: 2px; }
+.sos-big-number { font-size: 24px; font-weight: 900; letter-spacing: 0; }
 
 .emergency-numbers-grid {
   display: grid;

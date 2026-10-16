@@ -183,7 +183,7 @@ export default async function VaccinesPage() {
                 padding: '0 16px 8px',
                 display: 'flex', alignItems: 'center', gap: 6,
                 fontSize: 12, fontWeight: 700, color: '#5F6368',
-                textTransform: 'uppercase', letterSpacing: '0.3px',
+                textTransform: 'uppercase',
               }}>
                 <CatIcon size={14} stroke={2.2} color={meta.color} />
                 {meta.label}
