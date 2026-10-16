@@ -88,7 +88,7 @@ function LoginPageInner() {
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-emerald-700">سباير ميديكال</h1>
-          <p className="text-gray-600 mt-2 text-lg">رحباً بعودتك</p>
+          <p className="text-gray-600 mt-2 text-lg">مرحباً بعودتك</p>
         </div>
 
         {/* Email Login Form */}
