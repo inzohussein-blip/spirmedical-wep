@@ -616,6 +616,9 @@
   a { color: inherit; text-decoration: none; }
   button { font-family: inherit; cursor: pointer; }
   input, textarea, select { font-family: inherit; }
+  /* حقلُ الإدخال عرضُه الافتراضيّ ~20 حرفاً ولا يتقلّص داخل flex: في بحث /faq أخرج الصفحةَ 28px
+     يساراً على الهاتف فصغّرها المتصفّح. */
+  input, textarea, select { min-width: 0; max-width: 100%; }
 }
 
 /* جميع العناصر تستخدم IBM Plex Sans Arabic (‎--font-sans‎) افتراضياً */

@@ -5014,3 +5014,20 @@ html {
 .landing-step h3, .landing-step p { margin: 0; }
 /* الشارةُ بعرض محتواها لا بعرض العمود */
 .landing-eyebrow { width: fit-content; }
+
+/* ═══ الهاتف: لا عرضَ زائد (16 تشرين الأول) ═══
+   ما يتجاوز عرضَ الشاشة في صفحةٍ RTL يمتدّ يساراً، فيصغّر المتصفّحُ الصفحةَ كلّها ويظهر فراغٌ
+   على اليسار. قِيس بعرض 360: الرئيسية 379 (أرقامُ الإحصاءات)، المدوّنة 398 (حقلُ النشرة)،
+   الأسئلة 388 (حقلُ البحث). */
+.landing-stat-card, .landing-stats-grid > * { min-width: 0; }
+@media (max-width: 480px) {
+  .landing-stat-number { font-size: clamp(34px, 11vw, 56px); }
+  .landing-stat-suffix { font-size: 0.6em; }
+}
+.blog-newsletter-form { min-width: 0; width: 100%; box-sizing: border-box; }
+.blog-newsletter-input { min-width: 0; width: 100%; box-sizing: border-box; }
+@media (max-width: 420px) {
+  .blog-newsletter-form { flex-direction: column; }
+}
+/* شبكةُ أمان: أيُّ تجاوزٍ قادم يُقصّ بدل أن يوسّع الصفحة (clip لا يكسر position: sticky) */
+.landing, .blog-page, .mkt-screen { overflow-x: clip; }
