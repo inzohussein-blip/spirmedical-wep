@@ -24,6 +24,7 @@ import {
   IconAlertCircle,
 } from '@tabler/icons-react';
 import { SPECIALIST_META, type SpecialistType } from '@/lib/specialist-types';
+import { isEmail } from '@/lib/validations/is-email';
 import { activationMessage, credentialsMessage, displayPhone, waChatLink } from '@/lib/whatsapp/share';
 
 type Role = 'patient' | 'specialist' | 'admin' | 'super_admin' | 'manager' | 'support';
@@ -65,7 +66,6 @@ const STAFF_ROLES: { value: Role; label: string; description: string; superOnly:
 ];
 
 const PHONE_RE = /^07\d{9}$/;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function CreateUserClient({ callerRole }: Props) {
   const [kind, setKind] = useState<Kind | null>(null);
@@ -100,8 +100,8 @@ export default function CreateUserClient({ callerRole }: Props) {
     if (!PHONE_RE.test(phone)) e.phone = 'رقمٌ عراقيّ من 11 خانة يبدأ بـ07';
     if (fullName.trim().length < 2) e.fullName = 'الاسم الكامل مطلوب';
     if (role === 'specialist' && !specialistType) e.specialistType = 'اختر التخصّص';
-    if (!phoneLogin && !EMAIL_RE.test(email.trim())) e.email = 'بريدُ الدخول مطلوب لحساب الإدارة';
-    if (phoneLogin && email.trim() && !EMAIL_RE.test(email.trim())) e.email = 'البريد غير صالح';
+    if (!phoneLogin && !isEmail(email.trim())) e.email = 'بريدُ الدخول مطلوب لحساب الإدارة';
+    if (phoneLogin && email.trim() && !isEmail(email.trim())) e.email = 'البريد غير صالح';
     setErrors(e);
     return Object.keys(e).length === 0;
   }

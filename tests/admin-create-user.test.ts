@@ -219,3 +219,29 @@ describe('④ رسائلُ واتساب من الإدارة', () => {
     expect(c).toContain('482913');
   });
 });
+
+describe('⑤ فحصُ البريد بلا تراجعٍ متعدّد الحدود (CodeQL ReDoS)', () => {
+  const { isEmail } = require('@/lib/validations/is-email');
+
+  it('يقبل الصحيح ويرفض الناقص', () => {
+    expect(isEmail('m@x.io')).toBe(true);
+    expect(isEmail('a.b@sub.example.com')).toBe(true);
+    for (const bad of ['', 'm@x', '@x.io', 'm@@x.io', 'm@.io', 'm@x.', 'm x@x.io', 'm@x..io']) {
+      expect(isEmail(bad)).toBe(false);
+    }
+  });
+
+  it('🚨 مدخلٌ مَرَضيّ («!@!.» + تكرار «!.») يُرفض فوراً', () => {
+    const evil = '!@!.' + '!.'.repeat(50_000) + ' ';
+    const t = Date.now();
+    expect(isEmail(evil)).toBe(false);
+    expect(Date.now() - t).toBeLessThan(50);
+  });
+
+  it('المسارُ والنموذج بلا التعبير القديم', () => {
+    const fs = require('fs');
+    for (const f of ['src/app/api/admin/users/create/route.ts', 'src/app/admin/users/create/CreateUserClient.tsx']) {
+      expect(fs.readFileSync(f, 'utf8')).not.toMatch(/\[\^\\s@\]\+@\[\^\\s@\]\+\\\.\[\^\\s@\]\+/);
+    }
+  });
+});

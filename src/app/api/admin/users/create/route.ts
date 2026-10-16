@@ -24,6 +24,7 @@ import { generateTemporaryPin, setLoginPin } from '@/lib/auth/login-pin';
 import { isWaVerifyAvailable } from '@/lib/whatsapp/inbound-verify';
 import { resetPinUrl } from '@/lib/whatsapp/share';
 import { randomInt } from 'crypto';
+import { isEmail } from '@/lib/validations/is-email';
 import { NextResponse } from 'next/server';
 import { createClient as createSbClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
@@ -70,7 +71,6 @@ const PHONE_ROLES = new Set(['patient', 'specialist']);
 const ROLE_AR: Record<string, string> = {
   patient: 'مريض', specialist: 'مختصّ', admin: 'مدير', super_admin: 'مدير عام', manager: 'مشرف', support: 'دعم',
 };
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // ─── POST handler ───────────────────────────────────────────────
 
@@ -145,7 +145,7 @@ export async function POST(request: Request) {
 
     const phoneLogin = PHONE_ROLES.has(body.role);
     const email = body.email?.trim().toLowerCase() || null;
-    if (email && !EMAIL_RE.test(email)) {
+    if (email && !isEmail(email)) {
       return NextResponse.json({ success: false, error: 'البريد الإلكتروني غير صالح' }, { status: 400 });
     }
     if (!phoneLogin && !email) {
