@@ -22,6 +22,9 @@ updates:
     #     واجهةَ الكعكات (cookies) — يُقاس بدخولٍ حقيقيّ لا بالبناء وحده.
     #   • #14: ESLint 10 يُسقط `next lint` في Next 14.
     #   • #13: تعريفاتُ Node يجب أن تطابق إصدارَ التشغيل (engines: 24.x).
+    #   • #30 (16 تشرين الأول): TypeScript 7 حذف `baseUrl` فلم تُحلّ مساراتُ `@/…` وسقط
+    #     `next build` — فتوقّف النشرُ ثانيةً. و#32: eslint-config-next 16 لـNext 16.
+    #     و#31: بيئةُ jsdom 30 لا تعمل مع jest 29 — تُرقّى معه لا وحدها.
     ignore:
       - dependency-name: '@supabase/ssr'
       - dependency-name: '@supabase/supabase-js'
@@ -29,6 +32,18 @@ updates:
       - dependency-name: 'eslint'
         update-types: ['version-update:semver-major']
       - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'typescript'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'next'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'eslint-config-next'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'jest'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'jest-environment-jsdom'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@types/jest'
         update-types: ['version-update:semver-major']
     groups:
       production-dependencies:
