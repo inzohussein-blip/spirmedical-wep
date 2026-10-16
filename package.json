@@ -25,7 +25,7 @@
     "@supabase/ssr": "0.5.2",
     "@supabase/supabase-js": "2.45.6",
     "@tabler/icons-react": "^3.49.0",
-    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/ratelimit": "^2.2.0",
     "@upstash/redis": "^1.38.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^1.0.12",
