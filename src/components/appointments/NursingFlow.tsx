@@ -39,6 +39,7 @@ import {
   CheckCircle2, ChevronLeft, ChevronRight, X, Upload, Pill, Repeat,
   User, UserCircle, Users, Clock, Loader2,
 } from 'lucide-react';
+import { baghdadDateOffset } from '@/lib/time/baghdad-day';
 
 /** نتيجة الإرسال — تسمح بعرض أخطاء الحقول القادمة من الخادم. */
 export interface NursingSubmitResult {
@@ -205,15 +206,13 @@ const INFECTIOUS = [
 // ═══════════════════════════════════════════════════════════════════
 // Helpers
 // ═══════════════════════════════════════════════════════════════════
+// بتقويم بغداد: `toISOString()` كان يعطي تاريخ UTC، فيُقترح «الأمس» بين منتصف الليل والثالثة.
 function getMinDate(): string {
-  const today = new Date();
-  return today.toISOString().split('T')[0];
+  return baghdadDateOffset(0);
 }
 
 function getMaxDate(): string {
-  const max = new Date();
-  max.setDate(max.getDate() + 30);
-  return max.toISOString().split('T')[0];
+  return baghdadDateOffset(30);
 }
 
 // ═══════════════════════════════════════════════════════════════════

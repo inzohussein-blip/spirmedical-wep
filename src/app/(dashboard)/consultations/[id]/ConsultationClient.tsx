@@ -12,6 +12,7 @@ import {
 import { toast } from '@/components/ui/Toaster';
 import { useConfirm } from '@/components/ui';
 import { sendMessage, attachMedicalRecord, closeConsultation } from './actions';
+import { ageInYears } from '@/lib/time/baghdad-day';
 
 interface Consultation {
   id: string;
@@ -161,9 +162,7 @@ export default function ConsultationClient({
     : (familyMember?.full_name || patient?.full_name || 'المريض');
 
   // معلومات الفرد المعالَج
-  const targetAge = familyMember?.date_of_birth
-    ? Math.floor((Date.now() - new Date(familyMember.date_of_birth).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
-    : null;
+  const targetAge = ageInYears(familyMember?.date_of_birth);
 
   return (
     <main className="app-screen">
@@ -348,7 +347,6 @@ export default function ConsultationClient({
                   }}
                 >
                   {msg.message_type === 'image' && msg.image_url && (
-                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={msg.image_url}
                       alt="صورة"

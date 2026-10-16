@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { verifyPin } from '@/lib/services/pin-actions';
 
 interface Props {
@@ -16,18 +16,21 @@ export default function PinLockScreen({ onUnlock }: Props) {
   const MAX_ATTEMPTS = 5;
   const isLocked = attempts >= MAX_ATTEMPTS;
 
-  useEffect(() => {
-    if (pin.length === 4) {
-      handleVerify();
-    }
-  }, [pin]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  async function handleVerify() {
+  async function handleVerify(candidate: string) {
     if (isLocked) return;
     setIsVerifying(true);
     setError('');
 
-    const result = await verifyPin(pin);
+    // انقطاعُ الشبكة كان يرمي هنا فيبقى `isVerifying` صحيحاً: لوحةُ الأرقام مقفلةٌ إلى الأبد.
+    let result: Awaited<ReturnType<typeof verifyPin>>;
+    try {
+      result = await verifyPin(candidate);
+    } catch {
+      setError('تعذّر التحقّق — تحقّق من اتصالك وحاول مجدداً');
+      setPin('');
+      setIsVerifying(false);
+      return;
+    }
 
     if (result.ok) {
       // علِّم الجلسة بأنها unlocked
@@ -48,8 +51,11 @@ export default function PinLockScreen({ onUnlock }: Props) {
   function pressDigit(d: string) {
     if (isLocked || isVerifying) return;
     if (pin.length < 4) {
-      setPin((p) => p + d);
+      const next = pin + d;
+      setPin(next);
       setError('');
+      // يتحقّق عند الرقم الرابع مباشرةً من الحدث، لا من أثرٍ يراقب `pin` بعد الرسم.
+      if (next.length === 4) handleVerify(next);
     }
   }
 

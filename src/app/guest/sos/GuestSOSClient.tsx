@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const EMERGENCY_NUMBERS = [
   { id: '122', icon: '🚑', name: 'الإسعاف الفوري', number: '122', desc: 'الإسعاف الطبي العام' },
@@ -17,6 +18,7 @@ const QUICK_TIPS = [
 ];
 
 export default function GuestSOSClient() {
+  const router = useRouter();
   return (
     <main className="app-screen">
       <div className="scr-content">
@@ -41,7 +43,7 @@ export default function GuestSOSClient() {
           {/* ميزة موقع GPS - مقفلة للضيف */}
           <button
             type="button"
-            onClick={() => window.location.href = '/register'}
+            onClick={() => router.push('/register')}
             className="sos-gps-card"
           >
             <div className="sos-gps-icon" aria-hidden="true">📍</div>

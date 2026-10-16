@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Users, User } from 'lucide-react';
+import { ageInYears } from '@/lib/time/baghdad-day';
 
 /**
  * ═══════════════════════════════════════════════════════════════
@@ -106,9 +107,7 @@ export default function FamilyTargetBadge({ familyMemberId, ownerName }: Props) 
   }
 
   // إذا الطلب لفرد عائلة - عرض مفصّل
-  const age = target.date_of_birth
-    ? Math.floor((Date.now() - new Date(target.date_of_birth).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
-    : null;
+  const age = ageInYears(target.date_of_birth);
 
   const hasHealthAlerts =
     (target.chronic_conditions && target.chronic_conditions.length > 0) ||

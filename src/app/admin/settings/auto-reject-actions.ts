@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
+import { isSuperAdmin } from '@/lib/admin-types';
 import { logAuditEvent } from '@/lib/audit';
 import { AUTO_REJECT_KEY } from '@/lib/app-settings';
 
@@ -16,8 +17,9 @@ async function verifySuperAdmin() {
   const { data: profile } = await supabase
     .from('users').select('role').eq('id', user.id).single();
 
-  if (profile?.role !== 'super_admin') {
-    return { ok: false as const, error: 'هذا الإعداد للمدير العام وحده' };
+  // المديرُ والمديرُ العامّ (قرار المالك: صلاحيّاتُ `admin` = `super_admin` في admin-types)
+  if (!isSuperAdmin(profile?.role)) {
+    return { ok: false as const, error: 'هذا الإعداد للمدير وحده' };
   }
   return { ok: true as const, supabase, userId: user.id };
 }

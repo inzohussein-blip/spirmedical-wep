@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -23,8 +23,11 @@ export function useModalDialog<T extends HTMLElement = HTMLDivElement>(
   const ref = useRef<T>(null);
   // المرجعُ لا الدالّة في الاعتماديات: كثيرٌ من المستدعين يمرّرون سهماً
   // جديداً كلَّ عرض، فكان الأثرُ سيُعاد فيسرق التركيزَ من حقلٍ يُكتب فيه.
+  // يُحدَّث بعد الرسم لا أثناءه (قاعدة React Compiler)، ومتزامناً قبل أيّ حدثٍ يقرؤه.
   const onCloseRef = useRef(onClose);
-  onCloseRef.current = onClose;
+  useLayoutEffect(() => {
+    onCloseRef.current = onClose;
+  });
 
   useEffect(() => {
     if (!open) return;

@@ -97,7 +97,7 @@ describe('① إعادةُ الضبط من الإدارة', () => {
 
   it.each(['src/app/admin/patients/[id]/page.tsx', 'src/app/admin/specialists/[id]/page.tsx'])(
     'الزرّ في %s',
-    (p) => expect(read(p)).toMatch(/<ResetLoginPinButton userId=\{\w+\.id\} \/>/),
+    (p) => expect(read(p)).toMatch(/<ResetLoginPinButton\s+userId=\{\w+\.id\}/),
   );
 });
 

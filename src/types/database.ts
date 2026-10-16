@@ -5287,6 +5287,62 @@ export type Database = {
           },
         ]
       }
+      phone_verifications: {
+        Row: {
+          attempts: number
+          code: string
+          consumed_at: string | null
+          created_at: string
+          created_ip: string | null
+          expires_at: string
+          id: string
+          phone: string
+          provider: string | null
+          purpose: string
+          status: string
+          user_id: string | null
+          verified_at: string | null
+        }
+        Insert: {
+          attempts?: number
+          code: string
+          consumed_at?: string | null
+          created_at?: string
+          created_ip?: string | null
+          expires_at: string
+          id?: string
+          phone: string
+          provider?: string | null
+          purpose: string
+          status?: string
+          user_id?: string | null
+          verified_at?: string | null
+        }
+        Update: {
+          attempts?: number
+          code?: string
+          consumed_at?: string | null
+          created_at?: string
+          created_ip?: string | null
+          expires_at?: string
+          id?: string
+          phone?: string
+          provider?: string | null
+          purpose?: string
+          status?: string
+          user_id?: string | null
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "phone_verifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pharmacies: {
         Row: {
           accepts_insurance: boolean
@@ -8184,6 +8240,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      wa_gateway_status: {
+        Row: {
+          connected: boolean
+          detail: Json
+          last_seen_at: string
+          provider: string
+        }
+        Insert: {
+          connected?: boolean
+          detail?: Json
+          last_seen_at?: string
+          provider: string
+        }
+        Update: {
+          connected?: boolean
+          detail?: Json
+          last_seen_at?: string
+          provider?: string
+        }
+        Relationships: []
       }
       whatsapp_otp: {
         Row: {

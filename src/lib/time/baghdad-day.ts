@@ -71,3 +71,32 @@ export function baghdadDateString(now: Date = new Date()): string {
   const shifted = new Date(now.getTime() + BAGHDAD_UTC_OFFSET_HOURS * HOUR_MS);
   return shifted.toISOString().slice(0, 10);
 }
+
+/**
+ * «YYYY-MM-DD» ليوم بغداد بعد `offsetDays` — لـ`min`/`max` وقيمِ `<input type="date">`.
+ *
+ * كانت هذه الحقول تُؤخذ من `toISOString()` على جهاز المستخدم، أي بتاريخ UTC: بين منتصف
+ * الليل والثالثة فجراً في العراق صار «الغد» في سحب الدم هو اليوم، و«اليوم» في التمريض
+ * المنزليّ هو الأمس — فيُقترح على المريض موعدٌ في يومٍ مضى. والمنطقةُ ثابتة لا منطقةُ
+ * الجهاز: الحقول تُرسَم على الخادم ثمّ تُرطَّب في المتصفّح، فيجب أن يتّفق التاريخان.
+ */
+export function baghdadDateOffset(offsetDays: number, now: Date = new Date()): string {
+  return baghdadDateString(new Date(now.getTime() + offsetDays * 24 * HOUR_MS));
+}
+
+/**
+ * العمرُ بالسنوات الكاملة في يوم بغداد، أو null لتاريخٍ غائب أو غير صالح.
+ *
+ * كان يُحسب في أربعة مواضع بـ`(Date.now() - dob) / 365.25 يوماً`: يومَ ميلاد المريض بعد
+ * سنةٍ غير كبيسة تكون القسمةُ 0.9993 فيُعرض عمرُه أقلَّ بسنة.
+ */
+export function ageInYears(dob: string | null | undefined, now: Date = new Date()): number | null {
+  if (!dob) return null;
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(dob);
+  if (!m) return null;
+  const [y, mo, d] = baghdadDateString(now).split('-').map(Number);
+  let years = y - Number(m[1]);
+  const bm = Number(m[2]);
+  if (mo < bm || (mo === bm && d < Number(m[3]))) years--;
+  return Math.max(0, years);
+}

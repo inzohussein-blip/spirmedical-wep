@@ -20,6 +20,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { isSuperAdmin } from '@/lib/admin-types';
 import { createClient as createSbClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 import { logAuditEvent } from '@/lib/audit';
@@ -61,9 +62,9 @@ export async function POST(request: Request) {
       .eq('id', caller.id)
       .single();
 
-    if (!callerProfile || callerProfile.role !== 'super_admin') {
+    if (!isSuperAdmin(callerProfile?.role)) {
       return NextResponse.json(
-        { success: false, error: 'super_admin فقط' },
+        { success: false, error: 'للمدير فقط' },
         { status: 403 }
       );
     }

@@ -30,9 +30,23 @@ const SPEC_APPTS = [
   { id: 'o2', user_id: PID, specialist_id: UID, assigned_specialist_id: UID, service_type: 'سحب دم + تحاليل', status: 'confirmed', scheduled_at: iso(0.2), address: 'النجف · حي الأمير', created_at: iso(-1), updated_at: iso(-0.5), estimated_price: 30000, required_specialist_type: 'lab_analyst', governorate: 'النجف', users: PATIENT, patient: PATIENT },
   { id: 'o3', user_id: PID, specialist_id: UID, assigned_specialist_id: UID, service_type: 'تمريض منزلي', status: 'completed', scheduled_at: iso(-3), address: 'النجف · حي الغدير', created_at: iso(-4), updated_at: iso(-3), completed_at: iso(-3), estimated_price: 20000, governorate: 'النجف', users: PATIENT, patient: PATIENT },
 ];
+// لوحةُ الإدارة: مريضٌ ومختصٌّ وطلبٌ وطارئ بمعرّفاتٍ ثابتة لصفحات التفاصيل
+const SID = '33333333-3333-4333-8333-333333333333';
+const ADMIN_USERS = [
+  PROFILE,
+  { ...PROFILE, ...PATIENT, role: 'patient', email: null, approval_status: 'approved' },
+  { ...PROFILE, id: SID, full_name: 'علي حسين', phone: '+9647722222222', role: 'specialist', specialist_type: 'nurse',
+    approval_status: 'pending', specialist_bio: 'ممرّض بخبرة ٥ سنوات', specialist_years_exp: 5, specialist_languages: ['ar'], is_suspended: false },
+];
+const ADMIN_APPTS = [
+  { ...SPEC_APPTS[0], id: '44444444-4444-4444-8444-444444444444', user_id: PID, assigned_specialist_id: SID, specialist_id: SID, status: 'confirmed',
+    specialist: { full_name: 'علي حسين', phone: '+9647722222222' } },
+];
 const FIX = {
-  users: ROLE === 'specialist' ? [PROFILE, { ...PATIENT, role: 'patient' }] : [PROFILE],
-  appointments: ROLE === 'specialist' ? SPEC_APPTS : [
+  users: ROLE === 'specialist' ? [PROFILE, { ...PATIENT, role: 'patient' }] : ROLE === 'admin' ? ADMIN_USERS : [PROFILE],
+  nurse_emergency_logs: ROLE === 'admin' ? [{ id: '55555555-5555-4555-8555-555555555555', specialist_id: SID, appointment_id: ADMIN_APPTS[0].id,
+    trigger_reason: 'panic_button', description: 'وصفٌ تجريبيّ', latitude: 32.0, longitude: 44.33, status: 'open', created_at: iso(-0.01) }] : [],
+  appointments: ROLE === 'specialist' ? SPEC_APPTS : ROLE === 'admin' ? ADMIN_APPTS : [
     { id: 'a1', user_id: UID, service_type: 'سحب دم + تحاليل', status: 'pending', scheduled_at: iso(1), address: 'النجف · حي السعد', created_at: iso(-1), updated_at: iso(-1), notes: null, estimated_price: 25000, required_specialist_type: 'lab_analyst' },
     { id: 'a2', user_id: UID, service_type: 'تمريض منزلي', status: 'completed', scheduled_at: iso(-6), address: 'النجف · حي الأمير', created_at: iso(-8), updated_at: iso(-6), completed_at: iso(-6), estimated_price: 30000 },
     { id: 'a3', user_id: UID, service_type: 'سحب دم + تحاليل', status: 'confirmed', scheduled_at: iso(3), address: 'النجف · حي الغدير', created_at: iso(-2), updated_at: iso(-1), assigned_specialist_id: 's1' },

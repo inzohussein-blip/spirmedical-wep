@@ -46,7 +46,6 @@ export async function ThemeProvider({
     <>
       <style
         id="spir-theme"
-        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: cssVars }}
       />
       {children}

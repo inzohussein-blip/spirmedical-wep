@@ -88,8 +88,14 @@ describe('ترقياتٌ لا تُدمج آليّاً (Dependabot)', () => {
     else expect([18, 19]).toContain(reactMajor);
   });
 
-  it('🚨 TypeScript مثبَّتٌ على 5.x — الإصدار 7 يحذف baseUrl فتنكسر مساراتُ @/', () => {
-    expect(pkg.devDependencies.typescript).toMatch(/^5\.\d+\.\d+$/);
+  it('🚨 TypeScript مثبَّتٌ بدقّة وضمن ما يدعمه typescript-eslint (7 خارجه حتى الآن)', () => {
+    // #30 رقّى إلى 7 آليّاً فتوقّف النشر. المعيارُ مدى typescript-eslint نفسُه لا رقمٌ مكتوب:
+    // حين يُوسّعه إلى 7 يكفي رفعُ الإصدار هنا.
+    const ts = pkg.devDependencies.typescript;
+    expect(ts).toMatch(/^\d+\.\d+\.\d+$/);
+    const semver = require('semver');
+    const range = require('typescript-eslint/package.json').peerDependencies.typescript;
+    expect(semver.satisfies(ts, range)).toBe(true);
   });
 
   it('🚨 إصدارا Supabase مثبَّتان بدقّة (بلا ^) على المجرَّب', () => {

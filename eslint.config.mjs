@@ -12,21 +12,42 @@ export default defineConfig([
     '.audit/',
     'public/vendor/', // ملفّاتٌ مُصغَّرة من مكتباتٍ خارجيّة (عامل الخريطة، إضافة RTL)
     'public/sw.js',
+    // دوالُّ البوّابة الصافية (CommonJS كي يختبرها jest) — خارج أنماط إعداد Next
+    'services/**/*.cjs',
   ]),
   {
     extends: [...nextCoreWebVitals],
     rules: {
       '@next/next/no-img-element': 'off',
       'no-console': ['warn', { allow: ['warn', 'error', 'debug'] }],
-      // قواعدُ React Compiler الجديدة في eslint-config-next 16 (49 موضعاً عند الترقية). تحذيرٌ لا خطأ:
-      // تَصِف أنماطاً كانت تعمل (Date.now() في مكوّن خادم، setState في effect)، ويُراجَع كلٌّ منها
-      // قبل تفعيل المُصرِّف. «static-components» في الموضعين مكوّنا خادم بلا حالة — لا إعادةَ تركيب.
-      'react-hooks/purity': 'warn',
+      // قواعدُ React Compiler (eslint-config-next 16). رُوجعت المواضعُ كلُّها (16 تشرين الأول):
+      // أُصلحت مواضعُ refs وimmutability وstatic-components وuse-memo، فصارت أخطاءً تمنع عودتها.
+      'react-hooks/refs': 'error',
+      'react-hooks/immutability': 'error',
+      'react-hooks/static-components': 'error',
+      'react-hooks/use-memo': 'error',
+      // Date.now() في مكوّن عميلٍ أثناء الرسم خطأ (العمرُ والتواريخ عبر `lib/time/baghdad-day`).
+      // ويُستثنى منه مكوّنُ الخادم أدناه: يُرسم مرّةً لكلّ طلب، فـ«الآن» فيه هو المقصود.
+      'react-hooks/purity': 'error',
+      // تحذير: 17 موضعاً تقرأ واجهاتِ المتصفّح بعد التركيب (localStorage، matchMedia،
+      // navigator) أو تُغلق قائمةً عند تغيّر المسار. نقلُها إلى الرسم يكسر الترطيب.
       'react-hooks/set-state-in-effect': 'warn',
-      'react-hooks/refs': 'warn',
-      'react-hooks/immutability': 'warn',
-      'react-hooks/static-components': 'warn',
-      'react-hooks/use-memo': 'warn',
     },
+  },
+  {
+    // صفحاتُ App Router مكوّناتُ خادم (عدا الصفحتين العميلتين المستثناتين).
+    files: ['src/app/**/page.tsx'],
+    ignores: ['src/app/auth/verify-email/page.tsx', 'src/app/(auth)/login/page.tsx'],
+    rules: { 'react-hooks/purity': 'off' },
+  },
+  {
+    // أدواتُ سطر الأوامر وبوّابةُ واتساب (خدمةٌ مستقلّة على Railway) تكتب للطرفيّة عمداً.
+    files: ['tools/**', 'services/**'],
+    rules: { 'no-console': 'off' },
+  },
+  {
+    // البوّابةُ ليست React: `useMultiFileAuthState` من Baileys يشبه اسمُه الخطّافات فقط.
+    files: ['services/**'],
+    rules: { 'react-hooks/rules-of-hooks': 'off' },
   },
 ]);

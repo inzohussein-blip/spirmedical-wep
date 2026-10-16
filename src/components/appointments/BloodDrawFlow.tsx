@@ -42,6 +42,7 @@ import {
   BLOOD_DRAW_FIELD_LABELS,
   type BloodDrawFieldErrors,
 } from '@/lib/validations/blood-draw';
+import { baghdadDateOffset } from '@/lib/time/baghdad-day';
 
 const BLOOD_DRAW_PRICE = 15000;
 
@@ -95,16 +96,13 @@ interface Props {
 // ─────────────────────────────────────────────────────────────────
 // Helper: الحصول على الحد الأدنى للتاريخ (الغد)
 // ─────────────────────────────────────────────────────────────────
+// بتقويم بغداد: `toISOString()` كان يعطي تاريخ UTC، فيصير «الغد» اليومَ بعد منتصف الليل.
 function getMinDate(): string {
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  return tomorrow.toISOString().split('T')[0];
+  return baghdadDateOffset(1);
 }
 
 function getMaxDate(): string {
-  const max = new Date();
-  max.setDate(max.getDate() + 14); // أقصى 14 يوم
-  return max.toISOString().split('T')[0];
+  return baghdadDateOffset(14); // أقصى 14 يوم
 }
 
 // ─────────────────────────────────────────────────────────────────

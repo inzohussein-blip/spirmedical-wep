@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { z } from 'zod';
 import { sendOtp } from '../login/actions';
 import EmailResetForm from './EmailResetForm';
+import { isWaVerifyAvailable } from '@/lib/whatsapp/inbound-verify';
 
 const searchParamsSchema = z.object({
   error: z.string().max(500).optional(),
@@ -23,6 +24,8 @@ export default async function ForgotPage(
   const searchParams = await props.searchParams;
   const params = searchParamsSchema.safeParse(searchParams);
   const error = params.success ? params.data.error : undefined;
+  // التحقّقُ العكسيّ (0050): العميلُ يرسل رسالةً من رقمه — يعمل وتوكنُ Meta معطّل
+  const waAvailable = await isWaVerifyAvailable().catch(() => false);
 
   return (
     <main className="auth-screen">
@@ -47,6 +50,13 @@ export default async function ForgotPage(
           وسنُرسل لك رمز جديد لاستعادة الدخول.
         </p>
       </div>
+
+      {waAvailable && (
+        <Link href="/login/reset-pin" className="wa-verify-btn" style={{ marginBottom: 16 }}>
+          <span aria-hidden="true">💬</span>
+          <span>استعادة الرمز عبر واتساب</span>
+        </Link>
+      )}
 
       {error && (
         <div className="auth-error">

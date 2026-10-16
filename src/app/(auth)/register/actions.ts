@@ -9,6 +9,7 @@ import { createClient as createSbClient } from '@supabase/supabase-js';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
+import { readSpecialistDocs, storeSpecialistDocs } from '@/lib/specialist-documents';
 import { getOtpMode, canSkipOtp, isPasswordlessLoginAllowed } from '@/lib/flags';
 import { derivePhonePassword as derivePassword, phoneToEmail } from '@/lib/auth/phone-credentials';
 import { getClientIp as getIp, isNextRedirect } from '@/lib/auth/request-helpers';
@@ -151,6 +152,11 @@ export async function registerSpecialist(formData: FormData) {
   if (!rawTerms) {
     redirect('/register/specialist?error=' + encodeURIComponent('يجب الموافقة على الشروط والأحكام'));
   }
+  // الهويّة مطلوبة والبقيّة اختياريّة — يُتحقَّق منها قبل إنشاء الحساب، لا بعده.
+  const docs = readSpecialistDocs(formData);
+  if ('error' in docs) {
+    redirect('/register/specialist?error=' + encodeURIComponent(docs.error));
+  }
 
   const fullName             = rawFullName;
   const phone                = phoneValidation.data as string;
@@ -171,6 +177,8 @@ export async function registerSpecialist(formData: FormData) {
       specializationDetails,
     });
     if (pin) await setLoginPin(userId, pin);
+    // قبل التوجيه: `routeAfterRegister` يُنهي الطلبَ بـredirect.
+    await storeSpecialistDocs(userId, docs.files);
 
     await routeAfterRegister(normalizedPhone, 'specialist', action);
   } catch (err) {
@@ -187,6 +195,31 @@ export async function registerSpecialist(formData: FormData) {
         )
     );
   }
+}
+
+/** وجهةُ `redirect()` من خطئه (`NEXT_REDIRECT;<type>;<url>;<status>;`). */
+function redirectTarget(err: unknown): string | null {
+  if (!isNextRedirect(err)) return null;
+  return (err as { digest: string }).digest.split(';')[2] ?? null;
+}
+
+/**
+ * نسخةُ النموذج من `registerSpecialist`: أخطاءُ التحقّق تُعاد **قيمةً** لا توجيهاً.
+ * التوجيهُ إلى `?error=` كان يُعيد تركيبَ الصفحة فتُمحى الحقولُ كلُّها والهويّةُ المختارة،
+ * فيعيد المختصُّ كلَّ شيءٍ لخطأٍ في رمز الدخول. توجيهُ النجاح يمرّ كما هو.
+ */
+export async function registerSpecialistForm(formData: FormData): Promise<{ error: string } | undefined> {
+  try {
+    await registerSpecialist(formData);
+  } catch (err) {
+    const url = redirectTarget(err);
+    if (url?.startsWith('/register/specialist?error=')) {
+      const message = new URLSearchParams(url.slice(url.indexOf('?') + 1)).get('error');
+      return { error: message || 'تعذّر إنشاء الحساب' };
+    }
+    throw err;
+  }
+  return undefined;
 }
 
 // ─────────────────────────────────────────────────────────

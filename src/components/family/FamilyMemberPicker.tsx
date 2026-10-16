@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { User, Users, Plus, ChevronLeft, Loader2 } from 'lucide-react';
+import { ageInYears } from '@/lib/time/baghdad-day';
 
 /**
  * ═══════════════════════════════════════════════════════════════
@@ -60,8 +61,8 @@ export default function FamilyMemberPicker({ value, onChange, ownerName }: Props
   }, []);
 
   const calculateAge = (dob: string | null): string => {
-    if (!dob) return '';
-    const years = Math.floor((Date.now() - new Date(dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+    const years = ageInYears(dob);
+    if (years === null) return '';
     if (years < 1) return 'أقل من سنة';
     if (years === 1) return 'سنة';
     if (years === 2) return 'سنتان';

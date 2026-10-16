@@ -115,7 +115,7 @@ export default function SearchClient({
 }) {
   const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
-  const catalog = useMemo(buildCatalog, []);
+  const catalog = useMemo(() => buildCatalog(), []);
   const disabled = useMemo(() => new Set(disabledIds), [disabledIds]);
 
   const results = useMemo(() => {

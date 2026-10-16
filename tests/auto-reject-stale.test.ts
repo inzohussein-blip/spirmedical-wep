@@ -116,7 +116,7 @@ describe('الرفض التلقائيّ محدودٌ بحدوده', () => {
     expect(ADMIN_ACTION).toMatch(/import\s*\{\s*AUTO_REJECT_KEY\s*\}\s*from\s*'@\/lib\/app-settings'/);
     expect(ADMIN_ACTION).toMatch(/\.eq\(\s*'key'\s*,\s*AUTO_REJECT_KEY\s*\)/);
     // للمدير العام وحده، وبتحقّقٍ من المُدخَل
-    expect(ADMIN_ACTION).toMatch(/role\s*!==\s*'super_admin'/);
+    expect(ADMIN_ACTION).toMatch(/if \(!isSuperAdmin\(profile\?\.role\)\)/  /* المدير والمدير العامّ (قرار المالك، admin-role-parity) */);
     expect(ADMIN_ACTION).toMatch(/Number\.isInteger\(hours\)/);
     expect(ADMIN_PAGE).toMatch(/AutoRejectClient/);
   });

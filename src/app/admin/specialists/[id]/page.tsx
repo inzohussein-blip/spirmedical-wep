@@ -2,9 +2,14 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import ResetLoginPinButton from '@/app/admin/_components/ResetLoginPinButton';
+import { isWaVerifyAvailable } from '@/lib/whatsapp/inbound-verify';
+import { resetPinUrl } from '@/lib/whatsapp/share';
+
 import { oneOfOr } from '@/lib/format/vocabulary';
 import { toSpecialistType, SPECIALIST_META } from '@/lib/specialist-types';
 import SpecialistActions from './SpecialistActions';
+import { signedSpecialistDocs, SPECIALIST_DOC_FIELDS } from '@/lib/specialist-documents';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://spir-medical.com';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,12 +32,21 @@ export default async function SpecialistDetailPage(props: { params: Promise<{ id
 
   if (!specialist) notFound();
 
+  // رابطُ استعادة الرمز عبر واتساب — حين يعمل التحقّقُ العكسيّ ويكون للحساب رقمٌ صالح
+  const waResetUrl =
+    specialist.phone && /^\+9647\d{9}$/.test(specialist.phone) && (await isWaVerifyAvailable().catch(() => false))
+      ? resetPinUrl(SITE_URL, specialist.phone)
+      : null;
+
   // إحصائيات
   const [{ count: totalOrders }, { count: completedOrders }, { data: ratings }] = await Promise.all([
     supabase.from('appointments').select('*', { count: 'exact', head: true }).eq('assigned_specialist_id', specialist.id),
     supabase.from('appointments').select('*', { count: 'exact', head: true }).eq('assigned_specialist_id', specialist.id).eq('status', 'completed'),
     supabase.from('ratings').select('overall_rating').eq('specialist_id', specialist.id),
   ]);
+
+  // وثائقُ التسجيل بروابطَ موقّعة لساعة (حاويةٌ خاصّة — لا رابطَ عامّاً)
+  const documents = await signedSpecialistDocs(specialist.id);
 
   const avgRating = ratings && ratings.length > 0
     ? (ratings.reduce((sum, r) => sum + r.overall_rating, 0) / ratings.length).toFixed(1)
@@ -145,6 +159,38 @@ export default async function SpecialistDetailPage(props: { params: Promise<{ id
             )}
           </div>
 
+          {/* الوثائق */}
+          <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginBottom: 16 }}>
+            <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}>وثائق التسجيل</h2>
+            {!documents.some((d) => d.kind === 'id') && (
+              <div style={{ padding: 12, background: 'var(--rose-soft)', color: 'var(--rose)', borderRadius: 10, fontSize: 13, fontWeight: 700, marginBottom: 10 }}>
+                ⚠️ لم تُرفع {SPECIALIST_DOC_FIELDS.id.label} — اطلبها قبل الاعتماد.
+              </div>
+            )}
+            {documents.length === 0 ? (
+              <div style={{ fontSize: 13, color: 'var(--ink-3)' }}>لا وثائق.</div>
+            ) : (
+              <div style={{ display: 'grid', gap: 8 }}>
+                {documents.map((d) => (
+                  <div key={d.kind} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 12, background: 'var(--paper-3)', borderRadius: 10 }}>
+                    <span aria-hidden="true" style={{ fontSize: 20 }}>{d.type === 'application/pdf' ? '📄' : '🖼️'}</span>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>{d.label}</div>
+                      <div style={{ fontSize: 12, color: 'var(--ink-3)' }}>{new Date(d.uploadedAt).toLocaleDateString('ar-IQ')}</div>
+                    </div>
+                    {d.url ? (
+                      <a href={d.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, fontWeight: 700, color: 'var(--emerald)', minHeight: 44, display: 'inline-flex', alignItems: 'center' }}>
+                        عرض ↗
+                      </a>
+                    ) : (
+                      <span style={{ fontSize: 12, color: 'var(--rose)' }}>تعذّر الرابط</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* الإحصائيات */}
           <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20 }}>
             <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}>الأداء</h2>
@@ -164,7 +210,14 @@ export default async function SpecialistDetailPage(props: { params: Promise<{ id
             currentType={specialistType}
             isSuspended={specialist.is_suspended ?? false}
           />
-          <ResetLoginPinButton userId={specialist.id} />
+          <ResetLoginPinButton
+            userId={specialist.id}
+            phone={specialist.phone}
+            name={specialist.full_name}
+            role={specialist.role}
+            activationUrl={waResetUrl}
+            loginUrl={`${SITE_URL}/login/phone`}
+          />
         </div>
 
       </div>

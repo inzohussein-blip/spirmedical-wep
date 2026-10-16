@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import { isSuperAdmin } from '@/lib/admin-types';
 import SeedManagerClient from './SeedManagerClient';
 
 export const dynamic = 'force-dynamic';
@@ -20,7 +21,7 @@ export default async function SeedDataPage() {
     .eq('id', user.id)
     .single();
 
-  if (!profile || profile.role !== 'super_admin') {
+  if (!isSuperAdmin(profile?.role)) {
     redirect('/admin');
   }
 

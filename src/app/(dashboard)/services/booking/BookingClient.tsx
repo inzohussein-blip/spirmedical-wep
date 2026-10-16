@@ -12,6 +12,7 @@ import { toast } from '@/components/ui/Toaster';
 import { createServiceBooking } from './actions';
 import type { BookingProvider } from './page';
 import PhoneLink from '@/components/ui/PhoneLink';
+import { baghdadDateOffset } from '@/lib/time/baghdad-day';
 
 interface Props {
   provider: BookingProvider;
@@ -36,9 +37,7 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
   const [opticalService, setOpticalService] = useState<string>('');
 
   // قيم افتراضية: غداً 10:00 ص
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const minDate = tomorrow.toISOString().split('T')[0];
+  const minDate = baghdadDateOffset(1);
 
   const isOnlineService = provider.type === 'mental-health' && provider.packageType === 'online';
   const isClinicService = provider.type === 'dental' || provider.type === 'optical';

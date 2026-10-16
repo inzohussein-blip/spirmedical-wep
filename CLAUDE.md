@@ -1,6 +1,6 @@
 # سباير ميديكال — ملاحظاتٌ للجلسات القادمة
 
-منصّة طبّية عربية (RTL) — Next.js 14 App Router + Supabase.
+منصّة طبّية عربية (RTL) — Next.js 16 App Router + Supabase.
 
 ## 🗺️ خريطة سريعة — أين تجد ماذا
 
@@ -23,6 +23,7 @@
 | التغطية الجغرافية | `lib/service-areas.ts` · `lib/hooks/useServiceCoverage.ts` · الفهرسة `lib/seo/coverage.ts` |
 | الإشعارات | `lib/notifications.ts` (الطابور) · `lib/notifications-processor.ts` · `lib/services/push*.ts` · `lib/services/whatsapp.ts` · الصندوق `app/(dashboard)/account/inbox/` |
 | صحّة التشغيل والتنبيه | `lib/admin/ops-health.ts` → `app/admin/_components/OpsHealthCards.tsx` · `lib/ops/alert-owner.ts` |
+| التحقّق العكسيّ عبر واتساب | `lib/whatsapp/inbound-verify.ts` · `api/whatsapp/{inbound,heartbeat,verify}` · البوّابة `services/wa-inbound/` (Railway) |
 | رموز الدخول | `app/(auth)/login/actions.ts` · `lib/auth/phone-pin-login.ts` + `login-pin.ts` (الرقم + PIN) · `lib/whatsapp/otp-service.ts` · `lib/auth/otp-mode.ts` · `lib/auth/phone-credentials.ts` · `lib/auth/login-identifier.ts` |
 | الغلاف والتنقّل | `components/layout/AppShell.tsx` · `AuthenticatedShell.tsx` · `lib/focused-routes.ts` |
 | النوافذ المنبثقة | `components/ui/ModalShell.tsx` · `BottomSheet.tsx` · `lib/hooks/useModalDialog.ts` |
@@ -30,7 +31,7 @@
 | التنسيق | `app/styles/shared.css` (رموز + حارس iOS) · `app.css` (شاشات التطبيق) · `marketing.css` · `admin.css` |
 | الفهرسة | `app/layout.tsx` · `components/seo/JsonLd.tsx` · `app/sitemap.ts` · `app/robots.ts` |
 | الكرون | `vercel.json` → `app/api/cron/*` · `app/api/notifications/process` |
-| قاعدة البيانات | `supabase/migrations/` (آخرها 0049) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
+| قاعدة البيانات | `supabase/migrations/` (آخرها 0052) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
 | الاختبارات | `tests/` — اسمُ الحارس يدلّ على مجاله (`rls-*`، `order-flow-modals`، `specialist-screens`…) |
 
 **أدوات التحقّق البصريّ** في [`tools/mobile-audit/`](tools/mobile-audit/README.md):
@@ -223,6 +224,20 @@
   اشتراكاتُ الدفع بلا سياسة قراءة لصاحبها، فتُعدّ بعميل الخدمة مقيّدةً بـ`user.id`.
   الحارس: `tests/specialist-readiness.test.tsx`.
 
+## 🪪 تسجيلُ المختصّ — الهويّةُ وحدها مطلوبة (قرار المالك، 16 تشرين الأول)
+
+- **كان النموذجُ يطلب ثلاثَ وثائق ثمّ يُهملها** (لا رفعَ في الكود أصلاً)، ولا يعرض أخطاءَ الخادم (`?error=`
+  لا يُقرأ). الآن: الهويّة مطلوبة، والشهادةُ والصورة اختياريّتان في «وثائق إضافية».
+- **تُرفع فعلاً** إلى الحاوية الخاصّة `nurse-credentials` (`<user_id>/<kind>-<وقت>.<ext>`) بعميل الخدمة،
+  ومسارُها في `specialist_applications.documents` (`lib/specialist-documents.ts`). تُفحص **قبل** إنشاء الحساب،
+  وتُرفع بعده وقبل التوجيه. فشلُ الرفع لا يُسقط التسجيل — صفحةُ المختصّ في الإدارة تعرض الوثائق بروابطَ
+  موقّعة لساعة وتنبّه «لم تُرفع الهويّة».
+- **الصور تُصغَّر في المتصفّح** (`lib/forms/prepare-upload.ts`، ≤ 1.2MB، JPEG): جسمُ الطلب على Vercel ≤ 4.5MB
+  (`bodySizeLimit: '4.5mb'`). قِيس: صورةُ 11.4MB ← طلبٌ 855KB. الحاويةُ لا تقبل webp/HEIC — التحويلُ يحلّهما.
+- **`registerSpecialistForm`** يعيد الخطأَ قيمةً: التوجيهُ إلى `?error=` كان يُعيد تركيبَ الصفحة فتُمحى الحقولُ
+  والهويّة المختارة. وشاشةُ تحميلٍ (`spreg-overlay`) تغطّي التجهيزَ والإرسال.
+- الحارسان: `tests/specialist-register-docs.test.tsx` و`tests/specialist-register-form-action.test.ts`.
+
 ## 🔑 التسجيل والدخول بلا رمز واتساب — الرقم + PIN (0049)
 
 - **قرار المالك: لا OTP في التسجيل.** فالعاملُ الثاني رمزُ دخولٍ من 6 أرقام يختاره صاحبُ
@@ -244,6 +259,49 @@
   والبريدُ بـ`?method=email`. الرمزُ في حقل `password` لأنّ `guardPinRegistration` يقرؤه.
 - **الدفع نقدٌ فقط**: `payments` فارغٌ ولا بوّابةَ في الكود — فلا تَعِد الشروطُ بزين كاش أو بطاقات.
 - الحارس: `tests/admin-pin-reset.test.ts`.
+
+## 📲 التحقّق العكسيّ عبر واتساب (0050، قرار المالك — **مطفأ حتى يُجرَّب**)
+
+- **العميلُ يرسل الرمزَ إلى رقمنا** (`wa.me/<رقمنا>?text=…`)، ولا نرسل شيئاً — بديلُ توكن Meta المرفوض.
+  الإثبات = رمزٌ معلَّق غيرُ منتهٍ **و** رقمُ المرسِل هو الرقمُ المطلوب له. رقمٌ آخر أو رقمٌ مخفيّ (LID)
+  لا يُتحقَّق به، وخمسُ محاولاتٍ تُبطل الرمز. مرّةٌ واحدة: pending → verified → consumed.
+- **المنطقُ كلُّه في `lib/whatsapp/inbound-verify.ts`.** البوّابةُ ناقلٌ موقَّع (HMAC، نافذة 5 دقائق) بلا مفتاح
+  قاعدة. مصدران بمفتاحٍ واحد `WA_VERIFY_PROVIDER`: `baileys` (`/api/whatsapp/inbound`) أو `meta`
+  (`/api/whatsapp/webhook` القائم). لا تكتب منطقَ مطابقةٍ ثانياً في البوّابة.
+- **البوّابة لا ترسل رسالةً أبداً** (لا `sendMessage`/`readMessages`) — هكذا يقلّ خطرُ حظر الرقم.
+  ورسائلُ بلا ستّة أرقام لا تغادرها. تعمل على Railway بقرصٍ دائم `/data` للجلسة؛ `PROBE_ONLY=1` للمرحلة 0.
+- **`WA_VERIFY_MODE` مطفأ افتراضياً.** والزرُّ يختفي إن غابت نبضةُ البوّابة دقيقتين (`isWaVerifyAvailable`)،
+  وتظهر بطاقةُ «بوّابة واتساب منقطعة» في صحّة التشغيل. رمزُ الدخول ورمزُ الإدارة المؤقّت يبقيان.
+- **بُني:** استعادةُ الرمز/التفعيل (`/login/reset-pin`) وربطُ الإدارة (انظر 🛠️). **لم يُبنَ:** توثيقُ الرقم عند
+  التسجيل وتسجيلُ المختصّ الذاتيّ عبره — بعد نتيجة المرحلة 0 (هل يصل رقمُ المرسِل صريحاً؟).
+- الحارس: `tests/whatsapp-inbound-verify.test.ts` (أُثبت بكسر عشرة مواضع). ودليلُ النشر
+  `services/wa-inbound/README.md`.
+
+## 🛠️ لوحةُ الإدارة — ما قِيس وأُصلح (16 تشرين الأول)
+
+- **فحصٌ شامل:** 45 صفحة تُرسم بجلسة مديرٍ محاكاة بلا خطأ (والتفاصيلُ ببيانات: `MOCK_ROLE=admin` في الخادم
+  الوهميّ يضيف مريضاً ومختصّاً وطلباً وطارئاً). وكلُّ جدولٍ تكتبه اللوحة قِيس كتابةً كمديرٍ (`SET ROLE` + عدّ
+  الصفوف في ROLLBACK): يقبل — عدا `app_theme_settings` (للمدير العامّ عمداً، والصفحةُ تقول ذلك).
+- **إنشاءُ حسابٍ من الإدارة كان يفشل دائماً:** مُشغِّلُ `handle_new_user` على `auth.users` يُدرج صفَّ `users`
+  فوراً، والمسارُ يُدرجه ثانيةً ← مفتاحٌ مكرَّر ← يحذف حسابَ الدخول. الآن `upsert` على المعرّف. ولا تكتب
+  `insert` لصفّ `users` بعد `auth.admin.createUser` أبداً.
+- **المريضُ والمختصّ من الإدارة يدخلان بالرقم + رمزٍ مؤقّت** (`phoneToEmail` + `derivePhonePassword`)، والبريدُ
+  الاختياريّ في الملفّ فقط — كان يصير بريدَ الدخول فيرفضه «الرقم + الرمز». وبلا رمزٍ كان أوّلُ كاتبٍ للرقم يمتلكه.
+  الإدارةُ وحدها تدخل بالبريد (وكلمةُ سرٍّ مؤقّتة بـ`randomInt`).
+- **إسنادُ الطلب لم يُرسل إشعاراً لأحد:** التضمينُ طلب `users.user_id` غيرَ الموجود فسقط الاستعلام. الحارس العامّ
+  `tests/admin-schema-refs.test.ts` يطابق كلَّ select/insert/update في كود الإدارة بأنواع القاعدة (يلتقط أيضاً
+  `verified_at` القديم في المستشفيات).
+- **ربطُ واتساب (التحقّق العكسيّ 0050):** بعد الإنشاء، وفي صفحتَي المريض والمختصّ، زرٌّ يفتح واتساب المدير برسالةٍ
+  جاهزة (`lib/whatsapp/share.ts`): **رابطُ التفعيل** `/login/reset-pin?phone=…` حين يعمل التحقّق (يثبت صاحبُ
+  الحساب رقمه ويختار رمزه — لا يعرفه المدير)، وإلّا **الرمزُ المؤقّت**. و`/admin/whatsapp` يعرض الوضعَ والبوّابةَ
+  وحركةَ ٢٤ ساعة. و«نسيت الرمز» (`/forgot`) يعرض «استعادة عبر واتساب» حين يعمل.
+- `/login/reset-pin`: لا بدءَ والتحقّقُ معطّل، ولا مسَّ لحساب بريد، والرمزُ الجديد يُفحص **قبل** استهلاك التحقّق.
+- **المديرُ (`admin`) = المديرُ العامّ (قرار المالك):** كلُّ بوّابةٍ تستعمل `isSuperAdmin()` (يقبل الدورين) لا
+  `role === 'super_admin'`. **الاستثناءُ الوحيد:** منحُ دور «مدير عام» أو المسُّ بصاحبه للمدير العامّ وحده (الإنشاء،
+  والتعيين، والتغيير، والإزالة — `topRoleBlocked`)؛ كان في `admins/actions.ts` شرطٌ فارغٌ يدّعي ذلك.
+  وحفظُ الألوان يَعُدّ الصفوف (سياسةٌ ترفض بصمت كانت تعطي «تمّ»)، و0052 يوسّع سياستيها للمدير.
+  الحارس: `tests/admin-role-parity.test.ts`.
+- الحرّاس: `admin-create-user`، `whatsapp-pin-reset`، `admin-whatsapp-ui`، `admin-schema-refs`.
 
 ## 🚨 تنبيهُ المالك وبوّابة CI
 
@@ -289,20 +347,33 @@
 ## ⬆️ الانتقال إلى Next 16 (16 تشرين الأول) — ما يجب معرفته
 
 - **الإصدارات:** Next 16.4.2 (Turbopack)، React 19.3، Sentry 11، Tailwind 4 + tailwind-merge 3، Jest 30،
-  ESLint 10، أنواع Node 24. **TypeScript باقٍ 5.9**: الإصدار 7 يبني (وأسرع ×9) لكنّ typescript-eslint
-  لا يدعمه بعد. `baseUrl` أُزيل من tsconfig تمهيداً.
+  ESLint 10، أنواع Node 24. **TypeScript 6.0** (جسرُ 7، بلا تحذيرات إهمال): الإصدار 7 يبني (وأسرع ×9) لكنّ
+  typescript-eslint يدعم `<6.1` حتى في نسخته التجريبيّة. الحارس يقرأ مداه من حزمته — حين يتّسع ارفع الإصدار.
 - **`createClient()` من الخادم async**: `await createClient()` في كلّ موضع (301). وكذلك `cookies()`
   و`headers()` و`params` و`searchParams` و`getClientIp()`. لا `UnsafeUnwrapped…` (يعمل في 15 وينكسر في 16).
   الحارس: `tests/async-request-apis.test.ts`.
 - **`src/proxy.ts`** بدل `middleware.ts` (يعمل على Node). **`updateTag(tag)`** للإبطال الفوريّ في
   الإجراءات؛ `revalidateTag` صار يطلب profile.
-- **`next lint` أُزيل**: `npm run lint` = `eslint .` بإعداد `eslint.config.mjs`. قواعدُ React Compiler
-  (purity، set-state-in-effect…) **تحذير** — 49 موضعاً تُراجَع قبل تفعيل المُصرِّف.
+- **`next lint` أُزيل**: `npm run lint` = `eslint .` بإعداد `eslint.config.mjs`.
+- **قواعدُ React Compiler رُوجعت** (انظر 🧹 أدناه): refs وimmutability وstatic-components وuse-memo وpurity
+  **أخطاء**؛ وset-state-in-effect تحذيرٌ لـ17 موضعاً تقرأ المتصفّح بعد التركيب (نقلُها يكسر الترطيب).
 - **Tailwind 4**: الإعدادُ في `shared.css` (`@import 'tailwindcss'` و`@theme`)، لا `tailwind.config.ts`.
   أداةُ الترقية أعادت تسميةَ متغيّر `'outline'` في Button/Badge إلى `'outline-solid'` خطأً — أُرجع.
 - **أداةُ التدقيق** (`audit.mjs`) تنتظر `load` ثمّ الهدوءَ بسقف 5 ث: Playwright لا يرى جلبَ Next 15+
   المسبق «منتهياً». ولقطاتُ ما قبل الانتقال وبعده تختلف < 0.25٪ بكسلاً (40 شاشة).
 - الحارس: `tests/next16-migration.test.ts`.
+
+## 🧹 مراجعةُ تحذيرات React Compiler (16 تشرين الأول) — ما كان عطلاً
+
+- **العمرُ والتاريخ بيوم بغداد** (`ageInYears`، `baghdadDateOffset` في `lib/time/baghdad-day.ts`). كان العمرُ
+  `/ 365.25 يوماً` (يومَ الميلاد يُعرض أقلَّ بسنة)، وحدودُ حقول التاريخ `toISOString()` أي UTC: بين ٠٠:٠٠
+  و٠٣:٠٠ بغداد اقترح التمريضُ «الأمس» وسحبُ الدم «اليوم» بدل الغد. لا تكتب `toISOString().split('T')[0]`
+  لحقل تاريخ، ولا منطقةَ الجهاز: الحقلُ يُرسم على الخادم (UTC) ثمّ يُرطَّب.
+- **قفلُ PIN** (`PinLockScreen`): رميُ `verifyPin` (انقطاع) كان يُبقي اللوحةَ معطّلةً. والتحقّقُ من الحدث لا من أثر.
+- **خريطةُ الخدمات**: `syncData` تقرأ `filteredRef` — معالجُ `load` التقطها من الرسم الأوّل.
+- مراجعُ «آخر قيمة» (`useModalDialog`، `ServiceAreaMap`) تُحدَّث في `useLayoutEffect` لا أثناء الرسم.
+- صفحاتُ App Router (مكوّناتُ خادم) مستثناةٌ من purity: `Date.now()` فيها لكلّ طلب، وهو المقصود.
+- الحارس: `tests/react-compiler-review.test.tsx`.
 
 ## 🔑 معلّقٌ على المالك وحده
 

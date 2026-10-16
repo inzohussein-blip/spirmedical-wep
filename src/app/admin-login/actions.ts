@@ -1,5 +1,6 @@
 'use server';
 
+import { isSuperAdmin } from '@/lib/admin-types';
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { isAdminRole } from '@/lib/admin-types';
@@ -113,7 +114,8 @@ export async function adminCreate(formData: FormData) {
       .single();
     callerRole = (cp as { role?: string } | null)?.role ?? null;
   }
-  const callerIsSuperAdmin = callerRole === 'super_admin';
+  // المديرُ كالمدير العامّ (admin-types): لا يحتاج المفتاحَ السرّيّ لإنشاء حساب إدارة
+  const callerIsSuperAdmin = isSuperAdmin(callerRole);
 
   // 🔐 غير الـ super_admin المُصادق يحتاج مفتاحاً سرّياً قوياً
   if (!callerIsSuperAdmin) {
