@@ -355,7 +355,7 @@ export default function HospitalsClient({ hospitals }: Props) {
                           )}
                           {h.is_24h && (
                             <span style={{ ...tagStyle(), background: 'var(--emerald-soft)', color: 'var(--emerald)' }}>
-                              ٢٤/٧
+                              24/7
                             </span>
                           )}
                           {h.has_ambulance && (

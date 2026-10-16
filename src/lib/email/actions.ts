@@ -67,12 +67,12 @@ export async function sendAppointmentConfirmedEmail(appointmentId: string): Prom
   if (!userEmail) return;
 
   const date = new Date(appt.scheduled_at);
-  const dateStr = date.toLocaleDateString('ar-IQ', {
+  const dateStr = date.toLocaleDateString('ar-IQ-u-nu-latn', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
   });
-  const timeStr = date.toLocaleTimeString('ar-IQ', {
+  const timeStr = date.toLocaleTimeString('ar-IQ-u-nu-latn', {
     hour: '2-digit',
     minute: '2-digit',
   });
@@ -104,7 +104,7 @@ export async function sendAppointmentReminderEmail(appointmentId: string): Promi
   const userEmail = appt.users?.email;
   if (!userEmail) return;
 
-  const time = new Date(appt.scheduled_at).toLocaleString('ar-IQ', {
+  const time = new Date(appt.scheduled_at).toLocaleString('ar-IQ-u-nu-latn', {
     weekday: 'long',
     hour: '2-digit',
     minute: '2-digit',

@@ -110,12 +110,12 @@ export default async function LabOrderDetailPage(props: PageProps) {
   const results = (order.lab_results || []) as Array<any>;
 
   // تواريخ
-  const orderDate = new Date(order.created_at).toLocaleDateString('ar-IQ', {
+  const orderDate = new Date(order.created_at).toLocaleDateString('ar-IQ-u-nu-latn', {
     day: 'numeric', month: 'long', year: 'numeric',
   });
 
   const scheduledDate = appointment?.scheduled_at 
-    ? new Date(appointment.scheduled_at).toLocaleDateString('ar-IQ', {
+    ? new Date(appointment.scheduled_at).toLocaleDateString('ar-IQ-u-nu-latn', {
         day: 'numeric', month: 'long', year: 'numeric', 
         hour: '2-digit', minute: '2-digit',
       })
@@ -352,16 +352,16 @@ export default async function LabOrderDetailPage(props: PageProps) {
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: 13 }}>
             <span style={{ color: 'var(--ink-2)' }}>سحب الدم المنزلي</span>
-            <span style={{ fontWeight: 600 }}>{order.draw_fee.toLocaleString('ar-IQ')} د.ع</span>
+            <span style={{ fontWeight: 600 }}>{order.draw_fee.toLocaleString('ar-IQ-u-nu-latn')} د.ع</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: 13 }}>
             <span style={{ color: 'var(--ink-2)' }}>التحاليل ({order.test_ids.length})</span>
-            <span style={{ fontWeight: 600 }}>{order.tests_total.toLocaleString('ar-IQ')} د.ع</span>
+            <span style={{ fontWeight: 600 }}>{order.tests_total.toLocaleString('ar-IQ-u-nu-latn')} د.ع</span>
           </div>
           {order.discount > 0 && (
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: 13, color: 'var(--emerald-mid, #0F6E56)' }}>
               <span>خصم</span>
-              <span style={{ fontWeight: 600 }}>-{order.discount.toLocaleString('ar-IQ')} د.ع</span>
+              <span style={{ fontWeight: 600 }}>-{order.discount.toLocaleString('ar-IQ-u-nu-latn')} د.ع</span>
             </div>
           )}
           <div style={{
@@ -374,7 +374,7 @@ export default async function LabOrderDetailPage(props: PageProps) {
             fontWeight: 700,
           }}>
             <span>الإجمالي</span>
-            <span style={{ color: 'var(--emerald-mid, #0F6E56)' }}>{order.total_price.toLocaleString('ar-IQ')} د.ع</span>
+            <span style={{ color: 'var(--emerald-mid, #0F6E56)' }}>{order.total_price.toLocaleString('ar-IQ-u-nu-latn')} د.ع</span>
           </div>
         </div>
         </>

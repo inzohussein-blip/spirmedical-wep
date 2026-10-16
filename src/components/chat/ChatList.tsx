@@ -60,7 +60,7 @@ function formatRelativeTime(iso: string): string {
   if (diffMin < 60) return `${diffMin}د`;
   if (diffHour < 24) return `${diffHour}س`;
   if (diffDay < 7) return `${diffDay}ي`;
-  return date.toLocaleDateString('ar-IQ', { day: 'numeric', month: 'short' });
+  return date.toLocaleDateString('ar-IQ-u-nu-latn', { day: 'numeric', month: 'short' });
 }
 
 export default function ChatList({ initialChats, currentChatId, basePath, viewerRole, viewerId }: ChatListProps) {

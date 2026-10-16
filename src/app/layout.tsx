@@ -19,9 +19,9 @@ import DeferredGlobals from '@/components/pwa/DeferredGlobals';
 // خطوط — IBM Plex Sans Arabic (قرار المالك، 16 تشرين الأول: «خطٌّ احترافيّ أوضح» بدل Tajawal)
 // JetBrains-Mono للأرقام والوقت فقط
 //
-// العائلة تشحن ١٠٠–٧٠٠ ولا ٨٠٠/٩٠٠. فالمطلوبُ ٨٠٠/٩٠٠ (مئاتُ المواضع) يُطابَق بـ٧٠٠ **الحقيقيّ**
-// (لا تغليظَ حسابيّ ما دام في العائلة وزنٌ ≥ ٦٠٠). وكسبنا ٦٠٠ الحقيقيّ الذي لم تملكه Tajawal،
-// فصار `--weight-semibold` ٦٠٠ فعلاً. الحارس: tests/font-weights.test.ts.
+// العائلة تشحن 100–700 ولا 800/900. فالمطلوبُ 800/900 (مئاتُ المواضع) يُطابَق بـ700 **الحقيقيّ**
+// (لا تغليظَ حسابيّ ما دام في العائلة وزنٌ ≥ 600). وكسبنا 600 الحقيقيّ الذي لم تملكه Tajawal،
+// فصار `--weight-semibold` 600 فعلاً. الحارس: tests/font-weights.test.ts.
 import '@fontsource/ibm-plex-sans-arabic/400.css';
 import '@fontsource/ibm-plex-sans-arabic/500.css';
 import '@fontsource/ibm-plex-sans-arabic/600.css';

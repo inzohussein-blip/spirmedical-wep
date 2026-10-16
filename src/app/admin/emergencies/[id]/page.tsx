@@ -134,10 +134,10 @@ export default async function EmergencyDetailPage(
         <Row label="أُبلغ مركز الاتصال">{emergency.call_center_notified ? 'نعم' : 'لا'}</Row>
         <Row label="اتصال 911">{emergency.contacted_911 ? 'نعم' : 'لا'}</Row>
         <Row label="وقت البلاغ">
-          {new Date(emergency.created_at ?? Date.now()).toLocaleString('ar-IQ')}
+          {new Date(emergency.created_at ?? Date.now()).toLocaleString('ar-IQ-u-nu-latn')}
         </Row>
         {emergency.resolved_at && (
-          <Row label="وقت الحل">{new Date(emergency.resolved_at).toLocaleString('ar-IQ')}</Row>
+          <Row label="وقت الحل">{new Date(emergency.resolved_at).toLocaleString('ar-IQ-u-nu-latn')}</Row>
         )}
       </div>
 

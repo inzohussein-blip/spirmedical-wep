@@ -43,7 +43,7 @@ const STEPS: Step[] = [
     features: [
       { icon: <Sparkles size={16} />, label: '14+ خدمة طبية' },
       { icon: <Heart size={16} />, label: '18 محافظة' },
-      { icon: <Bell size={16} />, label: 'دعم ٢٤/٧' },
+      { icon: <Bell size={16} />, label: 'دعم 24/7' },
     ],
     color: 'var(--emerald)',
     bgGradient: 'linear-gradient(135deg, var(--emerald-soft), #FFE4D4)',

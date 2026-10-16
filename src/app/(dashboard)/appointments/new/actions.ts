@@ -80,12 +80,12 @@ async function createAppointmentV2Impl(input: CreateAppointmentInput) {
   }
 
   // 🩺 لا يُقبل طلبٌ لا مختصَّ يستلمه (0048): كان يبقى معلّقاً حتى يُلغيه
-  // الرفضُ التلقائيّ بعد ٤٨ ساعة. الصفحة تمنع قبله؛ وهذا لمن يتجاوزها.
+  // الرفضُ التلقائيّ بعد 48 ساعة. الصفحة تمنع قبله؛ وهذا لمن يتجاوزها.
   if (!(await isSpecialistAvailable(input.service_id ? getServiceById(input.service_id)?.specialistType : null))) {
     return { success: false, error: NO_SPECIALIST_MESSAGE, code: 'NO_SPECIALIST' as const };
   }
 
-  // Rate limit: ١٠ حجوزات / ساعة
+  // Rate limit: 10 حجوزات / ساعة
   const limit = await checkRateLimit(`appointment:create:${user.id}`, {
     max: 10,
     windowSeconds: 3600,
@@ -246,7 +246,7 @@ async function createAppointmentV2Impl(input: CreateAppointmentInput) {
         phone: userData.phone,
         patientName: userData.full_name || 'عزيزي',
         serviceName: input.service_name,
-        scheduledDate: new Date(input.scheduled_at).toLocaleDateString('ar-IQ', {
+        scheduledDate: new Date(input.scheduled_at).toLocaleDateString('ar-IQ-u-nu-latn', {
           weekday: 'long',
           year: 'numeric',
           month: 'long',
@@ -379,7 +379,7 @@ async function createBloodDrawOrderImpl(input: CreateBloodDrawInput) {
   }
 
   // 🩺 لا يُقبل طلبٌ لا مختصَّ يستلمه (0048): كان يبقى معلّقاً حتى يُلغيه
-  // الرفضُ التلقائيّ بعد ٤٨ ساعة. الصفحة تمنع قبله؛ وهذا لمن يتجاوزها.
+  // الرفضُ التلقائيّ بعد 48 ساعة. الصفحة تمنع قبله؛ وهذا لمن يتجاوزها.
   if (!(await isSpecialistAvailable('lab_analyst'))) {
     return { success: false, error: NO_SPECIALIST_MESSAGE, code: 'NO_SPECIALIST' as const };
   }
@@ -675,7 +675,7 @@ async function createNursingAppointmentImpl(input: CreateNursingInput) {
   }
 
   // 🩺 لا يُقبل طلبٌ لا مختصَّ يستلمه (0048): كان يبقى معلّقاً حتى يُلغيه
-  // الرفضُ التلقائيّ بعد ٤٨ ساعة. الصفحة تمنع قبله؛ وهذا لمن يتجاوزها.
+  // الرفضُ التلقائيّ بعد 48 ساعة. الصفحة تمنع قبله؛ وهذا لمن يتجاوزها.
   if (!(await isSpecialistAvailable('nurse'))) {
     return { success: false, error: NO_SPECIALIST_MESSAGE, code: 'NO_SPECIALIST' as const };
   }

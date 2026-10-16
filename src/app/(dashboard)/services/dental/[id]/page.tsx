@@ -360,7 +360,7 @@ function PriceRow({ label, min, max, show }: {
   label: string; min: number | null; max: number | null; show: boolean | null;
 }) {
   if (!show || (min == null && max == null)) return null;
-  const fmt = (n: number) => n.toLocaleString('ar-IQ');
+  const fmt = (n: number) => n.toLocaleString('ar-IQ-u-nu-latn');
   const text =
     min != null && max != null ? `${fmt(min)} - ${fmt(max)}`
     : min != null ? `من ${fmt(min)}`

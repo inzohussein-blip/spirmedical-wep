@@ -60,10 +60,10 @@ export default async function SettingsPage() {
       <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginBottom: 16 }}>
         <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}>📊 إحصائيات النظام</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
-          <StatBox label="إجمالي المستخدمين" value={(totalUsers ?? 0).toLocaleString('ar-IQ')} />
-          <StatBox label="المديرون" value={(totalAdmins ?? 0).toLocaleString('ar-IQ')} />
-          <StatBox label="الطلبات" value={(totalAppointments ?? 0).toLocaleString('ar-IQ')} />
-          <StatBox label="الكوبونات" value={(totalCoupons ?? 0).toLocaleString('ar-IQ')} />
+          <StatBox label="إجمالي المستخدمين" value={(totalUsers ?? 0).toLocaleString('ar-IQ-u-nu-latn')} />
+          <StatBox label="المديرون" value={(totalAdmins ?? 0).toLocaleString('ar-IQ-u-nu-latn')} />
+          <StatBox label="الطلبات" value={(totalAppointments ?? 0).toLocaleString('ar-IQ-u-nu-latn')} />
+          <StatBox label="الكوبونات" value={(totalCoupons ?? 0).toLocaleString('ar-IQ-u-nu-latn')} />
         </div>
       </div>
 

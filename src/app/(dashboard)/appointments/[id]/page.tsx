@@ -25,7 +25,7 @@ interface Props {
 }
 
 function formatDateArabic(iso: string): string {
-  return new Date(iso).toLocaleString('ar-IQ', {
+  return new Date(iso).toLocaleString('ar-IQ-u-nu-latn', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',

@@ -11,7 +11,7 @@ import type { UserSettings } from '@/lib/services/user-settings-types';
 /**
  * 🔒 تجزئة الـ PIN
  *
- * كان الاعتماد على SHA-256 (سريعة جداً): PIN من ٤ أرقام = 10٬000 احتمال فقط،
+ * كان الاعتماد على SHA-256 (سريعة جداً): PIN من 4 أرقام = 10٬000 احتمال فقط،
  * فمن يصل إلى الجدول يستخرجه فوراً بالقوة الغاشمة. نستعمل bcrypt (موجودة أصلاً
  * كاعتمادية) — بطيئة عمداً — مع الإبقاء على `user_id` في المدخل كتمييز إضافي.
  */
@@ -45,7 +45,7 @@ export async function setPin(pin: string) {
   if (!user) return { ok: false, error: 'unauthorized' };
 
   if (!/^\d{4}$/.test(pin)) {
-    return { ok: false, error: 'الـ PIN يجب أن يكون ٤ أرقام' };
+    return { ok: false, error: 'الـ PIN يجب أن يكون 4 أرقام' };
   }
 
   const hash = await hashPin(pin, user.id);
@@ -84,7 +84,7 @@ export async function verifyPin(pin: string) {
     return { ok: false, error: 'PIN غير صالح' };
   }
 
-  // 🔒 حدّ المحاولات: PIN من ٤ أرقام = 10٬000 احتمال فقط، وبلا حدٍّ كان قفل
+  // 🔒 حدّ المحاولات: PIN من 4 أرقام = 10٬000 احتمال فقط، وبلا حدٍّ كان قفل
   // التطبيق يُكسر بالقوة الغاشمة في ثوانٍ. الحدّ لكل مستخدم (لا لكل IP) كي لا
   // يُتجاوَز بتبديل الشبكة.
   const limit = await checkRateLimit(`pin:verify:${user.id}`, {

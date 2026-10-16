@@ -43,7 +43,7 @@ const STEPS = [
 ];
 
 const PREP = [
-  'بعض التحاليل — كسكّر الدم الصائم ودهون الدم — تحتاج صياماً من ٨ إلى ١٢ ساعة. الماء مسموح.',
+  'بعض التحاليل — كسكّر الدم الصائم ودهون الدم — تحتاج صياماً من 8 إلى 12 ساعة. الماء مسموح.',
   'لا توقف دواءً تتناوله دون استشارة طبيبك، وأخبر المختصّ بأدويتك عند السحب.',
   'اشرب الماء قبل الموعد؛ يسهّل ذلك إيجاد الوريد.',
   'جهّز طلب الطبيب إن كان لديك، واذكر أيّ حساسيّة أو ميلٍ للإغماء عند رؤية الدم.',
@@ -56,7 +56,7 @@ const FAQ = [
   },
   {
     q: 'هل أحتاج إلى الصيام قبل سحب الدم؟',
-    a: 'يعتمد ذلك على التحليل. سكّر الدم الصائم ودهون الدم تحتاج صياماً من ٨ إلى ١٢ ساعة، وكثيرٌ من التحاليل الأخرى لا تحتاجه. الماء مسموح في كلّ الأحوال.',
+    a: 'يعتمد ذلك على التحليل. سكّر الدم الصائم ودهون الدم تحتاج صياماً من 8 إلى 12 ساعة، وكثيرٌ من التحاليل الأخرى لا تحتاجه. الماء مسموح في كلّ الأحوال.',
   },
   {
     q: 'كيف تصلني النتائج؟',
@@ -110,7 +110,7 @@ export default function HomeBloodDrawPage() {
           <ol className="mkt-list-stack" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
             {STEPS.map((s, i) => (
               <li key={s.t} className="mkt-list-item">
-                <div className="mkt-list-item-icon" aria-hidden="true">{(i + 1).toLocaleString('ar-IQ')}</div>
+                <div className="mkt-list-item-icon" aria-hidden="true">{(i + 1).toLocaleString('ar-IQ-u-nu-latn')}</div>
                 <div className="mkt-list-item-content">
                   <div className="mkt-list-item-title">{s.t}</div>
                   <div className="mkt-list-item-subtitle">{s.d}</div>

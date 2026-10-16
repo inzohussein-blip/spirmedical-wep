@@ -159,7 +159,7 @@ export async function notifyAppointmentConfirmed(
     variables: {
       patient_name: patient.full_name ?? 'عزيزي',
       service: appointment.service_type,
-      date: new Date(appointment.scheduled_at).toLocaleString('ar-IQ', { dateStyle: 'full', timeStyle: 'short' }),
+      date: new Date(appointment.scheduled_at).toLocaleString('ar-IQ-u-nu-latn', { dateStyle: 'full', timeStyle: 'short' }),
       address: appointment.address ?? '—',
     },
     relatedType: 'appointment',
@@ -201,7 +201,7 @@ export async function notifyOrderAssigned(
       specialist_name: specialist.full_name ?? 'الاختصاصي',
       specialist_phone: specialist.phone,
       service: appointment.service_type,
-      date: new Date(appointment.scheduled_at).toLocaleString('ar-IQ', { dateStyle: 'full', timeStyle: 'short' }),
+      date: new Date(appointment.scheduled_at).toLocaleString('ar-IQ-u-nu-latn', { dateStyle: 'full', timeStyle: 'short' }),
     },
     relatedType: 'appointment',
     relatedId: appointmentId,
@@ -241,7 +241,7 @@ export async function notifyOrderCancelled(
     templateKey: 'order_cancelled',
     variables: {
       patient_name: patient.full_name ?? 'عزيزي',
-      date: new Date(appointment.scheduled_at).toLocaleString('ar-IQ', { dateStyle: 'short', timeStyle: 'short' }),
+      date: new Date(appointment.scheduled_at).toLocaleString('ar-IQ-u-nu-latn', { dateStyle: 'short', timeStyle: 'short' }),
       reason,
     },
     relatedType: 'appointment',

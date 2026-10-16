@@ -227,7 +227,7 @@ async function isInQuietHours(userId: string): Promise<boolean> {
   if (!prefs || !prefs.quiet_hours_enabled) return false;
 
   // ⚠️ بتوقيت بغداد لا بتوقيت الخادم: `toTimeString()` على Vercel يعطي UTC،
-  // فساعات الهدوء «٢٣:٠٠ → ٠٧:٠٠» كانت تُطبَّق من ٠٢:٠٠ إلى ١٠:٠٠ بغداد.
+  // فساعات الهدوء «23:00 → 07:00» كانت تُطبَّق من 02:00 إلى 10:00 بغداد.
   const currentTime = baghdadTimeString();
 
   const start = prefs.quiet_hours_start;

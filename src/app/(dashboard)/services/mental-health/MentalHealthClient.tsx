@@ -275,7 +275,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
               {specialist.years_experience} سنة خبرة
             </span>
             <span>·</span>
-            <span>{specialist.total_sessions.toLocaleString('ar-IQ')} جلسة</span>
+            <span>{specialist.total_sessions.toLocaleString('ar-IQ-u-nu-latn')} جلسة</span>
             {specialist.rating_count > 0 && (
               <>
                 <span>·</span>

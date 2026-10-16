@@ -37,7 +37,7 @@ export default function OpsHealthCards({ health }: { health: OpsHealth }) {
               <li key={c.type} style={{ fontSize: 13, color: 'var(--ink-2)', display: 'flex', justifyContent: 'space-between', gap: 8 }}>
                 <span>{c.label}</span>
                 <span style={{ color: 'var(--ink-3)' }}>
-                  {c.waiting > 0 ? `${c.waiting.toLocaleString('ar-IQ')} بانتظار الخدمة` : 'لا منتظرين'}
+                  {c.waiting > 0 ? `${c.waiting.toLocaleString('ar-IQ-u-nu-latn')} بانتظار الخدمة` : 'لا منتظرين'}
                 </span>
               </li>
             ))}
@@ -55,8 +55,8 @@ export default function OpsHealthCards({ health }: { health: OpsHealth }) {
             📨 رسائلُ لا تصل
           </div>
           <p style={{ fontSize: 13, color: 'var(--ink-2)', margin: '0 0 8px', lineHeight: 1.7 }}>
-            {q.failed24h.toLocaleString('ar-IQ')} فشلت نهائياً خلال ٢٤ ساعة ·{' '}
-            {q.retrying.toLocaleString('ar-IQ')} تُعاد محاولتُها
+            {q.failed24h.toLocaleString('ar-IQ-u-nu-latn')} فشلت نهائياً خلال 24 ساعة ·{' '}
+            {q.retrying.toLocaleString('ar-IQ-u-nu-latn')} تُعاد محاولتُها
           </p>
           {q.lastError && (
             <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '0 0 10px', lineHeight: 1.7 }}>
@@ -82,7 +82,7 @@ export default function OpsHealthCards({ health }: { health: OpsHealth }) {
           </p>
           <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: 0, lineHeight: 1.7 }}>
             {wa.lastSeenAt
-              ? `آخر نبضة: ${new Date(wa.lastSeenAt).toLocaleString('ar-IQ')}`
+              ? `آخر نبضة: ${new Date(wa.lastSeenAt).toLocaleString('ar-IQ-u-nu-latn')}`
               : 'لم تصل أيُّ نبضةٍ بعد'}{' '}
             · افتح صفحةَ <code dir="ltr">/qr</code> في خدمة Railway وأعد ربطَ الرقم إن طُلب.
           </p>

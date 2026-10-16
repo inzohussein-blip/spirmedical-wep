@@ -15,7 +15,7 @@ import { join } from 'path';
  *
  *     x Only async functions are allowed to be exported in a "use server" file.
  *
- * و`tsc` مرّ، و`jest` مرّ بـ٥٧٣ اختباراً — كلاهما لا يعرف القاعدة. فتوقّف
+ * و`tsc` مرّ، و`jest` مرّ بـ573 اختباراً — كلاهما لا يعرف القاعدة. فتوقّف
  * النشرُ على Vercel من ذلك الالتزام حتى اكتُشف ببناءٍ يدويّ، وبقي كلُّ ما
  * دُفع بعده غيرَ منشور.
  *

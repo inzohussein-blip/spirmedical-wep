@@ -55,7 +55,7 @@ export default async function CampaignsPage() {
         <div style={{ flex: 1 }}>
           <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0 }}>📧 الحملات</h1>
           <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '2px 0 0' }}>
-            {campaigns?.length ?? 0} حملة · جمهور محتمل: {totalUsers?.toLocaleString('ar-IQ') ?? 0} مستخدم
+            {campaigns?.length ?? 0} حملة · جمهور محتمل: {totalUsers?.toLocaleString('ar-IQ-u-nu-latn') ?? 0} مستخدم
           </p>
         </div>
       </div>

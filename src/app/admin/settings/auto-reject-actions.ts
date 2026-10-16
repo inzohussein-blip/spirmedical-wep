@@ -37,7 +37,7 @@ export async function setAutoRejectHours(
   if (!auth.ok) return { ok: false, error: auth.error };
 
   if (!Number.isInteger(hours) || hours < 0 || hours > MAX_HOURS) {
-    return { ok: false, error: `أدخل عدد ساعاتٍ صحيحاً بين ٠ و${MAX_HOURS}` };
+    return { ok: false, error: `أدخل عدد ساعاتٍ صحيحاً بين 0 و${MAX_HOURS}` };
   }
 
   const { error } = await (auth.supabase as any)

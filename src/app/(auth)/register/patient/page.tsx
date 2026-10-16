@@ -95,7 +95,7 @@ export default async function PatientRegisterPage(
               pattern="0?7[0-9]{9}"
             />
           </div>
-          <div className="auth-field-hint">مثال: ٠٧٧١٢٣٤٥٦٧٨ أو ٧٧١٢٣٤٥٦٧٨</div>
+          <div className="auth-field-hint">مثال: 07712345678 أو 7712345678</div>
         </div>
 
         <div className="auth-field">

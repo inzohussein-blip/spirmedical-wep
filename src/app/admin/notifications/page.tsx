@@ -71,10 +71,10 @@ export default async function NotificationsPage(props: { searchParams: Promise<{
 
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 20 }}>
-        <StatBox label="اليوم" value={(todayCount ?? 0).toLocaleString('ar-IQ')} color="#0E5C4D" icon="📊" />
-        <StatBox label="بانتظار الإرسال" value={(pendingCount ?? 0).toLocaleString('ar-IQ')} color="#B8540C" icon="⏳" />
-        <StatBox label="أُرسلت" value={(sentCount ?? 0).toLocaleString('ar-IQ')} color="#0E5C4D" icon="✅" />
-        <StatBox label="فشلت" value={(failedCount ?? 0).toLocaleString('ar-IQ')} color="#A82E3D" icon="❌" />
+        <StatBox label="اليوم" value={(todayCount ?? 0).toLocaleString('ar-IQ-u-nu-latn')} color="#0E5C4D" icon="📊" />
+        <StatBox label="بانتظار الإرسال" value={(pendingCount ?? 0).toLocaleString('ar-IQ-u-nu-latn')} color="#B8540C" icon="⏳" />
+        <StatBox label="أُرسلت" value={(sentCount ?? 0).toLocaleString('ar-IQ-u-nu-latn')} color="#0E5C4D" icon="✅" />
+        <StatBox label="فشلت" value={(failedCount ?? 0).toLocaleString('ar-IQ-u-nu-latn')} color="#A82E3D" icon="❌" />
       </div>
 
       {/* Filter */}
@@ -144,11 +144,11 @@ export default async function NotificationsPage(props: { searchParams: Promise<{
                     </td>
                     <td style={td}>
                       <div style={{ fontSize: 11 }}>
-                        {new Date(m.created_at ?? Date.now()).toLocaleString('ar-IQ', { dateStyle: 'short', timeStyle: 'short' })}
+                        {new Date(m.created_at ?? Date.now()).toLocaleString('ar-IQ-u-nu-latn', { dateStyle: 'short', timeStyle: 'short' })}
                       </div>
                       {m.sent_at && (
                         <div style={{ fontSize: 11, color: 'var(--emerald)', marginTop: 2 }}>
-                          ✅ {new Date(m.sent_at).toLocaleTimeString('ar-IQ', { timeStyle: 'short' })}
+                          ✅ {new Date(m.sent_at).toLocaleTimeString('ar-IQ-u-nu-latn', { timeStyle: 'short' })}
                         </div>
                       )}
                     </td>

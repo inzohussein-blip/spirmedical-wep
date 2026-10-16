@@ -50,7 +50,7 @@ export default function RiskCalculatorClient() {
       message = 'مؤشّراتك الصحية ضمن المعدّلات الجيّدة';
       recommendations = [
         'حافظ على نمط الحياة الصحي',
-        'ممارسة الرياضة ٣٠ دقيقة يومياً',
+        'ممارسة الرياضة 30 دقيقة يومياً',
         'فحص دوري سنوي',
       ];
     } else if (score < 60) {
@@ -61,7 +61,7 @@ export default function RiskCalculatorClient() {
         'فحص دم شامل خلال شهر',
         'استشارة طبية مع أخصائي',
         'تعديل النظام الغذائي',
-        'ممارسة الرياضة ٤٥ دقيقة يومياً',
+        'ممارسة الرياضة 45 دقيقة يومياً',
       ];
     } else {
       level = 'high';
@@ -70,7 +70,7 @@ export default function RiskCalculatorClient() {
       recommendations = [
         'استشارة طبية عاجلة',
         'فحوصات شاملة (قلب · سكر · كلى)',
-        'متابعة دورية كل ٣ أشهر',
+        'متابعة دورية كل 3 أشهر',
         'الاشتراك في برنامج طبيب العائلة',
       ];
     }
@@ -99,7 +99,7 @@ export default function RiskCalculatorClient() {
           <div style={{ padding: '0 18px' }}>
             <div className="tool-intro">
               <div className="tool-intro-icon" aria-hidden="true">🧮</div>
-              <h2>قيّم حالتك الصحية في ٣٠ ثانية</h2>
+              <h2>قيّم حالتك الصحية في 30 ثانية</h2>
               <p>أجب على أسئلة بسيطة لتقييم مؤشّراتك الصحية وأعراضك واحصل على توصية</p>
             </div>
 

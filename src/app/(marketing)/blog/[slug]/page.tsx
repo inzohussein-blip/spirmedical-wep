@@ -63,7 +63,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 }
 
 function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('ar-IQ', {
+  return new Date(iso).toLocaleDateString('ar-IQ-u-nu-latn', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',

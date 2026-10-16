@@ -36,7 +36,7 @@ export default function GuestSOSClient() {
             <div className="sos-big-icon" aria-hidden="true">🚨</div>
             <div className="sos-big-content">
               <div className="sos-big-title">اتصل بالإسعاف الآن</div>
-              <div className="sos-big-number">١٢٢</div>
+              <div className="sos-big-number">122</div>
             </div>
           </a>
 
@@ -83,7 +83,7 @@ export default function GuestSOSClient() {
           </div>
 
           <div className="tool-disclaimer" style={{ marginTop: 16 }}>
-            ⚠ في حالة الخطر، اتصل بـ ١٢٢ أولاً قبل أي إجراء آخر.
+            ⚠ في حالة الخطر، اتصل بـ 122 أولاً قبل أي إجراء آخر.
           </div>
         </div>
       </div>

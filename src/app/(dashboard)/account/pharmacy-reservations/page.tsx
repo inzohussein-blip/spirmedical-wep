@@ -118,7 +118,7 @@ export default async function PharmacyReservationsPage() {
               {reservations.map((r) => {
                 const status = STATUS_META[r.status] ?? STATUS_META.pending;
                 const StatusIcon = status.icon;
-                const date = new Date(r.created_at).toLocaleDateString('ar-IQ', {
+                const date = new Date(r.created_at).toLocaleDateString('ar-IQ-u-nu-latn', {
                   day: 'numeric', month: 'short', year: 'numeric',
                 });
                 
@@ -134,7 +134,7 @@ export default async function PharmacyReservationsPage() {
                     <div className="scr-list-item-content">
                       <div className="scr-list-item-title">
                         {r.items.length} دواء
-                        {r.total_final_price && ` · ${r.total_final_price.toLocaleString('ar-IQ')} د.ع`}
+                        {r.total_final_price && ` · ${r.total_final_price.toLocaleString('ar-IQ-u-nu-latn')} د.ع`}
                       </div>
                       <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 2 }}>
                         {r.items.slice(0, 2).map(it => it.name).join('، ')}

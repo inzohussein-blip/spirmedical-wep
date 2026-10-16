@@ -228,7 +228,7 @@ function TestTrendCard({ test }: { test: TrendableTest }) {
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {results.slice(-3).reverse().map((r, i) => {
-            const date = new Date(r.date).toLocaleDateString('ar-IQ', { day: 'numeric', month: 'short' });
+            const date = new Date(r.date).toLocaleDateString('ar-IQ-u-nu-latn', { day: 'numeric', month: 'short' });
             return (
               <div key={i} style={{
                 fontSize: 11,

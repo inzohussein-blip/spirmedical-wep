@@ -145,7 +145,7 @@ git push origin main
 - ✅ Encryption للبيانات الحساسة
 
 ### 🖼 الأصول
-- ✅ Favicons (٧ أحجام)
+- ✅ Favicons (7 أحجام)
 - ✅ PWA manifest محدّث مع shortcuts
 - ✅ Open Graph image
 
@@ -201,7 +201,7 @@ https://spirmedical-wep.vercel.app/guest
 
 1. **`/account/*`** للمراجع (تفاصيل الحساب، الإعدادات، الخروج)
 2. **`/favorites`** للمراجع (الأطباء، الصيدليات، الفحوصات)
-3. **`/specialist/*`** للأخصائيين (٤ نوافذ)
+3. **`/specialist/*`** للأخصائيين (4 نوافذ)
 4. **`/sos`** بشكل احترافي
 5. **مشروع CRM منفصل** للأدمن
 

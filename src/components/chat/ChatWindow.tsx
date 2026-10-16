@@ -43,7 +43,7 @@ interface ChatWindowProps {
 }
 
 function formatTime(iso: string): string {
-  return new Date(iso).toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' });
+  return new Date(iso).toLocaleTimeString('ar-IQ-u-nu-latn', { hour: '2-digit', minute: '2-digit' });
 }
 
 function formatDate(iso: string): string {
@@ -54,7 +54,7 @@ function formatDate(iso: string): string {
 
   if (date.toDateString() === today.toDateString()) return 'اليوم';
   if (date.toDateString() === yesterday.toDateString()) return 'أمس';
-  return date.toLocaleDateString('ar-IQ', { day: 'numeric', month: 'long', year: 'numeric' });
+  return date.toLocaleDateString('ar-IQ-u-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 // عرض صورة داخل المحادثة: bucket خاص، فنطلب رابطاً موقّعاً مؤقّتاً عبر server action

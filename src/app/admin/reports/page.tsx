@@ -19,7 +19,7 @@ interface SearchParams {
 function getDateRange(params: SearchParams): { from: string; to: string; label: string } {
   const now = new Date();
   // «اليوم» بتوقيت بغداد لا بتوقيت الخادم (UTC على Vercel) — وإلّا بدأ اليوم
-  // الساعة ٠٣:٠٠ بغداد وسقطت طلبات ما بعد منتصف الليل في حصيلة الأمس.
+  // الساعة 03:00 بغداد وسقطت طلبات ما بعد منتصف الليل في حصيلة الأمس.
   const today = baghdadDayWindow(now).start;
 
   if (params.period === 'custom' && params.from && params.to) {
@@ -229,11 +229,11 @@ export default async function ReportsPage(props: { searchParams: Promise<SearchP
         gap: 12,
         marginBottom: 24,
       }}>
-        <StatBox label="مرضى جدد" value={(newPatients ?? 0).toLocaleString('ar-IQ')} icon="👤" color="#534AB7" />
-        <StatBox label="اختصاصيون جدد" value={(newSpecialists ?? 0).toLocaleString('ar-IQ')} icon="👨‍⚕️" color="#B8540C" />
-        <StatBox label="إجمالي الطلبات" value={(totalOrders ?? 0).toLocaleString('ar-IQ')} icon="📋" color="#0E5C4D" />
-        <StatBox label="مكتملة" value={(completedOrders ?? 0).toLocaleString('ar-IQ')} icon="✅" color="#0E5C4D" />
-        <StatBox label="ملغاة" value={(cancelledOrders ?? 0).toLocaleString('ar-IQ')} icon="🚫" color="#A82E3D" />
+        <StatBox label="مرضى جدد" value={(newPatients ?? 0).toLocaleString('ar-IQ-u-nu-latn')} icon="👤" color="#534AB7" />
+        <StatBox label="اختصاصيون جدد" value={(newSpecialists ?? 0).toLocaleString('ar-IQ-u-nu-latn')} icon="👨‍⚕️" color="#B8540C" />
+        <StatBox label="إجمالي الطلبات" value={(totalOrders ?? 0).toLocaleString('ar-IQ-u-nu-latn')} icon="📋" color="#0E5C4D" />
+        <StatBox label="مكتملة" value={(completedOrders ?? 0).toLocaleString('ar-IQ-u-nu-latn')} icon="✅" color="#0E5C4D" />
+        <StatBox label="ملغاة" value={(cancelledOrders ?? 0).toLocaleString('ar-IQ-u-nu-latn')} icon="🚫" color="#A82E3D" />
         <StatBox label="معدل الإنجاز" value={`${completionRate}%`} icon="📊" color="#0E5C4D" />
       </div>
 

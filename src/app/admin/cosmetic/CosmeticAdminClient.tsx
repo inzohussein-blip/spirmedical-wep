@@ -210,11 +210,11 @@ export default function CosmeticAdminClient({ products: initial }: Props) {
               <div>
                 {hasDiscount && (
                   <div style={{ fontSize: 11, color: '#5F6368', textDecoration: 'line-through' }}>
-                    {p.price.toLocaleString('ar-IQ')} د.ع
+                    {p.price.toLocaleString('ar-IQ-u-nu-latn')} د.ع
                   </div>
                 )}
                 <div style={{ fontSize: 16, fontWeight: 900, color: 'var(--emerald, #01875F)' }}>
-                  {finalPrice.toLocaleString('ar-IQ')} د.ع
+                  {finalPrice.toLocaleString('ar-IQ-u-nu-latn')} د.ع
                 </div>
               </div>
 

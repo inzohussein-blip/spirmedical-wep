@@ -201,7 +201,7 @@ function NutritionistCard({ nutritionist }: { nutritionist: Nutritionist }) {
               {nutritionist.years_experience} سنة
             </span>
             <span>·</span>
-            <span>{nutritionist.total_clients.toLocaleString('ar-IQ')} عميل</span>
+            <span>{nutritionist.total_clients.toLocaleString('ar-IQ-u-nu-latn')} عميل</span>
             {nutritionist.success_rate > 0 && (
               <>
                 <span>·</span>

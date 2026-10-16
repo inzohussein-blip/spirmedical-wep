@@ -16,7 +16,7 @@ export const otpSchema = z.object({
   phone: z.string().regex(iraqiPhoneRegex),
   token: z
     .string()
-    .length(6, 'الرمز يجب أن يكون ٦ أرقام')
+    .length(6, 'الرمز يجب أن يكون 6 أرقام')
     .regex(/^\d+$/, 'الرمز يجب أن يكون أرقاماً فقط'),
 });
 

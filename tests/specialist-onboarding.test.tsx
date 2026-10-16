@@ -12,7 +12,7 @@ import { render, screen } from '@testing-library/react';
  *    يتيمٌ بلا ملفّ (إدراجُه يصطدم بالرقم ويُبلَع صامتاً).
  * ② **وبطاقةُ الإدارة تقول «الرقم + كلمة سرّ مؤقّتة»**، وحقلُ الدخول `type="email"`
  *    يرفض الرقم في المتصفّح أصلاً، والبريدُ الاصطناعيّ لا يُعرض لأحد.
- * ③ **لا أحدَ يرى الصفر**: اللوحةُ تعرض «اختصاصيون نشطون: ٠» بين بطاقاتٍ أخرى.
+ * ③ **لا أحدَ يرى الصفر**: اللوحةُ تعرض «اختصاصيون نشطون: 0» بين بطاقاتٍ أخرى.
  */
 
 const read = (p: string) => readFileSync(join(process.cwd(), p), 'utf8');
@@ -84,14 +84,14 @@ describe('③ المشرفُ يرى ما يسدّ الطريق', () => {
     render(<OpsHealthCards health={{ ...healthy, coverage: [{ type: 'lab_analyst', label: 'مُحلِّل مختبر', approved: 0, waiting: 3 }] }} />);
     const alert = screen.getByTestId('ops-no-specialists');
     expect(alert).toHaveTextContent('مُحلِّل مختبر');
-    expect(alert).toHaveTextContent('٣ بانتظار الخدمة');
+    expect(alert).toHaveTextContent('3 بانتظار الخدمة');
     expect(screen.getByRole('link', { name: 'إنشاء حساب مختصّ' })).toHaveAttribute('href', '/admin/users/create');
   });
 
   it('🚨 رسائلُ فاشلة → العددُ ونصُّ الخطأ', () => {
     render(<OpsHealthCards health={{ ...healthy, queue: { failed24h: 0, retrying: 3, lastError: 'Authentication Error', lastErrorChannel: 'whatsapp', lastErrorQueuedAt: null } }} />);
     const card = screen.getByTestId('ops-queue-health');
-    expect(card).toHaveTextContent('٣ تُعاد محاولتُها');
+    expect(card).toHaveTextContent('3 تُعاد محاولتُها');
     expect(card).toHaveTextContent('Authentication Error');
   });
 

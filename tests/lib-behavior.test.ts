@@ -8,7 +8,7 @@
  * التحقّقُ (zod) يحرس رفعَ الطلبات والتسجيل؛ ترقيتُه غيّرت واجهةَ الأخطاء (`errors` ← `issues`)
  * و`errorMap`. هنا يُقاس الناتجُ نفسُه: أيُّ حقلٍ يُرفض وبأيّ رسالةٍ عربيّة.
  * ومعه خللان وجدهما الاختبار:
- *   • الفتراتُ الزمنيّة: ٢٠٪ «محجوزة» عشوائيّاً وتتبدّل مع كلّ رسم.
+ *   • الفتراتُ الزمنيّة: 20٪ «محجوزة» عشوائيّاً وتتبدّل مع كلّ رسم.
  *   • تصديرُ CSV: نصٌّ يبدأ بـ = يُنفَّذ صيغةً في Excel (حقنُ صيغ).
  */
 
@@ -23,7 +23,6 @@ import {
 } from '@/lib/validations/auth-forms';
 import { toCSV } from '@/lib/csv-export';
 import {
-  toArabicDigits,
   formatTimeArabic,
   formatDateRelative,
   generateAvailableDates,
@@ -35,7 +34,7 @@ import { isMarketingPath, isAppPath, isSharedPath, getDefaultPath } from '@/lib/
 describe('التمريض المنزلي', () => {
   const ok = {
     procedureId: 'iv', allergyConfirmed: true, prescriptionImage: null, prescriptionSkipped: true,
-    scheduledDate: '2030-01-02', scheduledTime: '10:00', address: 'النجف · حي السعد · شارع ٢٠', phone: '07701234567',
+    scheduledDate: '2030-01-02', scheduledTime: '10:00', address: 'النجف · حي السعد · شارع 20', phone: '07701234567',
   };
 
   it('طلبٌ كامل يمرّ', () => expect(validateNursing(ok)).toEqual({ ok: true, fieldErrors: {} }));
@@ -61,7 +60,7 @@ describe('التمريض المنزلي', () => {
 });
 
 describe('سحب الدم', () => {
-  const ok = { tests: ['cbc'], address: 'بغداد · الكرادة · شارع ٦٢', phone: '7701234567', date: '2030-01-02', time: '09:00' };
+  const ok = { tests: ['cbc'], address: 'بغداد · الكرادة · شارع 62', phone: '7701234567', date: '2030-01-02', time: '09:00' };
 
   it('طلبٌ كامل يمرّ', () => expect(validateBloodDraw(ok).ok).toBe(true));
 
@@ -159,9 +158,9 @@ describe('تصدير CSV', () => {
 
 describe('الفترات الزمنيّة', () => {
   it('الأرقامُ والوقتُ بالعربيّة', () => {
-    expect(toArabicDigits(2026)).toBe('٢٠٢٦');
-    expect(formatTimeArabic(0)).toBe('١٢:٠٠ ص');
-    expect(formatTimeArabic(16, 30)).toBe('٤:٣٠ م');
+
+    expect(formatTimeArabic(0)).toBe('12:00 ص');
+    expect(formatTimeArabic(16, 30)).toBe('4:30 م');
   });
 
   it('التاريخُ النسبيّ', () => {
@@ -169,7 +168,8 @@ describe('الفترات الزمنيّة', () => {
     expect(formatDateRelative(d(0))).toBe('اليوم');
     expect(formatDateRelative(d(1))).toBe('غداً');
     expect(formatDateRelative(d(2))).toBe('بعد غد');
-    expect(formatDateRelative(d(10))).toMatch(/[٠-٩]/);
+    expect(formatDateRelative(d(10))).toMatch(/\d/);
+    expect(formatDateRelative(d(10))).not.toMatch(/[\u0660-\u0669]/);
   });
 
   it('الأيامُ تبدأ من الغد', () => {

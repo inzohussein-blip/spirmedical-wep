@@ -142,7 +142,7 @@ export default async function MentalDetailPage(
             <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
               <Award size={12} />{s.years_experience} سنة خبرة
             </span>
-            <span>📊 {count(s.total_sessions).toLocaleString('ar-IQ')} جلسة</span>
+            <span>📊 {count(s.total_sessions).toLocaleString('ar-IQ-u-nu-latn')} جلسة</span>
             {count(s.rating_count) > 0 && (
               <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
                 <Star size={12} fill="var(--amber)" color="var(--amber)" />

@@ -109,12 +109,12 @@ export default async function ReservationDetailPage(props: PageProps) {
   };
 
   const status = STATUS_META[reservation.status] ?? STATUS_META.pending;
-  const createdDate = new Date(reservation.created_at).toLocaleDateString('ar-IQ', {
+  const createdDate = new Date(reservation.created_at).toLocaleDateString('ar-IQ-u-nu-latn', {
     day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit',
   });
 
   const expectedDate = reservation.expected_pickup_at 
-    ? new Date(reservation.expected_pickup_at).toLocaleDateString('ar-IQ', {
+    ? new Date(reservation.expected_pickup_at).toLocaleDateString('ar-IQ-u-nu-latn', {
         day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
       })
     : null;
@@ -365,7 +365,7 @@ export default async function ReservationDetailPage(props: PageProps) {
               {reservation.total_estimated_price && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 6 }}>
                   <span style={{ color: 'var(--ink-2)' }}>السعر التقديري</span>
-                  <span>{reservation.total_estimated_price.toLocaleString('ar-IQ')} د.ع</span>
+                  <span>{reservation.total_estimated_price.toLocaleString('ar-IQ-u-nu-latn')} د.ع</span>
                 </div>
               )}
               {reservation.total_final_price && (
@@ -379,7 +379,7 @@ export default async function ReservationDetailPage(props: PageProps) {
                   marginTop: 8,
                 }}>
                   <span>الإجمالي</span>
-                  <span style={{ color: 'var(--emerald-mid, #0F6E56)' }}>{reservation.total_final_price.toLocaleString('ar-IQ')} د.ع</span>
+                  <span style={{ color: 'var(--emerald-mid, #0F6E56)' }}>{reservation.total_final_price.toLocaleString('ar-IQ-u-nu-latn')} د.ع</span>
                 </div>
               )}
             </div>

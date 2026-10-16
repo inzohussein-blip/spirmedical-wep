@@ -80,12 +80,12 @@ export default function AnalyticsClient({ stats, daily, totals }: Props) {
         gap: 10,
         marginBottom: 24,
       }}>
-        <KpiCard icon={<Users size={20} />} label="المستخدمون" value={totals.users.toLocaleString('ar-IQ')} color="var(--emerald)" />
-        <KpiCard icon={<Calendar size={20} />} label="الحجوزات" value={totals.appointments.toLocaleString('ar-IQ')} color="var(--amber)" />
-        <KpiCard icon={<MessageCircle size={20} />} label="الاستشارات" value={totals.consultations.toLocaleString('ar-IQ')} color="var(--ink-2)" />
-        <KpiCard icon={<Stethoscope size={20} />} label="الأطباء" value={totals.doctors.toLocaleString('ar-IQ')} color="var(--emerald)" />
-        <KpiCard icon={<Sparkles size={20} />} label="الاشتراكات النشطة" value={totals.subscriptions.toLocaleString('ar-IQ')} color="var(--amber)" />
-        <KpiCard icon={<Activity size={20} />} label="إجمالي الأحداث (30 يوم)" value={totals.events.toLocaleString('ar-IQ')} color="var(--ink-2)" />
+        <KpiCard icon={<Users size={20} />} label="المستخدمون" value={totals.users.toLocaleString('ar-IQ-u-nu-latn')} color="var(--emerald)" />
+        <KpiCard icon={<Calendar size={20} />} label="الحجوزات" value={totals.appointments.toLocaleString('ar-IQ-u-nu-latn')} color="var(--amber)" />
+        <KpiCard icon={<MessageCircle size={20} />} label="الاستشارات" value={totals.consultations.toLocaleString('ar-IQ-u-nu-latn')} color="var(--ink-2)" />
+        <KpiCard icon={<Stethoscope size={20} />} label="الأطباء" value={totals.doctors.toLocaleString('ar-IQ-u-nu-latn')} color="var(--emerald)" />
+        <KpiCard icon={<Sparkles size={20} />} label="الاشتراكات النشطة" value={totals.subscriptions.toLocaleString('ar-IQ-u-nu-latn')} color="var(--amber)" />
+        <KpiCard icon={<Activity size={20} />} label="إجمالي الأحداث (30 يوم)" value={totals.events.toLocaleString('ar-IQ-u-nu-latn')} color="var(--ink-2)" />
       </div>
 
       {/* Daily chart */}
@@ -127,7 +127,7 @@ export default function AnalyticsClient({ stats, daily, totals }: Props) {
             {daily.map((d) => {
               const heightPct = (d.total / maxDaily) * 100;
               const userHeightPct = (d.unique_users / maxDaily) * 100;
-              const dateLabel = new Date(d.event_date).toLocaleDateString('ar-IQ', {
+              const dateLabel = new Date(d.event_date).toLocaleDateString('ar-IQ-u-nu-latn', {
                 weekday: 'short',
                 day: 'numeric',
               });
@@ -260,7 +260,7 @@ export default function AnalyticsClient({ stats, daily, totals }: Props) {
                     </div>
                     <div style={{ textAlign: 'end' }}>
                       <div style={{ fontSize: 14, fontWeight: 900, color: meta.color }}>
-                        {stat.total.toLocaleString('ar-IQ')}
+                        {stat.total.toLocaleString('ar-IQ-u-nu-latn')}
                       </div>
                       <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                         {stat.unique_users} مستخدم

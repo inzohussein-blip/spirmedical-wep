@@ -80,7 +80,7 @@ export default async function AdminRequestsPage(
                     </div>
                   )}
                   <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 6 }}>
-                    {new Date(req.created_at).toLocaleString('ar-IQ')}
+                    {new Date(req.created_at).toLocaleString('ar-IQ-u-nu-latn')}
                   </div>
                 </div>
 

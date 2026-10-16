@@ -133,7 +133,7 @@ export default async function SpecialistDetailPage(props: { params: Promise<{ id
               <InfoRow icon="✉️" label="البريد" value={specialist.email ?? '—'} />
               <InfoRow icon="📍" label="المحافظة" value={specialist.governorate ?? '—'} />
               <InfoRow icon="📅" label="سنوات الخبرة" value={specialist.specialist_years_exp ? `${specialist.specialist_years_exp} سنة` : '—'} />
-              <InfoRow icon="🕒" label="تاريخ التسجيل" value={new Date(specialist.created_at).toLocaleDateString('ar-IQ')} />
+              <InfoRow icon="🕒" label="تاريخ التسجيل" value={new Date(specialist.created_at).toLocaleDateString('ar-IQ-u-nu-latn')} />
               <InfoRow icon="🌐" label="اللغات" value={(specialist.specialist_languages ?? []).join('، ') || '—'} />
             </div>
 
@@ -176,7 +176,7 @@ export default async function SpecialistDetailPage(props: { params: Promise<{ id
                     <span aria-hidden="true" style={{ fontSize: 20 }}>{d.type === 'application/pdf' ? '📄' : '🖼️'}</span>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)' }}>{d.label}</div>
-                      <div style={{ fontSize: 12, color: 'var(--ink-3)' }}>{new Date(d.uploadedAt).toLocaleDateString('ar-IQ')}</div>
+                      <div style={{ fontSize: 12, color: 'var(--ink-3)' }}>{new Date(d.uploadedAt).toLocaleDateString('ar-IQ-u-nu-latn')}</div>
                     </div>
                     {d.url ? (
                       <a href={d.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, fontWeight: 700, color: 'var(--emerald)', minHeight: 44, display: 'inline-flex', alignItems: 'center' }}>

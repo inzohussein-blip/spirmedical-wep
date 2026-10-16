@@ -50,7 +50,7 @@ function useCountUp(target: number, duration = 2000, start = false): number {
 function StatCard({ stat, visible }: { stat: Stat; visible: boolean }) {
   const current = useCountUp(stat.value, 2000, visible);
   const isDecimal = !Number.isInteger(stat.value);
-  const displayValue = isDecimal ? current.toFixed(1) : current.toLocaleString('ar-IQ');
+  const displayValue = isDecimal ? current.toFixed(1) : current.toLocaleString('ar-IQ-u-nu-latn');
 
   return (
     <div className="landing-stat-card">

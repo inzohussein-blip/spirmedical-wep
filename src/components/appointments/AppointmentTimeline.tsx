@@ -28,7 +28,7 @@ interface Props {
 
 function formatDateArabic(iso: string): string {
   const date = new Date(iso);
-  return date.toLocaleString('ar-IQ', {
+  return date.toLocaleString('ar-IQ-u-nu-latn', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -49,7 +49,7 @@ export default function AppointmentTimeline({
 }: Props) {
   const cancelled = currentStatus === 'cancelled';
 
-  // Timeline مفصّل لسحب الدم (٦ مراحل)
+  // Timeline مفصّل لسحب الدم (6 مراحل)
   const bloodDrawEvents: TimelineEvent[] = [
     { status: 'created',      label: 'تم استلام الطلب',           icon: FileText,    timestamp: createdAt,   active: true,                                                            current: currentStatus === 'pending' },
     { status: 'confirmed',    label: 'تأكيد المختص',              icon: CheckCircle2, timestamp: confirmedAt, active: ['confirmed', 'in_progress', 'completed'].includes(currentStatus), current: currentStatus === 'confirmed' },

@@ -38,7 +38,7 @@ export async function setServiceEnabled(
   }
 
   const note = (noteAr ?? '').trim();
-  if (note.length > 120) return { ok: false, error: 'النص طويل (١٢٠ حرفاً كحدٍّ أقصى)' };
+  if (note.length > 120) return { ok: false, error: 'النص طويل (120 حرفاً كحدٍّ أقصى)' };
 
   const { error } = await (auth.supabase as any)
     .from('service_switches')

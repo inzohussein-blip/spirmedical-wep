@@ -84,7 +84,7 @@ export default async function AccountPage() {
     : phone;
   const roleLabel = profile?.role === 'specialist' ? 'أخصائي' : 'مراجع';
   const memberSince = profile?.created_at
-    ? new Date(profile.created_at).toLocaleDateString('ar-IQ', {
+    ? new Date(profile.created_at).toLocaleDateString('ar-IQ-u-nu-latn', {
         year: 'numeric',
         month: 'long',
       })

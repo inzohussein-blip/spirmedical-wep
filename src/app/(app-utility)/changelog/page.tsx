@@ -107,7 +107,7 @@ export default async function ChangelogPage() {
                     {entry.version}
                   </code>
                   <Calendar size={11} />
-                  {new Date(entry.release_date).toLocaleDateString('ar-IQ', {
+                  {new Date(entry.release_date).toLocaleDateString('ar-IQ-u-nu-latn', {
                     year: 'numeric', month: 'long', day: 'numeric',
                   })}
                 </div>

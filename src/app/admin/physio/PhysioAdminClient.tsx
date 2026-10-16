@@ -259,13 +259,13 @@ export default function PhysioAdminClient({ physios: initialPhysios }: Props) {
                   {p.available_for_home && (
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, color: '#5F6368' }}>
                       <IconCurrencyDollar size={11} stroke={2.2} />
-                      منزلي: <strong style={{ color: 'var(--emerald, #01875F)' }}>{p.home_visit_price.toLocaleString('ar-IQ')}</strong>
+                      منزلي: <strong style={{ color: 'var(--emerald, #01875F)' }}>{p.home_visit_price.toLocaleString('ar-IQ-u-nu-latn')}</strong>
                     </span>
                   )}
                   {p.available_for_clinic && (
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, color: '#5F6368' }}>
                       <IconCurrencyDollar size={11} stroke={2.2} />
-                      عيادة: <strong style={{ color: 'var(--emerald, #01875F)' }}>{p.clinic_visit_price.toLocaleString('ar-IQ')}</strong>
+                      عيادة: <strong style={{ color: 'var(--emerald, #01875F)' }}>{p.clinic_visit_price.toLocaleString('ar-IQ-u-nu-latn')}</strong>
                     </span>
                   )}
                 </div>

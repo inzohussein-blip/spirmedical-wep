@@ -22,15 +22,15 @@ export default function CookiesPage() {
           <h3>المحتويات</h3>
           <nav aria-label="Table of contents">
             <ol>
-              <li><a href="#intro">١. ما هي الكوكيز؟</a></li>
-              <li><a href="#types">٢. أنواع الكوكيز المُستخدمة</a></li>
-              <li><a href="#essential">٣. الكوكيز الأساسية</a></li>
-              <li><a href="#analytics">٤. كوكيز التحليلات</a></li>
-              <li><a href="#functional">٥. الكوكيز الوظيفية</a></li>
-              <li><a href="#thirdparty">٦. الكوكيز من أطراف ثالثة</a></li>
-              <li><a href="#manage">٧. إدارة الكوكيز</a></li>
-              <li><a href="#changes">٨. التعديلات</a></li>
-              <li><a href="#contact">٩. التواصل</a></li>
+              <li><a href="#intro">1. ما هي الكوكيز؟</a></li>
+              <li><a href="#types">2. أنواع الكوكيز المُستخدمة</a></li>
+              <li><a href="#essential">3. الكوكيز الأساسية</a></li>
+              <li><a href="#analytics">4. كوكيز التحليلات</a></li>
+              <li><a href="#functional">5. الكوكيز الوظيفية</a></li>
+              <li><a href="#thirdparty">6. الكوكيز من أطراف ثالثة</a></li>
+              <li><a href="#manage">7. إدارة الكوكيز</a></li>
+              <li><a href="#changes">8. التعديلات</a></li>
+              <li><a href="#contact">9. التواصل</a></li>
             </ol>
           </nav>
         </aside>
@@ -40,12 +40,12 @@ export default function CookiesPage() {
             <span className="legal-eyebrow">القانوني</span>
             <h1>سياسة الكوكيز</h1>
             <p className="legal-meta">
-              آخر تحديث: ٩ مايو ٢٠٢٦ · تنطبق على جميع زوّار المنصة
+              آخر تحديث: 9 مايو 2026 · تنطبق على جميع زوّار المنصة
             </p>
           </header>
 
           <section id="intro">
-            <h2>١. ما هي الكوكيز؟</h2>
+            <h2>1. ما هي الكوكيز؟</h2>
             <p>
               <strong>ملفات تعريف الارتباط (Cookies)</strong> هي ملفات نصية صغيرة
               يتم تخزينها على جهازك (هاتف، حاسوب، جهاز لوحي) عند زيارتك لموقع إلكتروني.
@@ -58,7 +58,7 @@ export default function CookiesPage() {
           </section>
 
           <section id="types">
-            <h2>٢. أنواع الكوكيز المُستخدمة</h2>
+            <h2>2. أنواع الكوكيز المُستخدمة</h2>
             <p>نستخدم أربعة أنواع رئيسية من الكوكيز:</p>
             <ul>
               <li><strong>الأساسية:</strong> ضرورية لتشغيل الموقع (لا يمكن تعطيلها)</li>
@@ -69,7 +69,7 @@ export default function CookiesPage() {
           </section>
 
           <section id="essential">
-            <h2>٣. الكوكيز الأساسية</h2>
+            <h2>3. الكوكيز الأساسية</h2>
             <p>
               هذه الكوكيز <strong>ضرورية</strong> ولا يمكن تعطيلها لأن الموقع
               لن يعمل بدونها:
@@ -89,7 +89,7 @@ export default function CookiesPage() {
           </section>
 
           <section id="analytics">
-            <h2>٤. كوكيز التحليلات</h2>
+            <h2>4. كوكيز التحليلات</h2>
             <p>
               نستخدم <strong>Vercel Analytics</strong> لفهم كيفية تفاعل
               الزوّار مع الموقع. هذه التحليلات:
@@ -102,7 +102,7 @@ export default function CookiesPage() {
           </section>
 
           <section id="functional">
-            <h2>٥. الكوكيز الوظيفية</h2>
+            <h2>5. الكوكيز الوظيفية</h2>
             <p>
               تُحسّن تجربتك على الموقع بتذكّر:
             </p>
@@ -114,7 +114,7 @@ export default function CookiesPage() {
           </section>
 
           <section id="thirdparty">
-            <h2>٦. الكوكيز من أطراف ثالثة</h2>
+            <h2>6. الكوكيز من أطراف ثالثة</h2>
             <p>نستخدم خدمات خارجية موثوقة قد تضع كوكيز خاصة بها:</p>
             <ul>
               <li><strong>Vercel:</strong> استضافة وتسريع الموقع</li>
@@ -128,7 +128,7 @@ export default function CookiesPage() {
           </section>
 
           <section id="manage">
-            <h2>٧. إدارة الكوكيز</h2>
+            <h2>7. إدارة الكوكيز</h2>
             <p>يمكنك التحكم في الكوكيز بعدة طرق:</p>
             <h3>عبر شريط الموافقة</h3>
             <p>
@@ -155,7 +155,7 @@ export default function CookiesPage() {
           </section>
 
           <section id="changes">
-            <h2>٨. التعديلات على هذه السياسة</h2>
+            <h2>8. التعديلات على هذه السياسة</h2>
             <p>
               قد نُحدّث هذه السياسة من وقت لآخر. عند إجراء تغييرات جوهرية،
               سنُعلمك عبر:
@@ -168,7 +168,7 @@ export default function CookiesPage() {
           </section>
 
           <section id="contact">
-            <h2>٩. التواصل</h2>
+            <h2>9. التواصل</h2>
             <p>
               إذا كان لديك أي سؤال حول سياسة الكوكيز، تواصل معنا:
             </p>

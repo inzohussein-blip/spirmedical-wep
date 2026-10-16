@@ -131,7 +131,7 @@ export default function PharmaciesAdminClient({ pharmacies, inventoryCounts }: P
                     <td style={tdStyle}>
                       <div style={{ fontWeight: 800 }}>{p.name}</div>
                       <div style={{ fontSize: 11, color: 'var(--ink-3)', display: 'flex', gap: 4, marginTop: 2 }}>
-                        {p.is_24h && <span style={{ padding: '1px 5px', background: 'var(--emerald-soft)', color: 'var(--emerald)', borderRadius: 3, fontWeight: 700 }}>٢٤/٧</span>}
+                        {p.is_24h && <span style={{ padding: '1px 5px', background: 'var(--emerald-soft)', color: 'var(--emerald)', borderRadius: 3, fontWeight: 700 }}>24/7</span>}
                         {p.has_emergency_section && <span style={{ padding: '1px 5px', background: 'var(--rose-soft)', color: 'var(--rose)', borderRadius: 3, fontWeight: 700 }}>طوارئ</span>}
                       </div>
                     </td>
@@ -332,7 +332,7 @@ function PharmacyModal({
         </div>
 
         <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
-          <CheckLabel checked={is24h} onChange={setIs24h} label="٢٤ ساعة" />
+          <CheckLabel checked={is24h} onChange={setIs24h} label="24 ساعة" />
           <CheckLabel checked={hasEmergency} onChange={setHasEmergency} label="قسم طوارئ" />
         </div>
 

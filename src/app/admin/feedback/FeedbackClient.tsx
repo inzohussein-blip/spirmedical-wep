@@ -219,7 +219,7 @@ export default function FeedbackClient({ feedbackList, usersMap }: Props) {
                     <div style={{ marginTop: 8, fontSize: 11, color: 'var(--ink-3)' }}>
                       {user ? `👤 ${user.full_name}${user.phone ? ` · ${user.phone}` : ''}` : '👤 مجهول'}
                       {' · '}
-                      {new Date(f.created_at).toLocaleString('ar-IQ', {
+                      {new Date(f.created_at).toLocaleString('ar-IQ-u-nu-latn', {
                         year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
                       })}
                       {f.page_url && (
@@ -280,7 +280,7 @@ function StatCard({ label, value, color }: { label: string; value: number | stri
     }}>
       <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>{label}</div>
       <div style={{ fontSize: 20, fontWeight: 900, color, marginTop: 4 }}>
-        {typeof value === 'number' ? value.toLocaleString('ar-IQ') : value}
+        {typeof value === 'number' ? value.toLocaleString('ar-IQ-u-nu-latn') : value}
       </div>
     </div>
   );

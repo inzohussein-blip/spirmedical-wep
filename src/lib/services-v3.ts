@@ -66,17 +66,17 @@ export const CORE_SERVICES: ServiceConfig[] = [
 
 // 🛠️ SMART TOOLS - الأدوات الذكية (4 أدوات منفصلة)
 export const SMART_TOOLS: ServiceConfig[] = [
-  { id: 'risk-calculator', title: 'حاسبة المخاطر', description: 'قيّم حالتك في ٣٠ ثانية', icon: IconCalculator, color: '#FF7043', softBg: '#FBE9E7', route: '/tools/risk-calculator' },
+  { id: 'risk-calculator', title: 'حاسبة المخاطر', description: 'قيّم حالتك في 30 ثانية', icon: IconCalculator, color: '#FF7043', softBg: '#FBE9E7', route: '/tools/risk-calculator' },
   { id: 'symptom-checker', title: 'مدقّق الأعراض', description: 'حدّد توجّهك الطبي', icon: IconSearch, color: '#00897B', softBg: '#E0F2F1', route: '/tools/symptom-checker' },
-  { id: 'first-aid', title: 'الإسعافات الأولية', description: 'دليل لـ ١٠+ حالات', icon: IconFirstAidKit, color: '#EA4335', softBg: '#FCE8E6', route: '/tools/first-aid' },
-  { id: 'vaccinations-schedule', title: 'جدول التطعيمات', description: '١٨ لقاح حسب العمر', icon: IconCalendarEvent, color: '#26A69A', softBg: '#E0F2F1', route: '/tools/vaccinations' },
+  { id: 'first-aid', title: 'الإسعافات الأولية', description: 'دليل لـ 10+ حالات', icon: IconFirstAidKit, color: '#EA4335', softBg: '#FCE8E6', route: '/tools/first-aid' },
+  { id: 'vaccinations-schedule', title: 'جدول التطعيمات', description: '18 لقاح حسب العمر', icon: IconCalendarEvent, color: '#26A69A', softBg: '#E0F2F1', route: '/tools/vaccinations' },
 ];
 
 // 🚨 EMERGENCY - الطوارئ
 export const EMERGENCY_SERVICE: ServiceConfig = {
   id: 'sos',
   title: 'طوارئ SOS',
-  description: 'استجابة فورية · ١٢٢',
+  description: 'استجابة فورية · 122',
   icon: IconAlertOctagon,
   color: '#8B0000',
   softBg: '#FCE8E6',

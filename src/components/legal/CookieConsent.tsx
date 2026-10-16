@@ -24,7 +24,7 @@ function hasValidConsent(): boolean {
   if (typeof window === 'undefined') return true; // SSR: لا تُظهر
 
   try {
-    // ١. فحص localStorage
+    // 1. فحص localStorage
     const stored = localStorage.getItem(CONSENT_KEY);
     if (stored) {
       const consent: ConsentState = JSON.parse(stored);
@@ -38,7 +38,7 @@ function hasValidConsent(): boolean {
   }
 
   try {
-    // ٢. احتياطي: فحص الـ cookie
+    // 2. احتياطي: فحص الـ cookie
     const cookieMatch = document.cookie.match(
       new RegExp(`(^|;)\\s*${CONSENT_KEY}=([^;]+)`)
     );
@@ -54,14 +54,14 @@ function hasValidConsent(): boolean {
  * حفظ الموافقة في مكانين: localStorage + cookie
  */
 function saveConsentEverywhere(consent: ConsentState) {
-  // ١. حفظ في localStorage
+  // 1. حفظ في localStorage
   try {
     localStorage.setItem(CONSENT_KEY, JSON.stringify(consent));
   } catch (e) {
     console.warn('localStorage not available');
   }
 
-  // ٢. حفظ في cookie (احتياطي - يعمل حتى لو localStorage مغلق)
+  // 2. حفظ في cookie (احتياطي - يعمل حتى لو localStorage مغلق)
   try {
     const expires = new Date(Date.now() + CONSENT_DURATION);
     document.cookie = `${CONSENT_KEY}=1; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
@@ -92,7 +92,7 @@ export function CookieConsent() {
   useEffect(() => {
     setMounted(true);
     if (!hasValidConsent()) {
-      // عرض الـ banner بعد ١.٥ ثانية (UX أفضل)
+      // عرض الـ banner بعد 1.5 ثانية (UX أفضل)
       const timer = setTimeout(() => setShow(true), 1500);
       return () => clearTimeout(timer);
     }

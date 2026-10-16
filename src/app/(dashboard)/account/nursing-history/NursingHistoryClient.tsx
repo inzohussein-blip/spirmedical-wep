@@ -273,9 +273,9 @@ export default function NursingHistoryClient({ visits, specialistsMap }: Props) 
                     </div>
                     <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4 }}>
                       <Calendar size={11} />
-                      <span>{date.toLocaleDateString('ar-IQ', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                      <span>{date.toLocaleDateString('ar-IQ-u-nu-latn', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                       <span>·</span>
-                      <span>{date.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' })}</span>
+                      <span>{date.toLocaleTimeString('ar-IQ-u-nu-latn', { hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
                   </div>
                   {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}

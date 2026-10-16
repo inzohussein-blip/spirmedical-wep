@@ -108,7 +108,7 @@ export default async function AdminOrderDetailPage(props: { params: Promise<{ id
               </div>
             </div>
             <div style={{ fontSize: 14, fontWeight: 700 }}>
-              📅 {new Date(order.scheduled_at).toLocaleString('ar-IQ', { dateStyle: 'full', timeStyle: 'short' })}
+              📅 {new Date(order.scheduled_at).toLocaleString('ar-IQ-u-nu-latn', { dateStyle: 'full', timeStyle: 'short' })}
             </div>
           </div>
 
@@ -117,7 +117,7 @@ export default async function AdminOrderDetailPage(props: { params: Promise<{ id
             <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}>المعلومات</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 16, fontSize: 13 }}>
               <InfoRow icon="🆔" label="رقم الطلب" value={order.id.slice(0, 8) + '...'} dir="ltr" />
-              <InfoRow icon="📅" label="تاريخ الإنشاء" value={new Date(order.created_at).toLocaleDateString('ar-IQ')} />
+              <InfoRow icon="📅" label="تاريخ الإنشاء" value={new Date(order.created_at).toLocaleDateString('ar-IQ-u-nu-latn')} />
               {order.address && <InfoRow icon="📍" label="العنوان" value={order.address} />}
               {order.duration_minutes && <InfoRow icon="⏱" label="المدة" value={`${order.duration_minutes} دقيقة`} />}
             </div>

@@ -44,7 +44,7 @@ export const SERVICES: Service[] = [
     category: 'home',
     icon: '🩸',
     emoji: '🩸',
-    description: 'فني مختبر مدرّب يأتي إلى منزلك مع +١٠ تحاليل أساسية ونتائج رقمية',
+    description: 'فني مختبر مدرّب يأتي إلى منزلك مع +10 تحاليل أساسية ونتائج رقمية',
     basePrice: 15000,
     duration: 30,
     available: true,
@@ -106,7 +106,7 @@ export const SERVICES: Service[] = [
     category: 'consult',
     icon: '💬',
     emoji: '💬',
-    description: 'مكالمة فيديو مع طبيب مختص خلال ٣٠ دقيقة',
+    description: 'مكالمة فيديو مع طبيب مختص خلال 30 دقيقة',
     basePrice: 25000,
     duration: 20,
     available: true,
@@ -152,7 +152,7 @@ export const SERVICES: Service[] = [
     category: 'pharmacy',
     icon: '💊',
     emoji: '💊',
-    description: 'وصفة طبية → دواء عند بابك خلال ٢ ساعات',
+    description: 'وصفة طبية → دواء عند بابك خلال 2 ساعات',
     basePrice: 5000,
     duration: 120,
     available: true,
@@ -205,7 +205,7 @@ export const CATEGORIES: Record<ServiceCategory, { name: string; emoji: string; 
 
 // تنسيق السعر بالعربية
 export function formatPrice(price: number): string {
-  return price.toLocaleString('ar-IQ') + ' د.ع';
+  return price.toLocaleString('ar-IQ-u-nu-latn') + ' د.ع';
 }
 
 // تنسيق المدة

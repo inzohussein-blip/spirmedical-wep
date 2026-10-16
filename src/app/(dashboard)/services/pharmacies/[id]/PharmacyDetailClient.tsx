@@ -226,7 +226,7 @@ export default function PharmacyDetailClient({
           >
             <StatPill
               icon={<Clock size={14} />}
-              label={pharmacy.is_24h ? '٢٤/٧' : `${pharmacy.opens_at?.slice(0, 5)} - ${pharmacy.closes_at?.slice(0, 5)}`}
+              label={pharmacy.is_24h ? '24/7' : `${pharmacy.opens_at?.slice(0, 5)} - ${pharmacy.closes_at?.slice(0, 5)}`}
               sub="ساعات العمل"
             />
             <StatPill
@@ -653,7 +653,7 @@ export default function PharmacyDetailClient({
                               color: 'var(--emerald)',
                             }}
                           >
-                            {item.custom_price.toLocaleString('ar-IQ')} د.ع
+                            {item.custom_price.toLocaleString('ar-IQ-u-nu-latn')} د.ع
                           </span>
                         )}
                       </div>

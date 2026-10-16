@@ -57,7 +57,7 @@ export default async function WhatsAppAdminPage() {
           {o.gateway ? (
             <>
               <Row label="الاتصال">{o.gateway.connected && !stale ? 'متّصلة ✓' : 'منقطعة ✕'}</Row>
-              <Row label="آخر نبضة">{new Date(o.gateway.lastSeenAt).toLocaleString('ar-IQ')}</Row>
+              <Row label="آخر نبضة">{new Date(o.gateway.lastSeenAt).toLocaleString('ar-IQ-u-nu-latn')}</Row>
               {stats && (
                 <Row label="منذ آخر تشغيل">
                   {`${stats.codes ?? 0} رسالة برمز · ${stats.forwarded ?? 0} نُقلت · ${stats.hidden ?? 0} برقمٍ مخفيّ`}
@@ -74,7 +74,7 @@ export default async function WhatsAppAdminPage() {
       )}
 
       <section style={box}>
-        <h2 style={h2}>آخر ٢٤ ساعة</h2>
+        <h2 style={h2}>آخر 24 ساعة</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
           <Stat label="طُلب" value={o.last24h.started} />
           <Stat label="تحقّق" value={o.last24h.verified + o.last24h.consumed} />
@@ -105,7 +105,7 @@ function Missing({ children }: { children: React.ReactNode }) {
 function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div style={{ background: 'var(--paper-3)', borderRadius: 10, padding: 12, textAlign: 'center' }}>
-      <div style={{ fontSize: 20, fontWeight: 900, color: 'var(--emerald-deep)' }}>{value.toLocaleString('ar-IQ')}</div>
+      <div style={{ fontSize: 20, fontWeight: 900, color: 'var(--emerald-deep)' }}>{value.toLocaleString('ar-IQ-u-nu-latn')}</div>
       <div style={{ fontSize: 12, color: 'var(--ink-3)', fontWeight: 700 }}>{label}</div>
     </div>
   );

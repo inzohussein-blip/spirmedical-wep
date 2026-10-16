@@ -137,7 +137,7 @@ export default async function GeographicReportsPage() {
                 marginTop: 4,
               }}
             >
-              {grandTotal.toLocaleString('ar-IQ')}
+              {grandTotal.toLocaleString('ar-IQ-u-nu-latn')}
             </div>
             <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 4 }}>
               عبر {sorted.length} محافظة

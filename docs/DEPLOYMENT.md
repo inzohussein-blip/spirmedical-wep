@@ -14,16 +14,16 @@
 
 ---
 
-## 🗄️ المرحلة ١: إعداد Supabase
+## 🗄️ المرحلة 1: إعداد Supabase
 
-### ١.١ افتح المشروع
+### 1.1 افتح المشروع
 
 اذهب إلى:
 ```
 https://supabase.com/dashboard/project/ioulxemokusfeykjcaxg
 ```
 
-### ١.٢ شغّل المخطط
+### 1.2 شغّل المخطط
 
 1. **SQL Editor** (في القائمة الجانبية)
 2. **+ New query**
@@ -31,14 +31,14 @@ https://supabase.com/dashboard/project/ioulxemokusfeykjcaxg
 4. انسخ كل المحتوى → الصق → **Run** (أو `Ctrl+Enter`)
 5. ✅ يجب أن ترى `Success. No rows returned`
 
-### ١.٣ تحقق من الجداول
+### 1.3 تحقق من الجداول
 
 اذهب إلى **Table Editor** — يجب أن ترى:
 - ✅ `users`
 - ✅ `appointments`
 - ✅ `appointments_with_users` (view)
 
-### ١.٤ فعّل Phone Auth
+### 1.4 فعّل Phone Auth
 
 1. **Authentication** → **Providers**
 2. اختر **Phone**
@@ -50,7 +50,7 @@ https://supabase.com/dashboard/project/ioulxemokusfeykjcaxg
 
 > 💡 **بديل Twilio:** MessageBird, Vonage. كلها تعمل مع Supabase Auth.
 
-### ١.٥ احصل على المفاتيح
+### 1.5 احصل على المفاتيح
 
 **Settings** → **API** — انسخ هذه القيم (احفظها بأمان):
 
@@ -62,9 +62,9 @@ service_role key:   eyJxxxxxxxxxxxxxxx... (⚠️ سرّي للغاية)
 
 ---
 
-## 🐙 المرحلة ٢: رفع الكود لـ GitHub
+## 🐙 المرحلة 2: رفع الكود لـ GitHub
 
-### ٢.١ أنشئ المستودع (إذا لم يكن موجوداً)
+### 2.1 أنشئ المستودع (إذا لم يكن موجوداً)
 
 ```bash
 # في GitHub.com → New repository
@@ -73,7 +73,7 @@ service_role key:   eyJxxxxxxxxxxxxxxx... (⚠️ سرّي للغاية)
 # لا تختار "Initialize with README"
 ```
 
-### ٢.٢ ادفع الكود
+### 2.2 ادفع الكود
 
 ```bash
 cd spirmedical-wep
@@ -89,15 +89,15 @@ git push -u origin main
 
 > 💡 إذا طلب credentials: استخدم [Personal Access Token](https://github.com/settings/tokens) (ليس password).
 
-### ٢.٣ تحقق من الرفع
+### 2.3 تحقق من الرفع
 
 افتح: `https://github.com/inzohussein-blip/spirmedical-wep`
 
 ---
 
-## ☁️ المرحلة ٣: النشر على Vercel
+## ☁️ المرحلة 3: النشر على Vercel
 
-### ٣.١ افتح المشروع
+### 3.1 افتح المشروع
 
 ```
 https://vercel.com/inzohussein-blips-projects/spirmedical-wep
@@ -108,7 +108,7 @@ https://vercel.com/inzohussein-blips-projects/spirmedical-wep
 2. اختر مستودع `spirmedical-wep` من GitHub
 3. **Import**
 
-### ٣.٢ أضف Environment Variables
+### 3.2 أضف Environment Variables
 
 في **Settings** → **Environment Variables**، أضف هذه القيم:
 
@@ -121,14 +121,14 @@ https://vercel.com/inzohussein-blips-projects/spirmedical-wep
 
 ⚠️ **مهم:** فعّل خيار **"Sensitive"** على `SUPABASE_SERVICE_ROLE_KEY` — هذا يخفيه عن السجلات.
 
-### ٣.٣ أعد النشر
+### 3.3 أعد النشر
 
 بعد إضافة المتغيرات:
 1. **Deployments** → اختر آخر deployment
 2. الزر **⋯** → **Redeploy**
-3. انتظر ٢-٣ دقائق
+3. انتظر 2-3 دقائق
 
-### ٣.٤ اختبر الـ Production
+### 3.4 اختبر الـ Production
 
 افتح الرابط الذي أعطاك Vercel (مثل `spirmedical-wep.vercel.app`):
 - ✅ الصفحة الرئيسية تظهر
@@ -138,15 +138,15 @@ https://vercel.com/inzohussein-blips-projects/spirmedical-wep
 
 ---
 
-## 🌐 المرحلة ٤: ربط النطاق المخصّص (اختياري)
+## 🌐 المرحلة 4: ربط النطاق المخصّص (اختياري)
 
-### ٤.١ في Vercel
+### 4.1 في Vercel
 
 1. **Settings** → **Domains**
 2. أدخل `spirmedical.iq`
 3. اضغط **Add**
 
-### ٤.٢ في مزوّد النطاق العراقي
+### 4.2 في مزوّد النطاق العراقي
 
 أضف سجلات DNS:
 
@@ -155,13 +155,13 @@ A     @     76.76.21.21
 CNAME www   cname.vercel-dns.com
 ```
 
-⏱️ الانتشار ٥ دقائق إلى ٢٤ ساعة.
+⏱️ الانتشار 5 دقائق إلى 24 ساعة.
 
 ---
 
-## ✅ المرحلة ٥: اختبار النشر
+## ✅ المرحلة 5: اختبار النشر
 
-### ٥.١ اختبر التسجيل
+### 5.1 اختبر التسجيل
 
 1. افتح الموقع المنشور
 2. اضغط **"ادخل التطبيق"**
@@ -170,14 +170,14 @@ CNAME www   cname.vercel-dns.com
 5. أدخل الرمز
 6. ✅ يجب أن تصل لـ `/dashboard`
 
-### ٥.٢ اختبر إنشاء حجز
+### 5.2 اختبر إنشاء حجز
 
 1. من Dashboard، اضغط **"+ حجز جديد"**
 2. املأ النموذج
 3. احفظ
 4. ✅ يجب أن يظهر في القائمة
 
-### ٥.٣ اختبر API
+### 5.3 اختبر API
 
 ```bash
 # Health check (لا يحتاج مصادقة)
@@ -187,7 +187,7 @@ curl https://your-domain.vercel.app/api/health
 # {"status":"ok","timestamp":"...","version":"0.1.0"}
 ```
 
-### ٥.٤ اجعل نفسك أدمن (لاختبار لوحة الإدارة)
+### 5.4 اجعل نفسك أدمن (لاختبار لوحة الإدارة)
 
 في Supabase SQL Editor:
 
@@ -213,7 +213,7 @@ git add .
 git commit -m "docs: update readme"
 git push
 
-# Vercel سينشر تلقائياً خلال ٣٠ ثانية
+# Vercel سينشر تلقائياً خلال 30 ثانية
 ```
 
 كذلك GitHub Actions ستشغّل:
@@ -265,7 +265,7 @@ dig spirmedical.iq +short
 # يجب أن يُرجع: 76.76.21.21
 ```
 
-إذا لم يُرجع، تحقق من DNS مزوّد النطاق وانتظر ٢٤ ساعة.
+إذا لم يُرجع، تحقق من DNS مزوّد النطاق وانتظر 24 ساعة.
 
 ---
 

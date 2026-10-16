@@ -19,7 +19,7 @@ import './styles/marketing.css';
 export const metadata = {
   alternates: { canonical: '/' },
   title: 'سباير ميديكال · Spir Medical — منصة طبية رقمية متكاملة في العراق',
-  description: 'الرعاية الصحية بين يديك · ١٥ خدمة طبية · في كل المحافظات العراقية',
+  description: 'الرعاية الصحية بين يديك · 15 خدمة طبية · في كل المحافظات العراقية',
 };
 
 export const dynamic = 'force-dynamic';
@@ -440,7 +440,7 @@ export default async function HomePage(
           <div className="landing-section-head">
             <span className="landing-eyebrow">الخدمات</span>
             <h2 className="landing-h2">
-              ١٤ خدمة طبية،
+              14 خدمة طبية،
               <br />
               <span className="landing-italic">في تطبيق واحد</span>
             </h2>
@@ -459,22 +459,22 @@ export default async function HomePage(
             <div className="landing-service">
               <div className="landing-service-icon emerald">🧪</div>
               <h3>فحوصات مختبرية</h3>
-              <p>+٢٠٠ فحص متاح، نتائج خلال ٢٤ ساعة، أسعار شفافة.</p>
+              <p>+200 فحص متاح، نتائج خلال 24 ساعة، أسعار شفافة.</p>
             </div>
             <div className="landing-service">
               <div className="landing-service-icon amber">🏥</div>
               <h3>حجز مستشفيات</h3>
-              <p>+٤٠ مستشفى شريك، احجز ميعادك من التطبيق دون انتظار.</p>
+              <p>+40 مستشفى شريك، احجز ميعادك من التطبيق دون انتظار.</p>
             </div>
             <div className="landing-service">
               <div className="landing-service-icon amber">👩‍⚕️</div>
               <h3>تمريض منزلي</h3>
-              <p>عناية مستمرة لكبار السن أو المرضى، فترات يومية أو ٢٤ ساعة.</p>
+              <p>عناية مستمرة لكبار السن أو المرضى، فترات يومية أو 24 ساعة.</p>
             </div>
             <div className="landing-service">
               <div className="landing-service-icon emerald">📞</div>
               <h3>استشارات طبية</h3>
-              <p>أكثر من ٢٠ تخصص، استشر طبيباً عبر الشات أو المكالمة المرئية.</p>
+              <p>أكثر من 20 تخصص، استشر طبيباً عبر الشات أو المكالمة المرئية.</p>
             </div>
             <div className="landing-service">
               <div className="landing-service-icon emerald">💊</div>
@@ -511,23 +511,23 @@ export default async function HomePage(
           <div className="landing-section-head">
             <span className="landing-eyebrow">كيف يعمل</span>
             <h2 className="landing-h2">
-              <span className="landing-italic">٣ خطوات</span> لتحصل على الرعاية
+              <span className="landing-italic">3 خطوات</span> لتحصل على الرعاية
             </h2>
           </div>
 
           <div className="landing-steps">
             <div className="landing-step">
-              <div className="landing-step-num">١</div>
+              <div className="landing-step-num">1</div>
               <h3>سجّل بسرعة</h3>
               <p>أدخل رقم هاتفك العراقي واختر رمزَ دخولٍ من ستّة أرقام.</p>
             </div>
             <div className="landing-step">
-              <div className="landing-step-num">٢</div>
+              <div className="landing-step-num">2</div>
               <h3>اختر الخدمة</h3>
               <p>اختر سحب الدم أو التمريض المنزلي، وحدّد الموعد والعنوان.</p>
             </div>
             <div className="landing-step">
-              <div className="landing-step-num">٣</div>
+              <div className="landing-step-num">3</div>
               <h3>استلم في بيتك</h3>
               <p>يصلك مختصٌّ معتمَد إلى المنزل. تابع الطلب ونتائجه من التطبيق.</p>
             </div>
@@ -643,7 +643,7 @@ export default async function HomePage(
                   <div className="landing-blog-meta">
                     <span>{article.author}</span>
                     <span aria-hidden="true">·</span>
-                    <span>{new Date(article.publishedAt).toLocaleDateString('ar-IQ', { month: 'long', day: 'numeric' })}</span>
+                    <span>{new Date(article.publishedAt).toLocaleDateString('ar-IQ-u-nu-latn', { month: 'long', day: 'numeric' })}</span>
                   </div>
                 </div>
               </Link>
@@ -880,7 +880,7 @@ export default async function HomePage(
                 ابدأ <span className="landing-italic">رحلتك الصحية</span> اليوم
               </h2>
               <p className="landing-cta-text">
-                مجاناً تماماً للتسجيل · بدون التزامات · ادخل عبر هاتفك في ٣٠ ثانية
+                مجاناً تماماً للتسجيل · بدون التزامات · ادخل عبر هاتفك في 30 ثانية
               </p>
               <div className="landing-cta-buttons">
                 <Link href={appHomePath ?? '/gate'} className="landing-cta-primary big">
@@ -981,12 +981,12 @@ export default async function HomePage(
               <ul>
                 <li><a href="mailto:support@spir-medical.com">support@spir-medical.com</a></li>
                 <li>الدعم الفني</li>
-                <li>+٩٦٤ ٧٨٠ ٣٩٩ ٣٥٨٥</li>
+                <li>+964 780 399 3585</li>
               </ul>
             </div>
           </div>
           <div className="landing-footer-bottom">
-            © ٢٠٢٦ Spir Medical · جميع الحقوق محفوظة
+            © 2026 Spir Medical · جميع الحقوق محفوظة
           </div>
         </div>
       </footer>

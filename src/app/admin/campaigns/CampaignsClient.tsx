@@ -251,7 +251,7 @@ export default function CampaignsClient({ campaigns }: Props) {
                       )}
                       <span>
                         <Calendar size={9} style={{ display: 'inline', verticalAlign: -1 }} />
-                        {' '}{new Date(c.created_at).toLocaleDateString('ar-IQ')}
+                        {' '}{new Date(c.created_at).toLocaleDateString('ar-IQ-u-nu-latn')}
                       </span>
                     </div>
                   </div>

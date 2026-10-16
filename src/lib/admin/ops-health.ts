@@ -31,7 +31,7 @@ export interface SpecialistCoverage {
 }
 
 export interface QueueHealth {
-  /** فشلت نهائياً خلال ٢٤ ساعة */
+  /** فشلت نهائياً خلال 24 ساعة */
   failed24h: number;
   /** ما تزال `pending` بعد محاولةٍ فاشلة — ستُعاد */
   retrying: number;

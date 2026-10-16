@@ -384,7 +384,7 @@ export default function NotificationSettingsClient({
                   </div>
                   <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                     آخر استخدام:{' '}
-                    {new Date(sub.last_used_at).toLocaleDateString('ar-IQ')}
+                    {new Date(sub.last_used_at).toLocaleDateString('ar-IQ-u-nu-latn')}
                   </div>
                 </div>
                 <button

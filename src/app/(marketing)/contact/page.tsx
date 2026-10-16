@@ -67,7 +67,7 @@ export default function ContactPage() {
             subtitle="دعم سريع للحالات العاجلة"
             value="07803993585"
             href="tel:+9647803993585"
-            hours="٩ ص - ٩ م"
+            hours="9 ص - 9 م"
           />
 
           <ContactCard
@@ -77,7 +77,7 @@ export default function ContactPage() {
             subtitle="الأسرع للردود - اكتب لنا"
             value="9647803993585"
             href="https://wa.me/9647803993585"
-            hours="٩ ص - ١٢ م"
+            hours="9 ص - 12 م"
           />
 
           <ContactCard
@@ -87,7 +87,7 @@ export default function ContactPage() {
             subtitle="للاستفسارات الرسمية"
             value="support@spir-medical.com"
             href="mailto:support@spir-medical.com"
-            hours="رد خلال ٢٤ ساعة"
+            hours="رد خلال 24 ساعة"
           />
 
           <ContactCard
@@ -144,7 +144,7 @@ export default function ContactPage() {
             }}
           >
             <Clock size={12} />
-            <span>أوقات الدوام: الأحد - الخميس | ٩ ص - ٦ م</span>
+            <span>أوقات الدوام: الأحد - الخميس | 9 ص - 6 م</span>
           </div>
         </div>
 

@@ -244,7 +244,7 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
                   </div>
                   <p style={{ fontSize: 12, color: 'var(--ink)', margin: '0 0 4px', lineHeight: 1.6 }}>{n.note}</p>
                   <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
-                    {n.admin_name} · {new Date(n.created_at).toLocaleString('ar-IQ', { dateStyle: 'short', timeStyle: 'short' })}
+                    {n.admin_name} · {new Date(n.created_at).toLocaleString('ar-IQ-u-nu-latn', { dateStyle: 'short', timeStyle: 'short' })}
                   </div>
                 </div>
               );

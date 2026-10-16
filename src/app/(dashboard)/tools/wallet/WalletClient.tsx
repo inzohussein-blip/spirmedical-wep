@@ -89,7 +89,7 @@ export default function WalletClient({
             </div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
               <span style={{ fontSize: 32, fontWeight: 900 }}>
-                {walletBalance.toLocaleString('ar-IQ')}
+                {walletBalance.toLocaleString('ar-IQ-u-nu-latn')}
               </span>
               <span style={{ fontSize: 14, opacity: 0.85 }}>د.ع</span>
             </div>
@@ -335,7 +335,7 @@ export default function WalletClient({
                       {t.description}
                     </div>
                     <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 2 }}>
-                      {new Date(t.created_at).toLocaleDateString('ar-IQ', {
+                      {new Date(t.created_at).toLocaleDateString('ar-IQ-u-nu-latn', {
                         year: 'numeric', month: 'short', day: 'numeric',
                       })}
                     </div>
@@ -347,7 +347,7 @@ export default function WalletClient({
                         fontWeight: 900,
                         color: isPositive ? 'var(--emerald)' : 'var(--rose)',
                       }}>
-                        {isPositive ? '+' : '-'}{t.amount.toLocaleString('ar-IQ')} د.ع
+                        {isPositive ? '+' : '-'}{t.amount.toLocaleString('ar-IQ-u-nu-latn')} د.ع
                       </div>
                     )}
                     {t.points > 0 && (

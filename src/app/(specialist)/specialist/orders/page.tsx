@@ -151,8 +151,8 @@ export default async function SpecialistOrdersPage(
               const status = STATUS_META[o.status] ?? STATUS_META.pending;
               const patient = patientMap.get(o.user_id);
               const date = new Date(o.scheduled_at);
-              const dateStr = date.toLocaleDateString('ar-IQ', { day: 'numeric', month: 'long' });
-              const timeStr = date.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' });
+              const dateStr = date.toLocaleDateString('ar-IQ-u-nu-latn', { day: 'numeric', month: 'long' });
+              const timeStr = date.toLocaleTimeString('ar-IQ-u-nu-latn', { hour: '2-digit', minute: '2-digit' });
               const isUnassigned = !o.assigned_specialist_id;
 
               return (

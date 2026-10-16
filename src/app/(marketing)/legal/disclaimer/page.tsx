@@ -22,16 +22,16 @@ export default function DisclaimerPage() {
           <h3>المحتويات</h3>
           <nav aria-label="Table of contents">
             <ol>
-              <li><a href="#intro">١. مقدمة</a></li>
-              <li><a href="#nature">٢. طبيعة الخدمة</a></li>
-              <li><a href="#emergency">٣. حالات الطوارئ</a></li>
-              <li><a href="#consultations">٤. الاستشارات الطبية</a></li>
-              <li><a href="#tests">٥. الفحوصات والتحاليل</a></li>
-              <li><a href="#medications">٦. الأدوية</a></li>
-              <li><a href="#tools">٧. الأدوات الذكية</a></li>
-              <li><a href="#liability">٨. حدود المسؤولية</a></li>
-              <li><a href="#advice">٩. متى تطلب المساعدة الفورية؟</a></li>
-              <li><a href="#contact">١٠. التواصل</a></li>
+              <li><a href="#intro">1. مقدمة</a></li>
+              <li><a href="#nature">2. طبيعة الخدمة</a></li>
+              <li><a href="#emergency">3. حالات الطوارئ</a></li>
+              <li><a href="#consultations">4. الاستشارات الطبية</a></li>
+              <li><a href="#tests">5. الفحوصات والتحاليل</a></li>
+              <li><a href="#medications">6. الأدوية</a></li>
+              <li><a href="#tools">7. الأدوات الذكية</a></li>
+              <li><a href="#liability">8. حدود المسؤولية</a></li>
+              <li><a href="#advice">9. متى تطلب المساعدة الفورية؟</a></li>
+              <li><a href="#contact">10. التواصل</a></li>
             </ol>
           </nav>
         </aside>
@@ -41,7 +41,7 @@ export default function DisclaimerPage() {
             <span className="legal-eyebrow">القانوني</span>
             <h1>إخلاء المسؤولية الطبية</h1>
             <p className="legal-meta">
-              آخر تحديث: ٩ مايو ٢٠٢٦ · مهم — يُرجى القراءة بعناية
+              آخر تحديث: 9 مايو 2026 · مهم — يُرجى القراءة بعناية
             </p>
           </header>
 
@@ -55,7 +55,7 @@ export default function DisclaimerPage() {
           </div>
 
           <section id="intro">
-            <h2>١. مقدمة</h2>
+            <h2>1. مقدمة</h2>
             <p>
               يصف هذا المستند حدود مسؤوليتنا فيما يتعلق بالمحتوى الطبي والخدمات
               المقدّمة عبر منصة <strong>سباير ميديكال</strong>. باستخدامك للمنصّة،
@@ -64,7 +64,7 @@ export default function DisclaimerPage() {
           </section>
 
           <section id="nature">
-            <h2>٢. طبيعة الخدمة</h2>
+            <h2>2. طبيعة الخدمة</h2>
             <p>
               سباير ميديكال هي <strong>منصّة رقمية وسيطة</strong> تُسهّل:
             </p>
@@ -81,12 +81,12 @@ export default function DisclaimerPage() {
           </section>
 
           <section id="emergency">
-            <h2>٣. حالات الطوارئ</h2>
+            <h2>3. حالات الطوارئ</h2>
             <div className="legal-callout warning">
               <span className="legal-callout-icon">🚨</span>
               <div>
                 <strong>في حالات الطوارئ الفورية:</strong> اتصل برقم الإسعاف
-                <strong> ١٢٢ </strong>
+                <strong> 122 </strong>
                 مباشرة أو توجّه إلى أقرب مستشفى. <strong>لا تستخدم سباير ميديكال
                 للحالات التي تهدّد الحياة.</strong>
               </div>
@@ -99,7 +99,7 @@ export default function DisclaimerPage() {
           </section>
 
           <section id="consultations">
-            <h2>٤. الاستشارات الطبية</h2>
+            <h2>4. الاستشارات الطبية</h2>
             <p>
               الاستشارات عبر المنصّة تتم مع <strong>أطبّاء مرخّصين</strong> من وزارة
               الصحة العراقية. مع ذلك:
@@ -113,7 +113,7 @@ export default function DisclaimerPage() {
           </section>
 
           <section id="tests">
-            <h2>٥. الفحوصات والتحاليل</h2>
+            <h2>5. الفحوصات والتحاليل</h2>
             <p>
               <strong>التحاليل المختبرية</strong> تُجرى في مختبرات معتمدة من وزارة
               الصحة. نتيجة التحليل:
@@ -130,7 +130,7 @@ export default function DisclaimerPage() {
           </section>
 
           <section id="medications">
-            <h2>٦. الأدوية</h2>
+            <h2>6. الأدوية</h2>
             <p>
               الأدوية المتوفرة عبر المنصّة:
             </p>
@@ -150,7 +150,7 @@ export default function DisclaimerPage() {
           </section>
 
           <section id="tools">
-            <h2>٧. الأدوات الذكية</h2>
+            <h2>7. الأدوات الذكية</h2>
             <p>
               تتضمّن المنصّة أدوات مساعدة مثل:
             </p>
@@ -171,7 +171,7 @@ export default function DisclaimerPage() {
           </section>
 
           <section id="liability">
-            <h2>٨. حدود المسؤولية</h2>
+            <h2>8. حدود المسؤولية</h2>
             <p>
               <strong>سباير ميديكال غير مسؤولة عن:</strong>
             </p>
@@ -185,9 +185,9 @@ export default function DisclaimerPage() {
           </section>
 
           <section id="advice">
-            <h2>٩. متى تطلب المساعدة الفورية؟</h2>
+            <h2>9. متى تطلب المساعدة الفورية؟</h2>
             <p>
-              <strong>اتصل بالإسعاف ١٢٢ فوراً</strong> أو توجّه لأقرب طوارئ في الحالات التالية:
+              <strong>اتصل بالإسعاف 122 فوراً</strong> أو توجّه لأقرب طوارئ في الحالات التالية:
             </p>
             <ul>
               <li>ألم شديد ومفاجئ في الصدر</li>
@@ -202,7 +202,7 @@ export default function DisclaimerPage() {
           </section>
 
           <section id="contact">
-            <h2>١٠. التواصل</h2>
+            <h2>10. التواصل</h2>
             <p>
               لأي استفسار حول هذا الإخلاء أو الخدمات الطبية:
             </p>

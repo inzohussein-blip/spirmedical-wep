@@ -106,7 +106,7 @@ export default function PharmaciesClient({ pharmacies }: Props) {
           {(
             [
               { id: 'all', label: 'الكل' },
-              { id: '24h', label: '٢٤ ساعة' },
+              { id: '24h', label: '24 ساعة' },
               { id: 'emergency', label: 'قسم طوارئ' },
             ] as const
           ).map((tab) => (
@@ -229,14 +229,14 @@ export default function PharmaciesClient({ pharmacies }: Props) {
                         style={{ verticalAlign: '-2px', marginLeft: 2 }}
                       />
                       {p.is_24h
-                        ? '٢٤ ساعة'
+                        ? '24 ساعة'
                         : p.opens_at && p.closes_at
                           ? `${p.opens_at.slice(0, 5)} - ${p.closes_at.slice(0, 5)}`
                           : 'ساعات العمل غير محددة'}
                     </div>
                     <div className="scr-list-item-tags">
                       {p.is_24h && (
-                        <span className="scr-tag scr-tag-success">٢٤ ساعة</span>
+                        <span className="scr-tag scr-tag-success">24 ساعة</span>
                       )}
                       {p.has_emergency_section && (
                         <span className="scr-tag">قسم طوارئ</span>

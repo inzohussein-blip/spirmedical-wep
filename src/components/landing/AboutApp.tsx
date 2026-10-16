@@ -90,7 +90,7 @@ export default function AboutApp({ variant = 'home' }: { variant?: 'home' | 'pag
               <ol className="ab-steps">
                 {HOW_IT_WORKS_AR.map((s, i) => (
                   <li key={s}>
-                    <span className="ab-step-num" aria-hidden="true">{(i + 1).toLocaleString('ar-IQ')}</span>
+                    <span className="ab-step-num" aria-hidden="true">{(i + 1).toLocaleString('ar-IQ-u-nu-latn')}</span>
                     <span>{s}</span>
                   </li>
                 ))}

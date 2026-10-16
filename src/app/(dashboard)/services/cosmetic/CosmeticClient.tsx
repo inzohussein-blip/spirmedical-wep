@@ -273,7 +273,7 @@ function ProductCard({ product, compact = false }: { product: Product; compact?:
             color: 'var(--ink-3)',
             textDecoration: 'line-through',
           }}>
-            {product.price.toLocaleString('ar-IQ')}
+            {product.price.toLocaleString('ar-IQ-u-nu-latn')}
           </span>
         )}
         <span style={{
@@ -281,7 +281,7 @@ function ProductCard({ product, compact = false }: { product: Product; compact?:
           fontWeight: 900,
           color: hasDiscount ? 'var(--rose)' : 'var(--emerald)',
         }}>
-          {finalPrice.toLocaleString('ar-IQ')}
+          {finalPrice.toLocaleString('ar-IQ-u-nu-latn')}
         </span>
         <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>د.ع</span>
       </div>

@@ -37,7 +37,7 @@ const FIRST_AID_CASES: FirstAidCase[] = [
     severity: 'critical',
     callEmergency: true,
     steps: [
-      'اتصل بالإسعاف ١٢٢ فوراً',
+      'اتصل بالإسعاف 122 فوراً',
       'اجعل المصاب يجلس مرتاحاً',
       'فك الملابس الضيقة',
       'إذا كان واعياً، أعطه أسبرين 300mg لمضغه',
@@ -53,7 +53,7 @@ const FIRST_AID_CASES: FirstAidCase[] = [
     severity: 'urgent',
     steps: [
       'أبعد المصاب عن مصدر الحرارة',
-      'برّد الحرق بماء بارد جاري لمدة ٢٠ دقيقة',
+      'برّد الحرق بماء بارد جاري لمدة 20 دقيقة',
       'لا تستخدم الثلج أو الزبدة',
       'غطِّ الحرق بقماش نظيف',
       'لا تفرقع الفقاعات',
@@ -73,7 +73,7 @@ const FIRST_AID_CASES: FirstAidCase[] = [
       'استمر بالضغط حتى يتوقف النزيف',
       'لا ترفع الضمادة لتفقد النزيف',
       'إذا تشبّع القماش، أضف طبقة فوقها',
-      'اتصل بالإسعاف إذا لم يتوقف خلال ١٠ دقائق',
+      'اتصل بالإسعاف إذا لم يتوقف خلال 10 دقائق',
     ],
   },
   {
@@ -98,7 +98,7 @@ const FIRST_AID_CASES: FirstAidCase[] = [
     severity: 'normal',
     steps: [
       'ضع المصاب على ظهره',
-      'ارفع ساقيه لمستوى أعلى من رأسه (٣٠ سم)',
+      'ارفع ساقيه لمستوى أعلى من رأسه (30 سم)',
       'فك الملابس الضيقة',
       'افحص التنفس والنبض',
       'لا تعطِه ماء حتى يستعيد وعيه كاملاً',
@@ -141,7 +141,7 @@ export default function GuestFirstAidClient() {
                 <span aria-hidden="true">📞</span>
                 <div>
                   <div className="first-aid-emergency-title">اتصل بالإسعاف فوراً</div>
-                  <div className="first-aid-emergency-number">١٢٢</div>
+                  <div className="first-aid-emergency-number">122</div>
                 </div>
               </a>
             )}
@@ -166,7 +166,7 @@ export default function GuestFirstAidClient() {
             )}
 
             <div className="tool-disclaimer">
-              💡 هذه الإرشادات لا تُغني عن الإسعاف المهني. اتصل بالإسعاف ١٢٢ في الحالات الخطيرة.
+              💡 هذه الإرشادات لا تُغني عن الإسعاف المهني. اتصل بالإسعاف 122 في الحالات الخطيرة.
             </div>
           </div>
         </div>
@@ -195,7 +195,7 @@ export default function GuestFirstAidClient() {
 
           <a href="tel:122" className="first-aid-quick-call">
             <span aria-hidden="true">📞</span>
-            <span>اتصل بالإسعاف ١٢٢</span>
+            <span>اتصل بالإسعاف 122</span>
           </a>
 
           <div className="first-aid-grid">
@@ -216,7 +216,7 @@ export default function GuestFirstAidClient() {
           </div>
 
           <div className="tool-disclaimer">
-            ⚠ في الحالات الحرجة، اتصل بالإسعاف ١٢٢ فوراً قبل تطبيق الإسعافات الأولية.
+            ⚠ في الحالات الحرجة، اتصل بالإسعاف 122 فوراً قبل تطبيق الإسعافات الأولية.
           </div>
         </div>
       </div>

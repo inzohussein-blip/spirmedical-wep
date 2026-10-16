@@ -90,7 +90,7 @@ export default async function PatientDetailPage(props: { params: Promise<{ id: s
                   {patient.governorate && <span>📍 {patient.governorate}</span>}
                 </div>
                 <div style={{ marginTop: 8, fontSize: 11, color: 'var(--ink-3)' }}>
-                  انضم في {new Date(patient.created_at).toLocaleDateString('ar-IQ')}
+                  انضم في {new Date(patient.created_at).toLocaleDateString('ar-IQ-u-nu-latn')}
                 </div>
               </div>
 
@@ -141,7 +141,7 @@ export default async function PatientDetailPage(props: { params: Promise<{ id: s
                     <div>
                       <div style={{ fontSize: 13, fontWeight: 700 }}>{a.service_type}</div>
                       <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
-                        {new Date(a.scheduled_at).toLocaleString('ar-IQ', { dateStyle: 'medium', timeStyle: 'short' })}
+                        {new Date(a.scheduled_at).toLocaleString('ar-IQ-u-nu-latn', { dateStyle: 'medium', timeStyle: 'short' })}
                       </div>
                     </div>
                     <span style={{

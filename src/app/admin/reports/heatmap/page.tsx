@@ -85,7 +85,7 @@ export default async function HeatmapPage() {
             إجمالي الطلبات بـ GPS
           </div>
           <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--emerald)', marginTop: 4 }}>
-            {total.toLocaleString('ar-IQ')}
+            {total.toLocaleString('ar-IQ-u-nu-latn')}
           </div>
         </Card>
 
@@ -94,7 +94,7 @@ export default async function HeatmapPage() {
             إجمالي الطلبات
           </div>
           <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--ink)', marginTop: 4 }}>
-            {totalWithoutGps.toLocaleString('ar-IQ')}
+            {totalWithoutGps.toLocaleString('ar-IQ-u-nu-latn')}
           </div>
         </Card>
 

@@ -235,7 +235,7 @@ export default function PrescriptionsClient({ prescriptions }: { prescriptions: 
           </div>
           <div className="scr-list-stack">
             {prescriptions.map((p) => {
-              const date = new Date(p.prescribed_at).toLocaleDateString('ar-IQ', { day: 'numeric', month: 'long', year: 'numeric' });
+              const date = new Date(p.prescribed_at).toLocaleDateString('ar-IQ-u-nu-latn', { day: 'numeric', month: 'long', year: 'numeric' });
               return (
                 <article key={p.id} className="scr-list-item">
                   <div className="scr-list-item-icon" aria-hidden="true">

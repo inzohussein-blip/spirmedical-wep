@@ -128,7 +128,7 @@ export default async function PatientsListPage(props: { searchParams: Promise<Se
                       <a href={`tel:${p.phone}`} style={{ color: 'var(--emerald)', textDecoration: 'none' }}>{p.phone}</a>
                     </td>
                     <td style={td}>{p.governorate ?? '—'}</td>
-                    <td style={td}>{new Date(p.created_at).toLocaleDateString('ar-IQ')}</td>
+                    <td style={td}>{new Date(p.created_at).toLocaleDateString('ar-IQ-u-nu-latn')}</td>
                     <td style={td}>
                       <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                         {tags.length === 0 ? (

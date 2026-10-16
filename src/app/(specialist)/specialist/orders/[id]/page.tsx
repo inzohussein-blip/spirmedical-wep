@@ -234,10 +234,10 @@ export default async function SpecialistOrderDetailPage(
             </div>
             <div className="scr-list-item-content">
               <div className="scr-list-item-title">
-                {date.toLocaleDateString('ar-IQ', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                {date.toLocaleDateString('ar-IQ-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
               </div>
               <div className="scr-list-item-subtitle">
-                {date.toLocaleTimeString('ar-IQ', { hour: '2-digit', minute: '2-digit' })}
+                {date.toLocaleTimeString('ar-IQ-u-nu-latn', { hour: '2-digit', minute: '2-digit' })}
               </div>
             </div>
           </div>

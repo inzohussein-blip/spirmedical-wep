@@ -68,7 +68,7 @@ export default function GuestPharmaciesClient() {
               className={`scr-tab ${filter === 'open24' ? 'active' : ''}`}
               onClick={() => setFilter('open24')}
               type="button"
-            >مفتوح ٢٤ ساعة</button>
+            >مفتوح 24 ساعة</button>
           </div>
 
           <div className="pharmacy-info-banner">
@@ -92,7 +92,7 @@ export default function GuestPharmaciesClient() {
                       <div className="hospital-meta">
                         {pharmacy.open24 && (
                           <span className="hospital-emergency-badge" style={{ background: 'var(--emerald)', color: 'var(--paper-3)' }}>
-                            ٢٤ ساعة
+                            24 ساعة
                           </span>
                         )}
                       </div>

@@ -326,7 +326,7 @@ export interface WaOverview {
   secretSet: boolean;
   available: boolean;
   gateway: { connected: boolean; lastSeenAt: string; detail: Record<string, unknown> } | null;
-  /** آخر ٢٤ ساعة: طُلب، وتحقّق، واستُعمل، وانتهى/أُبطل */
+  /** آخر 24 ساعة: طُلب، وتحقّق، واستُعمل، وانتهى/أُبطل */
   last24h: { started: number; verified: number; consumed: number; expired: number };
 }
 

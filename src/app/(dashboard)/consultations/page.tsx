@@ -159,7 +159,7 @@ export default async function ConsultationsPage() {
                         >
                           <Clock size={10} color="var(--ink-3)" />
                           <span style={{ color: 'var(--ink-3)' }}>
-                            {date.toLocaleDateString('ar-IQ', { day: 'numeric', month: 'short' })}
+                            {date.toLocaleDateString('ar-IQ-u-nu-latn', { day: 'numeric', month: 'short' })}
                           </span>
                           <span
                             style={{

@@ -263,7 +263,7 @@ export default async function VaccinesPage() {
                         </span>
                       ) : (
                         <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--emerald, #01875F)' }}>
-                          {vaccine.price.toLocaleString('ar-IQ')} د.ع
+                          {vaccine.price.toLocaleString('ar-IQ-u-nu-latn')} د.ع
                         </div>
                       )}
                     </div>

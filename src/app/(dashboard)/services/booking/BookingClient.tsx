@@ -269,7 +269,7 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
               {/* السعر اختياري على المزوّد: بدونه كان يُطبع « د.ع» وحدها */}
               {provider.packagePrice ? (
                 <span style={{ fontSize: 14, fontWeight: 900, color: 'var(--emerald)' }}>
-                  {provider.packagePrice.toLocaleString('ar-IQ')} د.ع
+                  {provider.packagePrice.toLocaleString('ar-IQ-u-nu-latn')} د.ع
                 </span>
               ) : (
                 <span style={{ fontSize: 12, color: 'var(--ink-3)' }}>السعر عند التواصل</span>
@@ -533,7 +533,7 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
               )}
               <ReviewRow
                 label="التاريخ"
-                value={new Date(`${date}T${time}`).toLocaleDateString('ar-IQ', {
+                value={new Date(`${date}T${time}`).toLocaleDateString('ar-IQ-u-nu-latn', {
                   weekday: 'long',
                   day: 'numeric',
                   month: 'long',
@@ -555,7 +555,7 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
                 }}>
                   <span style={{ fontSize: 13, fontWeight: 700 }}>الإجمالي:</span>
                   <span style={{ fontSize: 18, fontWeight: 900, color: 'var(--emerald)' }}>
-                    {provider.packagePrice.toLocaleString('ar-IQ')} د.ع
+                    {provider.packagePrice.toLocaleString('ar-IQ-u-nu-latn')} د.ع
                   </span>
                 </div>
               )}

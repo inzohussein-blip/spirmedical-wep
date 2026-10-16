@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SERVICES, CATEGORIES, formatPrice, formatDuration, type Service } from '@/lib/services/services-data';
-import { generateAvailableDates, generateTimeSlotsForDate, groupTimeSlots, formatDateRelative, toArabicDigits, type TimeSlot } from '@/lib/services/time-slots';
+import { generateAvailableDates, generateTimeSlotsForDate, groupTimeSlots, formatDateRelative, type TimeSlot } from '@/lib/services/time-slots';
 import UserLocationPickerWrapper from '@/components/maps/UserLocationPickerWrapper';
 import {
   Calendar, MapPin, Lightbulb, Monitor, Clock, FileText, ChevronUp,
@@ -151,7 +151,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit, unavailabl
         {[1, 2, 3, 4].map((s) => (
           <div key={s} className="wizard-progress-row">
             <div className={`wizard-step-circle ${step >= s ? 'active' : ''} ${step > s ? 'done' : ''}`}>
-              {step > s ? '✓' : toArabicDigits(s)}
+              {step > s ? '✓' : String(s)}
             </div>
             {s < 4 && (
               <div className={`wizard-step-line ${step > s ? 'active' : ''}`} />
@@ -161,7 +161,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit, unavailabl
       </div>
 
       <div className="wizard-step-info">
-        <div className="wizard-step-num">الخطوة {toArabicDigits(step)} من ٤</div>
+        <div className="wizard-step-num">الخطوة {String(step)} من 4</div>
         <div className="wizard-step-title">
           {step === 1 && 'اختر الخدمة'}
           {step === 2 && 'اختر الوقت'}
@@ -289,7 +289,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit, unavailabl
                   className={`date-pill ${isSelected ? 'active' : ''}`}
                 >
                   <div className="date-pill-day">{formatDateRelative(d)}</div>
-                  <div className="date-pill-num">{toArabicDigits(d.getDate())}</div>
+                  <div className="date-pill-num">{String(d.getDate())}</div>
                 </button>
               );
             })}
@@ -373,7 +373,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit, unavailabl
               </div>
               <div>
                 <h3>خدمة عن بُعد</h3>
-                <p>سنرسل لك رابط المكالمة قبل الموعد بـ ١٥ دقيقة</p>
+                <p>سنرسل لك رابط المكالمة قبل الموعد بـ 15 دقيقة</p>
               </div>
             </div>
           )}
@@ -387,7 +387,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit, unavailabl
               rows={3}
               maxLength={1000}
             />
-            <div className="field-counter">{toArabicDigits(data.notes.length)}/١٠٠٠</div>
+            <div className="field-counter">{String(data.notes.length)}/1000</div>
           </div>
 
           {!data.service?.needsAddress && data.phone === '' && (

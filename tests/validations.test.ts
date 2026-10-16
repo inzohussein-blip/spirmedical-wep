@@ -23,7 +23,7 @@ describe('Auth validation', () => {
   });
 
   describe('otpSchema', () => {
-    it('يقبل رمز ٦ أرقام', () => {
+    it('يقبل رمز 6 أرقام', () => {
       expect(
         otpSchema.safeParse({ phone: '+9647712345678', token: '123456' }).success
       ).toBe(true);
@@ -114,7 +114,7 @@ describe('Appointment validation', () => {
       ).toBe(false);
     });
 
-    it('يرفض ملاحظات أطول من ١٠٠٠ حرف', () => {
+    it('يرفض ملاحظات أطول من 1000 حرف', () => {
       expect(
         appointmentSchema.safeParse({
           service_type: 'سحب دم',
@@ -141,7 +141,7 @@ describe('Appointment validation', () => {
   });
 
   describe('appointmentStatusEnum', () => {
-    it('يقبل كل الحالات الـ٥', () => {
+    it('يقبل كل الحالات الـ5', () => {
       const valid = ['pending', 'confirmed', 'in_progress', 'completed', 'cancelled'];
       for (const status of valid) {
         expect(appointmentStatusEnum.safeParse(status).success).toBe(true);

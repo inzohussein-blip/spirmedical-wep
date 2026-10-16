@@ -193,7 +193,7 @@ export default function OrderTrackClient({ id, initialStatus, estimatedPrice }: 
               <div className="scr-list-item-subtitle">الدفع عند الاستلام · يُتفق عليه مع الاختصاصي</div>
             </div>
             {SHOW_PRICES && estimatedPrice != null && (
-              <span className="scr-tag scr-tag-amber">{estimatedPrice.toLocaleString('ar-IQ')} د.ع</span>
+              <span className="scr-tag scr-tag-amber">{estimatedPrice.toLocaleString('ar-IQ-u-nu-latn')} د.ع</span>
             )}
           </div>
         </div>

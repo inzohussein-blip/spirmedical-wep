@@ -252,7 +252,7 @@ export default async function SpecialistChatsPage() {
                               ? 'الآن'
                               : diffHours < 24
                               ? `قبل ${Math.floor(diffHours)} ساعة`
-                              : lastMsg.toLocaleDateString('ar-IQ', {
+                              : lastMsg.toLocaleDateString('ar-IQ-u-nu-latn', {
                                   month: 'short',
                                   day: 'numeric',
                                 })}
