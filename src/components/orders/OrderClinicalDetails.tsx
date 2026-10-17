@@ -2,6 +2,7 @@ import {
   AlertTriangle, ShieldAlert, Droplet, User, Repeat, Package,
   Navigation, Receipt, Clock, FileImage,
 } from 'lucide-react';
+import { isUnpricedService } from '@/lib/config/pricing';
 
 /**
  * 🩺 تفاصيل الطلب السريرية
@@ -55,6 +56,8 @@ function activeFlags(
 
 export interface ClinicalOrder {
   service_id?: string | null;
+  service_type?: string | null;
+  required_specialist_type?: string | null;
   allergy_form?: unknown;
   allergy_form_filled?: boolean | null;
   infectious_disease_alert?: unknown;
@@ -200,7 +203,8 @@ export default function OrderClinicalDetails({ order }: { order: ClinicalOrder }
     });
   }
 
-  if (order.estimated_price) {
+  // التحاليلُ وسحبُ الدم بلا سعر في أيّ واجهة (`isUnpricedService`)
+  if (order.estimated_price && !isUnpricedService(order)) {
     rows.push({
       key: 'price',
       icon: <Receipt size={22} strokeWidth={2} />,

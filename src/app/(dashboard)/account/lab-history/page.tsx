@@ -6,7 +6,6 @@ import {
   Lock, FileText, AlertCircle, TrendingUp, Building2,
 } from 'lucide-react';
 import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
-import { SHOW_PRICES } from '@/lib/config/pricing';
 
 export const dynamic = 'force-dynamic';
 
@@ -248,7 +247,6 @@ export default async function LabHistoryPage() {
                     <div className="scr-list-item-content">
                       <div className="scr-list-item-title">
                         {order.test_ids.length} فحص
-                        {SHOW_PRICES && ` · ${order.total_price.toLocaleString('ar-IQ-u-nu-latn')} د.ع`}
                       </div>
                       <div className="scr-list-item-subtitle" style={{ fontSize: 11, color: 'var(--ink-2)' }}>
                         {testNames.join('، ')}

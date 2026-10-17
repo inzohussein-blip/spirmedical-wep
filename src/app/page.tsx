@@ -459,7 +459,7 @@ export default async function HomePage(
             <div className="landing-service">
               <div className="landing-service-icon emerald"><EmojiIcon e="🧪" /></div>
               <h3>فحوصات مختبرية</h3>
-              <p>+200 فحص متاح، نتائج خلال 24 ساعة، أسعار شفافة.</p>
+              <p>+200 فحص متاح، نتائج خلال 24 ساعة.</p>
             </div>
             <div className="landing-service">
               <div className="landing-service-icon amber"><EmojiIcon e="🏥" /></div>

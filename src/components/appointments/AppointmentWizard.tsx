@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SERVICES, CATEGORIES, formatPrice, formatDuration, type Service } from '@/lib/services/services-data';
+import { isUnpricedService } from '@/lib/config/pricing';
 import { generateAvailableDates, generateTimeSlotsForDate, groupTimeSlots, formatDateRelative, type TimeSlot } from '@/lib/services/time-slots';
 import UserLocationPickerWrapper from '@/components/maps/UserLocationPickerWrapper';
 import {
@@ -233,7 +234,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit, unavailabl
                     )}
                     <p className="aw-service-desc">{service.description}</p>
                     <div className="aw-service-meta">
-                      <span className="aw-service-price">من {formatPrice(service.basePrice)}</span>
+                      {!isUnpricedService(service) && <span className="aw-service-price">من {formatPrice(service.basePrice)}</span>}
                       <span className="aw-service-duration" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                         <Clock size={12} strokeWidth={2.2} />
                         {formatDuration(service.duration)}
@@ -465,6 +466,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit, unavailabl
 
             </div>
 
+            {data.service && !isUnpricedService(data.service) && (
             <div className="summary-price">
               <div className="summary-price-row">
                 <span>السعر التقديري</span>
@@ -475,6 +477,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit, unavailabl
                 السعر النهائي قد يختلف حسب المتطلبات الفعلية
               </div>
             </div>
+            )}
           </div>
 
           {/* تأكيد + شروط */}

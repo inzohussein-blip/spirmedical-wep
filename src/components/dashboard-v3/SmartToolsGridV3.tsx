@@ -70,7 +70,7 @@ function ToolCard({ tool, disabled }: { tool: ServiceConfig; disabled: boolean }
     <>
       {disabled && (
         <span style={{
-          position: 'absolute', top: 10, right: 10,
+          position: 'absolute', top: 10, left: 10,
           background: '#F1F3F4', color: '#5F6368',
           fontSize: 11, fontWeight: 700,
           padding: '2px 7px', borderRadius: 9999, zIndex: 2,

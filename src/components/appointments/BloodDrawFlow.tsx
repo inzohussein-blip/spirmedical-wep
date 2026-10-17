@@ -35,7 +35,6 @@ import {
   calculateBundleDiscount,
 } from '@/lib/services/blood-tests-data';
 import { ALL_LABS, ANY_LAB, type Lab } from '@/lib/services/labs-data';
-import { SHOW_PRICES } from '@/lib/config/pricing';
 import UserLocationPickerWrapper, { type LocationData } from '@/components/maps/UserLocationPickerWrapper';
 import {
   validateBloodDraw,
@@ -368,12 +367,6 @@ export default function BloodDrawFlow({
                     <div className="bd-sug-name">{test.nameAr}</div>
                     <div className="bd-sug-meta">
                       <span className="bd-sug-code">{test.code}</span>
-                      {SHOW_PRICES && (
-                        <>
-                          <span>·</span>
-                          <span>{formatTestPrice(test.price)}</span>
-                        </>
-                      )}
                     </div>
                   </div>
                   <span className="bd-sug-action">{isSel ? '✓' : '+'}</span>
@@ -409,9 +402,6 @@ export default function BloodDrawFlow({
                   >
                     <span className="bd-chip-emoji">{test.emoji}</span>
                     <span className="bd-chip-name">{test.nameAr}</span>
-                    {SHOW_PRICES && (
-                      <span className="bd-chip-price">{(test.price / 1000)}ك</span>
-                    )}
                   </button>
                 );
               })}
@@ -430,9 +420,6 @@ export default function BloodDrawFlow({
                   >
                     <span className="bd-chip-emoji">{test.emoji}</span>
                     <span className="bd-chip-name">{test.nameAr}</span>
-                    {SHOW_PRICES && (
-                      <span className="bd-chip-price">{(test.price / 1000)}ك</span>
-                    )}
                   </button>
                 );
               })}
@@ -445,9 +432,6 @@ export default function BloodDrawFlow({
           <div className="bd-selected-list">
             <div className="bd-selected-head">
               <strong>التحاليل المختارة ({selectedTests.length})</strong>
-              {SHOW_PRICES && discount > 0 && (
-                <span className="bd-discount-badge">خصم {Math.round((discount / subtotal) * 100)}%</span>
-              )}
             </div>
             <div className="bd-selected-items">
               {selectedTests.map((id) => {
@@ -457,9 +441,6 @@ export default function BloodDrawFlow({
                   <div key={id} className="bd-selected-item">
                     <span className="bd-sel-emoji">{t.emoji}</span>
                     <span className="bd-sel-name">{t.nameAr}</span>
-                    {SHOW_PRICES && (
-                      <span className="bd-sel-price">{formatTestPrice(t.price)}</span>
-                    )}
                     <button
                       type="button"
                       className="bd-sel-remove"
@@ -791,27 +772,11 @@ export default function BloodDrawFlow({
       {selectedTests.length > 0 && (
         <div className="bd-price-card">
           <div className="bd-price-title">ملخّص الطلب</div>
-          {SHOW_PRICES ? (
-            <>
-              <div className="bd-price-line">
-                <span>التحاليل ({selectedTests.length})</span>
-                <span>{formatTestPrice(total)}</span>
-              </div>
-              <div className="bd-price-line">
-                <span>زيارة فني المختبر</span>
-                <span>{formatTestPrice(BLOOD_DRAW_PRICE)}</span>
-              </div>
-              <div className="bd-price-line bd-price-total">
-                <span>الإجمالي</span>
-                <strong>{formatTestPrice(totalWithDrawing)}</strong>
-              </div>
-            </>
-          ) : (
-            <div className="bd-price-line bd-price-total">
-              <span>التحاليل المختارة</span>
-              <strong>{selectedTests.length}</strong>
-            </div>
-          )}
+          {/* بلا سعر: التحاليلُ وسحبُ الدم لا تُسعَّر (`isUnpricedService`) */}
+          <div className="bd-price-line bd-price-total">
+            <span>التحاليل المختارة</span>
+            <strong>{selectedTests.length}</strong>
+          </div>
           {resultTime && (
             <div className="bd-result-eta">
               <BarChart3 size={14} strokeWidth={2.2} aria-hidden />
@@ -844,11 +809,6 @@ export default function BloodDrawFlow({
           <div className="bd-footer-sum" aria-live="polite">
             {selectedTests.length === 0 ? (
               <span>لم تختر تحليلاً بعد</span>
-            ) : SHOW_PRICES ? (
-              <>
-                <span>الإجمالي</span>
-                <strong>{formatTestPrice(totalWithDrawing)}</strong>
-              </>
             ) : (
               <>
                 <span>التحاليل المختارة</span>

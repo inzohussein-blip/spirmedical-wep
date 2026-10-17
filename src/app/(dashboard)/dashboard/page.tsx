@@ -101,7 +101,7 @@ export default async function DashboardPage() {
           <PromoCardsV3 />
 
           {/* 6️⃣ Featured Service (سحب الدم) */}
-          <FeaturedServiceCardV3 duration="30 دقيقة" priceFrom={15} />
+          <FeaturedServiceCardV3 duration="30 دقيقة" />
 
           {/* 7️⃣ Core Services Grid (15 خدمة) */}
           <BentoServicesGridV3 />
