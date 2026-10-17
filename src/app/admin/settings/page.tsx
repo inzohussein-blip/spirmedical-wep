@@ -4,6 +4,7 @@ import { isSuperAdmin } from '@/lib/admin-types';
 import AutoRejectClient from './AutoRejectClient';
 import { AUTO_REJECT_KEY } from '@/lib/app-settings';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -21,7 +22,7 @@ export default async function SettingsPage() {
   if (!isSuperAdmin(profile?.role)) {
     return (
       <div style={{ background: 'var(--white)', borderRadius: 14, padding: 64, textAlign: 'center' }}>
-        <div style={{ fontSize: 48, marginBottom: 12 }}>🚫</div>
+        <div style={{ fontSize: 48, marginBottom: 12 }}><EmojiIcon e="🚫" /></div>
         <h1 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 6px' }}>غير مصرّح</h1>
         <p style={{ fontSize: 13, color: 'var(--ink-3)' }}>هذه الصفحة للمدير العام فقط</p>
       </div>
@@ -51,14 +52,14 @@ export default async function SettingsPage() {
 
   return (
     <>
-      <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}>⚙️ الإعدادات</h1>
+      <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}><EmojiIcon e="⚙️" /> الإعدادات</h1>
       <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: '0 0 20px' }}>
         إعدادات النظام والصلاحيات
       </p>
 
       {/* النظام */}
       <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginBottom: 16 }}>
-        <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}>📊 إحصائيات النظام</h2>
+        <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}><EmojiIcon e="📊" /> إحصائيات النظام</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
           <StatBox label="إجمالي المستخدمين" value={(totalUsers ?? 0).toLocaleString('ar-IQ-u-nu-latn')} />
           <StatBox label="المديرون" value={(totalAdmins ?? 0).toLocaleString('ar-IQ-u-nu-latn')} />
@@ -70,14 +71,14 @@ export default async function SettingsPage() {
       {/* الرفض التلقائيّ للطلبات المعلَّقة */}
       <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginBottom: 16 }}>
         <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}>
-          ⏳ الرفض التلقائيّ للطلبات المعلَّقة
+          <EmojiIcon e="⏳" /> الرفض التلقائيّ للطلبات المعلَّقة
         </h2>
         <AutoRejectClient initialHours={Number.isFinite(autoRejectHours) ? autoRejectHours : 0} />
       </div>
 
       {/* روابط سريعة */}
       <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginBottom: 16 }}>
-        <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}>🔗 روابط الإدارة</h2>
+        <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}><EmojiIcon e="🔗" /> روابط الإدارة</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
           <SettingsLink href="/admin/settings/theme" icon="🎨" title="تخصيص الألوان" desc="غيّر ألوان المنصة كاملة" />
           <SettingsLink href="/admin/admins" icon="👥" title="إدارة المديرين" desc="إضافة وتعيين الأدوار" />
@@ -89,7 +90,7 @@ export default async function SettingsPage() {
 
       {/* معلومات تقنية */}
       <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20 }}>
-        <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}>🔧 معلومات النظام</h2>
+        <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}><EmojiIcon e="🔧" /> معلومات النظام</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16, fontSize: 13 }}>
           <Info label="نسخة النظام" value="Spir Medical v22 · Admin" />
           <Info label="قاعدة البيانات" value="Supabase PostgreSQL" />
@@ -124,7 +125,7 @@ function SettingsLink({ href, icon, title, desc }: { href: string; icon: string;
       display: 'flex', gap: 12, padding: 16, background: 'var(--paper-3)',
       borderRadius: 10, textDecoration: 'none', color: 'var(--ink)',
     }}>
-      <div style={{ fontSize: 24 }}>{icon}</div>
+      <div style={{ fontSize: 24 }}><EmojiIcon e={icon} /></div>
       <div>
         <div style={{ fontSize: 13, fontWeight: 800, marginBottom: 2 }}>{title}</div>
         <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{desc}</div>

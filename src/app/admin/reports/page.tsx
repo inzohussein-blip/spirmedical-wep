@@ -4,6 +4,7 @@ import ReportsClient from './ReportsClient';
 import { EmptyState } from '@/components/ui';
 import { baghdadDayWindow } from '@/lib/time/baghdad-day';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -128,7 +129,7 @@ export default async function ReportsPage(props: { searchParams: Promise<SearchP
     <>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 20 }}>
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}>📈 التقارير</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}><EmojiIcon e="📈" /> التقارير</h1>
           <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: 0 }}>
             الفترة: <strong>{range.label}</strong>
           </p>
@@ -154,7 +155,7 @@ export default async function ReportsPage(props: { searchParams: Promise<SearchP
             border: '1px solid var(--emerald)',
           }}
         >
-          🎯 العمليات المباشرة
+          <EmojiIcon e="🎯" /> العمليات المباشرة
         </a>
         <a
           href="/admin/reports/heatmap"
@@ -172,7 +173,7 @@ export default async function ReportsPage(props: { searchParams: Promise<SearchP
             border: '1px solid var(--rose)',
           }}
         >
-          🌡️ خريطة الحرارة
+          <EmojiIcon e="🌡️" /> خريطة الحرارة
         </a>
         <a
           href="/admin/reports/geographic"
@@ -190,7 +191,7 @@ export default async function ReportsPage(props: { searchParams: Promise<SearchP
             border: '1px solid var(--amber)',
           }}
         >
-          📊 التقارير الجغرافية
+          <EmojiIcon e="📊" /> التقارير الجغرافية
         </a>
       </div>
 
@@ -241,7 +242,7 @@ export default async function ReportsPage(props: { searchParams: Promise<SearchP
 
         {/* Top types */}
         <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20 }}>
-          <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}>📊 الطلبات حسب النوع</h2>
+          <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}><EmojiIcon e="📊" /> الطلبات حسب النوع</h2>
           {Object.keys(typeStats).length === 0 ? (
             <EmptyState icon="📊" title="لا توجد بيانات" size="sm" variant="plain" />
           ) : (
@@ -253,7 +254,7 @@ export default async function ReportsPage(props: { searchParams: Promise<SearchP
                 return (
                   <div key={type}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                      <span style={{ fontSize: 12, fontWeight: 700 }}>{meta?.icon} {meta?.label ?? type}</span>
+                      <span style={{ fontSize: 12, fontWeight: 700 }}><EmojiIcon e={meta?.icon} /> {meta?.label ?? type}</span>
                       <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--emerald-deep)' }}>{count}</span>
                     </div>
                     <div style={{ background: 'var(--paper-3)', height: 8, borderRadius: 100, overflow: 'hidden' }}>
@@ -268,7 +269,7 @@ export default async function ReportsPage(props: { searchParams: Promise<SearchP
 
         {/* Top governorates */}
         <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20 }}>
-          <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}>📍 الطلبات حسب المحافظة</h2>
+          <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}><EmojiIcon e="📍" /> الطلبات حسب المحافظة</h2>
           {Object.keys(govStats).length === 0 ? (
             <EmptyState icon="📊" title="لا توجد بيانات" size="sm" variant="plain" />
           ) : (
@@ -279,7 +280,7 @@ export default async function ReportsPage(props: { searchParams: Promise<SearchP
                 return (
                   <div key={gov}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                      <span style={{ fontSize: 12, fontWeight: 700 }}>📍 {gov}</span>
+                      <span style={{ fontSize: 12, fontWeight: 700 }}><EmojiIcon e="📍" /> {gov}</span>
                       <span style={{ fontSize: 12, fontWeight: 800, color: 'var(--emerald-deep)' }}>{count}</span>
                     </div>
                     <div style={{ background: 'var(--paper-3)', height: 8, borderRadius: 100, overflow: 'hidden' }}>
@@ -295,7 +296,7 @@ export default async function ReportsPage(props: { searchParams: Promise<SearchP
 
       {/* Top specialists */}
       <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginTop: 20 }}>
-        <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}>🏆 أفضل الاختصاصيين أداءً</h2>
+        <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}><EmojiIcon e="🏆" /> أفضل الاختصاصيين أداءً</h2>
         {topSpecList.length === 0 ? (
           <EmptyState icon="📊" title="لا توجد بيانات" size="sm" variant="plain" />
         ) : (
@@ -333,7 +334,7 @@ export default async function ReportsPage(props: { searchParams: Promise<SearchP
 function StatBox({ label, value, icon, color }: { label: string; value: string; icon: string; color: string }) {
   return (
     <div style={{ background: 'var(--white)', borderRadius: 12, padding: 16, borderRight: `4px solid ${color}` }}>
-      <div style={{ fontSize: 24, marginBottom: 4 }}>{icon}</div>
+      <div style={{ fontSize: 24, marginBottom: 4 }}><EmojiIcon e={icon} /></div>
       <div style={{ fontSize: 22, fontWeight: 900, color, lineHeight: 1, marginBottom: 4 }}>{value}</div>
       <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>{label}</div>
     </div>

@@ -9,6 +9,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import MentalHealthAdminClient from './MentalHealthAdminClient';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'إدارة الصحة النفسية - Admin' };
 
@@ -44,7 +45,7 @@ export default async function AdminMentalHealthPage() {
           textDecoration: 'none', color: 'var(--ink-2)', fontSize: 13,
         }}>← العودة</Link>
         <h1 style={{ fontSize: 20, fontWeight: 900, margin: 0 }}>
-          🧠 إدارة الأخصائيين النفسيين
+          <EmojiIcon e="🧠" /> إدارة الأخصائيين النفسيين
         </h1>
       </div>
       <MentalHealthAdminClient

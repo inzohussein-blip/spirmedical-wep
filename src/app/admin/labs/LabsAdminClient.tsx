@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface PartnerLab {
   id: string;
   name_ar: string;
@@ -221,7 +222,7 @@ export default function LabsAdminClient({ labs }: Props) {
                   <td style={{ padding: 10, fontWeight: 700 }}>{lab.total_orders}</td>
                   <td style={{ padding: 10 }}>
                     <span style={{ fontSize: 12 }}>
-                      ⭐ {lab.rating_avg.toFixed(1)} <span style={{ color: 'var(--ink-3)' }}>({lab.rating_count})</span>
+                      <EmojiIcon e="⭐" /> {lab.rating_avg.toFixed(1)} <span style={{ color: 'var(--ink-3)' }}>({lab.rating_count})</span>
                     </span>
                   </td>
                   <td style={{ padding: 10 }}>

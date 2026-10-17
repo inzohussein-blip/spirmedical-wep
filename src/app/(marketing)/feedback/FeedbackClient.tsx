@@ -13,6 +13,7 @@ import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
 import FieldError from '@/components/forms/FieldError';
 import { submitFeedback } from '@/app/admin/feedback/actions';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 const FEEDBACK_FIELD_LABELS: Record<string, string> = { message: 'الرسالة' };
 
 const TYPES = [
@@ -125,7 +126,7 @@ export default function FeedbackClient() {
                   textAlign: 'start',
                 }}
               >
-                <div style={{ fontSize: 22 }}>{t.emoji}</div>
+                <div style={{ fontSize: 22 }}><EmojiIcon e={t.emoji} /></div>
                 <div style={{ flex: 1 }}>
                   <div style={{
                     fontSize: 12,
@@ -293,7 +294,7 @@ export default function FeedbackClient() {
           marginTop: 12,
           lineHeight: 1.6,
         }}>
-          🔒 ملاحظتك سرية ولن تُنشر علناً
+          <EmojiIcon e="🔒" /> ملاحظتك سرية ولن تُنشر علناً
         </p>
 
         <div style={{ height: 60 }} />

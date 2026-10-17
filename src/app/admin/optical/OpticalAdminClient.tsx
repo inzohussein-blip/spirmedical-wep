@@ -14,6 +14,7 @@ import {
 } from './actions';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface OpticalStore {
   id: string;
   name: string;
@@ -133,7 +134,7 @@ export default function OpticalAdminClient({ initialStores }: { initialStores: O
               <tr key={s.id} style={{ borderBottom: '1px solid var(--line)' }}>
                 <td style={tdStyle}>
                   <div style={{ fontWeight: 700 }}>{s.name}</div>
-                  {s.is_featured && <span style={{ fontSize: 11, color: 'var(--amber)' }}>⭐</span>}
+                  {s.is_featured && <span style={{ fontSize: 11, color: 'var(--amber)' }}><EmojiIcon e="⭐" /></span>}
                 </td>
                 <td style={tdStyle}>{s.city}{s.district && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{s.district}</div>}</td>
                 <td style={tdStyle}>
@@ -170,7 +171,7 @@ export default function OpticalAdminClient({ initialStores }: { initialStores: O
             ))}
           </tbody>
         </table>
-        {filtered.length === 0 && <div style={{ padding: 40, textAlign: 'center', color: 'var(--ink-3)' }}>👓 لا توجد متاجر</div>}
+        {filtered.length === 0 && <div style={{ padding: 40, textAlign: 'center', color: 'var(--ink-3)' }}><EmojiIcon e="👓" /> لا توجد متاجر</div>}
       </div>
 
       {(showCreate || editingId) && (
@@ -233,7 +234,7 @@ function StoreModal({ store, onClose }: { store: OpticalStore | null; onClose: (
           {/* 🆕 V31: اختيار موقع المتجر من الخريطة */}
           <div style={{ marginBottom: 12 }}>
             <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6, color: '#2C2C2A' }}>
-              📍 حدّد الموقع على الخريطة
+              <EmojiIcon e="📍" /> حدّد الموقع على الخريطة
             </label>
             <AdminLocationPickerWrapper
               initialLat={form.latitude ?? null}
@@ -254,7 +255,7 @@ function StoreModal({ store, onClose }: { store: OpticalStore | null; onClose: (
 
           {/* Prices */}
           <div style={{ background: 'var(--paper-3)', padding: 12, borderRadius: 8 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>💰 الأسعار (د.ع)</div>
+            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}><EmojiIcon e="💰" /> الأسعار (د.ع)</div>
             <Field label="سعر فحص النظر">
               <input type="number" value={form.exam_price ?? ''} onChange={(e) => setForm({ ...form, exam_price: e.target.value === '' ? null : (parseInt(e.target.value) || null) })} style={inputStyle} />
             </Field>
@@ -278,7 +279,7 @@ function StoreModal({ store, onClose }: { store: OpticalStore | null; onClose: (
 
           {/* Services */}
           <div style={{ background: 'var(--paper-3)', padding: 12, borderRadius: 8 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>🔧 الخدمات</div>
+            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}><EmojiIcon e="🔧" /> الخدمات</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6 }}>
               <label style={checkboxLabelStyle}>
                 <input type="checkbox" checked={form.offers_eye_exam ?? true} onChange={(e) => setForm({ ...form, offers_eye_exam: e.target.checked })} />

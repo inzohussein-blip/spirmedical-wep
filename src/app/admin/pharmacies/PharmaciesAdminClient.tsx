@@ -13,6 +13,7 @@ import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWr
 import PhoneLink from '@/components/ui/PhoneLink';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Pharmacy {
   id: string;
   name: string;
@@ -290,7 +291,7 @@ function PharmacyModal({
         {/* 🆕 V31: اختيار موقع الصيدلية من الخريطة */}
         <div style={{ marginBottom: 12 }}>
           <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6, color: '#2C2C2A' }}>
-            📍 حدّد الموقع على الخريطة
+            <EmojiIcon e="📍" /> حدّد الموقع على الخريطة
           </label>
           <AdminLocationPickerWrapper
             initialLat={lat ? parseFloat(lat) : null}

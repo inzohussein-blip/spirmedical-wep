@@ -14,6 +14,7 @@ import {
 } from './actions';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface DentalClinic {
   id: string;
   name: string;
@@ -221,7 +222,7 @@ export default function DentalAdminClient({ initialClinics }: Props) {
               <tr key={c.id} style={{ borderBottom: '1px solid var(--line)' }}>
                 <td style={tdStyle}>
                   <div style={{ fontWeight: 700 }}>{c.name}</div>
-                  {c.is_featured && <span style={{ fontSize: 11, color: 'var(--amber)' }}>⭐ مميّزة</span>}
+                  {c.is_featured && <span style={{ fontSize: 11, color: 'var(--amber)' }}><EmojiIcon e="⭐" /> مميّزة</span>}
                 </td>
                 <td style={tdStyle}>
                   {c.city}
@@ -230,7 +231,7 @@ export default function DentalAdminClient({ initialClinics }: Props) {
                 <td style={tdStyle}>{c.doctor_count}</td>
                 <td style={tdStyle}>
                   {c.rating_count > 0 ? (
-                    <span>⭐ {c.rating_avg.toFixed(1)} ({c.rating_count})</span>
+                    <span><EmojiIcon e="⭐" /> {c.rating_avg.toFixed(1)} ({c.rating_count})</span>
                   ) : (
                     <span style={{ color: 'var(--ink-3)' }}>—</span>
                   )}
@@ -289,7 +290,7 @@ export default function DentalAdminClient({ initialClinics }: Props) {
 
         {filtered.length === 0 && (
           <div style={{ padding: 40, textAlign: 'center', color: 'var(--ink-3)' }}>
-            🦷 لا توجد عيادات
+            <EmojiIcon e="🦷" /> لا توجد عيادات
           </div>
         )}
       </div>
@@ -431,7 +432,7 @@ function ClinicModal({ clinic, onClose }: { clinic: DentalClinic | null; onClose
           {/* 🆕 V31: اختيار موقع العيادة من الخريطة */}
           <div style={{ marginBottom: 12 }}>
             <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6, color: '#2C2C2A' }}>
-              📍 حدّد الموقع على الخريطة
+              <EmojiIcon e="📍" /> حدّد الموقع على الخريطة
             </label>
             <AdminLocationPickerWrapper
               initialLat={form.latitude ?? null}
@@ -475,7 +476,7 @@ function ClinicModal({ clinic, onClose }: { clinic: DentalClinic | null; onClose
 
           {/* Pricing */}
           <div style={{ background: 'var(--paper-3)', padding: 12, borderRadius: 8 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>💰 الأسعار (د.ع)</div>
+            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}><EmojiIcon e="💰" /> الأسعار (د.ع)</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 8 }}>
               <Field label="تنظيف (من)">
                 <input
@@ -516,7 +517,7 @@ function ClinicModal({ clinic, onClose }: { clinic: DentalClinic | null; onClose
 
           {/* Services */}
           <div style={{ background: 'var(--paper-3)', padding: 12, borderRadius: 8 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>🦷 الخدمات</div>
+            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}><EmojiIcon e="🦷" /> الخدمات</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6 }}>
               {[
                 { key: 'offers_cleaning', label: 'تنظيف' },

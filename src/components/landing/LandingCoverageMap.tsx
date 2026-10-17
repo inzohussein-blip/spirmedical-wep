@@ -4,6 +4,7 @@ import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import type { MapMarker } from '@/types/location';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /**
  * ════════════════════════════════════════════════════════════════════
  * 🗺️ LandingCoverageMap (V25.41)
@@ -98,7 +99,7 @@ export default function LandingCoverageMap({ cities, height = 420 }: Props) {
             ×
           </button>
           <div className="landing-map-city-name">
-            <span aria-hidden="true">📍</span>
+            <span aria-hidden="true"><EmojiIcon e="📍" /></span>
             <strong>{selectedCity.name}</strong>
           </div>
           <div className="landing-map-city-stats">

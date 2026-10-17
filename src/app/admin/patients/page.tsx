@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { EmptyState } from '@/components/ui';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -59,7 +60,7 @@ export default async function PatientsListPage(props: { searchParams: Promise<Se
 
   return (
     <>
-      <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}>👤 المرضى</h1>
+      <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}><EmojiIcon e="👤" /> المرضى</h1>
       <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: '0 0 20px' }}>
         {count ?? 0} مريض في النظام
       </p>
@@ -67,12 +68,12 @@ export default async function PatientsListPage(props: { searchParams: Promise<Se
       {/* Filters */}
       <form method="GET" style={{ background: 'var(--white)', padding: 16, borderRadius: 14, marginBottom: 20, display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
         <div style={{ flex: '2 1 250px' }}>
-          <label style={lblStyle}>🔍 بحث</label>
+          <label style={lblStyle}><EmojiIcon e="🔍" /> بحث</label>
           <input type="text" name="q" defaultValue={searchParams.q ?? ''} placeholder="الاسم أو الهاتف أو البريد..." style={inputStyle} />
         </div>
 
         <div>
-          <label style={lblStyle}>📍 المحافظة</label>
+          <label style={lblStyle}><EmojiIcon e="📍" /> المحافظة</label>
           <select name="governorate" defaultValue={searchParams.governorate ?? ''} style={inputStyle}>
             <option value="">كل المحافظات</option>
             {GOVERNORATES.map((g) => <option key={g} value={g}>{g}</option>)}
@@ -89,7 +90,7 @@ export default async function PatientsListPage(props: { searchParams: Promise<Se
         </div>
 
         <button type="submit" style={{ padding: '8px 20px', background: 'var(--emerald-deep)', color: 'var(--white)', border: 0, borderRadius: 8, fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
-          🔍 بحث
+          <EmojiIcon e="🔍" /> بحث
         </button>
       </form>
 
@@ -148,9 +149,9 @@ export default async function PatientsListPage(props: { searchParams: Promise<Se
                     </td>
                     <td style={td}>
                       {p.is_suspended ? (
-                        <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--rose-soft)', color: 'var(--rose)', fontWeight: 800 }}>⛔ معلّق</span>
+                        <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--rose-soft)', color: 'var(--rose)', fontWeight: 800 }}><EmojiIcon e="⛔" /> معلّق</span>
                       ) : (
-                        <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', fontWeight: 800 }}>✅ نشط</span>
+                        <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', fontWeight: 800 }}><EmojiIcon e="✅" /> نشط</span>
                       )}
                     </td>
                   </tr>

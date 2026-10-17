@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getAllLocations } from './actions';
 import LocationsAdminClient from './LocationsAdminClient';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata: Metadata = {
   title: 'إدارة المواقع · لوحة التحكّم',
 };
@@ -26,7 +27,7 @@ export default async function LocationsAdminPage() {
           ← العودة
         </Link>
         <h1 style={{ fontSize: 20, fontWeight: 900, margin: 0 }}>
-          🗺️ إدارة المواقع الموحّدة
+          <EmojiIcon e="🗺️" /> إدارة المواقع الموحّدة
         </h1>
       </div>
       <p style={{ fontSize: 13, color: '#888780', margin: '0 0 18px' }}>
@@ -35,7 +36,7 @@ export default async function LocationsAdminPage() {
 
       {!ok ? (
         <div style={{ padding: 20, background: '#FCEBEB', border: '1px solid #F5B4B4', borderRadius: 12, color: '#791F1F' }}>
-          ⚠️ تعذّر تحميل المواقع: {error || 'خطأ غير معروف'}
+          <EmojiIcon e="⚠️" /> تعذّر تحميل المواقع: {error || 'خطأ غير معروف'}
         </div>
       ) : (
         <LocationsAdminClient initialLocations={locations} />

@@ -823,9 +823,7 @@ export default function BloodDrawFlow({
 
       <div className="bd-trust-row">
         <Lock size={12} strokeWidth={2.2} aria-hidden />
-        <span>معلوماتك مشفّرة · صناعة عراقية ·</span>
-        <Star size={12} strokeWidth={2.4} fill="currentColor" aria-hidden />
-        <span>معتمد طبياً</span>
+        <span>معلوماتك مشفّرة · صناعة عراقية</span>
       </div>
 
       {/* ═══ الشريط الثابت: سطرٌ واحد — الملخّص وزرّ الإرسال ═══ */}

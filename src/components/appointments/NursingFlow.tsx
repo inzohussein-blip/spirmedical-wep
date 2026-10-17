@@ -878,7 +878,7 @@ export default function NursingFlow({
             alignItems: 'flex-start',
           }}>
             <ShieldCheck size={16} style={{ flexShrink: 0, marginTop: 1 }} />
-            <span>كل الكادر التمريضي معتمد رسمياً من نقابة التمريض ووزارة الصحة العراقية</span>
+            <span>يراجع فريقُنا هويّةَ كلّ ممرّضٍ قبل اعتماده في التطبيق</span>
           </div>
         </section>
       )}

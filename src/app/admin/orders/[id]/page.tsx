@@ -10,6 +10,7 @@ import OrderLocationEditor from './OrderLocationEditor';
 import { getOrderLocation, getAssignedSpecialistLocation } from './actions';
 import type { MapMarker } from '@/types/location';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -101,14 +102,14 @@ export default async function AdminOrderDetailPage(props: { params: Promise<{ id
             padding: 24, borderRadius: 14, marginBottom: 16,
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
-              <div style={{ fontSize: 36 }}>{meta?.icon ?? '📋'}</div>
+              <div style={{ fontSize: 36 }}><EmojiIcon e={meta?.icon ?? '📋'} /></div>
               <div>
                 <h1 style={{ fontSize: 20, fontWeight: 800, margin: 0 }}>{order.service_type}</h1>
                 <div style={{ fontSize: 12, opacity: 0.9 }}>{meta?.label ?? 'خدمة عامة'}</div>
               </div>
             </div>
             <div style={{ fontSize: 14, fontWeight: 700 }}>
-              📅 {new Date(order.scheduled_at).toLocaleString('ar-IQ-u-nu-latn', { dateStyle: 'full', timeStyle: 'short' })}
+              <EmojiIcon e="📅" /> {new Date(order.scheduled_at).toLocaleString('ar-IQ-u-nu-latn', { dateStyle: 'full', timeStyle: 'short' })}
             </div>
           </div>
 
@@ -136,7 +137,7 @@ export default async function AdminOrderDetailPage(props: { params: Promise<{ id
           {/* 🗺️ Map */}
           <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginBottom: 16 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-              <h2 style={{ fontSize: 14, fontWeight: 800, margin: 0 }}>🗺️ الموقع على الخريطة</h2>
+              <h2 style={{ fontSize: 14, fontWeight: 800, margin: 0 }}><EmojiIcon e="🗺️" /> الموقع على الخريطة</h2>
               {mapMarkers.length > 1 && (
                 <span style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>
                   {mapMarkers.length} مواقع
@@ -172,7 +173,7 @@ export default async function AdminOrderDetailPage(props: { params: Promise<{ id
 
           {/* Patient Card */}
           <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginBottom: 16 }}>
-            <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}>👤 المريض</h2>
+            <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}><EmojiIcon e="👤" /> المريض</h2>
             {patient && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{
@@ -188,16 +189,16 @@ export default async function AdminOrderDetailPage(props: { params: Promise<{ id
                     {patient.full_name ?? 'بدون اسم'}
                   </Link>
                   <div style={{ fontSize: 11, color: 'var(--ink-3)' }} dir="ltr">{patient.phone}</div>
-                  {patient.governorate && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>📍 {patient.governorate}</div>}
+                  {patient.governorate && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}><EmojiIcon e="📍" /> {patient.governorate}</div>}
                 </div>
-                <a href={`tel:${patient.phone}`} style={{ padding: '8px 12px', background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', borderRadius: 8, textDecoration: 'none', fontSize: 12, fontWeight: 800 }}>📞</a>
+                <a href={`tel:${patient.phone}`} style={{ padding: '8px 12px', background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', borderRadius: 8, textDecoration: 'none', fontSize: 12, fontWeight: 800 }}><EmojiIcon e="📞" /></a>
               </div>
             )}
           </div>
 
           {/* Specialist Card */}
           <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20 }}>
-            <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}>👨‍⚕️ الاختصاصي</h2>
+            <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}><EmojiIcon e="👨‍⚕️" /> الاختصاصي</h2>
             {specialist ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{
@@ -206,7 +207,7 @@ export default async function AdminOrderDetailPage(props: { params: Promise<{ id
                   color: 'var(--white)', display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 22,
                 }}>
-                  {SPECIALIST_META[specialist.specialist_type as SpecialistType]?.icon ?? '⚕️'}
+                  <EmojiIcon e={SPECIALIST_META[specialist.specialist_type as SpecialistType]?.icon ?? '⚕️'} />
                 </div>
                 <div style={{ flex: 1 }}>
                   <Link href={`/admin/specialists/${specialist.id}`} style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', textDecoration: 'none' }}>
@@ -214,11 +215,11 @@ export default async function AdminOrderDetailPage(props: { params: Promise<{ id
                   </Link>
                   <div style={{ fontSize: 11, color: 'var(--ink-3)' }} dir="ltr">{specialist.phone}</div>
                 </div>
-                <a href={`tel:${specialist.phone}`} style={{ padding: '8px 12px', background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', borderRadius: 8, textDecoration: 'none', fontSize: 12, fontWeight: 800 }}>📞</a>
+                <a href={`tel:${specialist.phone}`} style={{ padding: '8px 12px', background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', borderRadius: 8, textDecoration: 'none', fontSize: 12, fontWeight: 800 }}><EmojiIcon e="📞" /></a>
               </div>
             ) : (
               <div style={{ background: 'var(--amber-soft, #FEF7E0)', padding: 16, borderRadius: 10, fontSize: 12, color: 'var(--amber-deep, #6B3A08)', fontWeight: 700, textAlign: 'center' }}>
-                ⚠️ لم يُعيَّن اختصاصي بعد
+                <EmojiIcon e="⚠️" /> لم يُعيَّن اختصاصي بعد
               </div>
             )}
           </div>
@@ -248,7 +249,7 @@ function InfoRow({ icon, label, value, dir }: { icon: string; label: string; val
   return (
     <div>
       <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700, marginBottom: 4 }}>
-        {icon} {label}
+        <EmojiIcon e={icon} /> {label}
       </div>
       <div style={{ fontSize: 13, color: 'var(--ink)', fontWeight: 600 }} dir={dir}>{value}</div>
     </div>

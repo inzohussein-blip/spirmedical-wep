@@ -11,6 +11,7 @@ import {
   Send, Headphones, AlertTriangle,
 } from 'lucide-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = {
   alternates: { canonical: '/contact' },
   title: 'اتصل بنا · سباير ميديكال',
@@ -235,7 +236,7 @@ function ContactCard({
           flexShrink: 0,
         }}
       >
-        {icon}
+        <EmojiIcon e={icon} />
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: 13, fontWeight: 800 }}>{title}</div>
@@ -289,7 +290,7 @@ function DeptCard({ emoji, label, email }: { emoji: string; label: string; email
         color: 'inherit',
       }}
     >
-      <div style={{ fontSize: 20 }}>{emoji}</div>
+      <div style={{ fontSize: 20 }}><EmojiIcon e={emoji} /></div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: 11, fontWeight: 800 }}>{label}</div>
         <div

@@ -8,6 +8,7 @@ import LandingStats from '@/components/landing/Stats';
 import LandingCoverageMap from '@/components/landing/LandingCoverageMap';
 import LandingScrollEffects from '@/components/landing/LandingScrollEffects';
 import AboutApp from '@/components/landing/AboutApp';
+import { ICONS, ICON_STROKE, type IconName } from '@/lib/icons';
 import { ARTICLES } from '@/lib/data/blog-articles';
 import { SITE_TYPE, getAppUrl } from '@/lib/site-config';
 import { getRoleHomePath } from '@/lib/auth/home-path';
@@ -16,6 +17,7 @@ import { getRoleHomePath } from '@/lib/auth/home-path';
 // (V25.40: لا يدخل في (marketing) group لأنه root /)
 import './styles/marketing.css';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = {
   alternates: { canonical: '/' },
   title: 'سباير ميديكال · Spir Medical — منصة طبية رقمية متكاملة في العراق',
@@ -120,11 +122,12 @@ const FAQ_ITEMS = [
   },
 ];
 
-const TRUST_BADGES = [
-  { icon: '🔒', title: 'AES-256', desc: 'تشفير عسكري' },
-  { icon: '🏥', title: 'معتمد طبياً', desc: 'وزارة الصحة العراقية' },
-  { icon: '🇮🇶', title: 'صناعة عراقية', desc: 'بُني في النجف' },
-  { icon: '🛡️', title: 'SSL Pinned', desc: 'حماية البيانات' },
+// «معتمد طبياً — وزارة الصحة العراقية» حُذفت (قرار المالك، 17 تشرين الأول): لا اعتمادَ رسميّاً موثَّقاً بعد.
+// تعود حين يوجد، برقمه أو وثيقته.
+const TRUST_BADGES: { icon: IconName; title: string; desc: string }[] = [
+  { icon: 'secure', title: 'AES-256', desc: 'تشفير عسكري' },
+  { icon: 'local', title: 'صناعة عراقية', desc: 'بُني في النجف' },
+  { icon: 'admins', title: 'SSL Pinned', desc: 'حماية البيانات' },
 ];
 
 const ACTIVE_CITIES = [
@@ -235,7 +238,7 @@ export default async function HomePage(
             {/* Language Switcher */}
             <div className="landing-lang-switcher">
               <button type="button" className="landing-lang-btn" aria-label="اختر اللغة">
-                <span aria-hidden="true">🌐</span>
+                <span aria-hidden="true"><EmojiIcon e="🌐" /></span>
                 <span>AR</span>
               </button>
               <div className="landing-lang-menu">
@@ -249,7 +252,7 @@ export default async function HomePage(
                   <span className="landing-lang-soon">قريباً</span>
                 </button>
                 <button type="button">
-                  <span aria-hidden="true">🟢</span>
+                  <span aria-hidden="true"><EmojiIcon e="🟢" /></span>
                   <span>کوردی</span>
                   <span className="landing-lang-soon">قريباً</span>
                 </button>
@@ -311,7 +314,7 @@ export default async function HomePage(
               {/* App Store Badges */}
               <div className="landing-app-badges">
                 <button type="button" className="landing-app-badge" aria-label="Download on the App Store - coming soon">
-                  <span aria-hidden="true" className="landing-app-icon">🍎</span>
+                  <span aria-hidden="true" className="landing-app-icon"><EmojiIcon e="🍎" /></span>
                   <span className="landing-app-text">
                     <span className="landing-app-small">Download on the</span>
                     <span className="landing-app-big">App Store</span>
@@ -342,40 +345,40 @@ export default async function HomePage(
                       <div className="landing-phone-name">صديقنا 👋</div>
                     </div>
                     <div className="landing-phone-bell" aria-hidden="true">
-                      🔔
+                      <EmojiIcon e="🔔" />
                       <span className="landing-phone-bell-dot" aria-hidden="true"></span>
                     </div>
                   </div>
 
                   {/* Phone Search */}
                   <div className="landing-phone-search">
-                    <div className="landing-phone-search-icon" aria-hidden="true">🔍</div>
+                    <div className="landing-phone-search-icon" aria-hidden="true"><EmojiIcon e="🔍" /></div>
                     <span>ابحث عن خدمة أو تحليل...</span>
                   </div>
 
                   {/* Phone Pills */}
                   <div className="landing-phone-pills">
-                    <span className="landing-phone-pill">🩸 سحب دم + تحاليل</span>
-                    <span className="landing-phone-pill">💬 استشارة</span>
-                    <span className="landing-phone-pill">💊 صيدلية</span>
+                    <span className="landing-phone-pill"><EmojiIcon e="🩸" /> سحب دم + تحاليل</span>
+                    <span className="landing-phone-pill"><EmojiIcon e="💬" /> استشارة</span>
+                    <span className="landing-phone-pill"><EmojiIcon e="💊" /> صيدلية</span>
                   </div>
 
                   {/* Phone Stories */}
                   <div className="landing-phone-stories">
                     <div className="landing-phone-story story-1">
-                      <div className="landing-phone-story-inner">💉</div>
+                      <div className="landing-phone-story-inner"><EmojiIcon e="💉" /></div>
                     </div>
                     <div className="landing-phone-story story-2">
-                      <div className="landing-phone-story-inner">🩺</div>
+                      <div className="landing-phone-story-inner"><EmojiIcon e="🩺" /></div>
                     </div>
                     <div className="landing-phone-story story-3">
-                      <div className="landing-phone-story-inner">💊</div>
+                      <div className="landing-phone-story-inner"><EmojiIcon e="💊" /></div>
                     </div>
                     <div className="landing-phone-story story-4">
-                      <div className="landing-phone-story-inner">🍎</div>
+                      <div className="landing-phone-story-inner"><EmojiIcon e="🍎" /></div>
                     </div>
                     <div className="landing-phone-story story-5">
-                      <div className="landing-phone-story-inner">🚑</div>
+                      <div className="landing-phone-story-inner"><EmojiIcon e="🚑" /></div>
                     </div>
                   </div>
 
@@ -386,12 +389,12 @@ export default async function HomePage(
                       <div className="landing-phone-promo-title">خدمات منزلية</div>
                       <div className="landing-phone-promo-sub">سحب دم · إبر · بأسرع وقت</div>
                     </div>
-                    <span className="landing-phone-promo-icon" aria-hidden="true">🏠</span>
+                    <span className="landing-phone-promo-icon" aria-hidden="true"><EmojiIcon e="🏠" /></span>
                   </div>
 
                   {/* Phone Featured */}
                   <div className="landing-phone-featured">
-                    <div className="landing-phone-featured-icon">🩸</div>
+                    <div className="landing-phone-featured-icon"><EmojiIcon e="🩸" /></div>
                     <div className="landing-phone-featured-text">
                       <div className="landing-phone-featured-title">سحب الدم والتحاليل</div>
                       <div className="landing-phone-featured-meta">الخدمة الأساسية</div>
@@ -403,21 +406,21 @@ export default async function HomePage(
 
               {/* Floating Cards حول الهاتف */}
               <div className="landing-float-card landing-float-card-1">
-                <div className="landing-float-icon">⚡</div>
+                <div className="landing-float-icon"><EmojiIcon e="⚡" /></div>
                 <div>
                   <div className="landing-float-title">خلال ساعتين</div>
                   <div className="landing-float-sub">وصول سريع</div>
                 </div>
               </div>
               <div className="landing-float-card landing-float-card-2">
-                <div className="landing-float-icon">⭐</div>
+                <div className="landing-float-icon"><EmojiIcon e="⭐" /></div>
                 <div>
                   <div className="landing-float-title">4.8 / 5</div>
                   <div className="landing-float-sub">+1,200 تقييم</div>
                 </div>
               </div>
               <div className="landing-float-card landing-float-card-3">
-                <div className="landing-float-icon">🔒</div>
+                <div className="landing-float-icon"><EmojiIcon e="🔒" /></div>
                 <div>
                   <div className="landing-float-title">آمن 100%</div>
                   <div className="landing-float-sub">AES-256</div>
@@ -449,47 +452,47 @@ export default async function HomePage(
 
           <div className="landing-services-grid">
             <div className="landing-service">
-              <div className="landing-service-icon emerald">🩸</div>
+              <div className="landing-service-icon emerald"><EmojiIcon e="🩸" /></div>
               <h3>سحب دم منزلي</h3>
               <p>فني مختبر معتمد يأتي لباب بيتك، مع أدوات معقّمة وتقارير رقمية.</p>
             </div>
             <div className="landing-service">
-              <div className="landing-service-icon emerald">🧪</div>
+              <div className="landing-service-icon emerald"><EmojiIcon e="🧪" /></div>
               <h3>فحوصات مختبرية</h3>
               <p>+200 فحص متاح، نتائج خلال 24 ساعة، أسعار شفافة.</p>
             </div>
             <div className="landing-service">
-              <div className="landing-service-icon amber">🏥</div>
+              <div className="landing-service-icon amber"><EmojiIcon e="🏥" /></div>
               <h3>حجز مستشفيات</h3>
               <p>+40 مستشفى شريك، احجز ميعادك من التطبيق دون انتظار.</p>
             </div>
             <div className="landing-service">
-              <div className="landing-service-icon amber">👩‍⚕️</div>
+              <div className="landing-service-icon amber"><EmojiIcon e="👩‍⚕️" /></div>
               <h3>تمريض منزلي</h3>
               <p>عناية مستمرة لكبار السن أو المرضى، فترات يومية أو 24 ساعة.</p>
             </div>
             <div className="landing-service">
-              <div className="landing-service-icon emerald">📞</div>
+              <div className="landing-service-icon emerald"><EmojiIcon e="📞" /></div>
               <h3>استشارات طبية</h3>
               <p>أكثر من 20 تخصص، استشر طبيباً عبر الشات أو المكالمة المرئية.</p>
             </div>
             <div className="landing-service">
-              <div className="landing-service-icon emerald">💊</div>
+              <div className="landing-service-icon emerald"><EmojiIcon e="💊" /></div>
               <h3>صيدليات وأدوية</h3>
               <p>اطلب أدويتك من البيت، توصيل سريع وأسعار منافسة.</p>
             </div>
             <div className="landing-service">
-              <div className="landing-service-icon rose">🚨</div>
+              <div className="landing-service-icon rose"><EmojiIcon e="🚨" /></div>
               <h3>طوارئ SOS</h3>
               <p>زر طوارئ يُرسل موقعك ومعلوماتك الطبية فوراً للإسعاف.</p>
             </div>
             <div className="landing-service">
-              <div className="landing-service-icon emerald">📋</div>
+              <div className="landing-service-icon emerald"><EmojiIcon e="📋" /></div>
               <h3>سجلك الطبي</h3>
               <p>تاريخك الصحي مؤرشف ومشفّر، يمكنك مشاركته مع أي طبيب بضغطة.</p>
             </div>
             <div className="landing-service">
-              <div className="landing-service-icon amber">⏰</div>
+              <div className="landing-service-icon amber"><EmojiIcon e="⏰" /></div>
               <h3>تذكير الأدوية</h3>
               <p>إشعارات ذكية بمواعيد أدويتك، وتقرير الالتزام الشهري.</p>
             </div>
@@ -539,7 +542,7 @@ export default async function HomePage(
       <section id="coverage-map" className="landing-coverage-map">
         <div className="landing-wrap">
           <div className="landing-section-head">
-            <span className="landing-eyebrow">🗺️ تغطية واسعة</span>
+            <span className="landing-eyebrow"><EmojiIcon e="🗺️" /> تغطية واسعة</span>
             <h2 className="landing-section-title">
               مناطق <span className="landing-italic">تغطيتنا</span> في العراق
             </h2>
@@ -557,7 +560,7 @@ export default async function HomePage(
             {/* قائمة المدن */}
             <div className="landing-coverage-cities">
               <h3 className="landing-coverage-cities-title">
-                <span aria-hidden="true">📍</span>
+                <span aria-hidden="true"><EmojiIcon e="📍" /></span>
                 <span>المحافظات المغطّاة</span>
               </h3>
               <ul className="landing-coverage-cities-list">
@@ -599,7 +602,7 @@ export default async function HomePage(
           <div className="landing-trust-grid">
             {TRUST_BADGES.map((badge) => (
               <div key={badge.title} className="landing-trust-card">
-                <div className="landing-trust-icon">{badge.icon}</div>
+                <div className="landing-trust-icon">{(() => { const C = ICONS[badge.icon]; return <C size={26} strokeWidth={ICON_STROKE} aria-hidden />; })()}</div>
                 <h3>{badge.title}</h3>
                 <p>{badge.desc}</p>
               </div>
@@ -667,21 +670,21 @@ export default async function HomePage(
 
               <div className="landing-doctors-perks">
                 <div className="landing-doctors-perk">
-                  <div className="landing-doctors-perk-icon">💰</div>
+                  <div className="landing-doctors-perk-icon"><EmojiIcon e="💰" /></div>
                   <div>
                     <strong>0% رسوم تسجيل</strong>
                     <span>تسجيل مجاني · بدون التزامات</span>
                   </div>
                 </div>
                 <div className="landing-doctors-perk">
-                  <div className="landing-doctors-perk-icon">👥</div>
+                  <div className="landing-doctors-perk-icon"><EmojiIcon e="👥" /></div>
                   <div>
                     <strong>+500 مريض/شهر</strong>
                     <span>قاعدة عملاء واسعة وموثوقة</span>
                   </div>
                 </div>
                 <div className="landing-doctors-perk">
-                  <div className="landing-doctors-perk-icon">📊</div>
+                  <div className="landing-doctors-perk-icon"><EmojiIcon e="📊" /></div>
                   <div>
                     <strong>لوحة إدارة احترافية</strong>
                     <span>إدارة المواعيد والاستشارات بسهولة</span>
@@ -744,7 +747,7 @@ export default async function HomePage(
                   style={{ background: article.coverGradient }}
                 >
                   <span className="landing-blog-thumb-emoji" aria-hidden="true">
-                    {article.coverEmoji}
+                    <EmojiIcon e={article.coverEmoji} size="1em" />
                   </span>
                   <span className="landing-blog-reading">
                     {article.readingMinutes} دقائق قراءة
@@ -807,7 +810,7 @@ export default async function HomePage(
         <div className="landing-wrap">
           <div className="landing-install-card">
             <div className="landing-install-content">
-              <span className="landing-eyebrow">📱 التطبيق</span>
+              <span className="landing-eyebrow"><EmojiIcon e="📱" /> التطبيق</span>
               <h2 className="landing-install-title">
                 حمّل التطبيق على هاتفك
               </h2>
@@ -815,10 +818,10 @@ export default async function HomePage(
                 ثبّت سباير ميديكال للوصول السريع، الإشعارات الفورية، والعمل بدون إنترنت
               </p>
               <ul className="landing-install-features">
-                <li>⚡ فتح فوري بضغطة واحدة</li>
-                <li>🔔 إشعارات بمواعيدك ونتائجك</li>
-                <li>📴 يعمل بدون إنترنت</li>
-                <li>🏠 على شاشتك الرئيسية</li>
+                <li><EmojiIcon e="⚡" /> فتح فوري بضغطة واحدة</li>
+                <li><EmojiIcon e="🔔" /> إشعارات بمواعيدك ونتائجك</li>
+                <li><EmojiIcon e="📴" /> يعمل بدون إنترنت</li>
+                <li><EmojiIcon e="🏠" /> على شاشتك الرئيسية</li>
               </ul>
               <div className="landing-install-actions">
                 <Link href="/app" className="landing-install-btn-primary">

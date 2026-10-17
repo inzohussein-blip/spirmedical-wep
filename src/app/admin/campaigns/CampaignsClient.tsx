@@ -11,6 +11,7 @@ import { toast } from '@/components/ui/Toaster';
 import { createCampaign, updateCampaign, deleteCampaign, sendCampaign } from './actions';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Campaign {
   id: string;
   name: string;
@@ -119,7 +120,7 @@ export default function CampaignsClient({ campaigns }: Props) {
         <select value={filterType} onChange={(e) => setFilterType(e.target.value)} style={selectStyle}>
           <option value="">كل الأنواع</option>
           {Object.entries(TYPE_META).map(([k, v]) => (
-            <option key={k} value={k}>{v.emoji} {v.label}</option>
+            <option key={k} value={k}>{v.label}</option>
           ))}
         </select>
 
@@ -246,7 +247,7 @@ export default function CampaignsClient({ campaigns }: Props) {
                       </span>
                       {c.success_count > 0 && (
                         <span style={{ color: 'var(--emerald)', fontWeight: 700 }}>
-                          ✓ {c.success_count} وصلت
+                          <EmojiIcon e="✓" /> {c.success_count} وصلت
                         </span>
                       )}
                       <span>
@@ -432,7 +433,7 @@ function CampaignModal({
                   gap: 4,
                 }}
               >
-                <span style={{ fontSize: 20 }}>{v.emoji}</span>
+                <span style={{ fontSize: 20 }}><EmojiIcon e={v.emoji} /></span>
                 <span>{v.label}</span>
               </button>
             ))}

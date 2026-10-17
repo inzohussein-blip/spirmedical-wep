@@ -9,6 +9,7 @@ import { getServiceSwitches } from '@/lib/service-switches.server';
 import { isEnabled, noteFor, NON_SWITCHABLE } from '@/lib/service-switches';
 import ServiceSwitchesClient, { type Row } from './ServiceSwitchesClient';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata: Metadata = {
   title: 'تشغيل الخدمات · لوحة التحكّم',
 };
@@ -56,7 +57,7 @@ export default async function AdminServicesPage() {
           ← العودة
         </Link>
         <h1 style={{ fontSize: 20, fontWeight: 900, margin: 0 }}>
-          🔌 تشغيل الخدمات
+          <EmojiIcon e="🔌" /> تشغيل الخدمات
         </h1>
       </div>
       <p style={{ fontSize: 13, color: '#888780', margin: '0 0 18px' }}>

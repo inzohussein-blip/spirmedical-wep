@@ -31,6 +31,7 @@
 | التنسيق | `app/styles/shared.css` (رموز + حارس iOS) · `app.css` (شاشات التطبيق) · `marketing.css` · `admin.css` |
 | الفهرسة واكتشافُ النماذج | `app/layout.tsx` · `components/seo/JsonLd.tsx` · `app/sitemap.ts` · `app/robots.ts` · الأصل `lib/seo/origin.ts` · الحقائق `lib/seo/facts.ts` → `lib/seo/llms.ts` |
 | «عن التطبيق» | `components/landing/AboutApp.tsx` (الرئيسية `#about` و`/about`) |
+| الأيقونات ومكوّنات الإدارة | `lib/icons.ts` (أسماءٌ → Lucide) · `lib/emoji-icons.ts` + `components/ui/EmojiIcon.tsx` · `components/admin-ui` (StatCard، Panel، ListRow، StatusPill، DataTable…) |
 | الكرون | `vercel.json` → `app/api/cron/*` · `app/api/notifications/process` |
 | قاعدة البيانات | `supabase/migrations/` (آخرها 0053) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
 | الاختبارات | `tests/` — اسمُ الحارس يدلّ على مجاله (`rls-*`، `order-flow-modals`، `specialist-screens`…) |
@@ -197,6 +198,12 @@
   `@media (max-width: 700px)` بمطابقة قيمة العمود (`[style*="repeat(4, 1fr)"]`…) و`!important` — الحاسوبُ لا يتغيّر.
   ولا `overflow-wrap: anywhere` على المحتوى: يكسر جداولَ العربيّة حرفاً حرفاً.
   الحارس: `tests/mobile-width.test.ts`.
+- **أيقوناتٌ من Lucide وحده (قرار المالك، 17 تشرين الأول)** في الإدارة والموقع: كان 186 إيموجي ظاهراً (قِيس بنصوص
+  الصفحات المعروضة، بلا <script>) ← 2 (تحيّةٌ في مجسّم الهاتف وقلبٌ داخل جملة — محتوى). الإيموجي المخزَّن نصّاً (`icon: '🏥'`)
+  يُرسم بـ`<EmojiIcon>`، فلا تكتب `{x.icon}` نصّاً في JSX. لا إيموجي في `<option>`. وتطبيقُ المريض والمختصّ لم يُحوَّلا بعد
+  (≈ 480). مكوّناتُ `admin-ui` في لوحة التحكّم والممرّضين؛ الجداولُ الأخرى تُنقل إلى `DataTable` تباعاً.
+  **حُذف «معتمد طبياً — وزارة الصحة»** من الرئيسية ومن نموذج سحب الدم، وصار ادّعاءُ التمريض «يراجع فريقُنا هويّةَ كلّ ممرّض» —
+  لا اعتمادَ رسميّاً موثَّقاً بعد. الحارس: `tests/icons-system.test.tsx`.
 - **على المالك:** Search Console — أضف رمزَ التحقّق في `layout.tsx` (`verification.google`) وارفع
   `https://www.spir-medical.com/sitemap.xml`. وأرقامُ الرئيسية المرئيّة («18 محافظة»، «24/7») باقيةٌ بقراره؛ الأبوابُ
   الآليّة وحدها صُحّحت.

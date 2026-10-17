@@ -5,6 +5,7 @@ import { isAdminRole } from '@/lib/admin-types';
 import { Card, EmptyState } from '@/components/ui';
 import { IRAQ_GOVERNORATES } from '@/types/location';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -106,7 +107,7 @@ export default async function GeographicReportsPage() {
           ← العودة للتقارير
         </Link>
         <h1 style={{ fontSize: 22, fontWeight: 800, margin: '8px 0 4px' }}>
-          📊 التقارير الجغرافية
+          <EmojiIcon e="📊" /> التقارير الجغرافية
         </h1>
         <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: 0 }}>
           توزيع الطلبات حسب المحافظات والمدن
@@ -127,7 +128,7 @@ export default async function GeographicReportsPage() {
           {/* إجمالي */}
           <Card style={{ marginBottom: 20 }}>
             <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>
-              📍 إجمالي الطلبات المغطّاة بـ GPS
+              <EmojiIcon e="📍" /> إجمالي الطلبات المغطّاة بـ GPS
             </div>
             <div
               style={{
@@ -147,7 +148,7 @@ export default async function GeographicReportsPage() {
           {/* جدول المحافظات */}
           <Card>
             <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 16px' }}>
-              🏛️ التوزيع حسب المحافظة
+              <EmojiIcon e="🏛️" /> التوزيع حسب المحافظة
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {sorted.map(([gov, stats]) => {
@@ -169,7 +170,7 @@ export default async function GeographicReportsPage() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
                       <div>
                         <h3 style={{ fontSize: 14, fontWeight: 800, margin: 0 }}>
-                          📍 {gov}
+                          <EmojiIcon e="📍" /> {gov}
                         </h3>
                         <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 2 }}>
                           {percent.toFixed(1)}% من الإجمالي
@@ -216,7 +217,7 @@ export default async function GeographicReportsPage() {
                     >
                       <div>
                         <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>
-                          ⏳ معلّق
+                          <EmojiIcon e="⏳" /> معلّق
                         </div>
                         <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--amber)' }}>
                           {stats.pending}
@@ -224,7 +225,7 @@ export default async function GeographicReportsPage() {
                       </div>
                       <div>
                         <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>
-                          ✅ مكتمل
+                          <EmojiIcon e="✅" /> مكتمل
                         </div>
                         <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--emerald)' }}>
                           {stats.completed}
@@ -232,7 +233,7 @@ export default async function GeographicReportsPage() {
                       </div>
                       <div>
                         <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>
-                          ❌ ملغى
+                          <EmojiIcon e="❌" /> ملغى
                         </div>
                         <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--rose)' }}>
                           {stats.cancelled}
@@ -240,7 +241,7 @@ export default async function GeographicReportsPage() {
                       </div>
                       <div>
                         <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>
-                          🎯 الإنجاز
+                          <EmojiIcon e="🎯" /> الإنجاز
                         </div>
                         <div
                           style={{
@@ -271,7 +272,7 @@ export default async function GeographicReportsPage() {
                             marginBottom: 8,
                           }}
                         >
-                          🏥 الخدمات الأكثر طلباً:
+                          <EmojiIcon e="🏥" /> الخدمات الأكثر طلباً:
                         </div>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                           {Object.entries(stats.services)

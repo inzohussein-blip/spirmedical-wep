@@ -3,6 +3,7 @@ export const revalidate = 86400;
 
 import Link from 'next/link';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = {
   alternates: { canonical: '/legal/cookies' },
   title: 'سياسة الكوكيز · سباير ميديكال',
@@ -80,7 +81,7 @@ export default function CookiesPage() {
               <li><strong>spir_locale:</strong> تذكّر لغتك المختارة</li>
             </ul>
             <div className="legal-callout">
-              <span className="legal-callout-icon">🔒</span>
+              <span className="legal-callout-icon"><EmojiIcon e="🔒" /></span>
               <div>
                 <strong>أمان كامل:</strong> جميع كوكيز الجلسة مشفّرة ولا تحتوي
                 على معلومات شخصية حسّاسة.
@@ -146,7 +147,7 @@ export default function CookiesPage() {
               <li><strong>Edge:</strong> الإعدادات → ملفات تعريف الارتباط وأذونات الموقع</li>
             </ul>
             <div className="legal-callout warning">
-              <span className="legal-callout-icon">⚠️</span>
+              <span className="legal-callout-icon"><EmojiIcon e="⚠️" /></span>
               <div>
                 <strong>تنبيه:</strong> تعطيل جميع الكوكيز قد يؤثر على
                 وظائف الموقع، خاصة تسجيل الدخول وحفظ الإعدادات.

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createCoupon, toggleCouponActive, deleteCoupon } from './actions';
 import { EmptyState, useConfirm } from '@/components/ui';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Coupon {
   id: string;
   code: string;
@@ -95,7 +96,7 @@ export default function CouponsClient({ coupons }: Props) {
 
             {error && (
               <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '10px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700, marginBottom: 12 }}>
-                ⚠️ {error}
+                <EmojiIcon e="⚠️" /> {error}
               </div>
             )}
 
@@ -135,7 +136,7 @@ export default function CouponsClient({ coupons }: Props) {
                 border: 0, borderRadius: 8, fontSize: 12, fontWeight: 800,
                 cursor: 'pointer', fontFamily: 'inherit',
               }}>
-                💾 حفظ
+                <EmojiIcon e="💾" /> حفظ
               </button>
               <button onClick={() => { setShowForm(false); setError(''); }} style={{
                 padding: '10px 20px', background: 'transparent', border: '1px solid var(--line)',
@@ -203,13 +204,13 @@ export default function CouponsClient({ coupons }: Props) {
                           fontSize: 11, padding: '3px 10px', borderRadius: 100,
                           background: 'var(--emerald-soft)', color: 'var(--emerald-deep)',
                           fontWeight: 800, border: 0, cursor: 'pointer', fontFamily: 'inherit',
-                        }}>✅ نشط</button>
+                        }}><EmojiIcon e="✅" /> نشط</button>
                       ) : (
                         <button onClick={() => handleToggle(c.id, true)} disabled={isPending} style={{
                           fontSize: 11, padding: '3px 10px', borderRadius: 100,
                           background: 'var(--paper-3)', color: 'var(--ink-3)',
                           fontWeight: 800, border: 0, cursor: 'pointer', fontFamily: 'inherit',
-                        }}>⏸ متوقف</button>
+                        }}><EmojiIcon e="⏸" /> متوقف</button>
                       )}
                     </td>
                     <td style={td}>
@@ -217,7 +218,7 @@ export default function CouponsClient({ coupons }: Props) {
                         padding: '4px 10px', background: 'transparent',
                         color: 'var(--rose)', border: 0, fontSize: 14,
                         cursor: 'pointer', fontFamily: 'inherit',
-                      }}>🗑</button>
+                      }}><EmojiIcon e="🗑" /></button>
                     </td>
                   </tr>
                 );

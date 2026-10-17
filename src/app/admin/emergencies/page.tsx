@@ -12,6 +12,7 @@ import Link from 'next/link';
 import EmergenciesClient from './EmergenciesClient';
 import { baghdadDayWindow } from '@/lib/time/baghdad-day';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'الطوارئ الأمنية - Spir Medical' };
 
@@ -91,7 +92,7 @@ export default async function AdminEmergenciesPage(
       }}>
         <div>
           <h1 style={{ fontSize: 24, fontWeight: 900, margin: 0, display: 'flex', alignItems: 'center', gap: 10 }}>
-            🚨 الطوارئ الأمنية
+            <EmojiIcon e="🚨" /> الطوارئ الأمنية
           </h1>
           <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '4px 0 0' }}>
             مراقبة وإدارة تفعيلات زر الطوارئ من الكادر التمريضي
@@ -180,7 +181,7 @@ function StatCard({ label, value, color, emoji, urgent }: {
         animation: urgent ? 'pulse-emergency 2s ease-in-out infinite' : 'none',
       }}
     >
-      <div style={{ fontSize: 22, marginBottom: 4 }}>{emoji}</div>
+      <div style={{ fontSize: 22, marginBottom: 4 }}><EmojiIcon e={emoji} /></div>
       <div style={{ fontSize: 28, fontWeight: 900 }}>{value}</div>
       <div style={{ fontSize: 11, opacity: 0.8 }}>{label}</div>
     </div>

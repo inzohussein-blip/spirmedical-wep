@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { toast } from '@/components/ui/Toaster';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Emergency {
   id: string;
   specialist_id: string;
@@ -132,7 +133,7 @@ export default function EmergenciesClient({
           textAlign: 'center',
           border: '1px solid var(--line)',
         }}>
-          <div style={{ fontSize: 48, marginBottom: 8 }}>✨</div>
+          <div style={{ fontSize: 48, marginBottom: 8 }}><EmojiIcon e="✨" /></div>
           <h3 style={{ fontSize: 16, fontWeight: 800, margin: '0 0 4px' }}>
             لا توجد حالات طوارئ
           </h3>
@@ -220,7 +221,7 @@ export default function EmergenciesClient({
                     alignItems: 'center',
                     gap: 8,
                   }}>
-                    <span style={{ fontSize: 20 }}>{reason.emoji}</span>
+                    <span style={{ fontSize: 20 }}><EmojiIcon e={reason.emoji} /></span>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--rose)' }}>
                         {reason.label}

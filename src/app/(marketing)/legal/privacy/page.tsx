@@ -3,6 +3,7 @@ export const revalidate = 86400;
 
 import Link from 'next/link';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = {
   alternates: { canonical: '/legal/privacy' },
   title: 'سياسة الخصوصية · سباير ميديكال',
@@ -45,7 +46,7 @@ export default function PrivacyPage() {
           </header>
 
           <div className="legal-highlight">
-            <strong>🔒 خصوصيتك أولويّتنا</strong>
+            <strong><EmojiIcon e="🔒" /> خصوصيتك أولويّتنا</strong>
             <p>
               نُدرك أن بياناتك الطبية حسّاسة. نلتزم بحمايتها بأعلى معايير 
               الأمان الصناعية، ولا نبيعها أو نشاركها مع جهات تجارية.
@@ -85,7 +86,7 @@ export default function PrivacyPage() {
                 <tr>
                   <td>هوية</td>
                   <td>الاسم، رقم الهاتف</td>
-                  <td>✅ نعم</td>
+                  <td><EmojiIcon e="✅" /> نعم</td>
                 </tr>
                 <tr>
                   <td>طبية</td>
@@ -95,7 +96,7 @@ export default function PrivacyPage() {
                 <tr>
                   <td>الموقع</td>
                   <td>عنوان الخدمة المنزلية</td>
-                  <td>✅ للخدمات المنزلية</td>
+                  <td><EmojiIcon e="✅" /> للخدمات المنزلية</td>
                 </tr>
                 <tr>
                   <td>دفع</td>
@@ -126,16 +127,16 @@ export default function PrivacyPage() {
             <h2>3. كيف نستخدم بياناتك</h2>
             <p>نستخدم بياناتك للأغراض التالية فقط:</p>
             <ul>
-              <li>✅ تقديم الخدمات الطبية المطلوبة</li>
-              <li>✅ التواصل معك بخصوص حجوزاتك</li>
-              <li>✅ معالجة المدفوعات</li>
-              <li>✅ تحسين تجربتك في التطبيق</li>
-              <li>✅ الالتزام بالقوانين العراقية</li>
-              <li>✅ منع الاحتيال وحماية الأمن</li>
+              <li><EmojiIcon e="✅" /> تقديم الخدمات الطبية المطلوبة</li>
+              <li><EmojiIcon e="✅" /> التواصل معك بخصوص حجوزاتك</li>
+              <li><EmojiIcon e="✅" /> معالجة المدفوعات</li>
+              <li><EmojiIcon e="✅" /> تحسين تجربتك في التطبيق</li>
+              <li><EmojiIcon e="✅" /> الالتزام بالقوانين العراقية</li>
+              <li><EmojiIcon e="✅" /> منع الاحتيال وحماية الأمن</li>
             </ul>
 
             <div className="legal-highlight">
-              <strong>❌ لن نستخدم بياناتك أبداً لـ:</strong>
+              <strong><EmojiIcon e="❌" /> لن نستخدم بياناتك أبداً لـ:</strong>
               <ul>
                 <li>بيعها لأطراف ثالثة</li>
                 <li>التسويق دون موافقتك</li>
@@ -183,17 +184,17 @@ export default function PrivacyPage() {
                 <tr>
                   <td><strong>ضرورية</strong></td>
                   <td>تسجيل الدخول، حفظ الجلسة</td>
-                  <td>❌ لا (إجباري للعمل)</td>
+                  <td><EmojiIcon e="❌" /> لا (إجباري للعمل)</td>
                 </tr>
                 <tr>
                   <td>تحليلية</td>
                   <td>إحصاءات الاستخدام (Vercel)</td>
-                  <td>✅ نعم</td>
+                  <td><EmojiIcon e="✅" /> نعم</td>
                 </tr>
                 <tr>
                   <td>تسويقية</td>
                   <td>تخصيص الإعلانات</td>
-                  <td>✅ نعم (غير مُفعّلة حالياً)</td>
+                  <td><EmojiIcon e="✅" /> نعم (غير مُفعّلة حالياً)</td>
                 </tr>
               </tbody>
             </table>
@@ -210,12 +211,12 @@ export default function PrivacyPage() {
             <h2>6. كيف نحمي بياناتك</h2>
             <p>نستخدم أحدث المعايير الأمنية:</p>
             <ul>
-              <li>🔐 <strong>تشفير AES-256</strong> للبيانات الحساسة</li>
-              <li>🔒 <strong>HTTPS/TLS</strong> لكل الاتصالات</li>
-              <li>🛡️ <strong>RLS</strong> (Row-Level Security) في قاعدة البيانات</li>
-              <li>🔑 <strong>OTP</strong> بدلاً من كلمات المرور</li>
-              <li>📊 <strong>Audit logs</strong> لكل تغيير في البيانات</li>
-              <li>⏱️ <strong>Rate limiting</strong> ضد الاختراق</li>
+              <li><EmojiIcon e="🔐" /> <strong>تشفير AES-256</strong> للبيانات الحساسة</li>
+              <li><EmojiIcon e="🔒" /> <strong>HTTPS/TLS</strong> لكل الاتصالات</li>
+              <li><EmojiIcon e="🛡️" /> <strong>RLS</strong> (Row-Level Security) في قاعدة البيانات</li>
+              <li><EmojiIcon e="🔑" /> <strong>OTP</strong> بدلاً من كلمات المرور</li>
+              <li><EmojiIcon e="📊" /> <strong>Audit logs</strong> لكل تغيير في البيانات</li>
+              <li><EmojiIcon e="⏱️" /> <strong>Rate limiting</strong> ضد الاختراق</li>
             </ul>
           </section>
 
@@ -225,27 +226,27 @@ export default function PrivacyPage() {
 
             <div className="legal-rights-grid">
               <div className="legal-right">
-                <strong>📥 الوصول</strong>
+                <strong><EmojiIcon e="📥" /> الوصول</strong>
                 <p>طلب نسخة من جميع بياناتك</p>
               </div>
               <div className="legal-right">
-                <strong>✏️ التصحيح</strong>
+                <strong><EmojiIcon e="✏️" /> التصحيح</strong>
                 <p>تعديل أي معلومات خاطئة</p>
               </div>
               <div className="legal-right">
-                <strong>🗑️ الحذف</strong>
+                <strong><EmojiIcon e="🗑️" /> الحذف</strong>
                 <p>حذف حسابك وبياناتك</p>
               </div>
               <div className="legal-right">
-                <strong>⏸️ التقييد</strong>
+                <strong><EmojiIcon e="⏸️" /> التقييد</strong>
                 <p>إيقاف معالجة بياناتك مؤقتاً</p>
               </div>
               <div className="legal-right">
-                <strong>📤 النقل</strong>
+                <strong><EmojiIcon e="📤" /> النقل</strong>
                 <p>الحصول على بياناتك بصيغة قابلة للاستخدام</p>
               </div>
               <div className="legal-right">
-                <strong>🚫 الاعتراض</strong>
+                <strong><EmojiIcon e="🚫" /> الاعتراض</strong>
                 <p>رفض معالجة بياناتك لأغراض محدّدة</p>
               </div>
             </div>
@@ -304,15 +305,15 @@ export default function PrivacyPage() {
             <h2>9. مسؤول حماية البيانات</h2>
             <div className="legal-contact-card">
               <div>
-                <strong>📧 الأسئلة العامة</strong>
+                <strong><EmojiIcon e="📧" /> الأسئلة العامة</strong>
                 <a href="mailto:privacy@spir-medical.com">privacy@spir-medical.com</a>
               </div>
               <div>
-                <strong>📧 شكاوى الخصوصية</strong>
+                <strong><EmojiIcon e="📧" /> شكاوى الخصوصية</strong>
                 <a href="mailto:dpo@spir-medical.com">dpo@spir-medical.com</a>
               </div>
               <div>
-                <strong>⏱️ زمن الرد</strong>
+                <strong><EmojiIcon e="⏱️" /> زمن الرد</strong>
                 <span>خلال 48 ساعة عمل</span>
               </div>
             </div>

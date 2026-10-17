@@ -12,6 +12,7 @@ import {
   type ArticleCategory,
 } from '@/lib/data/blog-articles';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Props {
   params: Promise<{ name: string }>;
 }
@@ -82,7 +83,7 @@ export default async function CategoryPage(props: Props) {
 
         {/* Category Header */}
         <header className="blog-cat-hero">
-          <div className="blog-cat-hero-icon" aria-hidden="true">{category.icon}</div>
+          <div className="blog-cat-hero-icon" aria-hidden="true"><EmojiIcon e={category.icon} /></div>
           <h1 className="blog-cat-hero-title">{category.label}</h1>
           <p className="blog-cat-hero-desc">{category.description}</p>
           <div className="blog-cat-hero-count">
@@ -93,7 +94,7 @@ export default async function CategoryPage(props: Props) {
         {/* Categories Pills */}
         <section className="blog-categories">
           <Link href="/blog" className="blog-cat-pill">
-            <span aria-hidden="true">📋</span>
+            <span aria-hidden="true"><EmojiIcon e="📋" /></span>
             <span>الكل</span>
             <span className="blog-cat-count">{ARTICLES.length}</span>
           </Link>
@@ -106,7 +107,7 @@ export default async function CategoryPage(props: Props) {
                 href={`/blog/category/${key}`}
                 className={`blog-cat-pill ${key === categoryKey ? 'active' : ''}`}
               >
-                <span aria-hidden="true">{cat.icon}</span>
+                <span aria-hidden="true"><EmojiIcon e={cat.icon} /></span>
                 <span>{cat.label}</span>
                 <span className="blog-cat-count">{count}</span>
               </Link>
@@ -118,7 +119,7 @@ export default async function CategoryPage(props: Props) {
         <section className="blog-grid-section">
           {articles.length === 0 ? (
             <div className="blog-empty">
-              <div className="blog-empty-icon" aria-hidden="true">📭</div>
+              <div className="blog-empty-icon" aria-hidden="true"><EmojiIcon e="📭" /></div>
               <h3>لا توجد مقالات في هذا التصنيف بعد</h3>
               <p>سنُضيف مقالات قريباً. تابعنا للحصول على آخر النصائح الصحية.</p>
               <Link href="/blog" className="blog-empty-cta">
@@ -137,7 +138,7 @@ export default async function CategoryPage(props: Props) {
                     className="blog-card-cover"
                     style={{ background: article.coverGradient }}
                   >
-                    <span aria-hidden="true">{article.coverEmoji}</span>
+                    <span aria-hidden="true"><EmojiIcon e={article.coverEmoji} size="1em" /></span>
                   </div>
 
                   <div className="blog-card-content">

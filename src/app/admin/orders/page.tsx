@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { SPECIALIST_META, SPECIALIST_TYPES, type SpecialistType } from '@/lib/specialist-types';
 import { EmptyState } from '@/components/ui';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -76,7 +77,7 @@ export default async function AdminOrdersPage(props: { searchParams: Promise<Sea
 
   return (
     <>
-      <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}>📋 إدارة الطلبات</h1>
+      <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}><EmojiIcon e="📋" /> إدارة الطلبات</h1>
       <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: '0 0 20px' }}>
         {filteredOrders.length} من {count ?? 0} طلب
       </p>
@@ -116,17 +117,17 @@ export default async function AdminOrdersPage(props: { searchParams: Promise<Sea
         </div>
 
         <button type="submit" style={{ padding: '8px 20px', background: 'var(--emerald-deep)', color: 'var(--white)', border: 0, borderRadius: 8, fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
-          🔍 تطبيق
+          <EmojiIcon e="🔍" /> تطبيق
         </button>
 
         <div style={{ marginInlineStart: 'auto', display: 'flex', gap: 4 }}>
           <Link href={`/admin/orders?${new URLSearchParams({ ...searchParams, view: 'list' } as Record<string, string>).toString()}`}
                 style={{ padding: '8px 14px', background: view === 'list' ? 'var(--emerald-deep)' : 'transparent', color: view === 'list' ? 'var(--white)' : 'var(--ink-3)', textDecoration: 'none', borderRadius: 8, fontSize: 12, fontWeight: 700 }}>
-            📋 قائمة
+            <EmojiIcon e="📋" /> قائمة
           </Link>
           <Link href={`/admin/orders?${new URLSearchParams({ ...searchParams, view: 'kanban' } as Record<string, string>).toString()}`}
                 style={{ padding: '8px 14px', background: view === 'kanban' ? 'var(--emerald-deep)' : 'transparent', color: view === 'kanban' ? 'var(--white)' : 'var(--ink-3)', textDecoration: 'none', borderRadius: 8, fontSize: 12, fontWeight: 700 }}>
-            📊 Kanban
+            <EmojiIcon e="📊" /> Kanban
           </Link>
         </div>
       </form>
@@ -176,7 +177,7 @@ function ListView({ orders, usersMap }: { orders: Array<Record<string, unknown>>
                   </Link>
                 </td>
                 <td style={td}>
-                  {meta && <span style={{ marginInlineEnd: 4 }}>{meta.icon}</span>}
+                  {meta && <span style={{ marginInlineEnd: 4 }}><EmojiIcon e={meta.icon} /></span>}
                   {o.service_type}
                 </td>
                 <td style={td}>
@@ -242,12 +243,12 @@ function KanbanView({ orders, usersMap }: { orders: Array<Record<string, unknown
                     textDecoration: 'none', color: 'var(--ink)', fontSize: 12,
                   }}>
                     <div style={{ fontWeight: 700, marginBottom: 4 }}>
-                      {specMeta && <span style={{ marginInlineEnd: 4 }}>{specMeta.icon}</span>}
+                      {specMeta && <span style={{ marginInlineEnd: 4 }}><EmojiIcon e={specMeta.icon} /></span>}
                       {patient?.full_name ?? 'مريض'}
                     </div>
                     <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{o.service_type}</div>
                     <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 4 }}>
-                      📅 {new Date(o.scheduled_at).toLocaleDateString('ar-IQ-u-nu-latn', { day: 'numeric', month: 'short' })}
+                      <EmojiIcon e="📅" /> {new Date(o.scheduled_at).toLocaleDateString('ar-IQ-u-nu-latn', { day: 'numeric', month: 'short' })}
                     </div>
                   </Link>
                 );

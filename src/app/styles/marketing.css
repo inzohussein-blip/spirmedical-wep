@@ -2070,8 +2070,9 @@
 
 .landing-trust-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  /* ثلاثُ بطاقات (حُذفت «معتمد طبياً»): ثلاثةُ أعمدة في كلّ عرض — عمودان كانا يتركان بطاقةً يتيمة */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .landing-trust-card {
@@ -2089,8 +2090,9 @@
 }
 
 .landing-trust-icon {
-  font-size: 40px;
-  margin-bottom: 12px;
+  width: 56px; height: 56px; margin: 0 auto 12px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--emerald-soft); color: var(--emerald);
 }
 
 .landing-trust-card h3 {
@@ -4682,7 +4684,8 @@ html {
 
 @media (min-width: 768px) {
   .landing-trust-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
   }
 }
 
@@ -4954,8 +4957,10 @@ html {
 .ab-service-icon {
   width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
-  background: var(--emerald-soft); font-size: 22px;
+  background: var(--emerald-soft); color: var(--emerald);
 }
+.ab-service-coming-soon .ab-service-icon { background: var(--amber-soft); color: var(--amber); }
+.ab-service-directory .ab-service-icon { background: var(--paper-2); color: var(--ink-3); }
 .ab-service-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .ab-service-name {
   display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
@@ -5031,3 +5036,9 @@ html {
 }
 /* شبكةُ أمان: أيُّ تجاوزٍ قادم يُقصّ بدل أن يوسّع الصفحة (clip لا يكسر position: sticky) */
 .landing, .blog-page, .mkt-screen { overflow-x: clip; }
+@media (max-width: 480px) {
+  .landing-trust-card { padding: 16px 8px; }
+  .landing-trust-card h3 { font-size: 14px; }
+  .landing-trust-card p { font-size: 12px; }
+  .landing-trust-icon { width: 48px; height: 48px; border-radius: 14px; }
+}

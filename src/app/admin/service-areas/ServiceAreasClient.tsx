@@ -15,6 +15,7 @@ import {
   deleteServiceArea,
 } from './actions';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 // الخريطة client-only: MapLibre يلمس `window` عند التحميل، وحزمتها كبيرة
 // فلا تُدرج في حزمة الخادم ولا تُحمَّل قبل ظهور الصفحة.
 const ServiceAreaMap = dynamic(() => import('./ServiceAreaMap'), {
@@ -228,7 +229,7 @@ export default function ServiceAreasClient({ initialAreas }: Props) {
             opacity: draft.length === 0 ? 0.5 : 1,
           }}
         >
-          ✕ مسح الرسم
+          <EmojiIcon e="✕" /> مسح الرسم
         </button>
       </div>
 
@@ -240,7 +241,7 @@ export default function ServiceAreasClient({ initialAreas }: Props) {
         }}
       >
         <h2 style={{ fontSize: 15, fontWeight: 900, margin: 0 }}>
-          {editingId ? '✏️ تعديل المنطقة' : '➕ منطقة جديدة'}
+          <EmojiIcon e={editingId ? '✏️' : '➕'} /> {editingId ? 'تعديل المنطقة' : 'منطقة جديدة'}
         </h2>
 
         <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>

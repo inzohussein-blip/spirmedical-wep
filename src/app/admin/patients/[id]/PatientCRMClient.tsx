@@ -6,6 +6,7 @@ import { addPatientTag, removePatientTag, addPatientNote, deletePatientNote } fr
 import { toggleSuspendUser } from '../../specialists/actions';
 import { EmptyState, useConfirm } from '@/components/ui';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Tag { id: string; tag: string; color: string; }
 interface Note {
   id: string; note: string;
@@ -128,7 +129,7 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
 
       {/* Tags */}
       <div style={{ background: 'var(--white)', borderRadius: 14, padding: 16 }}>
-        <h3 style={{ fontSize: 13, fontWeight: 800, margin: '0 0 10px' }}>🏷️ التصنيفات</h3>
+        <h3 style={{ fontSize: 13, fontWeight: 800, margin: '0 0 10px' }}><EmojiIcon e="🏷️" /> التصنيفات</h3>
 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
           {tags.length === 0 ? (
@@ -180,7 +181,7 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
       {/* Notes */}
       <div style={{ background: 'var(--white)', borderRadius: 14, padding: 16 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-          <h3 style={{ fontSize: 13, fontWeight: 800, margin: 0 }}>📝 الملاحظات ({notes.length})</h3>
+          <h3 style={{ fontSize: 13, fontWeight: 800, margin: 0 }}><EmojiIcon e="📝" /> الملاحظات ({notes.length})</h3>
           {!showNoteForm && (
             <button onClick={() => setShowNoteForm(true)} style={{
               padding: '4px 10px', background: 'var(--emerald-soft)', color: 'var(--emerald-deep)',
@@ -201,12 +202,12 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
             <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
               <select value={noteType} onChange={(e) => setNoteType(e.target.value as never)} style={{ ...inputStyle, flex: 1 }}>
                 {Object.entries(NOTE_TYPE_META).map(([k, v]) => (
-                  <option key={k} value={k}>{v.icon} {v.label}</option>
+                  <option key={k} value={k}>{v.label}</option>
                 ))}
               </select>
               <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 700, padding: '0 8px' }}>
                 <input type="checkbox" checked={isPinned} onChange={(e) => setIsPinned(e.target.checked)} />
-                📌 تثبيت
+                <EmojiIcon e="📌" /> تثبيت
               </label>
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
@@ -235,12 +236,12 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
                     <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--ink-3)' }}>
-                      {n.is_pinned && '📌 '}{meta.icon} {meta.label}
+                      {n.is_pinned && '📌 '}<EmojiIcon e={meta.icon} /> {meta.label}
                     </span>
                     <button onClick={() => handleDeleteNote(n.id)} style={{
                       background: 'transparent', border: 0, color: 'var(--rose)',
                       cursor: 'pointer', fontSize: 11, padding: 0,
-                    }}>🗑</button>
+                    }}><EmojiIcon e="🗑" /></button>
                   </div>
                   <p style={{ fontSize: 12, color: 'var(--ink)', margin: '0 0 4px', lineHeight: 1.6 }}>{n.note}</p>
                   <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
@@ -255,10 +256,10 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
 
       {/* Actions */}
       <div style={{ background: 'var(--white)', borderRadius: 14, padding: 16 }}>
-        <h3 style={{ fontSize: 13, fontWeight: 800, margin: '0 0 10px' }}>⚙️ إجراءات</h3>
+        <h3 style={{ fontSize: 13, fontWeight: 800, margin: '0 0 10px' }}><EmojiIcon e="⚙️" /> إجراءات</h3>
         {error && (
           <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '8px 10px', borderRadius: 8, fontSize: 11, fontWeight: 700, marginBottom: 8 }}>
-            ⚠️ {error}
+            <EmojiIcon e="⚠️" /> {error}
           </div>
         )}
         <button onClick={handleToggleSuspend} disabled={isPending} style={{
@@ -267,7 +268,7 @@ export default function PatientCRMClient({ patientId, tags, notes, isSuspended }
           color: 'var(--white)', border: 0, borderRadius: 10,
           fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit',
         }}>
-          {isSuspended ? '▶️ إلغاء تعليق المريض' : '⛔ تعليق المريض'}
+          <EmojiIcon e={isSuspended ? '▶️' : '⛔'} /> {isSuspended ? 'إلغاء تعليق المريض' : 'تعليق المريض'}
         </button>
       </div>
       <ConfirmDialog />

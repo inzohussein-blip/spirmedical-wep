@@ -14,6 +14,7 @@ import {
 } from './actions';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Nutritionist {
   id: string;
   full_name: string;
@@ -123,8 +124,8 @@ export default function NutritionAdminClient({ initialNutritionists }: { initial
                 <td style={tdStyle}>{n.years_experience} سنة</td>
                 <td style={tdStyle}>{n.cities.slice(0, 2).join(', ')}</td>
                 <td style={tdStyle}>
-                  {formatNumber(n.initial_consultation_price) && <div style={{ fontSize: 11 }}>💬 {formatNumber(n.initial_consultation_price)}</div>}
-                  {formatNumber(n.monthly_plan_price) && <div style={{ fontSize: 11 }}>📅 {formatNumber(n.monthly_plan_price)}</div>}
+                  {formatNumber(n.initial_consultation_price) && <div style={{ fontSize: 11 }}><EmojiIcon e="💬" /> {formatNumber(n.initial_consultation_price)}</div>}
+                  {formatNumber(n.monthly_plan_price) && <div style={{ fontSize: 11 }}><EmojiIcon e="📅" /> {formatNumber(n.monthly_plan_price)}</div>}
                 </td>
                 <td style={tdStyle}>{n.total_clients}</td>
                 <td style={tdStyle}>
@@ -160,7 +161,7 @@ export default function NutritionAdminClient({ initialNutritionists }: { initial
             ))}
           </tbody>
         </table>
-        {filtered.length === 0 && <div style={{ padding: 40, textAlign: 'center', color: 'var(--ink-3)' }}>🥗 لا يوجد أخصائيون</div>}
+        {filtered.length === 0 && <div style={{ padding: 40, textAlign: 'center', color: 'var(--ink-3)' }}><EmojiIcon e="🥗" /> لا يوجد أخصائيون</div>}
       </div>
 
       {(showCreate || editingId) && (
@@ -243,7 +244,7 @@ function NutritionistModal({ nutritionist, onClose }: { nutritionist: Nutritioni
           {/* 🆕 V31: موقع العيادة على الخريطة (اختياري) */}
           <div style={{ marginBottom: 4 }}>
             <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6, color: '#2C2C2A' }}>
-              📍 موقع العيادة على الخريطة (اختياري)
+              <EmojiIcon e="📍" /> موقع العيادة على الخريطة (اختياري)
             </label>
             <AdminLocationPickerWrapper
               initialLat={form.latitude ?? null}
@@ -255,7 +256,7 @@ function NutritionistModal({ nutritionist, onClose }: { nutritionist: Nutritioni
           </div>
 
           <div style={{ background: 'var(--paper-3)', padding: 12, borderRadius: 8 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>💰 الباقات (د.ع)</div>
+            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}><EmojiIcon e="💰" /> الباقات (د.ع)</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
               <Field label="استشارة">
                 <input type="number" value={form.initial_consultation_price ?? ''} onChange={(e) => setForm({ ...form, initial_consultation_price: e.target.value === '' ? null : (parseInt(e.target.value) || null) })} style={inputStyle} />
@@ -272,11 +273,11 @@ function NutritionistModal({ nutritionist, onClose }: { nutritionist: Nutritioni
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
             <label style={checkboxLabelStyle}>
               <input type="checkbox" checked={form.available_online ?? true} onChange={(e) => setForm({ ...form, available_online: e.target.checked })} />
-              💻 أونلاين
+              <EmojiIcon e="💻" /> أونلاين
             </label>
             <label style={checkboxLabelStyle}>
               <input type="checkbox" checked={form.available_in_clinic ?? true} onChange={(e) => setForm({ ...form, available_in_clinic: e.target.checked })} />
-              🏢 عيادة
+              <EmojiIcon e="🏢" /> عيادة
             </label>
           </div>
 

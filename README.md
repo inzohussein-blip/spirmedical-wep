@@ -277,6 +277,7 @@ spirmedical-wep/
 | `components/seo/JsonLd.tsx` | بيانات منظَّمة تُرسم في الخادم (تراها زواحف الذكاء الاصطناعي) |
 | `components/seo/StructuredData.tsx` | Organization + WebSite |
 | `lib/seo/coverage.ts` | **المصدر الوحيد** للمدن المخدومة (`SERVED_CITIES`) |
+| `lib/icons.ts` · `lib/emoji-icons.ts` · `components/ui/EmojiIcon.tsx` · `components/admin-ui/index.tsx` | الأيقونات (Lucide وحده) ومكوّنات الإدارة |
 | `app/sitemap.ts` · `app/robots.ts` · `app/llms.txt/route.ts` · `app/llms-full.txt/route.ts` · `app/ai.txt/route.ts` ← `lib/seo/facts.ts` · `lib/seo/origin.ts` | الفهرسة واكتشافُ النماذج |
 | `lib/site-config.ts` | أنواع النطاق (`app` / `marketing` / `all`) |
 

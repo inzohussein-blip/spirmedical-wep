@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { ADMIN_ROLES, isSuperAdmin, type AdminRole } from '@/lib/admin-types';
 import AdminsClient from './AdminsClient';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -20,7 +21,7 @@ export default async function AdminsPage() {
   if (!isSuperAdmin(profile?.role)) {
     return (
       <div style={{ background: 'var(--white)', borderRadius: 14, padding: 64, textAlign: 'center' }}>
-        <div style={{ fontSize: 48, marginBottom: 12 }}>🚫</div>
+        <div style={{ fontSize: 48, marginBottom: 12 }}><EmojiIcon e="🚫" /></div>
         <h1 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 6px' }}>غير مصرّح</h1>
         <p style={{ fontSize: 13, color: 'var(--ink-3)' }}>هذه الصفحة للمدير العام فقط</p>
       </div>
@@ -36,7 +37,7 @@ export default async function AdminsPage() {
 
   return (
     <>
-      <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}>👥 إدارة المديرين</h1>
+      <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}><EmojiIcon e="👥" /> إدارة المديرين</h1>
       <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: '0 0 20px' }}>
         {admins?.length ?? 0} مدير في النظام
       </p>
@@ -62,7 +63,7 @@ export default async function AdminsPage() {
               background: 'var(--white)', borderRadius: 12, padding: 16,
               borderRight: `4px solid ${meta.color}`,
             }}>
-              <div style={{ fontSize: 24, marginBottom: 8 }}>{meta.icon}</div>
+              <div style={{ fontSize: 24, marginBottom: 8 }}><EmojiIcon e={meta.icon} /></div>
               <div style={{ fontSize: 14, fontWeight: 800, color: meta.color, marginBottom: 4 }}>
                 {meta.label}
               </div>

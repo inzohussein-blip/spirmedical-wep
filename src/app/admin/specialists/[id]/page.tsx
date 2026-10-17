@@ -11,6 +11,7 @@ import SpecialistActions from './SpecialistActions';
 import { signedSpecialistDocs, SPECIALIST_DOC_FIELDS } from '@/lib/specialist-documents';
 import { SITE_ORIGIN as SITE_URL } from '@/lib/seo/origin';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -82,7 +83,7 @@ export default async function SpecialistDetailPage(props: { params: Promise<{ id
                 fontSize: 36,
                 flexShrink: 0,
               }}>
-                {meta?.icon ?? '⚕️'}
+                <EmojiIcon e={meta?.icon ?? '⚕️'} />
               </div>
 
               <div style={{ flex: 1 }}>
@@ -90,7 +91,7 @@ export default async function SpecialistDetailPage(props: { params: Promise<{ id
                   {specialist.full_name ?? 'بدون اسم'}
                 </h1>
                 <div style={{ fontSize: 13, color: 'var(--ink-3)', marginBottom: 12 }}>
-                  {meta ? `${meta.icon} ${meta.label}` : '⚕️ لم يحدد النوع'}
+                  <EmojiIcon e={meta?.icon ?? '⚕️'} /> {meta ? meta.label : 'لم يحدد النوع'}
                 </div>
 
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -107,9 +108,9 @@ export default async function SpecialistDetailPage(props: { params: Promise<{ id
                            'var(--amber-deep, #6B3A08)',
                     fontWeight: 800,
                   }}>
-                    {specialist.approval_status === 'approved' ? '✅ معتمد' :
+                    {specialist.approval_status === 'approved' ? <><EmojiIcon e="✅" /> معتمد</> :
                      specialist.approval_status === 'rejected' ? '❌ مرفوض' :
-                     '⏳ بانتظار الموافقة'}
+                     <><EmojiIcon e="⏳" /> بانتظار الموافقة</>}
                   </span>
 
                   {specialist.is_suspended && (
@@ -117,7 +118,7 @@ export default async function SpecialistDetailPage(props: { params: Promise<{ id
                       fontSize: 11, padding: '4px 10px', borderRadius: 100,
                       background: 'var(--rose-soft)', color: 'var(--rose)', fontWeight: 800,
                     }}>
-                      ⛔ معلّق
+                      <EmojiIcon e="⛔" /> معلّق
                     </span>
                   )}
                 </div>
@@ -164,7 +165,7 @@ export default async function SpecialistDetailPage(props: { params: Promise<{ id
             <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 14px' }}>وثائق التسجيل</h2>
             {!documents.some((d) => d.kind === 'id') && (
               <div style={{ padding: 12, background: 'var(--rose-soft)', color: 'var(--rose)', borderRadius: 10, fontSize: 13, fontWeight: 700, marginBottom: 10 }}>
-                ⚠️ لم تُرفع {SPECIALIST_DOC_FIELDS.id.label} — اطلبها قبل الاعتماد.
+                <EmojiIcon e="⚠️" /> لم تُرفع {SPECIALIST_DOC_FIELDS.id.label} — اطلبها قبل الاعتماد.
               </div>
             )}
             {documents.length === 0 ? (
@@ -229,7 +230,7 @@ function InfoRow({ icon, label, value, dir }: { icon: string; label: string; val
   return (
     <div>
       <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700, marginBottom: 4 }}>
-        {icon} {label}
+        <EmojiIcon e={icon} /> {label}
       </div>
       <div style={{ fontSize: 13, color: 'var(--ink)', fontWeight: 600 }} dir={dir}>{value}</div>
     </div>

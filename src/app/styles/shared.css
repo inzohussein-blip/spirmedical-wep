@@ -5308,3 +5308,7 @@ html {
   padding: 10px 14px; border-radius: 12px; margin-bottom: 12px;
   background: var(--emerald-soft); color: var(--emerald-deep); font-weight: 800; font-size: 14px; text-align: center;
 }
+
+/* EmojiIcon: أيقونةٌ داخل سطر نصّ — تجلس على خطّه ولا تُكبّره */
+.emoji-icon { display: inline-block; vertical-align: -0.18em; flex-shrink: 0; }
+.emoji-dot { display: inline-block; width: 0.6em; height: 0.6em; border-radius: 50%; vertical-align: 0.05em; flex-shrink: 0; }

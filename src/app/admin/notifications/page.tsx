@@ -5,6 +5,7 @@ import NotificationRowActions from './NotificationRowActions';
 import { EmptyState } from '@/components/ui';
 import { baghdadDayWindow } from '@/lib/time/baghdad-day';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -60,9 +61,9 @@ export default async function NotificationsPage(props: { searchParams: Promise<{
     <>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}>💬 الإشعارات</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}><EmojiIcon e="💬" /> الإشعارات</h1>
           <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: 0 }}>
-            مزود WhatsApp: <strong>{provider === 'mock' ? '🔧 mock (development)' : provider}</strong>
+            مزود WhatsApp: <strong>{provider === 'mock' ? 'mock (development)' : provider}</strong>
           </p>
         </div>
 
@@ -80,10 +81,10 @@ export default async function NotificationsPage(props: { searchParams: Promise<{
       {/* Filter */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
         <Link href="/admin/notifications" style={tabStyle(!searchParams.status)}>الكل</Link>
-        <Link href="/admin/notifications?status=pending" style={tabStyle(searchParams.status === 'pending')}>⏳ معلّقة</Link>
-        <Link href="/admin/notifications?status=sent" style={tabStyle(searchParams.status === 'sent')}>✅ أُرسلت</Link>
-        <Link href="/admin/notifications?status=failed" style={tabStyle(searchParams.status === 'failed')}>❌ فشلت</Link>
-        <Link href="/admin/notifications?status=cancelled" style={tabStyle(searchParams.status === 'cancelled')}>🗑 ملغاة</Link>
+        <Link href="/admin/notifications?status=pending" style={tabStyle(searchParams.status === 'pending')}><EmojiIcon e="⏳" /> معلّقة</Link>
+        <Link href="/admin/notifications?status=sent" style={tabStyle(searchParams.status === 'sent')}><EmojiIcon e="✅" /> أُرسلت</Link>
+        <Link href="/admin/notifications?status=failed" style={tabStyle(searchParams.status === 'failed')}><EmojiIcon e="❌" /> فشلت</Link>
+        <Link href="/admin/notifications?status=cancelled" style={tabStyle(searchParams.status === 'cancelled')}><EmojiIcon e="🗑" /> ملغاة</Link>
       </div>
 
       {/* List */}
@@ -116,10 +117,10 @@ export default async function NotificationsPage(props: { searchParams: Promise<{
                   <tr key={m.id} style={{ borderTop: '1px solid var(--line)' }}>
                     <td style={td}>
                       <div style={{ fontFamily: 'monospace', fontWeight: 700 }} dir="ltr">{m.recipient_phone}</div>
-                      {m.template_key && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>📑 {m.template_key}</div>}
+                      {m.template_key && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}><EmojiIcon e="📑" /> {m.template_key}</div>}
                     </td>
                     <td style={td}>
-                      <span style={{ color: channel.color, fontWeight: 700 }}>{channel.icon} {m.channel}</span>
+                      <span style={{ color: channel.color, fontWeight: 700 }}><EmojiIcon e={channel.icon} /> {m.channel}</span>
                     </td>
                     <td style={td}>
                       <div style={{ fontSize: 12, maxWidth: 280, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -127,7 +128,7 @@ export default async function NotificationsPage(props: { searchParams: Promise<{
                       </div>
                       {m.error_message && (
                         <div style={{ fontSize: 11, color: 'var(--rose)', marginTop: 4 }}>
-                          ⚠️ {m.error_message.substring(0, 100)}
+                          <EmojiIcon e="⚠️" /> {m.error_message.substring(0, 100)}
                         </div>
                       )}
                     </td>
@@ -148,7 +149,7 @@ export default async function NotificationsPage(props: { searchParams: Promise<{
                       </div>
                       {m.sent_at && (
                         <div style={{ fontSize: 11, color: 'var(--emerald)', marginTop: 2 }}>
-                          ✅ {new Date(m.sent_at).toLocaleTimeString('ar-IQ-u-nu-latn', { timeStyle: 'short' })}
+                          <EmojiIcon e="✅" /> {new Date(m.sent_at).toLocaleTimeString('ar-IQ-u-nu-latn', { timeStyle: 'short' })}
                         </div>
                       )}
                     </td>
@@ -176,7 +177,7 @@ export default async function NotificationsPage(props: { searchParams: Promise<{
           borderRight: '4px solid var(--amber)',
         }}>
           <h3 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 8px', color: 'var(--amber-deep, #6B3A08)' }}>
-            🔧 وضع التطوير: MOCK
+            <EmojiIcon e="🔧" /> وضع التطوير: MOCK
           </h3>
           <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '0 0 8px', lineHeight: 1.7 }}>
             حالياً الرسائل تُسجّل في console فقط ولا تُرسل فعلياً.
@@ -209,7 +210,7 @@ CRON_SECRET=<random-string>`}</pre>
 function StatBox({ label, value, color, icon }: { label: string; value: string; color: string; icon: string }) {
   return (
     <div style={{ background: 'var(--white)', borderRadius: 12, padding: 16, borderRight: `4px solid ${color}` }}>
-      <div style={{ fontSize: 22, marginBottom: 4 }}>{icon}</div>
+      <div style={{ fontSize: 22, marginBottom: 4 }}><EmojiIcon e={icon} /></div>
       <div style={{ fontSize: 22, fontWeight: 900, color, lineHeight: 1, marginBottom: 4 }}>{value}</div>
       <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>{label}</div>
     </div>

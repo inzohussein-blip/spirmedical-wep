@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { oneOfOr } from '@/lib/format/vocabulary';
 import CouponsClient from './CouponsClient';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -20,7 +21,7 @@ export default async function CouponsPage() {
 
   return (
     <>
-      <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}>🎁 الكوبونات</h1>
+      <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}><EmojiIcon e="🎁" /> الكوبونات</h1>
       <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: '0 0 20px' }}>
         {coupons?.length ?? 0} كوبون
       </p>

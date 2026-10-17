@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Share2, Plus, MoreVertical, Download, ChevronRight } from 'lucide-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = {
   alternates: { canonical: '/help/install' },
   title: 'كيف أُثبّت التطبيق · سباير ميديكال',
@@ -34,7 +35,7 @@ export default function InstallHelpPage() {
             color: 'var(--ink)',
           }}
         >
-          📱 كيف أُثبّت التطبيق؟
+          <EmojiIcon e="📱" /> كيف أُثبّت التطبيق؟
         </h1>
         <p style={{ fontSize: 14, color: 'var(--ink-3)', margin: 0, lineHeight: 1.6 }}>
           ثبّت سباير ميديكال على هاتفك للحصول على تجربة أسرع وإشعارات فورية
@@ -68,7 +69,7 @@ export default function InstallHelpPage() {
             gap: 8,
           }}
         >
-          <span style={{ fontSize: 24 }}>🍎</span>
+          <span style={{ fontSize: 24 }}><EmojiIcon e="🍎" /></span>
           <span>على iPhone (Safari)</span>
         </h2>
 
@@ -120,7 +121,7 @@ export default function InstallHelpPage() {
             marginTop: 12,
           }}
         >
-          💡 ملاحظة: استخدم Safari فقط — Chrome على iPhone لا يدعم التثبيت
+          <EmojiIcon e="💡" /> ملاحظة: استخدم Safari فقط — Chrome على iPhone لا يدعم التثبيت
         </div>
       </section>
 
@@ -136,7 +137,7 @@ export default function InstallHelpPage() {
             gap: 8,
           }}
         >
-          <span style={{ fontSize: 24 }}>🤖</span>
+          <span style={{ fontSize: 24 }}><EmojiIcon e="🤖" /></span>
           <span>على Android (Chrome)</span>
         </h2>
 
@@ -176,7 +177,7 @@ export default function InstallHelpPage() {
             gap: 8,
           }}
         >
-          <span style={{ fontSize: 24 }}>💻</span>
+          <span style={{ fontSize: 24 }}><EmojiIcon e="💻" /></span>
           <span>على الكمبيوتر (Chrome / Edge)</span>
         </h2>
 
@@ -212,7 +213,7 @@ export default function InstallHelpPage() {
         }}
       >
         <h2 style={{ fontSize: 16, fontWeight: 800, margin: '0 0 16px' }}>
-          ❓ أسئلة شائعة
+          <EmojiIcon e="❓" /> أسئلة شائعة
         </h2>
 
         <Faq q="هل التطبيق مجاني؟">
@@ -275,7 +276,7 @@ function Benefit({
         textAlign: 'center',
       }}
     >
-      <div style={{ fontSize: 28, marginBottom: 6 }}>{icon}</div>
+      <div style={{ fontSize: 28, marginBottom: 6 }}><EmojiIcon e={icon} /></div>
       <div style={{ fontSize: 13, fontWeight: 800, marginBottom: 2 }}>
         {title}
       </div>

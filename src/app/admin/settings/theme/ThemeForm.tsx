@@ -7,6 +7,7 @@ import { updateTheme, resetThemeToDefault } from './actions';
 import { isValidHexColor, type ThemeSettings } from '@/types/theme';
 import { useConfirm } from '@/components/ui';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface ThemeFormProps {
   initialTheme: ThemeSettings;
 }
@@ -203,8 +204,8 @@ export default function ThemeForm({ initialTheme }: ThemeFormProps) {
           <button type="button" className="preview-btn preview-btn-danger">
             حذف
           </button>
-          <div className="preview-tag preview-tag-soft">⭐ مميز</div>
-          <div className="preview-tag preview-tag-accent">⚠️ تنبيه</div>
+          <div className="preview-tag preview-tag-soft"><EmojiIcon e="⭐" /> مميز</div>
+          <div className="preview-tag preview-tag-accent"><EmojiIcon e="⚠️" /> تنبيه</div>
         </div>
       </div>
 
@@ -419,7 +420,7 @@ function ColorRow({ field, value, onChange, disabled }: ColorRowProps) {
   return (
     <div className="color-row">
       <div className="color-row-info">
-        <div className="color-row-icon">{field.icon}</div>
+        <div className="color-row-icon"><EmojiIcon e={field.icon} /></div>
         <div className="color-row-text">
           <div className="color-row-label">{field.label}</div>
           <div className="color-row-desc">{field.description}</div>

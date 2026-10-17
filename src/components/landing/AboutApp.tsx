@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { HOW_IT_WORKS_AR, POLICIES_AR, SERVICES, SUMMARY_AR, servedCityNames } from '@/lib/seo/facts';
 import { getAppUrl } from '@/lib/site-config';
+import { ICONS, ICON_STROKE, type IconName } from '@/lib/icons';
 
 /**
  * ℹ️ «عن التطبيق» — قسمٌ في الرئيسية (`variant="home"`) وجسمُ صفحة `/about` (`variant="page"`).
@@ -11,13 +12,18 @@ import { getAppUrl } from '@/lib/site-config';
  *
  * أصنافُه بالبادئة `ab-` (marketing.css): الأصنافُ العامّة كـ`.service-card` تقلب التخطيط.
  */
-const ICON: Record<string, string> = {
-  'blood-draw': '🩸',
-  'home-nursing': '💉',
-  physio: '🦵',
-  hospitals: '🏥',
-  pharmacies: '💊',
+const ICON: Record<string, IconName> = {
+  'blood-draw': 'bloodDraw',
+  'home-nursing': 'nursing',
+  physio: 'physio',
+  hospitals: 'hospitals',
+  pharmacies: 'pharmacies',
 };
+
+function ServiceIcon({ id }: { id: string }) {
+  const C = ICONS[ICON[id] ?? 'empty'];
+  return <C size={22} strokeWidth={ICON_STROKE} aria-hidden />;
+}
 
 const STATUS_LABEL = { available: 'متاحة', 'coming-soon': 'قريباً', directory: 'دليل' } as const;
 
@@ -70,7 +76,7 @@ export default function AboutApp({ variant = 'home' }: { variant?: 'home' | 'pag
           <ul className="ab-services" aria-label="الخدمات">
             {SERVICES.map((s) => (
               <li key={s.id} className={`ab-service ab-service-${s.status}`}>
-                <span className="ab-service-icon" aria-hidden="true">{ICON[s.id] ?? '•'}</span>
+                <span className="ab-service-icon" aria-hidden="true"><ServiceIcon id={s.id} /></span>
                 <span className="ab-service-body">
                   <span className="ab-service-name">
                     {s.nameAr}

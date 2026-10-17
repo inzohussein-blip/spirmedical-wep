@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { approveAdminRequest, rejectAdminRequest } from '@/app/admin-register/actions';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = { title: 'طلبات الإدارة · Spir Medical' };
 
 interface AdminRequest {
@@ -38,7 +39,7 @@ export default async function AdminRequestsPage(
       </p>
 
       {searchParams.approved && (
-        <Banner type="success">✅ تمّت الموافقة وترقية الحساب</Banner>
+        <Banner type="success"><EmojiIcon e="✅" /> تمّت الموافقة وترقية الحساب</Banner>
       )}
       {searchParams.rejected && <Banner type="info">تمّ رفض الطلب</Banner>}
       {searchParams.error && <Banner type="error">{searchParams.error}</Banner>}

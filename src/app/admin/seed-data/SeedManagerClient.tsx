@@ -25,6 +25,7 @@ import {
   IconChecks,
 } from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface CategoryInfo {
   key: string;
   label: string;
@@ -158,7 +159,7 @@ export default function SeedManagerClient() {
           </Link>
           <div>
             <h1 style={{ fontSize: 20, fontWeight: 800, color: 'var(--ink)', margin: 0 }}>
-              📦 إدارة البيانات الأولية
+              <EmojiIcon e="📦" /> إدارة البيانات الأولية
             </h1>
             <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '4px 0 0' }}>
               أضف مستشفيات وصيدليات وأطباء بضغطة واحدة
@@ -179,7 +180,7 @@ export default function SeedManagerClient() {
             borderRadius: 12, padding: 14, marginBottom: 16,
           }}
         >
-          <span style={{ fontSize: 18, lineHeight: 1.2 }} aria-hidden="true">⚠️</span>
+          <span style={{ fontSize: 18, lineHeight: 1.2 }} aria-hidden="true"><EmojiIcon e="⚠️" /></span>
           <div style={{ fontSize: 12, lineHeight: 1.8, color: 'var(--ink-2)' }}>
             <strong style={{ color: 'var(--amber)' }}>بيانات تطويرٍ لا بيانات إطلاق.</strong>{' '}
             الأسماء والمواقع حقيقية، لكنّ <strong>أرقام الهواتف مُختلَقة</strong>{' '}
@@ -222,7 +223,7 @@ export default function SeedManagerClient() {
               border: '1px solid var(--line-2)', borderRadius: 8, cursor: 'pointer',
             }}
           >
-            ✓ اختيار الكل
+            <EmojiIcon e="✓" /> اختيار الكل
           </button>
           <button
             type="button"
@@ -233,7 +234,7 @@ export default function SeedManagerClient() {
               border: '1px solid var(--line-2)', borderRadius: 8, cursor: 'pointer',
             }}
           >
-            ✗ إلغاء الكل
+            <EmojiIcon e="✗" /> إلغاء الكل
           </button>
           <button
             type="button"
@@ -258,7 +259,7 @@ export default function SeedManagerClient() {
             background: 'var(--white)', borderRadius: 12, padding: 40,
             textAlign: 'center', color: 'var(--ink-3)',
           }}>
-            ⏳ جاري التحميل...
+            <EmojiIcon e="⏳" /> جاري التحميل...
           </div>
         ) : (
           <div style={{
@@ -295,7 +296,7 @@ export default function SeedManagerClient() {
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         fontSize: 22,
                       }}>
-                        {cat.icon}
+                        <EmojiIcon e={cat.icon} />
                       </div>
                       <div>
                         <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>
@@ -449,7 +450,7 @@ export default function SeedManagerClient() {
 
                 {/* Per-Category Results */}
                 <h3 style={{ fontSize: 14, fontWeight: 700, marginBottom: 10 }}>
-                  📊 التفاصيل
+                  <EmojiIcon e="📊" /> التفاصيل
                 </h3>
                 {result.results?.map((r) => (
                   <div
@@ -465,12 +466,12 @@ export default function SeedManagerClient() {
                     }}>
                       <div style={{ fontSize: 13, fontWeight: 700 }}>{r.label}</div>
                       <div style={{ display: 'flex', gap: 12, fontSize: 11 }}>
-                        <span style={{ color: 'var(--emerald, #01875F)' }}>✓ {r.inserted} مُدرج</span>
+                        <span style={{ color: 'var(--emerald, #01875F)' }}><EmojiIcon e="✓" /> {r.inserted} مُدرج</span>
                         {r.skipped > 0 && (
                           <span style={{ color: 'var(--amber, #B06000)' }}>⊘ {r.skipped} موجود</span>
                         )}
                         {r.errors.length > 0 && (
-                          <span style={{ color: 'var(--rose, #C71C56)' }}>✗ {r.errors.length} خطأ</span>
+                          <span style={{ color: 'var(--rose, #C71C56)' }}><EmojiIcon e="✗" /> {r.errors.length} خطأ</span>
                         )}
                       </div>
                     </div>

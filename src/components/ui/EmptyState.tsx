@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import EmojiIcon from './EmojiIcon';
 
 /**
  * ═══════════════════════════════════════════════════════════════
@@ -103,7 +104,7 @@ export function EmptyState({
           style={{ fontSize: config.iconSize }}
           aria-hidden="true"
         >
-          {icon}
+          <EmojiIcon e={icon} size="1em" />
         </div>
       )}
 

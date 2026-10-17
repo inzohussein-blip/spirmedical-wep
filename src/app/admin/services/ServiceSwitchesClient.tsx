@@ -3,6 +3,7 @@
 import { useState, useTransition } from 'react';
 import { setServiceEnabled } from './actions';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export interface Row {
   id: string;
   title: string;
@@ -86,7 +87,7 @@ export default function ServiceSwitchesClient({ initial }: { initial: Row[] }) {
         return (
           <section key={g}>
             <h2 style={{ fontSize: 14, fontWeight: 900, margin: '0 0 8px' }}>
-              {g === 'مميّزة' ? '⭐ الخدمة المميّزة' : g === 'خدمة' ? '🏥 الخدمات' : '🛠️ الأدوات'}
+              <EmojiIcon e={g === 'مميّزة' ? '⭐' : g === 'خدمة' ? '🏥' : '🛠️'} /> {g === 'مميّزة' ? 'الخدمة المميّزة' : g === 'خدمة' ? 'الخدمات' : 'الأدوات'}
               <span style={{ fontSize: 12, fontWeight: 600, color: '#888780' }}>
                 {' '}({items.length})
               </span>

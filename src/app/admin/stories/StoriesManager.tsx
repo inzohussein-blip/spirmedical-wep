@@ -26,6 +26,7 @@ import type { Story, StoryColorTheme, StoryInput } from '@/types/story';
 import { COLOR_THEMES } from '@/types/story';
 import { useConfirm } from '@/components/ui';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Props {
   initialStories: Story[];
 }
@@ -174,7 +175,7 @@ export default function StoriesManager({ initialStories }: Props) {
       {/* Header */}
       <div className="sm-header">
         <div>
-          <h1>📸 إدارة القصص الترويجية</h1>
+          <h1><EmojiIcon e="📸" /> إدارة القصص الترويجية</h1>
           <p>القصص تظهر في dashboard المستخدم كصف من الـ circles</p>
         </div>
         <Button
@@ -346,7 +347,7 @@ export default function StoriesManager({ initialStories }: Props) {
       <div className="sm-list">
         {stories.length === 0 ? (
           <div className="sm-empty">
-            <div className="sm-empty-icon">📸</div>
+            <div className="sm-empty-icon"><EmojiIcon e="📸" /></div>
             <h3>لا توجد قصص</h3>
             <p>اضغط &laquo;قصة جديدة&raquo; لإضافة أول قصة</p>
           </div>
@@ -490,7 +491,7 @@ function StoryRow({ story, onEdit, onToggle, onDelete, onMove, canMoveUp, canMov
         className="story-row-preview"
         style={{ background: colorConfig?.bg, color: colorConfig?.fg }}
       >
-        <span style={{ fontSize: 22 }}>{story.icon}</span>
+        <span style={{ fontSize: 22 }}><EmojiIcon e={story.icon} /></span>
       </div>
 
       <div className="story-row-info">

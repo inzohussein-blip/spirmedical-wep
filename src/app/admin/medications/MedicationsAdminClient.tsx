@@ -9,6 +9,7 @@ import { toast } from '@/components/ui/Toaster';
 import { createMedication, updateMedication, deleteMedication } from './actions';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Medication {
   id: string;
   name_ar: string;
@@ -101,7 +102,7 @@ export default function MedicationsAdminClient({ medications }: Props) {
 
         <select value={filterCat} onChange={(e) => setFilterCat(e.target.value)} style={selectStyle}>
           <option value="">كل الفئات</option>
-          {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>)}
+          {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
         </select>
       </div>
 
@@ -135,13 +136,13 @@ export default function MedicationsAdminClient({ medications }: Props) {
                       {m.name_en && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{m.name_en}</div>}
                       {m.generic_name && <div style={{ fontSize: 11, color: 'var(--ink-3)', fontStyle: 'italic' }}>({m.generic_name})</div>}
                     </td>
-                    <td style={tdStyle}>{catMeta?.emoji} {catMeta?.label}</td>
+                    <td style={tdStyle}><EmojiIcon e={catMeta?.emoji} /> {catMeta?.label}</td>
                     <td style={tdStyle}>{m.form ? FORM_LABELS[m.form] : '—'}</td>
                     <td style={tdStyle}>{m.strength || '—'}</td>
                     <td style={tdStyle}>{m.manufacturer || '—'}</td>
                     <td style={tdStyle}>
                       {m.requires_prescription ? (
-                        <span style={{ padding: '2px 6px', background: 'var(--amber-soft)', color: 'var(--amber)', borderRadius: 4, fontSize: 11, fontWeight: 800 }}>📋 وصفة</span>
+                        <span style={{ padding: '2px 6px', background: 'var(--amber-soft)', color: 'var(--amber)', borderRadius: 4, fontSize: 11, fontWeight: 800 }}><EmojiIcon e="📋" /> وصفة</span>
                       ) : (
                         <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>—</span>
                       )}
@@ -266,7 +267,7 @@ function MedicationModal({
 
         <Field label="الفئة *">
           <select value={category} onChange={(e) => setCategory(e.target.value)} style={inputStyle}>
-            {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>)}
+            {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
           </select>
         </Field>
 

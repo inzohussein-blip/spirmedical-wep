@@ -6,6 +6,7 @@ import {
   ArrowRight, ChevronDown, Search, HelpCircle, MessageCircle,
 } from 'lucide-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface FAQ {
   category: string;
   question: string;
@@ -187,7 +188,7 @@ export default function FAQClient() {
             onClick={() => setSelectedCategory('all')}
             style={pillStyle(selectedCategory === 'all')}
           >
-            🗂️ الكل ({FAQS.length})
+            <EmojiIcon e="🗂️" /> الكل ({FAQS.length})
           </button>
           {CATEGORIES.map((cat) => {
             const count = FAQS.filter((f) => f.category === cat).length;
@@ -304,7 +305,7 @@ export default function FAQClient() {
             textAlign: 'center',
           }}
         >
-          <div style={{ fontSize: 28, marginBottom: 6 }}>💬</div>
+          <div style={{ fontSize: 28, marginBottom: 6 }}><EmojiIcon e="💬" /></div>
           <h3 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 4px' }}>
             لم تجد إجابتك؟
           </h3>

@@ -4,59 +4,63 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { hasPermission, type Permission } from '@/lib/admin-types';
+import { Icon } from '@/components/admin-ui';
+import EmojiIcon from '@/components/ui/EmojiIcon';
+import { Menu, X } from 'lucide-react';
+import type { IconName } from '@/lib/icons';
 
 interface NavItem {
   href: string;
-  icon: string;
+  icon: IconName;
   label: string;
   permission?: Permission;
   badge?: string;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { href: '/admin', icon: '📊', label: 'لوحة التحكم' },
-  { href: '/admin/users/create', icon: '➕', label: 'إنشاء حساب جديد', permission: 'admins.manage' },
-  { href: '/admin/seed-data', icon: '📦', label: 'البيانات الأولية', permission: 'admins.manage' },
-  { href: '/admin/emergencies', icon: '🚨', label: 'الطوارئ الأمنية', permission: 'orders.view' },
-  { href: '/admin/specialists/pending', icon: '⏳', label: 'موافقات الاختصاصيين', permission: 'specialists.approve' },
-  { href: '/admin/specialists', icon: '👨‍⚕️', label: 'الاختصاصيون', permission: 'specialists.view' },
-  { href: '/admin/doctors', icon: '🩺', label: 'أطباء العائلة', permission: 'specialists.view' },
-  { href: '/admin/hospitals', icon: '🏥', label: 'المستشفيات', permission: 'specialists.view' },
-  { href: '/admin/pharmacies', icon: '💊', label: 'الصيدليات', permission: 'specialists.view' },
-  { href: '/admin/medications', icon: '📋', label: 'كتالوج الأدوية', permission: 'specialists.view' },
+  { href: '/admin', icon: 'dashboard', label: 'لوحة التحكم' },
+  { href: '/admin/users/create', icon: 'createUser', label: 'إنشاء حساب جديد', permission: 'admins.manage' },
+  { href: '/admin/seed-data', icon: 'seedData', label: 'البيانات الأولية', permission: 'admins.manage' },
+  { href: '/admin/emergencies', icon: 'emergency', label: 'الطوارئ الأمنية', permission: 'orders.view' },
+  { href: '/admin/specialists/pending', icon: 'pending', label: 'موافقات الاختصاصيين', permission: 'specialists.approve' },
+  { href: '/admin/specialists', icon: 'specialists', label: 'الاختصاصيون', permission: 'specialists.view' },
+  { href: '/admin/doctors', icon: 'doctors', label: 'أطباء العائلة', permission: 'specialists.view' },
+  { href: '/admin/hospitals', icon: 'hospitals', label: 'المستشفيات', permission: 'specialists.view' },
+  { href: '/admin/pharmacies', icon: 'pharmacies', label: 'الصيدليات', permission: 'specialists.view' },
+  { href: '/admin/medications', icon: 'medications', label: 'كتالوج الأدوية', permission: 'specialists.view' },
   // ─── V25.21: الخدمات الجديدة ───
   // كانت أربعاً من تسع، والخمس الباقية صفحاتٌ مبنيّة تعمل لكن لا رابط
   // إليها في أيّ مكان — لا يبلغها المشرف إلّا بكتابة المسار يدوياً.
-  { href: '/admin/dental', icon: '🦷', label: 'عيادات الأسنان', permission: 'specialists.view' },
-  { href: '/admin/optical', icon: '👓', label: 'متاجر النظارات', permission: 'specialists.view' },
-  { href: '/admin/mental-health', icon: '🧠', label: 'الصحة النفسية', permission: 'specialists.view' },
-  { href: '/admin/nutrition', icon: '🥗', label: 'التغذية', permission: 'specialists.view' },
-  { href: '/admin/nurses', icon: '👩‍⚕️', label: 'الممرضون', permission: 'specialists.view' },
-  { href: '/admin/physio', icon: '🦵', label: 'العلاج الطبيعي', permission: 'specialists.view' },
-  { href: '/admin/labs', icon: '🔬', label: 'المختبرات', permission: 'specialists.view' },
-  { href: '/admin/cosmetic', icon: '💄', label: 'منتجات التجميل', permission: 'specialists.view' },
-  { href: '/admin/locations', icon: '📍', label: 'المواقع', permission: 'specialists.view' },
-  { href: '/admin/service-areas', icon: '🧭', label: 'مناطق الخدمة', permission: 'settings.edit' },
-  { href: '/admin/services', icon: '🔌', label: 'تشغيل الخدمات', permission: 'settings.edit' },
-  { href: '/admin/patients', icon: '👤', label: 'المرضى (CRM)', permission: 'patients.view' },
-  { href: '/admin/orders', icon: '📋', label: 'الطلبات', permission: 'orders.view' },
-  { href: '/admin/notifications', icon: '💬', label: 'الإشعارات' },
-  { href: '/admin/whatsapp', icon: '📲', label: 'التحقّق عبر واتساب' },
-  { href: '/admin/stories', icon: '📸', label: 'القصص الترويجية' },
-  { href: '/admin/reports', icon: '📈', label: 'التقارير', permission: 'reports.view' },
-  { href: '/admin/campaigns', icon: '📧', label: 'الحملات', permission: 'campaigns.manage' },
-  { href: '/admin/analytics', icon: '📈', label: 'Analytics' },
-  { href: '/admin/coupons', icon: '🎁', label: 'الكوبونات', permission: 'coupons.manage' },
+  { href: '/admin/dental', icon: 'dental', label: 'عيادات الأسنان', permission: 'specialists.view' },
+  { href: '/admin/optical', icon: 'optical', label: 'متاجر النظارات', permission: 'specialists.view' },
+  { href: '/admin/mental-health', icon: 'mentalHealth', label: 'الصحة النفسية', permission: 'specialists.view' },
+  { href: '/admin/nutrition', icon: 'nutrition', label: 'التغذية', permission: 'specialists.view' },
+  { href: '/admin/nurses', icon: 'nurses', label: 'الممرضون', permission: 'specialists.view' },
+  { href: '/admin/physio', icon: 'physio', label: 'العلاج الطبيعي', permission: 'specialists.view' },
+  { href: '/admin/labs', icon: 'labs', label: 'المختبرات', permission: 'specialists.view' },
+  { href: '/admin/cosmetic', icon: 'cosmetic', label: 'منتجات التجميل', permission: 'specialists.view' },
+  { href: '/admin/locations', icon: 'locations', label: 'المواقع', permission: 'specialists.view' },
+  { href: '/admin/service-areas', icon: 'serviceAreas', label: 'مناطق الخدمة', permission: 'settings.edit' },
+  { href: '/admin/services', icon: 'services', label: 'تشغيل الخدمات', permission: 'settings.edit' },
+  { href: '/admin/patients', icon: 'patients', label: 'المرضى (CRM)', permission: 'patients.view' },
+  { href: '/admin/orders', icon: 'orders', label: 'الطلبات', permission: 'orders.view' },
+  { href: '/admin/notifications', icon: 'notifications', label: 'الإشعارات' },
+  { href: '/admin/whatsapp', icon: 'whatsapp', label: 'التحقّق عبر واتساب' },
+  { href: '/admin/stories', icon: 'stories', label: 'القصص الترويجية' },
+  { href: '/admin/reports', icon: 'reports', label: 'التقارير', permission: 'reports.view' },
+  { href: '/admin/campaigns', icon: 'campaigns', label: 'الحملات', permission: 'campaigns.manage' },
+  { href: '/admin/analytics', icon: 'analytics', label: 'Analytics' },
+  { href: '/admin/coupons', icon: 'coupons', label: 'الكوبونات', permission: 'coupons.manage' },
   // ─── V25.14: Beta Launch ───
-  { href: '/admin/launch-checklist', icon: '🚀', label: 'قائمة الإطلاق' },
-  { href: '/admin/beta-codes', icon: '🎟️', label: 'رموز Beta' },
-  { href: '/admin/feedback', icon: '💬', label: 'الملاحظات' },
-  { href: '/admin/bugs', icon: '🐛', label: 'الأعطال' },
+  { href: '/admin/launch-checklist', icon: 'launch', label: 'قائمة الإطلاق' },
+  { href: '/admin/beta-codes', icon: 'betaCodes', label: 'رموز Beta' },
+  { href: '/admin/feedback', icon: 'feedback', label: 'الملاحظات' },
+  { href: '/admin/bugs', icon: 'bugs', label: 'الأعطال' },
   // ─── النظام ───
-  { href: '/admin/audit-log', icon: '📜', label: 'سجل العمليات' },
-  { href: '/admin/admins', icon: '👥', label: 'إدارة المديرين', permission: 'admins.manage' },
-  { href: '/admin/settings', icon: '⚙️', label: 'الإعدادات', permission: 'settings.edit' },
-  { href: '/admin/settings/theme', icon: '🎨', label: 'تخصيص الألوان', permission: 'settings.edit' },
+  { href: '/admin/audit-log', icon: 'auditLog', label: 'سجل العمليات' },
+  { href: '/admin/admins', icon: 'admins', label: 'إدارة المديرين', permission: 'admins.manage' },
+  { href: '/admin/settings', icon: 'settings', label: 'الإعدادات', permission: 'settings.edit' },
+  { href: '/admin/settings/theme', icon: 'theme', label: 'تخصيص الألوان', permission: 'settings.edit' },
 ];
 
 interface Props {
@@ -83,7 +87,7 @@ export default function AdminSidebar({ userName, userRole, roleLabel, roleIcon }
         aria-label={open ? 'إغلاق القائمة' : 'فتح القائمة'}
         aria-expanded={open}
       >
-        {open ? '✕' : '☰'}
+        {open ? <X size={20} strokeWidth={2} aria-hidden /> : <Menu size={20} strokeWidth={2} aria-hidden />}
       </button>
 
       {/* طبقة معتِمة تُغلق الدُّرج باللمس خارجه */}
@@ -103,10 +107,10 @@ export default function AdminSidebar({ userName, userRole, roleLabel, roleIcon }
         marginBottom: 12,
       }}>
         <div style={{ fontSize: 18, fontWeight: 900, marginBottom: 2 }}>
-          🏥 Spir Admin
+          Spir Admin
         </div>
         <div style={{ fontSize: 11, opacity: 0.75 }}>
-          {roleIcon} {roleLabel}
+          <EmojiIcon e={roleIcon} /> {roleLabel}
         </div>
       </div>
 
@@ -136,7 +140,7 @@ export default function AdminSidebar({ userName, userRole, roleLabel, roleIcon }
               transition: 'all 0.15s',
             }}
           >
-            <span style={{ fontSize: 16 }}>{item.icon}</span>
+            <span className="admin-nav-icon"><Icon name={item.icon} size={18} /></span>
             <span style={{ flex: 1 }}>{item.label}</span>
             {item.badge && (
               <span style={{

@@ -9,6 +9,7 @@ import {
 import { toast } from '@/components/ui/Toaster';
 import { toggleChecklistItem, updateChecklistNotes } from './actions';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface ChecklistItem {
   id: string;
   category: 'technical' | 'content' | 'legal' | 'marketing' | 'operations' | 'security';
@@ -205,7 +206,7 @@ export default function LaunchChecklistClient({ items }: Props) {
               {stats.completed} من {stats.total} مهمة مُكتملة
               {stats.criticalPending > 0 && (
                 <span style={{ color: 'var(--rose)', fontWeight: 800, marginInlineStart: 8 }}>
-                  ⚠️ {stats.criticalPending} مهمة حرجة معلّقة
+                  <EmojiIcon e="⚠️" /> {stats.criticalPending} مهمة حرجة معلّقة
                 </span>
               )}
             </div>
@@ -235,7 +236,7 @@ export default function LaunchChecklistClient({ items }: Props) {
                 }}
               >
                 <div style={{ fontSize: 11, fontWeight: 700, opacity: 0.9 }}>
-                  {meta.emoji} {meta.label}
+                  <EmojiIcon e={meta.emoji} /> {meta.label}
                 </div>
                 <div style={{ fontSize: 14, fontWeight: 900, marginTop: 2 }}>
                   {cat.completed}/{cat.total}
@@ -302,7 +303,7 @@ export default function LaunchChecklistClient({ items }: Props) {
               gap: 6,
               color: meta.color,
             }}>
-              {meta.emoji} {meta.label}
+              <EmojiIcon e={meta.emoji} /> {meta.label}
               <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>
                 ({catItems.filter(i => i.is_completed).length}/{catItems.length})
               </span>

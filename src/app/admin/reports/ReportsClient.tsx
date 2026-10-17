@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { exportPatientsCSV, exportSpecialistsCSV, exportOrdersCSV } from './actions';
 import { toast } from '@/components/ui/Toaster';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Props {
   fromDate: string;
   toDate: string;
@@ -71,7 +72,7 @@ export default function ReportsClient({ fromDate, toDate }: Props) {
         border: 0, borderRadius: 10, fontSize: 13, fontWeight: 800,
         cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 8,
       }}>
-        📥 تصدير CSV {isPending && '...'}
+        <EmojiIcon e="📥" /> تصدير CSV {isPending && '...'}
       </button>
 
       {showMenu && (
@@ -86,13 +87,13 @@ export default function ReportsClient({ fromDate, toDate }: Props) {
             display: 'flex', flexDirection: 'column', gap: 2,
           }}>
             <button onClick={exportPatients} disabled={isPending} style={menuBtnStyle}>
-              👤 قائمة المرضى
+              <EmojiIcon e="👤" /> قائمة المرضى
             </button>
             <button onClick={exportSpecialists} disabled={isPending} style={menuBtnStyle}>
-              👨‍⚕️ قائمة الاختصاصيين
+              <EmojiIcon e="👨‍⚕️" /> قائمة الاختصاصيين
             </button>
             <button onClick={exportOrders} disabled={isPending} style={menuBtnStyle}>
-              📋 طلبات الفترة المحددة
+              <EmojiIcon e="📋" /> طلبات الفترة المحددة
             </button>
           </div>
         </>

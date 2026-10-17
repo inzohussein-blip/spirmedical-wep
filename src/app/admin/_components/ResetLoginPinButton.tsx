@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { adminResetLoginPin } from '../_actions/login-pin';
 import { activationMessage, credentialsMessage, waChatLink } from '@/lib/whatsapp/share';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /**
  * «الدخول وواتساب» في صفحتَي المريض والمختصّ.
  *
@@ -55,7 +56,7 @@ export default function ResetLoginPinButton({
 
   return (
     <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginTop: 16 }}>
-      <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 10px' }}>🔑 الدخول وواتساب</h2>
+      <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 10px' }}><EmojiIcon e="🔑" /> الدخول وواتساب</h2>
 
       {phone && activationUrl && !pin && (
         <>
@@ -66,7 +67,7 @@ export default function ResetLoginPinButton({
             style={btnWa}
             data-testid="wa-reset-link"
           >
-            💬 إرسال رابط استعادة الرمز
+            <EmojiIcon e="💬" /> إرسال رابط استعادة الرمز
           </a>
           <div style={{ fontSize: 12, color: 'var(--ink-3)', marginBottom: 12, lineHeight: 1.7 }}>
             يؤكّد رقمه برسالة واتساب ويختار رمزه بنفسه — الأسلم.
@@ -90,7 +91,7 @@ export default function ResetLoginPinButton({
               style={btnWa}
               data-testid="wa-send-pin"
             >
-              💬 إرسال الرمز عبر واتساب
+              <EmojiIcon e="💬" /> إرسال الرمز عبر واتساب
             </a>
           )}
         </div>

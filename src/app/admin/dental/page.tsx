@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import DentalAdminClient from './DentalAdminClient';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'إدارة عيادات الأسنان - Admin' };
 
@@ -50,7 +51,7 @@ export default async function AdminDentalPage() {
           ← العودة
         </Link>
         <h1 style={{ fontSize: 20, fontWeight: 900, margin: 0 }}>
-          🦷 إدارة عيادات الأسنان
+          <EmojiIcon e="🦷" /> إدارة عيادات الأسنان
         </h1>
       </div>
 

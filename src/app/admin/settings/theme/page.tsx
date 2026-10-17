@@ -4,6 +4,7 @@ import { isSuperAdmin } from '@/lib/admin-types';
 import { getActiveTheme } from '@/lib/theme/get-theme';
 import ThemeForm from './ThemeForm';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -38,7 +39,7 @@ export default async function ThemeSettingsPage() {
           textAlign: 'center',
         }}
       >
-        <div style={{ fontSize: 48, marginBottom: 12 }}>🚫</div>
+        <div style={{ fontSize: 48, marginBottom: 12 }}><EmojiIcon e="🚫" /></div>
         <h1 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 6px' }}>
           غير مصرّح
         </h1>

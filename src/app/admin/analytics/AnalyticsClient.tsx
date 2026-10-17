@@ -6,6 +6,7 @@ import {
   TrendingUp, Activity, BarChart3,
 } from 'lucide-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface EventStat {
   event_name: string;
   total: number;
@@ -66,7 +67,7 @@ export default function AnalyticsClient({ stats, daily, totals }: Props) {
           fontWeight: 700,
         }}>← العودة</Link>
         <div style={{ flex: 1 }}>
-          <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0 }}>📊 Analytics</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0 }}><EmojiIcon e="📊" /> Analytics</h1>
           <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '2px 0 0' }}>
             تحليلات شاملة - آخر 30 يوم
           </p>
@@ -251,7 +252,7 @@ export default function AnalyticsClient({ stats, daily, totals }: Props) {
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-                    <div style={{ fontSize: 18 }}>{meta.emoji}</div>
+                    <div style={{ fontSize: 18 }}><EmojiIcon e={meta.emoji} /></div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 12, fontWeight: 800 }}>{meta.label}</div>
                       <div style={{ fontSize: 11, color: 'var(--ink-3)', fontFamily: 'monospace' }}>
@@ -294,7 +295,7 @@ export default function AnalyticsClient({ stats, daily, totals }: Props) {
         fontSize: 12,
         color: 'var(--ink-2)',
       }}>
-        💡 <strong>ملاحظة:</strong> هذه البيانات من نظام Analytics الداخلي. لتحليل أعمق،
+        <EmojiIcon e="💡" /> <strong>ملاحظة:</strong> هذه البيانات من نظام Analytics الداخلي. لتحليل أعمق،
         فعّل PostHog عبر إضافة <code>NEXT_PUBLIC_POSTHOG_KEY</code> في Vercel.
       </div>
     </>
@@ -328,7 +329,7 @@ function KpiCard({ icon, label, value, color }: {
           color,
         }}
       >
-        {icon}
+        <EmojiIcon e={icon} />
         <span style={{ fontSize: 11, fontWeight: 800 }}>{label}</span>
       </div>
       <div style={{ fontSize: 24, fontWeight: 900 }}>{value}</div>

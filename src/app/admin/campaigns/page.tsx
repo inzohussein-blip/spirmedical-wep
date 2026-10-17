@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import CampaignsClient from './CampaignsClient';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'الحملات · إدارة' };
 
@@ -53,7 +54,7 @@ export default async function CampaignsPage() {
           fontWeight: 700,
         }}>← العودة</Link>
         <div style={{ flex: 1 }}>
-          <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0 }}>📧 الحملات</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0 }}><EmojiIcon e="📧" /> الحملات</h1>
           <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '2px 0 0' }}>
             {campaigns?.length ?? 0} حملة · جمهور محتمل: {totalUsers?.toLocaleString('ar-IQ-u-nu-latn') ?? 0} مستخدم
           </p>

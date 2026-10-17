@@ -10,6 +10,7 @@ import PatientCRMClient from './PatientCRMClient';
 import { EmptyState } from '@/components/ui';
 import { SITE_ORIGIN as SITE_URL } from '@/lib/seo/origin';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -85,9 +86,9 @@ export default async function PatientDetailPage(props: { params: Promise<{ id: s
               <div style={{ flex: 1 }}>
                 <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 4px' }}>{patient.full_name ?? 'بدون اسم'}</h1>
                 <div style={{ display: 'flex', gap: 16, fontSize: 13, color: 'var(--ink-3)', flexWrap: 'wrap' }}>
-                  <span dir="ltr">📱 {patient.phone}</span>
-                  {patient.email && <span>✉️ {patient.email}</span>}
-                  {patient.governorate && <span>📍 {patient.governorate}</span>}
+                  <span dir="ltr"><EmojiIcon e="📱" /> {patient.phone}</span>
+                  {patient.email && <span><EmojiIcon e="✉️" /> {patient.email}</span>}
+                  {patient.governorate && <span><EmojiIcon e="📍" /> {patient.governorate}</span>}
                 </div>
                 <div style={{ marginTop: 8, fontSize: 11, color: 'var(--ink-3)' }}>
                   انضم في {new Date(patient.created_at).toLocaleDateString('ar-IQ-u-nu-latn')}
@@ -103,7 +104,7 @@ export default async function PatientDetailPage(props: { params: Promise<{ id: s
                   display: 'inline-flex', alignItems: 'center', gap: 8,
                 }}
               >
-                💬 WhatsApp
+                <EmojiIcon e="💬" /> WhatsApp
               </a>
             </div>
           </div>
@@ -118,7 +119,7 @@ export default async function PatientDetailPage(props: { params: Promise<{ id: s
           {/* Medical Info */}
           {patient.medical_info && Object.keys(patient.medical_info as object).length > 0 && (
             <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20, marginBottom: 16 }}>
-              <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}>📋 الملف الطبي</h2>
+              <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}><EmojiIcon e="📋" /> الملف الطبي</h2>
               <pre style={{ fontSize: 12, fontFamily: 'inherit', background: 'var(--paper-3)', padding: 12, borderRadius: 8, whiteSpace: 'pre-wrap', margin: 0, lineHeight: 1.7 }}>
                 {JSON.stringify(patient.medical_info, null, 2)}
               </pre>
@@ -127,7 +128,7 @@ export default async function PatientDetailPage(props: { params: Promise<{ id: s
 
           {/* Appointments */}
           <div style={{ background: 'var(--white)', borderRadius: 14, padding: 20 }}>
-            <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}>📅 آخر المواعيد</h2>
+            <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}><EmojiIcon e="📅" /> آخر المواعيد</h2>
             {(appointments ?? []).length === 0 ? (
               <EmptyState icon="📋" title="لا توجد مواعيد" size="sm" variant="plain" />
             ) : (

@@ -3,6 +3,7 @@ export const revalidate = 86400;
 
 import Link from 'next/link';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = {
   alternates: { canonical: '/legal/terms' },
   title: 'الشروط والأحكام · سباير ميديكال',
@@ -116,7 +117,7 @@ export default function TermsPage() {
           </section>
 
           <section id="medical" className="legal-warning">
-            <h2>⚠️ 5. الإخلاء الطبي</h2>
+            <h2><EmojiIcon e="⚠️" /> 5. الإخلاء الطبي</h2>
             <p>
               <strong>سباير ميديكال ليس بديلاً عن الرعاية الطبية الطارئة.</strong>
             </p>
@@ -124,8 +125,8 @@ export default function TermsPage() {
               في الحالات الطارئة (نوبة قلبية، حادث، نزيف حاد)، اتصل فوراً بـ:
             </p>
             <ul>
-              <li>📞 الإسعاف: <strong>122</strong></li>
-              <li>📞 الطوارئ: <strong>104</strong></li>
+              <li><EmojiIcon e="📞" /> الإسعاف: <strong>122</strong></li>
+              <li><EmojiIcon e="📞" /> الطوارئ: <strong>104</strong></li>
               <li>أقرب مستشفى لك</li>
             </ul>
             <p>
@@ -185,15 +186,15 @@ export default function TermsPage() {
             <p>للأسئلة أو الشكاوى المتعلّقة بهذه الشروط:</p>
             <div className="legal-contact-card">
               <div>
-                <strong>📧 البريد الإلكتروني</strong>
+                <strong><EmojiIcon e="📧" /> البريد الإلكتروني</strong>
                 <a href="mailto:legal@spir-medical.com">legal@spir-medical.com</a>
               </div>
               <div>
-                <strong>📞 خدمة العملاء</strong>
+                <strong><EmojiIcon e="📞" /> خدمة العملاء</strong>
                 <span>+964 780 399 3585</span>
               </div>
               <div>
-                <strong>📍 العنوان</strong>
+                <strong><EmojiIcon e="📍" /> العنوان</strong>
                 <span>النجف - العراق</span>
               </div>
             </div>

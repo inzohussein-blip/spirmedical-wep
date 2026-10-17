@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import DoctorsAdminClient from './DoctorsAdminClient';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'إدارة الأطباء - Admin' };
 
@@ -51,7 +52,7 @@ export default async function AdminDoctorsPage() {
         </Link>
         <div style={{ flex: 1 }}>
           <h1 style={{ fontSize: 22, fontWeight: 900, margin: 0 }}>
-            👨‍⚕️ إدارة الأطباء
+            <EmojiIcon e="👨‍⚕️" /> إدارة الأطباء
           </h1>
           <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '2px 0 0' }}>
             {doctors?.length ?? 0} طبيب مسجّل
