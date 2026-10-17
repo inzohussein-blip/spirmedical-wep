@@ -4,9 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
-  AlertTriangle, MapPin, Phone, Clock, CheckCircle2, Loader2,
-  XCircle, Eye, User,
-} from 'lucide-react';
+  IconAlertTriangle as AlertTriangle, IconMapPin as MapPin, IconPhone as Phone, IconClock as Clock, IconCircleCheck as CheckCircle2, IconLoader2 as Loader2, IconCircleX as XCircle, IconEye as Eye, IconUser as User,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';

@@ -17,7 +17,7 @@ import EmojiIcon from './EmojiIcon';
  *     action={<Button>+ طلب جديد</Button>}
  *   />
  *
- *   // أو مع lucide icon:
+ *   // أو مع أيقونة Tabler:
  *   <EmptyState
  *     icon={<Inbox size={48} />}
  *     title="..." description="..."
@@ -29,7 +29,7 @@ type EmptyStateSize = 'sm' | 'md' | 'lg';
 type EmptyStateVariant = 'default' | 'bordered' | 'plain';
 
 export interface EmptyStateProps {
-  /** أيقونة (emoji أو lucide icon component) */
+  /** أيقونة (emoji أو مكوّن أيقونة Tabler) */
   icon?: ReactNode;
   /** عنوان رئيسي */
   title: string;

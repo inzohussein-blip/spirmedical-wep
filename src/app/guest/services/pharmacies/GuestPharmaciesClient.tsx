@@ -2,7 +2,9 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Search } from 'lucide-react';
+import {
+  IconSearch as Search,
+} from '@tabler/icons-react';
 import PhoneLink from '@/components/ui/PhoneLink';
 
 interface Pharmacy {

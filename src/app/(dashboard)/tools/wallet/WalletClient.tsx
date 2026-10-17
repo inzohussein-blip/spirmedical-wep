@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import {
-  ArrowRight, ArrowDownCircle, ArrowUpCircle, RotateCcw,
-  Gift, Star, TrendingUp, Award, Info,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconCircleArrowDown as ArrowDownCircle, IconCircleArrowUp as ArrowUpCircle, IconRotate as RotateCcw, IconGift as Gift, IconStar as Star, IconTrendingUp as TrendingUp, IconAward as Award, IconInfoCircle as Info,
+} from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Transaction {
   id: string;
   transaction_type: 'credit' | 'debit' | 'refund' | 'reward' | 'points_redeem';
@@ -127,7 +127,7 @@ export default function WalletClient({
                 justifyContent: 'center',
               }}
             >
-              {currentTier.emoji}
+              <EmojiIcon e={currentTier.emoji} />
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>مستواك الحالي</div>
@@ -164,7 +164,7 @@ export default function WalletClient({
                 </div>
               </div>
               <div style={{ fontSize: 11, color: 'var(--ink-3)', textAlign: 'center' }}>
-                {nextTier.threshold - loyaltyPoints} نقطة للوصول إلى <strong>{nextTier.name}</strong> {nextTier.emoji}
+                {nextTier.threshold - loyaltyPoints} نقطة للوصول إلى <strong>{nextTier.name}</strong> <EmojiIcon e={nextTier.emoji} />
               </div>
             </>
           )}
@@ -192,19 +192,19 @@ export default function WalletClient({
           </h3>
           <div style={{ fontSize: 11, color: 'var(--ink-2)', lineHeight: 1.7 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0' }}>
-              <span>💉 كل حجز خدمة</span>
+              <span><EmojiIcon e="💉" /> كل حجز خدمة</span>
               <strong>+10 نقاط</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0' }}>
-              <span>💬 إكمال استشارة</span>
+              <span><EmojiIcon e="💬" /> إكمال استشارة</span>
               <strong>+5 نقاط</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0' }}>
-              <span>⭐ تقييم خدمة</span>
+              <span><EmojiIcon e="⭐" /> تقييم خدمة</span>
               <strong>+3 نقاط</strong>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0' }}>
-              <span>👥 دعوة صديق</span>
+              <span><EmojiIcon e="👥" /> دعوة صديق</span>
               <strong>+50 نقطة</strong>
             </div>
           </div>
@@ -230,7 +230,7 @@ export default function WalletClient({
                     opacity: isAchieved ? 1 : 0.6,
                   }}
                 >
-                  <div style={{ fontSize: 22, marginBottom: 2 }}>{tier.emoji}</div>
+                  <div style={{ fontSize: 22, marginBottom: 2 }}><EmojiIcon e={tier.emoji} /></div>
                   <div style={{
                     fontSize: 11,
                     fontWeight: 800,
@@ -328,7 +328,7 @@ export default function WalletClient({
                       flexShrink: 0,
                     }}
                   >
-                    {meta.icon}
+                    <EmojiIcon e={meta.icon} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 12, fontWeight: 700 }}>

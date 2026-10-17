@@ -1,11 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Download, X, Smartphone, Sparkles, CheckCircle2 } from 'lucide-react';
+import {
+  IconDownload as Download, IconX as X, IconDeviceMobile as Smartphone, IconSparkles as Sparkles, IconCircleCheck as CheckCircle2,
+} from '@tabler/icons-react';
 import { getDeferredPrompt, onInstallPromptChange, triggerInstall } from '@/lib/pwa';
 import { usePathname } from 'next/navigation';
 import { isFocusedTaskRoute, isEmergencyRoute } from '@/lib/focused-routes';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /**
  * ═══════════════════════════════════════════════════════════════
  * 📱 Smart Install Prompt (V25.15)
@@ -321,7 +324,7 @@ function IOSInstructionsModal({ onClose }: { onClose: () => void }) {
               fontSize: 32,
             }}
           >
-            📱
+            <EmojiIcon e="📱" />
           </div>
           <h2 style={{ fontSize: 18, fontWeight: 900, margin: '0 0 4px' }}>
             ثبّت Spir Medical
@@ -368,7 +371,7 @@ function IOSInstructionsModal({ onClose }: { onClose: () => void }) {
           <Sparkles size={14} color="var(--emerald)" style={{ flexShrink: 0, marginTop: 2 }} />
           <div>
             <strong>المميزات بعد التثبيت:</strong><br />
-            ⚡ فتح أسرع · 📡 يعمل بدون نت · 🔔 إشعارات
+            <EmojiIcon e="⚡" /> فتح أسرع · 📡 يعمل بدون نت · 🔔 إشعارات
           </div>
         </div>
 
@@ -431,7 +434,7 @@ function Step({ number, title, description, icon }: {
       </div>
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: 12, fontWeight: 800, marginBottom: 2 }}>
-          {title} <span style={{ fontSize: 14 }}>{icon}</span>
+          {title} <span style={{ fontSize: 14 }}><EmojiIcon e={icon} /></span>
         </div>
         <div style={{ fontSize: 11, color: 'var(--ink-3)', lineHeight: 1.5 }}>
           {description}

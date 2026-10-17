@@ -8,9 +8,8 @@ import AppointmentActions from '@/components/appointments/AppointmentActions';
 import ExternalMapButton from '@/components/maps/ExternalMapButton';
 import OrderClinicalDetails from '@/components/orders/OrderClinicalDetails';
 import {
-  Stethoscope, Calendar, Clock, Smartphone, MessageCircle, Send,
-  MapPin, FileText, Lock, CheckCircle2,
-} from 'lucide-react';
+  IconStethoscope as Stethoscope, IconCalendar as Calendar, IconClock as Clock, IconDeviceMobile as Smartphone, IconMessageCircle as MessageCircle, IconSend as Send, IconMapPin as MapPin, IconFileText as FileText, IconLock as Lock, IconCircleCheck as CheckCircle2,
+} from '@tabler/icons-react';
 
 export const metadata = {
   title: 'تفاصيل الموعد · سباير ميديكال',

@@ -2,7 +2,9 @@
 
 import ModalShell, { ModalCloseButton } from '@/components/ui/ModalShell';
 import { useState, useTransition } from 'react';
-import { Heart, Star, MessageSquare, Save, CheckCircle2, AlertTriangle } from 'lucide-react';
+import {
+  IconHeart as Heart, IconStar as Star, IconMessage as MessageSquare, IconDeviceFloppy as Save, IconCircleCheck as CheckCircle2, IconAlertTriangle as AlertTriangle,
+} from '@tabler/icons-react';
 import { toggleCosmeticWishlist, submitCosmeticReview } from './actions';
 
 interface Props {

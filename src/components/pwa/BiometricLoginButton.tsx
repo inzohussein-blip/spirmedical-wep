@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Fingerprint, ScanFace, Loader2 } from 'lucide-react';
+import {
+  IconFingerprint as Fingerprint, IconFaceId as ScanFace, IconLoader2 as Loader2,
+} from '@tabler/icons-react';
 import {
   isBiometricAvailable, hasRegisteredBiometric,
   loginWithBiometric, registerBiometric,

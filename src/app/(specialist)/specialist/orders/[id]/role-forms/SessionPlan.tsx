@@ -2,11 +2,12 @@
 
 import { useState, useTransition } from 'react';
 import { updateOrderRoleData } from '../actions';
-import type { LucideIcon } from 'lucide-react';
-import {
-  Dumbbell, Search, Home, Save, CheckCircle2,
-} from 'lucide-react';
 
+import {
+  IconBarbell as Dumbbell, IconSearch as Search, IconHome as Home, IconDeviceFloppy as Save, IconCircleCheck as CheckCircle2,
+} from '@tabler/icons-react';
+
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 interface SessionData {
   assessment?: string;
   exercises?: string;
@@ -35,7 +36,7 @@ export default function SessionPlan({ orderId, initialData }: { orderId: string;
     });
   }
 
-  const fields: Array<{ key: keyof SessionData; label: string; icon: LucideIcon }> = [
+  const fields: Array<{ key: keyof SessionData; label: string; icon: TablerIcon }> = [
     { key: 'assessment', icon: Search,    label: 'التقييم الأولي' },
     { key: 'exercises',  icon: Dumbbell,  label: 'التمارين المنفّذة' },
     { key: 'homework',   icon: Home,      label: 'تمارين منزلية' },

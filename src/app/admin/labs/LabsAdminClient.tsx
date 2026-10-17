@@ -2,10 +2,9 @@
 
 import { useState, useTransition } from 'react';
 import { upsertLab, toggleLabActive, toggleLabFeatured, deleteLab } from './actions';
-import { 
-  Plus, Edit, Trash2, Star, Power, MapPin, Phone, 
-  Building2, X, Save, Search, CheckCircle2,
-} from 'lucide-react';
+import {
+  IconPlus as Plus, IconEdit as Edit, IconTrash as Trash2, IconStar as Star, IconPower as Power, IconMapPin as MapPin, IconPhone as Phone, IconBuilding as Building2, IconX as X, IconDeviceFloppy as Save, IconSearch as Search, IconCircleCheck as CheckCircle2,
+} from '@tabler/icons-react';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';

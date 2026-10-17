@@ -2,7 +2,9 @@
 
 import { useState, useTransition, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Bug, AlertTriangle, CheckCircle2, X, Copy } from 'lucide-react';
+import {
+  IconBug as Bug, IconAlertTriangle as AlertTriangle, IconCircleCheck as CheckCircle2, IconX as X, IconCopy as Copy,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { updateBugStatus } from './actions';
 

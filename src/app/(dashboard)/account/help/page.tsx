@@ -1,9 +1,10 @@
 import Link from 'next/link';
-import type { LucideIcon } from 'lucide-react';
-import {
-  ArrowRight, Phone, Mail, MessageCircle, MapPin,
-} from 'lucide-react';
 
+import {
+  IconArrowRight as ArrowRight, IconPhone as Phone, IconMail as Mail, IconMessageCircle as MessageCircle, IconMapPin as MapPin,
+} from '@tabler/icons-react';
+
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 export const metadata = {
   title: 'مساعدة والدعم · سباير ميديكال',
 };
@@ -17,7 +18,7 @@ const FAQ_ITEMS = [
 ];
 
 interface ContactMethod {
-  icon: LucideIcon;
+  icon: TablerIcon;
   label: string;
   value: string;
   href: string | null;

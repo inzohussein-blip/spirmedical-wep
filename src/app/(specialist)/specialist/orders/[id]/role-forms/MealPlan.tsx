@@ -2,11 +2,12 @@
 
 import { useState, useTransition } from 'react';
 import { updateOrderRoleData } from '../actions';
-import type { LucideIcon } from 'lucide-react';
-import {
-  Apple, Sunrise, Salad, Moon, Cookie, FileText, Save, CheckCircle2,
-} from 'lucide-react';
 
+import {
+  IconApple as Apple, IconSunrise as Sunrise, IconSalad as Salad, IconMoon as Moon, IconCookie as Cookie, IconFileText as FileText, IconDeviceFloppy as Save, IconCircleCheck as CheckCircle2,
+} from '@tabler/icons-react';
+
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 interface MealData {
   current_weight?: string;
   target_weight?: string;
@@ -38,7 +39,7 @@ export default function MealPlan({ orderId, initialData }: { orderId: string; in
     });
   }
 
-  const meals: Array<{ key: keyof MealData; label: string; icon: LucideIcon }> = [
+  const meals: Array<{ key: keyof MealData; label: string; icon: TablerIcon }> = [
     { key: 'breakfast', icon: Sunrise,  label: 'الفطور' },
     { key: 'lunch',     icon: Salad,    label: 'الغداء' },
     { key: 'dinner',    icon: Moon,     label: 'العشاء' },

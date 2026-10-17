@@ -3,9 +3,8 @@
 import { useState, useTransition, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Check, AlertTriangle, FileText, Scale, Megaphone,
-  Wrench, Shield, CheckCircle2, Circle, Loader2,
-} from 'lucide-react';
+  IconCheck as Check, IconAlertTriangle as AlertTriangle, IconFileText as FileText, IconScale as Scale, IconSpeakerphone as Megaphone, IconTool as Wrench, IconShield as Shield, IconCircleCheck as CheckCircle2, IconCircle as Circle, IconLoader2 as Loader2,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { toggleChecklistItem, updateChecklistNotes } from './actions';
 

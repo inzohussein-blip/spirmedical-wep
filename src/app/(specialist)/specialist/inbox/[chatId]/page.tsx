@@ -4,8 +4,8 @@ import { notFound } from 'next/navigation';
 import ChatWindow, { type Message, type ChatParticipant } from '@/components/chat/ChatWindow';
 import ChatMetaControls from './ChatMetaControls';
 import {
-  Phone, MapPin, Tag, Calendar, ClipboardList, FileText,
-} from 'lucide-react';
+  IconPhone as Phone, IconMapPin as MapPin, IconTag as Tag, IconCalendar as Calendar, IconClipboardList as ClipboardList, IconFileText as FileText,
+} from '@tabler/icons-react';
 
 export const dynamic = 'force-dynamic';
 

@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowRight, ArrowLeft, X, Check, Sparkles,
-  Heart, Calendar, Users, Bell, Lock,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconArrowLeft as ArrowLeft, IconX as X, IconCheck as Check, IconSparkles as Sparkles, IconHeart as Heart, IconCalendar as Calendar, IconUsers as Users, IconBell as Bell, IconLock as Lock,
+} from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /**
  * ═══════════════════════════════════════════════════════════════
  * 📚 Onboarding Tutorial (V25.13)
@@ -268,7 +268,7 @@ export default function OnboardingTutorial({ forceShow, onComplete }: Props) {
               animation: 'onb-bounce 2.5s ease-in-out infinite',
             }}
           >
-            {step.emoji}
+            <EmojiIcon e={step.emoji} />
           </div>
 
           {/* Title */}
@@ -319,7 +319,7 @@ export default function OnboardingTutorial({ forceShow, onComplete }: Props) {
                 }}
               >
                 <div style={{ color: step.color, flexShrink: 0 }}>
-                  {feature.icon}
+                  <EmojiIcon e={feature.icon} />
                 </div>
                 <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink-2)' }}>
                   {feature.label}

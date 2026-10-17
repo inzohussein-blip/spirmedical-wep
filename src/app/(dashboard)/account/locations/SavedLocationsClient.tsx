@@ -2,7 +2,9 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { MapPin, Plus, Trash2, Star, Edit3, X, Save, Crosshair } from 'lucide-react';
+import {
+  IconMapPin as MapPin, IconPlus as Plus, IconTrash as Trash2, IconStar as Star, IconPencil as Edit3, IconX as X, IconDeviceFloppy as Save, IconCrosshair as Crosshair,
+} from '@tabler/icons-react';
 import UserLocationPickerWrapper from '@/components/maps/UserLocationPickerWrapper';
 import { Card, CardHeader, CardTitle, EmptyState, Badge, useConfirm } from '@/components/ui';
 import { useFormErrors } from '@/lib/forms/useFormErrors';
@@ -22,6 +24,7 @@ const LOC_FIELD_LABELS: Record<string, string> = {
 import type { SavedLocation } from '@/types/saved-locations';
 import { SAVED_LOCATION_ICONS } from '@/types/saved-locations';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Props {
   initialLocations: SavedLocation[];
 }
@@ -153,7 +156,7 @@ export default function SavedLocationsClient({ initialLocations }: Props) {
   return (
     <main className="app-screen">
       <div style={{ padding: '20px 16px 8px' }}>
-        <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0 }}>📍 مواقعي المحفوظة</h1>
+        <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0 }}><EmojiIcon e="📍" /> مواقعي المحفوظة</h1>
         <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '4px 0 0' }}>
           احفظ مواقعك المتكررة (البيت، العمل) للوصول السريع
         </p>
@@ -198,7 +201,7 @@ export default function SavedLocationsClient({ initialLocations }: Props) {
               fontWeight: 700,
             }}
           >
-            ⚠️ وصلت للحد الأقصى (10 مواقع). احذف موقعاً قديماً للإضافة.
+            <EmojiIcon e="⚠️" /> وصلت للحد الأقصى (10 مواقع). احذف موقعاً قديماً للإضافة.
           </p>
         )}
       </div>
@@ -289,7 +292,7 @@ export default function SavedLocationsClient({ initialLocations }: Props) {
                     }}
                     title={opt.label}
                   >
-                    {opt.emoji}
+                    <EmojiIcon e={opt.emoji} />
                   </button>
                 ))}
               </div>
@@ -369,7 +372,7 @@ export default function SavedLocationsClient({ initialLocations }: Props) {
                   marginBottom: 12,
                 }}
               >
-                ⚠️ {error}
+                <EmojiIcon e="⚠️" /> {error}
               </div>
             )}
 
@@ -452,7 +455,7 @@ export default function SavedLocationsClient({ initialLocations }: Props) {
                     flexShrink: 0,
                   }}
                 >
-                  {loc.icon}
+                  <EmojiIcon e={loc.icon} />
                 </div>
 
                 <div style={{ flex: 1, minWidth: 0 }}>

@@ -6,7 +6,9 @@ import { usePathname } from 'next/navigation';
 import { hasPermission, type Permission } from '@/lib/admin-types';
 import { Icon } from '@/components/admin-ui';
 import EmojiIcon from '@/components/ui/EmojiIcon';
-import { Menu, X } from 'lucide-react';
+import {
+  IconMenu2 as Menu, IconX as X,
+} from '@tabler/icons-react';
 import type { IconName } from '@/lib/icons';
 
 interface NavItem {

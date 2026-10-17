@@ -2,9 +2,8 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import {
-  ArrowRight, BarChart3, CheckCircle2, Clock, TestTube, Calendar,
-  Lock, FileText, AlertCircle, TrendingUp, Building2,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconChartBar as BarChart3, IconCircleCheck as CheckCircle2, IconClock as Clock, IconTestPipe as TestTube, IconCalendar as Calendar, IconLock as Lock, IconFileText as FileText, IconAlertCircle as AlertCircle, IconTrendingUp as TrendingUp, IconBuilding as Building2,
+} from '@tabler/icons-react';
 import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
 
 export const dynamic = 'force-dynamic';

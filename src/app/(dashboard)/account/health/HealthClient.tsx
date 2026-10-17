@@ -2,13 +2,13 @@
 
 import { useState, useTransition } from 'react';
 import { recordVital, deleteVital, type VitalType } from './actions';
-import type { LucideIcon } from 'lucide-react';
+
 import { useConfirm } from '@/components/ui';
 import {
-  Heart, Droplet, Candy, Thermometer, Scale, Wind, Ruler,
-  AlertTriangle, Calendar, Trash2,
-} from 'lucide-react';
+  IconHeart as Heart, IconDroplet as Droplet, IconCandy as Candy, IconTemperature as Thermometer, IconScale as Scale, IconWind as Wind, IconRuler as Ruler, IconAlertTriangle as AlertTriangle, IconCalendar as Calendar, IconTrash as Trash2,
+} from '@tabler/icons-react';
 
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 interface Vital {
   id: string;
   vital_type: string;
@@ -18,7 +18,7 @@ interface Vital {
   notes: string | null;
 }
 
-const VITAL_META: Record<string, { label: string; icon: LucideIcon; unit: string; color: 'rose' | 'amber' | 'default'; placeholder: string }> = {
+const VITAL_META: Record<string, { label: string; icon: TablerIcon; unit: string; color: 'rose' | 'amber' | 'default'; placeholder: string }> = {
   pulse:           { label: 'النبض',     icon: Heart,       unit: 'نبضة/د',   color: 'rose',    placeholder: '72' },
   blood_pressure:  { label: 'الضغط',     icon: Droplet,     unit: 'ملم زئبق', color: 'default', placeholder: '120/80' },
   blood_sugar:     { label: 'السكر',     icon: Candy,       unit: 'mg/dL',    color: 'amber',   placeholder: '95' },

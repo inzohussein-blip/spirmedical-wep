@@ -4,10 +4,8 @@ import Link from 'next/link';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  ArrowRight, MapPin, Phone, Star, Stethoscope, Video, Home,
-  Award, Languages, CheckCircle2, Calendar, MessageCircle,
-  Sparkles, Loader2, Building2,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconMapPin as MapPin, IconPhone as Phone, IconStar as Star, IconStethoscope as Stethoscope, IconVideo as Video, IconHome as Home, IconAward as Award, IconLanguage as Languages, IconCircleCheck as CheckCircle2, IconCalendar as Calendar, IconMessageCircle as MessageCircle, IconSparkles as Sparkles, IconLoader2 as Loader2, IconBuilding as Building2,
+} from '@tabler/icons-react';
 import { formatNumber } from '@/lib/format/price';
 import { toast } from '@/components/ui/Toaster';
 import { useConfirm } from '@/components/ui';
@@ -19,6 +17,7 @@ import DoctorBookingModal from '@/components/doctors/DoctorBookingModal';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import PhoneLink from '@/components/ui/PhoneLink';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Doctor {
   id: string;
   full_name: string;
@@ -208,7 +207,7 @@ export default function DoctorDetailClient({ doctor, activeSubscription, initial
                 {doctor.is_verified && <CheckCircle2 size={16} fill="currentColor" />}
               </h2>
               <p style={{ fontSize: 13, opacity: 0.9, margin: '2px 0 0' }}>
-                {specMeta?.emoji} {specMeta?.label || doctor.specialty}
+                <EmojiIcon e={specMeta?.emoji} /> {specMeta?.label || doctor.specialty}
                 {doctor.sub_specialty && ` · ${doctor.sub_specialty}`}
               </p>
               {doctor.rating_count > 0 && (
@@ -675,7 +674,7 @@ export default function DoctorDetailClient({ doctor, activeSubscription, initial
                       borderRadius: 6,
                     }}
                   >
-                    ⭐ الأفضل
+                    <EmojiIcon e="⭐" /> الأفضل
                   </span>
                   <div
                     style={{
@@ -737,7 +736,7 @@ function StatBox({ icon, value, label }: { icon: React.ReactNode; value: string;
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 2, opacity: 0.85 }}>
-        {icon}
+        <EmojiIcon e={icon} />
       </div>
       <div style={{ fontSize: 13, fontWeight: 900 }}>{value}</div>
       <div style={{ fontSize: 11, opacity: 0.75, marginTop: 1 }}>{label}</div>

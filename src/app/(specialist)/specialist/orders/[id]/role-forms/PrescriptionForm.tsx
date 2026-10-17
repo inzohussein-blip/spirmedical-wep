@@ -2,7 +2,9 @@
 
 import { useState, useTransition } from 'react';
 import { updateOrderRoleData } from '../actions';
-import { Trash2, Save, CheckCircle2, Stethoscope } from 'lucide-react';
+import {
+  IconTrash as Trash2, IconDeviceFloppy as Save, IconCircleCheck as CheckCircle2, IconStethoscope as Stethoscope,
+} from '@tabler/icons-react';
 
 interface Medication {
   name: string;

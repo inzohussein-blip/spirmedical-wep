@@ -2,8 +2,11 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { WifiOff, RefreshCw, Home, CheckCircle2 } from 'lucide-react';
+import {
+  IconWifiOff as WifiOff, IconRefresh as RefreshCw, IconHome as Home, IconCircleCheck as CheckCircle2,
+} from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /**
  * ═══════════════════════════════════════════════════════════════
  * Offline Page — V25.3
@@ -86,7 +89,7 @@ export default function OfflineClient() {
 
         <div className="offline-features">
           <h3 className="offline-features-title">
-            ✨ ما زال يمكنك:
+            <EmojiIcon e="✨" /> ما زال يمكنك:
           </h3>
           <ul>
             <li>

@@ -2,7 +2,9 @@
 
 import { useState, useTransition } from 'react';
 import { saveSchedule, saveAutoReply } from './actions';
-import { Calendar, MessageCircle, Save, CheckCircle2 } from 'lucide-react';
+import {
+  IconCalendar as Calendar, IconMessageCircle as MessageCircle, IconDeviceFloppy as Save, IconCircleCheck as CheckCircle2,
+} from '@tabler/icons-react';
 
 interface ScheduleSlot {
   day_of_week: number;

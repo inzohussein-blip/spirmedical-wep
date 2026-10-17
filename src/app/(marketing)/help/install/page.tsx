@@ -1,5 +1,7 @@
 import Link from 'next/link';
-import { Share2, Plus, MoreVertical, Download, ChevronRight } from 'lucide-react';
+import {
+  IconShare as Share2, IconPlus as Plus, IconDotsVertical as MoreVertical, IconDownload as Download, IconChevronRight as ChevronRight,
+} from '@tabler/icons-react';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = {

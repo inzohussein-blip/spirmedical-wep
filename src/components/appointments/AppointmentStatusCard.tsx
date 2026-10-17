@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { LucideIcon } from 'lucide-react';
-import {
-  Clock, CheckCircle2, Car, PartyPopper, XCircle, Zap,
-  Timer,
-} from 'lucide-react';
 
+import {
+  IconClock as Clock, IconCircleCheck as CheckCircle2, IconCar as Car, IconConfetti as PartyPopper, IconCircleX as XCircle, IconBolt as Zap, IconClockHour4 as Timer,
+} from '@tabler/icons-react';
+
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 type Status = 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
 
 interface Props {
@@ -18,7 +18,7 @@ interface Props {
 
 const STATUS_CONFIG: Record<Status, {
   label: string;
-  icon: LucideIcon;
+  icon: TablerIcon;
   bg: string;
   color: string;
   pulse: boolean;

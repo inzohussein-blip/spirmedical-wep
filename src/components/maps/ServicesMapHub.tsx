@@ -2,8 +2,11 @@
 
 // أنماط MapLibre مفصولة (route-scoped) — تُحمَّل مع chunk الخريطة فقط.
 import '@/components/maps/maplibre-styles';
+import EmojiIcon from '@/components/ui/EmojiIcon';
 import { useEffect, useRef, useState } from 'react';
-import { MapPin, Filter, Crosshair, X } from 'lucide-react';
+import {
+  IconMapPin as MapPin, IconFilter as Filter, IconCrosshair as Crosshair, IconX as X,
+} from '@tabler/icons-react';
 import type {
   Map as MlMap,
   Marker as MlMarker,
@@ -58,15 +61,15 @@ interface Props {
 
 const SERVICE_FILTERS: Array<{ id: ServiceMarkerType | 'all'; label: string; tablerIcon: string }> = [
   { id: 'all',           label: 'الكل',         tablerIcon: '◉' },
-  { id: 'blood-draw',    label: 'سحب دم',       tablerIcon: '💉' },
-  { id: 'home-nursing',  label: 'تمريض',        tablerIcon: '+' },
-  { id: 'pharmacy',      label: 'صيدلية',       tablerIcon: 'Rx' },
+  { id: 'blood-draw',    label: 'سحب دم',       tablerIcon: '🩸' },
+  { id: 'home-nursing',  label: 'تمريض',        tablerIcon: '💉' },
+  { id: 'pharmacy',      label: 'صيدلية',       tablerIcon: '💊' },
   { id: 'dental',        label: 'أسنان',        tablerIcon: '🦷' },
   { id: 'optical',       label: 'نظارات',       tablerIcon: '👓' },
   { id: 'mental-health', label: 'صحة نفسية',   tablerIcon: '🧠' },
   { id: 'nutrition',     label: 'تغذية',        tablerIcon: '🥗' },
-  { id: 'hospital',      label: 'مستشفى',       tablerIcon: '+' },
-  { id: 'clinic',        label: 'عيادة',        tablerIcon: '🏥' },
+  { id: 'hospital',      label: 'مستشفى',       tablerIcon: '🏥' },
+  { id: 'clinic',        label: 'عيادة',        tablerIcon: '🩺' },
   { id: 'doctor',        label: 'طبيب',         tablerIcon: '👨‍⚕️' },
 ];
 
@@ -375,7 +378,7 @@ export default function ServicesMapHub({
             onClick={() => setSelectedFilter(f.id)}
             className={`services-map-filter-btn ${selectedFilter === f.id ? 'active' : ''}`}
           >
-            <span className="services-map-filter-symbol" aria-hidden="true">{f.tablerIcon}</span>
+            <span className="services-map-filter-symbol" aria-hidden="true"><EmojiIcon e={f.tablerIcon} /></span>
             {f.label}
           </button>
         ))}

@@ -4,9 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowRight, Calendar, Clock, MapPin, Phone, MessageCircle,
-  CheckCircle2, Loader2, User, Star, Info,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconCalendar as Calendar, IconClock as Clock, IconMapPin as MapPin, IconPhone as Phone, IconMessageCircle as MessageCircle, IconCircleCheck as CheckCircle2, IconLoader2 as Loader2, IconUser as User, IconStar as Star, IconInfoCircle as Info,
+} from '@tabler/icons-react';
 import { haptic } from '@/lib/haptic';
 import { toast } from '@/components/ui/Toaster';
 import { createServiceBooking } from './actions';
@@ -14,6 +13,7 @@ import type { BookingProvider } from './page';
 import PhoneLink from '@/components/ui/PhoneLink';
 import { baghdadDateOffset } from '@/lib/time/baghdad-day';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Props {
   provider: BookingProvider;
   serviceLabel: string;
@@ -286,7 +286,7 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
               background: 'var(--paper-3)',
               borderRadius: 6,
             }}>
-              💰 {provider.meta.priceRange}
+              <EmojiIcon e="💰" /> {provider.meta.priceRange}
             </div>
           )}
         </div>
@@ -309,7 +309,7 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
         {/* ─── Step 1: Details ─── */}
         {step === 'details' && (
           <div>
-            <SectionTitle>📞 رقم التواصل</SectionTitle>
+            <SectionTitle><EmojiIcon e="📞" /> رقم التواصل</SectionTitle>
             <input
               type="tel"
               value={phone}
@@ -321,7 +321,7 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
             {!isOnlineService && (
               <>
                 <SectionTitle style={{ marginTop: 14 }}>
-                  📍 {isClinicService ? 'الموقع (اختياري - للتذكير)' : 'العنوان'}
+                  <EmojiIcon e="📍" /> {isClinicService ? 'الموقع (اختياري - للتذكير)' : 'العنوان'}
                 </SectionTitle>
                 <textarea
                   value={address}
@@ -336,7 +336,7 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
             {/* V25.47: Dental Procedure Selector */}
             {provider.type === 'dental' && (
               <>
-                <SectionTitle style={{ marginTop: 14 }}>🦷 نوع الإجراء</SectionTitle>
+                <SectionTitle style={{ marginTop: 14 }}><EmojiIcon e="🦷" /> نوع الإجراء</SectionTitle>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6 }}>
                   {[
                     { id: 'cleaning', label: 'تنظيف الأسنان' },
@@ -378,7 +378,7 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
             {/* V25.47: Optical Service Selector */}
             {provider.type === 'optical' && (
               <>
-                <SectionTitle style={{ marginTop: 14 }}>👓 نوع الخدمة</SectionTitle>
+                <SectionTitle style={{ marginTop: 14 }}><EmojiIcon e="👓" /> نوع الخدمة</SectionTitle>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6 }}>
                   {[
                     { id: 'eye_exam', label: 'فحص نظر' },
@@ -415,7 +415,7 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
               </>
             )}
 
-            <SectionTitle style={{ marginTop: 14 }}>📝 ملاحظات (اختياري)</SectionTitle>
+            <SectionTitle style={{ marginTop: 14 }}><EmojiIcon e="📝" /> ملاحظات (اختياري)</SectionTitle>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
@@ -444,7 +444,7 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
                       fontSize: 11,
                       fontWeight: 700,
                     }}>
-                      ✓ {s}
+                      <EmojiIcon e="✓" /> {s}
                     </span>
                   ))}
                 </div>
@@ -456,7 +456,7 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
         {/* ─── Step 2: Date & Time ─── */}
         {step === 'datetime' && (
           <div>
-            <SectionTitle>📅 التاريخ</SectionTitle>
+            <SectionTitle><EmojiIcon e="📅" /> التاريخ</SectionTitle>
             <input
               type="date"
               value={date}
@@ -465,7 +465,7 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
               style={inputStyle}
             />
 
-            <SectionTitle style={{ marginTop: 14 }}>⏰ الوقت</SectionTitle>
+            <SectionTitle style={{ marginTop: 14 }}><EmojiIcon e="⏰" /> الوقت</SectionTitle>
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(3, 1fr)',
@@ -517,7 +517,7 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
         {/* ─── Step 3: Confirm ─── */}
         {step === 'confirm' && (
           <div>
-            <SectionTitle>✓ مراجعة الحجز</SectionTitle>
+            <SectionTitle><EmojiIcon e="✓" /> مراجعة الحجز</SectionTitle>
 
             <div style={{
               background: 'var(--white)',
@@ -570,7 +570,7 @@ export default function BookingClient({ provider, serviceLabel, userPhone, userN
               lineHeight: 1.7,
               marginBottom: 14,
             }}>
-              💡 الدفع <strong>كاش</strong> في موعد الزيارة. لن نطلب أي مبلغ مسبقاً.
+              <EmojiIcon e="💡" /> الدفع <strong>كاش</strong> في موعد الزيارة. لن نطلب أي مبلغ مسبقاً.
             </div>
           </div>
         )}

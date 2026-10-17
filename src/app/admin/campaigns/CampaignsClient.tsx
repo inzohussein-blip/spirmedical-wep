@@ -3,10 +3,8 @@
 import { useState, useTransition, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Plus, Edit3, Trash2, Send, X, Save, Loader2, Search,
-  MessageCircle, Smartphone, Bell, Mail, Calendar, Users,
-  Eye, AlertTriangle,
-} from 'lucide-react';
+  IconPlus as Plus, IconPencil as Edit3, IconTrash as Trash2, IconSend as Send, IconX as X, IconDeviceFloppy as Save, IconLoader2 as Loader2, IconSearch as Search, IconMessageCircle as MessageCircle, IconDeviceMobile as Smartphone, IconBell as Bell, IconMail as Mail, IconCalendar as Calendar, IconUsers as Users, IconEye as Eye, IconAlertTriangle as AlertTriangle,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { createCampaign, updateCampaign, deleteCampaign, sendCampaign } from './actions';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';

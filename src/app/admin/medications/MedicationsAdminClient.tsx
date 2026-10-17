@@ -3,8 +3,8 @@
 import { useState, useTransition, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Plus, Edit3, Trash2, X, Save, Loader2, Search, Pill,
-} from 'lucide-react';
+  IconPlus as Plus, IconPencil as Edit3, IconTrash as Trash2, IconX as X, IconDeviceFloppy as Save, IconLoader2 as Loader2, IconSearch as Search, IconPill as Pill,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { createMedication, updateMedication, deleteMedication } from './actions';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';

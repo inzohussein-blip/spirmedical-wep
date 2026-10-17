@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Plan {
   id: 'free' | 'pro' | 'family';
   name: string;
@@ -113,7 +114,7 @@ export default function SubscriptionClient() {
 
         {/* Hero */}
         <div className="scr-info-banner" style={{ background: 'linear-gradient(135deg, #0E5C4D 0%, #073B30 100%)', color: 'var(--white)', borderColor: 'transparent', flexDirection: 'column', alignItems: 'flex-start', padding: 16 }}>
-          <div style={{ fontSize: 24, marginBottom: 8 }}>💎</div>
+          <div style={{ fontSize: 24, marginBottom: 8 }}><EmojiIcon e="💎" /></div>
           <div style={{ fontSize: 14, fontWeight: 800, marginBottom: 4 }}>اختر الباقة المناسبة لك</div>
           <div style={{ fontSize: 11, opacity: 0.9 }}>
             ابدأ مجاناً · ترقَّ في أي وقت · ألغِ في أي وقت
@@ -208,7 +209,7 @@ export default function SubscriptionClient() {
                     className={`subscription-cta ${plan.highlight ? 'primary' : ''}`}
                     style={{ textDecoration: 'none', textAlign: 'center', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
                   >
-                    {plan.price === 0 ? 'متاحة' : <><span>💬</span><span>تواصل عبر واتساب</span></>}
+                    {plan.price === 0 ? 'متاحة' : <><span><EmojiIcon e="💬" /></span><span>تواصل عبر واتساب</span></>}
                   </a>
                 )}
               </div>
@@ -223,22 +224,22 @@ export default function SubscriptionClient() {
 
         <div className="services-grid">
           <div className="service-card service-default">
-            <div className="service-icon" aria-hidden="true">⚡</div>
+            <div className="service-icon" aria-hidden="true"><EmojiIcon e="⚡" /></div>
             <div className="service-title">أولوية</div>
             <div className="service-desc">مواعيد أسرع</div>
           </div>
           <div className="service-card service-amber">
-            <div className="service-icon" aria-hidden="true">💸</div>
+            <div className="service-icon" aria-hidden="true"><EmojiIcon e="💸" /></div>
             <div className="service-title">خصومات</div>
             <div className="service-desc">حتى 30%</div>
           </div>
           <div className="service-card service-default">
-            <div className="service-icon" aria-hidden="true">⌬</div>
+            <div className="service-icon" aria-hidden="true"><EmojiIcon e="⌬" /></div>
             <div className="service-title">طبيب مخصص</div>
             <div className="service-desc">رعاية شاملة</div>
           </div>
           <div className="service-card service-rose">
-            <div className="service-icon" aria-hidden="true">📞</div>
+            <div className="service-icon" aria-hidden="true"><EmojiIcon e="📞" /></div>
             <div className="service-title">دعم 24/7</div>
             <div className="service-desc">استجابة فورية</div>
           </div>
@@ -263,7 +264,7 @@ export default function SubscriptionClient() {
 
         {/* التواصل */}
         <div className="scr-info-banner" style={{ marginTop: 24 }}>
-          <span aria-hidden="true">💬</span>
+          <span aria-hidden="true"><EmojiIcon e="💬" /></span>
           <span>
             عندك سؤال؟{' '}
             <Link href="/account/help" className="auth-inline-link">

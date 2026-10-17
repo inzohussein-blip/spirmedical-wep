@@ -3,9 +3,12 @@
 import Link from 'next/link';
 import { useState, useMemo, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import type { LucideIcon } from 'lucide-react';
-import { Inbox, Circle, MessageCircle, Clock, CheckCircle2, AlertTriangle, Pin, Search } from 'lucide-react';
 
+import {
+  IconInbox as Inbox, IconCircle as Circle, IconMessageCircle as MessageCircle, IconClock as Clock, IconCircleCheck as CheckCircle2, IconAlertTriangle as AlertTriangle, IconPin as Pin, IconSearch as Search,
+} from '@tabler/icons-react';
+
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 export interface ChatPreview {
   id: string;
   participantName: string;
@@ -32,7 +35,7 @@ interface ChatListProps {
 
 type FilterId = 'all' | 'unread' | 'open' | 'pending' | 'resolved' | 'urgent';
 
-const FILTERS: Array<{ id: FilterId; label: string; icon: LucideIcon }> = [
+const FILTERS: Array<{ id: FilterId; label: string; icon: TablerIcon }> = [
   { id: 'all',      label: 'الكل',        icon: Inbox },
   { id: 'unread',   label: 'غير مقروء',   icon: Circle },
   { id: 'open',     label: 'مفتوحة',      icon: MessageCircle },

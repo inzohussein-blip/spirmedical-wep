@@ -2,9 +2,8 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import {
-  ArrowRight, MessageCircle, Stethoscope, Target, Video, Clock, Info,
-  ChevronLeft,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconMessageCircle as MessageCircle, IconStethoscope as Stethoscope, IconTarget as Target, IconVideo as Video, IconClock as Clock, IconInfoCircle as Info, IconChevronLeft as ChevronLeft,
+} from '@tabler/icons-react';
 
 export const dynamic = 'force-dynamic';
 

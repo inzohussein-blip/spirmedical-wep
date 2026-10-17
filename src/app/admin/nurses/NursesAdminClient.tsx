@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Star, User } from 'lucide-react';
+import {
+  IconSearch as Search, IconStar as Star, IconUser as User,
+} from '@tabler/icons-react';
 import { DataTable, StatusPill } from '@/components/admin-ui';
 
 interface Nurse {

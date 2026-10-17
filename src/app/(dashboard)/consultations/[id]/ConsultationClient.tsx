@@ -5,10 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 import Link from 'next/link';
 import {
-  ArrowRight, Send, Image as ImageIcon, FileText, X,
-  Paperclip, Stethoscope, User as UserIcon, Loader2,
-  ChevronDown, ChevronUp, CheckCircle2, Eye,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconSend as Send, IconPhoto as ImageIcon, IconFileText as FileText, IconX as X, IconPaperclip as Paperclip, IconStethoscope as Stethoscope, IconUser as UserIcon, IconLoader2 as Loader2, IconChevronDown as ChevronDown, IconChevronUp as ChevronUp, IconCircleCheck as CheckCircle2, IconEye as Eye,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { useConfirm } from '@/components/ui';
 import { sendMessage, attachMedicalRecord, closeConsultation } from './actions';

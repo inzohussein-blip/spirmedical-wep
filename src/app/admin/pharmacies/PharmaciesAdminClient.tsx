@@ -3,9 +3,8 @@
 import { useState, useTransition, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Plus, Edit3, Trash2, X, Save, Loader2, Search, Eye, EyeOff,
-  Package, Phone,
-} from 'lucide-react';
+  IconPlus as Plus, IconPencil as Edit3, IconTrash as Trash2, IconX as X, IconDeviceFloppy as Save, IconLoader2 as Loader2, IconSearch as Search, IconEye as Eye, IconEyeOff as EyeOff, IconPackage as Package, IconPhone as Phone,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { useConfirm } from '@/components/ui';
 import { createPharmacy, updatePharmacy, deletePharmacy, togglePharmacyActive } from './actions';

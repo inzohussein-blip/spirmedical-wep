@@ -3,8 +3,8 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import HealthClient from './HealthClient';
 import {
-  ArrowRight, ClipboardList, TestTube, Pill, Lock,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconClipboardList as ClipboardList, IconTestPipe as TestTube, IconPill as Pill, IconLock as Lock,
+} from '@tabler/icons-react';
 
 export const metadata = {
   title: 'لوحة الصحة · سباير ميديكال',

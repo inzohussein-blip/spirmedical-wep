@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { signOut } from '../../../(auth)/login/actions';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = {
   title: 'الحساب مرفوض · سباير ميديكال',
 };
@@ -25,7 +26,7 @@ export default async function RejectedPage() {
   return (
     <main style={{ minHeight: '100vh', background: 'var(--paper)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
       <div style={{ maxWidth: 420, width: '100%', background: 'var(--white)', borderRadius: 20, padding: 32, textAlign: 'center', boxShadow: '0 10px 40px rgba(0,0,0,0.08)' }}>
-        <div style={{ fontSize: 64, marginBottom: 12 }}>❌</div>
+        <div style={{ fontSize: 64, marginBottom: 12 }}><EmojiIcon e="❌" /></div>
         <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--ink)', margin: '0 0 8px' }}>
           عذراً، لم تتم الموافقة
         </h1>
@@ -59,7 +60,7 @@ export default async function RejectedPage() {
             marginBottom: 12,
           }}
         >
-          💬 تواصل للاستفسار
+          <EmojiIcon e="💬" /> تواصل للاستفسار
         </a>
 
         <form action={signOut}>

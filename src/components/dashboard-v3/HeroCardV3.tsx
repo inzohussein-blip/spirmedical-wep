@@ -14,6 +14,7 @@
 import Link from 'next/link';
 import { IconBell, IconFlask, IconPill } from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Props {
   firstName: string;
   testsCount: number;
@@ -101,7 +102,7 @@ export default function HeroCardV3({
         {/* Greeting */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 11, opacity: 0.85, marginBottom: 1 }}>
-            مرحباً 👋
+            مرحباً <EmojiIcon e="👋" />
           </div>
           <div
             style={{
@@ -198,7 +199,7 @@ function StatPill({
         backdropFilter: 'blur(8px)',
       }}
     >
-      <span style={{ opacity: 0.9 }}>{icon}</span>
+      <span style={{ opacity: 0.9 }}><EmojiIcon e={icon} /></span>
       <span style={{ fontSize: 14, fontWeight: 800 }}>{value}</span>
       <span style={{ fontSize: 11, opacity: 0.85 }}>{label}</span>
     </div>

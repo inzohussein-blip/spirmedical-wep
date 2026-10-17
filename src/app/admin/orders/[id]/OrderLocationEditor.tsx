@@ -2,7 +2,9 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { MapPin, X } from 'lucide-react';
+import {
+  IconMapPin as MapPin, IconX as X,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWrapper';
 import { updateOrderLocation } from './actions';

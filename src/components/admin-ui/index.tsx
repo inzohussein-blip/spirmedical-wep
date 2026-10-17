@@ -6,9 +6,11 @@
  * (البادئة `aui-`) فيعمل استعلامُ الوسائط — النمطُ السطريّ لا يُجاوَز إلّا بـ!important.
  */
 import Link from 'next/link';
-import type { ReactNode } from 'react';
-import { ChevronLeft } from 'lucide-react';
-import { ICONS, ICON_STROKE, type IconName } from '@/lib/icons';
+import type { CSSProperties, ReactNode } from 'react';
+import {
+  IconChevronLeft as ChevronLeft,
+} from '@tabler/icons-react';
+import { ICONS, ICON_COLOR, ICON_STROKE, ICON_TONES, type IconName } from '@/lib/icons';
 
 export type Tone = 'brand' | 'violet' | 'amber' | 'rose' | 'neutral';
 
@@ -17,13 +19,24 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
   return <C size={size} strokeWidth={ICON_STROKE} aria-hidden />;
 }
 
+/**
+ * بلاطةُ أيقونة بأسلوب تطبيق المريض: لونُ المفهوم على خلفيّته الفاتحة (`ICON_COLOR`) —
+ * المستشفى أزرق أينما ظهر. `tone` صريحاً يغلبه (تنبيهٌ أحمر لعددٍ يحتاج انتباهاً).
+ */
+function IconTile({ icon, tone }: { icon: IconName; tone?: Tone }) {
+  if (tone) return <span className={`aui-stat-icon aui-tone-${tone}`}><Icon name={icon} size={22} /></span>;
+  const t = ICON_TONES[ICON_COLOR[icon]];
+  const style = { '--tone': t.fg, '--tone-soft': t.bg } as CSSProperties;
+  return <span className="aui-stat-icon" style={style}><Icon name={icon} size={22} /></span>;
+}
+
 /** رقمٌ واحد مع أيقونته — للوحة وإحصاءات الأقسام */
 export function StatCard({
-  icon, label, value, hint, tone = 'brand', href,
+  icon, label, value, hint, tone, href,
 }: { icon: IconName; label: string; value: ReactNode; hint?: ReactNode; tone?: Tone; href?: string }) {
   const body = (
     <>
-      <span className={`aui-stat-icon aui-tone-${tone}`}><Icon name={icon} size={20} /></span>
+      <IconTile icon={icon} tone={tone} />
       <span className="aui-stat-value">{value}</span>
       <span className="aui-stat-label">{label}</span>
       {hint && <span className="aui-stat-hint">{hint}</span>}
@@ -139,12 +152,12 @@ export function DataTable<T>({ columns, rows, rowKey, empty }: {
 }
 
 /** إجراءٌ سريع: بطاقةٌ بأيقونةٍ ملوّنة — بدل أشرطةٍ متدرّجة الألوان لكلّ رابط */
-export function ActionTile({ href, icon, title, subtitle, tone = 'brand' }: {
+export function ActionTile({ href, icon, title, subtitle, tone }: {
   href: string; icon: IconName; title: string; subtitle?: string; tone?: Tone;
 }) {
   return (
     <Link href={href} className="aui-action">
-      <span className={`aui-stat-icon aui-tone-${tone}`}><Icon name={icon} size={20} /></span>
+      <IconTile icon={icon} tone={tone} />
       <span className="aui-row-text">
         <span className="aui-row-title">{title}</span>
         {subtitle && <span className="aui-row-sub">{subtitle}</span>}

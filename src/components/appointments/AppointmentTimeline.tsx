@@ -1,15 +1,15 @@
 'use client';
 
-import type { LucideIcon } from 'lucide-react';
-import {
-  FileText, CheckCircle2, Car, Droplet, TestTube, BarChart3,
-  PartyPopper, XCircle, ScrollText,
-} from 'lucide-react';
 
+import {
+  IconFileText as FileText, IconCircleCheck as CheckCircle2, IconCar as Car, IconDroplet as Droplet, IconTestPipe as TestTube, IconChartBar as BarChart3, IconConfetti as PartyPopper, IconCircleX as XCircle, IconScript as ScrollText,
+} from '@tabler/icons-react';
+
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 interface TimelineEvent {
   status: string;
   label: string;
-  icon: LucideIcon;
+  icon: TablerIcon;
   timestamp: string | null;
   active: boolean;
   current: boolean;

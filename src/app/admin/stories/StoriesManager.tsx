@@ -2,18 +2,8 @@
 
 import { useState, useTransition } from 'react';
 import {
-  Plus,
-  Edit2,
-  Trash2,
-  Eye,
-  EyeOff,
-  Save,
-  X,
-  AlertCircle,
-  Check,
-  ChevronUp,
-  ChevronDown,
-} from 'lucide-react';
+  IconPlus as Plus, IconPencil as Edit2, IconTrash as Trash2, IconEye as Eye, IconEyeOff as EyeOff, IconDeviceFloppy as Save, IconX as X, IconAlertCircle as AlertCircle, IconCheck as Check, IconChevronUp as ChevronUp, IconChevronDown as ChevronDown,
+} from '@tabler/icons-react';
 import { Button } from '@/components/ui/Button';
 import {
   createStory,

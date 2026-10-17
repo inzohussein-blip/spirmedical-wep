@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Download, Check, Smartphone } from 'lucide-react';
+import {
+  IconDownload as Download, IconCheck as Check, IconDeviceMobile as Smartphone,
+} from '@tabler/icons-react';
 import {
   isPWAInstalled, isIOSDevice,
   getDeferredPrompt, onInstallPromptChange, triggerInstall,
@@ -9,6 +11,7 @@ import {
 import { haptic } from '@/lib/haptic';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /**
  * InstallAppButton (V32)
  *
@@ -86,7 +89,7 @@ export default function InstallAppButton() {
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--emerald)' }}>
-            ✓ التطبيق مُثبّت
+            <EmojiIcon e="✓" /> التطبيق مُثبّت
           </div>
           <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 2 }}>
             استمتع بتجربة كاملة بدون متصفّح
@@ -173,13 +176,13 @@ export default function InstallAppButton() {
             }}
           >
             <h3 id="install-help-title" style={{ fontSize: 16, fontWeight: 900, marginBottom: 12 }}>
-              📱 {isIOSDevice() ? 'تثبيت على iPhone / iPad' : 'تثبيت التطبيق'}
+              <EmojiIcon e="📱" /> {isIOSDevice() ? 'تثبيت على iPhone / iPad' : 'تثبيت التطبيق'}
             </h3>
             {isIOSDevice() ? (
               <ol style={{ fontSize: 13, lineHeight: 1.9, color: 'var(--ink-2)', paddingInlineStart: 18 }}>
-                <li>اضغط زر <strong>المشاركة</strong> ⎙ في Safari</li>
-                <li>مرّر للأسفل واختر <strong>إضافة إلى الشاشة الرئيسية</strong> ✚</li>
-                <li>اضغط <strong>إضافة</strong> 🎉</li>
+                <li>اضغط زر <strong>المشاركة</strong> <EmojiIcon e="⎙" /> في Safari</li>
+                <li>مرّر للأسفل واختر <strong>إضافة إلى الشاشة الرئيسية</strong> <EmojiIcon e="✚" /></li>
+                <li>اضغط <strong>إضافة</strong> <EmojiIcon e="🎉" /></li>
               </ol>
             ) : (
               <ol style={{ fontSize: 13, lineHeight: 1.9, color: 'var(--ink-2)', paddingInlineStart: 18 }}>

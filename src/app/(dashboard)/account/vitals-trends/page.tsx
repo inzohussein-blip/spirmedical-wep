@@ -5,7 +5,9 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import { ArrowRight, Activity, Heart, Thermometer, Wind } from 'lucide-react';
+import {
+  IconArrowRight as ArrowRight, IconActivity as Activity, IconHeart as Heart, IconTemperature as Thermometer, IconWind as Wind,
+} from '@tabler/icons-react';
 import VitalsTrendsClient from './VitalsTrendsClient';
 
 export const dynamic = 'force-dynamic';

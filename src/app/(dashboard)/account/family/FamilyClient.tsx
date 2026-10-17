@@ -5,9 +5,8 @@ import { useModalDialog } from '@/lib/hooks/useModalDialog';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowRight, Plus, Edit3, Trash2, Users, X, Calendar,
-  Phone, AlertCircle, Heart, Save, Loader2, ChevronLeft,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconPlus as Plus, IconPencil as Edit3, IconTrash as Trash2, IconUsers as Users, IconX as X, IconCalendar as Calendar, IconPhone as Phone, IconAlertCircle as AlertCircle, IconHeart as Heart, IconDeviceFloppy as Save, IconLoader2 as Loader2, IconChevronLeft as ChevronLeft,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { useConfirm } from '@/components/ui';
 import { useFormErrors } from '@/lib/forms/useFormErrors';
@@ -16,6 +15,7 @@ import FieldError from '@/components/forms/FieldError';
 import { addFamilyMember, updateFamilyMember, deleteFamilyMember } from './actions';
 import { ageInYears, baghdadDateOffset } from '@/lib/time/baghdad-day';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 const FAMILY_FIELD_LABELS: Record<string, string> = {
   fullName: 'الاسم الكامل',
 };
@@ -495,7 +495,7 @@ function MemberModal({
                   gap: 2,
                 }}
               >
-                <span style={{ fontSize: 18 }}>{r.emoji}</span>
+                <span style={{ fontSize: 18 }}><EmojiIcon e={r.emoji} /></span>
                 <span style={{ fontSize: 11, fontWeight: 700 }}>{r.label}</span>
               </button>
             ))}

@@ -2,7 +2,9 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import {
+  IconAlertTriangle as AlertTriangle, IconRefresh as RefreshCw, IconHome as Home,
+} from '@tabler/icons-react';
 
 /**
  * ════════════════════════════════════════════════════════════════════

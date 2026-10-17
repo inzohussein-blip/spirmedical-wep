@@ -4,11 +4,12 @@ import ModalShell, { ModalCloseButton } from '@/components/ui/ModalShell';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Building2, Calendar, Clock, AlertTriangle, CheckCircle2, Stethoscope,
-} from 'lucide-react';
+  IconBuilding as Building2, IconCalendar as Calendar, IconClock as Clock, IconAlertTriangle as AlertTriangle, IconCircleCheck as CheckCircle2, IconStethoscope as Stethoscope,
+} from '@tabler/icons-react';
 import { createServiceBooking } from '@/app/(dashboard)/services/booking/actions';
 import { baghdadDateOffset } from '@/lib/time/baghdad-day';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Hospital {
   id: string;
   name: string;
@@ -221,7 +222,7 @@ export default function HospitalBookingModal({ hospital, onClose, userPhone }: P
           marginBottom: 14,
           lineHeight: 1.6,
         }}>
-          📋 سيتم التأكد من الموعد بالاتصال من المستشفى خلال 24 ساعة
+          <EmojiIcon e="📋" /> سيتم التأكد من الموعد بالاتصال من المستشفى خلال 24 ساعة
         </div>
 
         {/* Error */}

@@ -4,9 +4,8 @@ import { useState, useTransition } from 'react';
 import { updateMedicalInfo } from './actions';
 import type { MedicalInfo } from './types';
 import {
-  User, Stethoscope, AlertTriangle, ScrollText, Droplet, Calendar,
-  Ruler, Scale, Trash2, AlertCircle, CheckCircle2, Save, Lock,
-} from 'lucide-react';
+  IconUser as User, IconStethoscope as Stethoscope, IconAlertTriangle as AlertTriangle, IconScript as ScrollText, IconDroplet as Droplet, IconCalendar as Calendar, IconRuler as Ruler, IconScale as Scale, IconTrash as Trash2, IconAlertCircle as AlertCircle, IconCircleCheck as CheckCircle2, IconDeviceFloppy as Save, IconLock as Lock,
+} from '@tabler/icons-react';
 
 const BLOOD_TYPES = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 

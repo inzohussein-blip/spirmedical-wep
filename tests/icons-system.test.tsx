@@ -3,12 +3,17 @@ import { join } from 'path';
 import { render } from '@testing-library/react';
 import EmojiIcon from '@/components/ui/EmojiIcon';
 import { EmptyState } from '@/components/ui';
-import { DataTable, StatusPill } from '@/components/admin-ui';
-import { ICONS } from '@/lib/icons';
-import { EMOJI_ICONS } from '@/lib/emoji-icons';
+import { ActionTile, DataTable, StatCard, StatusPill } from '@/components/admin-ui';
+import { ICONS, ICON_COLOR, ICON_TONES } from '@/lib/icons';
+import { EMOJI_ICONS, EMOJI_TONE } from '@/lib/emoji-icons';
+
+jest.mock('next/link', () => ({ __esModule: true, default: ({ children, ...p }: { children: React.ReactNode }) => <a {...p}>{children}</a> }));
 
 /**
- * 🎯 أيقوناتٌ من مصدرٍ واحد (Lucide) ومكوّناتٌ مشتركة للإدارة — قرار المالك، 17 تشرين الأول.
+ * 🎯 أيقوناتٌ من مصدرٍ واحد ومكوّناتٌ مشتركة للإدارة — قرار المالك، 17 تشرين الأول.
+ *
+ * المصدرُ Tabler بأسلوب تطبيق المريض (لونُ المفهوم على خلفيّته الفاتحة): وُحّدت أوّلاً على Lucide،
+ * ثمّ رأى المالكُ تطبيقَ المريض وفضّله، فنُقلت 169 ملفّاً وأُزيلت lucide-react.
  *
  * قِيس في المتصفّح (نصوصُ الصفحة المعروضة، بلا <script>) على 47 صفحة إدارة و15 صفحةً عامّة:
  * 186 إيموجي ظاهراً قبل ← 2 بعد (تحيّةٌ في مجسّم الهاتف، وقلبٌ داخل جملة — محتوى لا أيقونة).
@@ -24,16 +29,40 @@ function walk(dir: string): string[] {
   });
 }
 const code = (p: string) => readFileSync(join(ROOT, p), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
-const AREAS = [...walk('src/app/admin'), ...walk('src/app/(marketing)'), ...walk('src/components/landing'), 'src/app/page.tsx'];
+const AREAS = [
+  ...walk('src/app/admin'), ...walk('src/app/(marketing)'), ...walk('src/components/landing'), 'src/app/page.tsx',
+  // تطبيقا المريض والمختصّ (17 تشرين الأول)
+  ...walk('src/app/(dashboard)'), ...walk('src/app/(specialist)'), ...walk('src/components/appointments'),
+  ...walk('src/components/dashboard-v3'), ...walk('src/components/layout'),
+];
 
 describe('🎯 مصدرُ الأيقونات', () => {
-  it('كلُّ اسمٍ في السجلّين أيقونةٌ موجودة في Lucide', () => {
+  it('كلُّ اسمٍ في السجلّين أيقونةُ Tabler، ولكلّ مفهومٍ لونٌ من اللوحة', () => {
     for (const C of [...Object.values(ICONS), ...Object.values(EMOJI_ICONS)]) expect(C).toBeTruthy();
-    expect(Object.keys(EMOJI_ICONS).length).toBeGreaterThan(130);
+    expect(Object.keys(EMOJI_ICONS).length).toBeGreaterThan(180);
+    for (const n of Object.keys(ICONS) as (keyof typeof ICONS)[]) expect(ICON_TONES[ICON_COLOR[n]]).toBeTruthy();
+    for (const t of Object.values(EMOJI_TONE)) expect(ICON_TONES[t]).toBeTruthy();
+    // ألوانُ تطبيق المريض نفسُها (services-v3): المستشفى أزرق، الصيدلية بنفسجيّة، سحبُ الدم أحمر
+    expect(ICON_TONES[ICON_COLOR.hospitals].fg).toBe('#1A73E8');
+    expect(ICON_TONES[ICON_COLOR.pharmacies].fg).toBe('#9334E6');
+    expect(ICON_TONES[ICON_COLOR.bloodDraw].fg).toBe('#EA4335');
   });
 
-  it('🚨 EmojiIcon يرسم Lucide لما في الجدول، ونقطةً ملوّنةً لدوائر الحالة، ويترك غيرَه', () => {
-    expect(render(<EmojiIcon e="🏥" />).container.querySelector('svg')).toBeTruthy();
+  it('🚨 lucide-react غائبةٌ من الكود والاعتماديّات', () => {
+    const src = (dir: string): string[] =>
+      readdirSync(join(ROOT, dir), { withFileTypes: true }).flatMap((e) => {
+        const p = join(dir, e.name);
+        return e.isDirectory() ? src(p) : /\.tsx?$/.test(e.name) ? [p] : [];
+      });
+    expect(src('src').filter((f) => /from 'lucide-react'/.test(readFileSync(join(ROOT, f), 'utf8')))).toEqual([]);
+    expect(JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).dependencies['lucide-react']).toBeUndefined();
+  });
+
+  it('🚨 EmojiIcon يرسم Tabler بلون مفهومه، ونقطةً ملوّنةً لدوائر الحالة، ويترك غيرَه', () => {
+    const h = render(<EmojiIcon e="🏥" />).container.querySelector('svg');
+    expect(h?.getAttribute('class')).toMatch(/tabler-icon/);
+    expect(h?.getAttribute('data-tone')).toBe('blue');
+    expect(h?.getAttribute('style')).toContain('--icon-tone: #1A73E8');
     expect(render(<EmojiIcon e="⚠️" />).container.querySelector('svg')).toBeTruthy(); // بمحدِّد الشكل
     expect(render(<EmojiIcon e="🟢" />).container.querySelector('.emoji-dot')).toBeTruthy();
     expect(render(<EmojiIcon e="🇬🇧" />).container.textContent).toBe('🇬🇧');
@@ -46,7 +75,7 @@ describe('🎯 مصدرُ الأيقونات', () => {
   });
 });
 
-describe('🚨 لا إيموجي أيقونةً في الإدارة والموقع', () => {
+describe('🚨 لا إيموجي أيقونةً في الإدارة والموقع وتطبيقَي المريض والمختصّ', () => {
   it('لا إيموجي في أوّل نصّ JSX (عنوان، زرّ، تسمية)', () => {
     const bad: string[] = [];
     for (const f of AREAS) {
@@ -85,6 +114,16 @@ describe('🧩 مكوّناتُ الإدارة', () => {
     expect(container.querySelector('table td')?.textContent).toBe('علي');
     expect(container.querySelector('.aui-card-primary')?.textContent).toBe('علي');
     expect(container.querySelector('.aui-card-field dt')?.textContent).toBe('المحافظة');
+  });
+
+  it('🚨 بلاطاتُ الإحصاء والإجراء بلون المفهوم (أسلوبُ تطبيق المريض)، و`tone` الصريح يغلبه', () => {
+    const tile = (el: HTMLElement) => el.querySelector('.aui-stat-icon') as HTMLElement;
+    const h = tile(render(<StatCard icon="hospitals" label="مستشفيات" value={3} />).container);
+    expect(h.getAttribute('style')).toContain('--tone: #1A73E8');
+    const p = tile(render(<ActionTile href="/x" icon="pharmacies" title="صيدليات" />).container);
+    expect(p.getAttribute('style')).toContain('--tone: #9334E6');
+    const r = tile(render(<StatCard icon="hospitals" label="x" value={1} tone="rose" />).container);
+    expect(r.className).toContain('aui-tone-rose');
   });
 
   it('شارةُ الحالة تقبل أسماءً خاصّة بالمجال', () => {

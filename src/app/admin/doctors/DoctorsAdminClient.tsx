@@ -3,9 +3,8 @@
 import { useState, useTransition, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Search, Plus, Edit3, Trash2, CheckCircle2, XCircle, Save, X,
-  Loader2, Filter, Star, MapPin, Award, Eye, EyeOff,
-} from 'lucide-react';
+  IconSearch as Search, IconPlus as Plus, IconPencil as Edit3, IconTrash as Trash2, IconCircleCheck as CheckCircle2, IconCircleX as XCircle, IconDeviceFloppy as Save, IconX as X, IconLoader2 as Loader2, IconFilter as Filter, IconStar as Star, IconMapPin as MapPin, IconAward as Award, IconEye as Eye, IconEyeOff as EyeOff,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { useConfirm } from '@/components/ui';
 import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWrapper';

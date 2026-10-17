@@ -6,10 +6,8 @@ import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowRight, MapPin, Phone, Star, Building2, AlertTriangle,
-  CheckCircle2, Clock, BedDouble, Activity, Map as MapIcon,
-  MessageCircle, Globe, Mail,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconMapPin as MapPin, IconPhone as Phone, IconStar as Star, IconBuilding as Building2, IconAlertTriangle as AlertTriangle, IconCircleCheck as CheckCircle2, IconClock as Clock, IconBed as BedDouble, IconActivity as Activity, IconMap as MapIcon, IconMessageCircle as MessageCircle, IconWorld as Globe, IconMail as Mail,
+} from '@tabler/icons-react';
 import FreeMedicalMapWrapper from '@/components/maps/SpirMapViewWrapper';
 import ShareButton from '@/components/pwa/ShareButton';
 import HospitalBookingButton from '@/components/hospitals/HospitalBookingButton';
@@ -18,6 +16,7 @@ import { checkIsFavorite } from '@/components/services/favorites-actions';
 import { count, formatRating } from '@/lib/format/price';
 import PhoneLink from '@/components/ui/PhoneLink';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 const TYPE_META: Record<string, { label: string; color: string; emoji: string }> = {
@@ -130,7 +129,7 @@ export default async function HospitalDetailPage(
                 justifyContent: 'center',
               }}
             >
-              {typeMeta.emoji}
+              <EmojiIcon e={typeMeta.emoji} />
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <h2 style={{ fontSize: 18, fontWeight: 900, margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -387,7 +386,7 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
 function StatBox({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
   return (
     <div style={{ padding: 8, background: 'rgba(255,255,255,0.12)', borderRadius: 10, textAlign: 'center' }}>
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 2, opacity: 0.85 }}>{icon}</div>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 2, opacity: 0.85 }}><EmojiIcon e={icon} /></div>
       <div style={{ fontSize: 13, fontWeight: 900 }}>{value}</div>
       <div style={{ fontSize: 11, opacity: 0.75, marginTop: 1 }}>{label}</div>
     </div>
@@ -410,7 +409,7 @@ function Feature({ has, label, emoji }: { has: boolean | null; label: string; em
         opacity: has ? 1 : 0.5,
       }}
     >
-      <span>{emoji}</span>
+      <span><EmojiIcon e={emoji} /></span>
       <span>{label}</span>
       {has && <CheckCircle2 size={10} />}
     </div>

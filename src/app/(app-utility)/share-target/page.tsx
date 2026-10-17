@@ -7,8 +7,11 @@
 // ═══════════════════════════════════════════════════════════════
 
 import Link from 'next/link';
-import { ArrowRight, FileText, Image as ImageIcon, ExternalLink } from 'lucide-react';
+import {
+  IconArrowRight as ArrowRight, IconFileText as FileText, IconPhoto as ImageIcon, IconExternalLink as ExternalLink,
+} from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = {
   title: 'مشاركة محتوى · Spir Medical',
 };
@@ -191,7 +194,7 @@ function SaveOption({
           flexShrink: 0,
         }}
       >
-        {icon}
+        <EmojiIcon e={icon} />
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: 13, fontWeight: 800 }}>{title}</div>

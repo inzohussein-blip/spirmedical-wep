@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /**
  * ════════════════════════════════════════════════════════════════════
  * 🎯 LiveStatusCard (V25.34)
@@ -94,7 +95,7 @@ export default function LiveStatusCard({
 
       <div className="live-status-specialist-row">
         <div className="live-status-avatar" aria-hidden="true">
-          {specialistAvatar}
+          <EmojiIcon e={specialistAvatar} />
         </div>
         <div className="live-status-specialist-info">
           <div className="live-status-specialist-name">{specialistName}</div>
@@ -109,7 +110,7 @@ export default function LiveStatusCard({
               className="live-status-action-btn"
               aria-label="اتصال"
             >
-              <span aria-hidden="true">📞</span>
+              <span aria-hidden="true"><EmojiIcon e="📞" /></span>
             </a>
           )}
           <Link
@@ -117,7 +118,7 @@ export default function LiveStatusCard({
             className="live-status-action-btn"
             aria-label="رسالة"
           >
-            <span aria-hidden="true">💬</span>
+            <span aria-hidden="true"><EmojiIcon e="💬" /></span>
           </Link>
         </div>
       </div>
@@ -167,7 +168,7 @@ export default function LiveStatusCard({
 
       {eta && status !== 'completed' && (
         <div className="live-status-eta">
-          <span className="live-status-eta-icon" aria-hidden="true">⏱</span>
+          <span className="live-status-eta-icon" aria-hidden="true"><EmojiIcon e="⏱" /></span>
           <div className="live-status-eta-content">
             <div className="live-status-eta-label">الوصول المتوقّع</div>
             <div className="live-status-eta-value">{eta}</div>

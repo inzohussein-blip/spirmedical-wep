@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { Plus, Edit, Trash2, CheckCircle2, XCircle, Search, Shield, TrendingUp } from 'lucide-react';
+import {
+  IconPlus as Plus, IconEdit as Edit, IconTrash as Trash2, IconCircleCheck as CheckCircle2, IconCircleX as XCircle, IconSearch as Search, IconShield as Shield, IconTrendingUp as TrendingUp,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { formatNumber } from '@/lib/format/price';
 import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWrapper';

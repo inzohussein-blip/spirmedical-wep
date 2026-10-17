@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { RefreshCw, Loader2 } from 'lucide-react';
+import {
+  IconRefresh as RefreshCw, IconLoader2 as Loader2,
+} from '@tabler/icons-react';
 
 /**
  * ═══════════════════════════════════════════════════════════════

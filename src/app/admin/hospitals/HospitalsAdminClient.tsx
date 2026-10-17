@@ -3,9 +3,8 @@
 import { useState, useTransition, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Plus, Edit3, Trash2, CheckCircle2, X, Save, Loader2, Search,
-  MapPin, Eye, EyeOff,
-} from 'lucide-react';
+  IconPlus as Plus, IconPencil as Edit3, IconTrash as Trash2, IconCircleCheck as CheckCircle2, IconX as X, IconDeviceFloppy as Save, IconLoader2 as Loader2, IconSearch as Search, IconMapPin as MapPin, IconEye as Eye, IconEyeOff as EyeOff,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { useConfirm } from '@/components/ui';
 import { createHospital, updateHospital, deleteHospital, toggleHospitalActive } from './actions';

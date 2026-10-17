@@ -5,7 +5,9 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import { ArrowRight, TrendingUp, Activity, Calendar, BarChart3 } from 'lucide-react';
+import {
+  IconArrowRight as ArrowRight, IconTrendingUp as TrendingUp, IconActivity as Activity, IconCalendar as Calendar, IconChartBar as BarChart3,
+} from '@tabler/icons-react';
 import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
 import LabTrendsClient from './LabTrendsClient';
 

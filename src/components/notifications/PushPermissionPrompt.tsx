@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Bell, Loader2 } from 'lucide-react';
+import {
+  IconBell as Bell, IconLoader2 as Loader2,
+} from '@tabler/icons-react';
 import { subscribeToPush } from '@/lib/push-client';
 import { toast } from '@/components/ui/Toaster';
 import { usePathname } from 'next/navigation';

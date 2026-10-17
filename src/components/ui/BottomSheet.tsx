@@ -6,7 +6,9 @@ import {
   type ReactNode,
   type TouchEvent as ReactTouchEvent,
 } from 'react';
-import { X } from 'lucide-react';
+import {
+  IconX as X,
+} from '@tabler/icons-react';
 import { cn } from '@/lib/utils';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 

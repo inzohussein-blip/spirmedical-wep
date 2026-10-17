@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import SosClient from './SosClient';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = {
   title: 'طوارئ SOS · سباير ميديكال',
 };
@@ -51,7 +52,7 @@ export default async function SosPage() {
 
         {/* زر طوارئ كبير */}
         <a href="tel:122" className="sos-big-button">
-          <div className="sos-big-icon" aria-hidden="true">🚨</div>
+          <div className="sos-big-icon" aria-hidden="true"><EmojiIcon e="🚨" /></div>
           <div className="sos-big-content">
             <div className="sos-big-title">اتصل بالإسعاف الآن</div>
             <div className="sos-big-number">122</div>
@@ -68,7 +69,7 @@ export default async function SosPage() {
         <div className="emergency-numbers-grid">
           {EMERGENCY_NUMBERS.map((e) => (
             <a key={e.id} href={`tel:${e.number}`} className="emergency-number-card">
-              <div className="emergency-icon" aria-hidden="true">{e.icon}</div>
+              <div className="emergency-icon" aria-hidden="true"><EmojiIcon e={e.icon} /></div>
               <div className="emergency-name">{e.name}</div>
               <div className="emergency-number">{e.number}</div>
               <div className="emergency-desc">{e.desc}</div>
@@ -83,14 +84,14 @@ export default async function SosPage() {
         <div className="quick-tips-grid">
           {QUICK_TIPS.map((tip) => (
             <Link key={tip.id} href={tip.href} className="quick-tip-card">
-              <div className="quick-tip-icon" aria-hidden="true">{tip.icon}</div>
+              <div className="quick-tip-icon" aria-hidden="true"><EmojiIcon e={tip.icon} /></div>
               <div className="quick-tip-title">{tip.title}</div>
             </Link>
           ))}
         </div>
 
         <div className="tool-disclaimer" style={{ marginTop: 16 }}>
-          ⚠ في حالة الخطر، اتصل بـ 122 أولاً قبل أي إجراء آخر.
+          <EmojiIcon e="⚠" /> في حالة الخطر، اتصل بـ 122 أولاً قبل أي إجراء آخر.
         </div>
       </div>
     </main>

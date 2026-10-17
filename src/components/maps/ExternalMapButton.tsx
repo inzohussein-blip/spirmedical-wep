@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { MapPin, ExternalLink } from 'lucide-react';
+import {
+  IconMapPin as MapPin, IconExternalLink as ExternalLink,
+} from '@tabler/icons-react';
 import { MAP_PROVIDERS, buildMapUrl, type Coords, type MapProvider } from '@/lib/maps/providers';
 
 /**

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import EmojiIcon from './EmojiIcon';
 import { type ReactNode } from 'react';
 
 /**
@@ -70,11 +71,11 @@ export default function EnhancedEmptyState({
           style={{ border: `0.5px solid ${colors.border}`, color: colors.iconColor }}
           aria-hidden="true"
         >
-          <span className="empty-state-v2-main-icon">{icon}</span>
+          <span className="empty-state-v2-main-icon"><EmojiIcon e={icon} /></span>
         </div>
         {decorIcon && (
           <div className="empty-state-v2-decor" aria-hidden="true">
-            <span>{decorIcon}</span>
+            <span><EmojiIcon e={decorIcon} /></span>
           </div>
         )}
       </div>

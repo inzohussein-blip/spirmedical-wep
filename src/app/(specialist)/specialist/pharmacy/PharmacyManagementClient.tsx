@@ -4,9 +4,8 @@ import { useState, useMemo, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  Search, Plus, Trash2, Edit3, Check, X, CheckCircle2, XCircle,
-  Pill, Package, TrendingUp, Eye, Save, ArrowRight, Filter,
-} from 'lucide-react';
+  IconSearch as Search, IconPlus as Plus, IconTrash as Trash2, IconPencil as Edit3, IconCheck as Check, IconX as X, IconCircleCheck as CheckCircle2, IconCircleX as XCircle, IconPill as Pill, IconPackage as Package, IconTrendingUp as TrendingUp, IconEye as Eye, IconDeviceFloppy as Save, IconArrowRight as ArrowRight, IconFilter as Filter,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { useConfirm } from '@/components/ui';
 import {
@@ -17,6 +16,7 @@ import {
 } from './actions';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Pharmacy {
   id: string;
   name: string;
@@ -331,7 +331,7 @@ function StatBox({ label, value, highlight, icon }: {
         textAlign: 'center',
       }}
     >
-      {icon && <div style={{ fontSize: 14, marginBottom: 2 }}>{icon}</div>}
+      {icon && <div style={{ fontSize: 14, marginBottom: 2 }}><EmojiIcon e={icon} /></div>}
       <div style={{ fontSize: 18, fontWeight: 900 }}>{value}</div>
       <div style={{ fontSize: 12, opacity: 0.85 }}>{label}</div>
     </div>
@@ -548,7 +548,7 @@ function InventoryRow({
               )}
               {item.notes && (
                 <span style={{ color: 'var(--ink-3)' }}>
-                  💬 {item.notes}
+                  <EmojiIcon e="💬" /> {item.notes}
                 </span>
               )}
             </div>

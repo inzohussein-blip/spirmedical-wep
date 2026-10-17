@@ -3,14 +3,14 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
-  ArrowRight, Search, MapPin, Phone, Star,
-  CheckCircle2, Sparkles, Award, Users,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconSearch as Search, IconMapPin as MapPin, IconPhone as Phone, IconStar as Star, IconCircleCheck as CheckCircle2, IconSparkles as Sparkles, IconAward as Award, IconUsers as Users,
+} from '@tabler/icons-react';
 import { formatPriceRange } from '@/lib/format/price';
 import { haptic } from '@/lib/haptic';
 import ExternalMapButton from '@/components/maps/ExternalMapButton';
 import PhoneLink from '@/components/ui/PhoneLink';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface DentalClinic {
   id: string;
   name: string;
@@ -155,7 +155,7 @@ export default function DentalClient({ clinics }: Props) {
                 flexShrink: 0,
               }}
             >
-              {s.icon} {s.label}
+              <EmojiIcon e={s.icon} /> {s.label}
             </button>
           ))}
         </div>
@@ -170,14 +170,14 @@ export default function DentalClient({ clinics }: Props) {
           color: 'var(--ink-2)',
           lineHeight: 1.7,
         }}>
-          💡 <strong>نصيحة:</strong> الأسعار قابلة للنقاش - تواصل مع العيادة مباشرة.
+          <EmojiIcon e="💡" /> <strong>نصيحة:</strong> الأسعار قابلة للنقاش - تواصل مع العيادة مباشرة.
           الحجز عبر سباير يضمن لك تقييمات حقيقية + خصومات أحياناً 🎁
         </div>
 
         {/* List */}
         {filtered.length === 0 ? (
           <div className="scr-empty" style={{ marginTop: 32 }}>
-            <div className="scr-empty-icon">🦷</div>
+            <div className="scr-empty-icon"><EmojiIcon e="🦷" /></div>
             <h2 className="scr-empty-title">لا توجد عيادات</h2>
             <p style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 8 }}>
               جرّب فلتر آخر
@@ -231,7 +231,7 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
           fontSize: 11,
           fontWeight: 900,
         }}>
-          ⭐ مميّز
+          <EmojiIcon e="⭐" /> مميّز
         </div>
       )}
 
@@ -243,7 +243,7 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           flexShrink: 0,
         }}>
-          🦷
+          <EmojiIcon e="🦷" />
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -305,7 +305,7 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
                 fontWeight: 700,
               }}
             >
-              {s.icon} {s.label}
+              <EmojiIcon e={s.icon} /> {s.label}
             </span>
           ))}
         </div>
@@ -322,12 +322,12 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
         lineHeight: 1.6,
       }}>
         {formatPriceRange(clinic.cleaning_price_min, clinic.cleaning_price_max) && (
-          <>💰 <strong>تنظيف:</strong> {formatPriceRange(clinic.cleaning_price_min, clinic.cleaning_price_max)}</>
+          <><EmojiIcon e="💰" /> <strong>تنظيف:</strong> {formatPriceRange(clinic.cleaning_price_min, clinic.cleaning_price_max)}</>
         )}
         {clinic.offers_implants && formatPriceRange(clinic.implant_price_min, clinic.implant_price_max) && (
           <>
             <br />
-            🔩 <strong>زراعة:</strong> {formatPriceRange(clinic.implant_price_min, clinic.implant_price_max)}
+            <EmojiIcon e="🔩" /> <strong>زراعة:</strong> {formatPriceRange(clinic.implant_price_min, clinic.implant_price_max)}
           </>
         )}
       </div>
@@ -353,7 +353,7 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
             fontWeight: 800,
           }}
         >
-          📅 احجز موعد عبر سباير
+          <EmojiIcon e="📅" /> احجز موعد عبر سباير
         </Link>
 
         {/* Secondary actions */}
@@ -402,7 +402,7 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
                 fontWeight: 700,
               }}
             >
-              💬 WhatsApp
+              <EmojiIcon e="💬" /> WhatsApp
             </PhoneLink>
           )}
           <ExternalMapButton

@@ -6,8 +6,11 @@
 // ═══════════════════════════════════════════════════════════════
 
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import {
+  IconArrowRight as ArrowRight,
+} from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -118,7 +121,7 @@ export default function ToolsPage() {
               )}
 
               <div style={{ fontSize: 32, marginBottom: 8 }}>
-                {tool.icon}
+                <EmojiIcon e={tool.icon} />
               </div>
               <div style={{
                 fontSize: 13,
@@ -148,7 +151,7 @@ export default function ToolsPage() {
           color: 'var(--ink-2)',
           lineHeight: 1.8,
         }}>
-          ⚠️ <strong>تنبيه:</strong> الأدوات مساعِدة فقط ولا تُغني عن استشارة طبيب مختص.
+          <EmojiIcon e="⚠️" /> <strong>تنبيه:</strong> الأدوات مساعِدة فقط ولا تُغني عن استشارة طبيب مختص.
           في حال الطوارئ يُرجى الاتصال بـ <Link href="/sos" style={{ color: 'var(--rose)', fontWeight: 800 }}>SOS</Link> فوراً.
         </div>
       </div>

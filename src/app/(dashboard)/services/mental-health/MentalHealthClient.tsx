@@ -3,13 +3,12 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
-  ArrowRight, Search, MapPin, Star, Brain,
-  CheckCircle2, Award, Home, Building2, Heart,
-  AlertCircle,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconSearch as Search, IconMapPin as MapPin, IconStar as Star, IconBrain as Brain, IconCircleCheck as CheckCircle2, IconAward as Award, IconHome as Home, IconBuilding as Building2, IconHeart as Heart, IconAlertCircle as AlertCircle,
+} from '@tabler/icons-react';
 import { formatPrice } from '@/lib/format/price';
 import { haptic } from '@/lib/haptic';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Specialist {
   id: string;
   full_name: string;
@@ -154,7 +153,7 @@ export default function MentalHealthClient({ specialists }: { specialists: Speci
             onClick={() => { haptic.selection(); setSelectedType('all'); }}
             style={typePillStyle(selectedType === 'all')}
           >
-            🧠 الكل
+            <EmojiIcon e="🧠" /> الكل
           </button>
           {Object.entries(TYPE_LABELS).map(([key, meta]) => (
             <button
@@ -163,7 +162,7 @@ export default function MentalHealthClient({ specialists }: { specialists: Speci
               onClick={() => { haptic.selection(); setSelectedType(key); }}
               style={typePillStyle(selectedType === key)}
             >
-              {meta.icon} {meta.label}
+              <EmojiIcon e={meta.icon} /> {meta.label}
             </button>
           ))}
         </div>
@@ -205,12 +204,12 @@ export default function MentalHealthClient({ specialists }: { specialists: Speci
             gap: 6,
           }}
         >
-          💻 جلسات أونلاين فقط
+          <EmojiIcon e="💻" /> جلسات أونلاين فقط
         </button>
 
         {filtered.length === 0 ? (
           <div className="scr-empty" style={{ marginTop: 32 }}>
-            <div className="scr-empty-icon">🧠</div>
+            <div className="scr-empty-icon"><EmojiIcon e="🧠" /></div>
             <h2 className="scr-empty-title">لا يوجد أخصائيون</h2>
           </div>
         ) : (
@@ -248,7 +247,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
           fontSize: 26,
           flexShrink: 0,
         }}>
-          {typeMeta.icon}
+          <EmojiIcon e={typeMeta.icon} />
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -339,7 +338,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
             border: '1px solid var(--emerald)',
           }}>
             <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
-              💻 أونلاين
+              <EmojiIcon e="💻" /> أونلاين
             </div>
             {formatPrice(specialist.online_session_price) && (
               <div style={{ fontSize: 13, fontWeight: 900, color: 'var(--emerald)' }}>
@@ -357,7 +356,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
             border: '1px solid var(--amber)',
           }}>
             <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
-              🏢 عيادة
+              <EmojiIcon e="🏢" /> عيادة
             </div>
             {formatPrice(specialist.clinic_session_price) && (
               <div style={{ fontSize: 13, fontWeight: 900, color: 'var(--amber)' }}>

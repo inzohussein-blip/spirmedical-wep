@@ -34,13 +34,11 @@ import {
   NURSING_FIELD_ORDER,
 } from '@/lib/validations/nursing';
 import {
-  Syringe, Droplet, Bandage, Stethoscope, Activity, Footprints,
-  AlertTriangle, FileImage, ShieldCheck, Calendar, MapPin, Phone,
-  CheckCircle2, ChevronLeft, ChevronRight, X, Upload, Pill, Repeat,
-  User, UserCircle, Users, Clock, Loader2,
-} from 'lucide-react';
+  IconVaccine as Syringe, IconDroplet as Droplet, IconBandage as Bandage, IconStethoscope as Stethoscope, IconActivity as Activity, IconShoe as Footprints, IconAlertTriangle as AlertTriangle, IconPhoto as FileImage, IconShieldCheck as ShieldCheck, IconCalendar as Calendar, IconMapPin as MapPin, IconPhone as Phone, IconCircleCheck as CheckCircle2, IconChevronLeft as ChevronLeft, IconChevronRight as ChevronRight, IconX as X, IconUpload as Upload, IconPill as Pill, IconRepeat as Repeat, IconUser as User, IconUserCircle as UserCircle, IconUsers as Users, IconClock as Clock, IconLoader2 as Loader2,
+} from '@tabler/icons-react';
 import { baghdadDateOffset } from '@/lib/time/baghdad-day';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /** نتيجة الإرسال — تسمح بعرض أخطاء الحقول القادمة من الخادم. */
 export interface NursingSubmitResult {
   ok: boolean;
@@ -544,7 +542,7 @@ export default function NursingFlow({
                   onChange={(e) => setAllergies({ ...allergies, [a.key]: e.target.checked })}
                   style={{ width: 18, height: 18, accentColor: 'var(--rose)' }}
                 />
-                <span style={{ fontSize: 20 }}>{a.emoji}</span>
+                <span style={{ fontSize: 20 }}><EmojiIcon e={a.emoji} /></span>
                 <span style={{ flex: 1, fontSize: 13, fontWeight: 700 }}>
                   حساسية {a.label}
                 </span>
@@ -720,7 +718,7 @@ export default function NursingFlow({
               <div style={{ flex: 1, fontSize: 12 }}>
                 <div style={{ fontWeight: 700 }}>ليس لدي وصفة (سيراها الممرض)</div>
                 <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 2 }}>
-                  ⚠️ قد يرفض الممرض إعطاء حقن دون وصفة موقّعة
+                  <EmojiIcon e="⚠️" /> قد يرفض الممرض إعطاء حقن دون وصفة موقّعة
                 </div>
               </div>
             </label>
@@ -1082,7 +1080,7 @@ export default function NursingFlow({
                       fontWeight: 700,
                     }}
                   >
-                    {loc.icon} {loc.label}
+                    <EmojiIcon e={loc.icon} /> {loc.label}
                   </button>
                 ))}
               </div>

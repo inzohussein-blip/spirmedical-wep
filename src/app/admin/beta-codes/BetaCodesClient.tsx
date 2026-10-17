@@ -3,9 +3,8 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Plus, Trash2, Eye, EyeOff, Copy, X, Save,
-  Loader2, Ticket, Users, Clock, CheckCircle2,
-} from 'lucide-react';
+  IconPlus as Plus, IconTrash as Trash2, IconEye as Eye, IconEyeOff as EyeOff, IconCopy as Copy, IconX as X, IconDeviceFloppy as Save, IconLoader2 as Loader2, IconTicket as Ticket, IconUsers as Users, IconClock as Clock, IconCircleCheck as CheckCircle2,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import {
   createBetaCode, toggleBetaCode, deleteBetaCode,

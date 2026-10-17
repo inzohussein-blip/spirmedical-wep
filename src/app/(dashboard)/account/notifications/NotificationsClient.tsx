@@ -2,13 +2,13 @@
 
 import { useState, useTransition } from 'react';
 import { updateUserSettings } from '@/lib/services/user-settings';
-import type { LucideIcon } from 'lucide-react';
-import {
-  Calendar, Pill, TestTube, MessageCircle, Newspaper,
-  CheckCircle2, Info,
-} from 'lucide-react';
 
-const SETTINGS_LIST: Array<{ id: string; icon: LucideIcon; label: string; desc: string }> = [
+import {
+  IconCalendar as Calendar, IconPill as Pill, IconTestPipe as TestTube, IconMessageCircle as MessageCircle, IconNews as Newspaper, IconCircleCheck as CheckCircle2, IconInfoCircle as Info,
+} from '@tabler/icons-react';
+
+import type { Icon as TablerIcon } from '@tabler/icons-react';
+const SETTINGS_LIST: Array<{ id: string; icon: TablerIcon; label: string; desc: string }> = [
   { id: 'appointments', icon: Calendar,      label: 'المواعيد',              desc: 'تنبيه قبل الموعد بساعة' },
   { id: 'meds',         icon: Pill,          label: 'أوقات الدواء',           desc: 'تذكير بمواعيد الأدوية' },
   { id: 'results',      icon: TestTube,      label: 'نتائج التحاليل',         desc: 'عند جاهزية النتائج' },

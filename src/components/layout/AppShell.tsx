@@ -7,9 +7,11 @@ import { useState, useEffect } from 'react';
 import {
   IconHome, IconHome2, IconLayoutGrid, IconClipboardList,
   IconMessageCircle, IconUser, IconHeart, IconMessages,
+  IconMenu2, IconX, IconLogin,
 } from '@tabler/icons-react';
 import type { Icon as TablerIcon } from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface AppShellProps {
   children: React.ReactNode;
   userName?: string;
@@ -165,7 +167,7 @@ export function AppShell({
                 className="app-sidebar-item"
                 style={{ width: '100%', border: 'none', background: 'transparent', cursor: 'pointer', font: 'inherit', color: 'inherit', textAlign: 'inherit' }}
               >
-                <span className="app-sidebar-icon" aria-hidden="true">⎋</span>
+                <span className="app-sidebar-icon" aria-hidden="true"><EmojiIcon e="⎋" /></span>
                 <span>تسجيل الخروج</span>
               </button>
             </form>
@@ -209,7 +211,7 @@ export function AppShell({
                 aria-controls="app-drawer"
                 aria-label={mobileMenuOpen ? 'إغلاق القائمة' : 'فتح القائمة'}
               >
-                <span aria-hidden="true">{mobileMenuOpen ? '✕' : '☰'}</span>
+                {mobileMenuOpen ? <IconX size={20} stroke={1.75} aria-hidden /> : <IconMenu2 size={20} stroke={1.75} aria-hidden />}
               </button>
             </div>
           </div>
@@ -258,7 +260,7 @@ export function AppShell({
               {!isGuest && signOutAction && (
                 <form action={signOutAction}>
                   <button type="submit" className="app-drawer-link signout">
-                    <span aria-hidden="true">⎋</span>
+                    <span aria-hidden="true"><EmojiIcon e="⎋" /></span>
                     <span>تسجيل الخروج</span>
                   </button>
                 </form>
@@ -266,7 +268,7 @@ export function AppShell({
 
               {isGuest && (
                 <Link href="/login" className="app-drawer-link primary">
-                  <span aria-hidden="true">⊕</span>
+                  <IconLogin size={18} stroke={1.75} aria-hidden />
                   <span>تسجيل الدخول</span>
                 </Link>
               )}

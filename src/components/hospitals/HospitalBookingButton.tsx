@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Calendar } from 'lucide-react';
+import {
+  IconCalendar as Calendar,
+} from '@tabler/icons-react';
 import HospitalBookingModal from './HospitalBookingModal';
 
 interface Props {

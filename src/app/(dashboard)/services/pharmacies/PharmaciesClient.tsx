@@ -3,12 +3,12 @@
 import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import {
-  ArrowRight, Search, MapPin, Phone, Star, Pill, Clock, Info,
-  ChevronLeft, Package,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconSearch as Search, IconMapPin as MapPin, IconPhone as Phone, IconStar as Star, IconPill as Pill, IconClock as Clock, IconInfoCircle as Info, IconChevronLeft as ChevronLeft, IconPackage as Package,
+} from '@tabler/icons-react';
 import ExternalMapButton from '@/components/maps/ExternalMapButton';
 import PhoneLink from '@/components/ui/PhoneLink';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Pharmacy {
   id: string;
   name: string;
@@ -208,7 +208,7 @@ export default function PharmaciesClient({ pharmacies }: Props) {
                             fontWeight: 800,
                           }}
                         >
-                          ✓ موثّقة
+                          <EmojiIcon e="✓" /> موثّقة
                         </span>
                       )}
                     </div>

@@ -3,7 +3,9 @@
 import ModalShell, { ModalCloseButton } from '@/components/ui/ModalShell';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { Home, Building2, Video, Calendar, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import {
+  IconHome as Home, IconBuilding as Building2, IconVideo as Video, IconCalendar as Calendar, IconAlertTriangle as AlertTriangle, IconCircleCheck as CheckCircle2,
+} from '@tabler/icons-react';
 import { formatPrice } from '@/lib/format/price';
 import { createDoctorAppointment } from '@/app/(dashboard)/services/doctors/[id]/actions';
 import HapticButton from '@/components/pwa/HapticButton';

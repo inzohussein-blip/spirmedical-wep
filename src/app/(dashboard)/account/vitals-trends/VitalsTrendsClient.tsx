@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Heart, Activity, Thermometer, Wind, Droplets, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import {
+  IconHeart as Heart, IconActivity as Activity, IconTemperature as Thermometer, IconWind as Wind, IconDroplets as Droplets, IconTrendingUp as TrendingUp, IconTrendingDown as TrendingDown, IconMinus as Minus,
+} from '@tabler/icons-react';
 
 interface VitalPoint {
   date: string;

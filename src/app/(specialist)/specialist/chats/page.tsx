@@ -8,10 +8,10 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import {
-  MessageCircle, Clock, AlertCircle, CheckCircle2,
-  ChevronLeft, Pin, Archive,
-} from 'lucide-react';
+  IconMessageCircle as MessageCircle, IconClock as Clock, IconAlertCircle as AlertCircle, IconCircleCheck as CheckCircle2, IconChevronLeft as ChevronLeft, IconPin as Pin, IconArchive as Archive,
+} from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'المحادثات - لوحة الأخصائي' };
 
@@ -100,7 +100,7 @@ export default async function SpecialistChatsPage() {
           }}
         >
           <div style={{ fontWeight: 800, marginBottom: 6 }}>
-            💡 الردود السريعة المتاحة:
+            <EmojiIcon e="💡" /> الردود السريعة المتاحة:
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
             {QUICK_REPLIES.map((q, i) => (
@@ -115,7 +115,7 @@ export default async function SpecialistChatsPage() {
                   color: 'var(--ink-2)',
                 }}
               >
-                {q.icon} {q.text}
+                <EmojiIcon e={q.icon} /> {q.text}
               </span>
             ))}
           </div>
@@ -179,7 +179,7 @@ export default async function SpecialistChatsPage() {
                           position: 'relative',
                         }}
                       >
-                        👤
+                        <EmojiIcon e="👤" />
                         {chat.is_pinned && (
                           <Pin
                             size={11}
@@ -267,7 +267,7 @@ export default async function SpecialistChatsPage() {
                               marginInlineStart: 4,
                             }}
                           >
-                            {statusMeta.emoji} {statusMeta.label}
+                            <EmojiIcon e={statusMeta.emoji} /> {statusMeta.label}
                           </span>
                         </div>
                       </div>

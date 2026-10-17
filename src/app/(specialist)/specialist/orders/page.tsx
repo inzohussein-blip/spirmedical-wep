@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { SPECIALIST_META, type SpecialistType } from '@/lib/specialist-types';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = {
   title: 'الطلبات · لوحة الاختصاصي',
 };
@@ -89,7 +90,7 @@ export default async function SpecialistOrdersPage(
           <div className="scr-page-spacer" />
         </div>
         <p className="scr-page-subtitle">
-          {meta.icon} {meta.label}
+          <EmojiIcon e={meta.icon} /> {meta.label}
         </p>
 
         {/* 🔧 V30: تنبيه إذا الحساب غير مكتمل */}
@@ -108,7 +109,7 @@ export default async function SpecialistOrdersPage(
               alignItems: 'flex-start',
             }}
           >
-            <span style={{ fontSize: 18, flexShrink: 0 }}>⚠️</span>
+            <span style={{ fontSize: 18, flexShrink: 0 }}><EmojiIcon e="⚠️" /></span>
             <div>
               <div style={{ fontWeight: 700, marginBottom: 4 }}>
                 ملفك غير مكتمل
@@ -129,14 +130,14 @@ export default async function SpecialistOrdersPage(
               className={`scr-pill ${filter === f.id ? 'active' : ''}`}
               style={{ textDecoration: 'none' }}
             >
-              <span style={{ marginInlineEnd: 4 }}>{f.icon}</span>{f.label}
+              <span style={{ marginInlineEnd: 4 }}><EmojiIcon e={f.icon} /></span>{f.label}
             </Link>
           ))}
         </div>
 
         {(orders ?? []).length === 0 ? (
           <div className="scr-empty" style={{ marginTop: 40 }}>
-            <div className="scr-empty-icon">📭</div>
+            <div className="scr-empty-icon"><EmojiIcon e="📭" /></div>
             <h2 className="scr-empty-title">لا توجد طلبات</h2>
             <p className="scr-empty-desc">
               {filter === 'new' ? 'لا توجد طلبات جديدة حالياً.' :
@@ -161,7 +162,7 @@ export default async function SpecialistOrdersPage(
                   href={`/specialist/orders/${o.id}`}
                   className="scr-list-item scr-list-item-clickable"
                 >
-                  <div className="scr-list-item-icon" aria-hidden="true">{meta.icon}</div>
+                  <div className="scr-list-item-icon" aria-hidden="true"><EmojiIcon e={meta.icon} /></div>
                   <div className="scr-list-item-content">
                     <div className="scr-list-item-title">
                       {patient?.full_name ?? 'مريض'}
@@ -172,8 +173,8 @@ export default async function SpecialistOrdersPage(
                       )}
                     </div>
                     <div className="scr-list-item-subtitle">{o.service_type}</div>
-                    <div className="scr-list-item-meta">📅 {dateStr} · {timeStr}</div>
-                    {o.address && <div className="scr-list-item-meta">📍 {o.address}</div>}
+                    <div className="scr-list-item-meta"><EmojiIcon e="📅" /> {dateStr} · {timeStr}</div>
+                    {o.address && <div className="scr-list-item-meta"><EmojiIcon e="📍" /> {o.address}</div>}
                     <div className="scr-list-item-tags" style={{ marginTop: 8 }}>
                       <span className={`scr-tag ${status.color}`}>{status.label}</span>
                     </div>

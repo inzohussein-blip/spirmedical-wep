@@ -6,7 +6,9 @@
 
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import {
+  IconArrowRight as ArrowRight,
+} from '@tabler/icons-react';
 import ServicesMapHubWrapper, { type ServiceLocation } from '@/components/maps/ServicesMapHubWrapper';
 import type { ServiceMarkerType } from '@/lib/maps/markers';
 import {

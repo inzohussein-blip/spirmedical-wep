@@ -1,7 +1,9 @@
 'use client';
 
 import { type ReactNode } from 'react';
-import { X } from 'lucide-react';
+import {
+  IconX as X,
+} from '@tabler/icons-react';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 /**

@@ -2,7 +2,9 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { Pin, PinOff } from 'lucide-react';
+import {
+  IconPin as Pin, IconPinnedOff as PinOff,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { updateChatStatus, updateChatPriority, toggleChatPin } from '../actions';
 

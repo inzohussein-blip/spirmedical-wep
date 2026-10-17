@@ -13,6 +13,7 @@ import {
   IconBuildingHospital,
 } from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -271,7 +272,7 @@ export default async function VaccineDetailPage(
                       fontSize: 13, fontWeight: 900,
                       flexShrink: 0,
                     }}>
-                      ✓
+                      <EmojiIcon e="✓" />
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 13, fontWeight: 700, color: '#202124' }}>

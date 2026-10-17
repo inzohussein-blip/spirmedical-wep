@@ -3,14 +3,13 @@
 import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import {
-  ArrowRight, Search, MapPin, Phone, Star, Building2,
-  Map as MapIcon, List, Hospital as HospitalIcon, AlertTriangle,
-  CheckCircle2, Activity, BedDouble,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconSearch as Search, IconMapPin as MapPin, IconPhone as Phone, IconStar as Star, IconBuilding as Building2, IconMap as MapIcon, IconList as List, IconBuildingHospital as HospitalIcon, IconAlertTriangle as AlertTriangle, IconCircleCheck as CheckCircle2, IconActivity as Activity, IconBed as BedDouble,
+} from '@tabler/icons-react';
 import FreeMedicalMapWrapper from '@/components/maps/SpirMapViewWrapper';
 import type { MapMarker } from '@/types/location';
 import PhoneLink from '@/components/ui/PhoneLink';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Hospital {
   id: string;
   name: string;
@@ -206,14 +205,14 @@ export default function HospitalsClient({ hospitals }: Props) {
             onClick={() => setSelectedType('government')}
             style={typeButtonStyle(selectedType === 'government', 'var(--emerald)')}
           >
-            🏛️ حكومي ({stats.government})
+            <EmojiIcon e="🏛️" /> حكومي ({stats.government})
           </button>
           <button
             type="button"
             onClick={() => setSelectedType('private')}
             style={typeButtonStyle(selectedType === 'private', 'var(--amber)')}
           >
-            🏥 أهلي ({stats.private})
+            <EmojiIcon e="🏥" /> أهلي ({stats.private})
           </button>
           <button
             type="button"
@@ -223,7 +222,7 @@ export default function HospitalsClient({ hospitals }: Props) {
               ...(emergencyOnly && { background: 'var(--rose)', color: 'var(--paper-3)' }),
             }}
           >
-            🚨 طوارئ ({stats.emergency})
+            <EmojiIcon e="🚨" /> طوارئ ({stats.emergency})
           </button>
         </div>
 
@@ -305,7 +304,7 @@ export default function HospitalsClient({ hospitals }: Props) {
                           flexShrink: 0,
                         }}
                       >
-                        {typeMeta.emoji}
+                        <EmojiIcon e={typeMeta.emoji} />
                       </div>
 
                       <div style={{ flex: 1, minWidth: 0 }}>

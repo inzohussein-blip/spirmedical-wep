@@ -10,6 +10,7 @@
 
 import { useEffect } from 'react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export default function AppShellError({
   error,
   reset,
@@ -23,7 +24,7 @@ export default function AppShellError({
 
   return (
     <div style={{ padding: 24, textAlign: 'center', maxWidth: 420, margin: '48px auto' }}>
-      <div style={{ fontSize: 40, marginBottom: 12 }} aria-hidden="true">⚠️</div>
+      <div style={{ fontSize: 40, marginBottom: 12 }} aria-hidden="true"><EmojiIcon e="⚠️" /></div>
       <h2 style={{ fontSize: 18, fontWeight: 800, marginBottom: 8, color: 'var(--ink)' }}>
         تعذّر تحميل التطبيق
       </h2>

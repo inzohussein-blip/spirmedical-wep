@@ -2,11 +2,12 @@
 
 import { useState, useTransition } from 'react';
 import { updateOrderRoleData } from '../actions';
-import type { LucideIcon } from 'lucide-react';
-import {
-  Lock, Brain, Smile, MessageSquare, Wrench, FileText, Save, CheckCircle2,
-} from 'lucide-react';
 
+import {
+  IconLock as Lock, IconBrain as Brain, IconMoodSmile as Smile, IconMessage as MessageSquare, IconTool as Wrench, IconFileText as FileText, IconDeviceFloppy as Save, IconCircleCheck as CheckCircle2,
+} from '@tabler/icons-react';
+
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 interface SessionData {
   mood_assessment?: string;
   topics_discussed?: string;
@@ -35,7 +36,7 @@ export default function SessionNotes({ orderId, initialData }: { orderId: string
     });
   }
 
-  const fields: Array<{ key: keyof SessionData; label: string; icon: LucideIcon }> = [
+  const fields: Array<{ key: keyof SessionData; label: string; icon: TablerIcon }> = [
     { key: 'mood_assessment',     icon: Smile,         label: 'تقييم الحالة المزاجية' },
     { key: 'topics_discussed',    icon: MessageSquare, label: 'المواضيع التي نوقشت' },
     { key: 'techniques_used',     icon: Wrench,        label: 'التقنيات المستخدمة' },

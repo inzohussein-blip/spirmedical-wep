@@ -1,9 +1,9 @@
 import {
-  AlertTriangle, ShieldAlert, Droplet, User, Repeat, Package,
-  Navigation, Receipt, Clock, FileImage,
-} from 'lucide-react';
+  IconAlertTriangle as AlertTriangle, IconShieldExclamation as ShieldAlert, IconDroplet as Droplet, IconUser as User, IconRepeat as Repeat, IconPackage as Package, IconNavigation as Navigation, IconReceipt as Receipt, IconClock as Clock, IconPhoto as FileImage,
+} from '@tabler/icons-react';
 import { isUnpricedService } from '@/lib/config/pricing';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /**
  * 🩺 تفاصيل الطلب السريرية
  *
@@ -265,7 +265,7 @@ export default function OrderClinicalDetails({ order }: { order: ClinicalOrder }
       {/* استمارة مملوءة بلا أي حساسية — طمأنة صريحة بدل الفراغ */}
       {showsAllergyReassurance && (
         <div style={{ marginTop: 10, fontSize: 12, color: 'var(--ink-3)' }}>
-          ✓ استمارة الحساسية مملوءة — لا حساسية مُعلَنة
+          <EmojiIcon e="✓" /> استمارة الحساسية مملوءة — لا حساسية مُعلَنة
         </div>
       )}
 
@@ -277,7 +277,7 @@ export default function OrderClinicalDetails({ order }: { order: ClinicalOrder }
           <div className="scr-list-stack">
             {rows.map((r) => (
               <div className="scr-list-item" key={r.key}>
-                <div className="scr-list-item-icon">{r.icon}</div>
+                <div className="scr-list-item-icon"><EmojiIcon e={r.icon} /></div>
                 <div className="scr-list-item-content">
                   <div className="scr-list-item-title">{r.title}</div>
                   <div className="scr-list-item-subtitle">{r.body}</div>

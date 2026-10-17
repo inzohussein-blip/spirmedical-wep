@@ -9,7 +9,9 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowRight, X, Search } from 'lucide-react';
+import {
+  IconArrowRight as ArrowRight, IconX as X, IconSearch as Search,
+} from '@tabler/icons-react';
 import type { Icon as TablerIcon } from '@tabler/icons-react';
 import {
   FEATURED_SERVICE,
@@ -19,6 +21,7 @@ import {
 } from '@/lib/services-v3';
 import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 type ResultKind = 'خدمة' | 'أداة' | 'فحص';
 
 interface SearchItem {
@@ -181,7 +184,7 @@ export default function SearchClient({
 
         {trimmed.length > 0 && results.length === 0 && (
           <div style={{ textAlign: 'center', marginTop: 40 }}>
-            <div style={{ fontSize: 40, marginBottom: 8 }}>🔍</div>
+            <div style={{ fontSize: 40, marginBottom: 8 }}><EmojiIcon e="🔍" /></div>
             <p style={{ fontWeight: 800, color: 'var(--ink)', marginBottom: 4 }}>
               لا نتائج لـ «{trimmed}»
             </p>

@@ -4,9 +4,8 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowRight, Send, Loader2, Star, MessageSquare,
-  ThumbsUp, ThumbsDown, Lightbulb, Heart,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconSend as Send, IconLoader2 as Loader2, IconStar as Star, IconMessage as MessageSquare, IconThumbUp as ThumbsUp, IconThumbDown as ThumbsDown, IconBulb as Lightbulb, IconHeart as Heart,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { useFormErrors } from '@/lib/forms/useFormErrors';
 import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';

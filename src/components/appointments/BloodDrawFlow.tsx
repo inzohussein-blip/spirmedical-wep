@@ -20,10 +20,8 @@ import { submitErrorMessage } from '@/lib/forms/submit-error';
 import FamilyMemberPicker from '@/components/family/FamilyMemberPicker';
 import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
 import {
-  Droplet, Search, Star, User, MapPin, Building2, Calendar,
-  TestTube, Clock, CheckCircle2, BarChart3, Lock, X, Loader2,
-  AlertTriangle, Lightbulb,
-} from 'lucide-react';
+  IconDroplet as Droplet, IconSearch as Search, IconStar as Star, IconUser as User, IconMapPin as MapPin, IconBuilding as Building2, IconCalendar as Calendar, IconTestPipe as TestTube, IconClock as Clock, IconCircleCheck as CheckCircle2, IconChartBar as BarChart3, IconLock as Lock, IconX as X, IconLoader2 as Loader2, IconAlertTriangle as AlertTriangle, IconBulb as Lightbulb,
+} from '@tabler/icons-react';
 import {
   BLOOD_TESTS,
   TEST_BUNDLES,
@@ -43,6 +41,7 @@ import {
 } from '@/lib/validations/blood-draw';
 import { baghdadDateOffset } from '@/lib/time/baghdad-day';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 const BLOOD_DRAW_PRICE = 15000;
 
 /** نتيجة الإرسال التي يعيدها الأب — تسمح بعرض أخطاء الحقول القادمة من الخادم. */
@@ -341,7 +340,7 @@ export default function BloodDrawFlow({
               onClick={() => setQuery('')}
               aria-label="مسح"
             >
-              ✕
+              <EmojiIcon e="✕" />
             </button>
           )}
         </div>
@@ -362,7 +361,7 @@ export default function BloodDrawFlow({
                     searchRef.current?.focus();
                   }}
                 >
-                  <span className="bd-sug-emoji">{test.emoji}</span>
+                  <span className="bd-sug-emoji"><EmojiIcon e={test.emoji} /></span>
                   <div className="bd-sug-text">
                     <div className="bd-sug-name">{test.nameAr}</div>
                     <div className="bd-sug-meta">
@@ -400,7 +399,7 @@ export default function BloodDrawFlow({
                     className={`bd-chip ${isSel ? 'selected' : ''}`}
                     onClick={() => toggleTest(test.id)}
                   >
-                    <span className="bd-chip-emoji">{test.emoji}</span>
+                    <span className="bd-chip-emoji"><EmojiIcon e={test.emoji} /></span>
                     <span className="bd-chip-name">{test.nameAr}</span>
                   </button>
                 );
@@ -418,7 +417,7 @@ export default function BloodDrawFlow({
                     className={`bd-chip ${isSel ? 'selected' : ''}`}
                     onClick={() => toggleTest(test.id)}
                   >
-                    <span className="bd-chip-emoji">{test.emoji}</span>
+                    <span className="bd-chip-emoji"><EmojiIcon e={test.emoji} /></span>
                     <span className="bd-chip-name">{test.nameAr}</span>
                   </button>
                 );
@@ -439,7 +438,7 @@ export default function BloodDrawFlow({
                 if (!t) return null;
                 return (
                   <div key={id} className="bd-selected-item">
-                    <span className="bd-sel-emoji">{t.emoji}</span>
+                    <span className="bd-sel-emoji"><EmojiIcon e={t.emoji} /></span>
                     <span className="bd-sel-name">{t.nameAr}</span>
                     <button
                       type="button"
@@ -501,14 +500,14 @@ export default function BloodDrawFlow({
                 className={`bd-toggle-btn ${gender === 'male' ? 'active' : ''}`}
                 onClick={() => setGender('male')}
               >
-                ♂ ذكر
+                <EmojiIcon e="♂" /> ذكر
               </button>
               <button
                 type="button"
                 className={`bd-toggle-btn ${gender === 'female' ? 'active' : ''}`}
                 onClick={() => setGender('female')}
               >
-                ♀ أنثى
+                <EmojiIcon e="♀" /> أنثى
               </button>
             </div>
           </div>
@@ -566,7 +565,7 @@ export default function BloodDrawFlow({
                     }}
                     title={`${loc.address}`}
                   >
-                    <span className="bd-saved-icon">{loc.icon}</span>
+                    <span className="bd-saved-icon"><EmojiIcon e={loc.icon} /></span>
                     <span>{loc.label}</span>
                   </button>
                 ))}
@@ -639,7 +638,7 @@ export default function BloodDrawFlow({
             </div>
           ) : userPhone ? (
             <div className="bd-hint">
-              ✓ تم ملء الرقم تلقائياً من حسابك
+              <EmojiIcon e="✓" /> تم ملء الرقم تلقائياً من حسابك
             </div>
           ) : null}
         </div>
@@ -666,7 +665,7 @@ export default function BloodDrawFlow({
                 className={`bd-lab-card ${isSel ? 'selected' : ''} ${isAny ? 'is-any' : ''}`}
                 onClick={() => setLabId(lab.id)}
               >
-                <div className="bd-lab-emoji">{lab.emoji}</div>
+                <div className="bd-lab-emoji"><EmojiIcon e={lab.emoji} /></div>
                 <div className="bd-lab-name">{lab.nameAr}</div>
                 <div className="bd-lab-city">{lab.city}</div>
                 <div className="bd-lab-time">

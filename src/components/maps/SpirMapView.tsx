@@ -3,7 +3,9 @@
 // أنماط MapLibre مفصولة (route-scoped) — تُحمَّل مع chunk الخريطة فقط.
 import '@/components/maps/maplibre-styles';
 import { useEffect, useRef, useState } from 'react';
-import { Crosshair, MapPin } from 'lucide-react';
+import {
+  IconCrosshair as Crosshair, IconMapPin as MapPin,
+} from '@tabler/icons-react';
 import type { Map as MlMap, Marker as MlMarker } from 'maplibre-gl';
 import { buildMarkerSvg, type ServiceMarkerType } from '@/lib/maps/markers';
 import {

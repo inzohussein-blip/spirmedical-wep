@@ -2,19 +2,19 @@
  * StatusBadge - عرض حالة بصرية احترافية
  * يحلّ محل النمط القديم: <span>[checkmark] معتمد</span>
  */
-import type { LucideIcon } from 'lucide-react';
-import {
-  Clock, CheckCircle2, Loader2, BadgeCheck, XCircle, Ban,
-  AlertCircle, CircleDashed,
-} from 'lucide-react';
 
+import {
+  IconClock as Clock, IconCircleCheck as CheckCircle2, IconLoader2 as Loader2, IconRosetteDiscountCheck as BadgeCheck, IconCircleX as XCircle, IconBan as Ban, IconAlertCircle as AlertCircle, IconCircleDashed as CircleDashed,
+} from '@tabler/icons-react';
+
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 export type StatusVariant =
   | 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled'
   | 'approved' | 'rejected' | 'suspended' | 'active' | 'inactive'
   | 'success' | 'warning' | 'danger' | 'info';
 
 interface VariantConfig {
-  icon: LucideIcon;
+  icon: TablerIcon;
   bg: string;
   color: string;
   label: string;

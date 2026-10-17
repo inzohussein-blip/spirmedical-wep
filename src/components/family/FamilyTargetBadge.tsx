@@ -1,9 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Users, User } from 'lucide-react';
+import {
+  IconUsers as Users, IconUser as User,
+} from '@tabler/icons-react';
 import { ageInYears } from '@/lib/time/baghdad-day';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /**
  * ═══════════════════════════════════════════════════════════════
  * FamilyTargetBadge (V25.8)
@@ -184,13 +187,13 @@ export default function FamilyTargetBadge({ familyMemberId, ownerName }: Props) 
         >
           {target.chronic_conditions && target.chronic_conditions.length > 0 && (
             <div style={{ fontSize: 12, color: 'var(--ink-2)' }}>
-              <strong style={{ color: 'var(--amber)' }}>⚕️ أمراض مزمنة:</strong>{' '}
+              <strong style={{ color: 'var(--amber)' }}><EmojiIcon e="⚕️" /> أمراض مزمنة:</strong>{' '}
               {target.chronic_conditions.join('، ')}
             </div>
           )}
           {target.allergies && target.allergies.length > 0 && (
             <div style={{ fontSize: 12, color: 'var(--ink-2)' }}>
-              <strong style={{ color: 'var(--rose)' }}>⚠️ حساسيات:</strong>{' '}
+              <strong style={{ color: 'var(--rose)' }}><EmojiIcon e="⚠️" /> حساسيات:</strong>{' '}
               {target.allergies.join('، ')}
             </div>
           )}

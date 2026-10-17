@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import {
-  Menu, X, Stethoscope, Settings, MessageCircle, HelpCircle, UserCog, Info,
-} from 'lucide-react';
+  IconMenu2 as Menu, IconX as X, IconStethoscope as Stethoscope, IconSettings as Settings, IconMessageCircle as MessageCircle, IconHelpCircle as HelpCircle, IconUserCog as UserCog, IconInfoCircle as Info,
+} from '@tabler/icons-react';
 
 /** `appHomePath` غير فارغ ⇒ الزائر مُسجّل، فتُبدَّل دعوة الدخول بدعوة الفتح */
 export default function LandingMobileMenu({ appHomePath }: { appHomePath?: string | null }) {

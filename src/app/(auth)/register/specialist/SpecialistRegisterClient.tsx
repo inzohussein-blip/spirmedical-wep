@@ -12,6 +12,7 @@ import { prepareUpload } from '@/lib/forms/prepare-upload';
 import { registerSpecialistForm } from '../actions';
 import { readOtpMode } from '@/lib/auth/otp-mode';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 type FormState = {
   fullName: string;
   gender: SpecialistRegisterInput['gender'] | '';
@@ -171,7 +172,7 @@ export default function SpecialistRegisterClient({ initialError }: { initialErro
       </div>
 
       <div className="auth-role-badge specialist">
-        <span aria-hidden="true">⌬</span>
+        <span aria-hidden="true"><EmojiIcon e="⌬" /></span>
         <span>تسجيل أخصائي طبي</span>
       </div>
 
@@ -466,7 +467,7 @@ export default function SpecialistRegisterClient({ initialError }: { initialErro
               className="auth-cta auth-cta-primary"
               disabled={busy}
             >
-              <span aria-hidden="true">🔐</span>
+              <span aria-hidden="true"><EmojiIcon e="🔐" /></span>
               <span>إنشاء + رمز تحقق</span>
             </button>
             <button
@@ -475,7 +476,7 @@ export default function SpecialistRegisterClient({ initialError }: { initialErro
               className="auth-cta auth-cta-secondary"
               disabled={busy}
             >
-              <span aria-hidden="true">⚡</span>
+              <span aria-hidden="true"><EmojiIcon e="⚡" /></span>
               <span>إنشاء سريع (بدون رمز)</span>
             </button>
           </div>
@@ -483,7 +484,7 @@ export default function SpecialistRegisterClient({ initialError }: { initialErro
       </form>
 
       <div className="auth-footer-note">
-        🔒 وثائقك تُحفظ في مساحةٍ خاصّة لا يراها إلّا فريقُ المراجعة.
+        <EmojiIcon e="🔒" /> وثائقك تُحفظ في مساحةٍ خاصّة لا يراها إلّا فريقُ المراجعة.
         <br />
         يظهر حسابك للمرضى بعد اعتماده (24–48 ساعة).
       </div>
@@ -560,7 +561,7 @@ function FileUploadField({
           aria-describedby={`${id}-hint ${error ? `${id}-error` : ''}`}
           aria-invalid={!!error}
         />
-        <div className="file-upload-icon" aria-hidden="true">{icon}</div>
+        <div className="file-upload-icon" aria-hidden="true"><EmojiIcon e={icon} /></div>
         <div className="file-upload-content">
           <div className="file-upload-title">
             {file ? file.name : 'اضغط لاختيار ملف أو التقاط صورة'}

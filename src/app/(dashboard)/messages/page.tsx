@@ -2,7 +2,9 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { oneOfOr } from '@/lib/format/vocabulary';
 import ChatList, { type ChatPreview } from '@/components/chat/ChatList';
-import { MessageCircle } from 'lucide-react';
+import {
+  IconMessageCircle as MessageCircle,
+} from '@tabler/icons-react';
 import { redirect } from 'next/navigation';
 import { openChatForAppointment } from '@/lib/chat/open-chat';
 

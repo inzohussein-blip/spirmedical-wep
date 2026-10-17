@@ -4,11 +4,11 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 import {
-  MessageCircle, Send, Smartphone, Check, X, Shield, Loader2,
-  AlertTriangle, ChevronLeft,
-} from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+  IconMessageCircle as MessageCircle, IconSend as Send, IconDeviceMobile as Smartphone, IconCheck as Check, IconX as X, IconShield as Shield, IconLoader2 as Loader2, IconAlertTriangle as AlertTriangle, IconChevronLeft as ChevronLeft,
+} from '@tabler/icons-react';
 
+
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 interface Props {
   initialEnabled: boolean;
   initialChannel: 'whatsapp' | 'telegram' | 'sms';
@@ -20,7 +20,7 @@ interface ChannelOption {
   id: 'whatsapp' | 'telegram' | 'sms';
   label: string;
   description: string;
-  icon: LucideIcon;
+  icon: TablerIcon;
   brandColor: string;
   recommended?: boolean;
   disabled?: boolean;

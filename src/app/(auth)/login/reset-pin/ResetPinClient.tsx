@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { completePinReset, startPinReset } from './actions';
 import { displayPhone } from '@/lib/whatsapp/share';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 type Started = { id: string; code: string; link: string; number: string; expiresAt: string };
 type Step = 'phone' | 'waiting' | 'pin';
 
@@ -139,7 +140,7 @@ export default function ResetPinClient({ initialPhone }: { initialPhone: string 
                 اضغط الزرّ، وسيفتح واتساب برسالةٍ جاهزة إلى رقمنا — <strong>اضغط «إرسال» فقط</strong>.
               </p>
               <a className="wa-verify-btn" href={started.link} target="_blank" rel="noopener noreferrer">
-                <span aria-hidden="true">💬</span>
+                <span aria-hidden="true"><EmojiIcon e="💬" /></span>
                 <span>أرسل الرمز عبر واتساب</span>
               </a>
               <div className="wa-verify-wait" role="status">
@@ -178,7 +179,7 @@ export default function ResetPinClient({ initialPhone }: { initialPhone: string 
 
       {step === 'pin' && (
         <form onSubmit={finish}>
-          <div className="wa-verify-ok" role="status">✓ تأكّدنا أنّ الرقم لك</div>
+          <div className="wa-verify-ok" role="status"><EmojiIcon e="✓" /> تأكّدنا أنّ الرقم لك</div>
           <div className="auth-field">
             <label htmlFor="pin" className="auth-field-label">رمز الدخول الجديد</label>
             <input

@@ -2,9 +2,8 @@
 
 import Link from 'next/link';
 import {
-  Users, Calendar, MessageCircle, Stethoscope, Sparkles,
-  TrendingUp, Activity, BarChart3,
-} from 'lucide-react';
+  IconUsers as Users, IconCalendar as Calendar, IconMessageCircle as MessageCircle, IconStethoscope as Stethoscope, IconSparkles as Sparkles, IconTrendingUp as TrendingUp, IconActivity as Activity, IconChartBar as BarChart3,
+} from '@tabler/icons-react';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
 interface EventStat {

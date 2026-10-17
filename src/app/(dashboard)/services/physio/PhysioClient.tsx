@@ -4,10 +4,10 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/format/price';
 import {
-  ArrowRight, Search, MapPin, Star, Activity,
-  Clock, CheckCircle2, Award, Home, Building2, Phone,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconSearch as Search, IconMapPin as MapPin, IconStar as Star, IconActivity as Activity, IconClock as Clock, IconCircleCheck as CheckCircle2, IconAward as Award, IconHome as Home, IconBuilding as Building2, IconPhone as Phone,
+} from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface ServiceType {
   id: string;
   slug: string;
@@ -102,14 +102,14 @@ export default function PhysioClient({ serviceTypes, specialists }: Props) {
             onClick={() => setView('types')}
             style={toggleStyle(view === 'types')}
           >
-            🦾 الخدمات
+            <EmojiIcon e="🦾" /> الخدمات
           </button>
           <button
             type="button"
             onClick={() => setView('specialists')}
             style={toggleStyle(view === 'specialists')}
           >
-            👨‍⚕️ الأخصائيون
+            <EmojiIcon e="👨‍⚕️" /> الأخصائيون
           </button>
         </div>
 
@@ -176,7 +176,7 @@ function ServiceTypesView({
           lineHeight: 1.7,
         }}
       >
-        💡 <strong>زيارة منزلية:</strong> الأخصائي يأتي لبيتك.
+        <EmojiIcon e="💡" /> <strong>زيارة منزلية:</strong> الأخصائي يأتي لبيتك.
         الجلسة من 45-60 دقيقة. الدفع كاش للأخصائي بعد الجلسة.
       </div>
 
@@ -199,7 +199,7 @@ function ServiceTypesView({
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0,
               }}>
-                {t.icon}
+                <EmojiIcon e={t.icon} />
               </div>
 
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -345,7 +345,7 @@ function SpecialistsView({
           onClick={() => setSelectedType('all')}
           style={pillStyle(selectedType === 'all')}
         >
-          🦾 الكل
+          <EmojiIcon e="🦾" /> الكل
         </button>
         {serviceTypes.map((t) => (
           <button
@@ -354,7 +354,7 @@ function SpecialistsView({
             onClick={() => setSelectedType(t.slug)}
             style={pillStyle(selectedType === t.slug)}
           >
-            {t.icon} {t.name_ar}
+            <EmojiIcon e={t.icon} /> {t.name_ar}
           </button>
         ))}
       </div>
@@ -400,7 +400,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
           fontSize: 24,
           flexShrink: 0,
         }}>
-          🦾
+          <EmojiIcon e="🦾" />
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>

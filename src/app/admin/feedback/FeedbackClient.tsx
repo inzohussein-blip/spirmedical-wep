@@ -3,9 +3,8 @@
 import { useState, useTransition, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Star, Archive, CheckCircle2, Clock, AlertCircle,
-  MessageSquare, ThumbsUp, ThumbsDown, Lightbulb, Loader2,
-} from 'lucide-react';
+  IconStar as Star, IconArchive as Archive, IconCircleCheck as CheckCircle2, IconClock as Clock, IconAlertCircle as AlertCircle, IconMessage as MessageSquare, IconThumbUp as ThumbsUp, IconThumbDown as ThumbsDown, IconBulb as Lightbulb, IconLoader2 as Loader2,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { updateFeedbackStatus } from './actions';
 

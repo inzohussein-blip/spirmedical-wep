@@ -5311,4 +5311,21 @@ html {
 
 /* EmojiIcon: أيقونةٌ داخل سطر نصّ — تجلس على خطّه ولا تُكبّره */
 .emoji-icon { display: inline-block; vertical-align: -0.18em; flex-shrink: 0; }
+/* أسلوبُ تطبيق المريض: الأيقونةُ الواقفة وحدها تحمل لونَ مفهومها؛ داخلَ زرٍّ أو رابطِ تنقّلٍ تتبع النصّ */
+.emoji-icon[data-tone]:only-child { color: var(--icon-tone); }
+:is(button, [role="button"], [class*="btn"], [class*="-button"], nav a, .sos-big-icon, .story-inner) .emoji-icon[data-tone] { color: inherit; }
+/* بلاطاتُ الأيقونات: خلفيّةٌ فاتحة بلون المفهوم (أسلوبُ بطاقات تطبيق المريض، lib/icons.ts ICON_TONES) */
+:is(.landing-service-icon, .ab-service-icon, .sm-empty-icon):has(> .emoji-icon[data-tone="emerald"]:only-child) { background: #E6F3EF; }
+:is(.landing-service-icon, .ab-service-icon, .sm-empty-icon):has(> .emoji-icon[data-tone="green"]:only-child) { background: #E8F5E9; }
+:is(.landing-service-icon, .ab-service-icon, .sm-empty-icon):has(> .emoji-icon[data-tone="teal"]:only-child) { background: #E0F2F1; }
+:is(.landing-service-icon, .ab-service-icon, .sm-empty-icon):has(> .emoji-icon[data-tone="cyan"]:only-child) { background: #E0F7FA; }
+:is(.landing-service-icon, .ab-service-icon, .sm-empty-icon):has(> .emoji-icon[data-tone="blue"]:only-child) { background: #E8F0FE; }
+:is(.landing-service-icon, .ab-service-icon, .sm-empty-icon):has(> .emoji-icon[data-tone="purple"]:only-child) { background: #F3E8FD; }
+:is(.landing-service-icon, .ab-service-icon, .sm-empty-icon):has(> .emoji-icon[data-tone="violet"]:only-child) { background: #EDE7F6; }
+:is(.landing-service-icon, .ab-service-icon, .sm-empty-icon):has(> .emoji-icon[data-tone="red"]:only-child) { background: #FCE8E6; }
+:is(.landing-service-icon, .ab-service-icon, .sm-empty-icon):has(> .emoji-icon[data-tone="rose"]:only-child) { background: #FCE8E6; }
+:is(.landing-service-icon, .ab-service-icon, .sm-empty-icon):has(> .emoji-icon[data-tone="orange"]:only-child) { background: #FFF3E0; }
+:is(.landing-service-icon, .ab-service-icon, .sm-empty-icon):has(> .emoji-icon[data-tone="amber"]:only-child) { background: #FEF7E0; }
+:is(.landing-service-icon, .ab-service-icon, .sm-empty-icon):has(> .emoji-icon[data-tone="yellow"]:only-child) { background: #FEF7E0; }
+:is(.landing-service-icon, .ab-service-icon, .sm-empty-icon):has(> .emoji-icon[data-tone="gray"]:only-child) { background: #F1F3F4; }
 .emoji-dot { display: inline-block; width: 0.6em; height: 0.6em; border-radius: 50%; vertical-align: 0.05em; flex-shrink: 0; }

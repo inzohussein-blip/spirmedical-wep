@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = {
   title: 'بوابة الدخول · سباير ميديكال',
   description: 'سجّل دخول أو أنشئ حساب جديد',
@@ -32,7 +33,7 @@ export default function GatePage() {
       {/* Two main options */}
       <div className="gate-options">
         <Link href="/login" className="gate-option" aria-label="تسجيل الدخول لحساب موجود">
-          <div className="gate-option-icon">🔐</div>
+          <div className="gate-option-icon"><EmojiIcon e="🔐" /></div>
           <div className="gate-option-content">
             <h3>تسجيل الدخول</h3>
             <p>عندي حساب بالفعل وأريد الدخول</p>
@@ -41,7 +42,7 @@ export default function GatePage() {
         </Link>
 
         <Link href="/register" className="gate-option highlight" aria-label="إنشاء حساب جديد">
-          <div className="gate-option-icon">✨</div>
+          <div className="gate-option-icon"><EmojiIcon e="✨" /></div>
           <div className="gate-option-content">
             <h3>إنشاء حساب جديد</h3>
             <p>مستخدم جديد · تسجيل سريع · مجاناً</p>
@@ -56,7 +57,7 @@ export default function GatePage() {
       </div>
 
       <Link href="/guest" className="gate-guest-link">
-        <span>👁</span>
+        <span><EmojiIcon e="👁" /></span>
         <span>تصفّح كضيف بدون تسجيل</span>
       </Link>
     </main>

@@ -8,7 +8,7 @@ import LandingStats from '@/components/landing/Stats';
 import LandingCoverageMap from '@/components/landing/LandingCoverageMap';
 import LandingScrollEffects from '@/components/landing/LandingScrollEffects';
 import AboutApp from '@/components/landing/AboutApp';
-import { ICONS, ICON_STROKE, type IconName } from '@/lib/icons';
+import { ICONS, ICON_STROKE, conceptTileStyle, type IconName } from '@/lib/icons';
 import { ARTICLES } from '@/lib/data/blog-articles';
 import { SITE_TYPE, getAppUrl } from '@/lib/site-config';
 import { getRoleHomePath } from '@/lib/auth/home-path';
@@ -602,7 +602,7 @@ export default async function HomePage(
           <div className="landing-trust-grid">
             {TRUST_BADGES.map((badge) => (
               <div key={badge.title} className="landing-trust-card">
-                <div className="landing-trust-icon">{(() => { const C = ICONS[badge.icon]; return <C size={26} strokeWidth={ICON_STROKE} aria-hidden />; })()}</div>
+                <div className="landing-trust-icon" style={conceptTileStyle(badge.icon)}>{(() => { const C = ICONS[badge.icon]; return <C size={28} strokeWidth={ICON_STROKE} aria-hidden />; })()}</div>
                 <h3>{badge.title}</h3>
                 <p>{badge.desc}</p>
               </div>

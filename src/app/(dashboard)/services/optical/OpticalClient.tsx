@@ -3,14 +3,14 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
-  ArrowRight, Search, MapPin, Phone, Star,
-  CheckCircle2, Eye,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconSearch as Search, IconMapPin as MapPin, IconPhone as Phone, IconStar as Star, IconCircleCheck as CheckCircle2, IconEye as Eye,
+} from '@tabler/icons-react';
 import { haptic } from '@/lib/haptic';
 import { formatPrice, formatPriceRange } from '@/lib/format/price';
 import ExternalMapButton from '@/components/maps/ExternalMapButton';
 import PhoneLink from '@/components/ui/PhoneLink';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Store {
   id: string;
   name: string;
@@ -97,14 +97,14 @@ export default function OpticalClient({ stores }: { stores: Store[] }) {
             onClick={() => { haptic.selection(); setExamOnly(!examOnly); }}
             style={pillStyle(examOnly)}
           >
-            👁️ يقدّم فحص نظر
+            <EmojiIcon e="👁️" /> يقدّم فحص نظر
           </button>
           <button
             type="button"
             onClick={() => { haptic.selection(); setContactLensesOnly(!contactLensesOnly); }}
             style={pillStyle(contactLensesOnly)}
           >
-            👁️‍🗨️ عدسات لاصقة
+            <EmojiIcon e="👁️‍🗨️" /> عدسات لاصقة
           </button>
         </div>
 
@@ -117,12 +117,12 @@ export default function OpticalClient({ stores }: { stores: Store[] }) {
           color: 'var(--ink-2)',
           lineHeight: 1.7,
         }}>
-          💡 <strong>اختر بحكمة:</strong> الإطار الجيد يدوم 3+ سنوات. الفحص الدوري كل سنتين موصى به.
+          <EmojiIcon e="💡" /> <strong>اختر بحكمة:</strong> الإطار الجيد يدوم 3+ سنوات. الفحص الدوري كل سنتين موصى به.
         </div>
 
         {filtered.length === 0 ? (
           <div className="scr-empty" style={{ marginTop: 32 }}>
-            <div className="scr-empty-icon">👓</div>
+            <div className="scr-empty-icon"><EmojiIcon e="👓" /></div>
             <h2 className="scr-empty-title">لا توجد متاجر</h2>
           </div>
         ) : (
@@ -165,7 +165,7 @@ function StoreCard({ store }: { store: Store }) {
           fontSize: 11,
           fontWeight: 900,
         }}>
-          ⭐ مميّز
+          <EmojiIcon e="⭐" /> مميّز
         </div>
       )}
 
@@ -177,7 +177,7 @@ function StoreCard({ store }: { store: Store }) {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           flexShrink: 0,
         }}>
-          👓
+          <EmojiIcon e="👓" />
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -243,13 +243,13 @@ function StoreCard({ store }: { store: Store }) {
         lineHeight: 1.7,
       }}>
         {store.offers_eye_exam && formatPrice(store.exam_price) && (
-          <>👁️ <strong>فحص نظر:</strong> {formatPrice(store.exam_price)}<br /></>
+          <><EmojiIcon e="👁️" /> <strong>فحص نظر:</strong> {formatPrice(store.exam_price)}<br /></>
         )}
         {formatPriceRange(store.frame_price_min, store.frame_price_max) && (
-          <>🖼️ <strong>إطارات:</strong> {formatPriceRange(store.frame_price_min, store.frame_price_max)}<br /></>
+          <><EmojiIcon e="🖼️" /> <strong>إطارات:</strong> {formatPriceRange(store.frame_price_min, store.frame_price_max)}<br /></>
         )}
         {formatPriceRange(store.lens_price_min, store.lens_price_max) && (
-          <>🔍 <strong>عدسات:</strong> {formatPriceRange(store.lens_price_min, store.lens_price_max)}</>
+          <><EmojiIcon e="🔍" /> <strong>عدسات:</strong> {formatPriceRange(store.lens_price_min, store.lens_price_max)}</>
         )}
       </div>
 
@@ -274,7 +274,7 @@ function StoreCard({ store }: { store: Store }) {
             fontWeight: 800,
           }}
         >
-          📅 احجز زيارة عبر سباير
+          <EmojiIcon e="📅" /> احجز زيارة عبر سباير
         </Link>
 
         {/* Secondary actions */}
@@ -323,7 +323,7 @@ function StoreCard({ store }: { store: Store }) {
                 fontWeight: 700,
               }}
             >
-              💬 WhatsApp
+              <EmojiIcon e="💬" /> WhatsApp
             </PhoneLink>
           )}
           <ExternalMapButton

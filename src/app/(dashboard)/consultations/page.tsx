@@ -6,11 +6,11 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowRight, MessageCircle, Plus, Clock, CheckCircle2,
-  AlertCircle, ChevronLeft,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconMessageCircle as MessageCircle, IconPlus as Plus, IconClock as Clock, IconCircleCheck as CheckCircle2, IconAlertCircle as AlertCircle, IconChevronLeft as ChevronLeft,
+} from '@tabler/icons-react';
 import RefreshWrapper from '@/components/pwa/RefreshWrapper';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'استشاراتي - Spir Medical' };
 
@@ -170,7 +170,7 @@ export default async function ConsultationsPage() {
                               fontWeight: 800,
                             }}
                           >
-                            {statusMeta.emoji} {statusMeta.label}
+                            <EmojiIcon e={statusMeta.emoji} /> {statusMeta.label}
                           </span>
                         </div>
                       </div>

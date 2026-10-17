@@ -2,8 +2,11 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { oneOfOr } from '@/lib/format/vocabulary';
 import ChatList, { type ChatPreview } from '@/components/chat/ChatList';
-import { Zap } from 'lucide-react';
+import {
+  IconBolt as Zap,
+} from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -109,7 +112,7 @@ export default async function SpecialistInboxPage() {
 
         {chats.length === 0 ? (
           <div className="scr-empty" style={{ marginTop: 32 }}>
-            <div className="scr-empty-icon" aria-hidden="true">✉</div>
+            <div className="scr-empty-icon" aria-hidden="true"><EmojiIcon e="✉" /></div>
             <h2 className="scr-empty-title">ابدأ محادثاتك</h2>
             <p className="scr-empty-desc">
               عند قبول طلب من مريض، ستظهر المحادثة هنا.

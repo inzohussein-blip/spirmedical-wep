@@ -5,7 +5,9 @@
 // ═══════════════════════════════════════════════════════════════
 
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import {
+  IconArrowRight as ArrowRight,
+} from '@tabler/icons-react';
 import StatusClient from './StatusClient';
 
 export const dynamic = 'force-dynamic';

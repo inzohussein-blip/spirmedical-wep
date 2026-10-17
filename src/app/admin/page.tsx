@@ -124,23 +124,23 @@ export default async function AdminDashboard() {
         <StatCard icon="inbox" label="طلبات اليوم" value={n(todayOrders)} href="/admin/orders?filter=today"
           hint={todayVsYesterday >= 0 ? `↑ ${todayVsYesterday} عن الأمس` : `↓ ${Math.abs(todayVsYesterday)} عن الأمس`} />
         <StatCard icon="done" label="مكتمل اليوم" value={n(todayCompleted)} />
-        <StatCard icon="patients" label="إجمالي المرضى" value={n(totalPatients)} tone="violet" href="/admin/patients" />
-        <StatCard icon="specialists" label="اختصاصيون نشطون" value={n(totalSpecialists)} tone="amber" href="/admin/specialists" />
+        <StatCard icon="patients" label="إجمالي المرضى" value={n(totalPatients)} href="/admin/patients" />
+        <StatCard icon="specialists" label="اختصاصيون نشطون" value={n(totalSpecialists)} href="/admin/specialists" />
         <StatCard icon="rate" label="معدل الإنجاز" value={`${completionRate}%`} hint={`من ${n(totalOrdersThisMonth)} طلب هذا الشهر`} />
-        <StatCard icon="cancelled" label="ملغاة (شهر)" value={n(cancelledThisMonth)} tone="rose" />
+        <StatCard icon="cancelled" label="ملغاة (شهر)" value={n(cancelledThisMonth)} />
       </StatGrid>
 
       <ActionGrid>
         <ActionTile href="/admin/users/create" icon="createUser" title="إنشاء حساب جديد" subtitle="مختصّ · مراجع · مدير" />
         <ActionTile href="/admin/locations" icon="map" title="إدارة المواقع الموحّدة" subtitle="كلُّ مقدّمي الخدمات على خريطة واحدة" />
-        <ActionTile href="/admin/seed-data" icon="seedData" title="البيانات الأولية" subtitle="مستشفيات وصيدليات وأطباء" tone="neutral" />
+        <ActionTile href="/admin/seed-data" icon="seedData" title="البيانات الأولية" subtitle="مستشفيات وصيدليات وأطباء" />
       </ActionGrid>
 
       <h2 className="aui-section-title">الخدمات الجديدة</h2>
       <StatGrid min={150}>
         <StatCard icon="dental" label="عيادات أسنان" value={n(dentalCount)} href="/admin/dental" />
-        <StatCard icon="optical" label="متاجر نظارات" value={n(opticalCount)} tone="amber" href="/admin/optical" />
-        <StatCard icon="mentalHealth" label="أخصائيو نفس" value={n(mentalCount)} tone="violet" href="/admin/mental-health" />
+        <StatCard icon="optical" label="متاجر نظارات" value={n(opticalCount)} href="/admin/optical" />
+        <StatCard icon="mentalHealth" label="أخصائيو نفس" value={n(mentalCount)} href="/admin/mental-health" />
         <StatCard icon="nutrition" label="أخصائيو تغذية" value={n(nutritionCount)} href="/admin/nutrition" />
       </StatGrid>
 

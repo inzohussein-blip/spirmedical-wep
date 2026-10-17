@@ -4,13 +4,8 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
-  Droplets,
-  Calendar,
-  MessageCircle,
-  ShieldCheck,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
+  IconDroplets as Droplets, IconCalendar as Calendar, IconMessageCircle as MessageCircle, IconShieldCheck as ShieldCheck, IconChevronLeft as ChevronLeft, IconChevronRight as ChevronRight,
+} from '@tabler/icons-react';
 
 /**
  * ═══════════════════════════════════════════════════════════════

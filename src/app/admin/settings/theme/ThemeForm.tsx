@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { Palette, Save, RotateCcw, Check, AlertCircle } from 'lucide-react';
+import {
+  IconPalette as Palette, IconDeviceFloppy as Save, IconRotate as RotateCcw, IconCheck as Check, IconAlertCircle as AlertCircle,
+} from '@tabler/icons-react';
 import { Button } from '@/components/ui/Button';
 import { updateTheme, resetThemeToDefault } from './actions';
 import { isValidHexColor, type ThemeSettings } from '@/types/theme';

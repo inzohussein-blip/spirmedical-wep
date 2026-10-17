@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import {
-  ArrowRight, ChevronDown, Search, HelpCircle, MessageCircle,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconChevronDown as ChevronDown, IconSearch as Search, IconHelpCircle as HelpCircle, IconMessageCircle as MessageCircle,
+} from '@tabler/icons-react';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
 interface FAQ {

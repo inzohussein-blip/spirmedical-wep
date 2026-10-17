@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import EmojiIcon from '@/components/ui/EmojiIcon';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
@@ -105,7 +106,7 @@ export default function FloatingActionButton() {
                 {action.label}
               </span>
               <span className={`fab-action-btn ${action.variant === 'danger' ? 'danger' : ''}`} aria-hidden="true">
-                {action.icon}
+                <EmojiIcon e={action.icon} />
               </span>
             </Link>
           </div>

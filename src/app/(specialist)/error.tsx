@@ -2,7 +2,9 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
-import { AlertCircle, RefreshCw, ArrowRight } from 'lucide-react';
+import {
+  IconAlertCircle as AlertCircle, IconRefresh as RefreshCw, IconArrowRight as ArrowRight,
+} from '@tabler/icons-react';
 
 export default function SpecialistError({
   error,
