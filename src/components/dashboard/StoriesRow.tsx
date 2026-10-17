@@ -3,7 +3,9 @@
  * StoriesRow — V26.8 (Tabler Icons + HTML Design)
  * ═══════════════════════════════════════════════════════════════
  * يجلب من DB عبر getActiveStories()
- * يدعم Tabler Icons (ti-*) و emojis في حقل icon
+ * حقلُ icon: اسمُ Tabler (ti-*) أو إيموجي — والإنتاجُ إيموجي (💉🩺💊🍎🚑) تكتبه الإدارة.
+ * الإيموجي لا يُرسم نصّاً: يُترجَم إلى أيقونة Tabler المقابلة كي تطابق بقيّةَ الرئيسية،
+ * وما ليس في الجدول يمرّ بـ<EmojiIcon> (خطّيّ أيضاً). الحارس: tests/stories-icons.test.tsx
  */
 
 import Link from 'next/link';
@@ -19,7 +21,15 @@ import {
   IconDroplet,
   IconBrain,
   IconEye,
+  IconDental,
+  IconSalad,
+  IconFlask,
+  IconBabyCarriage,
+  IconGift,
+  IconSparkles,
 } from '@tabler/icons-react';
+import EmojiIcon from '@/components/ui/EmojiIcon';
+import { normalizeEmoji } from '@/lib/emoji-icons';
 import { getActiveStories } from '@/lib/stories/get-stories';
 import type { Story } from '@/types/story';
 
@@ -36,6 +46,26 @@ const TABLER_ICON_MAP: Record<string, TablerIcon> = {
   'ti-eye': IconEye,
 };
 
+/** إيموجي القصص ← Tabler (المفتاحُ بلا U+FE0F) */
+const EMOJI_TABLER_MAP: Record<string, TablerIcon> = {
+  '💉': IconVaccine,
+  '🩺': IconStethoscope,
+  '💊': IconPill,
+  '🍎': IconApple,
+  '🚑': IconAmbulance,
+  '❤': IconHeartbeat,
+  '🏥': IconBuildingHospital,
+  '🩸': IconDroplet,
+  '🧠': IconBrain,
+  '👁': IconEye,
+  '🦷': IconDental,
+  '🥗': IconSalad,
+  '🧪': IconFlask,
+  '👶': IconBabyCarriage,
+  '🎁': IconGift,
+  '✨': IconSparkles,
+};
+
 const FALLBACK_STORIES: Story[] = [
   { id: '1', title: 'لقاحات',   icon: 'ti-vaccine',     description: null, href: '/tools/vaccinations',    color_theme: 'rose',    sort_order: 1, is_active: true, starts_at: null, ends_at: null, created_by: null, created_at: '', updated_at: '' },
   { id: '2', title: 'صحتك',     icon: 'ti-stethoscope', description: null, href: '/account/health',        color_theme: 'emerald', sort_order: 2, is_active: true, starts_at: null, ends_at: null, created_by: null, created_at: '', updated_at: '' },
@@ -44,12 +74,10 @@ const FALLBACK_STORIES: Story[] = [
   { id: '5', title: 'إسعافات',  icon: 'ti-ambulance',   description: null, href: '/tools/first-aid',       color_theme: 'amber',   sort_order: 5, is_active: true, starts_at: null, ends_at: null, created_by: null, created_at: '', updated_at: '' },
 ];
 
-function StoryIcon({ icon }: { icon: string }) {
-  if (icon.startsWith('ti-') && TABLER_ICON_MAP[icon]) {
-    const IconComp = TABLER_ICON_MAP[icon];
-    return <IconComp size={26} stroke={1.75} />;
-  }
-  return <>{icon}</>;
+export function StoryIcon({ icon }: { icon: string }) {
+  const IconComp = TABLER_ICON_MAP[icon] ?? EMOJI_TABLER_MAP[normalizeEmoji(icon.trim())];
+  if (IconComp) return <IconComp size={26} stroke={1.75} aria-hidden />;
+  return <EmojiIcon e={icon} size={26} />;
 }
 
 export default async function StoriesRow() {
