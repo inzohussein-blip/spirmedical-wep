@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { submitDeletionRequest } from './actions';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 const CONFIRM_PHRASE = 'أؤكد حذف بياناتي';
 
 export default function DeletionForm({
@@ -29,7 +30,7 @@ export default function DeletionForm({
           textAlign: 'center',
         }}
       >
-        <div style={{ fontSize: 36, marginBottom: 8 }}>✅</div>
+        <div style={{ fontSize: 36, marginBottom: 8 }}><EmojiIcon e="✅" /></div>
         <h3 style={{ margin: '0 0 8px', color: '#0A5446' }}>تم استلام طلبك</h3>
         <p style={{ fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.8, margin: 0 }}>
           رقم طلبك: <strong style={{ direction: 'ltr', display: 'inline-block' }}>{success}</strong>
@@ -55,7 +56,7 @@ export default function DeletionForm({
             marginBottom: 18,
           }}
         >
-          ⚠️ {error}
+          <EmojiIcon e="⚠️" /> {error}
         </div>
       )}
 
@@ -70,7 +71,7 @@ export default function DeletionForm({
         }}
       >
         <div style={{ fontWeight: 800, color: '#B8540C', marginBottom: 6, fontSize: 15 }}>
-          ⚠️ تنبيه: الحذف نهائي ولا يمكن التراجع عنه
+          <EmojiIcon e="⚠️" /> تنبيه: الحذف نهائي ولا يمكن التراجع عنه
         </div>
         <p style={{ fontSize: 13, color: 'var(--ink-2)', lineHeight: 1.7, margin: 0 }}>
           حذف بياناتك يعني فقدان سجلّاتك الطبية، مواعيدك، نتائج تحاليلك، وكل المعلومات

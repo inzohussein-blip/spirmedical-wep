@@ -3,19 +3,8 @@
 import { useState, useTransition, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Bell,
-  BellOff,
-  Calendar,
-  Beaker,
-  MessageCircle,
-  Gift,
-  Megaphone,
-  Moon,
-  Smartphone,
-  Trash2,
-  Send,
-  CheckCircle2,
-} from 'lucide-react';
+  IconBell as Bell, IconBellOff as BellOff, IconCalendar as Calendar, IconFlask as Beaker, IconMessageCircle as MessageCircle, IconGift as Gift, IconSpeakerphone as Megaphone, IconMoon as Moon, IconDeviceMobile as Smartphone, IconTrash as Trash2, IconSend as Send, IconCircleCheck as CheckCircle2,
+} from '@tabler/icons-react';
 import { Card, useConfirm, toast } from '@/components/ui';
 import {
   updateNotificationPreferences,
@@ -33,6 +22,7 @@ import {
   type PushPermission,
 } from '@/lib/push-client';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Props {
   initialSubscriptions: ActiveSubscription[];
   initialPreferences: NotificationPreferences;
@@ -148,7 +138,7 @@ export default function NotificationSettingsClient({
     return (
       <main className="app-screen" style={{ padding: 20 }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 16px' }}>
-          🔔 الإشعارات
+          <EmojiIcon e="🔔" /> الإشعارات
         </h1>
         <Card>
           <div style={{ textAlign: 'center', padding: 24 }}>
@@ -166,7 +156,7 @@ export default function NotificationSettingsClient({
   return (
     <main className="app-screen" style={{ padding: 20, paddingBottom: 60 }}>
       <div style={{ marginBottom: 16 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0 }}>🔔 الإشعارات</h1>
+        <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0 }}><EmojiIcon e="🔔" /> الإشعارات</h1>
         <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '4px 0 0' }}>
           إدارة إشعارات المواعيد والنتائج
         </p>
@@ -283,7 +273,7 @@ export default function NotificationSettingsClient({
                   lineHeight: 1.5,
                 }}
               >
-                ⚠️ رفضت الإشعارات سابقاً. فعّلها من إعدادات المتصفح ثم أعد تحميل الصفحة.
+                <EmojiIcon e="⚠️" /> رفضت الإشعارات سابقاً. فعّلها من إعدادات المتصفح ثم أعد تحميل الصفحة.
               </div>
             )}
           </div>
@@ -459,7 +449,7 @@ function CategoryToggle({
           flexShrink: 0,
         }}
       >
-        {icon}
+        <EmojiIcon e={icon} />
       </div>
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 2 }}>{title}</div>

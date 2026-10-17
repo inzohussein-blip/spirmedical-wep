@@ -2,10 +2,9 @@
 
 import ModalShell, { ModalCloseButton } from '@/components/ui/ModalShell';
 import { useState, useTransition } from 'react';
-import { 
-  Pill, Plus, Edit, Trash2, Power, Save, Bell, BellOff, 
-  Clock, Calendar, AlertTriangle, CheckCircle2,
-} from 'lucide-react';
+import {
+  IconPill as Pill, IconPlus as Plus, IconEdit as Edit, IconTrash as Trash2, IconPower as Power, IconDeviceFloppy as Save, IconBell as Bell, IconBellOff as BellOff, IconClock as Clock, IconCalendar as Calendar, IconAlertTriangle as AlertTriangle, IconCircleCheck as CheckCircle2,
+} from '@tabler/icons-react';
 import { useConfirm } from '@/components/ui';
 import { useFormErrors } from '@/lib/forms/useFormErrors';
 import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';

@@ -6,6 +6,7 @@ import { approveSpecialist, rejectSpecialist, toggleSuspendUser, updateSpecialis
 import { SPECIALIST_META, SPECIALIST_TYPES, type SpecialistType } from '@/lib/specialist-types';
 import { useConfirm } from '@/components/ui';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Props {
   specialistId: string;
   approvalStatus: 'pending' | 'approved' | 'rejected';
@@ -48,7 +49,7 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
     startTransition(async () => {
       const result = await approveSpecialist(specialistId, selectedType, approveNotes || undefined);
       if (!result.ok) { setError(result.error || 'حدث خطأ'); return; }
-      setSuccess('✅ تمت الموافقة بنجاح');
+      setSuccess('تمت الموافقة بنجاح');
       router.refresh();
     });
   }
@@ -135,7 +136,7 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
 
       {error && (
         <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '10px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700, marginBottom: 12 }}>
-          ⚠️ {error}
+          <EmojiIcon e="⚠️" /> {error}
         </div>
       )}
       {success && (
@@ -154,7 +155,7 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
             <select value={selectedType} onChange={(e) => setSelectedType(e.target.value as SpecialistType)} style={inputStyle}>
               {SPECIALIST_TYPES.map((t) => (
                 <option key={t} value={t}>
-                  {SPECIALIST_META[t].icon} {SPECIALIST_META[t].label}
+                  {SPECIALIST_META[t].label}
                 </option>
               ))}
             </select>
@@ -174,14 +175,14 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
           </div>
 
           <button type="button" onClick={handleApprove} disabled={isPending} style={btnPrimary}>
-            {isPending ? '...' : '✅ موافقة'}
+            {isPending ? '...' : <><EmojiIcon e="✅" /> موافقة</>}
           </button>
 
           <div style={{ height: 8 }} />
 
           {!showRejectForm ? (
             <button type="button" onClick={() => setShowRejectForm(true)} style={{ ...btnGhost, color: 'var(--rose)', borderColor: 'var(--rose-soft)' }}>
-              ❌ رفض
+              <EmojiIcon e="❌" /> رفض
             </button>
           ) : (
             <div style={{ background: 'var(--rose-soft)', padding: 12, borderRadius: 10, marginTop: 12 }}>
@@ -215,7 +216,7 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
             <select value={selectedType} onChange={(e) => setSelectedType(e.target.value as SpecialistType)} style={inputStyle}>
               {SPECIALIST_TYPES.map((t) => (
                 <option key={t} value={t}>
-                  {SPECIALIST_META[t].icon} {SPECIALIST_META[t].label}
+                  {SPECIALIST_META[t].label}
                 </option>
               ))}
             </select>
@@ -223,7 +224,7 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
 
           {selectedType !== currentType && (
             <button type="button" onClick={handleChangeType} disabled={isPending} style={{ ...btnPrimary, marginBottom: 12 }}>
-              💾 حفظ النوع الجديد
+              <EmojiIcon e="💾" /> حفظ النوع الجديد
             </button>
           )}
 
@@ -232,7 +233,7 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
           {!isSuspended ? (
             !showSuspendForm ? (
               <button type="button" onClick={() => setShowSuspendForm(true)} style={{ ...btnGhost, color: 'var(--rose)', borderColor: 'var(--rose-soft)' }}>
-                ⛔ تعليق الحساب
+                <EmojiIcon e="⛔" /> تعليق الحساب
               </button>
             ) : (
               <div style={{ background: 'var(--rose-soft)', padding: 12, borderRadius: 10 }}>
@@ -271,13 +272,13 @@ export default function SpecialistActions({ specialistId, approvalStatus, curren
             <select value={selectedType} onChange={(e) => setSelectedType(e.target.value as SpecialistType)} style={inputStyle}>
               {SPECIALIST_TYPES.map((t) => (
                 <option key={t} value={t}>
-                  {SPECIALIST_META[t].icon} {SPECIALIST_META[t].label}
+                  {SPECIALIST_META[t].label}
                 </option>
               ))}
             </select>
           </div>
           <button type="button" onClick={handleApprove} disabled={isPending} style={btnPrimary}>
-            🔄 إعادة الموافقة
+            <EmojiIcon e="🔄" /> إعادة الموافقة
           </button>
         </>
       )}

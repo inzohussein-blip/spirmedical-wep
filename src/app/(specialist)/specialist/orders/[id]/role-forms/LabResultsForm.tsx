@@ -4,10 +4,10 @@ import { useState, useTransition } from 'react';
 import { saveLabResults, updateLabOrderStatus, type LabResultInput } from '../actions';
 import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
 import {
-  Droplet, TestTube, AlertTriangle, Trash2, Save, CheckCircle2,
-  Upload, FileText, Activity, X,
-} from 'lucide-react';
+  IconDroplet as Droplet, IconTestPipe as TestTube, IconAlertTriangle as AlertTriangle, IconTrash as Trash2, IconDeviceFloppy as Save, IconCircleCheck as CheckCircle2, IconUpload as Upload, IconFileText as FileText, IconActivity as Activity, IconX as X,
+} from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /**
  * ════════════════════════════════════════════════════════════════════
  * 🩸 V25.43: LabResultsForm محسّن
@@ -180,7 +180,7 @@ export default function LabResultsForm({ orderId, expectedTests = [], existingRe
           className="scr-pill"
           style={{ fontSize: 12 }}
         >
-          ✓ تمّ السحب
+          <EmojiIcon e="✓" /> تمّ السحب
         </button>
         <button 
           type="button"
@@ -188,7 +188,7 @@ export default function LabResultsForm({ orderId, expectedTests = [], existingRe
           className="scr-pill"
           style={{ fontSize: 12 }}
         >
-          📤 أُرسل للمختبر
+          <EmojiIcon e="📤" /> أُرسل للمختبر
         </button>
         <button 
           type="button"
@@ -196,7 +196,7 @@ export default function LabResultsForm({ orderId, expectedTests = [], existingRe
           className="scr-pill"
           style={{ fontSize: 12 }}
         >
-          ⚗️ قيد التحليل
+          <EmojiIcon e="⚗️" /> قيد التحليل
         </button>
       </div>
 

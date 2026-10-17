@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import type { LucideIcon } from 'lucide-react';
-import {
-  Syringe, Baby, User, Heart, Plane,
-  ArrowRight, ClipboardList, Clock, Lightbulb, X,
-} from 'lucide-react';
 
+import {
+  IconVaccine as Syringe, IconBabyCarriage as Baby, IconUser as User, IconHeart as Heart, IconPlane as Plane, IconArrowRight as ArrowRight, IconClipboardList as ClipboardList, IconClock as Clock, IconBulb as Lightbulb, IconX as X,
+} from '@tabler/icons-react';
+
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 interface Vaccine {
   id: string;
   name: string;
@@ -18,7 +18,7 @@ interface Vaccine {
   doses: string;
 }
 
-const CATEGORIES: Array<{ id: string; label: string; icon: LucideIcon }> = [
+const CATEGORIES: Array<{ id: string; label: string; icon: TablerIcon }> = [
   { id: 'all',       label: 'الكل',      icon: Syringe },
   { id: 'child',     label: 'الأطفال',   icon: Baby },
   { id: 'adult',     label: 'الكبار',    icon: User },

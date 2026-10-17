@@ -12,10 +12,13 @@
 
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { ArrowRight } from 'lucide-react';
+import {
+  IconArrowRight as ArrowRight,
+} from '@tabler/icons-react';
 import { createClient } from '@/lib/supabase/server';
 import { formatPrice } from '@/lib/format/price';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'قائمة أمنياتي - Spir Medical' };
 
@@ -63,7 +66,7 @@ export default async function CosmeticWishlistPage() {
 
         {items.length === 0 ? (
           <div className="scr-empty" style={{ marginTop: 32 }}>
-            <div className="scr-empty-icon" aria-hidden="true">💖</div>
+            <div className="scr-empty-icon" aria-hidden="true"><EmojiIcon e="💖" /></div>
             <h2 className="scr-empty-title">قائمتك فارغة</h2>
             <p className="scr-empty-desc">
               اضغط على القلب في أيّ منتجٍ لحفظه هنا.

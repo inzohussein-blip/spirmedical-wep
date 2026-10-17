@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import CosmeticAdminClient from './CosmeticAdminClient';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'إدارة منتجات التجميل - Admin' };
 
@@ -67,7 +68,7 @@ export default async function AdminCosmeticPage() {
         <h1 style={{ 
           fontSize: 26, fontWeight: 900, margin: '8px 0 4px', color: '#202124',
         }}>
-          💄 إدارة منتجات التجميل
+          <EmojiIcon e="💄" /> إدارة منتجات التجميل
         </h1>
         <p style={{ fontSize: 13, color: '#5F6368', margin: 0 }}>
           إدارة الكتالوج + الأسعار + المنتجات الموصى بها

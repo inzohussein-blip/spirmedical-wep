@@ -5,7 +5,9 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import { ArrowRight, Pill, Plus, Search } from 'lucide-react';
+import {
+  IconArrowRight as ArrowRight, IconPill as Pill, IconPlus as Plus, IconSearch as Search,
+} from '@tabler/icons-react';
 import MyMedicationsClient from './MyMedicationsClient';
 
 export const dynamic = 'force-dynamic';

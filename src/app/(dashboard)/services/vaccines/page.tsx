@@ -13,6 +13,7 @@ import {
 } from '@tabler/icons-react';
 import type { Icon as TablerIcon } from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -220,7 +221,7 @@ export default async function VaccinesPage() {
                       fontSize: 22,
                       flexShrink: 0,
                     }}>
-                      {vaccine.icon}
+                      <EmojiIcon e={vaccine.icon} />
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{

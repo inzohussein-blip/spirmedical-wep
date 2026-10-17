@@ -2,10 +2,13 @@
 
 import { useState, useTransition, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { Bug, AlertTriangle, CheckCircle2, X, Copy } from 'lucide-react';
+import {
+  IconBug as Bug, IconAlertTriangle as AlertTriangle, IconCircleCheck as CheckCircle2, IconX as X, IconCopy as Copy,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { updateBugStatus } from './actions';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface BugReport {
   id: string;
   user_id: string | null;
@@ -99,7 +102,7 @@ export default function BugsClient({ bugs, usersMap }: Props) {
         <FilterPill active={filterStatus === 'all'} onClick={() => setFilterStatus('all')}>كل الحالات</FilterPill>
         {Object.entries(STATUS_META).map(([key, meta]) => (
           <FilterPill key={key} active={filterStatus === key} onClick={() => setFilterStatus(key)}>
-            {meta.emoji} {meta.label}
+            <EmojiIcon e={meta.emoji} /> {meta.label}
           </FilterPill>
         ))}
       </div>
@@ -108,7 +111,7 @@ export default function BugsClient({ bugs, usersMap }: Props) {
         <FilterPill active={filterSeverity === 'all'} onClick={() => setFilterSeverity('all')}>كل المستويات</FilterPill>
         {Object.entries(SEVERITY_META).map(([key, meta]) => (
           <FilterPill key={key} active={filterSeverity === key} onClick={() => setFilterSeverity(key)}>
-            {meta.emoji} {meta.label}
+            <EmojiIcon e={meta.emoji} /> {meta.label}
           </FilterPill>
         ))}
       </div>
@@ -118,7 +121,7 @@ export default function BugsClient({ bugs, usersMap }: Props) {
         <div style={{ padding: 40, textAlign: 'center', background: 'var(--white)', borderRadius: 12 }}>
           <Bug size={42} color="var(--ink-4)" style={{ opacity: 0.5, marginBottom: 10 }} />
           <p style={{ fontSize: 13, color: 'var(--ink-3)' }}>
-            {bugs.length === 0 ? 'لا توجد أعطال 🎉' : 'لا توجد أعطال تطابق الفلتر'}
+            {bugs.length === 0 ? 'لا توجد أعطال' : 'لا توجد أعطال تطابق الفلتر'}
           </p>
         </div>
       ) : (
@@ -152,7 +155,7 @@ export default function BugsClient({ bugs, usersMap }: Props) {
                         fontSize: 11,
                         fontWeight: 800,
                       }}>
-                        {sev.emoji} {sev.label}
+                        <EmojiIcon e={sev.emoji} /> {sev.label}
                       </span>
                       <span style={{
                         padding: '2px 6px',
@@ -162,7 +165,7 @@ export default function BugsClient({ bugs, usersMap }: Props) {
                         fontSize: 11,
                         fontWeight: 800,
                       }}>
-                        {st.emoji} {st.label}
+                        <EmojiIcon e={st.emoji} /> {st.label}
                       </span>
                     </div>
 
@@ -193,9 +196,9 @@ export default function BugsClient({ bugs, usersMap }: Props) {
                     )}
 
                     <div style={{ marginTop: 8, fontSize: 11, color: 'var(--ink-3)', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                      <span>👤 {user?.full_name || 'مجهول'}</span>
-                      {b.browser && <span>🌐 {b.browser}</span>}
-                      {b.device && <span>📱 {b.device}</span>}
+                      <span><EmojiIcon e="👤" /> {user?.full_name || 'مجهول'}</span>
+                      {b.browser && <span><EmojiIcon e="🌐" /> {b.browser}</span>}
+                      {b.device && <span><EmojiIcon e="📱" /> {b.device}</span>}
                       {b.page_url && (
                         <code style={{ fontSize: 11, background: 'var(--paper-3)', padding: '1px 4px', borderRadius: 3 }}>
                           {b.page_url}
@@ -244,7 +247,7 @@ export default function BugsClient({ bugs, usersMap }: Props) {
                         opacity: b.status === key ? 0.7 : 1,
                       }}
                     >
-                      {meta.emoji} {meta.label}
+                      <EmojiIcon e={meta.emoji} /> {meta.label}
                     </button>
                   ))}
                 </div>
@@ -266,7 +269,7 @@ function StatCard({ label, value, color, icon }: {
       borderInlineStartWidth: 4, borderInlineStartStyle: 'solid', borderInlineStartColor: color,
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, color, marginBottom: 6 }}>
-        {icon}
+        <EmojiIcon e={icon} />
         <span style={{ fontSize: 11, fontWeight: 700 }}>{label}</span>
       </div>
       <div style={{ fontSize: 20, fontWeight: 900 }}>{value.toLocaleString('ar-IQ-u-nu-latn')}</div>

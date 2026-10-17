@@ -4,6 +4,7 @@ import { isAdminRole } from '@/lib/admin-types';
 import { getWaOverview, GATEWAY_STALE_MS } from '@/lib/whatsapp/inbound-verify';
 import { displayPhone } from '@/lib/whatsapp/share';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'واتساب · إدارة' };
 
@@ -32,7 +33,7 @@ export default async function WhatsAppAdminPage() {
 
   return (
     <>
-      <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}>📲 التحقّق عبر واتساب</h1>
+      <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}><EmojiIcon e="📲" /> التحقّق عبر واتساب</h1>
       <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: '0 0 20px', lineHeight: 1.7 }}>
         العميلُ يرسل رمزاً من رقمه إلى رقمنا، فيثبت ملكيّته — لاستعادة رمز الدخول وتفعيل الحسابات التي تنشئها الإدارة.
       </p>

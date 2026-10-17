@@ -4,15 +4,15 @@ import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowRight, Send, Loader2, Star, MessageSquare,
-  ThumbsUp, ThumbsDown, Lightbulb, Heart,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconSend as Send, IconLoader2 as Loader2, IconStar as Star, IconMessage as MessageSquare, IconThumbUp as ThumbsUp, IconThumbDown as ThumbsDown, IconBulb as Lightbulb, IconHeart as Heart,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { useFormErrors } from '@/lib/forms/useFormErrors';
 import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
 import FieldError from '@/components/forms/FieldError';
 import { submitFeedback } from '@/app/admin/feedback/actions';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 const FEEDBACK_FIELD_LABELS: Record<string, string> = { message: 'الرسالة' };
 
 const TYPES = [
@@ -125,7 +125,7 @@ export default function FeedbackClient() {
                   textAlign: 'start',
                 }}
               >
-                <div style={{ fontSize: 22 }}>{t.emoji}</div>
+                <div style={{ fontSize: 22 }}><EmojiIcon e={t.emoji} /></div>
                 <div style={{ flex: 1 }}>
                   <div style={{
                     fontSize: 12,
@@ -293,7 +293,7 @@ export default function FeedbackClient() {
           marginTop: 12,
           lineHeight: 1.6,
         }}>
-          🔒 ملاحظتك سرية ولن تُنشر علناً
+          <EmojiIcon e="🔒" /> ملاحظتك سرية ولن تُنشر علناً
         </p>
 
         <div style={{ height: 60 }} />

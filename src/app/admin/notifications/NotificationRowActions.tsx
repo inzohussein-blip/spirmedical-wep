@@ -2,7 +2,9 @@
 
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { RotateCw, Ban } from 'lucide-react';
+import {
+  IconRotateClockwise as RotateCw, IconBan as Ban,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { retryNotification, cancelNotification } from './actions';
 

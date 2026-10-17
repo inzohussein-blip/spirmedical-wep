@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import HospitalsAdminClient from './HospitalsAdminClient';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'إدارة المستشفيات - Admin' };
 
@@ -45,7 +46,7 @@ export default async function AdminHospitalsPage() {
           fontWeight: 700,
         }}>← العودة</Link>
         <div style={{ flex: 1 }}>
-          <h1 style={{ fontSize: 22, fontWeight: 900, margin: 0 }}>🏥 إدارة المستشفيات</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 900, margin: 0 }}><EmojiIcon e="🏥" /> إدارة المستشفيات</h1>
           <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '2px 0 0' }}>
             {hospitals?.length ?? 0} مستشفى
           </p>

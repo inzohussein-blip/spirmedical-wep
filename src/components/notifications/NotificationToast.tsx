@@ -3,7 +3,9 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
-import { MessageCircle, ClipboardList, Bell, X } from 'lucide-react';
+import {
+  IconMessageCircle as MessageCircle, IconClipboardList as ClipboardList, IconBell as Bell, IconX as X,
+} from '@tabler/icons-react';
 
 interface Toast {
   id: string;

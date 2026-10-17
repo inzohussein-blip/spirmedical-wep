@@ -6,6 +6,7 @@ import { promoteToAdmin, revokeAdminRole, changeAdminRole } from './actions';
 import { ADMIN_ROLES, type AdminRole } from '@/lib/admin-types';
 import { useConfirm } from '@/components/ui';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface AdminUser {
   id: string;
   name: string;
@@ -102,7 +103,7 @@ export default function AdminsClient({ admins }: Props) {
 
             {error && (
               <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '10px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700, marginBottom: 12 }}>
-                ⚠️ {error}
+                <EmojiIcon e="⚠️" /> {error}
               </div>
             )}
 
@@ -126,9 +127,9 @@ export default function AdminsClient({ admins }: Props) {
                   الدور
                 </label>
                 <select value={newRole} onChange={(e) => setNewRole(e.target.value as AdminRole)} style={inputStyle}>
-                  <option value="super_admin">👑 {ADMIN_ROLES.super_admin.label}</option>
-                  <option value="manager">👔 {ADMIN_ROLES.manager.label}</option>
-                  <option value="support">🎧 {ADMIN_ROLES.support.label}</option>
+                  <option value="super_admin"><EmojiIcon e="👑" /> {ADMIN_ROLES.super_admin.label}</option>
+                  <option value="manager"><EmojiIcon e="👔" /> {ADMIN_ROLES.manager.label}</option>
+                  <option value="support"><EmojiIcon e="🎧" /> {ADMIN_ROLES.support.label}</option>
                 </select>
               </div>
 
@@ -137,7 +138,7 @@ export default function AdminsClient({ admins }: Props) {
                 border: 0, borderRadius: 8, fontSize: 12, fontWeight: 800,
                 cursor: 'pointer', fontFamily: 'inherit',
               }}>
-                💾 تعيين
+                <EmojiIcon e="💾" /> تعيين
               </button>
               <button onClick={() => { setShowAddForm(false); setError(''); }} style={{
                 padding: '10px 16px', background: 'transparent', border: '1px solid var(--line)',
@@ -193,10 +194,10 @@ export default function AdminsClient({ admins }: Props) {
                         cursor: a.isMe ? 'default' : 'pointer', fontFamily: 'inherit',
                       }}
                     >
-                      <option value="super_admin">👑 مدير عام</option>
-                      <option value="admin">👑 مدير عام</option>
-                      <option value="manager">👔 مدير عمليات</option>
-                      <option value="support">🎧 دعم فني</option>
+                      <option value="super_admin">مدير عام</option>
+                      <option value="admin">مدير عام</option>
+                      <option value="manager">مدير عمليات</option>
+                      <option value="support">دعم فني</option>
                     </select>
                   </td>
                   <td style={td}>{new Date(a.createdAt).toLocaleDateString('ar-IQ-u-nu-latn')}</td>
@@ -209,7 +210,7 @@ export default function AdminsClient({ admins }: Props) {
                         border: 0, borderRadius: 100, fontSize: 11, fontWeight: 800,
                         cursor: 'pointer', fontFamily: 'inherit',
                       }}>
-                        🗑 إزالة
+                        <EmojiIcon e="🗑" /> إزالة
                       </button>
                     )}
                   </td>

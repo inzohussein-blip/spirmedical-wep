@@ -2,11 +2,12 @@
 
 import { useState, useTransition } from 'react';
 import { updateOrderRoleData } from '../actions';
-import type { LucideIcon } from 'lucide-react';
-import {
-  HelpCircle, Pill, AlertTriangle, CheckCircle2, RefreshCw, Save,
-} from 'lucide-react';
 
+import {
+  IconHelpCircle as HelpCircle, IconPill as Pill, IconAlertTriangle as AlertTriangle, IconCircleCheck as CheckCircle2, IconRefresh as RefreshCw, IconDeviceFloppy as Save,
+} from '@tabler/icons-react';
+
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 interface DrugData {
   patient_concerns?: string;
   drugs_reviewed?: string;
@@ -35,7 +36,7 @@ export default function DrugConsultation({ orderId, initialData }: { orderId: st
     });
   }
 
-  const fields: Array<{ key: keyof DrugData; label: string; icon: LucideIcon; placeholder: string }> = [
+  const fields: Array<{ key: keyof DrugData; label: string; icon: TablerIcon; placeholder: string }> = [
     { key: 'patient_concerns',   icon: HelpCircle,    label: 'استفسارات المريض',      placeholder: 'ما هي الاستفسارات؟' },
     { key: 'drugs_reviewed',     icon: Pill,          label: 'الأدوية المراجَعة',       placeholder: 'قائمة الأدوية...' },
     { key: 'interactions_found', icon: AlertTriangle, label: 'التفاعلات المكتشفة',     placeholder: 'إن وُجدت...' },

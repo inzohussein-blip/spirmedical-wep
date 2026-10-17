@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import FeedbackClient from './FeedbackClient';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'الملاحظات - Admin' };
 
@@ -46,7 +47,7 @@ export default async function FeedbackPage() {
           borderRadius: 8, textDecoration: 'none', fontSize: 12, fontWeight: 700,
         }}>← العودة</Link>
         <div style={{ flex: 1 }}>
-          <h1 style={{ fontSize: 22, fontWeight: 900, margin: 0 }}>💬 الملاحظات</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 900, margin: 0 }}><EmojiIcon e="💬" /> الملاحظات</h1>
           <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '2px 0 0' }}>
             {feedbackList?.length ?? 0} ملاحظة من المستخدمين
           </p>

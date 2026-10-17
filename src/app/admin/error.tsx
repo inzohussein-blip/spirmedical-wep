@@ -2,7 +2,9 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
-import { AlertTriangle, RefreshCw, Shield } from 'lucide-react';
+import {
+  IconAlertTriangle as AlertTriangle, IconRefresh as RefreshCw, IconShield as Shield,
+} from '@tabler/icons-react';
 
 export default function AdminError({
   error,

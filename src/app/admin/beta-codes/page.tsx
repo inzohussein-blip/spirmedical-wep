@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import BetaCodesClient from './BetaCodesClient';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'رموز Beta - Admin' };
 
@@ -32,7 +33,7 @@ export default async function BetaCodesPage() {
           borderRadius: 8, textDecoration: 'none', fontSize: 12, fontWeight: 700,
         }}>← العودة</Link>
         <div style={{ flex: 1 }}>
-          <h1 style={{ fontSize: 22, fontWeight: 900, margin: 0 }}>🎟️ رموز Beta</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 900, margin: 0 }}><EmojiIcon e="🎟️" /> رموز Beta</h1>
           <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '2px 0 0' }}>
             {codes?.length ?? 0} رمز · إدارة الدعوات الحصرية
           </p>

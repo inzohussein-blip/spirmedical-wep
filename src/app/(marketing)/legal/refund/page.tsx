@@ -3,6 +3,7 @@ export const revalidate = 86400;
 
 import Link from 'next/link';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = {
   alternates: { canonical: '/legal/refund' },
   title: 'سياسة الاسترداد · سباير ميديكال',
@@ -44,7 +45,7 @@ export default function RefundPage() {
           </header>
 
           <div className="legal-highlight">
-            <strong>💰 شفافية كاملة</strong>
+            <strong><EmojiIcon e="💰" /> شفافية كاملة</strong>
             <p>
               نُؤمن بحقّك في استرداد أموالك في حالات محدّدة. هذه السياسة
               تشرح متى وكيف نُعيد المدفوعات بشفافية.
@@ -173,9 +174,9 @@ export default function RefundPage() {
               للاستفسار عن أي طلب استرداد أو شكوى:
             </p>
             <ul>
-              <li>📧 البريد: <strong>refunds@spir-medical.com</strong></li>
-              <li>📞 الهاتف: <strong>07803993585</strong></li>
-              <li>💬 WhatsApp: <strong>9647803993585</strong></li>
+              <li><EmojiIcon e="📧" /> البريد: <strong>refunds@spir-medical.com</strong></li>
+              <li><EmojiIcon e="📞" /> الهاتف: <strong>07803993585</strong></li>
+              <li><EmojiIcon e="💬" /> WhatsApp: <strong>9647803993585</strong></li>
               <li>أو زر <Link href="/contact">صفحة الاتصال</Link></li>
             </ul>
 

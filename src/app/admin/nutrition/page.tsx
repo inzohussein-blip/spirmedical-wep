@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import NutritionAdminClient from './NutritionAdminClient';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'إدارة التغذية - Admin' };
 
@@ -41,7 +42,7 @@ export default async function AdminNutritionPage() {
           textDecoration: 'none', color: 'var(--ink-2)', fontSize: 13,
         }}>← العودة</Link>
         <h1 style={{ fontSize: 20, fontWeight: 900, margin: 0 }}>
-          🥗 إدارة أخصائيي التغذية
+          <EmojiIcon e="🥗" /> إدارة أخصائيي التغذية
         </h1>
       </div>
       <NutritionAdminClient

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getServiceAreas } from './actions';
 import ServiceAreasClient from './ServiceAreasClient';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata: Metadata = {
   title: 'مناطق الخدمة · لوحة التحكّم',
 };
@@ -26,7 +27,7 @@ export default async function ServiceAreasPage() {
           ← العودة
         </Link>
         <h1 style={{ fontSize: 20, fontWeight: 900, margin: 0 }}>
-          🧭 مناطق الخدمة
+          <EmojiIcon e="🧭" /> مناطق الخدمة
         </h1>
       </div>
       <p style={{ fontSize: 13, color: '#888780', margin: '0 0 18px' }}>
@@ -41,7 +42,7 @@ export default async function ServiceAreasPage() {
             borderRadius: 12, color: '#791F1F',
           }}
         >
-          ⚠️ تعذّر تحميل المناطق: {error || 'خطأ غير معروف'}
+          <EmojiIcon e="⚠️" /> تعذّر تحميل المناطق: {error || 'خطأ غير معروف'}
         </div>
       ) : (
         <ServiceAreasClient initialAreas={areas} />

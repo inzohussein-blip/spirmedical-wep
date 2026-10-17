@@ -3,9 +3,8 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Plus, Trash2, Eye, EyeOff, Copy, X, Save,
-  Loader2, Ticket, Users, Clock, CheckCircle2,
-} from 'lucide-react';
+  IconPlus as Plus, IconTrash as Trash2, IconEye as Eye, IconEyeOff as EyeOff, IconCopy as Copy, IconX as X, IconDeviceFloppy as Save, IconLoader2 as Loader2, IconTicket as Ticket, IconUsers as Users, IconClock as Clock, IconCircleCheck as CheckCircle2,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import {
   createBetaCode, toggleBetaCode, deleteBetaCode,
@@ -13,6 +12,7 @@ import {
 } from './actions';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface BetaCode {
   id: string;
   code: string;
@@ -199,9 +199,9 @@ export default function BetaCodesClient({ codes }: Props) {
                     {c.used_count} / {c.max_uses} استخدام ({usagePct}%)
                   </span>
                   <div style={{ display: 'flex', gap: 8 }}>
-                    {!c.is_active && <span style={{ color: 'var(--amber)' }}>⏸️ مُعطّل</span>}
-                    {isExhausted && <span style={{ color: 'var(--rose)' }}>🔴 مُستنفد</span>}
-                    {isExpired && <span style={{ color: 'var(--rose)' }}>⏰ منتهي</span>}
+                    {!c.is_active && <span style={{ color: 'var(--amber)' }}><EmojiIcon e="⏸️" /> مُعطّل</span>}
+                    {isExhausted && <span style={{ color: 'var(--rose)' }}><EmojiIcon e="🔴" /> مُستنفد</span>}
+                    {isExpired && <span style={{ color: 'var(--rose)' }}><EmojiIcon e="⏰" /> منتهي</span>}
                     {c.expires_at && !isExpired && (
                       <span>
                         ينتهي {new Date(c.expires_at).toLocaleDateString('ar-IQ-u-nu-latn')}
@@ -236,7 +236,7 @@ function StatCard({ label, value, color, icon }: {
       borderInlineStartWidth: 4, borderInlineStartStyle: 'solid', borderInlineStartColor: color,
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, color, marginBottom: 6 }}>
-        {icon}
+        <EmojiIcon e={icon} />
         <span style={{ fontSize: 11, fontWeight: 700 }}>{label}</span>
       </div>
       <div style={{ fontSize: 20, fontWeight: 900 }}>{value.toLocaleString('ar-IQ-u-nu-latn')}</div>

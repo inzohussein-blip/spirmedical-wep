@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { isUnpricedService } from '@/lib/config/pricing';
 import OrderTrackClient from './OrderTrackClient';
 
 export const metadata = {
@@ -17,7 +18,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
   const { data: appointment, error } = await supabase
     .from('appointments')
-    .select('id, status, estimated_price, created_at, scheduled_at')
+    .select('id, status, estimated_price, created_at, scheduled_at, service_id, service_type, required_specialist_type')
     .eq('id', params.id)
     .eq('user_id', user.id)
     .single();
@@ -28,7 +29,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     <OrderTrackClient
       id={appointment.id}
       initialStatus={appointment.status}
-      estimatedPrice={appointment.estimated_price}
+      estimatedPrice={isUnpricedService(appointment) ? null : appointment.estimated_price}
       createdAt={appointment.created_at}
     />
   );

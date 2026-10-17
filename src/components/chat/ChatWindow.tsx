@@ -6,9 +6,8 @@ import { createClient } from '@/lib/supabase/client';
 import { sendMessage, markChatAsRead, getSignedChatImageUrl } from '@/app/(specialist)/specialist/inbox/actions';
 import { toast } from '@/components/ui/Toaster';
 import {
-  Phone, Video, MoreVertical, MessageCircle, Image as ImageIcon,
-  Mic, Plus, X, FileText, Send, Loader2, Zap,
-} from 'lucide-react';
+  IconPhone as Phone, IconVideo as Video, IconDotsVertical as MoreVertical, IconMessageCircle as MessageCircle, IconPhoto as ImageIcon, IconMicrophone as Mic, IconPlus as Plus, IconX as X, IconFileText as FileText, IconSend as Send, IconLoader2 as Loader2, IconBolt as Zap,
+} from '@tabler/icons-react';
 
 export interface Message {
   id: string;

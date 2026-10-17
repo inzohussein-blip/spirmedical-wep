@@ -6,13 +6,13 @@ import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowRight, MapPin, Phone, Star, CheckCircle2,
-  Users, Clock, MessageCircle,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconMapPin as MapPin, IconPhone as Phone, IconStar as Star, IconCircleCheck as CheckCircle2, IconUsers as Users, IconClock as Clock, IconMessageCircle as MessageCircle,
+} from '@tabler/icons-react';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import { checkIsFavorite } from '@/components/services/favorites-actions';
 import PhoneLink from '@/components/ui/PhoneLink';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
@@ -72,7 +72,7 @@ export default async function DentalDetailPage(
             <ArrowRight size={20} strokeWidth={2.2} />
           </Link>
           <h1 className="scr-page-title" style={{ fontSize: 14 }}>
-            🦷 تفاصيل العيادة
+            <EmojiIcon e="🦷" /> تفاصيل العيادة
           </h1>
           <ServiceFavoriteButton
             serviceType="dental"
@@ -103,7 +103,7 @@ export default async function DentalDetailPage(
               justifyContent: 'center',
               flexShrink: 0,
             }}>
-              🦷
+              <EmojiIcon e="🦷" />
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
@@ -120,7 +120,7 @@ export default async function DentalDetailPage(
                   padding: '2px 8px', borderRadius: 100,
                   marginBottom: 6,
                 }}>
-                  ⭐ عيادة مميّزة
+                  <EmojiIcon e="⭐" /> عيادة مميّزة
                 </span>
               )}
               {clinic.description && (
@@ -181,7 +181,7 @@ export default async function DentalDetailPage(
         {clinic.doctor_names && clinic.doctor_names.length > 0 && (
           <div style={{ marginBottom: 14 }}>
             <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 8 }}>
-              👨‍⚕️ الأطباء
+              <EmojiIcon e="👨‍⚕️" /> الأطباء
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {clinic.doctor_names.map((name: string, i: number) => (
@@ -204,7 +204,7 @@ export default async function DentalDetailPage(
         {services.length > 0 && (
           <div style={{ marginBottom: 14 }}>
             <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 8 }}>
-              🦷 الخدمات المتوفّرة
+              <EmojiIcon e="🦷" /> الخدمات المتوفّرة
             </h3>
             <div style={{
               display: 'grid',
@@ -224,7 +224,7 @@ export default async function DentalDetailPage(
                   alignItems: 'center',
                   gap: 6,
                 }}>
-                  <span>{s.icon}</span>
+                  <span><EmojiIcon e={s.icon} /></span>
                   {s.label}
                 </div>
               ))}
@@ -240,7 +240,7 @@ export default async function DentalDetailPage(
           marginBottom: 14,
         }}>
           <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 10, color: 'var(--emerald)' }}>
-            💰 الأسعار
+            <EmojiIcon e="💰" /> الأسعار
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 12 }}>
             <PriceRow
@@ -269,7 +269,7 @@ export default async function DentalDetailPage(
             />
           </div>
           <p style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 10, marginBottom: 0, lineHeight: 1.5 }}>
-            💡 الأسعار تقريبية وتتوقّف على الحالة. تأكّد من العيادة قبل الزيارة.
+            <EmojiIcon e="💡" /> الأسعار تقريبية وتتوقّف على الحالة. تأكّد من العيادة قبل الزيارة.
           </p>
         </div>
 
@@ -292,7 +292,7 @@ export default async function DentalDetailPage(
               boxShadow: '0 4px 12px rgba(15,107,88,0.3)',
             }}
           >
-            📅 احجز موعد عبر سباير
+            <EmojiIcon e="📅" /> احجز موعد عبر سباير
           </Link>
 
           <div style={{ display: 'flex', gap: 8 }}>

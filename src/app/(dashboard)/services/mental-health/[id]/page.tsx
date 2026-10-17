@@ -6,13 +6,13 @@ import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowRight, MapPin, Star, CheckCircle2,
-  Award, Heart, AlertCircle, Globe,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconMapPin as MapPin, IconStar as Star, IconCircleCheck as CheckCircle2, IconAward as Award, IconHeart as Heart, IconAlertCircle as AlertCircle, IconWorld as Globe,
+} from '@tabler/icons-react';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import { checkIsFavorite } from '@/components/services/favorites-actions';
 import { formatPrice, count, formatRating, formatNumber } from '@/lib/format/price';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 const TYPE_LABELS: Record<string, { label: string; icon: string }> = {
@@ -79,7 +79,7 @@ export default async function MentalDetailPage(
           <Link href="/services/mental-health" className="scr-back-btn" aria-label="العودة">
             <ArrowRight size={20} strokeWidth={2.2} />
           </Link>
-          <h1 className="scr-page-title" style={{ fontSize: 14 }}>🧠 تفاصيل الأخصائي</h1>
+          <h1 className="scr-page-title" style={{ fontSize: 14 }}><EmojiIcon e="🧠" /> تفاصيل الأخصائي</h1>
           <ServiceFavoriteButton
             serviceType="mental_health"
             serviceId={s.id}
@@ -119,7 +119,7 @@ export default async function MentalDetailPage(
               fontSize: 36,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               flexShrink: 0,
-            }}>{typeMeta.icon}</div>
+            }}><EmojiIcon e={typeMeta.icon} /></div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
                 <h2 style={{ fontSize: 18, fontWeight: 900, margin: 0 }}>
@@ -142,7 +142,7 @@ export default async function MentalDetailPage(
             <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
               <Award size={12} />{s.years_experience} سنة خبرة
             </span>
-            <span>📊 {count(s.total_sessions).toLocaleString('ar-IQ-u-nu-latn')} جلسة</span>
+            <span><EmojiIcon e="📊" /> {count(s.total_sessions).toLocaleString('ar-IQ-u-nu-latn')} جلسة</span>
             {count(s.rating_count) > 0 && (
               <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
                 <Star size={12} fill="var(--amber)" color="var(--amber)" />
@@ -156,7 +156,7 @@ export default async function MentalDetailPage(
         {/* Specialties */}
         {s.specialties && s.specialties.length > 0 && (
           <div style={{ marginBottom: 14 }}>
-            <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 8 }}>🎯 التخصّصات</h3>
+            <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 8 }}><EmojiIcon e="🎯" /> التخصّصات</h3>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {s.specialties.map((sp: string, i: number) => (
                 <span key={i} style={{
@@ -173,7 +173,7 @@ export default async function MentalDetailPage(
         {/* Certifications */}
         {s.certifications && s.certifications.length > 0 && (
           <div style={{ marginBottom: 14 }}>
-            <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 8 }}>📜 الشهادات</h3>
+            <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 8 }}><EmojiIcon e="📜" /> الشهادات</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               {s.certifications.map((c: string, i: number) => (
                 <div key={i} style={{
@@ -220,7 +220,7 @@ export default async function MentalDetailPage(
             display: 'flex', alignItems: 'flex-start', gap: 8,
           }}>
             <AlertCircle size={14} color="var(--rose)" style={{ flexShrink: 0, marginTop: 1 }} />
-            <span><strong>🚨 يستقبل حالات طوارئ</strong> - يمكن التواصل في أي وقت</span>
+            <span><strong><EmojiIcon e="🚨" /> يستقبل حالات طوارئ</strong> - يمكن التواصل في أي وقت</span>
           </div>
         )}
 
@@ -232,7 +232,7 @@ export default async function MentalDetailPage(
           marginBottom: 14,
         }}>
           <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 10, color: 'var(--emerald)' }}>
-            💰 خيارات الجلسة (مدة: {s.session_duration_minutes} دقيقة)
+            <EmojiIcon e="💰" /> خيارات الجلسة (مدة: {s.session_duration_minutes} دقيقة)
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
             {s.available_online && (
@@ -242,7 +242,7 @@ export default async function MentalDetailPage(
                 padding: 12,
                 border: '2px solid var(--emerald)',
               }}>
-                <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 4 }}>💻 أونلاين</div>
+                <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 4 }}><EmojiIcon e="💻" /> أونلاين</div>
                 {onlinePrice ? (
                   <>
                     <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--emerald)' }}>{onlinePrice}</div>
@@ -260,7 +260,7 @@ export default async function MentalDetailPage(
                 padding: 12,
                 border: '1px solid var(--line)',
               }}>
-                <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 4 }}>🏢 عيادة</div>
+                <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 4 }}><EmojiIcon e="🏢" /> عيادة</div>
                 {clinicPrice ? (
                   <>
                     <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--amber)' }}>{clinicPrice}</div>
@@ -281,7 +281,7 @@ export default async function MentalDetailPage(
               href={`/services/booking?service=mental-health&id=${s.id}&package=online`}
               style={primaryButton}
             >
-              💻 احجز جلسة أونلاين{onlinePrice ? ` - ${onlinePrice} د.ع` : ''}
+              <EmojiIcon e="💻" /> احجز جلسة أونلاين{onlinePrice ? ` - ${onlinePrice} د.ع` : ''}
             </Link>
           )}
           {s.available_in_clinic && (
@@ -289,7 +289,7 @@ export default async function MentalDetailPage(
               href={`/services/booking?service=mental-health&id=${s.id}&package=clinic`}
               style={{...primaryButton, background: 'var(--amber)'}}
             >
-              🏢 احجز جلسة في العيادة{clinicPrice ? ` - ${clinicPrice} د.ع` : ''}
+              <EmojiIcon e="🏢" /> احجز جلسة في العيادة{clinicPrice ? ` - ${clinicPrice} د.ع` : ''}
             </Link>
           )}
         </div>

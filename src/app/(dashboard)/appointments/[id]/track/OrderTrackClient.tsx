@@ -7,15 +7,15 @@ import { cancelAppointment } from '../actions';
 import { toast } from '@/components/ui/Toaster';
 import { createClient } from '@/lib/supabase/client';
 import { SHOW_PRICES } from '@/lib/config/pricing';
-import type { LucideIcon } from 'lucide-react';
+
 import { useConfirm } from '@/components/ui';
 import {
-  ClipboardList, CheckCircle2, RefreshCw, BadgeCheck,
-  MessageCircle, Phone, AlertTriangle, X, Loader2, Banknote, Star, Ban,
-} from 'lucide-react';
+  IconClipboardList as ClipboardList, IconCircleCheck as CheckCircle2, IconRefresh as RefreshCw, IconRosetteDiscountCheck as BadgeCheck, IconMessageCircle as MessageCircle, IconPhone as Phone, IconAlertTriangle as AlertTriangle, IconX as X, IconLoader2 as Loader2, IconCash as Banknote, IconStar as Star, IconBan as Ban,
+} from '@tabler/icons-react';
 
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 // الحالات الحقيقية من enum appointment_status: pending → confirmed → in_progress → completed (+ cancelled)
-const STATUS_FLOW: Array<{ id: string; label: string; icon: LucideIcon; desc: string }> = [
+const STATUS_FLOW: Array<{ id: string; label: string; icon: TablerIcon; desc: string }> = [
   { id: 'pending',     label: 'قيد المراجعة', icon: ClipboardList, desc: 'سيراجع فريقنا طلبك' },
   { id: 'confirmed',   label: 'مؤكّد',         icon: CheckCircle2,  desc: 'تم قبول الطلب' },
   { id: 'in_progress', label: 'قيد التنفيذ',   icon: RefreshCw,     desc: 'جاري تقديم الخدمة' },

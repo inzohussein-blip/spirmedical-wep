@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import type { LucideIcon } from 'lucide-react';
-import {
-  Thermometer, Heart, Utensils, Brain,
-  ArrowRight, Search, AlertOctagon, AlertTriangle, Clock, CheckCircle2, AlertCircle,
-} from 'lucide-react';
 
+import {
+  IconTemperature as Thermometer, IconHeart as Heart, IconToolsKitchen2 as Utensils, IconBrain as Brain, IconArrowRight as ArrowRight, IconSearch as Search, IconAlertOctagon as AlertOctagon, IconAlertTriangle as AlertTriangle, IconClock as Clock, IconCircleCheck as CheckCircle2, IconAlertCircle as AlertCircle,
+} from '@tabler/icons-react';
+
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 interface Symptom {
   id: string;
   label: string;
@@ -36,7 +36,7 @@ const SYMPTOMS: Symptom[] = [
   { id: 'blurred-vision', label: 'عدم وضوح الرؤية', category: 'neurological' },
 ];
 
-const CATEGORIES: Array<{ id: string; label: string; icon: LucideIcon }> = [
+const CATEGORIES: Array<{ id: string; label: string; icon: TablerIcon }> = [
   { id: 'general',      label: 'عامة',             icon: Thermometer },
   { id: 'chest',        label: 'الصدر',            icon: Heart },
   { id: 'digestive',    label: 'الجهاز الهضمي',     icon: Utensils },

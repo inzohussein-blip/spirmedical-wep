@@ -3,11 +3,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { SERVICES, CATEGORIES, formatPrice, formatDuration, type Service } from '@/lib/services/services-data';
+import { isUnpricedService } from '@/lib/config/pricing';
 import { generateAvailableDates, generateTimeSlotsForDate, groupTimeSlots, formatDateRelative, type TimeSlot } from '@/lib/services/time-slots';
 import UserLocationPickerWrapper from '@/components/maps/UserLocationPickerWrapper';
 import {
-  Calendar, MapPin, Lightbulb, Monitor, Clock, FileText, ChevronUp,
-} from 'lucide-react';
+  IconCalendar as Calendar, IconMapPin as MapPin, IconBulb as Lightbulb, IconDeviceDesktop as Monitor, IconClock as Clock, IconFileText as FileText, IconChevronUp as ChevronUp,
+} from '@tabler/icons-react';
 import { haptic } from '@/lib/haptic';
 import { toast } from '@/components/ui/Toaster';
 import { joinServiceWaitlist } from '@/app/(dashboard)/appointments/new/waitlist-actions';
@@ -17,6 +18,7 @@ import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
 import FieldError from '@/components/forms/FieldError';
 import { APPOINTMENT_FIELD_LABELS } from '@/lib/validations/appointment';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /** نتيجة الإرسال — تسمح بعرض أخطاء الحقول القادمة من الخادم. */
 export interface WizardSubmitResult {
   ok: boolean;
@@ -187,7 +189,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit, unavailabl
                 className={`category-pill ${selectedCategory === key ? 'active' : ''}`}
                 onClick={() => setSelectedCategory(key)}
               >
-                {cat.emoji} {cat.name}
+                <EmojiIcon e={cat.emoji} /> {cat.name}
               </button>
             ))}
           </div>
@@ -218,7 +220,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit, unavailabl
                   aria-pressed={data.service?.id === service.id}
                   aria-describedby={isUnavailable(service) ? `unavail-${service.id}` : undefined}
                 >
-                  <div className="aw-service-icon" aria-hidden="true">{service.emoji}</div>
+                  <div className="aw-service-icon" aria-hidden="true"><EmojiIcon e={service.emoji} /></div>
                   <div className="aw-service-info">
                     <div className="aw-service-header">
                       <h3>{service.nameAr}</h3>
@@ -233,7 +235,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit, unavailabl
                     )}
                     <p className="aw-service-desc">{service.description}</p>
                     <div className="aw-service-meta">
-                      <span className="aw-service-price">من {formatPrice(service.basePrice)}</span>
+                      {!isUnpricedService(service) && <span className="aw-service-price">من {formatPrice(service.basePrice)}</span>}
                       <span className="aw-service-duration" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                         <Clock size={12} strokeWidth={2.2} />
                         {formatDuration(service.duration)}
@@ -253,7 +255,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit, unavailabl
               <strong>«{unavailablePick.nameAr}» غير متاحة حالياً</strong>
               <p>لا يوجد مختصّ متاح لهذه الخدمة بعد، فلن نأخذ الطلب كي لا يبقى معلّقاً.</p>
               {unavailablePick.specialistType && waitlisted[unavailablePick.specialistType] ? (
-                <span className="aw-unavailable-done">✓ سنُعلمك حين تتوفّر</span>
+                <span className="aw-unavailable-done"><EmojiIcon e="✓" /> سنُعلمك حين تتوفّر</span>
               ) : (
                 <button
                   type="button"
@@ -301,7 +303,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit, unavailabl
               {groupTimeSlots(generateTimeSlotsForDate(data.date, data.service?.duration || 60)).map((group) => (
                 <div key={group.label} className="time-group">
                   <div className="time-group-header">
-                    <span>{group.emoji}</span>
+                    <span><EmojiIcon e={group.emoji} /></span>
                     <span>{group.label}</span>
                   </div>
                   <div className="time-slots-grid">
@@ -417,7 +419,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit, unavailabl
           {/* ملخّص الحجز */}
           <div className="summary-card">
             <div className="summary-header">
-              <div className="summary-icon">{data.service?.emoji}</div>
+              <div className="summary-icon"><EmojiIcon e={data.service?.emoji} /></div>
               <div>
                 <h3>{data.service?.nameAr}</h3>
                 <p>{data.service?.description}</p>
@@ -465,6 +467,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit, unavailabl
 
             </div>
 
+            {data.service && !isUnpricedService(data.service) && (
             <div className="summary-price">
               <div className="summary-price-row">
                 <span>السعر التقديري</span>
@@ -475,6 +478,7 @@ export default function AppointmentWizard({ userPhone = '', onSubmit, unavailabl
                 السعر النهائي قد يختلف حسب المتطلبات الفعلية
               </div>
             </div>
+            )}
           </div>
 
           {/* تأكيد + شروط */}

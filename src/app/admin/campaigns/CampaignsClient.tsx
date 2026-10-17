@@ -3,14 +3,13 @@
 import { useState, useTransition, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Plus, Edit3, Trash2, Send, X, Save, Loader2, Search,
-  MessageCircle, Smartphone, Bell, Mail, Calendar, Users,
-  Eye, AlertTriangle,
-} from 'lucide-react';
+  IconPlus as Plus, IconPencil as Edit3, IconTrash as Trash2, IconSend as Send, IconX as X, IconDeviceFloppy as Save, IconLoader2 as Loader2, IconSearch as Search, IconMessageCircle as MessageCircle, IconDeviceMobile as Smartphone, IconBell as Bell, IconMail as Mail, IconCalendar as Calendar, IconUsers as Users, IconEye as Eye, IconAlertTriangle as AlertTriangle,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { createCampaign, updateCampaign, deleteCampaign, sendCampaign } from './actions';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Campaign {
   id: string;
   name: string;
@@ -119,7 +118,7 @@ export default function CampaignsClient({ campaigns }: Props) {
         <select value={filterType} onChange={(e) => setFilterType(e.target.value)} style={selectStyle}>
           <option value="">كل الأنواع</option>
           {Object.entries(TYPE_META).map(([k, v]) => (
-            <option key={k} value={k}>{v.emoji} {v.label}</option>
+            <option key={k} value={k}>{v.label}</option>
           ))}
         </select>
 
@@ -246,7 +245,7 @@ export default function CampaignsClient({ campaigns }: Props) {
                       </span>
                       {c.success_count > 0 && (
                         <span style={{ color: 'var(--emerald)', fontWeight: 700 }}>
-                          ✓ {c.success_count} وصلت
+                          <EmojiIcon e="✓" /> {c.success_count} وصلت
                         </span>
                       )}
                       <span>
@@ -432,7 +431,7 @@ function CampaignModal({
                   gap: 4,
                 }}
               >
-                <span style={{ fontSize: 20 }}>{v.emoji}</span>
+                <span style={{ fontSize: 20 }}><EmojiIcon e={v.emoji} /></span>
                 <span>{v.label}</span>
               </button>
             ))}

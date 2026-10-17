@@ -3,15 +3,15 @@
 import { useState, useTransition, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Plus, Edit3, Trash2, CheckCircle2, X, Save, Loader2, Search,
-  MapPin, Eye, EyeOff,
-} from 'lucide-react';
+  IconPlus as Plus, IconPencil as Edit3, IconTrash as Trash2, IconCircleCheck as CheckCircle2, IconX as X, IconDeviceFloppy as Save, IconLoader2 as Loader2, IconSearch as Search, IconMapPin as MapPin, IconEye as Eye, IconEyeOff as EyeOff,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { useConfirm } from '@/components/ui';
 import { createHospital, updateHospital, deleteHospital, toggleHospitalActive } from './actions';
 import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWrapper';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Hospital {
   id: string;
   name: string;
@@ -145,7 +145,7 @@ export default function HospitalsAdminClient({ hospitals }: Props) {
       <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
         <select value={filterType} onChange={(e) => setFilterType(e.target.value)} style={selectStyle}>
           <option value="">كل الأنواع</option>
-          {TYPES.map((t) => <option key={t.id} value={t.id}>{t.emoji} {t.label}</option>)}
+          {TYPES.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
         </select>
         <select value={filterCity} onChange={(e) => setFilterCity(e.target.value)} style={selectStyle}>
           <option value="">كل المدن</option>
@@ -186,7 +186,7 @@ export default function HospitalsAdminClient({ hospitals }: Props) {
                         <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{h.district}</div>
                       )}
                     </td>
-                    <td style={tdStyle}>{typeMeta?.emoji} {typeMeta?.label}</td>
+                    <td style={tdStyle}><EmojiIcon e={typeMeta?.emoji} /> {typeMeta?.label}</td>
                     <td style={tdStyle}>{h.city}</td>
                     <td style={tdStyle}>
                       <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', fontSize: 11 }}>
@@ -357,7 +357,7 @@ function HospitalModal({
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 12 }}>
           <Field label="النوع *">
             <select value={type} onChange={(e) => setType(e.target.value as Hospital['type'])} style={inputStyle}>
-              {TYPES.map((t) => <option key={t.id} value={t.id}>{t.emoji} {t.label}</option>)}
+              {TYPES.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
             </select>
           </Field>
           <Field label="المدينة *">
@@ -377,7 +377,7 @@ function HospitalModal({
         {/* 🆕 V31: اختيار الموقع من الخريطة (يملأ الإحداثيات تلقائياً) */}
         <div style={{ marginBottom: 12 }}>
           <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6, color: '#2C2C2A' }}>
-            📍 حدّد الموقع على الخريطة
+            <EmojiIcon e="📍" /> حدّد الموقع على الخريطة
           </label>
           <AdminLocationPickerWrapper
             initialLat={lat ? parseFloat(lat) : null}

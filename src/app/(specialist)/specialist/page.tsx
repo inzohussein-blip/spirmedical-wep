@@ -6,6 +6,7 @@ import { baghdadDayWindow } from '@/lib/time/baghdad-day';
 import { specialistReadiness } from '@/lib/specialist-readiness';
 import SpecialistReadinessCard from '@/components/specialist/SpecialistReadinessCard';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = {
   title: 'لوحة الاختصاصي · سباير ميديكال',
 };
@@ -29,7 +30,7 @@ export default async function SpecialistDashboard() {
       <main className="app-screen">
         <div className="scr-content">
           <div className="scr-empty" style={{ marginTop: 64 }}>
-            <div className="scr-empty-icon">⏳</div>
+            <div className="scr-empty-icon"><EmojiIcon e="⏳" /></div>
             <h2 className="scr-empty-title">حسابك قيد المراجعة</h2>
             <p className="scr-empty-desc">
               تم استلام تسجيلك ويُراجع من قبل إدارة Spir Medical. سنتواصل معك خلال 24-48 ساعة.
@@ -111,7 +112,7 @@ export default async function SpecialistDashboard() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ fontSize: 38 }}>{meta.icon}</div>
+            <div style={{ fontSize: 38 }}><EmojiIcon e={meta.icon} /></div>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 12, opacity: 0.85, fontWeight: 700 }}>أهلاً</div>
               <div style={{ fontSize: 16, fontWeight: 800 }}>{profile?.full_name ?? 'أخصائي'}</div>
@@ -128,22 +129,22 @@ export default async function SpecialistDashboard() {
         </div>
         <div className="services-grid">
           <Link href="/specialist/orders?filter=new" className="service-card service-rose spec-stat" style={{ textDecoration: 'none' }}>
-            <div className="service-icon" aria-hidden="true">📥</div>
+            <div className="service-icon" aria-hidden="true"><EmojiIcon e="📥" /></div>
             <div className="service-title spec-stat-value">{newOrders ?? 0}</div>
             <div className="service-desc">طلبات جديدة</div>
           </Link>
           <Link href="/specialist/orders?filter=in_progress" className="service-card service-amber spec-stat" style={{ textDecoration: 'none' }}>
-            <div className="service-icon" aria-hidden="true">🔄</div>
+            <div className="service-icon" aria-hidden="true"><EmojiIcon e="🔄" /></div>
             <div className="service-title spec-stat-value">{inProgressOrders ?? 0}</div>
             <div className="service-desc">قيد التنفيذ</div>
           </Link>
           <Link href="/specialist/orders?filter=completed" className="service-card service-default spec-stat" style={{ textDecoration: 'none' }}>
-            <div className="service-icon" aria-hidden="true">✅</div>
+            <div className="service-icon" aria-hidden="true"><EmojiIcon e="✅" /></div>
             <div className="service-title spec-stat-value">{completedToday ?? 0}</div>
             <div className="service-desc">مكتمل اليوم</div>
           </Link>
           <div className="service-card service-default spec-stat">
-            <div className="service-icon" aria-hidden="true">⭐</div>
+            <div className="service-icon" aria-hidden="true"><EmojiIcon e="⭐" /></div>
             <div className="service-title spec-stat-value">{avgRating}</div>
             <div className="service-desc">تقييمك</div>
           </div>
@@ -155,7 +156,7 @@ export default async function SpecialistDashboard() {
         </div>
         <div className="scr-list-stack">
           <Link href="/specialist/orders" className="scr-list-item scr-list-item-clickable">
-            <div className="scr-list-item-icon">📋</div>
+            <div className="scr-list-item-icon"><EmojiIcon e="📋" /></div>
             <div className="scr-list-item-content">
               <div className="scr-list-item-title">الطلبات</div>
               <div className="scr-list-item-subtitle">إدارة كل طلباتك</div>
@@ -163,7 +164,7 @@ export default async function SpecialistDashboard() {
             <div style={{ color: 'var(--ink-3)', fontSize: 18 }}>←</div>
           </Link>
           <Link href="/specialist/inbox" className="scr-list-item scr-list-item-clickable">
-            <div className="scr-list-item-icon">💬</div>
+            <div className="scr-list-item-icon"><EmojiIcon e="💬" /></div>
             <div className="scr-list-item-content">
               <div className="scr-list-item-title">الرسائل</div>
               <div className="scr-list-item-subtitle">المحادثات مع المرضى</div>
@@ -171,7 +172,7 @@ export default async function SpecialistDashboard() {
             <div style={{ color: 'var(--ink-3)', fontSize: 18 }}>←</div>
           </Link>
           <Link href="/specialist/schedule" className="scr-list-item scr-list-item-clickable">
-            <div className="scr-list-item-icon">📅</div>
+            <div className="scr-list-item-icon"><EmojiIcon e="📅" /></div>
             <div className="scr-list-item-content">
               <div className="scr-list-item-title">جدول الدوام</div>
               <div className="scr-list-item-subtitle">حدّد ساعاتك المتاحة</div>
@@ -180,7 +181,7 @@ export default async function SpecialistDashboard() {
           </Link>
           {/* 🎯 V25.30: link للإحصائيات */}
           <Link href="/specialist/stats" className="scr-list-item scr-list-item-clickable">
-            <div className="scr-list-item-icon">📊</div>
+            <div className="scr-list-item-icon"><EmojiIcon e="📊" /></div>
             <div className="scr-list-item-content">
               <div className="scr-list-item-title">الإحصائيات</div>
               <div className="scr-list-item-subtitle">أداؤك · تقييماتك · دخلك</div>
@@ -189,7 +190,7 @@ export default async function SpecialistDashboard() {
           </Link>
           {profile?.specialist_type === 'pharmacist' && (
             <Link href="/specialist/pharmacy" className="scr-list-item scr-list-item-clickable">
-              <div className="scr-list-item-icon">💊</div>
+              <div className="scr-list-item-icon"><EmojiIcon e="💊" /></div>
               <div className="scr-list-item-content">
                 <div className="scr-list-item-title">إدارة الصيدلية</div>
                 <div className="scr-list-item-subtitle">كتالوج الأدوية والمخزون</div>
@@ -198,7 +199,7 @@ export default async function SpecialistDashboard() {
             </Link>
           )}
           <Link href="/specialist/account" className="scr-list-item scr-list-item-clickable">
-            <div className="scr-list-item-icon">👤</div>
+            <div className="scr-list-item-icon"><EmojiIcon e="👤" /></div>
             <div className="scr-list-item-content">
               <div className="scr-list-item-title">الملف الشخصي</div>
               <div className="scr-list-item-subtitle">السيرة الذاتية والإعدادات</div>

@@ -11,7 +11,9 @@ import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
 import { ALL_LABS } from '@/lib/services/labs-data';
 import { createAppointmentV2, createBloodDrawOrder, createNursingAppointment } from './actions';
 import { track } from '@/lib/analytics';
-import { FlaskConical, AlertTriangle, Briefcase, MessageCircle, Syringe, ChevronRight } from 'lucide-react';
+import {
+  IconFlask as FlaskConical, IconAlertTriangle as AlertTriangle, IconBriefcase as Briefcase, IconMessageCircle as MessageCircle, IconVaccine as Syringe, IconChevronRight as ChevronRight,
+} from '@tabler/icons-react';
 
 interface Props {
   service: string;

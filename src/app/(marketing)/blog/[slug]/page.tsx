@@ -12,6 +12,7 @@ import {
 } from '@/lib/data/blog-articles';
 import { SITE_ORIGIN } from '@/lib/seo/origin';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Props {
   params: Promise<{ slug: string }>;
 }
@@ -107,7 +108,7 @@ function ArticleSectionRenderer({ section }: { section: ArticleSection }) {
     case 'highlight':
       return (
         <div className="article-highlight">
-          <span aria-hidden="true">💡</span>
+          <span aria-hidden="true"><EmojiIcon e="💡" /></span>
           <p>{section.content as string}</p>
         </div>
       );
@@ -115,7 +116,7 @@ function ArticleSectionRenderer({ section }: { section: ArticleSection }) {
     case 'warning':
       return (
         <div className="article-warning">
-          <span aria-hidden="true">⚠️</span>
+          <span aria-hidden="true"><EmojiIcon e="⚠️" /></span>
           <p>{section.content as string}</p>
         </div>
       );
@@ -233,11 +234,11 @@ export default async function ArticlePage(props: Props) {
 
             <div className="article-meta-info">
               <div className="article-meta-item">
-                <span aria-hidden="true">📅</span>
+                <span aria-hidden="true"><EmojiIcon e="📅" /></span>
                 <span>{formatDate(article.publishedAt)}</span>
               </div>
               <div className="article-meta-item">
-                <span aria-hidden="true">⏱</span>
+                <span aria-hidden="true"><EmojiIcon e="⏱" /></span>
                 <span>{article.readingMinutes} دقائق قراءة</span>
               </div>
             </div>
@@ -249,7 +250,7 @@ export default async function ArticlePage(props: Props) {
           className="article-cover"
           style={{ background: article.coverGradient }}
         >
-          <span aria-hidden="true">{article.coverEmoji}</span>
+          <span aria-hidden="true"><EmojiIcon e={article.coverEmoji} size="1em" /></span>
         </div>
 
         {/* Body */}
@@ -291,7 +292,7 @@ export default async function ArticlePage(props: Props) {
 
         {/* CTA */}
         <div className="article-cta">
-          <div className="article-cta-icon" aria-hidden="true">💊</div>
+          <div className="article-cta-icon" aria-hidden="true"><EmojiIcon e="💊" /></div>
           <h3>هل تحتاج فحصاً أو استشارة؟</h3>
           <p>عبر سباير ميديكال، يمكنك حجز فحص دم منزلي أو استشارة طبية في دقائق</p>
           <Link href="/login" className="article-cta-btn">
@@ -314,7 +315,7 @@ export default async function ArticlePage(props: Props) {
                     className="article-related-cover"
                     style={{ background: rel.coverGradient }}
                   >
-                    <span aria-hidden="true">{rel.coverEmoji}</span>
+                    <span aria-hidden="true"><EmojiIcon e={rel.coverEmoji} size="1em" /></span>
                   </div>
                   <div className="article-related-info">
                     <span className="article-related-cat">{rel.categoryLabel}</span>
@@ -331,7 +332,7 @@ export default async function ArticlePage(props: Props) {
 
         {/* Disclaimer */}
         <div className="article-disclaimer">
-          <strong>⚠️ تنبيه طبي:</strong> المحتوى الموجود في هذا المقال للأغراض
+          <strong><EmojiIcon e="⚠️" /> تنبيه طبي:</strong> المحتوى الموجود في هذا المقال للأغراض
           التعليمية والإعلامية فقط، ولا يُغني عن استشارة طبيب مختص. لا تستخدم هذه
           المعلومات لتشخيص أو علاج أي حالة طبية دون استشارة طبيب.
         </div>

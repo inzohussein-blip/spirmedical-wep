@@ -6,9 +6,8 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import {
-  ArrowRight, Pill, Clock, CheckCircle2, XCircle, AlertCircle, 
-  Building2, Calendar, Package,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconPill as Pill, IconClock as Clock, IconCircleCheck as CheckCircle2, IconCircleX as XCircle, IconAlertCircle as AlertCircle, IconBuilding as Building2, IconCalendar as Calendar, IconPackage as Package,
+} from '@tabler/icons-react';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'حجوزات الأدوية · سباير ميديكال' };

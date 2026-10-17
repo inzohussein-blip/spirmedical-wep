@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import {
-  MapPin, CheckCircle2, AlertTriangle, Loader2, AlertOctagon,
-} from 'lucide-react';
+  IconMapPin as MapPin, IconCircleCheck as CheckCircle2, IconAlertTriangle as AlertTriangle, IconLoader2 as Loader2, IconAlertOctagon as AlertOctagon,
+} from '@tabler/icons-react';
 import { haptic } from '@/lib/haptic';
 import StatusBar from '@/components/pwa/StatusBar';
 

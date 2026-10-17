@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { Star } from 'lucide-react';
+import {
+  IconStar as Star,
+} from '@tabler/icons-react';
 import { submitPharmacyRating } from '../actions';
 
 /**

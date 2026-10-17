@@ -3,12 +3,12 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import {
-  ArrowRight, Search, MapPin, Star,
-  CheckCircle2, Award, TrendingUp,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconSearch as Search, IconMapPin as MapPin, IconStar as Star, IconCircleCheck as CheckCircle2, IconAward as Award, IconTrendingUp as TrendingUp,
+} from '@tabler/icons-react';
 import { formatNumber } from '@/lib/format/price';
 import { haptic } from '@/lib/haptic';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Nutritionist {
   id: string;
   full_name: string;
@@ -86,7 +86,7 @@ export default function NutritionClient({ nutritionists }: { nutritionists: Nutr
           color: 'var(--ink-2)',
           lineHeight: 1.7,
         }}>
-          🥗 <strong>3 باقات لكل أخصائي:</strong> استشارة أولى · متابعة دورية · خطة شهرية كاملة
+          <EmojiIcon e="🥗" /> <strong>3 باقات لكل أخصائي:</strong> استشارة أولى · متابعة دورية · خطة شهرية كاملة
         </div>
 
         <div className="scr-search">
@@ -112,7 +112,7 @@ export default function NutritionClient({ nutritionists }: { nutritionists: Nutr
             onClick={() => { haptic.selection(); setSelectedSpecialty('all'); }}
             style={pillStyle(selectedSpecialty === 'all')}
           >
-            🥗 الكل
+            <EmojiIcon e="🥗" /> الكل
           </button>
           {Object.entries(SPECIALTY_LABELS).map(([key, meta]) => (
             <button
@@ -121,7 +121,7 @@ export default function NutritionClient({ nutritionists }: { nutritionists: Nutr
               onClick={() => { haptic.selection(); setSelectedSpecialty(key); }}
               style={pillStyle(selectedSpecialty === key)}
             >
-              {meta.icon} {meta.label}
+              <EmojiIcon e={meta.icon} /> {meta.label}
             </button>
           ))}
         </div>
@@ -142,7 +142,7 @@ export default function NutritionClient({ nutritionists }: { nutritionists: Nutr
 
         {filtered.length === 0 ? (
           <div className="scr-empty" style={{ marginTop: 32 }}>
-            <div className="scr-empty-icon">🥗</div>
+            <div className="scr-empty-icon"><EmojiIcon e="🥗" /></div>
             <h2 className="scr-empty-title">لا يوجد أخصائيون</h2>
           </div>
         ) : (
@@ -178,7 +178,7 @@ function NutritionistCard({ nutritionist }: { nutritionist: Nutritionist }) {
           fontSize: 26,
           flexShrink: 0,
         }}>
-          🥗
+          <EmojiIcon e="🥗" />
         </div>
 
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -328,7 +328,7 @@ function PackageCard({ icon, title, price, color, highlight }: {
       border: highlight ? '2px solid var(--emerald)' : '1px solid var(--line)',
       textAlign: 'center',
     }}>
-      <div style={{ fontSize: 16, marginBottom: 2 }}>{icon}</div>
+      <div style={{ fontSize: 16, marginBottom: 2 }}><EmojiIcon e={icon} /></div>
       <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 2, fontWeight: 700 }}>{title}</div>
       {formatNumber(price) && (
         <>

@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { toSpecialistType, SPECIALIST_META } from '@/lib/specialist-types';
 import { EmptyState } from '@/components/ui';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -22,7 +23,7 @@ export default async function PendingSpecialistsPage() {
   return (
     <>
       <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--ink)', margin: '0 0 6px' }}>
-        ⏳ موافقات الاختصاصيين
+        <EmojiIcon e="⏳" /> موافقات الاختصاصيين
       </h1>
       <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: '0 0 24px' }}>
         طلبات تسجيل بانتظار المراجعة ({pending?.length ?? 0})
@@ -64,7 +65,7 @@ export default async function PendingSpecialistsPage() {
                   fontSize: 24,
                   flexShrink: 0,
                 }}>
-                  {meta?.icon ?? '⚕️'}
+                  <EmojiIcon e={meta?.icon ?? '⚕️'} />
                 </div>
 
                 {/* Content */}
@@ -91,10 +92,10 @@ export default async function PendingSpecialistsPage() {
                   </div>
 
                   <div style={{ display: 'flex', gap: 16, fontSize: 12, color: 'var(--ink-3)', marginBottom: 12 }}>
-                    {s.governorate && <span>📍 {s.governorate}</span>}
-                    {s.specialist_type && meta && <span>{meta.icon} {meta.label}</span>}
-                    {s.specialist_years_exp && <span>📅 {s.specialist_years_exp} سنوات</span>}
-                    {s.email && <span>✉️ {s.email}</span>}
+                    {s.governorate && <span><EmojiIcon e="📍" /> {s.governorate}</span>}
+                    {s.specialist_type && meta && <span><EmojiIcon e={meta.icon} /> {meta.label}</span>}
+                    {s.specialist_years_exp && <span><EmojiIcon e="📅" /> {s.specialist_years_exp} سنوات</span>}
+                    {s.email && <span><EmojiIcon e="✉️" /> {s.email}</span>}
                   </div>
 
                   {s.specialist_bio && (

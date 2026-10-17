@@ -7,8 +7,8 @@ import { useFormErrors } from '@/lib/forms/useFormErrors';
 import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
 import FieldError from '@/components/forms/FieldError';
 import {
-  AlertTriangle, ClipboardList, Pill, Calendar, FileText, Trash2,
-} from 'lucide-react';
+  IconAlertTriangle as AlertTriangle, IconClipboardList as ClipboardList, IconPill as Pill, IconCalendar as Calendar, IconFileText as FileText, IconTrash as Trash2,
+} from '@tabler/icons-react';
 
 const RX_FIELD_LABELS: Record<string, string> = {
   doctorName: 'الطبيب',

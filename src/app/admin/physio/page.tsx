@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import PhysioAdminClient from './PhysioAdminClient';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'إدارة أخصائيي العلاج الطبيعي - Admin' };
 
@@ -77,7 +78,7 @@ export default async function AdminPhysioPage() {
         <h1 style={{ 
           fontSize: 26, fontWeight: 900, margin: '8px 0 4px', color: '#202124',
         }}>
-          🏃 إدارة أخصائيي العلاج الطبيعي
+          <EmojiIcon e="🏃" /> إدارة أخصائيي العلاج الطبيعي
         </h1>
         <p style={{ fontSize: 13, color: '#5F6368', margin: 0 }}>
           إدارة شاملة للأخصائيين + التحقق + الأسعار
@@ -94,7 +95,7 @@ export default async function AdminPhysioPage() {
         <StatCard label="إجمالي الأخصائيين" value={totalCount} color="#01875F" bg="#E6F3EF" />
         <StatCard label="معتمدون" value={verifiedCount} color="#1A73E8" bg="#E8F0FE" />
         <StatCard label="نشطون" value={activeCount} color="#FF6D00" bg="#FFF3E0" />
-        <StatCard label="متوسط التقييم" value={`${avgRating} ⭐`} color="#FBBC04" bg="#FEF7E0" />
+        <StatCard label="متوسط التقييم" value={avgRating} color="#FBBC04" bg="#FEF7E0" />
       </div>
 
       {/* Client component */}

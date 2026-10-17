@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Share2, Copy, Check, Loader2 } from 'lucide-react';
+import {
+  IconShare as Share2, IconCopy as Copy, IconCheck as Check, IconLoader2 as Loader2,
+} from '@tabler/icons-react';
 import { haptic } from '@/lib/haptic';
 import { toast } from '@/components/ui/Toaster';
 

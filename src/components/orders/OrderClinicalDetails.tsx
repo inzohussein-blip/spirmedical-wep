@@ -1,8 +1,9 @@
 import {
-  AlertTriangle, ShieldAlert, Droplet, User, Repeat, Package,
-  Navigation, Receipt, Clock, FileImage,
-} from 'lucide-react';
+  IconAlertTriangle as AlertTriangle, IconShieldExclamation as ShieldAlert, IconDroplet as Droplet, IconUser as User, IconRepeat as Repeat, IconPackage as Package, IconNavigation as Navigation, IconReceipt as Receipt, IconClock as Clock, IconPhoto as FileImage,
+} from '@tabler/icons-react';
+import { isUnpricedService } from '@/lib/config/pricing';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /**
  * 🩺 تفاصيل الطلب السريرية
  *
@@ -55,6 +56,8 @@ function activeFlags(
 
 export interface ClinicalOrder {
   service_id?: string | null;
+  service_type?: string | null;
+  required_specialist_type?: string | null;
   allergy_form?: unknown;
   allergy_form_filled?: boolean | null;
   infectious_disease_alert?: unknown;
@@ -200,7 +203,8 @@ export default function OrderClinicalDetails({ order }: { order: ClinicalOrder }
     });
   }
 
-  if (order.estimated_price) {
+  // التحاليلُ وسحبُ الدم بلا سعر في أيّ واجهة (`isUnpricedService`)
+  if (order.estimated_price && !isUnpricedService(order)) {
     rows.push({
       key: 'price',
       icon: <Receipt size={22} strokeWidth={2} />,
@@ -261,7 +265,7 @@ export default function OrderClinicalDetails({ order }: { order: ClinicalOrder }
       {/* استمارة مملوءة بلا أي حساسية — طمأنة صريحة بدل الفراغ */}
       {showsAllergyReassurance && (
         <div style={{ marginTop: 10, fontSize: 12, color: 'var(--ink-3)' }}>
-          ✓ استمارة الحساسية مملوءة — لا حساسية مُعلَنة
+          <EmojiIcon e="✓" /> استمارة الحساسية مملوءة — لا حساسية مُعلَنة
         </div>
       )}
 
@@ -273,7 +277,7 @@ export default function OrderClinicalDetails({ order }: { order: ClinicalOrder }
           <div className="scr-list-stack">
             {rows.map((r) => (
               <div className="scr-list-item" key={r.key}>
-                <div className="scr-list-item-icon">{r.icon}</div>
+                <div className="scr-list-item-icon"><EmojiIcon e={r.icon} /></div>
                 <div className="scr-list-item-content">
                   <div className="scr-list-item-title">{r.title}</div>
                   <div className="scr-list-item-subtitle">{r.body}</div>

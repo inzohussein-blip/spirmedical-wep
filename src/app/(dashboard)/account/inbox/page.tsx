@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import MarkRead from './MarkRead';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = {
   title: 'الإشعارات · سباير ميديكال',
 };
@@ -41,7 +42,7 @@ export default async function InboxPage() {
           </Link>
           <h1 className="scr-page-title">الإشعارات</h1>
           <Link href="/account/notifications" className="scr-back-btn" aria-label="إعدادات الإشعارات">
-            <span aria-hidden="true">⚙</span>
+            <span aria-hidden="true"><EmojiIcon e="⚙" /></span>
           </Link>
         </div>
 
@@ -49,7 +50,7 @@ export default async function InboxPage() {
 
         {items.length === 0 ? (
           <div className="scr-empty">
-            <div className="scr-empty-icon" aria-hidden="true">🔔</div>
+            <div className="scr-empty-icon" aria-hidden="true"><EmojiIcon e="🔔" /></div>
             <p className="scr-empty-title">لا إشعاراتَ بعد</p>
             <p className="scr-empty-desc">ستجد هنا تحديثاتِ طلباتك وتنبيهاتِ الخدمات.</p>
           </div>

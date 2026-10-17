@@ -2,6 +2,7 @@
 
 import { useEffect, useState, createContext, useContext } from 'react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /**
  * ═══════════════════════════════════════════════════════════════
  * 🎨 PWA Mode Provider (V25.15)
@@ -137,7 +138,7 @@ export default function PWAModeProvider({ children }: { children: React.ReactNod
             animation: 'slideDown 0.3s ease',
           }}
         >
-          📡 لا يوجد اتصال - بعض الميزات قد لا تعمل
+          <EmojiIcon e="📡" /> لا يوجد اتصال - بعض الميزات قد لا تعمل
           <style>{`
             @keyframes slideDown {
               from { transform: translateY(-100%); }

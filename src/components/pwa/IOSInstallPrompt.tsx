@@ -1,13 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { X, Share, Plus } from 'lucide-react';
+import {
+  IconX as X, IconShare as Share, IconPlus as Plus,
+} from '@tabler/icons-react';
 import { isIOSDevice, isPWAInstalled, shouldShowInstallPrompt, dismissInstallPrompt } from '@/lib/pwa';
 import { haptic } from '@/lib/haptic';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 import { usePathname } from 'next/navigation';
 import { isFocusedTaskRoute, isEmergencyRoute } from '@/lib/focused-routes';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /**
  * iOS Install Instructions Modal (V25.23)
  *
@@ -94,7 +97,7 @@ export default function IOSInstallPrompt() {
               justifyContent: 'center',
               fontSize: 30,
             }}>
-              📱
+              <EmojiIcon e="📱" />
             </div>
             <div>
               <h2 id="ios-install-title" style={{ fontSize: 18, fontWeight: 900, margin: 0 }}>
@@ -217,9 +220,9 @@ export default function IOSInstallPrompt() {
           lineHeight: 1.7,
           marginBottom: 14,
         }}>
-          ✨ <strong>المزايا:</strong>
+          <EmojiIcon e="✨" /> <strong>المزايا:</strong>
           <br />
-          ⚡ فتح أسرع · 🔔 إشعارات فورية · 📲 يعمل بدون إنترنت
+          <EmojiIcon e="⚡" /> فتح أسرع · 🔔 إشعارات فورية · 📲 يعمل بدون إنترنت
         </div>
 
         {/* Buttons */}

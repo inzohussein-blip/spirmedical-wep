@@ -10,11 +10,10 @@ import PinSection from './PinSection';
 import BiometricLoginButton from '@/components/pwa/BiometricLoginButton';
 import InstallAppButton from '@/components/pwa/InstallAppButton';
 import {
-  ArrowRight, Globe, Bell, Lock, BarChart3, Download, Loader2,
-  ScrollText, FileText, HelpCircle, AlertTriangle, Info, LogOut,
-  CheckCircle2,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconWorld as Globe, IconBell as Bell, IconLock as Lock, IconChartBar as BarChart3, IconDownload as Download, IconLoader2 as Loader2, IconScript as ScrollText, IconFileText as FileText, IconHelpCircle as HelpCircle, IconAlertTriangle as AlertTriangle, IconInfoCircle as Info, IconLogout as LogOut, IconCircleCheck as CheckCircle2,
+} from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Props {
   initial: UserSettings;
   pinEnabled: boolean;
@@ -182,7 +181,7 @@ export default function SettingsClient({ initial, pinEnabled, userId, userEmail,
             style={{ marginTop: 10, textDecoration: 'none' }}
           >
             <div className="scr-list-item-icon" aria-hidden="true">
-              <span style={{ fontSize: 22 }}>💬</span>
+              <span style={{ fontSize: 22 }}><EmojiIcon e="💬" /></span>
             </div>
             <div className="scr-list-item-content">
               <div className="scr-list-item-title">رمز OTP عبر واتساب</div>

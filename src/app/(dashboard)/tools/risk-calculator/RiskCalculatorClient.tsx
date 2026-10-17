@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 type RiskLevel = 'low' | 'moderate' | 'high';
 
 interface RiskResult {
@@ -98,7 +99,7 @@ export default function RiskCalculatorClient() {
         {step === 'form' ? (
           <div style={{ padding: '0 18px' }}>
             <div className="tool-intro">
-              <div className="tool-intro-icon" aria-hidden="true">🧮</div>
+              <div className="tool-intro-icon" aria-hidden="true"><EmojiIcon e="🧮" /></div>
               <h2>قيّم حالتك الصحية في 30 ثانية</h2>
               <p>أجب على أسئلة بسيطة لتقييم مؤشّراتك الصحية وأعراضك واحصل على توصية</p>
             </div>
@@ -202,7 +203,7 @@ export default function RiskCalculatorClient() {
               </button>
 
               <div className="tool-disclaimer">
-                ⚠ هذه الحاسبة لا تُغني عن الفحص الطبي. النتيجة استرشادية فقط.
+                <EmojiIcon e="⚠" /> هذه الحاسبة لا تُغني عن الفحص الطبي. النتيجة استرشادية فقط.
               </div>
             </div>
           </div>

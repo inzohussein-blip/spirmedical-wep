@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { RefreshCw } from 'lucide-react';
+import {
+  IconRefresh as RefreshCw,
+} from '@tabler/icons-react';
 
 /**
  * 🔄 AutoRefresh (V31)

@@ -56,6 +56,10 @@ const FIX = {
     { id: 'n2', user_id: UID, title: 'نتائج فحوصاتك جاهزة', body: 'انقر لعرض النتائج', type: 'lab_results', is_read: true, created_at: iso(-3) },
   ],
   service_switches: [],
+  // قصصُ الإنتاج كما هي: إيموجي في حقل icon (لا ti-*)
+  stories: [['لقاحات', '💉', '/tools/vaccinations'], ['صحتك', '🩺', '/account/health'], ['دواء', '💊', '/account/prescriptions'],
+    ['تغذية', '🍎', '/tools/risk-calculator'], ['إسعافات', '🚑', '/tools/first-aid']].map(([title, icon, href], i) =>
+    ({ id: `st${i + 1}`, title, icon, href, color_theme: 'rose', sort_order: i + 1, is_active: true, starts_at: null, ends_at: null })),
   service_areas: [],
   family_members: [],
   favorites: [], service_favorites: [], pharmacy_favorites: [],

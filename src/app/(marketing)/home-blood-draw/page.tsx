@@ -3,6 +3,7 @@ import JsonLd from '@/components/seo/JsonLd';
 import { SERVED_CITIES, absoluteUrl, areaServedJsonLd } from '@/lib/seo/coverage';
 import { getAppUrl } from '@/lib/site-config';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /**
  * 🩸 صفحةُ الخدمة العامّة: سحب الدم المنزلي
  *
@@ -141,7 +142,7 @@ export default function HomeBloodDrawPage() {
           <div className="mkt-list-stack">
             {SERVED_CITIES.map((c) => (
               <div key={c.slug} id={c.slug} className="mkt-list-item">
-                <div className="mkt-list-item-icon" aria-hidden="true">📍</div>
+                <div className="mkt-list-item-icon" aria-hidden="true"><EmojiIcon e="📍" /></div>
                 <div className="mkt-list-item-content">
                   <h3 className="mkt-list-item-title" style={{ margin: 0, fontSize: 'inherit' }}>
                     سحب دم منزلي في {c.name}

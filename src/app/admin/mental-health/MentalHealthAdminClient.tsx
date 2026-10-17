@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { Plus, Edit, Trash2, CheckCircle2, XCircle, Search, Shield } from 'lucide-react';
+import {
+  IconPlus as Plus, IconEdit as Edit, IconTrash as Trash2, IconCircleCheck as CheckCircle2, IconCircleX as XCircle, IconSearch as Search, IconShield as Shield,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { formatNumber } from '@/lib/format/price';
 import { useConfirm } from '@/components/ui';
@@ -15,6 +17,7 @@ import {
 } from './actions';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Specialist {
   id: string;
   full_name: string;
@@ -143,8 +146,8 @@ export default function MentalHealthAdminClient({ initialSpecialists }: { initia
                 <td style={tdStyle}>{s.years_experience} سنة</td>
                 <td style={tdStyle}>{s.cities.slice(0, 2).join(', ')}{s.cities.length > 2 && `+${s.cities.length - 2}`}</td>
                 <td style={tdStyle}>
-                  {s.available_online && formatNumber(s.online_session_price) && <div style={{ fontSize: 11 }}>💻 {formatNumber(s.online_session_price)}</div>}
-                  {s.available_in_clinic && formatNumber(s.clinic_session_price) && <div style={{ fontSize: 11 }}>🏢 {formatNumber(s.clinic_session_price)}</div>}
+                  {s.available_online && formatNumber(s.online_session_price) && <div style={{ fontSize: 11 }}><EmojiIcon e="💻" /> {formatNumber(s.online_session_price)}</div>}
+                  {s.available_in_clinic && formatNumber(s.clinic_session_price) && <div style={{ fontSize: 11 }}><EmojiIcon e="🏢" /> {formatNumber(s.clinic_session_price)}</div>}
                 </td>
                 <td style={tdStyle}>{s.total_sessions}</td>
                 <td style={tdStyle}>
@@ -173,7 +176,7 @@ export default function MentalHealthAdminClient({ initialSpecialists }: { initia
             ))}
           </tbody>
         </table>
-        {filtered.length === 0 && <div style={{ padding: 40, textAlign: 'center', color: 'var(--ink-3)' }}>🧠 لا يوجد أخصائيون</div>}
+        {filtered.length === 0 && <div style={{ padding: 40, textAlign: 'center', color: 'var(--ink-3)' }}><EmojiIcon e="🧠" /> لا يوجد أخصائيون</div>}
       </div>
 
       {(showCreate || editingId) && (
@@ -265,7 +268,7 @@ function SpecialistModal({ specialist, onClose }: { specialist: Specialist | nul
           {/* 🆕 V31: موقع العيادة على الخريطة (اختياري — للأطباء بعيادة ثابتة) */}
           <div style={{ marginBottom: 4 }}>
             <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6, color: '#2C2C2A' }}>
-              📍 موقع العيادة على الخريطة (اختياري)
+              <EmojiIcon e="📍" /> موقع العيادة على الخريطة (اختياري)
             </label>
             <AdminLocationPickerWrapper
               initialLat={form.latitude ?? null}
@@ -277,7 +280,7 @@ function SpecialistModal({ specialist, onClose }: { specialist: Specialist | nul
           </div>
 
           <div style={{ background: 'var(--paper-3)', padding: 12, borderRadius: 8 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}>💰 الأسعار (د.ع)</div>
+            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8 }}><EmojiIcon e="💰" /> الأسعار (د.ع)</div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
               <Field label="جلسة أونلاين">
                 <input type="number" value={form.online_session_price ?? ''} onChange={(e) => setForm({ ...form, online_session_price: e.target.value === '' ? null : (parseInt(e.target.value) || null) })} style={inputStyle} />
@@ -291,15 +294,15 @@ function SpecialistModal({ specialist, onClose }: { specialist: Specialist | nul
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
             <label style={checkboxLabelStyle}>
               <input type="checkbox" checked={form.available_online ?? true} onChange={(e) => setForm({ ...form, available_online: e.target.checked })} />
-              💻 أونلاين
+              <EmojiIcon e="💻" /> أونلاين
             </label>
             <label style={checkboxLabelStyle}>
               <input type="checkbox" checked={form.available_in_clinic ?? true} onChange={(e) => setForm({ ...form, available_in_clinic: e.target.checked })} />
-              🏢 عيادة
+              <EmojiIcon e="🏢" /> عيادة
             </label>
             <label style={checkboxLabelStyle}>
               <input type="checkbox" checked={form.accepts_emergency ?? false} onChange={(e) => setForm({ ...form, accepts_emergency: e.target.checked })} />
-              🚨 طوارئ
+              <EmojiIcon e="🚨" /> طوارئ
             </label>
           </div>
 

@@ -4,15 +4,15 @@ import ModalShell, { ModalCloseButton } from '@/components/ui/ModalShell';
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Plus, Trash2, CheckCircle2, AlertTriangle,
-  Clock, Pill, FileText,
-} from 'lucide-react';
+  IconPlus as Plus, IconTrash as Trash2, IconCircleCheck as CheckCircle2, IconAlertTriangle as AlertTriangle, IconClock as Clock, IconPill as Pill, IconFileText as FileText,
+} from '@tabler/icons-react';
 import { createPharmacyReservation, type ReservationItem } from '@/app/(dashboard)/services/pharmacies/actions';
 import { useFormErrors } from '@/lib/forms/useFormErrors';
 import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
 import FieldError from '@/components/forms/FieldError';
 import { baghdadDateOffset } from '@/lib/time/baghdad-day';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 const PHARMACY_FIELD_LABELS: Record<string, string> = {
   items: 'الأدوية المطلوبة',
 };
@@ -133,7 +133,7 @@ export default function PharmacyReservationModal({
           marginBottom: 16,
           lineHeight: 1.6,
         }}>
-          📋 الصيدلية ستراجع طلبك وترد بالتوفّر + الأسعار خلال 30 دقيقة. ستصلك إشعار عند جاهزية الدواء للاستلام.
+          <EmojiIcon e="📋" /> الصيدلية ستراجع طلبك وترد بالتوفّر + الأسعار خلال 30 دقيقة. ستصلك إشعار عند جاهزية الدواء للاستلام.
         </div>
 
         {/* الأدوية */}

@@ -12,6 +12,7 @@ import { sendOtp } from '../login/actions';
 import EmailResetForm from './EmailResetForm';
 import { isWaVerifyAvailable } from '@/lib/whatsapp/inbound-verify';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 const searchParamsSchema = z.object({
   error: z.string().max(500).optional(),
 });
@@ -40,7 +41,7 @@ export default async function ForgotPage(
         <div className="auth-brand-sub">سباير ميديكال</div>
       </div>
 
-      <div className="auth-status-icon amber">🔑</div>
+      <div className="auth-status-icon amber"><EmojiIcon e="🔑" /></div>
 
       <div className="auth-title-section">
         <h2 className="auth-title">نسيت الرمز؟</h2>
@@ -53,7 +54,7 @@ export default async function ForgotPage(
 
       {waAvailable && (
         <Link href="/login/reset-pin" className="wa-verify-btn" style={{ marginBottom: 16 }}>
-          <span aria-hidden="true">💬</span>
+          <span aria-hidden="true"><EmojiIcon e="💬" /></span>
           <span>استعادة الرمز عبر واتساب</span>
         </Link>
       )}

@@ -1,6 +1,8 @@
 'use client';
 
-import { Search } from 'lucide-react';
+import {
+  IconSearch as Search,
+} from '@tabler/icons-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { LockedAction } from '@/components/app/LockedAction';

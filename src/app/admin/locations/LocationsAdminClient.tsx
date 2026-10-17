@@ -3,9 +3,8 @@
 import { useState, useMemo, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Eye, EyeOff, Trash2, Plus, Search, MapPin, X, Loader2, Check,
-  Filter, AlertCircle,
-} from 'lucide-react';
+  IconEye as Eye, IconEyeOff as EyeOff, IconTrash as Trash2, IconPlus as Plus, IconSearch as Search, IconMapPin as MapPin, IconX as X, IconLoader2 as Loader2, IconCheck as Check, IconFilter as Filter, IconAlertCircle as AlertCircle,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { useConfirm } from '@/components/ui';
 import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWrapper';
@@ -18,6 +17,7 @@ import {
 } from './actions';
 import type { UnifiedLocation, LocationSource } from './types';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 const SOURCES: { value: LocationSource; label: string; emoji: string }[] = [
   { value: 'hospitals', label: 'مستشفيات', emoji: '🏥' },
   { value: 'pharmacies', label: 'صيدليات', emoji: '💊' },
@@ -124,7 +124,7 @@ export default function LocationsAdminClient({ initialLocations }: Props) {
       <div style={{ marginBottom: 16 }}>
         <UnifiedLocationsMapWrapper locations={mapLocations} height={380} />
         <p style={{ fontSize: 11, color: '#888780', margin: '6px 2px 0' }}>
-          📍 الخريطة تعرض {mapLocations.length} موقعاً (التي لها إحداثيات) ضمن الفلتر الحالي
+          <EmojiIcon e="📍" /> الخريطة تعرض {mapLocations.length} موقعاً (التي لها إحداثيات) ضمن الفلتر الحالي
         </p>
       </div>
 
@@ -158,7 +158,7 @@ export default function LocationsAdminClient({ initialLocations }: Props) {
           const count = initialLocations.filter((l) => l.source === s.value).length;
           return (
             <FilterPill key={s.value} active={sourceFilter === s.value} onClick={() => setSourceFilter(s.value)}>
-              {s.emoji} {s.label} ({count})
+              <EmojiIcon e={s.emoji} /> {s.label} ({count})
             </FilterPill>
           );
         })}
@@ -167,9 +167,9 @@ export default function LocationsAdminClient({ initialLocations }: Props) {
       {/* ─── فلاتر الحالة ─── */}
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14 }}>
         <FilterPill active={statusFilter === 'all'} onClick={() => setStatusFilter('all')} small>الكل</FilterPill>
-        <FilterPill active={statusFilter === 'active'} onClick={() => setStatusFilter('active')} small>👁 ظاهرة</FilterPill>
-        <FilterPill active={statusFilter === 'hidden'} onClick={() => setStatusFilter('hidden')} small>🚫 مخفية</FilterPill>
-        <FilterPill active={statusFilter === 'no-coords'} onClick={() => setStatusFilter('no-coords')} small>⚠️ بدون إحداثيات</FilterPill>
+        <FilterPill active={statusFilter === 'active'} onClick={() => setStatusFilter('active')} small><EmojiIcon e="👁" /> ظاهرة</FilterPill>
+        <FilterPill active={statusFilter === 'hidden'} onClick={() => setStatusFilter('hidden')} small><EmojiIcon e="🚫" /> مخفية</FilterPill>
+        <FilterPill active={statusFilter === 'no-coords'} onClick={() => setStatusFilter('no-coords')} small><EmojiIcon e="⚠️" /> بدون إحداثيات</FilterPill>
       </div>
 
       {/* ─── الجدول ─── */}
@@ -270,7 +270,7 @@ function LocationRow({ loc, isPending, onToggle, onDelete, onEditCoords }: {
         opacity: loc.is_active ? 1 : 0.6,
       }}
     >
-      <span style={{ fontSize: 22, flexShrink: 0 }}>{loc.emoji}</span>
+      <span style={{ fontSize: 22, flexShrink: 0 }}><EmojiIcon e={loc.emoji} /></span>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontWeight: 700, fontSize: 14, color: '#2C2C2A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {loc.name}
@@ -385,7 +385,7 @@ function EditCoordsModal({ loc, onClose, onSuccess }: {
         </div>
 
         <div style={{ fontSize: 13, color: '#5F5E5A', marginBottom: 12 }}>
-          {loc.emoji} {loc.name}
+          <EmojiIcon e={loc.emoji} /> {loc.name}
           {loc.city && <span style={{ color: '#888780' }}> · {loc.city}</span>}
         </div>
 
@@ -461,7 +461,7 @@ function AddLocationModal({ onClose, onSuccess }: { onClose: () => void; onSucce
         onClick={(e) => e.stopPropagation()}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>➕ إضافة موقع جديد</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}><EmojiIcon e="➕" /> إضافة موقع جديد</h2>
           <button type="button" onClick={onClose} style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: '#888780' }}>
             <X size={22} aria-hidden />
           </button>
@@ -483,7 +483,7 @@ function AddLocationModal({ onClose, onSuccess }: { onClose: () => void; onSucce
                 fontSize: 12.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
               }}
             >
-              {s.emoji} {s.label}
+              <EmojiIcon e={s.emoji} /> {s.label}
             </button>
           ))}
         </div>
@@ -505,14 +505,14 @@ function AddLocationModal({ onClose, onSuccess }: { onClose: () => void; onSucce
         </select>
 
         {/* الخريطة */}
-        <label style={labelStyle}>📍 حدّد الموقع على الخريطة *</label>
+        <label style={labelStyle}><EmojiIcon e="📍" /> حدّد الموقع على الخريطة *</label>
         <AdminLocationPickerWrapper
           markerType={markerTypeFor(cfg.value)}
           onChange={(la, ln) => { setLat(la); setLng(ln); }}
         />
 
         <div style={{ background: '#FAEEDA', border: '1px solid #E8C77A', borderRadius: 10, padding: '8px 12px', fontSize: 12, color: '#633806', marginTop: 12 }}>
-          💡 هذه إضافة سريعة بالحقول الأساسية. لإضافة كل التفاصيل (الأسعار، الخدمات...) استخدم لوحة إدارة {cfg.label} المخصّصة.
+          <EmojiIcon e="💡" /> هذه إضافة سريعة بالحقول الأساسية. لإضافة كل التفاصيل (الأسعار، الخدمات...) استخدم لوحة إدارة {cfg.label} المخصّصة.
         </div>
 
         {/* أزرار */}

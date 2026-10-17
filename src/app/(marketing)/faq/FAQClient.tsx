@@ -3,9 +3,10 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import {
-  ArrowRight, ChevronDown, Search, HelpCircle, MessageCircle,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconChevronDown as ChevronDown, IconSearch as Search, IconHelpCircle as HelpCircle, IconMessageCircle as MessageCircle,
+} from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface FAQ {
   category: string;
   question: string;
@@ -43,8 +44,8 @@ const FAQS: FAQ[] = [
   },
   {
     category: 'الدفع',
-    question: 'هل الأسعار ثابتة؟',
-    answer: 'نعم، الأسعار معروضة بوضوح قبل تأكيد الحجز. لا توجد رسوم خفية. قد تُضاف رسوم الطوارئ أو الليل للخدمات خارج الساعات المعتادة.',
+    question: 'كم تكلفة سحب الدم والتحاليل؟',
+    answer: 'لا ننشر أسعاراً للتحاليل وسحب الدم: تُحدَّد حسب التحاليل المطلوبة، ويُتّفق عليها مباشرةً مع المختصّ قبل الزيارة. الدفع نقداً عند الاستلام، ولا رسوم خفيّة.',
   },
   {
     category: 'الدفع',
@@ -187,7 +188,7 @@ export default function FAQClient() {
             onClick={() => setSelectedCategory('all')}
             style={pillStyle(selectedCategory === 'all')}
           >
-            🗂️ الكل ({FAQS.length})
+            <EmojiIcon e="🗂️" /> الكل ({FAQS.length})
           </button>
           {CATEGORIES.map((cat) => {
             const count = FAQS.filter((f) => f.category === cat).length;
@@ -304,7 +305,7 @@ export default function FAQClient() {
             textAlign: 'center',
           }}
         >
-          <div style={{ fontSize: 28, marginBottom: 6 }}>💬</div>
+          <div style={{ fontSize: 28, marginBottom: 6 }}><EmojiIcon e="💬" /></div>
           <h3 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 4px' }}>
             لم تجد إجابتك؟
           </h3>

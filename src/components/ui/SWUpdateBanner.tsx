@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Sparkles, X, RefreshCw } from 'lucide-react';
+import {
+  IconSparkles as Sparkles, IconX as X, IconRefresh as RefreshCw,
+} from '@tabler/icons-react';
 
 /**
  * ═══════════════════════════════════════════════════════════════

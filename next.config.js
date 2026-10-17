@@ -17,7 +17,7 @@ const nextConfig = {
       bodySizeLimit: '4.5mb',
     },
     optimizePackageImports: [
-      'lucide-react',
+      '@tabler/icons-react',
       'date-fns',
       'recharts',
     ],

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ARTICLES, getAllCategories } from '@/lib/data/blog-articles';
 import type { Metadata } from 'next';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata: Metadata = {
   alternates: { canonical: '/blog' },
   title: 'المدونة الطبية · سباير ميديكال',
@@ -52,7 +53,7 @@ export default function BlogIndexPage() {
         {/* Hero */}
         <header className="blog-hero">
           <span className="blog-hero-badge">
-            <span aria-hidden="true">📚</span>
+            <span aria-hidden="true"><EmojiIcon e="📚" /></span>
             <span>المدونة الطبية · {ARTICLES.length} مقال</span>
           </span>
           <h1 className="blog-hero-title">
@@ -69,7 +70,7 @@ export default function BlogIndexPage() {
         {/* Categories */}
         <section className="blog-categories">
           <Link href="/blog" className="blog-cat-pill active">
-            <span aria-hidden="true">📋</span>
+            <span aria-hidden="true"><EmojiIcon e="📋" /></span>
             <span>الكل</span>
             <span className="blog-cat-count">{ARTICLES.length}</span>
           </Link>
@@ -79,7 +80,7 @@ export default function BlogIndexPage() {
               href={`/blog/category/${cat.slug}`}
               className="blog-cat-pill"
             >
-              <span aria-hidden="true">{cat.icon}</span>
+              <span aria-hidden="true"><EmojiIcon e={cat.icon} /></span>
               <span>{cat.label}</span>
               <span className="blog-cat-count">{cat.count}</span>
             </Link>
@@ -89,7 +90,7 @@ export default function BlogIndexPage() {
         {/* Featured */}
         <section className="blog-featured-section">
           <div className="blog-section-label">
-            <span aria-hidden="true">⭐</span>
+            <span aria-hidden="true"><EmojiIcon e="⭐" /></span>
             <span>المقال المميّز</span>
           </div>
 
@@ -99,7 +100,7 @@ export default function BlogIndexPage() {
               style={{ background: featuredArticle.coverGradient }}
             >
               <span className="blog-featured-emoji" aria-hidden="true">
-                {featuredArticle.coverEmoji}
+                <EmojiIcon e={featuredArticle.coverEmoji} size="1em" />
               </span>
             </div>
 
@@ -131,7 +132,7 @@ export default function BlogIndexPage() {
         {/* Articles Grid */}
         <section className="blog-grid-section">
           <div className="blog-section-label">
-            <span aria-hidden="true">📝</span>
+            <span aria-hidden="true"><EmojiIcon e="📝" /></span>
             <span>أحدث المقالات</span>
           </div>
 
@@ -146,7 +147,7 @@ export default function BlogIndexPage() {
                   className="blog-card-cover"
                   style={{ background: article.coverGradient }}
                 >
-                  <span aria-hidden="true">{article.coverEmoji}</span>
+                  <span aria-hidden="true"><EmojiIcon e={article.coverEmoji} size="1em" /></span>
                 </div>
 
                 <div className="blog-card-content">
@@ -177,7 +178,7 @@ export default function BlogIndexPage() {
         {/* Newsletter CTA */}
         <section className="blog-newsletter">
           <div className="blog-newsletter-content">
-            <h3>📬 احصل على نصائح صحية أسبوعياً</h3>
+            <h3><EmojiIcon e="📬" /> احصل على نصائح صحية أسبوعياً</h3>
             <p>اشترك في نشرة سباير ميديكال للحصول على أحدث المقالات الطبية</p>
             <div className="blog-newsletter-form">
               <input

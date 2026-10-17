@@ -3,10 +3,10 @@
 import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import {
-  ArrowRight, Search, Star, ShoppingBag, Sparkles, Info,
-  Award, CheckCircle2,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconSearch as Search, IconStar as Star, IconShoppingBag as ShoppingBag, IconSparkles as Sparkles, IconInfoCircle as Info, IconAward as Award, IconCircleCheck as CheckCircle2,
+} from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Product {
   id: string;
   name: string;
@@ -138,7 +138,7 @@ export default function CosmeticClient({ products }: Props) {
                 flexShrink: 0,
               }}
             >
-              {cat.emoji} {cat.label}
+              <EmojiIcon e={cat.emoji} /> {cat.label}
             </button>
           ))}
         </div>
@@ -225,7 +225,7 @@ function ProductCard({ product, compact = false }: { product: Product; compact?:
           padding: '2px 6px',
           borderRadius: 4,
         }}>
-          ⭐ مُوصى
+          <EmojiIcon e="⭐" /> مُوصى
         </div>
       )}
 
@@ -293,7 +293,7 @@ function ProductCard({ product, compact = false }: { product: Product; compact?:
           color: 'var(--rose)',
           fontWeight: 700,
         }}>
-          ⚠️ غير متوفّر
+          <EmojiIcon e="⚠️" /> غير متوفّر
         </div>
       )}
     </article>

@@ -5,10 +5,10 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import {
-  ArrowRight, Sparkles, Wrench, Bug,
-  AlertTriangle, Calendar,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconSparkles as Sparkles, IconTool as Wrench, IconBug as Bug, IconAlertTriangle as AlertTriangle, IconCalendar as Calendar,
+} from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const revalidate = 3600;
 
@@ -172,7 +172,7 @@ export default async function ChangelogPage() {
           fontSize: 12,
           color: 'var(--ink-2)',
         }}>
-          💡 هل لديك اقتراح؟
+          <EmojiIcon e="💡" /> هل لديك اقتراح؟
           <Link
             href="/feedback"
             style={{ color: 'var(--emerald)', fontWeight: 800, marginInlineStart: 6, paddingBlock: 8 }}
@@ -204,7 +204,7 @@ function Section({ icon, title, color, items }: {
         alignItems: 'center',
         gap: 4,
       }}>
-        {icon}
+        <EmojiIcon e={icon} />
         {title}
       </h3>
       <ul style={{

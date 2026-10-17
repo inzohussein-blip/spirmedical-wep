@@ -2,16 +2,16 @@
 
 import { useState, useTransition } from 'react';
 import { createReminder, toggleReminder, deleteReminder, type ReminderType, type ReminderFrequency } from './actions';
-import type { LucideIcon } from 'lucide-react';
+
 import { useConfirm } from '@/components/ui';
 import { useFormErrors } from '@/lib/forms/useFormErrors';
 import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
 import FieldError from '@/components/forms/FieldError';
 import {
-  Pill, Calendar, TestTube, Syringe, AlertTriangle, Clock,
-  Pause, Play, Trash2,
-} from 'lucide-react';
+  IconPill as Pill, IconCalendar as Calendar, IconTestPipe as TestTube, IconVaccine as Syringe, IconAlertTriangle as AlertTriangle, IconClock as Clock, IconPlayerPause as Pause, IconPlayerPlay as Play, IconTrash as Trash2,
+} from '@tabler/icons-react';
 
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 const REMINDER_FIELD_LABELS: Record<string, string> = {
   title: 'العنوان',
   date: 'التاريخ',
@@ -28,7 +28,7 @@ interface Reminder {
   active: boolean;
 }
 
-const TYPE_META: Record<string, { label: string; icon: LucideIcon; color: string }> = {
+const TYPE_META: Record<string, { label: string; icon: TablerIcon; color: string }> = {
   medication:  { label: 'دواء',      icon: Pill,     color: 'default' },
   appointment: { label: 'موعد طبيب', icon: Calendar, color: 'amber' },
   checkup:     { label: 'فحص دوري',   icon: TestTube, color: 'default' },

@@ -11,14 +11,14 @@
  */
 
 import Link from 'next/link';
-import { IconClock, IconCash, IconArrowLeft } from '@tabler/icons-react';
+import { IconClock, IconArrowLeft } from '@tabler/icons-react';
 import { FEATURED_SERVICE } from '@/lib/services-v3';
 import { getServiceSwitches } from '@/lib/service-switches.server';
 import { isEnabled } from '@/lib/service-switches';
 
 interface Props {
   duration?: string;     // e.g. "30 دقيقة"
-  priceFrom?: number;    // e.g. 15
+  // لا سعر: التحاليلُ وسحبُ الدم بلا سعرٍ أبداً (`isUnpricedService` في lib/config/pricing)
 }
 
 // الخدمة المميّزة تُطفأ كغيرها: تبقى في مكانها بلا رابط.
@@ -50,7 +50,6 @@ function CardWrapper({
 
 export default async function FeaturedServiceCardV3({
   duration = '30 دقيقة',
-  priceFrom = 15,
 }: Props) {
   const service = FEATURED_SERVICE;
   const Icon = service.icon;
@@ -173,19 +172,7 @@ export default async function FeaturedServiceCardV3({
               <IconClock size={12} stroke={2.2} />
               {duration}
             </span>
-            <span
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 3,
-                fontSize: 11,
-                color: 'var(--emerald, #01875F)',
-                fontWeight: 700,
-              }}
-            >
-              <IconCash size={12} stroke={2.2} />
-              من ${priceFrom}
-            </span>
+
           </div>
         </div>
         

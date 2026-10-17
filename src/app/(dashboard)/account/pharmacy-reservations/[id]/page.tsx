@@ -6,9 +6,8 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect, notFound } from 'next/navigation';
 import {
-  ArrowRight, Pill, Clock, Building2, Phone, MapPin, MessageCircle,
-  Calendar, AlertTriangle, CheckCircle2, X, Package,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconPill as Pill, IconClock as Clock, IconBuilding as Building2, IconPhone as Phone, IconMapPin as MapPin, IconMessageCircle as MessageCircle, IconCalendar as Calendar, IconAlertTriangle as AlertTriangle, IconCircleCheck as CheckCircle2, IconX as X, IconPackage as Package,
+} from '@tabler/icons-react';
 import CancelReservationButton from './CancelReservationButton';
 import PhoneLink from '@/components/ui/PhoneLink';
 

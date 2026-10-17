@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { User, Users, Plus, ChevronLeft, Loader2 } from 'lucide-react';
+import {
+  IconUser as User, IconUsers as Users, IconPlus as Plus, IconChevronLeft as ChevronLeft, IconLoader2 as Loader2,
+} from '@tabler/icons-react';
 import { ageInYears } from '@/lib/time/baghdad-day';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /**
  * ═══════════════════════════════════════════════════════════════
  * FamilyMemberPicker (V25.8) - الميزة الموحّدة
@@ -170,7 +173,7 @@ export default function FamilyMemberPicker({ value, onChange, ownerName }: Props
               fontWeight: 900,
             }}
           >
-            ✓
+            <EmojiIcon e="✓" />
           </div>
         )}
       </button>
@@ -237,7 +240,7 @@ export default function FamilyMemberPicker({ value, onChange, ownerName }: Props
                   fontWeight: 900,
                 }}
               >
-                ✓
+                <EmojiIcon e="✓" />
               </div>
             )}
           </button>

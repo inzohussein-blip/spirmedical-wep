@@ -14,9 +14,10 @@ import SessionNotes from './role-forms/SessionNotes';
 import MealPlan from './role-forms/MealPlan';
 import FamilyTargetBadge from '@/components/family/FamilyTargetBadge';
 import {
-  User, Phone, Calendar, MapPin, FileText, ClipboardList,
-} from 'lucide-react';
+  IconUser as User, IconPhone as Phone, IconCalendar as Calendar, IconMapPin as MapPin, IconFileText as FileText, IconClipboardList as ClipboardList,
+} from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = {
   title: 'تفاصيل الطلب · لوحة الاختصاصي',
 };
@@ -186,7 +187,7 @@ export default async function SpecialistOrderDetailPage(
           alignItems: 'center',
           gap: 12,
         }}>
-          <div style={{ fontSize: 28 }}>{meta.icon}</div>
+          <div style={{ fontSize: 28 }}><EmojiIcon e={meta.icon} /></div>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 14, fontWeight: 800 }}>{order.service_type}</div>
             <div style={{ fontSize: 12, opacity: 0.9 }}>{meta.label}</div>

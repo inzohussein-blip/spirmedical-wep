@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import {
-  CheckCircle2, AlertTriangle, XCircle, RefreshCw,
-  Database, Lock, FolderOpen, Loader2, Clock,
-} from 'lucide-react';
+  IconCircleCheck as CheckCircle2, IconAlertTriangle as AlertTriangle, IconCircleX as XCircle, IconRefresh as RefreshCw, IconDatabase as Database, IconLock as Lock, IconFolderOpen as FolderOpen, IconLoader2 as Loader2, IconClock as Clock,
+} from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface HealthCheck {
   ok: boolean;
   latency_ms?: number;
@@ -256,7 +256,7 @@ export default function StatusClient() {
           lineHeight: 1.7,
         }}
       >
-        <strong>💡 معلومة:</strong> هذه الصفحة تفحص حالة الخدمات الأساسية فقط.
+        <strong><EmojiIcon e="💡" /> معلومة:</strong> هذه الصفحة تفحص حالة الخدمات الأساسية فقط.
         لمراقبة شاملة، نستخدم Vercel Analytics و Supabase Dashboard داخلياً.
       </div>
     </div>

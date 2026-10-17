@@ -3,13 +3,13 @@
 import { useState, useTransition } from 'react';
 import Link from 'next/link';
 import {
-  ArrowRight, Copy, Share2, Gift, TrendingUp,
-  Trophy, Users, CheckCircle2, Sparkles,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconCopy as Copy, IconShare as Share2, IconGift as Gift, IconTrendingUp as TrendingUp, IconTrophy as Trophy, IconUsers as Users, IconCircleCheck as CheckCircle2, IconSparkles as Sparkles,
+} from '@tabler/icons-react';
 import { haptic } from '@/lib/haptic';
 import { toast } from '@/components/ui/Toaster';
 import { generateMyReferralCode } from './actions';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Milestone {
   id: string;
   tier: 'silver' | 'gold' | 'platinum' | 'diamond';
@@ -140,7 +140,7 @@ export default function RewardsClient({
             fontSize: 120,
             opacity: 0.2,
           }}>
-            {currentMilestone?.badge_icon}
+            <EmojiIcon e={currentMilestone?.badge_icon} />
           </div>
 
           <div style={{ position: 'relative', zIndex: 1 }}>
@@ -148,7 +148,7 @@ export default function RewardsClient({
               مستواك الحالي
             </div>
             <div style={{ fontSize: 24, fontWeight: 900, marginBottom: 8 }}>
-              {currentMilestone?.badge_icon} {currentMilestone?.name_ar || 'سيلفر'}
+              <EmojiIcon e={currentMilestone?.badge_icon} /> {currentMilestone?.name_ar || 'سيلفر'}
             </div>
             <div style={{
               fontSize: 32,
@@ -205,7 +205,7 @@ export default function RewardsClient({
         }}>
           <div>
             <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 2 }}>
-              💰 رصيد المحفظة
+              <EmojiIcon e="💰" /> رصيد المحفظة
             </div>
             <div style={{ fontSize: 20, fontWeight: 900, color: 'var(--emerald)' }}>
               {walletBalance.toLocaleString('ar-IQ-u-nu-latn')} د.ع
@@ -224,7 +224,7 @@ export default function RewardsClient({
             marginBottom: 14,
           }}>
             <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 10 }}>
-              🎁 مزاياك الحالية
+              <EmojiIcon e="🎁" /> مزاياك الحالية
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 12 }}>
               {currentMilestone.discount_percent > 0 && (
@@ -251,7 +251,7 @@ export default function RewardsClient({
         {/* All Tiers Roadmap */}
         <div style={{ marginBottom: 20 }}>
           <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 10 }}>
-            🏆 مستويات الولاء
+            <EmojiIcon e="🏆" /> مستويات الولاء
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {milestones.map((m) => {
@@ -437,7 +437,7 @@ export default function RewardsClient({
         {referrals.length > 0 && (
           <div style={{ marginBottom: 14 }}>
             <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 8 }}>
-              📊 إحالاتي الأخيرة
+              <EmojiIcon e="📊" /> إحالاتي الأخيرة
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {referrals.map((r) => (
@@ -485,7 +485,7 @@ function Benefit({ icon, text }: { icon: string; text: string }) {
       fontSize: 12,
       color: 'var(--ink-2)',
     }}>
-      <span style={{ fontSize: 14 }}>{icon}</span>
+      <span style={{ fontSize: 14 }}><EmojiIcon e={icon} /></span>
       <span>{text}</span>
     </div>
   );

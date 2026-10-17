@@ -31,6 +31,7 @@
 | التنسيق | `app/styles/shared.css` (رموز + حارس iOS) · `app.css` (شاشات التطبيق) · `marketing.css` · `admin.css` |
 | الفهرسة واكتشافُ النماذج | `app/layout.tsx` · `components/seo/JsonLd.tsx` · `app/sitemap.ts` · `app/robots.ts` · الأصل `lib/seo/origin.ts` · الحقائق `lib/seo/facts.ts` → `lib/seo/llms.ts` |
 | «عن التطبيق» | `components/landing/AboutApp.tsx` (الرئيسية `#about` و`/about`) |
+| الأيقونات ومكوّنات الإدارة | `lib/icons.ts` (أسماءٌ → Tabler + لونُ كلّ مفهوم) · `lib/emoji-icons.ts` + `components/ui/EmojiIcon.tsx` · `components/admin-ui` (StatCard، Panel، ListRow، StatusPill، DataTable…) |
 | الكرون | `vercel.json` → `app/api/cron/*` · `app/api/notifications/process` |
 | قاعدة البيانات | `supabase/migrations/` (آخرها 0053) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
 | الاختبارات | `tests/` — اسمُ الحارس يدلّ على مجاله (`rls-*`، `order-flow-modals`، `specialist-screens`…) |
@@ -190,6 +191,25 @@
   بلا مائل فيُصطنع)، ولا `letter-spacing` على العربيّة (يقطع الوصل)، وخطٌّ واحد للأرقام. والترتيب: الخدمات ← كيف يعمل ←
   عن التطبيق ← التغطية ← الأمان ← الآراء ← للأطباء ← المدوّنة ← الأسئلة ← التثبيت. حُذف شريطُ «المزايا» (يَعِد بزين كاش
   وفيزا) وشبكةُ المدن المكرّرة (أرقامُها باقيةٌ في قسم الخريطة). الحارس: `tests/landing-typography.test.ts`.
+- **لا عرضَ زائد على الهاتف:** التجاوزُ في RTL يمتدّ يساراً فيصغّر المتصفّحُ الصفحة (قِيس بعرض 360: الرئيسية 379،
+  المدوّنة 398، الأسئلة 388). حقولُ الإدخال `min-width: 0`، وعناصرُ flex/grid التي تحمل أرقاماً كبيرة أو حقولاً كذلك.
+  وشبكةُ أمان `overflow-x: clip` على `.landing/.blog-page/.mkt-screen`. قِس بـ`isMobile: true` — بدونه لا يظهر التصغير.
+  **لوحة الإدارة** (47 صفحة بعرض 390): شبكاتُ النمط السطريّ بأعمدةٍ ثابتة (112 موضعاً) تُطوى في `admin.css` تحت
+  `@media (max-width: 700px)` بمطابقة قيمة العمود (`[style*="repeat(4, 1fr)"]`…) و`!important` — الحاسوبُ لا يتغيّر.
+  ولا `overflow-wrap: anywhere` على المحتوى: يكسر جداولَ العربيّة حرفاً حرفاً.
+  الحارس: `tests/mobile-width.test.ts`.
+- **أيقوناتٌ من Tabler وحده بأسلوب تطبيق المريض (قرار المالك، 17 تشرين الأول)** في المشروع كلّه: وُحّدت أوّلاً على
+  Lucide، ثمّ رأى المالكُ تطبيقَ المريض (Tabler ملوّنة) وفضّله، فنُقل 169 ملفّاً وأُزيلت `lucide-react` — **لا تُعِدها**.
+  الاستيرادُ بأسماءٍ مستعارة (`IconBuildingHospital as Hospital`) فبقيت مواضعُ الاستعمال كما هي؛ وTabler تقبل `strokeWidth`.
+  **اللون**: لكلّ مفهومٍ لونٌ (`ICON_COLOR` ← `ICON_TONES`، قيمُ `services-v3.ts` نفسُها: المستشفى أزرق، الصيدلية بنفسجيّة،
+  سحبُ الدم أحمر). البلاطاتُ (`StatCard`/`ActionTile`، خدماتُ الموقع وثقتُه) بلون المفهوم على خلفيّته؛ و`tone` الصريح يغلبه
+  للتنبيه. `<EmojiIcon>` يحمل `--icon-tone` ويُلوَّن حين يقف وحده في عنصره، وداخلَ الأزرار والتنقّل بلون النصّ (`shared.css`).
+  الإيموجي الظاهر: الإدارة والموقع 186 ← 1 (تحيّةُ مجسّم الهاتف)، المريض 292 ← نحو 35 (علاماتُ ✓✕ في الباقات وتسمياتٌ
+  تُخزَّن في الطلب)، المختصّ ← 6 (✓). الإيموجي المخزَّن نصّاً (`icon: '🏥'`) يُرسم بـ`<EmojiIcon>`، فلا تكتب `{x.icon}`
+  نصّاً في JSX. لا إيموجي في `<option>`. القصص: الإدارةُ تكتبها إيموجي فيترجمها `StoryIcon` (`tests/stories-icons.test.tsx`).
+  مكوّناتُ `admin-ui` في لوحة التحكّم والممرّضين؛ الجداولُ الأخرى تُنقل إلى `DataTable` تباعاً.
+  **حُذف «معتمد طبياً — وزارة الصحة»** من الرئيسية ومن نموذج سحب الدم، وصار ادّعاءُ التمريض «يراجع فريقُنا هويّةَ كلّ ممرّض» —
+  لا اعتمادَ رسميّاً موثَّقاً بعد. الحارس: `tests/icons-system.test.tsx`.
 - **على المالك:** Search Console — أضف رمزَ التحقّق في `layout.tsx` (`verification.google`) وارفع
   `https://www.spir-medical.com/sitemap.xml`. وأرقامُ الرئيسية المرئيّة («18 محافظة»، «24/7») باقيةٌ بقراره؛ الأبوابُ
   الآليّة وحدها صُحّحت.
@@ -288,6 +308,8 @@
   (`app/admin/_actions/login-pin.ts`). للحساب الهاتفيّ وحده، يُعرض مرّةً، ويُسجَّل `reset_login_pin`.
 - **تسجيلُ المريض**: `/register/patient` بالرقم + الرمز افتراضيّاً (`registerPatient`، `action=skip`)،
   والبريدُ بـ`?method=email`. الرمزُ في حقل `password` لأنّ `guardPinRegistration` يقرؤه.
+- **التحاليلُ وسحبُ الدم بلا سعرٍ في أيّ واجهة** (قرار المالك، 17 تشرين الأول): `isUnpricedService` في
+  `lib/config/pricing.ts` لا يتبع `SHOW_PRICES`. القيمُ المخزّنة باقية ولا تُعرض. الحارس: `tests/no-test-prices.test.tsx`.
 - **الدفع نقدٌ فقط**: `payments` فارغٌ ولا بوّابةَ في الكود — فلا تَعِد الشروطُ بزين كاش أو بطاقات.
 - الحارس: `tests/admin-pin-reset.test.ts`.
 

@@ -3,12 +3,12 @@
 import Link from 'next/link';
 import { useState, useEffect, useTransition } from 'react';
 import {
-  ArrowRight, Search, Pill, MapPin, CheckCircle2, Phone,
-  AlertCircle, Loader2, Package,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconSearch as Search, IconPill as Pill, IconMapPin as MapPin, IconCircleCheck as CheckCircle2, IconPhone as Phone, IconAlertCircle as AlertCircle, IconLoader2 as Loader2, IconPackage as Package,
+} from '@tabler/icons-react';
 import { searchMedicationAvailability } from './actions';
 import PhoneLink from '@/components/ui/PhoneLink';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface SearchResult {
   medication: {
     id: string;
@@ -338,7 +338,7 @@ export default function SearchClient() {
                                   fontStyle: 'italic',
                                 }}
                               >
-                                💬 {p.notes}
+                                <EmojiIcon e="💬" /> {p.notes}
                               </div>
                             )}
                           </div>

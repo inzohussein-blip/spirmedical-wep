@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { ACTION_TYPE_LABELS } from '@/lib/admin-types';
 import { EmptyState } from '@/components/ui';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -40,7 +41,7 @@ export default async function AuditLogPage(props: { searchParams: Promise<Search
 
   return (
     <>
-      <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}>📜 سجل العمليات</h1>
+      <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}><EmojiIcon e="📜" /> سجل العمليات</h1>
       <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: '0 0 20px' }}>
         {count ?? 0} عملية مسجلة
       </p>
@@ -52,13 +53,13 @@ export default async function AuditLogPage(props: { searchParams: Promise<Search
           <select name="type" defaultValue={searchParams.type ?? ''} style={inputStyle}>
             <option value="">كل العمليات</option>
             {allTypes.map((t) => (
-              <option key={t} value={t}>{ACTION_TYPE_LABELS[t].icon} {ACTION_TYPE_LABELS[t].label}</option>
+              <option key={t} value={t}>{ACTION_TYPE_LABELS[t].label}</option>
             ))}
           </select>
         </div>
 
         <button type="submit" style={{ padding: '8px 20px', background: 'var(--emerald-deep)', color: 'var(--white)', border: 0, borderRadius: 8, fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
-          🔍 تطبيق
+          <EmojiIcon e="🔍" /> تطبيق
         </button>
       </form>
 
@@ -98,17 +99,17 @@ export default async function AuditLogPage(props: { searchParams: Promise<Search
                       <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{admin?.role ?? '—'}</div>
                     </td>
                     <td style={td}>
-                      <span style={{ fontSize: 12, fontWeight: 700 }}>{meta.icon} {meta.label}</span>
+                      <span style={{ fontSize: 12, fontWeight: 700 }}><EmojiIcon e={meta.icon} /> {meta.label}</span>
                     </td>
                     <td style={td}>
                       {a.target_type && a.target_id ? (
                         a.target_type === 'user' ? (
                           <Link href={`/admin/specialists/${a.target_id}`} style={{ fontSize: 11, color: 'var(--emerald)', textDecoration: 'none' }}>
-                            👤 {a.target_id.slice(0, 8)}
+                            <EmojiIcon e="👤" /> {a.target_id.slice(0, 8)}
                           </Link>
                         ) : a.target_type === 'appointment' ? (
                           <Link href={`/admin/orders/${a.target_id}`} style={{ fontSize: 11, color: 'var(--emerald)', textDecoration: 'none' }}>
-                            📋 {a.target_id.slice(0, 8)}
+                            <EmojiIcon e="📋" /> {a.target_id.slice(0, 8)}
                           </Link>
                         ) : (
                           <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>{a.target_type}: {a.target_id?.slice(0, 8)}</span>

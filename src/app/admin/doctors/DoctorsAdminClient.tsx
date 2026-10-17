@@ -3,9 +3,8 @@
 import { useState, useTransition, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Search, Plus, Edit3, Trash2, CheckCircle2, XCircle, Save, X,
-  Loader2, Filter, Star, MapPin, Award, Eye, EyeOff,
-} from 'lucide-react';
+  IconSearch as Search, IconPlus as Plus, IconPencil as Edit3, IconTrash as Trash2, IconCircleCheck as CheckCircle2, IconCircleX as XCircle, IconDeviceFloppy as Save, IconX as X, IconLoader2 as Loader2, IconFilter as Filter, IconStar as Star, IconMapPin as MapPin, IconAward as Award, IconEye as Eye, IconEyeOff as EyeOff,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { useConfirm } from '@/components/ui';
 import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWrapper';
@@ -14,6 +13,7 @@ import {
 } from './actions';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Doctor {
   id: string;
   full_name: string;
@@ -184,7 +184,7 @@ export default function DoctorsAdminClient({ doctors }: Props) {
         >
           <option value="">كل التخصصات</option>
           {SPECIALTIES.map((s) => (
-            <option key={s.id} value={s.id}>{s.emoji} {s.label}</option>
+            <option key={s.id} value={s.id}>{s.label}</option>
           ))}
         </select>
 
@@ -257,7 +257,7 @@ export default function DoctorsAdminClient({ doctors }: Props) {
                       </div>
                     </td>
                     <td style={tdStyle}>
-                      {specMeta?.emoji} {specMeta?.label || d.specialty}
+                      <EmojiIcon e={specMeta?.emoji} /> {specMeta?.label || d.specialty}
                     </td>
                     <td style={tdStyle}>
                       {d.clinic_city || '—'}
@@ -272,7 +272,7 @@ export default function DoctorsAdminClient({ doctors }: Props) {
                     </td>
                     <td style={tdStyle}>
                       {d.rating_count > 0 ? (
-                        <span>⭐ {d.rating_avg.toFixed(1)} ({d.rating_count})</span>
+                        <span><EmojiIcon e="⭐" /> {d.rating_avg.toFixed(1)} ({d.rating_count})</span>
                       ) : (
                         '—'
                       )}
@@ -566,7 +566,7 @@ function DoctorModal({
           <Field label="التخصص *">
             <select value={specialty} onChange={(e) => setSpecialty(e.target.value)} style={inputStyle}>
               {SPECIALTIES.map((s) => (
-                <option key={s.id} value={s.id}>{s.emoji} {s.label}</option>
+                <option key={s.id} value={s.id}>{s.label}</option>
               ))}
             </select>
           </Field>
@@ -621,7 +621,7 @@ function DoctorModal({
         {/* 🆕 V31: موقع العيادة على الخريطة (للأطباء بعيادة ثابتة) */}
         <div style={{ marginBottom: 12 }}>
           <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 6, color: '#2C2C2A' }}>
-            📍 موقع العيادة على الخريطة (اختياري)
+            <EmojiIcon e="📍" /> موقع العيادة على الخريطة (اختياري)
           </label>
           <AdminLocationPickerWrapper
             initialLat={clinicLat}
@@ -653,7 +653,7 @@ function DoctorModal({
         </Field>
 
         <div style={{ marginTop: 14, padding: 12, background: 'var(--paper-3)', borderRadius: 10 }}>
-          <h4 style={{ fontSize: 13, fontWeight: 800, margin: '0 0 8px' }}>💰 الأسعار (د.ع)</h4>
+          <h4 style={{ fontSize: 13, fontWeight: 800, margin: '0 0 8px' }}><EmojiIcon e="💰" /> الأسعار (د.ع)</h4>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
             <Field label="زيارة منزلية">
               <input

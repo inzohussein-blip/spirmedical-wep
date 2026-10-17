@@ -4,11 +4,11 @@ import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import LazyImage from '@/components/ui/LazyImage';
 import {
-  ArrowRight, Search, MapPin, Star, Stethoscope, Video,
-  Home, Building2, Languages, Award, CheckCircle2, Clock,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconSearch as Search, IconMapPin as MapPin, IconStar as Star, IconStethoscope as Stethoscope, IconVideo as Video, IconHome as Home, IconBuilding as Building2, IconLanguage as Languages, IconAward as Award, IconCircleCheck as CheckCircle2, IconClock as Clock,
+} from '@tabler/icons-react';
 import { formatPrice, formatNumber } from '@/lib/format/price';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Doctor {
   id: string;
   full_name: string;
@@ -175,7 +175,7 @@ export default function DoctorsClient({ doctors, initialSpecialty = '', videoOnl
                     flexShrink: 0,
                   }}
                 >
-                  {meta.emoji} {meta.label}
+                  <EmojiIcon e={meta.emoji} /> {meta.label}
                 </button>
               );
             })}
@@ -254,7 +254,7 @@ export default function DoctorsClient({ doctors, initialSpecialty = '', videoOnl
                         </div>
 
                         <div style={{ fontSize: 12, color: 'var(--ink-3)', marginTop: 2 }}>
-                          {specMeta?.emoji} {specMeta?.label || d.specialty}
+                          <EmojiIcon e={specMeta?.emoji} /> {specMeta?.label || d.specialty}
                           {d.sub_specialty && ` · ${d.sub_specialty}`}
                         </div>
 

@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { TrendingUp, TrendingDown, Minus, Calendar } from 'lucide-react';
+import {
+  IconTrendingUp as TrendingUp, IconTrendingDown as TrendingDown, IconMinus as Minus, IconCalendar as Calendar,
+} from '@tabler/icons-react';
 
 interface TrendableTest {
   testId: string;

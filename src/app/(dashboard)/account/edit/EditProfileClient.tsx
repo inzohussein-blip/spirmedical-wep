@@ -5,7 +5,9 @@ import { updateProfile } from './actions';
 import { useFormErrors } from '@/lib/forms/useFormErrors';
 import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
 import FieldError from '@/components/forms/FieldError';
-import { AlertTriangle, CheckCircle2 } from 'lucide-react';
+import {
+  IconAlertTriangle as AlertTriangle, IconCircleCheck as CheckCircle2,
+} from '@tabler/icons-react';
 
 const PROFILE_FIELD_LABELS: Record<string, string> = { fullName: 'الاسم الكامل' };
 

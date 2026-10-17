@@ -3,8 +3,11 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { acceptOrder, startOrder, completeOrder } from './actions';
-import { AlertTriangle, CheckCircle2, Play, Phone } from 'lucide-react';
+import {
+  IconAlertTriangle as AlertTriangle, IconCircleCheck as CheckCircle2, IconPlayerPlay as Play, IconPhone as Phone,
+} from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Props {
   orderId: string;
   status: string;
@@ -110,7 +113,7 @@ export default function OrderActionsBar({ orderId, status, isMine, canAccept, pa
           className="scr-empty-cta"
           style={{ display: 'block', width: '100%' }}
         >
-          ✓ إنهاء الخدمة
+          <EmojiIcon e="✓" /> إنهاء الخدمة
         </button>
       )}
 

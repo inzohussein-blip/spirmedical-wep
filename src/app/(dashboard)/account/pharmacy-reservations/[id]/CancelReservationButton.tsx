@@ -2,7 +2,9 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { XCircle, AlertTriangle } from 'lucide-react';
+import {
+  IconCircleX as XCircle, IconAlertTriangle as AlertTriangle,
+} from '@tabler/icons-react';
 import { cancelPharmacyReservation } from '@/app/(dashboard)/services/pharmacies/actions';
 
 export default function CancelReservationButton({ reservationId }: { reservationId: string }) {

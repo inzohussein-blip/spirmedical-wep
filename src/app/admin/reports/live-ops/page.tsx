@@ -7,6 +7,7 @@ import { Card, EmptyState, StatusBadge } from '@/components/ui';
 import AutoRefresh from '@/components/admin/AutoRefresh';
 import { baghdadDayWindow } from '@/lib/time/baghdad-day';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -117,7 +118,7 @@ export default async function LiveOpsPage() {
           ← العودة للتقارير
         </Link>
         <h1 style={{ fontSize: 22, fontWeight: 800, margin: '8px 0 4px' }}>
-          🎯 العمليات المباشرة
+          <EmojiIcon e="🎯" /> العمليات المباشرة
         </h1>
         <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '0 0 12px' }}>
           الطلبات النشطة والأخصائيين على الخريطة
@@ -137,7 +138,7 @@ export default async function LiveOpsPage() {
       >
         <Card size="md">
           <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>
-            🎯 الطلبات النشطة
+            <EmojiIcon e="🎯" /> الطلبات النشطة
           </div>
           <div
             style={{
@@ -153,7 +154,7 @@ export default async function LiveOpsPage() {
 
         <Card size="md">
           <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>
-            👨‍⚕️ أخصائيون متاحون
+            <EmojiIcon e="👨‍⚕️" /> أخصائيون متاحون
           </div>
           <div
             style={{
@@ -169,7 +170,7 @@ export default async function LiveOpsPage() {
 
         <Card size="md">
           <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>
-            ⏳ بانتظار التأكيد
+            <EmojiIcon e="⏳" /> بانتظار التأكيد
           </div>
           <div
             style={{
@@ -185,7 +186,7 @@ export default async function LiveOpsPage() {
 
         <Card size="md">
           <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>
-            🚀 جارٍ التنفيذ
+            <EmojiIcon e="🚀" /> جارٍ التنفيذ
           </div>
           <div
             style={{
@@ -225,7 +226,7 @@ export default async function LiveOpsPage() {
       {activeOrders && activeOrders.length > 0 && (
         <Card style={{ marginTop: 16 }}>
           <h2 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 12px' }}>
-            📋 الطلبات النشطة ({activeOrders.length})
+            <EmojiIcon e="📋" /> الطلبات النشطة ({activeOrders.length})
           </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {activeOrders.map((o) => (

@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { registerWithEmail } from '../email-actions';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = {
   title: 'تسجيل بالبريد · سباير ميديكال',
 };
@@ -28,7 +29,7 @@ export default async function EmailRegisterPage(
         </div>
 
         <div className="auth-title-section" style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '48px', marginBottom: '12px' }}>📧</div>
+          <div style={{ fontSize: '48px', marginBottom: '12px' }}><EmojiIcon e="📧" /></div>
           <h2 className="auth-title">تحقّق من بريدك</h2>
           <p className="auth-subtitle">
             أرسلنا رابط تفعيل إلى

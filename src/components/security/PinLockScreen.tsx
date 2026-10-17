@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import EmojiIcon from '@/components/ui/EmojiIcon';
 import { verifyPin } from '@/lib/services/pin-actions';
 
 interface Props {
@@ -242,7 +243,7 @@ export default function PinLockScreen({ onUnlock }: Props) {
             textDecoration: 'none',
           }}
         >
-          🚨 طوارئ SOS
+          <EmojiIcon e="🚨" /> طوارئ SOS
         </a>
 
         <a

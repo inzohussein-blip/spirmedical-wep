@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { OpsHealth } from '@/lib/admin/ops-health';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /**
  * بطاقتا صحّة التشغيل أعلى لوحة الإدارة. تظهران حين يوجد ما يستدعي تدخّلاً،
  * وتصمتان حين يكون كلُّ شيءٍ سليماً — لا ضجيجَ دائم يتعلّم المشرفُ تجاهله.
@@ -27,7 +28,7 @@ export default function OpsHealthCards({ health }: { health: OpsHealth }) {
       {uncovered.length > 0 && (
         <div role="alert" style={card} data-testid="ops-no-specialists">
           <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--ink)', marginBottom: 6 }}>
-            🚫 خدماتٌ مغلقة: لا مختصَّ معتمَداً
+            <EmojiIcon e="🚫" /> خدماتٌ مغلقة: لا مختصَّ معتمَداً
           </div>
           <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '0 0 10px', lineHeight: 1.7 }}>
             المرضى يرون «غير متاحة حالياً» ولا يستطيعون رفعَ طلب لهذه الأنواع.
@@ -52,7 +53,7 @@ export default function OpsHealthCards({ health }: { health: OpsHealth }) {
       {q && queueTrouble && (
         <div role="alert" style={card} data-testid="ops-queue-health">
           <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--ink)', marginBottom: 6 }}>
-            📨 رسائلُ لا تصل
+            <EmojiIcon e="📨" /> رسائلُ لا تصل
           </div>
           <p style={{ fontSize: 13, color: 'var(--ink-2)', margin: '0 0 8px', lineHeight: 1.7 }}>
             {q.failed24h.toLocaleString('ar-IQ-u-nu-latn')} فشلت نهائياً خلال 24 ساعة ·{' '}
@@ -75,7 +76,7 @@ export default function OpsHealthCards({ health }: { health: OpsHealth }) {
       {wa && waDown && (
         <div role="alert" style={card} data-testid="ops-wa-gateway">
           <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--ink)', marginBottom: 6 }}>
-            📲 بوّابة واتساب منقطعة
+            <EmojiIcon e="📲" /> بوّابة واتساب منقطعة
           </div>
           <p style={{ fontSize: 13, color: 'var(--ink-2)', margin: '0 0 8px', lineHeight: 1.7 }}>
             زرُّ «تحقّق عبر واتساب» مخفيٌّ عن العملاء الآن — رمزُ الدخول والرمزُ المؤقّت من الإدارة يعملان.

@@ -1,18 +1,18 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
-import type { LucideIcon } from 'lucide-react';
-import {
-  ArrowRight, Droplet, Syringe, MessageCircle, Phone, ClipboardList,
-  BarChart3, Star, Zap, CheckCircle2, RefreshCw, TrendingUp,
-} from 'lucide-react';
 
+import {
+  IconArrowRight as ArrowRight, IconDroplet as Droplet, IconVaccine as Syringe, IconMessageCircle as MessageCircle, IconPhone as Phone, IconClipboardList as ClipboardList, IconChartBar as BarChart3, IconStar as Star, IconBolt as Zap, IconCircleCheck as CheckCircle2, IconRefresh as RefreshCw, IconTrendingUp as TrendingUp,
+} from '@tabler/icons-react';
+
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'الإحصاءات · لوحة الأخصائي',
 };
 
-const SERVICE_ICONS: Record<string, LucideIcon> = {
+const SERVICE_ICONS: Record<string, TablerIcon> = {
   'سحب دم منزلي':         Droplet,
   'تمريض منزلي':          Syringe,
   'استشارة طبية مرئية':   MessageCircle,
@@ -58,7 +58,7 @@ export default async function SpecialistStatsPage() {
     const name = row.service_type?.trim() || 'أخرى';
     serviceTally.set(name, (serviceTally.get(name) ?? 0) + 1);
   }
-  const topServices: Array<{ name: string; count: number; icon: LucideIcon }> = [
+  const topServices: Array<{ name: string; count: number; icon: TablerIcon }> = [
     ...serviceTally.entries(),
   ]
     .sort((a, b) => b[1] - a[1])

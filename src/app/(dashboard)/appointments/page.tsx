@@ -4,6 +4,7 @@ import RefreshWrapper from '@/components/pwa/RefreshWrapper';
 import EnhancedEmptyState from '@/components/ui/EnhancedEmptyState';
 import { baghdadDayWindow } from '@/lib/time/baghdad-day';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = {
   title: 'مواعيدي · سباير ميديكال',
   description: 'إدارة مواعيدك الطبية وتتبع حالتها — قيد التنفيذ، مكتملة، ملغاة',
@@ -144,13 +145,13 @@ export default async function AppointmentsPage(props: Props) {
             }
             primaryAction={{
               href: '/appointments/new',
-              label: '➕ احجز خدمتك الأولى',
+              label: 'احجز خدمتك الأولى',
             }}
             secondaryActions={
               filter === 'all'
                 ? [
-                    { href: '/services', label: '🔍 استكشف الخدمات' },
-                    { href: '/account/help', label: '💬 اسأل دعم' },
+                    { href: '/services', label: 'استكشف الخدمات' },
+                    { href: '/account/help', label: 'اسأل الدعم' },
                   ]
                 : [
                     { href: '/appointments', label: 'عرض كل الطلبات' },
@@ -165,7 +166,7 @@ export default async function AppointmentsPage(props: Props) {
               return (
                 <Link key={appt.id} href={`/appointments/${appt.id}`} className="appt-card">
                   <div className="appt-card-head">
-                    <div className="appt-card-icon" aria-hidden="true">{icon}</div>
+                    <div className="appt-card-icon" aria-hidden="true"><EmojiIcon e={icon} /></div>
                     <div className="appt-card-info">
                       <div className="appt-card-title">{appt.service_type}</div>
                       <div className="appt-card-when">{formatDateRelative(appt.scheduled_at)}</div>
@@ -174,17 +175,17 @@ export default async function AppointmentsPage(props: Props) {
                       {status.pillClass.includes('status-pill-active') && (
                         <span className="status-pill-icon" aria-hidden="true" />
                       )}
-                      {status.icon && status.icon !== '' && <span aria-hidden="true">{status.icon}</span>}
+                      {status.icon && status.icon !== '' && <span aria-hidden="true"><EmojiIcon e={status.icon} /></span>}
                       {status.label}
                     </span>
                   </div>
                   {(appt.address || appt.notes) && (
                     <div className="appt-card-meta">
                       {appt.address && (
-                        <span className="appt-card-meta-item">📍 {appt.address.slice(0, 35)}{appt.address.length > 35 ? '...' : ''}</span>
+                        <span className="appt-card-meta-item"><EmojiIcon e="📍" /> {appt.address.slice(0, 35)}{appt.address.length > 35 ? '...' : ''}</span>
                       )}
                       {appt.notes && (
-                        <span className="appt-card-meta-item">📝 {appt.notes.slice(0, 30)}{appt.notes.length > 30 ? '...' : ''}</span>
+                        <span className="appt-card-meta-item"><EmojiIcon e="📝" /> {appt.notes.slice(0, 30)}{appt.notes.length > 30 ? '...' : ''}</span>
                       )}
                     </div>
                   )}

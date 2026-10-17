@@ -2,16 +2,16 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import type { LucideIcon } from 'lucide-react';
-import {
-  Wind, Heart, Flame, Droplet, Bone, Activity,
-  ArrowRight, Phone, AlertTriangle, Lightbulb, Ambulance,
-} from 'lucide-react';
 
+import {
+  IconWind as Wind, IconHeart as Heart, IconFlame as Flame, IconDroplet as Droplet, IconBone as Bone, IconActivity as Activity, IconArrowRight as ArrowRight, IconPhone as Phone, IconAlertTriangle as AlertTriangle, IconBulb as Lightbulb, IconAmbulance as Ambulance,
+} from '@tabler/icons-react';
+
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 interface FirstAidCase {
   id: string;
   title: string;
-  icon: LucideIcon;
+  icon: TablerIcon;
   severity: 'critical' | 'urgent' | 'normal';
   steps: string[];
   warning?: string;

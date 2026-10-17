@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { AlertTriangle, Trash2, AlertCircle, Info } from 'lucide-react';
+import {
+  IconAlertTriangle as AlertTriangle, IconTrash as Trash2, IconAlertCircle as AlertCircle, IconInfoCircle as Info,
+} from '@tabler/icons-react';
 import {
   BottomSheet,
   BottomSheetHeader,

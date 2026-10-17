@@ -2,13 +2,13 @@
 
 import { useState, useRef, useCallback } from 'react';
 import {
-  Camera, X, RotateCcw, Check, Image as ImageIcon,
-  Loader2, Upload, ZoomIn, ZoomOut,
-} from 'lucide-react';
+  IconCamera as Camera, IconX as X, IconRotate as RotateCcw, IconCheck as Check, IconPhoto as ImageIcon, IconLoader2 as Loader2, IconUpload as Upload, IconZoomIn as ZoomIn, IconZoomOut as ZoomOut,
+} from '@tabler/icons-react';
 import { compressImage, formatFileSize, isValidImage } from '@/lib/image-utils';
 import { haptic } from '@/lib/haptic';
 import { toast } from '@/components/ui/Toaster';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /**
  * ═══════════════════════════════════════════════════════════════
  * 📷 Camera Capture (V25.16)
@@ -252,7 +252,7 @@ export default function CameraCapture({
             fontWeight: 700,
           }}
         >
-          ✨ وفّرنا {formatFileSize(totalSaved)} عبر الضغط
+          <EmojiIcon e="✨" /> وفّرنا {formatFileSize(totalSaved)} عبر الضغط
         </div>
       )}
 

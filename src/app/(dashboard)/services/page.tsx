@@ -6,7 +6,9 @@
 
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import {
+  IconArrowRight as ArrowRight,
+} from '@tabler/icons-react';
 import ServicesMapHubWrapper, { type ServiceLocation } from '@/components/maps/ServicesMapHubWrapper';
 import type { ServiceMarkerType } from '@/lib/maps/markers';
 import {
@@ -212,7 +214,7 @@ export default async function ServicesPage() {
               background: '#FCE8E6', opacity: 0.7, top: -12, left: -12,
             }} />
             <span style={{
-              position: 'absolute', top: 10, right: 10,
+              position: 'absolute', top: 10, left: 10,
               background: '#FBBC04', color: '#202124',
               fontSize: 11, fontWeight: 700,
               padding: '2px 7px', borderRadius: 9999, zIndex: 2,

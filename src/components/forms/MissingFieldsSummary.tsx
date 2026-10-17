@@ -1,6 +1,8 @@
 'use client';
 
-import { AlertTriangle } from 'lucide-react';
+import {
+  IconAlertTriangle as AlertTriangle,
+} from '@tabler/icons-react';
 
 /**
  * صندوق «الحقول الناقصة» — مشترك بين تدفّقات رفع الطلبات.

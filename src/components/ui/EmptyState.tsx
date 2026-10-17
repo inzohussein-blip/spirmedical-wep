@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import EmojiIcon from './EmojiIcon';
 
 /**
  * ═══════════════════════════════════════════════════════════════
@@ -16,7 +17,7 @@ import { cn } from '@/lib/utils';
  *     action={<Button>+ طلب جديد</Button>}
  *   />
  *
- *   // أو مع lucide icon:
+ *   // أو مع أيقونة Tabler:
  *   <EmptyState
  *     icon={<Inbox size={48} />}
  *     title="..." description="..."
@@ -28,7 +29,7 @@ type EmptyStateSize = 'sm' | 'md' | 'lg';
 type EmptyStateVariant = 'default' | 'bordered' | 'plain';
 
 export interface EmptyStateProps {
-  /** أيقونة (emoji أو lucide icon component) */
+  /** أيقونة (emoji أو مكوّن أيقونة Tabler) */
   icon?: ReactNode;
   /** عنوان رئيسي */
   title: string;
@@ -103,7 +104,7 @@ export function EmptyState({
           style={{ fontSize: config.iconSize }}
           aria-hidden="true"
         >
-          {icon}
+          <EmojiIcon e={icon} size="1em" />
         </div>
       )}
 

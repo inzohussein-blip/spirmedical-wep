@@ -2,8 +2,11 @@
 
 import { useState, useTransition } from 'react';
 import { setPin, disablePin, changePin } from '@/lib/services/pin-actions';
-import { CheckCircle2, AlertTriangle } from 'lucide-react';
+import {
+  IconCircleCheck as CheckCircle2, IconAlertTriangle as AlertTriangle,
+} from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Props {
   pinEnabled: boolean;
 }
@@ -126,7 +129,7 @@ export default function PinSection({ pinEnabled: initialEnabled }: Props) {
   return (
     <>
       <div className="scr-list-item">
-        <div className="scr-list-item-icon" aria-hidden="true">🔢</div>
+        <div className="scr-list-item-icon" aria-hidden="true"><EmojiIcon e="🔢" /></div>
         <div className="scr-list-item-content">
           <div className="scr-list-item-title">قفل بـ PIN</div>
           <div className="scr-list-item-subtitle">
@@ -179,7 +182,7 @@ export default function PinSection({ pinEnabled: initialEnabled }: Props) {
             style={{ background: 'var(--white)', borderRadius: 20, padding: 24, width: '100%', maxWidth: 360 }}
           >
             <div style={{ textAlign: 'center', marginBottom: 16 }}>
-              <div style={{ fontSize: 38, marginBottom: 8 }}>🔢</div>
+              <div style={{ fontSize: 38, marginBottom: 8 }}><EmojiIcon e="🔢" /></div>
               <h2 style={{ fontSize: 18, fontWeight: 800, color: 'var(--ink)', margin: '0 0 4px' }}>
                 {mode === 'enable-1' && 'اختر PIN جديد'}
                 {mode === 'enable-2' && 'أكِّد الـ PIN'}

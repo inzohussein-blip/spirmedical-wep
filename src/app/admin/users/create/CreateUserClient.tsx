@@ -27,6 +27,7 @@ import { SPECIALIST_META, type SpecialistType } from '@/lib/specialist-types';
 import { isEmail } from '@/lib/validations/is-email';
 import { activationMessage, credentialsMessage, displayPhone, waChatLink } from '@/lib/whatsapp/share';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 type Role = 'patient' | 'specialist' | 'admin' | 'super_admin' | 'manager' | 'support';
 type Kind = 'patient' | 'specialist' | 'staff';
 
@@ -246,7 +247,7 @@ export default function CreateUserClient({ callerRole }: Props) {
                   >
                     <option value="">— اختر التخصّص —</option>
                     {Object.values(SPECIALIST_META).map((meta) => (
-                      <option key={meta.type} value={meta.type}>{meta.icon} {meta.label}</option>
+                      <option key={meta.type} value={meta.type}>{meta.label}</option>
                     ))}
                   </select>
                 </Field>
@@ -419,7 +420,7 @@ function KindCard(props: { onClick: () => void; icon: React.ReactNode; tint: str
   return (
     <button type="button" onClick={props.onClick} style={kindCard}>
       <div style={{ width: 48, height: 48, borderRadius: 12, background: props.tint, color: props.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-        {props.icon}
+        <EmojiIcon e={props.icon} />
       </div>
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: 15, fontWeight: 700, color: '#202124' }}>{props.title}</div>

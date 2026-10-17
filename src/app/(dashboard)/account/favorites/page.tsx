@@ -6,9 +6,8 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import {
-  ArrowRight, Heart, Building2, Stethoscope, Eye, Pill, UserCircle,
-  Brain, Apple, Activity, MapPin, Star,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconHeart as Heart, IconBuilding as Building2, IconStethoscope as Stethoscope, IconEye as Eye, IconPill as Pill, IconUserCircle as UserCircle, IconBrain as Brain, IconApple as Apple, IconActivity as Activity, IconMapPin as MapPin, IconStar as Star,
+} from '@tabler/icons-react';
 import type { ServiceType } from '@/components/services/favorites-actions';
 
 export const dynamic = 'force-dynamic';

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 import { sendManualWhatsApp } from './actions';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export default function NotificationsClient() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -42,7 +43,7 @@ export default function NotificationsClient() {
         border: 0, borderRadius: 10, fontSize: 13, fontWeight: 800,
         cursor: 'pointer', fontFamily: 'inherit',
       }}>
-        💬 إرسال رسالة جديدة
+        <EmojiIcon e="💬" /> إرسال رسالة جديدة
       </button>
 
       {showForm && (
@@ -57,12 +58,12 @@ export default function NotificationsClient() {
             width: 480, maxWidth: '90vw', zIndex: 101,
           }}>
             <h2 id="wa-send-title" style={{ fontSize: 18, fontWeight: 800, margin: '0 0 14px' }}>
-              💬 إرسال رسالة WhatsApp
+              <EmojiIcon e="💬" /> إرسال رسالة WhatsApp
             </h2>
 
             {error && (
               <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '10px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700, marginBottom: 12 }}>
-                ⚠️ {error}
+                <EmojiIcon e="⚠️" /> {error}
               </div>
             )}
 
@@ -94,7 +95,7 @@ export default function NotificationsClient() {
                 style={{ ...inputStyle, resize: 'vertical' }}
               />
               <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 4 }}>
-                💡 يدعم WhatsApp: *bold* _italic_ ~strikethrough~
+                <EmojiIcon e="💡" /> يدعم WhatsApp: *bold* _italic_ ~strikethrough~
               </div>
             </div>
 

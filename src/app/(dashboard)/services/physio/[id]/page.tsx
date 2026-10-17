@@ -6,13 +6,13 @@ import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowRight, MapPin, Phone, Star, CheckCircle2,
-  Home, Building2, Award, Activity, Clock,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconMapPin as MapPin, IconPhone as Phone, IconStar as Star, IconCircleCheck as CheckCircle2, IconHome as Home, IconBuilding as Building2, IconAward as Award, IconActivity as Activity, IconClock as Clock,
+} from '@tabler/icons-react';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import { checkIsFavorite } from '@/components/services/favorites-actions';
 import { formatPrice, count, formatRating, formatNumber } from '@/lib/format/price';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
@@ -89,7 +89,7 @@ export default async function PhysioSpecialistPage(
           <Link href="/services/physio" className="scr-back-btn" aria-label="العودة">
             <ArrowRight size={20} strokeWidth={2.2} />
           </Link>
-          <h1 className="scr-page-title" style={{ fontSize: 14 }}>🏃 تفاصيل الأخصائي</h1>
+          <h1 className="scr-page-title" style={{ fontSize: 14 }}><EmojiIcon e="🏃" /> تفاصيل الأخصائي</h1>
           <ServiceFavoriteButton
             serviceType="physio"
             serviceId={specialist.id}
@@ -382,7 +382,7 @@ export default async function PhysioSpecialistPage(
                     borderRadius: 8,
                   }}
                 >
-                  <span style={{ fontSize: 18 }}>{t.icon}</span>
+                  <span style={{ fontSize: 18 }}><EmojiIcon e={t.icon} /></span>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 12, fontWeight: 700 }}>{t.name_ar}</div>
                     {t.description && (
@@ -443,7 +443,7 @@ function Stat({ icon, value, label }: { icon: React.ReactNode; value: string; la
       textAlign: 'center',
     }}>
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 2, opacity: 0.85 }}>
-        {icon}
+        <EmojiIcon e={icon} />
       </div>
       <div style={{ fontSize: 14, fontWeight: 900 }}>{value}</div>
       <div style={{ fontSize: 11, opacity: 0.75, marginTop: 1 }}>{label}</div>

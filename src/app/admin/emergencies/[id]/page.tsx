@@ -10,6 +10,7 @@ import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import EmergencyActions from './EmergencyActions';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'تفاصيل بلاغ طوارئ - Spir Medical' };
 
@@ -87,7 +88,7 @@ export default async function EmergencyDetailPage(
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
         <h1 style={{ fontSize: 20, fontWeight: 900, margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}>
-          {reason.emoji} تفاصيل البلاغ
+          <EmojiIcon e={reason.emoji} /> تفاصيل البلاغ
         </h1>
         <Link
           href="/admin/emergencies"
@@ -109,7 +110,7 @@ export default async function EmergencyDetailPage(
           <div style={{ fontSize: 11, opacity: 0.9 }}>الحالة</div>
           <div style={{ fontSize: 18, fontWeight: 900 }}>{statusCfg.label}</div>
         </div>
-        <div style={{ fontSize: 28 }}>{reason.emoji}</div>
+        <div style={{ fontSize: 28 }}><EmojiIcon e={reason.emoji} /></div>
       </div>
 
       {/* Details card */}
@@ -151,7 +152,7 @@ export default async function EmergencyDetailPage(
             padding: 14, fontSize: 14, fontWeight: 800, textDecoration: 'none',
           }}
         >
-          📞 اتصل بالممرض الآن
+          <EmojiIcon e="📞" /> اتصل بالممرض الآن
         </a>
       )}
 

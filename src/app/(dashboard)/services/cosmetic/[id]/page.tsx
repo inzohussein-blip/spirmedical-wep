@@ -6,11 +6,11 @@ import { createClient } from '@/lib/supabase/server';
 import { notFound, redirect } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowRight, Star, Heart, CheckCircle2, AlertCircle, 
-  Package, Award, ShoppingBag,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconStar as Star, IconHeart as Heart, IconCircleCheck as CheckCircle2, IconAlertCircle as AlertCircle, IconPackage as Package, IconAward as Award, IconShoppingBag as ShoppingBag,
+} from '@tabler/icons-react';
 import CosmeticProductActions from './CosmeticProductActions';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
@@ -120,7 +120,7 @@ export default async function CosmeticProductDetailPage(
           <Link href="/services/cosmetic" className="scr-back-btn" aria-label="العودة">
             <ArrowRight size={20} strokeWidth={2.2} />
           </Link>
-          <h1 className="scr-page-title" style={{ fontSize: 14 }}>💄 تفاصيل المنتج</h1>
+          <h1 className="scr-page-title" style={{ fontSize: 14 }}><EmojiIcon e="💄" /> تفاصيل المنتج</h1>
           <div className="scr-page-spacer" />
         </div>
 
@@ -252,7 +252,7 @@ export default async function CosmeticProductDetailPage(
                 fontSize: 11,
                 fontWeight: 700,
               }}>
-                ✓ متوفّر
+                <EmojiIcon e="✓" /> متوفّر
               </span>
             ) : (
               <span style={{
@@ -263,7 +263,7 @@ export default async function CosmeticProductDetailPage(
                 fontSize: 11,
                 fontWeight: 700,
               }}>
-                ✗ غير متوفّر
+                <EmojiIcon e="✗" /> غير متوفّر
               </span>
             )}
             {product.category && (

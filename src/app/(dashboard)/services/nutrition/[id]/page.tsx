@@ -6,13 +6,13 @@ import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowRight, MapPin, Star, CheckCircle2,
-  Award, TrendingUp, Globe, Users,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconMapPin as MapPin, IconStar as Star, IconCircleCheck as CheckCircle2, IconAward as Award, IconTrendingUp as TrendingUp, IconWorld as Globe, IconUsers as Users,
+} from '@tabler/icons-react';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import { checkIsFavorite } from '@/components/services/favorites-actions';
 import { formatPrice, count, formatRating, formatNumber } from '@/lib/format/price';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 const SPECIALTY_LABELS: Record<string, { label: string; icon: string }> = {
@@ -73,7 +73,7 @@ export default async function NutritionDetailPage(
           <Link href="/services/nutrition" className="scr-back-btn" aria-label="العودة">
             <ArrowRight size={20} strokeWidth={2.2} />
           </Link>
-          <h1 className="scr-page-title" style={{ fontSize: 14 }}>🥗 تفاصيل الأخصائي</h1>
+          <h1 className="scr-page-title" style={{ fontSize: 14 }}><EmojiIcon e="🥗" /> تفاصيل الأخصائي</h1>
           <ServiceFavoriteButton
             serviceType="nutritionist"
             serviceId={n.id}
@@ -97,7 +97,7 @@ export default async function NutritionDetailPage(
               fontSize: 36,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               flexShrink: 0,
-            }}>🥗</div>
+            }}><EmojiIcon e="🥗" /></div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
                 <h2 style={{ fontSize: 18, fontWeight: 900, margin: 0 }}>
@@ -138,7 +138,7 @@ export default async function NutritionDetailPage(
         {/* Specialties */}
         {n.specialties && n.specialties.length > 0 && (
           <div style={{ marginBottom: 14 }}>
-            <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 8 }}>🎯 التخصّصات</h3>
+            <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 8 }}><EmojiIcon e="🎯" /> التخصّصات</h3>
             <div style={{
               display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6,
             }}>
@@ -169,7 +169,7 @@ export default async function NutritionDetailPage(
         {/* Certifications */}
         {n.certifications && n.certifications.length > 0 && (
           <div style={{ marginBottom: 14 }}>
-            <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 8 }}>📜 الشهادات</h3>
+            <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 8 }}><EmojiIcon e="📜" /> الشهادات</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               {n.certifications.map((c: string, i: number) => (
                 <div key={i} style={{
@@ -215,7 +215,7 @@ export default async function NutritionDetailPage(
           marginBottom: 14,
         }}>
           <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 10, color: 'var(--emerald)' }}>
-            💰 الباقات المتوفّرة
+            <EmojiIcon e="💰" /> الباقات المتوفّرة
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
             <PackageCard
@@ -252,13 +252,13 @@ export default async function NutritionDetailPage(
               background: 'var(--emerald)',
             }}
           >
-            📅 احجز خطة شهرية{formatPrice(n.monthly_plan_price) ? ` - ${formatPrice(n.monthly_plan_price)}` : ''}
+            <EmojiIcon e="📅" /> احجز خطة شهرية{formatPrice(n.monthly_plan_price) ? ` - ${formatPrice(n.monthly_plan_price)}` : ''}
           </Link>
           <Link
             href={`/services/booking?service=nutrition&id=${n.id}&package=initial`}
             style={{...primaryButton, background: 'var(--white)', color: 'var(--emerald)', border: '1px solid var(--emerald)', boxShadow: 'none'}}
           >
-            💬 استشارة أولى{formatPrice(n.initial_consultation_price) ? ` - ${formatPrice(n.initial_consultation_price)}` : ''}
+            <EmojiIcon e="💬" /> استشارة أولى{formatPrice(n.initial_consultation_price) ? ` - ${formatPrice(n.initial_consultation_price)}` : ''}
           </Link>
         </div>
       </div>
@@ -277,7 +277,7 @@ function PackageCard({ icon, title, subtitle, price, color, highlight }: {
       border: highlight ? '2px solid var(--emerald)' : '1px solid var(--line)',
       textAlign: 'center',
     }}>
-      <div style={{ fontSize: 18, marginBottom: 4 }}>{icon}</div>
+      <div style={{ fontSize: 18, marginBottom: 4 }}><EmojiIcon e={icon} /></div>
       <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>{title}</div>
       <div style={{ fontSize: 11, color: 'var(--ink-3)', marginBottom: 4 }}>{subtitle}</div>
       {formatNumber(price) ? (

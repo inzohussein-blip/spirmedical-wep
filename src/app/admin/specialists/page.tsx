@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { toSpecialistType, SPECIALIST_META, SPECIALIST_TYPES, type SpecialistType } from '@/lib/specialist-types';
 import { EmptyState } from '@/components/ui';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -47,7 +48,7 @@ export default async function SpecialistsListPage(props: { searchParams: Promise
     <>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--ink)', margin: 0 }}>
-          👨‍⚕️ الاختصاصيون
+          <EmojiIcon e="👨‍⚕️" /> الاختصاصيون
         </h1>
       </div>
       <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: '0 0 20px' }}>
@@ -72,7 +73,7 @@ export default async function SpecialistsListPage(props: { searchParams: Promise
           <select name="type" defaultValue={searchParams.type ?? ''} style={{ padding: '8px 12px', border: '1px solid var(--line)', borderRadius: 8, fontSize: 13, fontFamily: 'inherit' }}>
             <option value="">كل الأنواع</option>
             {SPECIALIST_TYPES.map((t) => (
-              <option key={t} value={t}>{SPECIALIST_META[t].icon} {SPECIALIST_META[t].label}</option>
+              <option key={t} value={t}>{SPECIALIST_META[t].label}</option>
             ))}
           </select>
         </div>
@@ -80,14 +81,14 @@ export default async function SpecialistsListPage(props: { searchParams: Promise
         <div>
           <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 4 }}>الحالة</label>
           <select name="status" defaultValue={searchParams.status ?? 'approved'} style={{ padding: '8px 12px', border: '1px solid var(--line)', borderRadius: 8, fontSize: 13, fontFamily: 'inherit' }}>
-            <option value="approved">✅ معتمد</option>
-            <option value="rejected">❌ مرفوض</option>
+            <option value="approved">معتمد</option>
+            <option value="rejected">مرفوض</option>
             <option value="all">الكل</option>
           </select>
         </div>
 
         <button type="submit" style={{ padding: '8px 20px', background: 'var(--emerald-deep)', color: 'var(--white)', border: 0, borderRadius: 8, fontSize: 12, fontWeight: 800, cursor: 'pointer' }}>
-          🔍 بحث
+          <EmojiIcon e="🔍" /> بحث
         </button>
       </form>
 
@@ -129,13 +130,13 @@ export default async function SpecialistsListPage(props: { searchParams: Promise
                     <td style={td}>{s.specialist_years_exp ? `${s.specialist_years_exp} سنة` : '—'}</td>
                     <td style={td}>
                       {s.is_suspended ? (
-                        <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--rose-soft)', color: 'var(--rose)', fontWeight: 800 }}>⛔ معلّق</span>
+                        <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--rose-soft)', color: 'var(--rose)', fontWeight: 800 }}><EmojiIcon e="⛔" /> معلّق</span>
                       ) : s.approval_status === 'approved' ? (
-                        <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', fontWeight: 800 }}>✅ نشط</span>
+                        <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', fontWeight: 800 }}><EmojiIcon e="✅" /> نشط</span>
                       ) : s.approval_status === 'rejected' ? (
-                        <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--rose-soft)', color: 'var(--rose)', fontWeight: 800 }}>❌ مرفوض</span>
+                        <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--rose-soft)', color: 'var(--rose)', fontWeight: 800 }}><EmojiIcon e="❌" /> مرفوض</span>
                       ) : (
-                        <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--amber-soft, #FEF7E0)', color: 'var(--amber-deep, #6B3A08)', fontWeight: 800 }}>⏳ معلّق</span>
+                        <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--amber-soft, #FEF7E0)', color: 'var(--amber-deep, #6B3A08)', fontWeight: 800 }}><EmojiIcon e="⏳" /> معلّق</span>
                       )}
                     </td>
                   </tr>

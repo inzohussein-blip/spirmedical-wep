@@ -2,7 +2,9 @@
 
 import { useState, useTransition } from 'react';
 import { updateSpecialistProfile } from './actions';
-import { AlertTriangle, CheckCircle2 } from 'lucide-react';
+import {
+  IconAlertTriangle as AlertTriangle, IconCircleCheck as CheckCircle2,
+} from '@tabler/icons-react';
 
 const GOVERNORATES = [
   'بغداد', 'البصرة', 'أربيل', 'الموصل', 'النجف', 'كربلاء',

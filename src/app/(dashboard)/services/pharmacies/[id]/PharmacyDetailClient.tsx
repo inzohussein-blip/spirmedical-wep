@@ -3,16 +3,15 @@
 import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import {
-  ArrowRight, Search, MapPin, Phone, Map, Clock, Pill,
-  CheckCircle2, XCircle, Filter, AlertCircle, Building2,
-  MessageCircle, Star, Package,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconSearch as Search, IconMapPin as MapPin, IconPhone as Phone, IconMap as Map, IconClock as Clock, IconPill as Pill, IconCircleCheck as CheckCircle2, IconCircleX as XCircle, IconFilter as Filter, IconAlertCircle as AlertCircle, IconBuilding as Building2, IconMessageCircle as MessageCircle, IconStar as Star, IconPackage as Package,
+} from '@tabler/icons-react';
 import ShareButton from '@/components/pwa/ShareButton';
 import PharmacyReservationModal from '@/components/pharmacies/PharmacyReservationModal';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import PharmacyRatingCard from './PharmacyRatingCard';
 import PhoneLink from '@/components/ui/PhoneLink';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Pharmacy {
   id: string;
   name: string;
@@ -464,7 +463,7 @@ export default function PharmacyDetailClient({
                     flexShrink: 0,
                   }}
                 >
-                  {meta.emoji} {meta.label}
+                  <EmojiIcon e={meta.emoji} /> {meta.label}
                 </button>
               );
             })}
@@ -538,7 +537,7 @@ export default function PharmacyDetailClient({
                         }}
                       />
                     ) : (
-                      <span>{catMeta.emoji}</span>
+                      <span><EmojiIcon e={catMeta.emoji} /></span>
                     )}
                   </div>
 
@@ -607,7 +606,7 @@ export default function PharmacyDetailClient({
                             color: 'var(--amber)',
                           }}
                         >
-                          📋 وصفة
+                          <EmojiIcon e="📋" /> وصفة
                         </span>
                       )}
                       {item.brand_variant && (
@@ -642,7 +641,7 @@ export default function PharmacyDetailClient({
                               flex: 1,
                             }}
                           >
-                            💬 {item.notes}
+                            <EmojiIcon e="💬" /> {item.notes}
                           </span>
                         )}
                         {item.custom_price && (
@@ -736,7 +735,7 @@ function StatPill({ icon, label, sub }: { icon: React.ReactNode; label: string; 
       }}
     >
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 2, opacity: 0.85 }}>
-        {icon}
+        <EmojiIcon e={icon} />
       </div>
       <div style={{ fontSize: 12, fontWeight: 900 }}>{label}</div>
       <div style={{ fontSize: 11, opacity: 0.75, marginTop: 1 }}>{sub}</div>

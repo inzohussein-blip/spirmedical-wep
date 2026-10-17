@@ -3,12 +3,12 @@
 import Link from 'next/link';
 import { useState, useMemo } from 'react';
 import {
-  ArrowRight, Search, MapPin, Phone, Star, Stethoscope,
-  Building2, Calendar, CheckCircle2, Clock, Languages,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconSearch as Search, IconMapPin as MapPin, IconPhone as Phone, IconStar as Star, IconStethoscope as Stethoscope, IconBuilding as Building2, IconCalendar as Calendar, IconCircleCheck as CheckCircle2, IconClock as Clock, IconLanguage as Languages,
+} from '@tabler/icons-react';
 import ExternalMapButton from '@/components/maps/ExternalMapButton';
 import PhoneLink from '@/components/ui/PhoneLink';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Doctor {
   id: string;
   full_name: string;
@@ -172,7 +172,7 @@ export default function ClinicsClient({ doctors }: Props) {
                 flexShrink: 0,
               }}
             >
-              {spec.emoji} {spec.label}
+              <EmojiIcon e={spec.emoji} /> {spec.label}
             </button>
           ))}
         </div>
@@ -218,7 +218,7 @@ export default function ClinicsClient({ doctors }: Props) {
                         flexShrink: 0,
                       }}
                     >
-                      🏛️
+                      <EmojiIcon e="🏛️" />
                     </div>
 
                     <div style={{ flex: 1, minWidth: 0 }}>

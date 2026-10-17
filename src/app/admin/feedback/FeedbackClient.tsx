@@ -3,12 +3,12 @@
 import { useState, useTransition, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  Star, Archive, CheckCircle2, Clock, AlertCircle,
-  MessageSquare, ThumbsUp, ThumbsDown, Lightbulb, Loader2,
-} from 'lucide-react';
+  IconStar as Star, IconArchive as Archive, IconCircleCheck as CheckCircle2, IconClock as Clock, IconAlertCircle as AlertCircle, IconMessage as MessageSquare, IconThumbUp as ThumbsUp, IconThumbDown as ThumbsDown, IconBulb as Lightbulb, IconLoader2 as Loader2,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import { updateFeedbackStatus } from './actions';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Feedback {
   id: string;
   user_id: string | null;
@@ -117,7 +117,7 @@ export default function FeedbackClient({ feedbackList, usersMap }: Props) {
         <FilterPill active={filterStatus === 'all'} onClick={() => setFilterStatus('all')}>كل الحالات</FilterPill>
         {Object.entries(STATUS_META).map(([key, meta]) => (
           <FilterPill key={key} active={filterStatus === key} onClick={() => setFilterStatus(key)}>
-            {meta.emoji} {meta.label}
+            <EmojiIcon e={meta.emoji} /> {meta.label}
           </FilterPill>
         ))}
       </div>
@@ -126,7 +126,7 @@ export default function FeedbackClient({ feedbackList, usersMap }: Props) {
         <FilterPill active={filterType === 'all'} onClick={() => setFilterType('all')}>كل الأنواع</FilterPill>
         {Object.entries(TYPE_META).map(([key, meta]) => (
           <FilterPill key={key} active={filterType === key} onClick={() => setFilterType(key)}>
-            {meta.emoji} {meta.label}
+            <EmojiIcon e={meta.emoji} /> {meta.label}
           </FilterPill>
         ))}
       </div>
@@ -169,7 +169,7 @@ export default function FeedbackClient({ feedbackList, usersMap }: Props) {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: 22, flexShrink: 0,
                   }}>
-                    {typeMeta.emoji}
+                    <EmojiIcon e={typeMeta.emoji} />
                   </div>
 
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -189,7 +189,7 @@ export default function FeedbackClient({ feedbackList, usersMap }: Props) {
                         fontSize: 11,
                         fontWeight: 800,
                       }}>
-                        {statusMeta.emoji} {statusMeta.label}
+                        <EmojiIcon e={statusMeta.emoji} /> {statusMeta.label}
                       </span>
                     </div>
 
@@ -259,7 +259,7 @@ export default function FeedbackClient({ feedbackList, usersMap }: Props) {
                         opacity: f.status === key ? 0.7 : 1,
                       }}
                     >
-                      {meta.emoji} {meta.label}
+                      <EmojiIcon e={meta.emoji} /> {meta.label}
                     </button>
                   ))}
                 </div>

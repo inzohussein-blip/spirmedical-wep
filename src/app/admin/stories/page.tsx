@@ -10,6 +10,7 @@ import { isSuperAdmin } from '@/lib/admin-types';
 import StoriesManager from './StoriesManager';
 import type { Story } from '@/types/story';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'القصص الترويجية - Admin' };
 
@@ -33,7 +34,7 @@ export default async function AdminStoriesPage() {
         padding: 64,
         textAlign: 'center',
       }}>
-        <div style={{ fontSize: 48, marginBottom: 12 }}>🚫</div>
+        <div style={{ fontSize: 48, marginBottom: 12 }}><EmojiIcon e="🚫" /></div>
         <h1 style={{ fontSize: 18, fontWeight: 800, margin: '0 0 6px' }}>غير مصرّح</h1>
         <p style={{ fontSize: 13, color: 'var(--ink-3)' }}>
           هذه الصفحة للمديرين فقط
@@ -53,7 +54,7 @@ export default async function AdminStoriesPage() {
     <>
       <div style={{ marginBottom: 20 }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}>
-          📸 القصص الترويجية
+          <EmojiIcon e="📸" /> القصص الترويجية
         </h1>
         <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: 0 }}>
           إدارة الـ stories التي تظهر في dashboard المستخدمين (مثل Instagram Stories)
@@ -69,7 +70,7 @@ export default async function AdminStoriesPage() {
         marginBottom: 20,
         fontSize: 12,
       }}>
-        <div style={{ fontWeight: 800, marginBottom: 4 }}>💡 كيف تظهر القصص؟</div>
+        <div style={{ fontWeight: 800, marginBottom: 4 }}><EmojiIcon e="💡" /> كيف تظهر القصص؟</div>
         <div style={{ color: 'var(--ink-2)', lineHeight: 1.7 }}>
           القصص النشطة تظهر كصف من الـ circles في أعلى dashboard كل مستخدم.<br />
           يمكن جدولتها (تظهر من-إلى)، ترتيبها، أو إيقافها مؤقتاً.<br />

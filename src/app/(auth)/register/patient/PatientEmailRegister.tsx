@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { signUpWithEmail } from '@/lib/auth/email-auth';
 import { useRouter } from 'next/navigation';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 // ═══════════════════════════════════════════════════════════
 // 📝 تسجيل مريض جديد - بسيط وسريع
 // ═══════════════════════════════════════════════════════════
@@ -263,7 +264,7 @@ export default function PatientEmailRegister() {
       <div className="max-w-md w-full text-center">
         <div className="mb-6">
           <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-3xl">✓</span>
+            <span className="text-3xl"><EmojiIcon e="✓" /></span>
           </div>
           <h1 className="text-2xl font-bold text-gray-900">تم إنشاء حسابك بنجاح!</h1>
         </div>

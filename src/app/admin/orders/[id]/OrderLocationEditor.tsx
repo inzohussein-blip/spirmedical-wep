@@ -2,11 +2,14 @@
 
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { MapPin, X } from 'lucide-react';
+import {
+  IconMapPin as MapPin, IconX as X,
+} from '@tabler/icons-react';
 import { toast } from '@/components/ui/Toaster';
 import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWrapper';
 import { updateOrderLocation } from './actions';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 /**
  * 📍 ضبط موقع الطلب من لوحة الإدارة
  *
@@ -89,7 +92,7 @@ export default function OrderLocationEditor({
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-              <h2 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>📍 موقع الطلب</h2>
+              <h2 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}><EmojiIcon e="📍" /> موقع الطلب</h2>
               <button
                 type="button"
                 onClick={() => setOpen(false)}

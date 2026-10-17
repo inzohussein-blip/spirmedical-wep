@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 // ═══════════════════════════════════════════════════════════
 // 🎯 اختيار نوع الحساب
 // ═══════════════════════════════════════════════════════════
@@ -38,7 +39,7 @@ export default function RegisterPage() {
           className="auth-role-card"
           aria-label="إنشاء حساب مريض"
         >
-          <div className="auth-role-icon">🏥</div>
+          <div className="auth-role-icon"><EmojiIcon e="🏥" /></div>
           <div className="auth-role-info">
             <div className="auth-role-title">حساب مريض</div>
             <div className="auth-role-desc">
@@ -55,7 +56,7 @@ export default function RegisterPage() {
           aria-label="إنشاء حساب أخصائي"
         >
           <div className="auth-role-icon" style={{ background: 'var(--amber-soft)', color: 'var(--amber)' }}>
-            👨‍⚕️
+            <EmojiIcon e="👨‍⚕️" />
           </div>
           <div className="auth-role-info">
             <div className="auth-role-title">حساب أخصائي</div>
@@ -75,9 +76,9 @@ export default function RegisterPage() {
       </div>
 
       <div className="auth-trust" aria-label="مؤشرات الثقة">
-        <span className="auth-trust-item">🔐 آمن وموثوق</span>
+        <span className="auth-trust-item"><EmojiIcon e="🔐" /> آمن وموثوق</span>
         <span className="auth-trust-sep">·</span>
-        <span className="auth-trust-item">⚡ سريع وسهل</span>
+        <span className="auth-trust-item"><EmojiIcon e="⚡" /> سريع وسهل</span>
         <span className="auth-trust-sep">·</span>
         <span className="auth-trust-item">🌟 دعم 24/7</span>
       </div>

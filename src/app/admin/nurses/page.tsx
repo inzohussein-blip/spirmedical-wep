@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import NursesAdminClient from './NursesAdminClient';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'إدارة الممرضين - Admin' };
 
@@ -101,9 +102,9 @@ export default async function AdminNursesPage() {
           fontWeight: 700,
         }}>← العودة</Link>
         <div style={{ flex: 1 }}>
-          <h1 style={{ fontSize: 22, fontWeight: 900, margin: 0 }}>💉 إدارة الممرضين</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 900, margin: 0 }}><EmojiIcon e="💉" /> إدارة الممرضين</h1>
           <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '2px 0 0' }}>
-            {allNurses.length} ممرض · {activeNurses} نشط · {pendingNurses} قيد المراجعة · {totalVisits} زيارة · ⭐ {avgRating.toFixed(1)}
+            {allNurses.length} ممرض · {activeNurses} نشط · {pendingNurses} قيد المراجعة · {totalVisits} زيارة · <EmojiIcon e="⭐" /> {avgRating.toFixed(1)}
           </p>
         </div>
       </div>

@@ -4,8 +4,8 @@ import { useState, useTransition } from 'react';
 import { createTemplate, updateTemplate, deleteTemplate } from './actions';
 import { useConfirm } from '@/components/ui';
 import {
-  Zap, AlertTriangle, BarChart3, Pencil, Trash2,
-} from 'lucide-react';
+  IconBolt as Zap, IconAlertTriangle as AlertTriangle, IconChartBar as BarChart3, IconPencil as Pencil, IconTrash as Trash2,
+} from '@tabler/icons-react';
 
 interface Template {
   id: string;

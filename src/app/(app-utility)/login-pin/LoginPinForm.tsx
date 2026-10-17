@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import Link from 'next/link';
 import { changeLoginPin } from './actions';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export default function LoginPinForm({ homePath, hasPin }: { homePath: string; hasPin: boolean }) {
   const [pin, setPin] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -24,7 +25,7 @@ export default function LoginPinForm({ homePath, hasPin }: { homePath: string; h
   if (done) {
     return (
       <div role="status" className="scr-empty">
-        <div className="scr-empty-icon" aria-hidden="true">✅</div>
+        <div className="scr-empty-icon" aria-hidden="true"><EmojiIcon e="✅" /></div>
         <p className="scr-empty-title">حُفظ رمز الدخول</p>
         <p className="scr-empty-desc">ادخل به من الآن مع رقم هاتفك.</p>
         <Link href={homePath} className="scr-empty-cta">متابعة</Link>

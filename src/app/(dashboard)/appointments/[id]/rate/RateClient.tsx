@@ -7,16 +7,15 @@ import { submitRating } from './actions';
 import { useFormErrors } from '@/lib/forms/useFormErrors';
 import MissingFieldsSummary from '@/components/forms/MissingFieldsSummary';
 import FieldError from '@/components/forms/FieldError';
-import type { LucideIcon } from 'lucide-react';
+
 
 const RATE_FIELD_LABELS: Record<string, string> = { overall: 'التقييم العام' };
 import {
-  GraduationCap, Clock, Smile, Sparkles, Leaf, Stethoscope, Zap, Target,
-  Timer, Wind, HelpCircle,
-  ArrowRight, PartyPopper, AlertTriangle,
-} from 'lucide-react';
+  IconSchool as GraduationCap, IconClock as Clock, IconMoodSmile as Smile, IconSparkles as Sparkles, IconLeaf as Leaf, IconStethoscope as Stethoscope, IconBolt as Zap, IconTarget as Target, IconClockHour4 as Timer, IconWind as Wind, IconHelpCircle as HelpCircle, IconArrowRight as ArrowRight, IconConfetti as PartyPopper, IconAlertTriangle as AlertTriangle,
+} from '@tabler/icons-react';
 
-const QUICK_TAGS: Array<{ id: string; label: string; icon: LucideIcon }> = [
+import type { Icon as TablerIcon } from '@tabler/icons-react';
+const QUICK_TAGS: Array<{ id: string; label: string; icon: TablerIcon }> = [
   { id: 'professional', label: 'احترافي',     icon: GraduationCap },
   { id: 'punctual',     label: 'في الموعد',   icon: Clock },
   { id: 'friendly',     label: 'ودود',        icon: Smile },
@@ -27,7 +26,8 @@ const QUICK_TAGS: Array<{ id: string; label: string; icon: LucideIcon }> = [
   { id: 'thorough',     label: 'دقيق',        icon: Target },
 ];
 
-const NEGATIVE_TAGS: Array<{ id: string; label: string; icon: LucideIcon }> = [
+import EmojiIcon from '@/components/ui/EmojiIcon';
+const NEGATIVE_TAGS: Array<{ id: string; label: string; icon: TablerIcon }> = [
   { id: 'late',     label: 'تأخر',        icon: Timer },
   { id: 'rushed',   label: 'مستعجل',      icon: Wind },
   { id: 'unclear',  label: 'غير واضح',    icon: HelpCircle },
@@ -332,7 +332,7 @@ export default function RateClient() {
                 </>
               ) : (
                 <>
-                  <span aria-hidden="true">✓</span>
+                  <span aria-hidden="true"><EmojiIcon e="✓" /></span>
                   <span>إرسال التقييم</span>
                 </>
               )}

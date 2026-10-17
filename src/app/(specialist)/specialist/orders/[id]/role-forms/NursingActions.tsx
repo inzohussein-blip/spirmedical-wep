@@ -2,12 +2,12 @@
 
 import { useState, useTransition } from 'react';
 import { updateOrderRoleData } from '../actions';
-import type { LucideIcon } from 'lucide-react';
-import {
-  Syringe, Droplet, Bandage, Stethoscope, Save, CheckCircle2,
-  Activity, Footprints,
-} from 'lucide-react';
 
+import {
+  IconVaccine as Syringe, IconDroplet as Droplet, IconBandage as Bandage, IconStethoscope as Stethoscope, IconDeviceFloppy as Save, IconCircleCheck as CheckCircle2, IconActivity as Activity, IconShoe as Footprints,
+} from '@tabler/icons-react';
+
+import type { Icon as TablerIcon } from '@tabler/icons-react';
 interface NursingData {
   action_type?: string;
   description?: string;
@@ -23,7 +23,7 @@ interface Props {
 // ═══════════════════════════════════════════════════════════════
 // ✨ V25.5: نطاق الخدمات التمريضية الكامل (من وثيقة المواصفات)
 // ═══════════════════════════════════════════════════════════════
-const ACTION_TYPES: Array<{ id: string; label: string; icon: LucideIcon; desc?: string }> = [
+const ACTION_TYPES: Array<{ id: string; label: string; icon: TablerIcon; desc?: string }> = [
   { id: 'injection',     label: 'زرق إبر',         icon: Syringe,    desc: 'عضلية، وريدية، تحت الجلد' },
   { id: 'iv',            label: 'مغذٍ وريدي',       icon: Droplet,    desc: 'تركيب وإشراف' },
   { id: 'cannula',       label: 'تركيب كانيولا',   icon: Activity,   desc: 'تأمين المجرى الوريدي' },

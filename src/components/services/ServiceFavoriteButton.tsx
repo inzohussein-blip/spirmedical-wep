@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { Heart } from 'lucide-react';
+import {
+  IconHeart as Heart,
+} from '@tabler/icons-react';
 import { toggleServiceFavorite, type ServiceType } from './favorites-actions';
 import { toast } from '@/components/ui/Toaster';
 

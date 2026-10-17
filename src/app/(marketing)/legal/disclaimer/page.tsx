@@ -3,6 +3,7 @@ export const revalidate = 86400;
 
 import Link from 'next/link';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const metadata = {
   alternates: { canonical: '/legal/disclaimer' },
   title: 'إخلاء المسؤولية الطبية · سباير ميديكال',
@@ -46,7 +47,7 @@ export default function DisclaimerPage() {
           </header>
 
           <div className="legal-callout warning">
-            <span className="legal-callout-icon">⚕️</span>
+            <span className="legal-callout-icon"><EmojiIcon e="⚕️" /></span>
             <div>
               <strong>تنبيه طبي مهم:</strong> سباير ميديكال هي <strong>منصّة وسيطة</strong> تربط
               بين المرضى ومقدّمي الخدمة الطبية. نحن <strong>لا نُقدّم تشخيصاً طبياً</strong> ولا
@@ -83,7 +84,7 @@ export default function DisclaimerPage() {
           <section id="emergency">
             <h2>3. حالات الطوارئ</h2>
             <div className="legal-callout warning">
-              <span className="legal-callout-icon">🚨</span>
+              <span className="legal-callout-icon"><EmojiIcon e="🚨" /></span>
               <div>
                 <strong>في حالات الطوارئ الفورية:</strong> اتصل برقم الإسعاف
                 <strong> 122 </strong>
@@ -141,7 +142,7 @@ export default function DisclaimerPage() {
               <li>أبلغ طبيبك عن أي حساسية أو دواء آخر تتناوله</li>
             </ul>
             <div className="legal-callout">
-              <span className="legal-callout-icon">💊</span>
+              <span className="legal-callout-icon"><EmojiIcon e="💊" /></span>
               <div>
                 <strong>تنبيه:</strong> لا تتناول أي دواء دون استشارة طبية،
                 حتى لو كان متاحاً بدون وصفة.
@@ -161,7 +162,7 @@ export default function DisclaimerPage() {
               <li><strong>تتبّع المؤشرات الحيوية:</strong> سجل شخصي فقط</li>
             </ul>
             <div className="legal-callout warning">
-              <span className="legal-callout-icon">🤖</span>
+              <span className="legal-callout-icon"><EmojiIcon e="🤖" /></span>
               <div>
                 <strong>تحذير:</strong> هذه الأدوات <strong>تثقيفية ومساعدة فقط</strong>.
                 نتائجها <strong>ليست تشخيصاً طبياً</strong> ولا تستبدل

@@ -3,11 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import {
-  Syringe, Droplet, Bandage, Stethoscope, Activity, Footprints,
-  Calendar, ChevronLeft, Filter, FileText, User, Heart, Thermometer,
-  ChevronDown, ChevronUp,
-} from 'lucide-react';
+  IconVaccine as Syringe, IconDroplet as Droplet, IconBandage as Bandage, IconStethoscope as Stethoscope, IconActivity as Activity, IconShoe as Footprints, IconCalendar as Calendar, IconChevronLeft as ChevronLeft, IconFilter as Filter, IconFileText as FileText, IconUser as User, IconHeart as Heart, IconTemperature as Thermometer, IconChevronDown as ChevronDown, IconChevronUp as ChevronUp,
+} from '@tabler/icons-react';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Visit {
   id: string;
   user_id: string;
@@ -106,7 +105,7 @@ export default function NursingHistoryClient({ visits, specialistsMap }: Props) 
             gap: 4,
           }}
         >
-          📈 التطوّر
+          <EmojiIcon e="📈" /> التطوّر
         </Link>
       </div>
 
@@ -362,7 +361,7 @@ export default function NursingHistoryClient({ visits, specialistsMap }: Props) 
                     {visit.complications && (
                       <div style={{ marginBottom: 10 }}>
                         <h4 style={{ fontSize: 11, fontWeight: 800, color: 'var(--rose)', margin: '0 0 4px' }}>
-                          ⚠️ مضاعفات
+                          <EmojiIcon e="⚠️" /> مضاعفات
                         </h4>
                         <div style={{
                           padding: 10,
@@ -387,7 +386,7 @@ export default function NursingHistoryClient({ visits, specialistsMap }: Props) 
                         fontWeight: 700,
                         textAlign: 'center',
                       }}>
-                        🔔 مطلوب متابعة لاحقة
+                        <EmojiIcon e="🔔" /> مطلوب متابعة لاحقة
                       </div>
                     )}
                   </div>
@@ -410,7 +409,7 @@ function VitalCard({ icon, label, value }: { icon: React.ReactNode; label: strin
       textAlign: 'center',
     }}>
       <div style={{ color: 'var(--emerald)', display: 'flex', justifyContent: 'center', marginBottom: 2 }}>
-        {icon}
+        <EmojiIcon e={icon} />
       </div>
       <div style={{ fontSize: 11, color: 'var(--ink-3)', fontWeight: 700 }}>{label}</div>
       <div style={{ fontSize: 12, fontWeight: 900 }}>{value}</div>

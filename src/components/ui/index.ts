@@ -89,3 +89,5 @@ export type { MapHeatmapProps, HeatmapPoint } from './MapHeatmap';
 
 
 
+
+export { default as EmojiIcon } from './EmojiIcon';

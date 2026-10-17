@@ -1,7 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Star, User, MapPin, Phone, Calendar, Activity } from 'lucide-react';
+import {
+  IconSearch as Search, IconStar as Star, IconUser as User,
+} from '@tabler/icons-react';
+import { DataTable, StatusPill } from '@/components/admin-ui';
 
 interface Nurse {
   id: string;
@@ -20,12 +23,6 @@ interface Props {
   nurses: Nurse[];
 }
 
-const STATUS_META: Record<string, { label: string; bg: string; color: string }> = {
-  approved: { label: 'موافَق عليه', bg: '#E1F5EE', color: '#04342C' },
-  pending: { label: 'قيد المراجعة', bg: '#FAEEDA', color: '#412402' },
-  rejected: { label: 'مرفوض', bg: '#FCEBEB', color: '#791F1F' },
-  suspended: { label: 'موقوف', bg: '#F3F4F6', color: '#374151' },
-};
 
 export default function NursesAdminClient({ nurses }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -132,127 +129,30 @@ export default function NursesAdminClient({ nurses }: Props) {
         </select>
       </div>
 
-      {/* Table */}
-      <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 12, overflow: 'hidden' }}>
-        {filtered.length === 0 ? (
-          <div style={{ padding: 40, textAlign: 'center', color: 'var(--ink-3)' }}>
-            <User size={48} strokeWidth={1.2} style={{ opacity: 0.3, marginBottom: 12 }} />
-            <div style={{ fontSize: 14 }}>لا توجد نتائج</div>
-          </div>
-        ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-            <thead>
-              <tr style={{ background: 'var(--paper-2)', borderBottom: '1px solid var(--line)' }}>
-                <th style={th}>الممرض</th>
-                <th style={th}>المحافظة</th>
-                <th style={th}>الهاتف</th>
-                <th style={th}>الزيارات</th>
-                <th style={th}>التقييم</th>
-                <th style={th}>الحالة</th>
-                <th style={th}>تاريخ التسجيل</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((nurse) => {
-                const status = STATUS_META[nurse.approval_status] ?? STATUS_META.pending;
-                const regDate = new Date(nurse.created_at).toLocaleDateString('ar-IQ-u-nu-latn', { 
-                  day: 'numeric', month: 'short', year: 'numeric' 
-                });
-                
-                return (
-                  <tr key={nurse.id} style={{ borderBottom: '1px solid var(--line)' }}>
-                    <td style={td}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{
-                          width: 32, height: 32, borderRadius: '50%',
-                          background: nurse.gender === 'female' ? '#FCEBEB' : '#E1EBFA',
-                          color: nurse.gender === 'female' ? '#A32D2D' : '#1E40AF',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: 14, fontWeight: 700,
-                        }}>
-                          {nurse.full_name?.[0] || '?'}
-                        </div>
-                        <div>
-                          <div style={{ fontWeight: 700 }}>
-                            {nurse.full_name || 'بدون اسم'}
-                          </div>
-                          <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>
-                            {nurse.gender === 'female' ? '♀ أنثى' : '♂ ذكر'}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td style={td}>
-                      {nurse.governorate ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--ink-2)' }}>
-                          <MapPin size={12} strokeWidth={2.2} aria-hidden />
-                          {nurse.governorate}
-                        </div>
-                      ) : '—'}
-                    </td>
-                    <td style={td}>
-                      {nurse.phone && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--ink-2)' }}>
-                          <Phone size={11} strokeWidth={2.2} aria-hidden />
-                          {nurse.phone}
-                        </div>
-                      )}
-                    </td>
-                    <td style={{ ...td, fontWeight: 700 }}>
-                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                        <Activity size={12} strokeWidth={2.2} style={{ color: 'var(--emerald)' }} aria-hidden />
-                        {nurse.totalVisits}
-                      </div>
-                    </td>
-                    <td style={td}>
-                      {nurse.ratingCount > 0 ? (
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                          <Star size={12} fill="#A57100" stroke="#A57100" aria-hidden />
-                          <strong>{nurse.ratingAvg.toFixed(1)}</strong>
-                          <span style={{ color: 'var(--ink-3)', fontSize: 11 }}>({nurse.ratingCount})</span>
-                        </div>
-                      ) : (
-                        <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>—</span>
-                      )}
-                    </td>
-                    <td style={td}>
-                      <span style={{
-                        display: 'inline-flex',
-                        padding: '2px 8px',
-                        borderRadius: 12,
-                        fontSize: 11,
-                        fontWeight: 700,
-                        background: status.bg,
-                        color: status.color,
-                      }}>
-                        {status.label}
-                      </span>
-                    </td>
-                    <td style={{ ...td, fontSize: 11, color: 'var(--ink-3)' }}>
-                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-                        <Calendar size={11} strokeWidth={2.2} aria-hidden />
-                        {regDate}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        )}
-      </div>
+      <DataTable<Nurse>
+        rows={filtered}
+        rowKey={(n) => n.id}
+        empty={<><User size={40} strokeWidth={1.4} style={{ opacity: 0.35 }} aria-hidden /><div>لا توجد نتائج</div></>}
+        columns={[
+          { key: 'name', header: 'الممرض', primary: true, render: (n) => (
+            <span className="aui-person">
+              <span className={`aui-avatar ${n.gender === 'female' ? 'aui-tone-rose' : 'aui-tone-violet'}`}>{n.full_name?.[0] || '?'}</span>
+              <span className="aui-row-text">
+                <span className="aui-row-title">{n.full_name || 'بدون اسم'}</span>
+                <span className="aui-row-sub">{n.gender === 'female' ? 'أنثى' : 'ذكر'}</span>
+              </span>
+            </span>
+          ) },
+          { key: 'status', header: 'الحالة', render: (n) => <StatusPill status={n.approval_status} labels={{ pending: 'قيد المراجعة' }} /> },
+          { key: 'gov', header: 'المحافظة', render: (n) => n.governorate ?? '—' },
+          { key: 'phone', header: 'الهاتف', render: (n) => n.phone ? <a href={`tel:${n.phone}`} dir="ltr" className="aui-link">{n.phone}</a> : '—' },
+          { key: 'visits', header: 'الزيارات', render: (n) => <strong>{n.totalVisits}</strong> },
+          { key: 'rating', header: 'التقييم', render: (n) => n.ratingCount > 0
+            ? <span className="aui-inline"><Star size={14} fill="#A57100" stroke="#A57100" aria-hidden /><strong>{n.ratingAvg.toFixed(1)}</strong><span className="aui-muted">({n.ratingCount})</span></span>
+            : <span className="aui-muted">لا تقييم</span> },
+          { key: 'date', header: 'تاريخ التسجيل', render: (n) => new Date(n.created_at).toLocaleDateString('ar-IQ-u-nu-latn', { day: 'numeric', month: 'short', year: 'numeric' }) },
+        ]}
+      />
     </div>
   );
 }
-
-const th: React.CSSProperties = {
-  padding: 10,
-  textAlign: 'right',
-  fontSize: 11,
-  fontWeight: 700,
-  color: 'var(--ink-2)',
-};
-
-const td: React.CSSProperties = {
-  padding: 10,
-};

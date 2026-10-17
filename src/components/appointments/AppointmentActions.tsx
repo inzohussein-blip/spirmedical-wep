@@ -4,7 +4,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 import { cancelAppointment } from '@/app/(dashboard)/appointments/[id]/actions';
-import { Phone, MessageCircle, MapPin, X, RefreshCw, AlertTriangle } from 'lucide-react';
+import {
+  IconPhone as Phone, IconMessageCircle as MessageCircle, IconMapPin as MapPin, IconX as X, IconRefresh as RefreshCw, IconAlertTriangle as AlertTriangle,
+} from '@tabler/icons-react';
 
 interface Props {
   appointmentId: string;

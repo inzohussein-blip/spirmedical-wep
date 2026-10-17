@@ -5,6 +5,7 @@ import { isAdminRole } from '@/lib/admin-types';
 import { MapHeatmapWrapper } from '@/components/ui/MapHeatmapWrapper';
 import { Card } from '@/components/ui';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -64,7 +65,7 @@ export default async function HeatmapPage() {
           ← العودة للتقارير
         </Link>
         <h1 style={{ fontSize: 22, fontWeight: 800, margin: '8px 0 4px' }}>
-          🌡️ خريطة حرارة الطلبات
+          <EmojiIcon e="🌡️" /> خريطة حرارة الطلبات
         </h1>
         <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: 0 }}>
           المناطق الأكثر طلباً للخدمات الطبية في العراق
@@ -126,12 +127,12 @@ export default async function HeatmapPage() {
 
       {/* ملاحظات */}
       <Card size="md" style={{ marginTop: 16 }}>
-        <h3 style={{ fontSize: 14, fontWeight: 800, marginBottom: 8 }}>💡 كيف تقرأ الخريطة؟</h3>
+        <h3 style={{ fontSize: 14, fontWeight: 800, marginBottom: 8 }}><EmojiIcon e="💡" /> كيف تقرأ الخريطة؟</h3>
         <ul style={{ fontSize: 12, color: 'var(--ink-2)', paddingInlineStart: 16, margin: 0, lineHeight: 1.8 }}>
-          <li>🔴 المناطق الحمراء = الأكثر طلباً</li>
-          <li>🟡 المناطق الصفراء = نشاط متوسط</li>
-          <li>🟢 المناطق الخضراء = نشاط بدأ</li>
-          <li>🔵 المناطق الزرقاء = نشاط منخفض</li>
+          <li><EmojiIcon e="🔴" /> المناطق الحمراء = الأكثر طلباً</li>
+          <li><EmojiIcon e="🟡" /> المناطق الصفراء = نشاط متوسط</li>
+          <li><EmojiIcon e="🟢" /> المناطق الخضراء = نشاط بدأ</li>
+          <li><EmojiIcon e="🔵" /> المناطق الزرقاء = نشاط منخفض</li>
         </ul>
       </Card>
     </main>

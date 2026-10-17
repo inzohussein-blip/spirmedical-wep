@@ -6,14 +6,14 @@ import { createClient } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import {
-  ArrowRight, MapPin, Phone, Star, CheckCircle2,
-  Clock, MessageCircle, Eye,
-} from 'lucide-react';
+  IconArrowRight as ArrowRight, IconMapPin as MapPin, IconPhone as Phone, IconStar as Star, IconCircleCheck as CheckCircle2, IconClock as Clock, IconMessageCircle as MessageCircle, IconEye as Eye,
+} from '@tabler/icons-react';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import { checkIsFavorite } from '@/components/services/favorites-actions';
 import { formatPrice, formatPriceRange, count, formatRating } from '@/lib/format/price';
 import PhoneLink from '@/components/ui/PhoneLink';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
@@ -63,7 +63,7 @@ export default async function OpticalDetailPage(
           <Link href="/services/optical" className="scr-back-btn" aria-label="العودة">
             <ArrowRight size={20} strokeWidth={2.2} />
           </Link>
-          <h1 className="scr-page-title" style={{ fontSize: 14 }}>👓 تفاصيل المتجر</h1>
+          <h1 className="scr-page-title" style={{ fontSize: 14 }}><EmojiIcon e="👓" /> تفاصيل المتجر</h1>
           <ServiceFavoriteButton
             serviceType="optical"
             serviceId={store.id}
@@ -90,7 +90,7 @@ export default async function OpticalDetailPage(
               fontSize: 36,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               flexShrink: 0,
-            }}>👓</div>
+            }}><EmojiIcon e="👓" /></div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
                 <h2 style={{ fontSize: 18, fontWeight: 900, margin: 0 }}>{store.name}</h2>
@@ -101,7 +101,7 @@ export default async function OpticalDetailPage(
                   display: 'inline-block', fontSize: 11, fontWeight: 900,
                   background: 'var(--amber)', color: 'var(--paper-3)',
                   padding: '2px 8px', borderRadius: 100, marginBottom: 6,
-                }}>⭐ متجر مميّز</span>
+                }}><EmojiIcon e="⭐" /> متجر مميّز</span>
               )}
               {store.description && (
                 <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: 0, lineHeight: 1.6 }}>
@@ -145,7 +145,7 @@ export default async function OpticalDetailPage(
         {/* Brands */}
         {store.brands && store.brands.length > 0 && (
           <div style={{ marginBottom: 14 }}>
-            <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 8 }}>🏷️ العلامات التجارية</h3>
+            <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 8 }}><EmojiIcon e="🏷️" /> العلامات التجارية</h3>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {store.brands.map((b: string, i: number) => (
                 <span key={i} style={{
@@ -166,7 +166,7 @@ export default async function OpticalDetailPage(
 
         {/* Services */}
         <div style={{ marginBottom: 14 }}>
-          <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 8 }}>🔧 الخدمات</h3>
+          <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 8 }}><EmojiIcon e="🔧" /> الخدمات</h3>
           <div style={{
             display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6,
           }}>
@@ -211,18 +211,18 @@ export default async function OpticalDetailPage(
             marginBottom: 14,
           }}>
             <h3 style={{ fontSize: 13, fontWeight: 800, marginBottom: 10, color: 'var(--amber)' }}>
-              💰 الأسعار
+              <EmojiIcon e="💰" /> الأسعار
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 12 }}>
               {framePrice && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: lensPrice ? '1px solid rgba(0,0,0,0.05)' : undefined }}>
-                  <span style={{ fontWeight: 600 }}>🖼️ إطارات</span>
+                  <span style={{ fontWeight: 600 }}><EmojiIcon e="🖼️" /> إطارات</span>
                   <span style={{ fontWeight: 700, color: 'var(--amber)' }}>{framePrice}</span>
                 </div>
               )}
               {lensPrice && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0' }}>
-                  <span style={{ fontWeight: 600 }}>🔍 عدسات</span>
+                  <span style={{ fontWeight: 600 }}><EmojiIcon e="🔍" /> عدسات</span>
                   <span style={{ fontWeight: 700, color: 'var(--amber)' }}>{lensPrice}</span>
                 </div>
               )}
@@ -249,7 +249,7 @@ export default async function OpticalDetailPage(
               boxShadow: '0 4px 12px rgba(201,121,22,0.3)',
             }}
           >
-            📅 احجز زيارة عبر سباير
+            <EmojiIcon e="📅" /> احجز زيارة عبر سباير
           </Link>
 
           {store.phone && (

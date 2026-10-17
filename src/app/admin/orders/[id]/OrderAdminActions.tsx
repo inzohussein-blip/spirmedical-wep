@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { assignOrderToSpecialist, adminCancelOrder, rescheduleOrder } from '../actions';
 import { useConfirm } from '@/components/ui';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Props {
   orderId: string;
   status: string;
@@ -98,7 +99,7 @@ export default function OrderAdminActions({
 
       {error && (
         <div style={{ background: 'var(--rose-soft)', color: 'var(--rose)', padding: '10px 12px', borderRadius: 8, fontSize: 12, fontWeight: 700, marginBottom: 12 }}>
-          ⚠️ {error}
+          <EmojiIcon e="⚠️" /> {error}
         </div>
       )}
       {success && (
@@ -112,7 +113,7 @@ export default function OrderAdminActions({
           {/* تعيين اختصاصي */}
           <div style={{ marginBottom: 16 }}>
             <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-3)', display: 'block', marginBottom: 8 }}>
-              🎯 تعيين/تغيير الاختصاصي
+              <EmojiIcon e="🎯" /> تعيين/تغيير الاختصاصي
             </label>
             <select value={selectedSpecialist} onChange={(e) => setSelectedSpecialist(e.target.value)} style={inputStyle}>
               <option value="">اختر اختصاصي...</option>
@@ -129,7 +130,7 @@ export default function OrderAdminActions({
                 background: 'var(--emerald-deep)', color: 'var(--white)',
                 border: 0, borderRadius: 8, fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit',
               }}>
-                💾 تأكيد التعيين
+                <EmojiIcon e="💾" /> تأكيد التعيين
               </button>
             )}
           </div>
@@ -143,7 +144,7 @@ export default function OrderAdminActions({
               border: 0, borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit',
               marginBottom: 8,
             }}>
-              📅 إعادة جدولة
+              <EmojiIcon e="📅" /> إعادة جدولة
             </button>
           ) : (
             <div style={{ marginBottom: 12 }}>
@@ -168,7 +169,7 @@ export default function OrderAdminActions({
               color: 'var(--rose)', border: 0, borderRadius: 8,
               fontSize: 12, fontWeight: 800, cursor: 'pointer', fontFamily: 'inherit',
             }}>
-              🚫 إلغاء الطلب
+              <EmojiIcon e="🚫" /> إلغاء الطلب
             </button>
           ) : (
             <div style={{ background: 'var(--rose-soft)', padding: 12, borderRadius: 10 }}>

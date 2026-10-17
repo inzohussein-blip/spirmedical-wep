@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import BugsClient from './BugsClient';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'الأعطال - Admin' };
 
@@ -46,7 +47,7 @@ export default async function BugsPage() {
           borderRadius: 8, textDecoration: 'none', fontSize: 12, fontWeight: 700,
         }}>← العودة</Link>
         <div style={{ flex: 1 }}>
-          <h1 style={{ fontSize: 22, fontWeight: 900, margin: 0 }}>🐛 الأعطال</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 900, margin: 0 }}><EmojiIcon e="🐛" /> الأعطال</h1>
           <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '2px 0 0' }}>
             {bugs?.length ?? 0} عطل مُبلَّغ
           </p>

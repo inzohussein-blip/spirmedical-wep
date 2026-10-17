@@ -11,6 +11,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import OtpForm from './OtpForm';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 const searchParamsSchema = z.object({
   phone: z.string().min(10).max(20),
   error: z.string().max(500).optional(),
@@ -55,7 +56,7 @@ export default async function OtpPage(
       </div>
 
       {/* 🎯 V26.6: أيقونة القناة */}
-      <div className="auth-status-icon">{channelInfo.icon}</div>
+      <div className="auth-status-icon"><EmojiIcon e={channelInfo.icon} /></div>
 
       <div className="auth-title-section">
         <h2 className="auth-title">تحقّق من رقمك</h2>
@@ -76,7 +77,7 @@ export default async function OtpPage(
 
       <OtpForm phone={phone} channel={channel} redirectTo={redirectTo} />
 
-      <div className="auth-expiry">⏱ ينتهي خلال 5 دقائق</div>
+      <div className="auth-expiry"><EmojiIcon e="⏱" /> ينتهي خلال 5 دقائق</div>
     </main>
   );
 }

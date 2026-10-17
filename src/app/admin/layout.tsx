@@ -13,6 +13,7 @@ import AdminSidebar from './_components/AdminSidebar';
 //   • Admin utilities (.admin-tabular, .admin-mono)
 import '@/app/styles/admin.css';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -72,7 +73,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <div>
             <div style={{ fontSize: 12, color: 'var(--ink-3)', fontWeight: 700 }}>أهلاً</div>
             <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--ink)' }}>
-              {profile?.full_name ?? 'مدير'} <span style={{ fontSize: 14 }}>{roleMeta.icon}</span>
+              {profile?.full_name ?? 'مدير'} <span style={{ fontSize: 14 }}><EmojiIcon e={roleMeta.icon} /></span>
             </div>
           </div>
 
@@ -101,7 +102,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 cursor: 'pointer',
                 fontFamily: 'inherit',
               }}>
-                🚪 خروج
+                <EmojiIcon e="🚪" /> خروج
               </button>
             </form>
           </div>

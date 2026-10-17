@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import PharmaciesAdminClient from './PharmaciesAdminClient';
 
+import EmojiIcon from '@/components/ui/EmojiIcon';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'إدارة الصيدليات - Admin' };
 
@@ -44,7 +45,7 @@ export default async function AdminPharmaciesPage() {
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
         <Link href="/admin" style={{ padding: '8px 12px', background: 'var(--paper-3)', color: 'var(--ink-2)', borderRadius: 8, textDecoration: 'none', fontSize: 12, fontWeight: 700 }}>← العودة</Link>
         <div style={{ flex: 1 }}>
-          <h1 style={{ fontSize: 22, fontWeight: 900, margin: 0 }}>💊 إدارة الصيدليات</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 900, margin: 0 }}><EmojiIcon e="💊" /> إدارة الصيدليات</h1>
           <p style={{ fontSize: 12, color: 'var(--ink-3)', margin: '2px 0 0' }}>
             {pharmacies?.length ?? 0} صيدلية مسجّلة
           </p>
@@ -58,7 +59,7 @@ export default async function AdminPharmaciesPage() {
           fontSize: 12,
           fontWeight: 800,
         }}>
-          📋 كتالوج الأدوية
+          <EmojiIcon e="📋" /> كتالوج الأدوية
         </Link>
       </div>
 
