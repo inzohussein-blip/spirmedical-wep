@@ -7,8 +7,8 @@ export const dynamic = 'force-dynamic';
 export const metadata = { title: 'تحاليل مختبري · سباير ميديكال' };
 
 /**
- * 🧪 «المختصّ يختار الفحوص الموجودة في مختبره» (قرار المالك، 0055). ما يختاره هنا يحدّد ظهورَ مختبره
- * للمريض في سحب الدم: يُعرض لمن اختار تحاليلَ يُجريها.
+ * 🧪 «المختبرُ يختار الفحوصَ التي يُجريها» (قرار المالك، 0055؛ صار حسابَ «خدمة» في 0060). ما يختاره هنا يحدّد
+ * ظهورَه للمريض في سحب الدم: يُعرض لمن اختار تحاليلَ يُجريها.
  */
 export default async function LabTestsPage() {
   const supabase = await createClient();
@@ -16,19 +16,19 @@ export default async function LabTestsPage() {
   if (!user) redirect('/login');
 
   const [{ data: profile }, { data: rows }] = await Promise.all([
-    supabase.from('users').select('role, specialist_type, clinic_name, clinic_city, governorate').eq('id', user.id).single(),
+    supabase.from('users').select('role, provider_type, clinic_name, clinic_city, governorate').eq('id', user.id).single(),
     supabase.from('specialist_lab_tests').select('test_id').eq('specialist_id', user.id),
   ]);
 
-  if (profile?.role !== 'specialist' || profile.specialist_type !== 'lab_analyst') {
+  if (profile?.role !== 'provider' || profile.provider_type !== 'lab') {
     return (
       <main className="app-screen">
         <div className="scr-content" style={{ paddingTop: 40, textAlign: 'center' }}>
-          <h1 style={{ fontSize: 18, fontWeight: 700 }}>لمختصّي التحاليل</h1>
+          <h1 style={{ fontSize: 18, fontWeight: 700 }}>لحسابات المختبرات</h1>
           <p style={{ fontSize: 13, color: 'var(--ink-3)', marginTop: 8 }}>
-            هذه الصفحة يختار فيها مختصُّ التحاليل ما يُجريه مختبرُه.
+            هذه الصفحة يختار فيها المختبرُ التحاليلَ التي يُجريها.
           </p>
-          <Link href="/specialist" style={{ display: 'inline-block', marginTop: 16, fontWeight: 700, color: 'var(--emerald)' }}>
+          <Link href="/provider" style={{ display: 'inline-block', marginTop: 16, fontWeight: 700, color: 'var(--emerald)' }}>
             العودة
           </Link>
         </div>

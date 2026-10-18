@@ -82,18 +82,12 @@ export default async function SpecialistDashboard() {
   ]);
 
   // اشتراكاتُ الدفع لا يقرؤها صاحبُها تحت RLS — تُعدّ بعميل الخدمة لهذا المستخدم وحده.
-  // وتحاليلُ المختبر لمختصّ التحاليل وحده (0055) — معاً لا بالتتابع.
-  const isLab = profile?.specialist_type === 'lab_analyst';
-  const [{ count: activePushSubs }, { count: labTests }] = await Promise.all([
-    createAdminClient()
-      .from('push_subscriptions')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-      .eq('is_active', true),
-    isLab
-      ? supabase.from('specialist_lab_tests').select('test_id', { count: 'exact', head: true }).eq('specialist_id', user.id)
-      : Promise.resolve({ count: null }),
-  ]);
+  // (تحاليلُ المختبر انتقلت إلى حساب «الخدمة» — 0060: المحلّلُ يسحب، والمختبرُ يُحلّل.)
+  const { count: activePushSubs } = await createAdminClient()
+    .from('push_subscriptions')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .eq('is_active', true);
   const readiness = specialistReadiness(
     {
       full_name: profile?.full_name ?? null,
@@ -101,7 +95,6 @@ export default async function SpecialistDashboard() {
       specialist_bio: profile?.specialist_bio ?? null,
     },
     activePushSubs ?? 0,
-    isLab ? (labTests ?? 0) : undefined,
   );
 
   const avgRating = ratings && ratings.length > 0
@@ -199,16 +192,6 @@ export default async function SpecialistDashboard() {
             </div>
             <div style={{ color: 'var(--ink-3)', fontSize: 18 }}>←</div>
           </Link>
-          {profile?.specialist_type === 'lab_analyst' && (
-            <Link href="/specialist/lab-tests" className="scr-list-item scr-list-item-clickable">
-              <div className="scr-list-item-icon"><EmojiIcon e="🧪" /></div>
-              <div className="scr-list-item-content">
-                <div className="scr-list-item-title">تحاليل مختبري</div>
-                <div className="scr-list-item-subtitle">ما يُجريه مختبرُك — يظهر للمريض عند اختيار تحاليله</div>
-              </div>
-              <div style={{ color: 'var(--ink-3)', fontSize: 18 }}>←</div>
-            </Link>
-          )}
           {profile?.specialist_type === 'pharmacist' && (
             <Link href="/specialist/pharmacy" className="scr-list-item scr-list-item-clickable">
               <div className="scr-list-item-icon"><EmojiIcon e="💊" /></div>

@@ -6964,3 +6964,48 @@
   font-variant-numeric: tabular-nums;
   margin-bottom: 2px;
 }
+
+/* ─── 🏥 نافذةُ الخدمة (/provider، 0060) — البادئة pv- ─── */
+.pv { display: grid; gap: 14px; padding-bottom: 24px; }
+.pv-hero {
+  display: flex; align-items: center; gap: 12px; margin-top: 8px; padding: 18px;
+  border-radius: 16px; background: var(--emerald); color: #fff;
+}
+.pv-hero-icon { display: inline-flex; width: 52px; height: 52px; border-radius: 14px; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.16); }
+.pv-hero-text { min-width: 0; }
+.pv-hello { font-size: 12px; opacity: 0.85; font-weight: 600; }
+.pv-name { font-size: 17px; font-weight: 700; overflow-wrap: break-word; }
+.pv-type { font-size: 13px; opacity: 0.9; }
+.pv-title { font-size: 20px; font-weight: 700; margin: 8px 0 0; }
+.pv-card { background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: grid; gap: 10px; }
+.pv-card-title { font-size: 15px; font-weight: 700; margin: 0; }
+.pv-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.pv-step { display: flex; gap: 10px; align-items: flex-start; }
+.pv-check {
+  flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--line);
+  display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff;
+}
+.pv-done .pv-check { background: var(--emerald); border-color: var(--emerald); }
+.pv-step-link { display: grid; gap: 2px; min-height: 44px; text-decoration: none; color: inherit; min-width: 0; }
+.pv-step-title { font-size: 14px; font-weight: 600; color: var(--ink); }
+.pv-done .pv-step-title { color: var(--ink-3); text-decoration: line-through; }
+.pv-step-desc { font-size: 12px; color: var(--ink-3); }
+.pv-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.pv-stat { display: grid; gap: 2px; padding: 12px; border-radius: 12px; background: var(--paper-3); text-decoration: none; color: inherit; }
+.pv-stat-value { font-size: 22px; font-weight: 700; color: var(--ink); }
+.pv-stat-label { font-size: 12px; color: var(--ink-3); }
+.pv-note { font-size: 13px; color: var(--ink-3); line-height: 1.7; margin: 0; }
+.pv-form { gap: 12px; }
+.pv-field { display: grid; gap: 6px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.pv-field input {
+  font: inherit; font-size: 16px; min-width: 0; width: 100%; box-sizing: border-box;
+  padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper-3); color: var(--ink);
+}
+.pv-btn {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 20px; margin-top: 8px;
+  border: 0; border-radius: 12px; background: var(--emerald); color: #fff; font: inherit; font-weight: 700; cursor: pointer; text-decoration: none;
+}
+.pv-btn:disabled { opacity: 0.6; }
+.pv-btn-ghost { background: transparent; color: var(--ink-2); border: 1px solid var(--line); }
+.pv-ok { color: var(--emerald-deep); font-size: 13px; font-weight: 700; margin: 0; }
+.pv-err { color: var(--rose); font-size: 13px; font-weight: 700; margin: 0; }

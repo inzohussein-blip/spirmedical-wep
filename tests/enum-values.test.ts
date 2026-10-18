@@ -37,6 +37,9 @@ export function constrainedColumns(sql: string): Map<string, Set<string>> {
   while ((m = enumRe.exec(sql)) !== null) {
     enums.set(m[1], new Set([...m[2].matchAll(/'([^']+)'/g)].map((x) => x[1])));
   }
+  // قيمةٌ تُضاف لاحقاً (0059: `ALTER TYPE user_role ADD VALUE 'provider'`) جزءٌ من المسموح
+  const addRe = /ALTER TYPE (?:public\.)?([a-z_]+) ADD VALUE (?:IF NOT EXISTS )?'([^']+)'/gi;
+  while ((m = addRe.exec(sql)) !== null) enums.get(m[1])?.add(m[2]);
 
   const cols = new Map<string, Set<string>>();
   const tableRe = /CREATE TABLE IF NOT EXISTS public\.([a-z_]+)\s*\(([\s\S]*?)\n\);/gi;

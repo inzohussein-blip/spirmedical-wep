@@ -181,15 +181,9 @@ export const fileValidation = {
 // Specialization labels (للعرض)
 // ============================================================
 export const specializationLabels: Record<string, string> = {
-  doctor: 'دكتور',
-  nurse: 'ممرض / ممرضة',
-  analyst: 'محلل',
-  pharmacist: 'صيدلي',
-  physiotherapist: 'معالج طبيعي',
-  dentist: 'طبيب أسنان',
-  lab_tech: 'فني مختبر',
-  radiologist: 'أخصائي أشعة',
-  other: 'أخرى - حدّد',
+  // المختصّ فردٌ يذهب إلى المريض (0060). العياداتُ والمختبراتُ والصيدلياتُ والمستشفياتُ تسجّل «خدمة».
+  analyst: 'محلّل — سحب دم منزليّ',
+  nurse: 'ممرّض / ممرّضة — تمريض منزليّ',
 };
 
 export const genderLabels: Record<string, string> = {

@@ -15,7 +15,7 @@ export interface ReadinessProfile {
 }
 
 export interface ReadinessStep {
-  key: 'push' | 'name' | 'governorate' | 'bio' | 'labTests';
+  key: 'push' | 'name' | 'governorate' | 'bio';
   done: boolean;
   title: string;
   desc: string;
@@ -25,23 +25,12 @@ export interface ReadinessStep {
 /** الاسمُ الذي يضعه إنشاءُ الحساب بالرمز قبل أن يكتب صاحبُه اسمه */
 const PLACEHOLDER_NAMES = new Set(['مستخدم', 'أخصائي', '']);
 
-/**
- * `labTests`: عددُ تحاليل المختبر لمختصّ التحاليل وحده (0055) — بدونها لا يظهر مختبرُه للمريض في
- * «سحب الدم». يُترك `undefined` لغيره فلا تظهر الخطوة.
- */
+/** (خطوةُ «حدّد تحاليلَ مختبرك» انتقلت إلى نافذة الخدمة — 0060: المختبرُ حسابُ خدمة لا مختصّ.) */
 export function specialistReadiness(
   profile: ReadinessProfile,
   activePushSubscriptions: number,
-  labTests?: number,
 ): ReadinessStep[] {
   const name = (profile.full_name ?? '').trim();
-  const labStep: ReadinessStep[] = labTests === undefined ? [] : [{
-    key: 'labTests',
-    done: labTests > 0,
-    title: 'حدّد تحاليلَ مختبرك',
-    desc: 'يظهر مختبرُك للمريض حين يختار تحاليلَ يُجريها.',
-    href: '/specialist/lab-tests',
-  }];
   return [
     {
       key: 'push',
@@ -49,7 +38,6 @@ export function specialistReadiness(
       title: 'فعّل إشعارات الطلبات الجديدة',
       desc: 'بدونها لن تعلم بالطلب حتى تفتح التطبيق، والطلبُ الذي لا يُستلم يُلغى بعد 48 ساعة.',
     },
-    ...labStep,
     {
       key: 'name',
       done: name.length >= 2 && !PLACEHOLDER_NAMES.has(name),

@@ -173,7 +173,7 @@ export default function SpecialistRegisterClient({ initialError }: { initialErro
 
       <div className="auth-role-badge specialist">
         <span aria-hidden="true"><EmojiIcon e="⌬" /></span>
-        <span>تسجيل أخصائي طبي</span>
+        <span>تسجيل مختصّ: سحب دم أو تمريض منزليّ</span>
       </div>
 
       <div className="auth-title-section">

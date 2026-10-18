@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { isAdminRole, ADMIN_ROLES } from '@/lib/admin-types';
 import { signOut } from '../(auth)/login/actions';
 import AdminSidebar from './_components/AdminSidebar';
-import { IconStethoscope, IconUser } from '@tabler/icons-react';
+import { IconBuildingHospital, IconStethoscope, IconUser } from '@tabler/icons-react';
 import { getAppUrl } from '@/lib/site-config';
 
 // 🛡️ Admin-specific CSS (V25.40 — Hybrid Approach)
@@ -86,6 +86,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </Link>
             <Link href={getAppUrl('/specialist')} className="admin-app-link">
               <IconStethoscope size={16} stroke={1.75} aria-hidden /> تطبيق المختصّ
+            </Link>
+            {/* النافذةُ الثالثة (0060): مختبر، صيدلية، عيادة، مستشفى */}
+            <Link href={getAppUrl('/provider')} className="admin-app-link">
+              <IconBuildingHospital size={16} stroke={1.75} aria-hidden /> تطبيق الخدمة
             </Link>
 
             <form action={signOut}>

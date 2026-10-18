@@ -11,7 +11,7 @@
  * المرضى وقبول الطلبات الطبّية.
  */
 
-export type AccountRole = 'patient' | 'specialist';
+export type AccountRole = 'patient' | 'specialist' | 'provider';
 export type ApprovalStatus = 'pending' | 'approved' | 'rejected';
 
 export interface ExistingProfileSnapshot {
@@ -28,11 +28,13 @@ export function resolveApprovalStatus(
   role: AccountRole,
   existingProfile?: ExistingProfileSnapshot | null
 ): ApprovalStatus {
-  if (role !== 'specialist') return 'approved';
+  if (role === 'patient') return 'approved';
 
-  const wasApprovedSpecialist =
-    existingProfile?.role === 'specialist' &&
+  // المختصّ وحسابُ الخدمة (0060) يُراجَعان. لا يُحتفظ بالاعتماد إلّا لمن كان معتمَداً **بالدور نفسه** —
+  // مختصٌّ معتمَد يسجّل خدمةً بالرقم نفسه يبدأ `pending` (اعتمادٌ لعملٍ لا يُنقل إلى غيره).
+  const wasApprovedSameRole =
+    existingProfile?.role === role &&
     existingProfile?.approval_status === 'approved';
 
-  return wasApprovedSpecialist ? 'approved' : 'pending';
+  return wasApprovedSameRole ? 'approved' : 'pending';
 }

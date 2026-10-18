@@ -61,7 +61,7 @@ export default function LabTestsEditor({ initialTests, initialName, initialCity 
     <main className="app-screen">
       <div className="scr-content lt">
         <div className="lt-head">
-          <Link href="/specialist" className="lt-back" aria-label="العودة">
+          <Link href="/provider" className="lt-back" aria-label="العودة">
             <IconArrowRight size={20} stroke={2} aria-hidden />
           </Link>
           <h1 className="lt-title">تحاليل مختبري</h1>

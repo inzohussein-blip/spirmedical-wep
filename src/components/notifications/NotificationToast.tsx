@@ -18,7 +18,7 @@ interface Toast {
 
 interface Props {
   userId: string;
-  userRole: 'patient' | 'specialist';
+  userRole: 'patient' | 'specialist' | 'provider';
 }
 
 export default function NotificationToast({ userId, userRole }: Props) {
@@ -79,7 +79,9 @@ export default function NotificationToast({ userId, userRole }: Props) {
           const senderName = sender?.full_name || 'مستخدم';
           const href = userRole === 'specialist'
             ? `/specialist/inbox/${msg.chat_id}`
-            : `/messages/${msg.chat_id}`;
+            : userRole === 'provider'
+              ? '/provider'
+              : `/messages/${msg.chat_id}`;
 
           showToast({
             id: msg.id,
