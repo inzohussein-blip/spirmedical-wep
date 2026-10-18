@@ -6,15 +6,9 @@ import {
 import Link from 'next/link';
 import { useState } from 'react';
 import { LockedAction } from '@/components/app/LockedAction';
+import StoriesStrip from '@/components/stories/StoriesStrip';
+import type { Story } from '@/types/story';
 
-const STORIES = [
-  { id: 'add', icon: '+', label: 'إضافة', isAdd: true, locked: true },
-  { id: 'vaccines', icon: '💉', label: 'لقاحات', isAdd: false, locked: false },
-  { id: 'health', icon: '🩺', label: 'صحتك', isAdd: false, locked: false },
-  { id: 'meds', icon: '💊', label: 'دواء', isAdd: false, locked: false },
-  { id: 'nutrition', icon: '🍎', label: 'تغذية', isAdd: false, locked: false },
-  { id: 'firstaid', icon: '🚑', label: 'إسعافات', isAdd: false, locked: false },
-];
 
 type Variant = 'default' | 'amber' | 'rose' | 'locked' | 'featured';
 
@@ -238,7 +232,7 @@ const EMERGENCY_SERVICE: Service = {
 // ============================================================
 // المكوّن الرئيسي
 // ============================================================
-export default function GuestClient() {
+export default function GuestClient({ stories = [] }: { stories?: Story[] }) {
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
@@ -271,36 +265,8 @@ export default function GuestClient() {
           />
         </label>
 
-        {/* Stories */}
-        <div className="scr-stories" aria-label="القصص الطبية">
-          {STORIES.map((story) =>
-            story.isAdd ? (
-              <LockedAction
-                key={story.id}
-                isLocked={true}
-                message="سجّل الآن لإضافة قصصك الطبية"
-                className="story story-add"
-              >
-                <div className="story-circle">
-                  <div className="story-inner">{story.icon}</div>
-                </div>
-                <div className="story-label">{story.label}</div>
-              </LockedAction>
-            ) : (
-              <LockedAction
-                key={story.id}
-                isLocked={true}
-                message="سجّل الآن لمشاهدة القصص الطبية"
-                className="story"
-              >
-                <div className="story-circle">
-                  <div className="story-inner">{story.icon}</div>
-                </div>
-                <div className="story-label">{story.label}</div>
-              </LockedAction>
-            )
-          )}
-        </div>
+        {/* القصص: ما تنشره الإدارة نفسُه — لا «إضافة»، فالقصصُ من الإدارة وحدها */}
+        {stories.length > 0 && <StoriesStrip stories={stories} />}
 
         {/* Promo Banner */}
         <Link href="/register" className="scr-banner" style={{ textDecoration: 'none' }}>

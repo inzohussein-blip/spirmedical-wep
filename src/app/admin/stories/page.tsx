@@ -52,32 +52,7 @@ export default async function AdminStoriesPage() {
 
   return (
     <>
-      <div style={{ marginBottom: 20 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}>
-          <EmojiIcon e="📸" /> القصص الترويجية
-        </h1>
-        <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: 0 }}>
-          إدارة الـ stories التي تظهر في dashboard المستخدمين (مثل Instagram Stories)
-        </p>
-      </div>
-
-      {/* Info banner */}
-      <div style={{
-        background: 'var(--emerald-soft)',
-        borderInlineStart: '4px solid var(--emerald)',
-        borderRadius: 10,
-        padding: 14,
-        marginBottom: 20,
-        fontSize: 12,
-      }}>
-        <div style={{ fontWeight: 800, marginBottom: 4 }}><EmojiIcon e="💡" /> كيف تظهر القصص؟</div>
-        <div style={{ color: 'var(--ink-2)', lineHeight: 1.7 }}>
-          القصص النشطة تظهر كصف من الـ circles في أعلى dashboard كل مستخدم.<br />
-          يمكن جدولتها (تظهر من-إلى)، ترتيبها، أو إيقافها مؤقتاً.<br />
-          الرابط (<code style={{ background: 'var(--white)', padding: '1px 4px', borderRadius: 3 }}>href</code>) يحدّد لأين تذهب عند الضغط.
-        </div>
-      </div>
-
+      {/* العنوانُ والشرحُ في StoriesManager — كانا هنا مكرَّرَين («مثل Instagram»، «circles»، «href») */}
       <StoriesManager initialStories={(stories as Story[]) || []} />
     </>
   );

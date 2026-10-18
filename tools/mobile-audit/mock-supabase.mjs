@@ -57,9 +57,15 @@ const FIX = {
   ],
   service_switches: [],
   // قصصُ الإنتاج كما هي: إيموجي في حقل icon (لا ti-*)
-  stories: [['لقاحات', '💉', '/tools/vaccinations'], ['صحتك', '🩺', '/account/health'], ['دواء', '💊', '/account/prescriptions'],
-    ['تغذية', '🍎', '/tools/risk-calculator'], ['إسعافات', '🚑', '/tools/first-aid']].map(([title, icon, href], i) =>
-    ({ id: `st${i + 1}`, title, icon, href, color_theme: 'rose', sort_order: i + 1, is_active: true, starts_at: null, ends_at: null })),
+  stories: [
+    ['لقاحات', '💉', '/tools/vaccinations', 'orange', 'حملة لقاح الإنفلونزا الموسميّة بدأت. راجع جدول التطعيم واحجز موعدك.', 'جدول التطعيم'],
+    ['صحتك', '🩺', '/account/health', 'emerald', 'سجّل ضغطك وسكّرك أسبوعياً لترى تغيّرها في لوحة الصحة.', null],
+    ['دواء', '💊', '/account/prescriptions', 'purple', 'احفظ وصفاتك في التطبيق ليصلك تذكيرُ الجرعة في موعدها.', null],
+    ['تغذية', '🍎', '/services/nutrition', 'green', 'أخصائيّو التغذية متاحون للاستشارة.', null],
+    ['إسعافات', '🚑', '/tools/first-aid', 'red', 'تعلّم الإسعافات الأوّليّة لعشر حالاتٍ شائعة.', 'افتح الدليل'],
+  ].map(([title, icon, href, color_theme, description, cta_label], i) =>
+    ({ id: `st${i + 1}`, title, icon, href, color_theme, description, cta_label, image_url: null, sort_order: i + 1,
+      is_active: true, starts_at: null, ends_at: null, created_at: iso(-1), updated_at: iso(-1) })),
   service_areas: [],
   family_members: [],
   favorites: [], service_favorites: [], pharmacy_favorites: [],

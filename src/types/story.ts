@@ -1,10 +1,26 @@
 /**
  * ═══════════════════════════════════════════════════════════════
- * Story Types — Promotional Stories System
+ * Story Types — قصصٌ تنشرها الإدارة وحدها (0054)
  * ═══════════════════════════════════════════════════════════════
+ * القصّةُ تُفتح بملء الشاشة: صورةٌ اختياريّة، ونصٌّ (`description`)، وزرُّ إجراء
+ * (`cta_label` → `href`). ولونُها من لوحة المشروع (`lib/icons.ts`) لا من ترتيبها.
  */
+import { ICON_TONES, type IconTone } from '@/lib/icons';
 
-export type StoryColorTheme = 'emerald' | 'amber' | 'rose' | 'paper' | 'ink';
+/** القيمُ الخمس الأولى قديمة (تبقى صالحة)، والباقي ألوانُ المفاهيم — قيدُ valid_color في 0054 */
+export type StoryColorTheme =
+  | 'emerald' | 'amber' | 'rose' | 'paper' | 'ink'
+  | 'blue' | 'purple' | 'red' | 'orange' | 'teal' | 'green';
+
+export const STORY_THEMES: readonly StoryColorTheme[] = [
+  'emerald', 'blue', 'purple', 'red', 'orange', 'amber', 'teal', 'green', 'rose', 'paper', 'ink',
+];
+
+/** لونُ القصّة في لوحة المشروع — «فاتح» و«داكن» القديمان يُرسمان رماديّاً */
+export function storyTone(theme: string | null | undefined): IconTone {
+  if (theme && theme in ICON_TONES) return theme as IconTone;
+  return theme === 'paper' || theme === 'ink' ? 'gray' : 'emerald';
+}
 
 export interface Story {
   id: string;
@@ -12,6 +28,8 @@ export interface Story {
   icon: string;
   description: string | null;
   href: string;
+  image_url?: string | null;
+  cta_label?: string | null;
   color_theme: StoryColorTheme;
   sort_order: number;
   is_active: boolean;
@@ -27,6 +45,8 @@ export interface StoryInput {
   icon: string;
   description?: string;
   href: string;
+  image_url?: string | null;
+  cta_label?: string;
   color_theme: StoryColorTheme;
   sort_order?: number;
   is_active?: boolean;
@@ -36,19 +56,22 @@ export interface StoryInput {
 
 /* ─── Color theme presets ──────────────────────────────────── */
 
-export const COLOR_THEMES: Array<{
-  value: StoryColorTheme;
-  label: string;
-  bg: string;
-  fg: string;
-  ring: string;
-}> = [
-  { value: 'emerald', label: 'أخضر', bg: 'var(--emerald-soft)', fg: 'var(--emerald-deep)', ring: 'var(--emerald)' },
-  { value: 'amber', label: 'كهرماني', bg: 'var(--amber-soft)', fg: 'var(--amber)', ring: 'var(--amber)' },
-  { value: 'rose', label: 'وردي', bg: 'var(--rose-soft)', fg: 'var(--rose)', ring: 'var(--rose)' },
-  { value: 'paper', label: 'فاتح', bg: 'var(--paper)', fg: 'var(--ink)', ring: 'var(--line-2)' },
-  { value: 'ink', label: 'داكن', bg: 'var(--ink)', fg: 'var(--paper-3)', ring: 'var(--ink-2)' },
-];
+const THEME_LABELS: Record<StoryColorTheme, string> = {
+  emerald: 'أخضر', blue: 'أزرق', purple: 'بنفسجي', red: 'أحمر', orange: 'برتقالي', amber: 'كهرماني',
+  teal: 'فيروزي', green: 'أخضر فاتح', rose: 'وردي', paper: 'رمادي', ink: 'رمادي داكن',
+};
+
+/** خياراتُ اللون في الإدارة: الألوانُ القديمة الصالحة لا تُعرض للاختيار الجديد */
+export const COLOR_THEMES = STORY_THEMES.filter((t) => t !== 'paper' && t !== 'ink').map((value) => {
+  const t = ICON_TONES[storyTone(value)];
+  return { value, label: THEME_LABELS[value], bg: t.bg, fg: t.fg, ring: t.fg };
+});
+
+/** لألوانٍ قديمة في صفوفٍ موجودة (paper/ink) */
+export function themeConfig(value: string) {
+  const t = ICON_TONES[storyTone(value)];
+  return { bg: t.bg, fg: t.fg, ring: t.fg };
+}
 
 /* ─── Validation ───────────────────────────────────────────── */
 
@@ -74,8 +97,20 @@ export function validateStoryInput(input: Partial<StoryInput>): {
     errors.push('الرابط يجب أن يبدأ بـ / أو http');
   }
 
-  if (input.color_theme && !['emerald', 'amber', 'rose', 'paper', 'ink'].includes(input.color_theme)) {
+  if (input.color_theme && !STORY_THEMES.includes(input.color_theme)) {
     errors.push('اللون غير صالح');
+  }
+
+  if (input.description && input.description.length > 280) {
+    errors.push('النصّ طويل جداً (الحد 280 حرفاً)');
+  }
+
+  if (input.cta_label && input.cta_label.length > 24) {
+    errors.push('نصّ الزرّ طويل جداً (الحد 24 حرفاً)');
+  }
+
+  if (input.image_url && !input.image_url.startsWith('https://')) {
+    errors.push('رابطُ الصورة غير صالح');
   }
 
   if (input.starts_at && input.ends_at) {

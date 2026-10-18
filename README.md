@@ -251,7 +251,7 @@ spirmedical-wep/
 | المنشآت | `admin/hospitals` `doctors` `pharmacies` `labs` `dental` `optical` `mental-health` `nutrition` `physio` `cosmetic` `medications` `nurses` |
 | التغطية والخدمات | `admin/service-areas` · `admin/services` (مفاتيح التشغيل) · `admin/locations` |
 | التقارير | `admin/reports/*` (جغرافي، خريطة حرارية، عمليات حيّة) · `admin/analytics` |
-| التسويق | `admin/campaigns` · `admin/coupons` · `admin/beta-codes` · `admin/stories` |
+| التسويق | `admin/campaigns` · `admin/coupons` · `admin/beta-codes` · `admin/stories` (قصصٌ بملء الشاشة، من الإدارة وحدها — 0054) |
 | الإعدادات | `admin/settings` (منها الرفض التلقائيّ للطلبات المعلّقة) · `admin/settings/theme` |
 | السجلّات | `admin/audit-log` · `admin/bugs` · `admin/feedback` · `admin/notifications` |
 | البيانات الأوّلية | `admin/seed-data` · `api/admin/seed` · `lib/seed/*` (بيانات تطوير — الهواتف مُقنَّعة) |

@@ -31,9 +31,10 @@
 | التنسيق | `app/styles/shared.css` (رموز + حارس iOS) · `app.css` (شاشات التطبيق) · `marketing.css` · `admin.css` |
 | الفهرسة واكتشافُ النماذج | `app/layout.tsx` · `components/seo/JsonLd.tsx` · `app/sitemap.ts` · `app/robots.ts` · الأصل `lib/seo/origin.ts` · الحقائق `lib/seo/facts.ts` → `lib/seo/llms.ts` |
 | «عن التطبيق» | `components/landing/AboutApp.tsx` (الرئيسية `#about` و`/about`) |
+| القصص | `components/stories/*` (الشريط، العارض، البطاقة) · `types/story.ts` · الإدارة `app/admin/stories/` |
 | الأيقونات ومكوّنات الإدارة | `lib/icons.ts` (أسماءٌ → Tabler + لونُ كلّ مفهوم) · `lib/emoji-icons.ts` + `components/ui/EmojiIcon.tsx` · `components/admin-ui` (StatCard، Panel، ListRow، StatusPill، DataTable…) |
 | الكرون | `vercel.json` → `app/api/cron/*` · `app/api/notifications/process` |
-| قاعدة البيانات | `supabase/migrations/` (آخرها 0053) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
+| قاعدة البيانات | `supabase/migrations/` (آخرها 0054) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
 | الاختبارات | `tests/` — اسمُ الحارس يدلّ على مجاله (`rls-*`، `order-flow-modals`، `specialist-screens`…) |
 
 **أدوات التحقّق البصريّ** في [`tools/mobile-audit/`](tools/mobile-audit/README.md):
@@ -213,6 +214,20 @@
 - **على المالك:** Search Console — أضف رمزَ التحقّق في `layout.tsx` (`verification.google`) وارفع
   `https://www.spir-medical.com/sitemap.xml`. وأرقامُ الرئيسية المرئيّة («18 محافظة»، «24/7») باقيةٌ بقراره؛ الأبوابُ
   الآليّة وحدها صُحّحت.
+
+## 📸 القصص — من الإدارة وحدها (0054، قرار المالك، 18 تشرين الأول)
+
+- **قصصٌ حقيقيّة لا روابط:** تُفتح بملء الشاشة (`StoryViewer`، يُرسم في `body` بـcreatePortal — غلافُ التطبيق يجعل
+  `fixed` نسبيّاً إليه): صورةٌ اختياريّة، ونصٌّ (`description` ≤ 280)، وزرٌّ (`cta_label` ≤ 24 → `href`). التقدّمُ بنهاية
+  حركة CSS لا بمؤقّت، والضغطُ يوقفه، و«تقليلُ الحركة» يلغي الانتقالَ وحده. «التالية» يسارَ الشاشة (عربيّ).
+- **اللونُ من القصّة** (`color_theme` ← `ICON_TONES`)، لا من ترتيبها (`nth-child` حُذف). الحلقةُ ملوّنة للجديدة على هذا
+  الجهاز ورماديّةٌ بعد المشاهدة (`seen-store.ts`، localStorage بـ`updated_at` — التعديلُ يُعيدها جديدة).
+- **من الإدارة وحدها:** سياساتُ `stories` تحصر الكتابة في super_admin/admin/manager. وحاويةُ `stories` عامّةُ القراءة
+  **بلا أيّ سياسة كتابة** — يرفع إليها `uploadStoryImage` بعميل الخدمة بعد `requireAdmin()`. لا تُضف سياسةَ إدراج لها.
+  ولا قصصَ مكتوبةً في الكود (حُذف `FALLBACK_STORIES` و«إضافة» في صفحة الزائر): لا قصص ← لا شريط.
+- أنماطُ العارض والبطاقة في `shared.css` (معاينةُ الإدارة تستعملها)، والشريطُ في `app.css`.
+- `getActiveStories` بـ`unstable_cache` (120 ث): البناءُ بلا خادمٍ وهميّ يخزّن `[]` — امسح `.next/cache/fetch-cache` قبل التصوير.
+- الحارسان: `tests/stories-viewer.test.tsx` و`tests/stories-icons.test.tsx`.
 
 ## 📞 أرقام المنشآت
 

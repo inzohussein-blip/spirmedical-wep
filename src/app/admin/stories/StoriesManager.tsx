@@ -11,9 +11,13 @@ import {
   toggleStoryActive,
   deleteStory,
   reorderStories,
+  uploadStoryImage,
 } from './actions';
-import type { Story, StoryColorTheme, StoryInput } from '@/types/story';
-import { COLOR_THEMES } from '@/types/story';
+import type { Story, StoryInput } from '@/types/story';
+import { COLOR_THEMES, themeConfig } from '@/types/story';
+import StoryCard, { DEFAULT_CTA } from '@/components/stories/StoryCard';
+import { StoryIcon, STORY_ICON_CHOICES } from '@/components/stories/StoryIcon';
+import { prepareUpload } from '@/lib/forms/prepare-upload';
 import { useConfirm } from '@/components/ui';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
@@ -26,6 +30,8 @@ const EMPTY_FORM: StoryInput = {
   icon: '💉',
   description: '',
   href: '/',
+  image_url: null,
+  cta_label: '',
   color_theme: 'emerald',
   sort_order: 0,
   is_active: true,
@@ -42,6 +48,29 @@ export default function StoriesManager({ initialStories }: Props) {
     message: string;
   } | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [uploading, setUploading] = useState(false);
+
+  /** الصورةُ تُصغَّر في المتصفّح (≤ 1.2MB، JPEG) ثمّ تُرفع إلى حاوية القصص من إجراء الإدارة */
+  const handleImage = async (file: File | undefined) => {
+    if (!file) return;
+    setUploading(true);
+    try {
+      const prepared = await prepareUpload(file);
+      if ('error' in prepared) {
+        setFeedback({ type: 'error', message: prepared.error });
+        return;
+      }
+      const fd = new FormData();
+      fd.append('image', prepared.file);
+      const res = await uploadStoryImage(fd);
+      if (res.url) setFormData((f) => ({ ...f, image_url: res.url }));
+      else setFeedback({ type: 'error', message: res.error ?? 'تعذّر رفع الصورة' });
+    } catch {
+      setFeedback({ type: 'error', message: 'تعذّر رفع الصورة. حاول مرة أخرى.' });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   /* ─── Handlers ───────────────────────────────────────── */
 
@@ -73,6 +102,8 @@ export default function StoriesManager({ initialStories }: Props) {
       icon: story.icon,
       description: story.description ?? '',
       href: story.href,
+      image_url: story.image_url ?? null,
+      cta_label: story.cta_label ?? '',
       color_theme: story.color_theme,
       sort_order: story.sort_order,
       is_active: story.is_active,
@@ -165,8 +196,8 @@ export default function StoriesManager({ initialStories }: Props) {
       {/* Header */}
       <div className="sm-header">
         <div>
-          <h1><EmojiIcon e="📸" /> إدارة القصص الترويجية</h1>
-          <p>القصص تظهر في dashboard المستخدم كصف من الـ circles</p>
+          <h1><EmojiIcon e="📸" /> القصص</h1>
+          <p>تظهر أعلى رئيسية المريض، وتُفتح بملء الشاشة: صورة، ونصّ، وزرّ. لا ينشرها إلّا المدير.</p>
         </div>
         <Button
           variant="primary"
@@ -234,18 +265,23 @@ export default function StoriesManager({ initialStories }: Props) {
               </div>
 
               {/* Icon */}
-              <div className="sm-field">
-                <label>الأيقونة (emoji) *</label>
-                <input
-                  type="text"
-                  value={formData.icon}
-                  onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                  placeholder="💉"
-                  maxLength={4}
-                  required
-                  disabled={isPending}
-                  className="sm-icon-input"
-                />
+              <div className="sm-field sm-field-full">
+                <span className="sm-label">الأيقونة *</span>
+                <div className="sm-icons" role="radiogroup" aria-label="الأيقونة">
+                  {STORY_ICON_CHOICES.map((e) => (
+                    <button
+                      key={e}
+                      type="button"
+                      role="radio"
+                      aria-checked={formData.icon === e}
+                      className={`sm-icon-choice ${formData.icon === e ? 'sm-icon-selected' : ''}`}
+                      onClick={() => setFormData({ ...formData, icon: e })}
+                      disabled={isPending}
+                    >
+                      <StoryIcon icon={e} size={22} />
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Sort order */}
@@ -276,6 +312,7 @@ export default function StoriesManager({ initialStories }: Props) {
                       }`}
                       style={{ background: c.bg, color: c.fg }}
                       disabled={isPending}
+                      aria-pressed={formData.color_theme === c.value}
                     >
                       {c.label}
                     </button>
@@ -285,7 +322,7 @@ export default function StoriesManager({ initialStories }: Props) {
 
               {/* Href */}
               <div className="sm-field sm-field-full">
-                <label>الرابط (href) *</label>
+                <label>رابطُ الزرّ *</label>
                 <input
                   type="text"
                   value={formData.href}
@@ -296,16 +333,56 @@ export default function StoriesManager({ initialStories }: Props) {
                 />
               </div>
 
+              {/* CTA */}
+              <div className="sm-field">
+                <label>نصُّ الزرّ</label>
+                <input
+                  type="text"
+                  value={formData.cta_label ?? ''}
+                  onChange={(e) => setFormData({ ...formData, cta_label: e.target.value })}
+                  placeholder={DEFAULT_CTA}
+                  maxLength={24}
+                  disabled={isPending}
+                />
+              </div>
+
+              {/* Image */}
+              <div className="sm-field">
+                <label>صورة (اختيارية)</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImage(e.target.files?.[0])}
+                  disabled={isPending || uploading}
+                />
+                {uploading && <span className="sm-hint">جارٍ رفع الصورة…</span>}
+                {formData.image_url && !uploading && (
+                  <button type="button" className="sm-remove-image" onClick={() => setFormData({ ...formData, image_url: null })}>
+                    إزالة الصورة
+                  </button>
+                )}
+              </div>
+
               {/* Description */}
               <div className="sm-field sm-field-full">
-                <label>الوصف (اختياري)</label>
+                <label>نصُّ القصّة</label>
                 <textarea
                   value={formData.description ?? ''}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={2}
-                  maxLength={120}
+                  rows={4}
+                  maxLength={280}
+                  placeholder="مثال: حملة لقاح الإنفلونزا الموسميّة بدأت — احجز موعدك من التطبيق."
                   disabled={isPending}
                 />
+                <span className="sm-hint">{(formData.description ?? '').length}/280</span>
+              </div>
+            </div>
+
+            {/* معاينةٌ حيّة: الشكلُ نفسه الذي يراه المريض */}
+            <div className="sm-preview">
+              <span className="sm-label">معاينة</span>
+              <div className="sm-preview-frame">
+                <StoryCard story={{ ...formData, description: formData.description || null }} preview />
               </div>
             </div>
 
@@ -412,7 +489,18 @@ export default function StoriesManager({ initialStories }: Props) {
         .sm-field input:focus, .sm-field textarea:focus {
           outline: none; border-color: var(--emerald);
         }
-        .sm-icon-input { text-align: center; font-size: 24px !important; }
+        .sm-label { font-size: 12px; font-weight: 700; color: var(--ink-2); }
+        .sm-hint { font-size: 12px; color: var(--ink-3); }
+        .sm-icons { display: flex; flex-wrap: wrap; gap: 6px; }
+        .sm-icon-choice {
+          width: 44px; height: 44px; border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          border: 2px solid var(--line); background: var(--paper-3); color: var(--ink-2); cursor: pointer;
+        }
+        .sm-icon-selected { border-color: var(--emerald); color: var(--emerald); background: var(--emerald-soft); }
+        .sm-remove-image { align-self: flex-start; border: 0; background: transparent; color: var(--rose); font-weight: 700; cursor: pointer; padding: 4px 0; font-size: 12px; }
+        .sm-preview { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+        .sm-preview-frame { width: 100%; max-width: 300px; height: 460px; border-radius: 20px; overflow: hidden; border: 1px solid var(--line); }
         .sm-colors { display: flex; flex-wrap: wrap; gap: 6px; }
         .sm-color {
           padding: 8px 14px; font-size: 12px; font-weight: 700;
@@ -449,7 +537,7 @@ interface StoryRowProps {
 }
 
 function StoryRow({ story, onEdit, onToggle, onDelete, onMove, canMoveUp, canMoveDown, disabled }: StoryRowProps) {
-  const colorConfig = COLOR_THEMES.find((c) => c.value === story.color_theme);
+  const colorConfig = themeConfig(story.color_theme);
 
   return (
     <div className={`story-row ${!story.is_active ? 'story-row-inactive' : ''}`}>
@@ -481,7 +569,7 @@ function StoryRow({ story, onEdit, onToggle, onDelete, onMove, canMoveUp, canMov
         className="story-row-preview"
         style={{ background: colorConfig?.bg, color: colorConfig?.fg }}
       >
-        <span style={{ fontSize: 22 }}><EmojiIcon e={story.icon} /></span>
+        <StoryIcon icon={story.icon} size={22} />
       </div>
 
       <div className="story-row-info">

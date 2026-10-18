@@ -5329,3 +5329,85 @@ html {
 :is(.landing-service-icon, .ab-service-icon, .sm-empty-icon):has(> .emoji-icon[data-tone="yellow"]:only-child) { background: #FEF7E0; }
 :is(.landing-service-icon, .ab-service-icon, .sm-empty-icon):has(> .emoji-icon[data-tone="gray"]:only-child) { background: #F1F3F4; }
 .emoji-dot { display: inline-block; width: 0.6em; height: 0.6em; border-radius: 50%; vertical-align: 0.05em; flex-shrink: 0; }
+
+/* ═══ القصص: العارضُ والبطاقة (components/stories) — هنا لا في app.css: معاينةُ الإدارة تستعملها ═══ */
+.sv-backdrop {
+  position: fixed; inset: 0; z-index: 10000;
+  background: rgba(15, 20, 18, 0.94);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.sv-panel {
+  position: relative; width: 100%; max-width: 440px; height: 100dvh;
+  display: flex; flex-direction: column;
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) 12px calc(env(safe-area-inset-bottom, 0px) + 16px);
+  outline: none;
+}
+
+@media (min-width: 600px) {
+  .sv-panel { height: min(820px, 92dvh); }
+}
+
+.sv-progress { display: flex; gap: 4px; direction: rtl; }
+.sv-seg { flex: 1; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, 0.3); overflow: hidden; }
+.sv-fill { display: block; height: 100%; width: 0; background: #fff; border-radius: 3px; }
+.sv-fill.sv-done { width: 100%; }
+.sv-fill.sv-run { animation: sv-progress linear forwards; }
+.sv-fill.sv-paused { animation-play-state: paused; }
+@keyframes sv-progress { from { width: 0; } to { width: 100%; } }
+
+/* «تقليلُ الحركة»: لا انتقالَ وحده — الشريطُ ممتلئ ويتقدّم المستخدمُ باللمس */
+@media (prefers-reduced-motion: reduce) {
+  .sv-fill.sv-run { animation: none; width: 100%; }
+}
+
+.sv-close {
+  position: absolute; top: calc(env(safe-area-inset-top, 0px) + 22px); inset-inline-end: 12px; z-index: 3;
+  width: 44px; height: 44px; border-radius: 50%; border: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0, 0, 0, 0.42); color: #fff; cursor: pointer;
+}
+
+.sv-stage { position: relative; flex: 1; min-height: 0; margin-top: 12px; }
+
+.sv-tap {
+  position: absolute; top: 0; bottom: 0; width: 50%; z-index: 1;
+  border: 0; background: transparent; cursor: pointer; padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.sv-tap-next { left: 0; }
+.sv-tap-prev { right: 0; }
+
+.sv-card {
+  height: 100%; border-radius: 20px; overflow: hidden;
+  display: flex; flex-direction: column;
+  background: var(--paper-3, #fff); color: var(--ink);
+}
+
+.sv-media {
+  flex: 1; min-height: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--st-bg); color: var(--st-fg);
+}
+
+.sv-image { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.sv-hero-icon {
+  width: 128px; height: 128px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--paper-3, #fff);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* النصُّ والزرّ فوق مناطق اللمس: الزرُّ يُضغط، والنصُّ يُقرأ دون أن يقلب القصّة */
+.sv-body { position: relative; z-index: 2; padding: 20px 20px 22px; display: flex; flex-direction: column; gap: 10px; background: inherit; }
+.sv-title { margin: 0; font-size: 20px; font-weight: 700; line-height: 1.4; }
+.sv-text { margin: 0; font-size: 15px; line-height: 1.75; color: var(--ink-2); white-space: pre-line; }
+
+.sv-cta {
+  margin-top: 6px; min-height: 48px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--st-fg); color: #fff; font-weight: 700; font-size: 15px;
+  text-decoration: none;
+}
+

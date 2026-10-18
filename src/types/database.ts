@@ -7078,11 +7078,13 @@ export type Database = {
           color_theme: string
           created_at: string
           created_by: string | null
+          cta_label: string | null
           description: string | null
           ends_at: string | null
           href: string
           icon: string
           id: string
+          image_url: string | null
           is_active: boolean
           sort_order: number
           starts_at: string | null
@@ -7093,11 +7095,13 @@ export type Database = {
           color_theme?: string
           created_at?: string
           created_by?: string | null
+          cta_label?: string | null
           description?: string | null
           ends_at?: string | null
           href?: string
           icon: string
           id?: string
+          image_url?: string | null
           is_active?: boolean
           sort_order?: number
           starts_at?: string | null
@@ -7108,11 +7112,13 @@ export type Database = {
           color_theme?: string
           created_at?: string
           created_by?: string | null
+          cta_label?: string | null
           description?: string | null
           ends_at?: string | null
           href?: string
           icon?: string
           id?: string
+          image_url?: string | null
           is_active?: boolean
           sort_order?: number
           starts_at?: string | null
