@@ -183,7 +183,8 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    if (pathname.startsWith('/specialist') && role !== 'specialist') {
+    // المديرُ يدخل تطبيقَ المختصّ أيضاً (زرُّه في لوحة الإدارة)
+    if (pathname.startsWith('/specialist') && role !== 'specialist' && !isAdminRole(role)) {
       const url = request.nextUrl.clone();
       url.pathname = '/dashboard';
       return NextResponse.redirect(url);

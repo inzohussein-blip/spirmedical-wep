@@ -7,6 +7,7 @@ import { ADMIN_ROLES, type AdminRole } from '@/lib/admin-types';
 import { useConfirm } from '@/components/ui';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { DataTable } from '@/components/admin-ui';
 interface AdminUser {
   id: string;
   name: string;
@@ -160,30 +161,16 @@ export default function AdminsClient({ admins }: Props) {
 
       {/* List */}
       <div style={{ background: 'var(--white)', borderRadius: 14, overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-          <thead style={{ background: 'var(--paper-3)' }}>
-            <tr>
-              <th style={th}>الاسم</th>
-              <th style={th}>الهاتف</th>
-              <th style={th}>الدور</th>
-              <th style={th}>تاريخ التعيين</th>
-              <th style={th}>إجراء</th>
-            </tr>
-          </thead>
-          <tbody>
-            {admins.map((a) => {
+        <DataTable
+          rows={admins.map((a) => {
               const meta = ADMIN_ROLES[a.role];
-              return (
-                <tr key={a.id} style={{ borderTop: '1px solid var(--line)' }}>
-                  <td style={td}>
-                    <div style={{ fontWeight: 700 }}>
+            return { key: String(a.id), cells: [
+              <><div style={{ fontWeight: 700 }}>
                       {a.name} {a.isMe && <span style={{ fontSize: 11, color: 'var(--emerald)', marginInlineStart: 6 }}>(أنت)</span>}
                     </div>
-                    {a.email && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{a.email}</div>}
-                  </td>
-                  <td style={{ ...td, fontFamily: 'monospace' }} dir="ltr">{a.phone}</td>
-                  <td style={td}>
-                    <select
+                    {a.email && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{a.email}</div>}</>,
+              <>{a.phone}</>,
+              <><select
                       value={a.role}
                       onChange={(e) => handleChangeRole(a.id, e.target.value as AdminRole)}
                       disabled={a.isMe || isPending}
@@ -198,11 +185,9 @@ export default function AdminsClient({ admins }: Props) {
                       <option value="admin">مدير عام</option>
                       <option value="manager">مدير عمليات</option>
                       <option value="support">دعم فني</option>
-                    </select>
-                  </td>
-                  <td style={td}>{new Date(a.createdAt).toLocaleDateString('ar-IQ-u-nu-latn')}</td>
-                  <td style={td}>
-                    {a.isMe ? (
+                    </select></>,
+              <>{new Date(a.createdAt).toLocaleDateString('ar-IQ-u-nu-latn')}</>,
+              <>{a.isMe ? (
                       <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>—</span>
                     ) : (
                       <button onClick={() => handleRevoke(a.id, a.name)} disabled={isPending} style={{
@@ -212,13 +197,18 @@ export default function AdminsClient({ admins }: Props) {
                       }}>
                         <EmojiIcon e="🗑" /> إزالة
                       </button>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                    )}</>,
+            ] };
+          })}
+          rowKey={(r) => r.key}
+          columns={[
+            { key: 'c0', header: 'الاسم', primary: true, render: (r) => r.cells[0] },
+            { key: 'c1', header: 'الهاتف', render: (r) => r.cells[1] },
+            { key: 'c2', header: 'الدور', render: (r) => r.cells[2] },
+            { key: 'c3', header: 'تاريخ التعيين', render: (r) => r.cells[3] },
+            { key: 'c4', header: 'إجراء', render: (r) => r.cells[4] },
+          ]}
+        />
       </div>
       <ConfirmDialog />
     </>

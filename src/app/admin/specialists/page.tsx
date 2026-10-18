@@ -4,6 +4,7 @@ import { toSpecialistType, SPECIALIST_META, SPECIALIST_TYPES, type SpecialistTyp
 import { EmptyState } from '@/components/ui';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { DataTable } from '@/components/admin-ui';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -102,34 +103,19 @@ export default async function SpecialistsListPage(props: { searchParams: Promise
         />
       ) : (
         <div style={{ background: 'var(--white)', borderRadius: 14, overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-            <thead style={{ background: 'var(--paper-3)' }}>
-              <tr>
-                <th style={th}>الاسم</th>
-                <th style={th}>الهاتف</th>
-                <th style={th}>النوع</th>
-                <th style={th}>المحافظة</th>
-                <th style={th}>الخبرة</th>
-                <th style={th}>الحالة</th>
-              </tr>
-            </thead>
-            <tbody>
-              {specialists.map((s) => {
+          <DataTable
+            rows={specialists.map((s) => {
                 const type = toSpecialistType(s.specialist_type);
                 const meta = type ? SPECIALIST_META[type] : null;
-                return (
-                  <tr key={s.id} style={{ borderTop: '1px solid var(--line)' }}>
-                    <td style={td}>
-                      <Link href={`/admin/specialists/${s.id}`} style={{ color: 'var(--ink)', textDecoration: 'none', fontWeight: 700 }}>
+              return { key: String(s.id), cells: [
+                <><Link href={`/admin/specialists/${s.id}`} style={{ color: 'var(--ink)', textDecoration: 'none', fontWeight: 700 }}>
                         {s.full_name ?? 'بدون اسم'}
-                      </Link>
-                    </td>
-                    <td style={{ ...td, fontFamily: 'monospace' }} dir="ltr">{s.phone}</td>
-                    <td style={td}>{meta ? `${meta.icon} ${meta.label}` : '—'}</td>
-                    <td style={td}>{s.governorate ?? '—'}</td>
-                    <td style={td}>{s.specialist_years_exp ? `${s.specialist_years_exp} سنة` : '—'}</td>
-                    <td style={td}>
-                      {s.is_suspended ? (
+                      </Link></>,
+                <>{s.phone}</>,
+                <>{meta ? `${meta.icon} ${meta.label}` : '—'}</>,
+                <>{s.governorate ?? '—'}</>,
+                <>{s.specialist_years_exp ? `${s.specialist_years_exp} سنة` : '—'}</>,
+                <>{s.is_suspended ? (
                         <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--rose-soft)', color: 'var(--rose)', fontWeight: 800 }}><EmojiIcon e="⛔" /> معلّق</span>
                       ) : s.approval_status === 'approved' ? (
                         <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', fontWeight: 800 }}><EmojiIcon e="✅" /> نشط</span>
@@ -137,13 +123,19 @@ export default async function SpecialistsListPage(props: { searchParams: Promise
                         <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--rose-soft)', color: 'var(--rose)', fontWeight: 800 }}><EmojiIcon e="❌" /> مرفوض</span>
                       ) : (
                         <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--amber-soft, #FEF7E0)', color: 'var(--amber-deep, #6B3A08)', fontWeight: 800 }}><EmojiIcon e="⏳" /> معلّق</span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      )}</>,
+              ] };
+            })}
+            rowKey={(r) => r.key}
+            columns={[
+              { key: 'c0', header: 'الاسم', primary: true, render: (r) => r.cells[0] },
+              { key: 'c1', header: 'الهاتف', render: (r) => r.cells[1] },
+              { key: 'c2', header: 'النوع', render: (r) => r.cells[2] },
+              { key: 'c3', header: 'المحافظة', render: (r) => r.cells[3] },
+              { key: 'c4', header: 'الخبرة', render: (r) => r.cells[4] },
+              { key: 'c5', header: 'الحالة', render: (r) => r.cells[5] },
+            ]}
+          />
         </div>
       )}
     </>

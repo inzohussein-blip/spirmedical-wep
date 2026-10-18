@@ -28,6 +28,7 @@ export default async function DashboardLayout({
 }) {
   const session = await requireSession({
     allowedRoles: ['patient'],
+    allowAdmin: true,
   });
 
   // ─── بوّابة الخدمات المطفأة ───

@@ -8,12 +8,15 @@
  */
 
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/server-service';
+import { randomUUID } from 'crypto';
 // Next 16: updateTag يُبطل فوراً فيرى المديرُ تعديله (revalidateTag صار stale-while-revalidate)
 import { updateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { isSuperAdmin } from '@/lib/admin-types';
 import { validateStoryInput, type StoryInput } from '@/types/story';
-import type { TablesUpdate } from '@/types/database';
+import type { Json, TablesUpdate } from '@/types/database';
+import { parseStripSettings, STRIP_SETTINGS_KEY, type StripSettings } from '@/lib/stories/strip-settings';
 
 export interface StoryActionResult {
   success: boolean;
@@ -65,6 +68,8 @@ export async function createStory(input: StoryInput): Promise<StoryActionResult>
     icon: input.icon.trim(),
     description: input.description?.trim() || null,
     href: input.href.trim(),
+    image_url: input.image_url || null,
+    cta_label: input.cta_label?.trim() || null,
     color_theme: input.color_theme,
     sort_order: input.sort_order ?? 0,
     is_active: input.is_active ?? true,
@@ -104,6 +109,8 @@ export async function updateStory(
   if (input.icon !== undefined) updateData.icon = input.icon.trim();
   if (input.description !== undefined) updateData.description = input.description?.trim() || null;
   if (input.href !== undefined) updateData.href = input.href.trim();
+  if (input.image_url !== undefined) updateData.image_url = input.image_url || null;
+  if (input.cta_label !== undefined) updateData.cta_label = input.cta_label?.trim() || null;
   if (input.color_theme !== undefined) updateData.color_theme = input.color_theme;
   if (input.sort_order !== undefined) updateData.sort_order = input.sort_order;
   if (input.is_active !== undefined) updateData.is_active = input.is_active;
@@ -156,11 +163,16 @@ export async function deleteStory(id: string): Promise<StoryActionResult> {
     return { success: false, message: 'غير مصرّح' };
   }
 
+  const { data: row } = await supabase.from('stories').select('image_url').eq('id', id).maybeSingle();
   const { error } = await supabase.from('stories').delete().eq('id', id);
 
   if (error) {
     return { success: false, message: 'فشل الحذف: ' + error.message };
   }
+
+  // صورتُها من حاويتنا تُحذف معها — فشلُ ذلك لا يُفشل الحذف
+  const path = storyImagePath(row?.image_url);
+  if (path) await createServiceClient().storage.from(STORY_IMAGES_BUCKET).remove([path]).catch(() => null);
 
   updateTag('stories');
   return { success: true, message: 'تم حذف القصة' };
@@ -193,4 +205,77 @@ export async function reorderStories(
 
   updateTag('stories');
   return { success: true, message: 'تم تحديث الترتيب' };
+}
+
+/* ─── Story image ──────────────────────────────────────────── */
+
+const STORY_IMAGES_BUCKET = 'stories';
+const STORY_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const STORY_IMAGE_MAX = 2 * 1024 * 1024;
+
+/** مسارُ الصورة داخل حاويتنا من رابطها العامّ — وإلّا null (رابطٌ خارجيّ لا يُحذف) */
+function storyImagePath(url: string | null | undefined): string | null {
+  const m = url?.match(/\/storage\/v1\/object\/public\/stories\/(.+)$/);
+  return m ? decodeURIComponent(m[1]) : null;
+}
+
+/**
+ * يرفع صورةَ قصّة ويعيد رابطَها العامّ. الحاويةُ `stories` بلا أيّ سياسة كتابة (0054):
+ * لا يكتبها إلّا عميلُ الخدمة من هنا، بعد التحقّق من دور المدير — فالقصصُ من الإدارة وحدها.
+ * الصورةُ تُصغَّر في المتصفّح قبل الإرسال (`prepareUpload`).
+ */
+export async function uploadStoryImage(formData: FormData): Promise<{ url?: string; error?: string }> {
+  const { authorized } = await requireAdmin();
+  if (!authorized) return { error: 'غير مصرّح' };
+
+  const file = formData.get('image');
+  if (!(file instanceof File) || file.size === 0) return { error: 'لم تُختر صورة' };
+  if (!STORY_IMAGE_TYPES.includes(file.type)) return { error: 'الصورة يجب أن تكون JPEG أو PNG أو WebP' };
+  if (file.size > STORY_IMAGE_MAX) return { error: 'الصورة أكبر من 2MB' };
+
+  const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
+  const path = `${randomUUID()}.${ext}`;
+  const storage = createServiceClient().storage.from(STORY_IMAGES_BUCKET);
+  const { error } = await storage.upload(path, file, { contentType: file.type, upsert: false });
+  if (error) {
+    console.error('[Stories] Image upload failed:', error);
+    return { error: 'تعذّر رفع الصورة' };
+  }
+  return { url: storage.getPublicUrl(path).data.publicUrl };
+}
+
+/* ─── Strip settings (show/hide for everyone, shape, theme) ───────── */
+
+/**
+ * يحفظ إعدادَ شريط القصص في `app_settings` (`stories_strip`). الكتابةُ بعميل RLS:
+ * سياسةُ الجدول `private.is_admin` تحرسها في القاعدة، ويُعدّ الصفُّ المكتوب — سياسةٌ ترفض بصمت
+ * كانت ستعطي «تمّ» (كما في حفظ الألوان). `updateTag('stories')` يُبطل ما يراه المرضى فوراً.
+ */
+export async function saveStripSettings(input: StripSettings): Promise<StoryActionResult> {
+  const { authorized, user, supabase } = await requireAdmin();
+  if (!authorized || !user) return { success: false, message: 'غير مصرّح' };
+
+  const value = parseStripSettings(input);
+  const { data, error } = await supabase
+    .from('app_settings')
+    .upsert(
+      {
+        key: STRIP_SETTINGS_KEY,
+        value: value as unknown as Json,
+        description_ar: 'شريطُ القصص: الإظهار للجميع والشكل والثيم',
+        updated_by: user.id,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'key' },
+    )
+    .select('key');
+
+  if (error) return { success: false, message: 'فشل الحفظ: ' + error.message };
+  if (!data?.length) return { success: false, message: 'لم يُحفظ — صلاحيّاتك لا تسمح بتعديل الإعدادات' };
+
+  updateTag('stories');
+  return {
+    success: true,
+    message: value.enabled ? 'حُفظ شكلُ الشريط — ظاهرٌ لجميع المستخدمين' : 'أُخفي شريطُ القصص عن جميع المستخدمين',
+  };
 }

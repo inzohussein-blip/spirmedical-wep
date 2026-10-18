@@ -17,6 +17,7 @@ import {
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { DataTable } from '@/components/admin-ui';
 interface DentalClinic {
   id: string;
   name: string;
@@ -207,54 +208,31 @@ export default function DentalAdminClient({ initialClinics }: Props) {
         borderRadius: 12,
         overflowX: 'auto',
       }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ background: 'var(--paper-3)' }}>
-              <th style={thStyle}>الاسم</th>
-              <th style={thStyle}>المدينة</th>
-              <th style={thStyle}>الأطباء</th>
-              <th style={thStyle}>التقييم</th>
-              <th style={thStyle}>الخدمات</th>
-              <th style={thStyle}>الحالة</th>
-              <th style={thStyle}>إجراءات</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((c) => (
-              <tr key={c.id} style={{ borderBottom: '1px solid var(--line)' }}>
-                <td style={tdStyle}>
-                  <div style={{ fontWeight: 700 }}>{c.name}</div>
-                  {c.is_featured && <span style={{ fontSize: 11, color: 'var(--amber)' }}><EmojiIcon e="⭐" /> مميّزة</span>}
-                </td>
-                <td style={tdStyle}>
-                  {c.city}
-                  {c.district && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{c.district}</div>}
-                </td>
-                <td style={tdStyle}>{c.doctor_count}</td>
-                <td style={tdStyle}>
-                  {c.rating_count > 0 ? (
+        <DataTable
+          rows={filtered.map((c) => {
+            return { key: String(c.id), cells: [
+              <><div style={{ fontWeight: 700 }}>{c.name}</div>
+                  {c.is_featured && <span style={{ fontSize: 11, color: 'var(--amber)' }}><EmojiIcon e="⭐" /> مميّزة</span>}</>,
+              <>{c.city}
+                  {c.district && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{c.district}</div>}</>,
+              <>{c.doctor_count}</>,
+              <>{c.rating_count > 0 ? (
                     <span><EmojiIcon e="⭐" /> {c.rating_avg.toFixed(1)} ({c.rating_count})</span>
                   ) : (
                     <span style={{ color: 'var(--ink-3)' }}>—</span>
-                  )}
-                </td>
-                <td style={tdStyle}>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                  )}</>,
+              <><div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
                     {c.offers_implants && <Badge>زراعة</Badge>}
                     {c.offers_orthodontics && <Badge>تقويم</Badge>}
                     {c.offers_pediatric && <Badge>أطفال</Badge>}
                     {c.offers_emergency && <Badge color="var(--rose)">طوارئ</Badge>}
-                  </div>
-                </td>
-                <td style={tdStyle}>
-                  {c.is_active ? (
+                  </div></>,
+              <>{c.is_active ? (
                     <CheckCircle2 size={16} color="var(--emerald)" />
                   ) : (
                     <XCircle size={16} color="var(--ink-3)" />
-                  )}
-                </td>
-                <td style={tdStyle}>
-                  <div style={{ display: 'flex', gap: 4 }}>
+                  )}</>,
+              <><div style={{ display: 'flex', gap: 4 }}>
                     <IconButton
                       onClick={() => handleToggleFeatured(c.id, c.is_featured)}
                       title="تمييز"
@@ -283,12 +261,20 @@ export default function DentalAdminClient({ initialClinics }: Props) {
                     >
                       <Trash2 size={14} />
                     </IconButton>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  </div></>,
+            ] };
+          })}
+          rowKey={(r) => r.key}
+          columns={[
+            { key: 'c0', header: 'الاسم', primary: true, render: (r) => r.cells[0] },
+            { key: 'c1', header: 'المدينة', render: (r) => r.cells[1] },
+            { key: 'c2', header: 'الأطباء', render: (r) => r.cells[2] },
+            { key: 'c3', header: 'التقييم', render: (r) => r.cells[3] },
+            { key: 'c4', header: 'الخدمات', render: (r) => r.cells[4] },
+            { key: 'c5', header: 'الحالة', render: (r) => r.cells[5] },
+            { key: 'c6', header: 'إجراءات', render: (r) => r.cells[6] },
+          ]}
+        />
 
         {filtered.length === 0 && (
           <div style={{ padding: 40, textAlign: 'center', color: 'var(--ink-3)' }}>

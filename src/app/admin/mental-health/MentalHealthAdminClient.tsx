@@ -18,6 +18,7 @@ import {
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { DataTable } from '@/components/admin-ui';
 interface Specialist {
   id: string;
   full_name: string;
@@ -122,42 +123,22 @@ export default function MentalHealthAdminClient({ initialSpecialists }: { initia
       </div>
 
       <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 12, overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ background: 'var(--paper-3)' }}>
-              <th style={thStyle}>الاسم</th>
-              <th style={thStyle}>التخصّص</th>
-              <th style={thStyle}>الخبرة</th>
-              <th style={thStyle}>المدن</th>
-              <th style={thStyle}>أسعار</th>
-              <th style={thStyle}>الجلسات</th>
-              <th style={thStyle}>الحالة</th>
-              <th style={thStyle}>إجراءات</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((s) => (
-              <tr key={s.id} style={{ borderBottom: '1px solid var(--line)' }}>
-                <td style={tdStyle}>
-                  <div style={{ fontWeight: 700 }}>{s.title} {s.full_name}</div>
-                  <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{s.gender === 'female' ? 'أنثى' : 'ذكر'}</div>
-                </td>
-                <td style={tdStyle}><Badge>{TYPE_LABELS[s.specialist_type]}</Badge></td>
-                <td style={tdStyle}>{s.years_experience} سنة</td>
-                <td style={tdStyle}>{s.cities.slice(0, 2).join(', ')}{s.cities.length > 2 && `+${s.cities.length - 2}`}</td>
-                <td style={tdStyle}>
-                  {s.available_online && formatNumber(s.online_session_price) && <div style={{ fontSize: 11 }}><EmojiIcon e="💻" /> {formatNumber(s.online_session_price)}</div>}
-                  {s.available_in_clinic && formatNumber(s.clinic_session_price) && <div style={{ fontSize: 11 }}><EmojiIcon e="🏢" /> {formatNumber(s.clinic_session_price)}</div>}
-                </td>
-                <td style={tdStyle}>{s.total_sessions}</td>
-                <td style={tdStyle}>
-                  <div style={{ display: 'flex', gap: 4 }}>
+        <DataTable
+          rows={filtered.map((s) => {
+            return { key: String(s.id), cells: [
+              <><div style={{ fontWeight: 700 }}>{s.title} {s.full_name}</div>
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{s.gender === 'female' ? 'أنثى' : 'ذكر'}</div></>,
+              <><Badge>{TYPE_LABELS[s.specialist_type]}</Badge></>,
+              <>{s.years_experience} سنة</>,
+              <>{s.cities.slice(0, 2).join(', ')}{s.cities.length > 2 && `+${s.cities.length - 2}`}</>,
+              <>{s.available_online && formatNumber(s.online_session_price) && <div style={{ fontSize: 11 }}><EmojiIcon e="💻" /> {formatNumber(s.online_session_price)}</div>}
+                  {s.available_in_clinic && formatNumber(s.clinic_session_price) && <div style={{ fontSize: 11 }}><EmojiIcon e="🏢" /> {formatNumber(s.clinic_session_price)}</div>}</>,
+              <>{s.total_sessions}</>,
+              <><div style={{ display: 'flex', gap: 4 }}>
                     {s.is_active ? <CheckCircle2 size={14} color="var(--emerald)" /> : <XCircle size={14} color="var(--ink-3)" />}
                     {s.is_verified && <Shield size={14} color="#3B82F6" />}
-                  </div>
-                </td>
-                <td style={tdStyle}>
-                  <div style={{ display: 'flex', gap: 4 }}>
+                  </div></>,
+              <><div style={{ display: 'flex', gap: 4 }}>
                     <IconButton onClick={() => startTransition(async () => { await toggleMentalVerified(s.id, !s.is_verified); window.location.reload(); })} title="توثيق" color={s.is_verified ? '#3B82F6' : 'var(--ink-3)'}>
                       <Shield size={14} />
                     </IconButton>
@@ -170,12 +151,21 @@ export default function MentalHealthAdminClient({ initialSpecialists }: { initia
                     <IconButton onClick={() => handleDelete(s.id, s.full_name)} title="حذف" color="var(--rose)">
                       <Trash2 size={14} />
                     </IconButton>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  </div></>,
+            ] };
+          })}
+          rowKey={(r) => r.key}
+          columns={[
+            { key: 'c0', header: 'الاسم', primary: true, render: (r) => r.cells[0] },
+            { key: 'c1', header: 'التخصّص', render: (r) => r.cells[1] },
+            { key: 'c2', header: 'الخبرة', render: (r) => r.cells[2] },
+            { key: 'c3', header: 'المدن', render: (r) => r.cells[3] },
+            { key: 'c4', header: 'أسعار', render: (r) => r.cells[4] },
+            { key: 'c5', header: 'الجلسات', render: (r) => r.cells[5] },
+            { key: 'c6', header: 'الحالة', render: (r) => r.cells[6] },
+            { key: 'c7', header: 'إجراءات', render: (r) => r.cells[7] },
+          ]}
+        />
         {filtered.length === 0 && <div style={{ padding: 40, textAlign: 'center', color: 'var(--ink-3)' }}><EmojiIcon e="🧠" /> لا يوجد أخصائيون</div>}
       </div>
 

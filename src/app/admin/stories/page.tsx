@@ -8,6 +8,8 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { isSuperAdmin } from '@/lib/admin-types';
 import StoriesManager from './StoriesManager';
+import StripSettingsPanel from './StripSettingsPanel';
+import { parseStripSettings, STRIP_SETTINGS_KEY } from '@/lib/stories/strip-settings';
 import type { Story } from '@/types/story';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
@@ -44,41 +46,26 @@ export default async function AdminStoriesPage() {
   }
 
   // ─── جلب كل القصص ───
-  const { data: stories } = await supabase
-    .from('stories')
-    .select('*')
-    .order('sort_order', { ascending: true })
-    .order('created_at', { ascending: false });
+  // ─── القصص وإعدادُ الشريط معاً (لا شلّالَ انتظار) ───
+  const [{ data: stories }, { data: setting }] = await Promise.all([
+    supabase.from('stories').select('*')
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false }),
+    supabase.from('app_settings').select('value').eq('key', STRIP_SETTINGS_KEY).maybeSingle(),
+  ]);
+
+  // «الآن» من الخادم مرّةً: حالةُ كلّ قصّة (منشورة/مجدولة/منتهية) تُحسب منه في العميل بلا Date.now() في الرسم
+  const now = Date.now();
+  const all = (stories as Story[]) || [];
+  const published = all.filter((s) =>
+    s.is_active && (!s.starts_at || Date.parse(s.starts_at) <= now) && (!s.ends_at || Date.parse(s.ends_at) > now));
 
   return (
     <>
-      <div style={{ marginBottom: 20 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 6px' }}>
-          <EmojiIcon e="📸" /> القصص الترويجية
-        </h1>
-        <p style={{ fontSize: 13, color: 'var(--ink-3)', margin: 0 }}>
-          إدارة الـ stories التي تظهر في dashboard المستخدمين (مثل Instagram Stories)
-        </p>
-      </div>
-
-      {/* Info banner */}
-      <div style={{
-        background: 'var(--emerald-soft)',
-        borderInlineStart: '4px solid var(--emerald)',
-        borderRadius: 10,
-        padding: 14,
-        marginBottom: 20,
-        fontSize: 12,
-      }}>
-        <div style={{ fontWeight: 800, marginBottom: 4 }}><EmojiIcon e="💡" /> كيف تظهر القصص؟</div>
-        <div style={{ color: 'var(--ink-2)', lineHeight: 1.7 }}>
-          القصص النشطة تظهر كصف من الـ circles في أعلى dashboard كل مستخدم.<br />
-          يمكن جدولتها (تظهر من-إلى)، ترتيبها، أو إيقافها مؤقتاً.<br />
-          الرابط (<code style={{ background: 'var(--white)', padding: '1px 4px', borderRadius: 3 }}>href</code>) يحدّد لأين تذهب عند الضغط.
-        </div>
-      </div>
-
-      <StoriesManager initialStories={(stories as Story[]) || []} />
+      {/* العنوانُ والشرحُ في StoriesManager — كانا هنا مكرَّرَين («مثل Instagram»، «circles»، «href») */}
+      <StripSettingsPanel initial={parseStripSettings(setting?.value)} stories={published} />
+      <div style={{ height: 16 }} />
+      <StoriesManager initialStories={all} now={now} />
     </>
   );
 }

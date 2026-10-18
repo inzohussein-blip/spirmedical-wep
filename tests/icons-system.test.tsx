@@ -139,3 +139,12 @@ describe('🚨 لا ادّعاءَ اعتمادٍ رسميّ بلا وثيقة (
     expect(bad).toEqual([]);
   });
 });
+
+describe('🚨 تسمياتُ الحجز بلا إيموجي (18 تشرين الأول)', () => {
+  it('اسمُ الخدمة والباقة نصٌّ — يظهر في المراجعة ورسالة واتساب بلا رمزٍ بخطّ الجهاز', () => {
+    const s = code('src/app/(dashboard)/services/booking/page.tsx');
+    const labels = [...s.matchAll(/(?:serviceLabel|pkgLabel|packageLabel)\s*[=:]\s*([^;\n]+)/g)].map((m) => m[1]);
+    expect(labels.length).toBeGreaterThan(5);
+    for (const l of labels) expect(l).not.toMatch(EMO);
+  });
+});

@@ -14,6 +14,7 @@ import {
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { DataTable } from '@/components/admin-ui';
 interface Doctor {
   id: string;
   full_name: string;
@@ -209,26 +210,11 @@ export default function DoctorsAdminClient({ doctors }: Props) {
         </div>
       ) : (
         <div style={{ background: 'var(--white)', borderRadius: 12, overflowX: 'auto', border: '1px solid var(--line)' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-            <thead>
-              <tr style={{ background: 'var(--paper-3)' }}>
-                <th style={thStyle}>الطبيب</th>
-                <th style={thStyle}>التخصص</th>
-                <th style={thStyle}>المدينة</th>
-                <th style={thStyle}>الزيارة</th>
-                <th style={thStyle}>الاشتراك</th>
-                <th style={thStyle}>تقييم</th>
-                <th style={thStyle}>الحالة</th>
-                <th style={thStyle}>إجراءات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((d) => {
+          <DataTable
+            rows={filtered.map((d) => {
                 const specMeta = SPECIALTIES.find((s) => s.id === d.specialty);
-                return (
-                  <tr key={d.id} style={{ borderBottom: '1px solid var(--line)' }}>
-                    <td style={tdStyle}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              return { key: String(d.id), cells: [
+                <><div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <div
                           style={{
                             width: 36,
@@ -254,31 +240,19 @@ export default function DoctorsAdminClient({ doctors }: Props) {
                             </div>
                           )}
                         </div>
-                      </div>
-                    </td>
-                    <td style={tdStyle}>
-                      <EmojiIcon e={specMeta?.emoji} /> {specMeta?.label || d.specialty}
-                    </td>
-                    <td style={tdStyle}>
-                      {d.clinic_city || '—'}
-                    </td>
-                    <td style={tdStyle}>
-                      {d.home_visit_price ? `${d.home_visit_price.toLocaleString('ar-IQ-u-nu-latn')} د.ع` : '—'}
-                    </td>
-                    <td style={tdStyle}>
-                      {d.monthly_subscription_price
+                      </div></>,
+                <><EmojiIcon e={specMeta?.emoji} /> {specMeta?.label || d.specialty}</>,
+                <>{d.clinic_city || '—'}</>,
+                <>{d.home_visit_price ? `${d.home_visit_price.toLocaleString('ar-IQ-u-nu-latn')} د.ع` : '—'}</>,
+                <>{d.monthly_subscription_price
                         ? `${d.monthly_subscription_price.toLocaleString('ar-IQ-u-nu-latn')}/شهر`
-                        : '—'}
-                    </td>
-                    <td style={tdStyle}>
-                      {d.rating_count > 0 ? (
+                        : '—'}</>,
+                <>{d.rating_count > 0 ? (
                         <span><EmojiIcon e="⭐" /> {d.rating_avg.toFixed(1)} ({d.rating_count})</span>
                       ) : (
                         '—'
-                      )}
-                    </td>
-                    <td style={tdStyle}>
-                      <span
+                      )}</>,
+                <><span
                         style={{
                           padding: '2px 8px',
                           background: d.is_active ? 'var(--emerald-soft)' : 'var(--rose-soft)',
@@ -289,10 +263,8 @@ export default function DoctorsAdminClient({ doctors }: Props) {
                         }}
                       >
                         {d.is_active ? 'نشط' : 'معطّل'}
-                      </span>
-                    </td>
-                    <td style={tdStyle}>
-                      <div style={{ display: 'flex', gap: 4 }}>
+                      </span></>,
+                <><div style={{ display: 'flex', gap: 4 }}>
                         <button
                           type="button"
                           onClick={() => { setEditing(d); setShowModal(true); }}
@@ -332,13 +304,21 @@ export default function DoctorsAdminClient({ doctors }: Props) {
                         >
                           <Trash2 size={12} />
                         </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      </div></>,
+              ] };
+            })}
+            rowKey={(r) => r.key}
+            columns={[
+              { key: 'c0', header: 'الطبيب', primary: true, render: (r) => r.cells[0] },
+              { key: 'c1', header: 'التخصص', render: (r) => r.cells[1] },
+              { key: 'c2', header: 'المدينة', render: (r) => r.cells[2] },
+              { key: 'c3', header: 'الزيارة', render: (r) => r.cells[3] },
+              { key: 'c4', header: 'الاشتراك', render: (r) => r.cells[4] },
+              { key: 'c5', header: 'تقييم', render: (r) => r.cells[5] },
+              { key: 'c6', header: 'الحالة', render: (r) => r.cells[6] },
+              { key: 'c7', header: 'إجراءات', render: (r) => r.cells[7] },
+            ]}
+          />
         </div>
       )}
 

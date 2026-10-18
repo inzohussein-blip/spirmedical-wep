@@ -2969,6 +2969,7 @@ export type Database = {
           id: string
           internal_notes: string | null
           lab_name_snapshot: string | null
+          lab_specialist_id: string | null
           needs_fasting: boolean
           notes: string | null
           partner_lab_id: string | null
@@ -2995,6 +2996,7 @@ export type Database = {
           id?: string
           internal_notes?: string | null
           lab_name_snapshot?: string | null
+          lab_specialist_id?: string | null
           needs_fasting?: boolean
           notes?: string | null
           partner_lab_id?: string | null
@@ -3021,6 +3023,7 @@ export type Database = {
           id?: string
           internal_notes?: string | null
           lab_name_snapshot?: string | null
+          lab_specialist_id?: string | null
           needs_fasting?: boolean
           notes?: string | null
           partner_lab_id?: string | null
@@ -7073,16 +7076,36 @@ export type Database = {
           },
         ]
       }
+      specialist_lab_tests: {
+        Row: {
+          created_at: string
+          specialist_id: string
+          test_id: string
+        }
+        Insert: {
+          created_at?: string
+          specialist_id: string
+          test_id: string
+        }
+        Update: {
+          created_at?: string
+          specialist_id?: string
+          test_id?: string
+        }
+        Relationships: []
+      }
       stories: {
         Row: {
           color_theme: string
           created_at: string
           created_by: string | null
+          cta_label: string | null
           description: string | null
           ends_at: string | null
           href: string
           icon: string
           id: string
+          image_url: string | null
           is_active: boolean
           sort_order: number
           starts_at: string | null
@@ -7093,11 +7116,13 @@ export type Database = {
           color_theme?: string
           created_at?: string
           created_by?: string | null
+          cta_label?: string | null
           description?: string | null
           ends_at?: string | null
           href?: string
           icon: string
           id?: string
+          image_url?: string | null
           is_active?: boolean
           sort_order?: number
           starts_at?: string | null
@@ -7108,11 +7133,13 @@ export type Database = {
           color_theme?: string
           created_at?: string
           created_by?: string | null
+          cta_label?: string | null
           description?: string | null
           ends_at?: string | null
           href?: string
           icon?: string
           id?: string
+          image_url?: string | null
           is_active?: boolean
           sort_order?: number
           starts_at?: string | null

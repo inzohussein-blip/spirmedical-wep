@@ -17,6 +17,7 @@ import {
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { DataTable } from '@/components/admin-ui';
 interface OpticalStore {
   id: string;
   name: string;
@@ -119,42 +120,23 @@ export default function OpticalAdminClient({ initialStores }: { initialStores: O
       </div>
 
       <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 12, overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ background: 'var(--paper-3)' }}>
-              <th style={thStyle}>الاسم</th>
-              <th style={thStyle}>المدينة</th>
-              <th style={thStyle}>العلامات</th>
-              <th style={thStyle}>الخدمات</th>
-              <th style={thStyle}>التقييم</th>
-              <th style={thStyle}>الحالة</th>
-              <th style={thStyle}>إجراءات</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((s) => (
-              <tr key={s.id} style={{ borderBottom: '1px solid var(--line)' }}>
-                <td style={tdStyle}>
-                  <div style={{ fontWeight: 700 }}>{s.name}</div>
-                  {s.is_featured && <span style={{ fontSize: 11, color: 'var(--amber)' }}><EmojiIcon e="⭐" /></span>}
-                </td>
-                <td style={tdStyle}>{s.city}{s.district && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{s.district}</div>}</td>
-                <td style={tdStyle}>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+        <DataTable
+          rows={filtered.map((s) => {
+            return { key: String(s.id), cells: [
+              <><div style={{ fontWeight: 700 }}>{s.name}</div>
+                  {s.is_featured && <span style={{ fontSize: 11, color: 'var(--amber)' }}><EmojiIcon e="⭐" /></span>}</>,
+              <>{s.city}{s.district && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{s.district}</div>}</>,
+              <><div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
                     {s.brands.slice(0, 3).map((b, i) => <Badge key={i}>{b}</Badge>)}
                     {s.brands.length > 3 && <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>+{s.brands.length - 3}</span>}
-                  </div>
-                </td>
-                <td style={tdStyle}>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+                  </div></>,
+              <><div style={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
                     {s.offers_eye_exam && <Badge>فحص</Badge>}
                     {s.offers_contact_lenses && <Badge>عدسات</Badge>}
-                  </div>
-                </td>
-                <td style={tdStyle}>{s.rating_count > 0 ? `⭐ ${s.rating_avg.toFixed(1)}` : '—'}</td>
-                <td style={tdStyle}>{s.is_active ? <CheckCircle2 size={16} color="var(--emerald)" /> : <XCircle size={16} color="var(--ink-3)" />}</td>
-                <td style={tdStyle}>
-                  <div style={{ display: 'flex', gap: 4 }}>
+                  </div></>,
+              <>{s.rating_count > 0 ? `⭐ ${s.rating_avg.toFixed(1)}` : '—'}</>,
+              <>{s.is_active ? <CheckCircle2 size={16} color="var(--emerald)" /> : <XCircle size={16} color="var(--ink-3)" />}</>,
+              <><div style={{ display: 'flex', gap: 4 }}>
                     <IconButton onClick={() => startTransition(async () => { await toggleOpticalFeatured(s.id, !s.is_featured); window.location.reload(); })} title="تمييز" color={s.is_featured ? 'var(--amber)' : 'var(--ink-3)'}>
                       <Star size={14} fill={s.is_featured ? 'var(--amber)' : 'none'} />
                     </IconButton>
@@ -167,12 +149,20 @@ export default function OpticalAdminClient({ initialStores }: { initialStores: O
                     <IconButton onClick={() => handleDelete(s.id, s.name)} title="حذف" color="var(--rose)">
                       <Trash2 size={14} />
                     </IconButton>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  </div></>,
+            ] };
+          })}
+          rowKey={(r) => r.key}
+          columns={[
+            { key: 'c0', header: 'الاسم', primary: true, render: (r) => r.cells[0] },
+            { key: 'c1', header: 'المدينة', render: (r) => r.cells[1] },
+            { key: 'c2', header: 'العلامات', render: (r) => r.cells[2] },
+            { key: 'c3', header: 'الخدمات', render: (r) => r.cells[3] },
+            { key: 'c4', header: 'التقييم', render: (r) => r.cells[4] },
+            { key: 'c5', header: 'الحالة', render: (r) => r.cells[5] },
+            { key: 'c6', header: 'إجراءات', render: (r) => r.cells[6] },
+          ]}
+        />
         {filtered.length === 0 && <div style={{ padding: 40, textAlign: 'center', color: 'var(--ink-3)' }}><EmojiIcon e="👓" /> لا توجد متاجر</div>}
       </div>
 

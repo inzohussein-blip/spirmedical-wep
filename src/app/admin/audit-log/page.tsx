@@ -4,6 +4,7 @@ import { ACTION_TYPE_LABELS } from '@/lib/admin-types';
 import { EmptyState } from '@/components/ui';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { DataTable } from '@/components/admin-ui';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -73,36 +74,16 @@ export default async function AuditLogPage(props: { searchParams: Promise<Search
         />
       ) : (
         <div style={{ background: 'var(--white)', borderRadius: 14, overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-            <thead style={{ background: 'var(--paper-3)' }}>
-              <tr>
-                <th style={th}>الوقت</th>
-                <th style={th}>المدير</th>
-                <th style={th}>العملية</th>
-                <th style={th}>الهدف</th>
-                <th style={th}>التفاصيل</th>
-                <th style={th}>IP</th>
-              </tr>
-            </thead>
-            <tbody>
-              {actions.map((a) => {
+          <DataTable
+            rows={actions.map((a) => {
                 const admin = a.admin_id ? adminsMap.get(a.admin_id) : undefined;
                 const meta = ACTION_TYPE_LABELS[a.action_type] ?? { label: a.action_type, icon: '⚙️' };
-
-                return (
-                  <tr key={a.id} style={{ borderTop: '1px solid var(--line)' }}>
-                    <td style={{ ...td, whiteSpace: 'nowrap' }}>
-                      {new Date(a.created_at).toLocaleString('ar-IQ-u-nu-latn', { dateStyle: 'short', timeStyle: 'short' })}
-                    </td>
-                    <td style={td}>
-                      <div style={{ fontWeight: 700, fontSize: 12 }}>{admin?.full_name ?? '—'}</div>
-                      <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{admin?.role ?? '—'}</div>
-                    </td>
-                    <td style={td}>
-                      <span style={{ fontSize: 12, fontWeight: 700 }}><EmojiIcon e={meta.icon} /> {meta.label}</span>
-                    </td>
-                    <td style={td}>
-                      {a.target_type && a.target_id ? (
+              return { key: String(a.id), cells: [
+                <>{new Date(a.created_at).toLocaleString('ar-IQ-u-nu-latn', { dateStyle: 'short', timeStyle: 'short' })}</>,
+                <><div style={{ fontWeight: 700, fontSize: 12 }}>{admin?.full_name ?? '—'}</div>
+                      <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{admin?.role ?? '—'}</div></>,
+                <><span style={{ fontSize: 12, fontWeight: 700 }}><EmojiIcon e={meta.icon} /> {meta.label}</span></>,
+                <>{a.target_type && a.target_id ? (
                         a.target_type === 'user' ? (
                           <Link href={`/admin/specialists/${a.target_id}`} style={{ fontSize: 11, color: 'var(--emerald)', textDecoration: 'none' }}>
                             <EmojiIcon e="👤" /> {a.target_id.slice(0, 8)}
@@ -114,24 +95,28 @@ export default async function AuditLogPage(props: { searchParams: Promise<Search
                         ) : (
                           <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>{a.target_type}: {a.target_id?.slice(0, 8)}</span>
                         )
-                      ) : '—'}
-                    </td>
-                    <td style={td}>
-                      {a.details ? (
+                      ) : '—'}</>,
+                <>{a.details ? (
                         <details>
                           <summary style={{ cursor: 'pointer', fontSize: 11, color: 'var(--ink-3)' }}>عرض</summary>
                           <pre style={{ fontSize: 11, background: 'var(--paper-3)', padding: 8, borderRadius: 6, marginTop: 4, maxWidth: 220, overflow: 'auto', whiteSpace: 'pre-wrap', fontFamily: 'inherit' }}>
                             {JSON.stringify(a.details, null, 2)}
                           </pre>
                         </details>
-                      ) : '—'}
-                    </td>
-                    <td style={{ ...td, fontFamily: 'monospace', fontSize: 11 }}>{a.ip_address ?? '—'}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      ) : '—'}</>,
+                <>{a.ip_address ?? '—'}</>,
+              ] };
+            })}
+            rowKey={(r) => r.key}
+            columns={[
+              { key: 'c0', header: 'الوقت', render: (r) => r.cells[0] },
+              { key: 'c1', header: 'المدير', render: (r) => r.cells[1] },
+              { key: 'c2', header: 'العملية', primary: true, render: (r) => r.cells[2] },
+              { key: 'c3', header: 'الهدف', render: (r) => r.cells[3] },
+              { key: 'c4', header: 'التفاصيل', render: (r) => r.cells[4] },
+              { key: 'c5', header: 'IP', render: (r) => r.cells[5] },
+            ]}
+          />
         </div>
       )}
     </>

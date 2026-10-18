@@ -6,6 +6,7 @@ import { isBookingSoon } from '@/lib/services-v3';
 import ServiceUnavailable from '@/components/services/ServiceUnavailable';
 import { isSpecialistAvailable, unavailableSpecialistTypes } from '@/lib/specialist-availability';
 import { SERVICES } from '@/lib/services/services-data';
+import { getLabNetwork } from '@/lib/labs/lab-network';
 
 /** التدفّقان المخصّصان ومختصُّ كلٍّ منهما (يطابق createBloodDrawOrder/createNursingAppointment) */
 const DEDICATED_FLOW_SPECIALIST: Record<string, { type: string; title: string }> = {
@@ -72,7 +73,7 @@ export default async function NewAppointmentPage(
 
   // نداءاتٌ مستقلّة: لا يعتمد أيٌّ منها على نتيجة سابقه، وكانت تُنتظَر واحداً بعد واحد
   // فتُدفع رحلةٌ شبكيّةٌ لكلٍّ منها قبل أن يُرسم شيء. الآن نافذةُ انتظارٍ واحدة.
-  const [{ data: profile }, { data: savedLocationsRaw }] = await Promise.all([
+  const [{ data: profile }, { data: savedLocationsRaw }, labs] = await Promise.all([
     // جلب رقم الهاتف من حساب المستخدم
     supabase
       .from('users')
@@ -88,6 +89,8 @@ export default async function NewAppointmentPage(
       .order('last_used_at', { ascending: false, nullsFirst: false })
       .order('use_count', { ascending: false })
       .limit(6),
+    // 🧪 المختبراتُ الحقيقيّة وتحاليلُها (0055) — لسحب الدم وحده
+    searchParams.service === 'blood-draw' ? getLabNetwork() : Promise.resolve([]),
   ]);
 
   const savedLocations = (savedLocationsRaw ?? []).map((l) => ({
@@ -108,6 +111,7 @@ export default async function NewAppointmentPage(
       consultationType={searchParams.type}
       savedLocations={savedLocations}
       unavailableSpecialistTypes={unavailableTypes}
+      labs={labs}
     />
   );
 }

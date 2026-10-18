@@ -7,6 +7,7 @@ import { specialistReadiness } from '@/lib/specialist-readiness';
 import SpecialistReadinessCard from '@/components/specialist/SpecialistReadinessCard';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { isAdminRole } from '@/lib/admin-types';
 export const metadata = {
   title: 'لوحة الاختصاصي · سباير ميديكال',
 };
@@ -20,7 +21,7 @@ export default async function SpecialistDashboard() {
 
   const { data: profile } = await supabase
     .from('users')
-    .select('full_name, specialist_type, approval_status, governorate, specialist_bio')
+    .select('full_name, specialist_type, approval_status, governorate, specialist_bio, role')
     .eq('id', user.id)
     .single();
 
@@ -43,6 +44,13 @@ export default async function SpecialistDashboard() {
 
   const specialistType = (profile?.specialist_type ?? 'doctor') as SpecialistType;
   const meta = SPECIALIST_META[specialistType] ?? SPECIALIST_META.doctor;
+  // المديرُ بلا نوع اختصاص: يرى الطلبات الجديدة لكلّ الأنواع
+  const asAdmin = isAdminRole(profile?.role);
+  const newOrdersQuery = supabase
+    .from('appointments')
+    .select('*', { count: 'exact', head: true })
+    .or(`assigned_specialist_id.is.null,assigned_specialist_id.eq.${user.id}`)
+    .eq('status', 'pending');
 
   // اجلب إحصائيات
   const [
@@ -52,12 +60,7 @@ export default async function SpecialistDashboard() {
     { data: ratings },
   ] = await Promise.all([
     // طلبات جديدة (لم تُعيَّن أو معيّنة لي وقيد الانتظار)
-    supabase
-      .from('appointments')
-      .select('*', { count: 'exact', head: true })
-      .eq('required_specialist_type', specialistType)
-      .or(`assigned_specialist_id.is.null,assigned_specialist_id.eq.${user.id}`)
-      .eq('status', 'pending'),
+    asAdmin ? newOrdersQuery : newOrdersQuery.eq('required_specialist_type', specialistType),
 
     supabase
       .from('appointments')
@@ -78,12 +81,19 @@ export default async function SpecialistDashboard() {
       .eq('specialist_id', user.id),
   ]);
 
-  // اشتراكاتُ الدفع لا يقرؤها صاحبُها تحت RLS — تُعدّ بعميل الخدمة لهذا المستخدم وحده
-  const { count: activePushSubs } = await createAdminClient()
-    .from('push_subscriptions')
-    .select('id', { count: 'exact', head: true })
-    .eq('user_id', user.id)
-    .eq('is_active', true);
+  // اشتراكاتُ الدفع لا يقرؤها صاحبُها تحت RLS — تُعدّ بعميل الخدمة لهذا المستخدم وحده.
+  // وتحاليلُ المختبر لمختصّ التحاليل وحده (0055) — معاً لا بالتتابع.
+  const isLab = profile?.specialist_type === 'lab_analyst';
+  const [{ count: activePushSubs }, { count: labTests }] = await Promise.all([
+    createAdminClient()
+      .from('push_subscriptions')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('is_active', true),
+    isLab
+      ? supabase.from('specialist_lab_tests').select('test_id', { count: 'exact', head: true }).eq('specialist_id', user.id)
+      : Promise.resolve({ count: null }),
+  ]);
   const readiness = specialistReadiness(
     {
       full_name: profile?.full_name ?? null,
@@ -91,6 +101,7 @@ export default async function SpecialistDashboard() {
       specialist_bio: profile?.specialist_bio ?? null,
     },
     activePushSubs ?? 0,
+    isLab ? (labTests ?? 0) : undefined,
   );
 
   const avgRating = ratings && ratings.length > 0
@@ -116,12 +127,12 @@ export default async function SpecialistDashboard() {
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 12, opacity: 0.85, fontWeight: 700 }}>أهلاً</div>
               <div style={{ fontSize: 16, fontWeight: 800 }}>{profile?.full_name ?? 'أخصائي'}</div>
-              <div style={{ fontSize: 12, opacity: 0.9, marginTop: 2 }}>{meta.label}</div>
+              <div style={{ fontSize: 12, opacity: 0.9, marginTop: 2 }}>{asAdmin ? 'مدير — كلُّ أنواع الطلبات' : meta.label}</div>
             </div>
           </div>
         </div>
 
-        <SpecialistReadinessCard steps={readiness} />
+        {!asAdmin && <SpecialistReadinessCard steps={readiness} />}
 
         {/* الإحصائيات */}
         <div className="scr-section-head">
@@ -188,6 +199,16 @@ export default async function SpecialistDashboard() {
             </div>
             <div style={{ color: 'var(--ink-3)', fontSize: 18 }}>←</div>
           </Link>
+          {profile?.specialist_type === 'lab_analyst' && (
+            <Link href="/specialist/lab-tests" className="scr-list-item scr-list-item-clickable">
+              <div className="scr-list-item-icon"><EmojiIcon e="🧪" /></div>
+              <div className="scr-list-item-content">
+                <div className="scr-list-item-title">تحاليل مختبري</div>
+                <div className="scr-list-item-subtitle">ما يُجريه مختبرُك — يظهر للمريض عند اختيار تحاليله</div>
+              </div>
+              <div style={{ color: 'var(--ink-3)', fontSize: 18 }}>←</div>
+            </Link>
+          )}
           {profile?.specialist_type === 'pharmacist' && (
             <Link href="/specialist/pharmacy" className="scr-list-item scr-list-item-clickable">
               <div className="scr-list-item-icon"><EmojiIcon e="💊" /></div>

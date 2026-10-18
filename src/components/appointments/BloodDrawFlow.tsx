@@ -32,7 +32,8 @@ import {
   formatTestPrice,
   calculateBundleDiscount,
 } from '@/lib/services/blood-tests-data';
-import { ALL_LABS, ANY_LAB, type Lab } from '@/lib/services/labs-data';
+import { ANY_LAB } from '@/lib/services/labs-data';
+import { rankLabsForTests, type LabOffer } from '@/lib/labs/lab-match';
 import UserLocationPickerWrapper, { type LocationData } from '@/components/maps/UserLocationPickerWrapper';
 import {
   validateBloodDraw,
@@ -80,6 +81,8 @@ interface Props {
   userPhone?: string;
   userAddress?: string;
   onSubmit: (data: BloodDrawSubmission) => Promise<BloodDrawSubmitResult | void>;
+  /** 🧪 المختبراتُ الحقيقيّة: مختصّو التحاليل وما اختاروه من تحاليل (0055) */
+  labs?: LabOffer[];
   /** ✨ V25.1: قائمة المواقع المحفوظة للمستخدم */
   savedLocations?: Array<{
     id: string;
@@ -112,6 +115,7 @@ export default function BloodDrawFlow({
   userAddress = '',
   onSubmit,
   savedLocations = [],
+  labs = [],
 }: Props) {
   // ─── State ───
   const [query, setQuery] = useState('');
@@ -216,11 +220,10 @@ export default function BloodDrawFlow({
   );
   const totalWithDrawing = total + BLOOD_DRAW_PRICE;
 
-  // المختبر المختار
-  const selectedLab = useMemo(
-    () => ALL_LABS.find((l) => l.id === labId) || ANY_LAB,
-    [labId]
-  );
+  // 🧪 المختبراتُ التي تُجري التحاليلَ المختارة: الكاملةُ أوّلاً، ثمّ الجزئيّةُ بعدد الناقص.
+  // مختبرٌ اختير ثمّ تغيّرت التحاليل فلم يَعُد يُجري أيّاً منها ← «لا يهم» (بلا أثر).
+  const rankedLabs = useMemo(() => rankLabsForTests(labs, selectedTests), [labs, selectedTests]);
+  const effectiveLabId = rankedLabs.some((r) => r.lab.id === labId) ? labId : ANY_LAB.id;
 
   // ─── Handlers ───
   const toggleTest = (testId: string) => {
@@ -263,7 +266,7 @@ export default function BloodDrawFlow({
       const res = await onSubmit({
         testIds: selectedTests,
         bundleId: null,
-        labId,
+        labId: effectiveLabId,
         patientAge: age,
         patientGender: gender,
         patientCondition: condition,
@@ -644,34 +647,46 @@ export default function BloodDrawFlow({
         </div>
       </div>
 
-      {/* ═══ 3. المختبر ═══ */}
+      {/* ═══ 3. المختبر — مختبراتٌ تُجري التحاليلَ المختارة (قرار المالك، 0055) ═══ */}
       <div className="bd-card">
         <h3 className="bd-card-title">
           <Building2 size={18} strokeWidth={2.2} aria-hidden />
           <span>اختر المختبر</span>
         </h3>
         <p className="bd-card-sub">
-          المختبرات الشريكة المعتمدة في العراق
+          {selectedTests.length === 0
+            ? 'اختر تحاليلك أوّلاً لتظهر المختبراتُ التي تُجريها.'
+            : rankedLabs.length === 0
+              ? 'لا مختبرَ مسجّلٌ يُجري هذه التحاليل بعد — سنختار لك الأنسب.'
+              : 'المختبراتُ التي تُجري تحاليلك — الأكملُ أوّلاً.'}
         </p>
 
-        <div className="bd-labs-scroll">
-          {ALL_LABS.map((lab) => {
-            const isSel = labId === lab.id;
-            const isAny = lab.id === 'any';
+        <div className="bd-labs-scroll" role="radiogroup" aria-label="المختبر">
+          {[{ lab: null, complete: true, covered: selectedTests.length, missing: [] as string[] }, ...rankedLabs].map((r) => {
+            const id = r.lab ? r.lab.id : ANY_LAB.id;
+            const isSel = effectiveLabId === id;
+            const isAny = !r.lab;
             return (
               <button
-                key={lab.id}
+                key={id}
                 type="button"
+                role="radio"
+                aria-checked={isSel}
                 className={`bd-lab-card ${isSel ? 'selected' : ''} ${isAny ? 'is-any' : ''}`}
-                onClick={() => setLabId(lab.id)}
+                onClick={() => setLabId(id)}
               >
-                <div className="bd-lab-emoji"><EmojiIcon e={lab.emoji} /></div>
-                <div className="bd-lab-name">{lab.nameAr}</div>
-                <div className="bd-lab-city">{lab.city}</div>
-                <div className="bd-lab-time">
-                  <Clock size={11} strokeWidth={2.4} aria-hidden />
-                  <span>{lab.resultTime}</span>
-                </div>
+                <div className="bd-lab-emoji"><EmojiIcon e={isAny ? ANY_LAB.emoji : '🧪'} /></div>
+                <div className="bd-lab-name">{r.lab ? r.lab.name : ANY_LAB.nameAr}</div>
+                <div className="bd-lab-city">{r.lab ? (r.lab.city ?? '—') : ANY_LAB.city}</div>
+                {!isAny && (
+                  <div className="bd-lab-time">
+                    <span>
+                      {r.complete
+                        ? 'يُجري كلَّ تحاليلك'
+                        : `يُجري ${r.covered} من ${selectedTests.length}`}
+                    </span>
+                  </div>
+                )}
                 {isSel && (
                   <div className="bd-lab-check">
                     <CheckCircle2 size={11} strokeWidth={2.4} aria-hidden />

@@ -1745,41 +1745,38 @@
    COOKIE BANNER + UTILITIES
    ═══════════════════════════════════════════════════════════════════ */
 
+/* أصغرُ شكل: سطرٌ واحد بارتفاع ~52px — جملةٌ قصيرة ورابطُ «تخصيص» وزرّان (طلبُ المالك). */
 .cookie-overlay {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
   display: flex; justify-content: center;
-  padding: 16px; pointer-events: none;
+  padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px)); pointer-events: none;
 }
 
 .cookie-banner {
   pointer-events: auto;
   max-width: 480px; width: 100%;
   background: var(--white); border: 1px solid var(--line);
-  border-radius: 16px; padding: 16px; box-shadow: var(--shadow-xl);
+  border-radius: 14px; padding: 8px 8px 8px 10px; box-shadow: var(--shadow-xl);
 }
 
-.cookie-icon { font-size: 22px; margin-bottom: 8px; }
+.cookie-row { display: flex; align-items: center; gap: 8px; }
 
-.cookie-title { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
-
-.cookie-desc { font-size: 13px; color: var(--ink-3); line-height: 1.6; margin-bottom: 12px; }
+.cookie-desc { flex: 1; min-width: 0; margin: 0; font-size: 12px; color: var(--ink-2); line-height: 1.5; }
 
 .cookie-options {
   display: flex; flex-direction: column; gap: 8px;
-  margin-bottom: 12px; padding: 12px;
+  margin-bottom: 8px; padding: 10px;
   background: var(--paper-2); border-radius: 10px;
 }
 
 .cookie-option { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-2); }
 
-.cookie-required { font-size: 11px; color: var(--ink-3); margin-right: auto; }
-
-.cookie-actions { display: flex; gap: 8px; }
+.cookie-actions { display: flex; gap: 6px; flex-shrink: 0; }
 
 .cookie-btn {
-  flex: 1; min-height: 44px; padding: 10px 12px; border: 0;
+  min-height: 36px; padding: 6px 14px; border: 0;
   border-radius: 10px; white-space: nowrap;
-  font-size: 14px; font-weight: 800; cursor: pointer;
+  font-size: 13px; font-weight: 700; cursor: pointer;
 }
 
 /* لا `.outline`: ذاك صنفٌ أداتيّ في Tailwind (`outline-style: solid`) كان
@@ -1789,8 +1786,7 @@
   border: 1px solid var(--line-2);
 }
 
-/* رابطٌ داخل الجملة القانونيّة لا صفٌّ مستقلّ — يوفّر سطراً من ارتفاع الشعار.
-   (الأهدافُ السطريّة في جملةٍ مستثناةٌ من حدّ الحجم في WCAG 2.5.8.) */
+/* رابطٌ داخل الجملة (الأهدافُ السطريّة في جملةٍ مستثناةٌ من حدّ الحجم في WCAG 2.5.8). */
 .cookie-details-link {
   display: inline; padding: 0 2px;
   background: none; border: 0; cursor: pointer;
@@ -1800,16 +1796,7 @@
 
 .cookie-btn.primary { background: var(--btn-primary-bg); color: var(--paper-3); }
 
-.cookie-btn.secondary { background: var(--paper-2); color: var(--ink); }
-
-.cookie-legal { font-size: 12px; color: var(--ink-3); text-align: center; margin: 10px 0 0; line-height: 1.7; }
-
-/* الهاتف: الأيقونة تأكل ارتفاعاً لا يحتاجه الشعار */
-@media (max-width: 480px) {
-  .cookie-overlay { padding: 8px 8px calc(8px + env(safe-area-inset-bottom)); }
-  .cookie-banner { padding: 14px; }
-  .cookie-icon { display: none; }
-}
+.cookie-legal { font-size: 12px; color: var(--ink-3); margin: 2px 0 0; }
 
 .cookie-link { color: var(--emerald); font-weight: 700; }
 
@@ -5329,3 +5316,181 @@ html {
 :is(.landing-service-icon, .ab-service-icon, .sm-empty-icon):has(> .emoji-icon[data-tone="yellow"]:only-child) { background: #FEF7E0; }
 :is(.landing-service-icon, .ab-service-icon, .sm-empty-icon):has(> .emoji-icon[data-tone="gray"]:only-child) { background: #F1F3F4; }
 .emoji-dot { display: inline-block; width: 0.6em; height: 0.6em; border-radius: 50%; vertical-align: 0.05em; flex-shrink: 0; }
+
+/* ═══ القصص: الشريط (components/stories/StoriesStrip) — بلون القصّة لا بترتيبها ═══
+   --st-fg/--st-bg من lib/icons.ts ICON_TONES (storyStyle). الحلقةُ ملوّنة للقصّة الجديدة على هذا الجهاز،
+   ورماديّةٌ بعد مشاهدتها. الشكلُ (.stories-shape-*) والثيمُ (.stories-theme-*) يختارهما المدير
+   (lib/stories/strip-settings.ts). هنا لا في app.css: معاينةُ الإدارة تستعملها. */
+.scr-stories {
+  display: flex; gap: 12px; overflow-x: auto;
+  padding: 2px 2px 14px;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+}
+.scr-stories::-webkit-scrollbar { display: none; }
+
+.story {
+  position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px; flex-shrink: 0;
+  border: 0; background: transparent; cursor: pointer; padding: 0;
+  width: 68px; font: inherit; color: var(--ink);
+  scroll-snap-align: start;
+}
+.story-circle {
+  width: 68px; height: 68px; border-radius: 50%;
+  padding: 3px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--st-fg, var(--emerald));
+}
+.story-seen .story-circle { background: color-mix(in srgb, var(--ink-4, #80868b) 45%, transparent); }
+.story-inner {
+  width: 100%; height: 100%; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--st-bg, var(--emerald-soft)); color: var(--st-fg, var(--emerald));
+  box-shadow: 0 0 0 2px var(--paper-3, #fff);
+}
+.story-label {
+  font-size: 12px; color: var(--ink);
+  font-weight: 500; text-align: center; line-height: 1.3;
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.story-seen .story-label { color: var(--ink-3); }
+.story-dot { display: none; }
+.story:focus-visible { outline: none; }
+.story:focus-visible .story-circle { box-shadow: 0 0 0 3px var(--paper-3, #fff), 0 0 0 5px var(--st-fg); }
+
+/* ─── الأشكال ─── */
+.stories-shape-rounded .story-circle { border-radius: 22px; }
+.stories-shape-rounded .story-inner { border-radius: 19px; }
+
+/* بطاقات: أكبر، والعنوانُ داخلها؛ الإطارُ بلون القصّة للجديدة */
+.stories-shape-card { gap: 10px; }
+.stories-shape-card .story {
+  width: 96px; padding: 12px 8px 10px; gap: 8px;
+  border-radius: 18px; background: var(--st-bg);
+  box-shadow: inset 0 0 0 2px var(--st-fg);
+}
+.stories-shape-card .story-seen { box-shadow: inset 0 0 0 1px var(--line); }
+.stories-shape-card .story-circle,
+.stories-shape-card .story-seen .story-circle { width: 48px; height: 48px; padding: 0; background: transparent; }
+.stories-shape-card .story-inner { background: var(--paper-3, #fff); box-shadow: none; }
+.stories-shape-card .story-label { font-weight: 700; color: var(--ink); }
+
+/* شرائح: سطرٌ مضغوط — أيقونةٌ وعنوان */
+.stories-shape-chip { gap: 8px; padding-bottom: 12px; }
+.stories-shape-chip .story {
+  width: auto; flex-direction: row; gap: 6px;
+  padding: 4px 12px 4px 6px; min-height: 40px;
+  border-radius: 999px; background: var(--paper-3, #fff);
+  box-shadow: inset 0 0 0 2px var(--st-fg);
+}
+.stories-shape-chip .story-seen { box-shadow: inset 0 0 0 1px var(--line); }
+.stories-shape-chip .story-circle,
+.stories-shape-chip .story-seen .story-circle { width: 30px; height: 30px; padding: 0; background: transparent; }
+.stories-shape-chip .story-inner { box-shadow: none; }
+.stories-shape-chip .story-label { font-weight: 600; }
+
+/* ─── الثيمات ─── (تُعرَّف المتغيّراتُ على الأبناء فتغلب ما على .story سطرياً) */
+.stories-theme-brand .story > * { --st-fg: #01875F; --st-bg: #E6F3EF; }
+.stories-theme-brand.stories-shape-card .story,
+.stories-theme-brand.stories-shape-chip .story { --st-fg: #01875F !important; --st-bg: #E6F3EF !important; }
+
+/* هادئ: لا حلقةَ ملوّنة — إطارٌ رماديّ رفيع ونقطةٌ بلون القصّة للجديدة */
+.stories-theme-soft .story-circle,
+.stories-theme-soft .story-seen .story-circle { padding: 1px; background: var(--line); }
+.stories-theme-soft.stories-shape-card .story,
+.stories-theme-soft.stories-shape-chip .story { box-shadow: inset 0 0 0 1px var(--line); }
+.stories-theme-soft .story-dot {
+  display: block; position: absolute; top: 2px; inset-inline-start: 4px;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--st-fg); box-shadow: 0 0 0 2px var(--paper-3, #fff);
+}
+
+/* ممتلئ: خلفيّةٌ بلون القصّة وأيقونةٌ بيضاء */
+.stories-theme-filled .story-inner { background: var(--st-fg); color: #fff; }
+.stories-theme-filled.stories-shape-card .story { background: var(--st-fg); }
+.stories-theme-filled.stories-shape-card .story-label { color: #fff; }
+.stories-theme-filled.stories-shape-card .story-inner { background: rgba(255, 255, 255, 0.2); }
+
+/* ═══ القصص: العارضُ والبطاقة (components/stories) — هنا لا في app.css: معاينةُ الإدارة تستعملها ═══ */
+.sv-backdrop {
+  position: fixed; inset: 0; z-index: 10000;
+  background: rgba(15, 20, 18, 0.94);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.sv-panel {
+  position: relative; width: 100%; max-width: 440px; height: 100dvh;
+  display: flex; flex-direction: column;
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) 12px calc(env(safe-area-inset-bottom, 0px) + 16px);
+  outline: none;
+}
+
+@media (min-width: 600px) {
+  .sv-panel { height: min(820px, 92dvh); }
+}
+
+.sv-progress { display: flex; gap: 4px; direction: rtl; }
+.sv-seg { flex: 1; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, 0.3); overflow: hidden; }
+.sv-fill { display: block; height: 100%; width: 0; background: #fff; border-radius: 3px; }
+.sv-fill.sv-done { width: 100%; }
+.sv-fill.sv-run { animation: sv-progress linear forwards; }
+.sv-fill.sv-paused { animation-play-state: paused; }
+@keyframes sv-progress { from { width: 0; } to { width: 100%; } }
+
+/* «تقليلُ الحركة»: لا انتقالَ وحده — الشريطُ ممتلئ ويتقدّم المستخدمُ باللمس */
+@media (prefers-reduced-motion: reduce) {
+  .sv-fill.sv-run { animation: none; width: 100%; }
+}
+
+.sv-close {
+  position: absolute; top: calc(env(safe-area-inset-top, 0px) + 22px); inset-inline-end: 12px; z-index: 3;
+  width: 44px; height: 44px; border-radius: 50%; border: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0, 0, 0, 0.42); color: #fff; cursor: pointer;
+}
+
+.sv-stage { position: relative; flex: 1; min-height: 0; margin-top: 12px; }
+
+.sv-tap {
+  position: absolute; top: 0; bottom: 0; width: 50%; z-index: 1;
+  border: 0; background: transparent; cursor: pointer; padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.sv-tap-next { left: 0; }
+.sv-tap-prev { right: 0; }
+
+.sv-card {
+  height: 100%; border-radius: 20px; overflow: hidden;
+  display: flex; flex-direction: column;
+  background: var(--paper-3, #fff); color: var(--ink);
+}
+
+.sv-media {
+  flex: 1; min-height: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--st-bg); color: var(--st-fg);
+}
+
+.sv-image { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.sv-hero-icon {
+  width: 128px; height: 128px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--paper-3, #fff);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* النصُّ والزرّ فوق مناطق اللمس: الزرُّ يُضغط، والنصُّ يُقرأ دون أن يقلب القصّة */
+.sv-body { position: relative; z-index: 2; padding: 20px 20px 22px; display: flex; flex-direction: column; gap: 10px; background: inherit; }
+.sv-title { margin: 0; font-size: 20px; font-weight: 700; line-height: 1.4; }
+.sv-text { margin: 0; font-size: 15px; line-height: 1.75; color: var(--ink-2); white-space: pre-line; }
+
+.sv-cta {
+  margin-top: 6px; min-height: 48px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--st-fg); color: #fff; font-weight: 700; font-size: 15px;
+  text-decoration: none;
+}
+

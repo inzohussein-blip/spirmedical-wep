@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { notifyTestResultsReady, notifySpecialistAssigned } from '@/lib/services/push-templates';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
+import { isAdminRole } from '@/lib/admin-types';
 
 /**
  * قبول طلب: تعيين الاختصاصي للطلب
@@ -21,24 +22,27 @@ export async function acceptOrder(orderId: string) {
     .eq('id', user.id)
     .single();
 
-  if (profile?.role !== 'specialist' || profile?.approval_status !== 'approved') {
+  // المديرُ يقبل أيَّ طلبٍ (قرار المالك: دخولٌ كامل لتطبيق المختصّ) — بلا نوع اختصاص ولا اعتماد
+  const asAdmin = isAdminRole(profile?.role);
+  if (!profile || (!asAdmin && (profile.role !== 'specialist' || profile.approval_status !== 'approved'))) {
     return { ok: false, error: 'غير مصرّح' };
   }
 
-  if (!profile.specialist_type) {
+  if (!asAdmin && !profile.specialist_type) {
     return { ok: false, error: 'نوع الاختصاص غير محدّد' };
   }
 
   // تحديث الطلب + استرجاع بياناته (للإشعار)
-  const { data: updated, error } = await supabase
+  let acceptQuery = supabase
     .from('appointments')
     .update({
       assigned_specialist_id: user.id,
       status: 'confirmed',
     } as never)
     .eq('id', orderId)
-    .eq('required_specialist_type', profile.specialist_type)
-    .is('assigned_specialist_id', null)
+    .is('assigned_specialist_id', null);
+  if (!asAdmin) acceptQuery = acceptQuery.eq('required_specialist_type', profile.specialist_type!);
+  const { data: updated, error } = await acceptQuery
     .select('id, user_id, service_type, scheduled_at')
     .maybeSingle();
 
@@ -247,7 +251,7 @@ export async function saveLabResults(
     .eq('id', user.id)
     .single();
 
-  if (!profile || (profile.specialist_type !== 'lab_analyst' && profile.role !== 'admin')) {
+  if (!profile || (profile.specialist_type !== 'lab_analyst' && !isAdminRole(profile.role))) {
     return { ok: false, error: 'permission_denied' };
   }
 

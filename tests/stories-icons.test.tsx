@@ -7,9 +7,7 @@ import { render } from '@testing-library/react';
  * أسماءَ `ti-*`، فظهرت القصصُ وحدها إيموجي ملوّناً وسط أيقونات Tabler الخطّيّة (ملاحظةُ المالك،
  * 17 تشرين الأول). القاعدةُ لا تُمسّ: الترجمةُ في الكود فتشمل ما تضيفه الإدارةُ لاحقاً.
  */
-jest.mock('@/lib/stories/get-stories', () => ({ getActiveStories: jest.fn(async () => []) }));
-
-const { StoryIcon } = require('@/components/dashboard/StoriesRow');
+const { StoryIcon } = require('@/components/stories/StoryIcon');
 
 const EMOJI = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u;
 

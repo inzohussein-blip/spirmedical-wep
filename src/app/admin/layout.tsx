@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/server';
 import { isAdminRole, ADMIN_ROLES } from '@/lib/admin-types';
 import { signOut } from '../(auth)/login/actions';
 import AdminSidebar from './_components/AdminSidebar';
+import { IconStethoscope, IconUser } from '@tabler/icons-react';
+import { getAppUrl } from '@/lib/site-config';
 
 // 🛡️ Admin-specific CSS (V25.40 — Hybrid Approach)
 // Root layout يستورد shared.css (المشترك) — لا تكرار
@@ -77,17 +79,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <Link href="/dashboard" style={{
-              padding: '8px 14px',
-              borderRadius: 10,
-              background: 'var(--paper-3)',
-              color: 'var(--ink)',
-              fontSize: 12,
-              fontWeight: 700,
-              textDecoration: 'none',
-            }}>
-              ↗ تطبيق المريض
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+            {/* المديرُ يدخل التطبيقين بحسابه (requireSession allowAdmin — قرار المالك). كان الزرُّ يعيده إلى هنا */}
+            <Link href={getAppUrl('/dashboard')} className="admin-app-link">
+              <IconUser size={16} stroke={1.75} aria-hidden /> تطبيق المريض
+            </Link>
+            <Link href={getAppUrl('/specialist')} className="admin-app-link">
+              <IconStethoscope size={16} stroke={1.75} aria-hidden /> تطبيق المختصّ
             </Link>
 
             <form action={signOut}>

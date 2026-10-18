@@ -13,6 +13,7 @@ import PhoneLink from '@/components/ui/PhoneLink';
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { DataTable } from '@/components/admin-ui';
 interface Pharmacy {
   id: string;
   name: string;
@@ -111,59 +112,33 @@ export default function PharmaciesAdminClient({ pharmacies, inventoryCounts }: P
         </div>
       ) : (
         <div style={{ background: 'var(--white)', borderRadius: 12, overflowX: 'auto', border: '1px solid var(--line)' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-            <thead>
-              <tr style={{ background: 'var(--paper-3)' }}>
-                <th style={thStyle}>الصيدلية</th>
-                <th style={thStyle}>الموقع</th>
-                <th style={thStyle}>الهاتف</th>
-                <th style={thStyle}>الكتالوج</th>
-                <th style={thStyle}>المالك</th>
-                <th style={thStyle}>الحالة</th>
-                <th style={thStyle}>إجراءات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((p) => {
+          <DataTable
+            rows={filtered.map((p) => {
                 const counts = inventoryCounts[p.id];
-                return (
-                  <tr key={p.id} style={{ borderBottom: '1px solid var(--line)' }}>
-                    <td style={tdStyle}>
-                      <div style={{ fontWeight: 800 }}>{p.name}</div>
+              return { key: String(p.id), cells: [
+                <><div style={{ fontWeight: 800 }}>{p.name}</div>
                       <div style={{ fontSize: 11, color: 'var(--ink-3)', display: 'flex', gap: 4, marginTop: 2 }}>
                         {p.is_24h && <span style={{ padding: '1px 5px', background: 'var(--emerald-soft)', color: 'var(--emerald)', borderRadius: 3, fontWeight: 700 }}>24/7</span>}
                         {p.has_emergency_section && <span style={{ padding: '1px 5px', background: 'var(--rose-soft)', color: 'var(--rose)', borderRadius: 3, fontWeight: 700 }}>طوارئ</span>}
-                      </div>
-                    </td>
-                    <td style={tdStyle}>
-                      <div style={{ fontSize: 12 }}>{p.city}</div>
-                      <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{p.district}</div>
-                    </td>
-                    <td style={tdStyle}>
-                      <PhoneLink phone={p.phone} href={`tel:${p.phone}`} style={{ color: 'var(--emerald)', textDecoration: 'none', fontSize: 11 }}>
+                      </div></>,
+                <><div style={{ fontSize: 12 }}>{p.city}</div>
+                      <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{p.district}</div></>,
+                <><PhoneLink phone={p.phone} href={`tel:${p.phone}`} style={{ color: 'var(--emerald)', textDecoration: 'none', fontSize: 11 }}>
                         {p.phone}
-                      </PhoneLink>
-                    </td>
-                    <td style={tdStyle}>
-                      {counts ? (
+                      </PhoneLink></>,
+                <>{counts ? (
                         <div>
                           <div style={{ fontSize: 11, fontWeight: 800 }}>{counts.available}/{counts.total}</div>
                           <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>متوفر/إجمالي</div>
                         </div>
-                      ) : '—'}
-                    </td>
-                    <td style={tdStyle}>
-                      <span style={{ fontSize: 11, color: p.owner_user_id ? 'var(--emerald)' : 'var(--ink-3)' }}>
+                      ) : '—'}</>,
+                <><span style={{ fontSize: 11, color: p.owner_user_id ? 'var(--emerald)' : 'var(--ink-3)' }}>
                         {p.owner_user_id ? '✓ مربوط' : '—'}
-                      </span>
-                    </td>
-                    <td style={tdStyle}>
-                      <span style={{ padding: '2px 8px', background: p.is_active ? 'var(--emerald-soft)' : 'var(--rose-soft)', color: p.is_active ? 'var(--emerald)' : 'var(--rose)', borderRadius: 4, fontSize: 11, fontWeight: 800 }}>
+                      </span></>,
+                <><span style={{ padding: '2px 8px', background: p.is_active ? 'var(--emerald-soft)' : 'var(--rose-soft)', color: p.is_active ? 'var(--emerald)' : 'var(--rose)', borderRadius: 4, fontSize: 11, fontWeight: 800 }}>
                         {p.is_active ? 'نشط' : 'معطّل'}
-                      </span>
-                    </td>
-                    <td style={tdStyle}>
-                      <div style={{ display: 'flex', gap: 4 }}>
+                      </span></>,
+                <><div style={{ display: 'flex', gap: 4 }}>
                         <button onClick={() => { setEditing(p); setShowModal(true); }} aria-label="تعديل" style={iconBtn()}>
                           <Edit3 size={12} />
                         </button>
@@ -173,13 +148,20 @@ export default function PharmaciesAdminClient({ pharmacies, inventoryCounts }: P
                         <button onClick={() => handleDelete(p)} disabled={isPending} aria-label="حذف" style={{ ...iconBtn(), background: 'var(--rose-soft)', color: 'var(--rose)' }}>
                           <Trash2 size={12} />
                         </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      </div></>,
+              ] };
+            })}
+            rowKey={(r) => r.key}
+            columns={[
+              { key: 'c0', header: 'الصيدلية', primary: true, render: (r) => r.cells[0] },
+              { key: 'c1', header: 'الموقع', render: (r) => r.cells[1] },
+              { key: 'c2', header: 'الهاتف', render: (r) => r.cells[2] },
+              { key: 'c3', header: 'الكتالوج', render: (r) => r.cells[3] },
+              { key: 'c4', header: 'المالك', render: (r) => r.cells[4] },
+              { key: 'c5', header: 'الحالة', render: (r) => r.cells[5] },
+              { key: 'c6', header: 'إجراءات', render: (r) => r.cells[6] },
+            ]}
+          />
         </div>
       )}
 

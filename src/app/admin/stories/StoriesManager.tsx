@@ -11,27 +11,61 @@ import {
   toggleStoryActive,
   deleteStory,
   reorderStories,
+  uploadStoryImage,
 } from './actions';
-import type { Story, StoryColorTheme, StoryInput } from '@/types/story';
-import { COLOR_THEMES } from '@/types/story';
+import type { Story, StoryInput } from '@/types/story';
+import { COLOR_THEMES, themeConfig } from '@/types/story';
+import StoryCard, { DEFAULT_CTA } from '@/components/stories/StoryCard';
+import { StoryIcon, STORY_ICON_CHOICES } from '@/components/stories/StoryIcon';
+import { prepareUpload } from '@/lib/forms/prepare-upload';
 import { useConfirm } from '@/components/ui';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Props {
   initialStories: Story[];
+  /** «الآن» من الخادم — لحساب حالة القصّة بلا Date.now() في الرسم */
+  now: number;
 }
+
+type StoryStatus = 'published' | 'hidden' | 'scheduled' | 'ended';
+
+const STATUS_LABEL: Record<StoryStatus, { label: string; cls: string }> = {
+  published: { label: 'منشورة', cls: 'st-pub' },
+  hidden: { label: 'مسودّة · مخفيّة', cls: 'st-hid' },
+  scheduled: { label: 'مجدولة', cls: 'st-sch' },
+  ended: { label: 'منتهية', cls: 'st-end' },
+};
+
+/** حالةُ القصّة كما يراها المريض الآن */
+function storyStatus(s: Pick<Story, 'is_active' | 'starts_at' | 'ends_at'>, now: number): StoryStatus {
+  if (!s.is_active) return 'hidden';
+  if (s.starts_at && Date.parse(s.starts_at) > now) return 'scheduled';
+  if (s.ends_at && Date.parse(s.ends_at) <= now) return 'ended';
+  return 'published';
+}
+
+/** حقلُ datetime-local بتوقيت جهاز المدير ↔ ISO */
+function isoToLocal(iso: string | null | undefined): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const p = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+const localToIso = (v: string | null | undefined) => (v ? new Date(v).toISOString() : null);
 
 const EMPTY_FORM: StoryInput = {
   title: '',
   icon: '💉',
   description: '',
   href: '/',
+  image_url: null,
+  cta_label: '',
   color_theme: 'emerald',
   sort_order: 0,
   is_active: true,
 };
 
-export default function StoriesManager({ initialStories }: Props) {
+export default function StoriesManager({ initialStories, now }: Props) {
   const { confirm, ConfirmDialog } = useConfirm();
   const [stories, setStories] = useState<Story[]>(initialStories);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -42,6 +76,29 @@ export default function StoriesManager({ initialStories }: Props) {
     message: string;
   } | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [uploading, setUploading] = useState(false);
+
+  /** الصورةُ تُصغَّر في المتصفّح (≤ 1.2MB، JPEG) ثمّ تُرفع إلى حاوية القصص من إجراء الإدارة */
+  const handleImage = async (file: File | undefined) => {
+    if (!file) return;
+    setUploading(true);
+    try {
+      const prepared = await prepareUpload(file);
+      if ('error' in prepared) {
+        setFeedback({ type: 'error', message: prepared.error });
+        return;
+      }
+      const fd = new FormData();
+      fd.append('image', prepared.file);
+      const res = await uploadStoryImage(fd);
+      if (res.url) setFormData((f) => ({ ...f, image_url: res.url }));
+      else setFeedback({ type: 'error', message: res.error ?? 'تعذّر رفع الصورة' });
+    } catch {
+      setFeedback({ type: 'error', message: 'تعذّر رفع الصورة. حاول مرة أخرى.' });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   /* ─── Handlers ───────────────────────────────────────── */
 
@@ -54,7 +111,11 @@ export default function StoriesManager({ initialStories }: Props) {
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     startTransition(async () => {
-      const result = await createStory(formData);
+      const result = await createStory({
+        ...formData,
+        starts_at: localToIso(formData.starts_at),
+        ends_at: localToIso(formData.ends_at),
+      });
       setFeedback({
         type: result.success ? 'success' : 'error',
         message: result.success ? result.message : result.errors?.join(' · ') ?? result.message,
@@ -73,9 +134,13 @@ export default function StoriesManager({ initialStories }: Props) {
       icon: story.icon,
       description: story.description ?? '',
       href: story.href,
+      image_url: story.image_url ?? null,
+      cta_label: story.cta_label ?? '',
       color_theme: story.color_theme,
       sort_order: story.sort_order,
       is_active: story.is_active,
+      starts_at: isoToLocal(story.starts_at),
+      ends_at: isoToLocal(story.ends_at),
     });
     setShowAddForm(true);
   };
@@ -85,7 +150,11 @@ export default function StoriesManager({ initialStories }: Props) {
     if (!editingId) return;
 
     startTransition(async () => {
-      const result = await updateStory(editingId, formData);
+      const result = await updateStory(editingId, {
+        ...formData,
+        starts_at: localToIso(formData.starts_at),
+        ends_at: localToIso(formData.ends_at),
+      });
       setFeedback({
         type: result.success ? 'success' : 'error',
         message: result.success ? result.message : result.errors?.join(' · ') ?? result.message,
@@ -165,8 +234,8 @@ export default function StoriesManager({ initialStories }: Props) {
       {/* Header */}
       <div className="sm-header">
         <div>
-          <h1><EmojiIcon e="📸" /> إدارة القصص الترويجية</h1>
-          <p>القصص تظهر في dashboard المستخدم كصف من الـ circles</p>
+          <h1><EmojiIcon e="📸" /> القصص</h1>
+          <p>تظهر أعلى رئيسية المريض، وتُفتح بملء الشاشة: صورة، ونصّ، وزرّ. لا ينشرها إلّا المدير.</p>
         </div>
         <Button
           variant="primary"
@@ -234,18 +303,23 @@ export default function StoriesManager({ initialStories }: Props) {
               </div>
 
               {/* Icon */}
-              <div className="sm-field">
-                <label>الأيقونة (emoji) *</label>
-                <input
-                  type="text"
-                  value={formData.icon}
-                  onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                  placeholder="💉"
-                  maxLength={4}
-                  required
-                  disabled={isPending}
-                  className="sm-icon-input"
-                />
+              <div className="sm-field sm-field-full">
+                <span className="sm-label">الأيقونة *</span>
+                <div className="sm-icons" role="radiogroup" aria-label="الأيقونة">
+                  {STORY_ICON_CHOICES.map((e) => (
+                    <button
+                      key={e}
+                      type="button"
+                      role="radio"
+                      aria-checked={formData.icon === e}
+                      className={`sm-icon-choice ${formData.icon === e ? 'sm-icon-selected' : ''}`}
+                      onClick={() => setFormData({ ...formData, icon: e })}
+                      disabled={isPending}
+                    >
+                      <StoryIcon icon={e} size={22} />
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Sort order */}
@@ -276,6 +350,7 @@ export default function StoriesManager({ initialStories }: Props) {
                       }`}
                       style={{ background: c.bg, color: c.fg }}
                       disabled={isPending}
+                      aria-pressed={formData.color_theme === c.value}
                     >
                       {c.label}
                     </button>
@@ -285,7 +360,7 @@ export default function StoriesManager({ initialStories }: Props) {
 
               {/* Href */}
               <div className="sm-field sm-field-full">
-                <label>الرابط (href) *</label>
+                <label>رابطُ الزرّ *</label>
                 <input
                   type="text"
                   value={formData.href}
@@ -296,16 +371,87 @@ export default function StoriesManager({ initialStories }: Props) {
                 />
               </div>
 
+              {/* CTA */}
+              <div className="sm-field">
+                <label>نصُّ الزرّ</label>
+                <input
+                  type="text"
+                  value={formData.cta_label ?? ''}
+                  onChange={(e) => setFormData({ ...formData, cta_label: e.target.value })}
+                  placeholder={DEFAULT_CTA}
+                  maxLength={24}
+                  disabled={isPending}
+                />
+              </div>
+
+              {/* Image */}
+              <div className="sm-field">
+                <label>صورة (اختيارية)</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImage(e.target.files?.[0])}
+                  disabled={isPending || uploading}
+                />
+                {uploading && <span className="sm-hint">جارٍ رفع الصورة…</span>}
+                {formData.image_url && !uploading && (
+                  <button type="button" className="sm-remove-image" onClick={() => setFormData({ ...formData, image_url: null })}>
+                    إزالة الصورة
+                  </button>
+                )}
+              </div>
+
+              {/* النشر والجدولة */}
+              <div className="sm-field sm-field-full">
+                <label className="sm-check">
+                  <input
+                    type="checkbox"
+                    checked={formData.is_active ?? true}
+                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                    disabled={isPending}
+                  />
+                  <span>انشرها عند الحفظ (وإلّا تبقى مسودّةً مخفيّة)</span>
+                </label>
+              </div>
+              <div className="sm-field">
+                <label>تبدأ في (اختياري)</label>
+                <input
+                  type="datetime-local"
+                  value={formData.starts_at ?? ''}
+                  onChange={(e) => setFormData({ ...formData, starts_at: e.target.value || null })}
+                  disabled={isPending}
+                />
+              </div>
+              <div className="sm-field">
+                <label>تنتهي في (اختياري)</label>
+                <input
+                  type="datetime-local"
+                  value={formData.ends_at ?? ''}
+                  onChange={(e) => setFormData({ ...formData, ends_at: e.target.value || null })}
+                  disabled={isPending}
+                />
+              </div>
+
               {/* Description */}
               <div className="sm-field sm-field-full">
-                <label>الوصف (اختياري)</label>
+                <label>نصُّ القصّة</label>
                 <textarea
                   value={formData.description ?? ''}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={2}
-                  maxLength={120}
+                  rows={4}
+                  maxLength={280}
+                  placeholder="مثال: حملة لقاح الإنفلونزا الموسميّة بدأت — احجز موعدك من التطبيق."
                   disabled={isPending}
                 />
+                <span className="sm-hint">{(formData.description ?? '').length}/280</span>
+              </div>
+            </div>
+
+            {/* معاينةٌ حيّة: الشكلُ نفسه الذي يراه المريض */}
+            <div className="sm-preview">
+              <span className="sm-label">معاينة</span>
+              <div className="sm-preview-frame">
+                <StoryCard story={{ ...formData, description: formData.description || null }} preview />
               </div>
             </div>
 
@@ -353,6 +499,7 @@ export default function StoriesManager({ initialStories }: Props) {
               canMoveUp={index > 0}
               canMoveDown={index < stories.length - 1}
               disabled={isPending}
+              status={storyStatus(story, now)}
             />
           ))
         )}
@@ -412,7 +559,20 @@ export default function StoriesManager({ initialStories }: Props) {
         .sm-field input:focus, .sm-field textarea:focus {
           outline: none; border-color: var(--emerald);
         }
-        .sm-icon-input { text-align: center; font-size: 24px !important; }
+        .sm-label { font-size: 12px; font-weight: 700; color: var(--ink-2); }
+        .sm-check { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--ink); cursor: pointer; }
+        .sm-check input { width: 18px; height: 18px; accent-color: var(--emerald); }
+        .sm-hint { font-size: 12px; color: var(--ink-3); }
+        .sm-icons { display: flex; flex-wrap: wrap; gap: 6px; }
+        .sm-icon-choice {
+          width: 44px; height: 44px; border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          border: 2px solid var(--line); background: var(--paper-3); color: var(--ink-2); cursor: pointer;
+        }
+        .sm-icon-selected { border-color: var(--emerald); color: var(--emerald); background: var(--emerald-soft); }
+        .sm-remove-image { align-self: flex-start; border: 0; background: transparent; color: var(--rose); font-weight: 700; cursor: pointer; padding: 4px 0; font-size: 12px; }
+        .sm-preview { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+        .sm-preview-frame { width: 100%; max-width: 300px; height: 460px; border-radius: 20px; overflow: hidden; border: 1px solid var(--line); }
         .sm-colors { display: flex; flex-wrap: wrap; gap: 6px; }
         .sm-color {
           padding: 8px 14px; font-size: 12px; font-weight: 700;
@@ -446,10 +606,11 @@ interface StoryRowProps {
   onToggle: (id: string, current: boolean) => void;
   onDelete: (id: string, title: string) => void;
   disabled?: boolean;
+  status: StoryStatus;
 }
 
-function StoryRow({ story, onEdit, onToggle, onDelete, onMove, canMoveUp, canMoveDown, disabled }: StoryRowProps) {
-  const colorConfig = COLOR_THEMES.find((c) => c.value === story.color_theme);
+function StoryRow({ story, onEdit, onToggle, onDelete, onMove, canMoveUp, canMoveDown, disabled, status }: StoryRowProps) {
+  const colorConfig = themeConfig(story.color_theme);
 
   return (
     <div className={`story-row ${!story.is_active ? 'story-row-inactive' : ''}`}>
@@ -481,11 +642,14 @@ function StoryRow({ story, onEdit, onToggle, onDelete, onMove, canMoveUp, canMov
         className="story-row-preview"
         style={{ background: colorConfig?.bg, color: colorConfig?.fg }}
       >
-        <span style={{ fontSize: 22 }}><EmojiIcon e={story.icon} /></span>
+        <StoryIcon icon={story.icon} size={22} />
       </div>
 
       <div className="story-row-info">
-        <div className="story-row-title">{story.title}</div>
+        <div className="story-row-title">
+          {story.title}
+          <span className={`story-row-status ${STATUS_LABEL[status].cls}`}>{STATUS_LABEL[status].label}</span>
+        </div>
         <div className="story-row-meta">
           <span className="story-row-href">{story.href}</span>
           <span>·</span>
@@ -499,10 +663,11 @@ function StoryRow({ story, onEdit, onToggle, onDelete, onMove, canMoveUp, canMov
           size="sm"
           onClick={() => onToggle(story.id, story.is_active)}
           disabled={disabled}
-          aria-label={story.is_active ? 'إخفاء' : 'إظهار'}
-          title={story.is_active ? 'إخفاء' : 'إظهار'}
+          aria-label={story.is_active ? 'إخفاء القصّة' : 'نشر القصّة'}
+          title={story.is_active ? 'إخفاء القصّة' : 'نشر القصّة'}
         >
-          {story.is_active ? <Eye size={14} /> : <EyeOff size={14} />}
+          {story.is_active ? <EyeOff size={14} /> : <Eye size={14} />}
+          <span className="story-row-btn-text">{story.is_active ? 'إخفاء' : 'نشر'}</span>
         </Button>
         <Button
           variant="ghost"
@@ -534,7 +699,13 @@ function StoryRow({ story, onEdit, onToggle, onDelete, onMove, canMoveUp, canMov
           transition: all 0.15s;
         }
         .story-row:hover { border-color: var(--line-2); }
-        .story-row-inactive { opacity: 0.55; }
+        .story-row-inactive { opacity: 0.7; }
+        .story-row-status { display: inline-block; margin-inline-start: 8px; padding: 1px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; vertical-align: 2px; }
+        .st-pub { background: var(--emerald-soft); color: var(--emerald-deep); }
+        .st-hid { background: var(--paper-2); color: var(--ink-3); }
+        .st-sch { background: #E8F0FE; color: #1A73E8; }
+        .st-end { background: var(--rose-soft); color: var(--rose); }
+        .story-row-btn-text { margin-inline-start: 4px; font-size: 12px; font-weight: 700; }
         .story-row-reorder {
           display: flex; flex-direction: column; gap: 2px; flex-shrink: 0;
         }

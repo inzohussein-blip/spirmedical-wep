@@ -12,6 +12,7 @@ import AdminLocationPickerWrapper from '@/components/admin/AdminLocationPickerWr
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { DataTable } from '@/components/admin-ui';
 interface Hospital {
   id: string;
   name: string;
@@ -161,43 +162,26 @@ export default function HospitalsAdminClient({ hospitals }: Props) {
         </div>
       ) : (
         <div style={{ background: 'var(--white)', borderRadius: 12, overflowX: 'auto', border: '1px solid var(--line)' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-            <thead>
-              <tr style={{ background: 'var(--paper-3)' }}>
-                <th style={thStyle}>المستشفى</th>
-                <th style={thStyle}>النوع</th>
-                <th style={thStyle}>المدينة</th>
-                <th style={thStyle}>الخدمات</th>
-                <th style={thStyle}>الحالة</th>
-                <th style={thStyle}>إجراءات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((h) => {
+          <DataTable
+            rows={filtered.map((h) => {
                 const typeMeta = TYPES.find(t => t.id === h.type);
-                return (
-                  <tr key={h.id} style={{ borderBottom: '1px solid var(--line)' }}>
-                    <td style={tdStyle}>
-                      <div style={{ fontWeight: 800 }}>
+              return { key: String(h.id), cells: [
+                <><div style={{ fontWeight: 800 }}>
                         {h.name}
                         {h.is_verified && <CheckCircle2 size={11} color="var(--emerald)" style={{ marginInlineStart: 4 }} />}
                       </div>
                       {h.district && (
                         <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{h.district}</div>
-                      )}
-                    </td>
-                    <td style={tdStyle}><EmojiIcon e={typeMeta?.emoji} /> {typeMeta?.label}</td>
-                    <td style={tdStyle}>{h.city}</td>
-                    <td style={tdStyle}>
-                      <div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', fontSize: 11 }}>
+                      )}</>,
+                <><EmojiIcon e={typeMeta?.emoji} /> {typeMeta?.label}</>,
+                <>{h.city}</>,
+                <><div style={{ display: 'flex', gap: 3, flexWrap: 'wrap', fontSize: 11 }}>
                         {h.has_emergency && <span style={featureTag('var(--rose)')}>طوارئ</span>}
                         {h.is_24h && <span style={featureTag('var(--emerald)')}>24/7</span>}
                         {h.has_lab && <span style={featureTag('var(--ink-3)')}>مختبر</span>}
                         {h.has_radiology && <span style={featureTag('var(--ink-3)')}>أشعة</span>}
-                      </div>
-                    </td>
-                    <td style={tdStyle}>
-                      <span style={{
+                      </div></>,
+                <><span style={{
                         padding: '2px 8px',
                         background: h.is_active ? 'var(--emerald-soft)' : 'var(--rose-soft)',
                         color: h.is_active ? 'var(--emerald)' : 'var(--rose)',
@@ -206,10 +190,8 @@ export default function HospitalsAdminClient({ hospitals }: Props) {
                         fontWeight: 800,
                       }}>
                         {h.is_active ? 'نشط' : 'معطّل'}
-                      </span>
-                    </td>
-                    <td style={tdStyle}>
-                      <div style={{ display: 'flex', gap: 4 }}>
+                      </span></>,
+                <><div style={{ display: 'flex', gap: 4 }}>
                         <button onClick={() => { setEditing(h); setShowModal(true); }} aria-label="تعديل" style={iconBtn()}>
                           <Edit3 size={12} />
                         </button>
@@ -219,13 +201,19 @@ export default function HospitalsAdminClient({ hospitals }: Props) {
                         <button onClick={() => handleDelete(h)} disabled={isPending} aria-label="حذف" style={{ ...iconBtn(), background: 'var(--rose-soft)', color: 'var(--rose)' }}>
                           <Trash2 size={12} />
                         </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      </div></>,
+              ] };
+            })}
+            rowKey={(r) => r.key}
+            columns={[
+              { key: 'c0', header: 'المستشفى', primary: true, render: (r) => r.cells[0] },
+              { key: 'c1', header: 'النوع', render: (r) => r.cells[1] },
+              { key: 'c2', header: 'المدينة', render: (r) => r.cells[2] },
+              { key: 'c3', header: 'الخدمات', render: (r) => r.cells[3] },
+              { key: 'c4', header: 'الحالة', render: (r) => r.cells[4] },
+              { key: 'c5', header: 'إجراءات', render: (r) => r.cells[5] },
+            ]}
+          />
         </div>
       )}
 

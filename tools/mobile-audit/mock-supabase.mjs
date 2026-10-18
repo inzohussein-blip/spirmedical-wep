@@ -42,8 +42,22 @@ const ADMIN_APPTS = [
   { ...SPEC_APPTS[0], id: '44444444-4444-4444-8444-444444444444', user_id: PID, assigned_specialist_id: SID, specialist_id: SID, status: 'confirmed',
     specialist: { full_name: 'علي حسين', phone: '+9647722222222' } },
 ];
+// 🧪 مختبران (مختصّا تحاليل) وتحاليلُهما (0055) — لاختيار المختبر في سحب الدم
+const LABS = [
+  { id: '44444444-0000-4000-8000-000000000001', role: 'specialist', specialist_type: 'lab_analyst', approval_status: 'approved',
+    is_suspended: false, full_name: 'أحمد كاظم', clinic_name: 'مختبر النور', clinic_city: 'النجف', governorate: 'النجف' },
+  { id: '44444444-0000-4000-8000-000000000002', role: 'specialist', specialist_type: 'lab_analyst', approval_status: 'approved',
+    is_suspended: false, full_name: 'سارة عباس', clinic_name: 'مختبر الرافدين', clinic_city: 'كربلاء', governorate: 'كربلاء' },
+];
+const LAB_TESTS = [
+  ...['cbc', 'fbs', 'hba1c', 'lipid', 'tsh', 'vit-d'].map((t) => ({ specialist_id: LABS[0].id, test_id: t })),
+  ...['cbc', 'fbs'].map((t) => ({ specialist_id: LABS[1].id, test_id: t })),
+  ...(ROLE === 'specialist' ? ['cbc', 'fbs', 'hba1c'].map((t) => ({ specialist_id: UID, test_id: t })) : []),
+];
+
 const FIX = {
-  users: ROLE === 'specialist' ? [PROFILE, { ...PATIENT, role: 'patient' }] : ROLE === 'admin' ? ADMIN_USERS : [PROFILE],
+  specialist_lab_tests: LAB_TESTS,
+  users: ROLE === 'specialist' ? [PROFILE, { ...PATIENT, role: 'patient' }] : ROLE === 'admin' ? ADMIN_USERS : [PROFILE, ...LABS],
   nurse_emergency_logs: ROLE === 'admin' ? [{ id: '55555555-5555-4555-8555-555555555555', specialist_id: SID, appointment_id: ADMIN_APPTS[0].id,
     trigger_reason: 'panic_button', description: 'وصفٌ تجريبيّ', latitude: 32.0, longitude: 44.33, status: 'open', created_at: iso(-0.01) }] : [],
   appointments: ROLE === 'specialist' ? SPEC_APPTS : ROLE === 'admin' ? ADMIN_APPTS : [
@@ -57,9 +71,15 @@ const FIX = {
   ],
   service_switches: [],
   // قصصُ الإنتاج كما هي: إيموجي في حقل icon (لا ti-*)
-  stories: [['لقاحات', '💉', '/tools/vaccinations'], ['صحتك', '🩺', '/account/health'], ['دواء', '💊', '/account/prescriptions'],
-    ['تغذية', '🍎', '/tools/risk-calculator'], ['إسعافات', '🚑', '/tools/first-aid']].map(([title, icon, href], i) =>
-    ({ id: `st${i + 1}`, title, icon, href, color_theme: 'rose', sort_order: i + 1, is_active: true, starts_at: null, ends_at: null })),
+  stories: [
+    ['لقاحات', '💉', '/tools/vaccinations', 'orange', 'حملة لقاح الإنفلونزا الموسميّة بدأت. راجع جدول التطعيم واحجز موعدك.', 'جدول التطعيم'],
+    ['صحتك', '🩺', '/account/health', 'emerald', 'سجّل ضغطك وسكّرك أسبوعياً لترى تغيّرها في لوحة الصحة.', null],
+    ['دواء', '💊', '/account/prescriptions', 'purple', 'احفظ وصفاتك في التطبيق ليصلك تذكيرُ الجرعة في موعدها.', null],
+    ['تغذية', '🍎', '/services/nutrition', 'green', 'أخصائيّو التغذية متاحون للاستشارة.', null],
+    ['إسعافات', '🚑', '/tools/first-aid', 'red', 'تعلّم الإسعافات الأوّليّة لعشر حالاتٍ شائعة.', 'افتح الدليل'],
+  ].map(([title, icon, href, color_theme, description, cta_label], i) =>
+    ({ id: `st${i + 1}`, title, icon, href, color_theme, description, cta_label, image_url: null, sort_order: i + 1,
+      is_active: true, starts_at: null, ends_at: null, created_at: iso(-1), updated_at: iso(-1) })),
   service_areas: [],
   family_members: [],
   favorites: [], service_favorites: [], pharmacy_favorites: [],
