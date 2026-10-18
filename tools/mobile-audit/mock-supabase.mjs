@@ -42,8 +42,22 @@ const ADMIN_APPTS = [
   { ...SPEC_APPTS[0], id: '44444444-4444-4444-8444-444444444444', user_id: PID, assigned_specialist_id: SID, specialist_id: SID, status: 'confirmed',
     specialist: { full_name: 'علي حسين', phone: '+9647722222222' } },
 ];
+// 🧪 مختبران (مختصّا تحاليل) وتحاليلُهما (0055) — لاختيار المختبر في سحب الدم
+const LABS = [
+  { id: '44444444-0000-4000-8000-000000000001', role: 'specialist', specialist_type: 'lab_analyst', approval_status: 'approved',
+    is_suspended: false, full_name: 'أحمد كاظم', clinic_name: 'مختبر النور', clinic_city: 'النجف', governorate: 'النجف' },
+  { id: '44444444-0000-4000-8000-000000000002', role: 'specialist', specialist_type: 'lab_analyst', approval_status: 'approved',
+    is_suspended: false, full_name: 'سارة عباس', clinic_name: 'مختبر الرافدين', clinic_city: 'كربلاء', governorate: 'كربلاء' },
+];
+const LAB_TESTS = [
+  ...['cbc', 'fbs', 'hba1c', 'lipid', 'tsh', 'vit-d'].map((t) => ({ specialist_id: LABS[0].id, test_id: t })),
+  ...['cbc', 'fbs'].map((t) => ({ specialist_id: LABS[1].id, test_id: t })),
+  ...(ROLE === 'specialist' ? ['cbc', 'fbs', 'hba1c'].map((t) => ({ specialist_id: UID, test_id: t })) : []),
+];
+
 const FIX = {
-  users: ROLE === 'specialist' ? [PROFILE, { ...PATIENT, role: 'patient' }] : ROLE === 'admin' ? ADMIN_USERS : [PROFILE],
+  specialist_lab_tests: LAB_TESTS,
+  users: ROLE === 'specialist' ? [PROFILE, { ...PATIENT, role: 'patient' }] : ROLE === 'admin' ? ADMIN_USERS : [PROFILE, ...LABS],
   nurse_emergency_logs: ROLE === 'admin' ? [{ id: '55555555-5555-4555-8555-555555555555', specialist_id: SID, appointment_id: ADMIN_APPTS[0].id,
     trigger_reason: 'panic_button', description: 'وصفٌ تجريبيّ', latitude: 32.0, longitude: 44.33, status: 'open', created_at: iso(-0.01) }] : [],
   appointments: ROLE === 'specialist' ? SPEC_APPTS : ROLE === 'admin' ? ADMIN_APPTS : [

@@ -22,6 +22,7 @@ import {
 } from '@/lib/services/push-templates';
 import { sendAppointmentConfirmedWA, isWhatsAppEnabled } from '@/lib/services/whatsapp';
 
+import { resolveChosenLab } from '@/lib/labs/lab-network';
 interface CreateAppointmentInput {
   service_id: string;
   service_name: string;
@@ -306,6 +307,8 @@ export interface CreateBloodDrawInput {
   lab_name_snapshot: string;
   // 🆕 V31: slug للبحث عن المختبر الحقيقي في DB (إن توفّر)
   lab_slug?: string | null;
+  /** 🧪 المختبرُ المختار = مختصُّ تحاليل (0055)؛ null = «لا يهم» */
+  lab_specialist_id?: string | null;
   
   // بيانات المريض
   patient_age?: number;
@@ -437,6 +440,9 @@ async function createBloodDrawOrderImpl(input: CreateBloodDrawInput) {
       if (labRow?.id) resolvedLabId = labRow.id as string;
     }
 
+    // 🧪 المختبرُ المختار: مؤهَّلٌ فعلاً واسمُه من القاعدة — لا يُصدَّق ما يرسله العميل
+    const chosenLab = await resolveChosenLab(input.lab_specialist_id);
+
     const { data: labOrder, error: labOrderError } = await supabase
       .from('lab_orders')
       .insert({
@@ -445,7 +451,8 @@ async function createBloodDrawOrderImpl(input: CreateBloodDrawInput) {
         test_ids: input.test_ids,
         bundle_id: input.bundle_id,
         partner_lab_id: resolvedLabId,
-        lab_name_snapshot: input.lab_name_snapshot,
+        lab_specialist_id: chosenLab?.id ?? null,
+        lab_name_snapshot: chosenLab ? chosenLab.name : 'لا يهم — اختاروا الأنسب',
         patient_age: input.patient_age || null,
         patient_gender: input.patient_gender || null,
         patient_condition: input.patient_condition || null,

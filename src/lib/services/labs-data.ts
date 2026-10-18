@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════
-// 🏥 المختبرات الشريكة - Phase 1
+// 🏥 خيارُ «لا يهم» في اختيار المختبر
 // ═══════════════════════════════════════════════════════════════════
 
 export interface Lab {
@@ -15,50 +15,8 @@ export interface Lab {
   popular?: boolean;
 }
 
-export const PARTNER_LABS: Lab[] = [
-  {
-    id: 'medcare',
-    nameAr: 'مختبر ميد كير',
-    city: 'بغداد',
-    resultTime: '24 ساعة',
-    features: ['معتمد دولياً', 'ISO 15189', 'تحاليل متخصصة'],
-    emoji: '🏥',
-    popular: true,
-  },
-  {
-    id: 'al-hayat',
-    nameAr: 'مختبرات الحياة',
-    city: 'بغداد',
-    resultTime: '24 ساعة',
-    features: ['أحدث الأجهزة', 'نتائج رقمية'],
-    emoji: '🔬',
-    popular: true,
-  },
-  {
-    id: 'al-shifa',
-    nameAr: 'مختبر الشفاء',
-    city: 'بغداد',
-    resultTime: '12-24 ساعة',
-    features: ['أسعار اقتصادية', 'استشارة مجانية'],
-    emoji: '⚕️',
-  },
-  {
-    id: 'ibn-sina',
-    nameAr: 'مختبر ابن سينا',
-    city: 'البصرة',
-    resultTime: '24 ساعة',
-    features: ['الجنوب', 'تحاليل دقيقة'],
-    emoji: '🧪',
-  },
-  {
-    id: 'al-amal',
-    nameAr: 'مختبر الأمل',
-    city: 'أربيل',
-    resultTime: '24 ساعة',
-    features: ['الشمال', 'كردي + عربي'],
-    emoji: '🩺',
-  },
-];
+// لا قائمةَ مختبراتٍ ثابتة: كانت هنا خمسةٌ مكتوبة («معتمد دولياً»، «ISO 15189» بلا وثيقة) لا صلةَ لها
+// بالتحاليل ولا بمن يستلم الطلب. المختبراتُ الآن مختصّو التحاليل وتحاليلُهم (0055، lib/labs/lab-network.ts).
 
 // الخيار الافتراضي: اختر لي الأنسب
 export const ANY_LAB: Lab = {
@@ -69,5 +27,3 @@ export const ANY_LAB: Lab = {
   features: ['سنختار أقرب مختبر', 'أسرع وقت ممكن', 'أفضل سعر'],
   emoji: '✨',
 };
-
-export const ALL_LABS = [ANY_LAB, ...PARTNER_LABS];

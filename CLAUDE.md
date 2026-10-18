@@ -31,10 +31,11 @@
 | التنسيق | `app/styles/shared.css` (رموز + حارس iOS) · `app.css` (شاشات التطبيق) · `marketing.css` · `admin.css` |
 | الفهرسة واكتشافُ النماذج | `app/layout.tsx` · `components/seo/JsonLd.tsx` · `app/sitemap.ts` · `app/robots.ts` · الأصل `lib/seo/origin.ts` · الحقائق `lib/seo/facts.ts` → `lib/seo/llms.ts` |
 | «عن التطبيق» | `components/landing/AboutApp.tsx` (الرئيسية `#about` و`/about`) |
+| مختبراتُ التحاليل | `lib/labs/lab-match.ts` (ترتيب) · `lab-network.ts` (الخادم) · المختصّ `app/(specialist)/specialist/lab-tests/` |
 | القصص | `components/stories/*` (الشريط، العارض، البطاقة) · `types/story.ts` · الإدارة `app/admin/stories/` |
 | الأيقونات ومكوّنات الإدارة | `lib/icons.ts` (أسماءٌ → Tabler + لونُ كلّ مفهوم) · `lib/emoji-icons.ts` + `components/ui/EmojiIcon.tsx` · `components/admin-ui` (StatCard، Panel، ListRow، StatusPill، DataTable…) |
 | الكرون | `vercel.json` → `app/api/cron/*` · `app/api/notifications/process` |
-| قاعدة البيانات | `supabase/migrations/` (آخرها 0054) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
+| قاعدة البيانات | `supabase/migrations/` (آخرها 0056) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
 | الاختبارات | `tests/` — اسمُ الحارس يدلّ على مجاله (`rls-*`، `order-flow-modals`، `specialist-screens`…) |
 
 **أدوات التحقّق البصريّ** في [`tools/mobile-audit/`](tools/mobile-audit/README.md):
@@ -236,6 +237,19 @@
 - الحارسان: `tests/stories-viewer.test.tsx` و`tests/stories-icons.test.tsx`.
 - **شريطُ الكوكيز بأصغر شكل** (طلبُ المالك): سطرٌ واحد ~54px — «نستخدم كوكيز ضرورية فقط افتراضياً. تخصيص» و«رفض/قبول».
   حُذفت الأيقونةُ والعنوانُ والفقرةُ القانونيّة (روابطُ الخصوصية والشروط داخل «تخصيص»). الحارسُ في `stories-viewer`.
+
+## 🧪 مختبراتُ التحاليل (0055/0056، قرار المالك، 18 تشرين الأول)
+
+- **«المختصّ يختار الفحوص الموجودة في مختبره، وللمريض تظهر المختبرات التي تدعمها.»** المختبرُ = مختصُّ تحاليل (`lab_analyst`)
+  مؤهَّل بالمعيار الموحّد (`eligibleSpecialistIds`)، اسمُه `users.clinic_name`، وتحاليلُه في `specialist_lab_tests`
+  (معرّفاتُ `BLOOD_TESTS`). يختارها في `/specialist/lab-tests`، وخطوةُ «حدّد تحاليلَ مختبرك» في بطاقة الجاهزيّة.
+- **في سحب الدم** تظهر بعد اختيار التحاليل: الكاملةُ أوّلاً ثمّ «يُجري 2 من 3» (`rankLabsForTests`)، و«لا يهم» دائماً.
+  حُذفت القائمةُ الثابتة (`PARTNER_LABS`: «معتمد دولياً»، «ISO 15189» بلا وثيقة). **الخادمُ يتحقّق** (`resolveChosenLab`) ويأخذ
+  الاسمَ من القاعدة إلى `lab_orders.lab_specialist_id` و`lab_name_snapshot` — لا يُصدَّق العميل.
+- RLS: قراءةٌ للمصادَق عليهم، وإدراجٌ وحذفٌ لصاحب الصفّ من مختصّي التحاليل، ولا تحديث (`REVOKE UPDATE`). والمريضُ يقرأ
+  أسماءَ المختبرات من الخادم بعميل الخدمة (الاسمُ والمدينة وحدهما). عطبٌ ← قائمةٌ فارغة و«لا يهم».
+- **لم يُبنَ:** توجيهُ الطلب إلى المختبر المختار وحده — ما زال يُعرض على كلّ مختصّي التحاليل؛ الاختيارُ محفوظٌ ويظهر في الطلب.
+- الحارس: `tests/lab-tests-network.test.ts`.
 
 ## 📞 أرقام المنشآت
 

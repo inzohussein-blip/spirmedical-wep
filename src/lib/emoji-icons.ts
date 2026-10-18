@@ -25,11 +25,16 @@ import {
   IconWalk, IconWallet, IconWifiOff, IconWind, IconWorld, IconX,
   IconAbacus, IconAntenna, IconBath, IconCash, IconDeviceDesktop, IconDiamond, IconFiretruck, IconFlame, IconFlower, IconGenderFemale, IconGenderMale, IconHandStop, IconHash, IconHexagon, IconMedal, IconMenu2, IconMessageDots, IconShield, IconPrinter, IconTruck,
   IconCar, IconFlask2, IconPaperclip, IconMicrophone,
+  IconCandy, IconButterfly,
 } from '@tabler/icons-react';
 import type { Icon as TablerIcon } from '@tabler/icons-react';
 import type { IconTone } from '@/lib/icons';
 
 export const EMOJI_ICONS: Record<string, TablerIcon> = {
+  "🍬": IconCandy,
+  "🦋": IconButterfly,
+  "🫀": IconHeartbeat,
+  "🫘": IconDroplets,
   "⚗": IconFlask2,
   "📎": IconPaperclip,
   "🎤": IconMicrophone,
@@ -223,6 +228,10 @@ export const EMOJI_ICONS: Record<string, TablerIcon> = {
 
 /** لونُ الإيموجي حين يقف أيقونةً وحده (بلاطة، رأسُ قسم) — مجموعاتٌ دلاليّة بلوحة `ICON_TONES` */
 export const EMOJI_TONE: Record<string, IconTone> = {
+  "🍬": 'orange',
+  "🦋": 'purple',
+  "🫀": 'red',
+  "🫘": 'teal',
   "💪": 'green',
   "🏋": 'green',
   "💎": 'purple',

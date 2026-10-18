@@ -8,7 +8,7 @@ import BloodDrawFlow, { type BloodDrawSubmission } from '@/components/appointmen
 import NursingFlow, { type NursingSubmission } from '@/components/appointments/NursingFlow';
 import { SERVICES } from '@/lib/services/services-data';
 import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
-import { ALL_LABS } from '@/lib/services/labs-data';
+import type { LabOffer } from '@/lib/labs/lab-match';
 import { createAppointmentV2, createBloodDrawOrder, createNursingAppointment } from './actions';
 import { track } from '@/lib/analytics';
 import {
@@ -24,6 +24,8 @@ interface Props {
   /** ✨ V25.1: المواقع المحفوظة للمستخدم */
   /** أنواعُ المختصّين غير المتاحين — خدماتُها معطّلةٌ في المعالج العامّ */
   unavailableSpecialistTypes?: string[];
+  /** 🧪 المختبراتُ الحقيقيّة وتحاليلُها (سحب الدم) */
+  labs?: LabOffer[];
   savedLocations?: Array<{
     id: string;
     label: string;
@@ -34,7 +36,7 @@ interface Props {
   }>;
 }
 
-export default function NewAppointmentClient({ service, userPhone, userAddress, clinicId, consultationType, savedLocations = [], unavailableSpecialistTypes = [] }: Props) {
+export default function NewAppointmentClient({ service, userPhone, userAddress, clinicId, consultationType, savedLocations = [], unavailableSpecialistTypes = [], labs = [] }: Props) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
@@ -51,7 +53,7 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
     // بدل ما نحفظ كل البيانات في notes كنص، نستخدم structured columns
     // في جدول lab_orders + ربط مع appointments
     
-    const lab = ALL_LABS.find((l) => l.id === data.labId);
+    const lab = labs.find((l) => l.id === data.labId);
     
     // notes اختياري - فقط معلومات المريض المهمّة
     const customNotes: string[] = [];
@@ -75,9 +77,10 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
       bundle_id: data.bundleId,
       
       // المختبر (structured)
-      partner_lab_id: null, // يُحلّ من الـ slug في الـ action (migration 47)
-      lab_slug: data.labId, // 🆕 V31: slug للبحث عن المختبر الحقيقي
-      lab_name_snapshot: lab?.nameAr || 'لم يُحدّد',
+      // المختبرُ مختصُّ تحاليل (0055): يُتحقَّق منه ومن اسمه في الخادم، لا يُصدَّق العميل
+      partner_lab_id: null,
+      lab_specialist_id: lab ? lab.id : null,
+      lab_name_snapshot: lab?.name || 'لا يهم — اختاروا الأنسب',
       
       // بيانات المريض (structured)
       patient_age: data.patientAge ? parseInt(data.patientAge) : undefined,
@@ -345,6 +348,7 @@ export default function NewAppointmentClient({ service, userPhone, userAddress, 
           userAddress={userAddress}
           onSubmit={handleBloodDrawSubmit}
           savedLocations={savedLocations}
+          labs={labs}
         />
       ) : isNursingFlow ? (
         <NursingFlow
