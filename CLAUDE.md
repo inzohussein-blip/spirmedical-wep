@@ -37,7 +37,7 @@
 | القصص | `components/stories/*` (الشريط، العارض، البطاقة) · `types/story.ts` · الإدارة `app/admin/stories/` |
 | الأيقونات ومكوّنات الإدارة | `lib/icons.ts` (أسماءٌ → Tabler + لونُ كلّ مفهوم) · `lib/emoji-icons.ts` + `components/ui/EmojiIcon.tsx` · `components/admin-ui` (StatCard، Panel، ListRow، StatusPill، DataTable…) |
 | الكرون | `vercel.json` → `app/api/cron/*` · `app/api/notifications/process` |
-| قاعدة البيانات | `supabase/migrations/` (آخرها 0060) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
+| قاعدة البيانات | `supabase/migrations/` (آخرها 0061) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
 | الاختبارات | `tests/` — اسمُ الحارس يدلّ على مجاله (`rls-*`، `order-flow-modals`، `specialist-screens`…) |
 
 **أدوات التحقّق البصريّ** في [`tools/mobile-audit/`](tools/mobile-audit/README.md):
@@ -264,7 +264,8 @@
   حتى يعتمده المدير في `/admin/providers` (يُعدّ الصفّ، ويُخطَر صاحبُه في الصندوق). وزرُّ «تطبيق الخدمة» في رأس اللوحة.
 - **لم يُبنَ بعد (الدفعة 2):** استلامُ العيّنة ورفعُ النتائج، وتوجيهُ الطلب إلى المختبر المختار. **(الدفعة 3):** الصيدلية
   والعيادة والمستشفى تستقبل الطلبات — حساباتُها الآن ملفٌّ واعتمادٌ فقط، والصفحةُ تقول ذلك.
-- **باقٍ بعد الدمج:** تحويلُ الطبيب المعلَّق إلى عيادة، ثمّ ترحيلٌ يُزيل ذراعَ `lab_analyst` من سياسة إدراج `specialist_lab_tests`.
+- **بعد الدمج (18 تشرين الأول):** حُوّل الطبيبُ المعلَّق إلى عيادةٍ معلَّقة (جُرّب في ROLLBACK)، و0061 أزال ذراعَ `lab_analyst` من
+  إدراج `specialist_lab_tests` — قِيس كمحلّل: 42501، وكمختبر: يُقبل.
 - الحارس: `tests/providers.test.ts` (أُثبت بكسر ستّة مواضع).
 
 ## 📸 القصص — من الإدارة وحدها (0054، قرار المالك، 18 تشرين الأول)

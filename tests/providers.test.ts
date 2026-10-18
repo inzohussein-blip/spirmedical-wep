@@ -152,5 +152,9 @@ describe('🗄️ 0059/0060', () => {
 
   it('🚨 تحاليلُ المختبر لحساب المختبر', () => {
     expect(m).toMatch(/ALTER POLICY specialist_lab_tests_insert[\s\S]*u\.role = 'provider' AND u\.provider_type = 'lab'/);
+    // 0061: المحلّلُ يسحب ولا يُحلّل — لا ذراعَ له بعد دمج نافذة الخدمة
+    const m61 = code('supabase/migrations/0061_lab_tests_provider_only.sql');
+    expect(m61).toMatch(/ALTER POLICY specialist_lab_tests_insert[\s\S]*u\.role = 'provider' AND u\.provider_type = 'lab'/);
+    expect(m61).not.toMatch(/lab_analyst|role = 'specialist'/);
   });
 });
