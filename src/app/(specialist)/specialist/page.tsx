@@ -7,6 +7,7 @@ import { specialistReadiness } from '@/lib/specialist-readiness';
 import SpecialistReadinessCard from '@/components/specialist/SpecialistReadinessCard';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { isAdminRole } from '@/lib/admin-types';
 export const metadata = {
   title: 'لوحة الاختصاصي · سباير ميديكال',
 };
@@ -20,7 +21,7 @@ export default async function SpecialistDashboard() {
 
   const { data: profile } = await supabase
     .from('users')
-    .select('full_name, specialist_type, approval_status, governorate, specialist_bio')
+    .select('full_name, specialist_type, approval_status, governorate, specialist_bio, role')
     .eq('id', user.id)
     .single();
 
@@ -43,6 +44,13 @@ export default async function SpecialistDashboard() {
 
   const specialistType = (profile?.specialist_type ?? 'doctor') as SpecialistType;
   const meta = SPECIALIST_META[specialistType] ?? SPECIALIST_META.doctor;
+  // المديرُ بلا نوع اختصاص: يرى الطلبات الجديدة لكلّ الأنواع
+  const asAdmin = isAdminRole(profile?.role);
+  const newOrdersQuery = supabase
+    .from('appointments')
+    .select('*', { count: 'exact', head: true })
+    .or(`assigned_specialist_id.is.null,assigned_specialist_id.eq.${user.id}`)
+    .eq('status', 'pending');
 
   // اجلب إحصائيات
   const [
@@ -52,12 +60,7 @@ export default async function SpecialistDashboard() {
     { data: ratings },
   ] = await Promise.all([
     // طلبات جديدة (لم تُعيَّن أو معيّنة لي وقيد الانتظار)
-    supabase
-      .from('appointments')
-      .select('*', { count: 'exact', head: true })
-      .eq('required_specialist_type', specialistType)
-      .or(`assigned_specialist_id.is.null,assigned_specialist_id.eq.${user.id}`)
-      .eq('status', 'pending'),
+    asAdmin ? newOrdersQuery : newOrdersQuery.eq('required_specialist_type', specialistType),
 
     supabase
       .from('appointments')
@@ -116,12 +119,12 @@ export default async function SpecialistDashboard() {
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 12, opacity: 0.85, fontWeight: 700 }}>أهلاً</div>
               <div style={{ fontSize: 16, fontWeight: 800 }}>{profile?.full_name ?? 'أخصائي'}</div>
-              <div style={{ fontSize: 12, opacity: 0.9, marginTop: 2 }}>{meta.label}</div>
+              <div style={{ fontSize: 12, opacity: 0.9, marginTop: 2 }}>{asAdmin ? 'مدير — كلُّ أنواع الطلبات' : meta.label}</div>
             </div>
           </div>
         </div>
 
-        <SpecialistReadinessCard steps={readiness} />
+        {!asAdmin && <SpecialistReadinessCard steps={readiness} />}
 
         {/* الإحصائيات */}
         <div className="scr-section-head">

@@ -36,6 +36,12 @@ export interface AuthenticatedSession {
 
 export interface RequireSessionOptions {
   allowedRoles?: UserRole[];
+  /**
+   * أدوارُ الإدارة تدخل أيضاً (قرار المالك، 18 تشرين الأول — «دخول كامل»): زرّا «تطبيق المريض»
+   * و«تطبيق المختصّ» في لوحة الإدارة كانا يُعيدان المديرَ إليها فوراً لأنّ التطبيقين لمرضى ومختصّين
+   * وحدهم. المديرُ يستعملهما بحسابه: طلباته تُسجَّل باسمه في الإنتاج.
+   */
+  allowAdmin?: boolean;
   redirectOnDenied?: string;
   redirectOnUnauth?: string;
 }
@@ -62,6 +68,7 @@ export async function requireSession(
 ): Promise<AuthenticatedSession> {
   const {
     allowedRoles,
+    allowAdmin = false,
     redirectOnDenied,
     redirectOnUnauth = '/login',
   } = options;
@@ -117,7 +124,8 @@ export async function requireSession(
   }
 
   // التحقق من الصلاحيات
-  if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(role)) {
+  const adminAllowed = allowAdmin && ADMIN_ROLES.includes(role);
+  if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(role) && !adminAllowed) {
     if (redirectOnDenied) {
       redirect(redirectOnDenied);
     }

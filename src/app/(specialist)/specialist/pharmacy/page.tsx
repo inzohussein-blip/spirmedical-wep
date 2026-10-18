@@ -9,6 +9,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import PharmacyManagementClient from './PharmacyManagementClient';
 
+import { isAdminRole } from '@/lib/admin-types';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'إدارة الصيدلية - Spir Medical' };
 
@@ -25,7 +26,8 @@ export default async function PharmacyManagementPage() {
     .eq('id', user.id)
     .single();
 
-  if (!profile || profile.role !== 'specialist' || profile.specialist_type !== 'pharmacist') {
+  const admin = isAdminRole(profile?.role);
+  if (!profile || (!admin && (profile.role !== 'specialist' || profile.specialist_type !== 'pharmacist'))) {
     return (
       <main className="app-screen">
         <div className="scr-content" style={{ paddingTop: 40, textAlign: 'center' }}>

@@ -12,6 +12,7 @@ import {
 } from '@tabler/icons-react';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { isAdminRole } from '@/lib/admin-types';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'المحادثات - لوحة الأخصائي' };
 
@@ -48,7 +49,7 @@ export default async function SpecialistChatsPage() {
     .eq('id', user.id)
     .single();
 
-  if (!profile || profile.role !== 'specialist') {
+  if (!profile || (profile.role !== 'specialist' && !isAdminRole(profile.role))) {
     redirect('/dashboard');
   }
 

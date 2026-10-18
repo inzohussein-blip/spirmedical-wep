@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { SPECIALIST_META, type SpecialistType } from '@/lib/specialist-types';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { isAdminRole } from '@/lib/admin-types';
 export const metadata = {
   title: 'الطلبات · لوحة الاختصاصي',
 };
@@ -37,12 +38,14 @@ export default async function SpecialistOrdersPage(
 
   const { data: profile } = await supabase
     .from('users')
-    .select('specialist_type, full_name')
+    .select('specialist_type, full_name, role')
     .eq('id', user.id)
     .single();
 
   // 🔧 V30: تنبيه واضح إذا الحساب غير مكتمل (specialist_type ناقص)
-  const profileIncomplete = !profile?.specialist_type;
+  // المديرُ بلا نوع اختصاص: يرى طلباتِ كلّ الأنواع، ولا تنبيهَ «حساب غير مكتمل»
+  const asAdmin = isAdminRole(profile?.role);
+  const profileIncomplete = !asAdmin && !profile?.specialist_type;
   const specialistType = (profile?.specialist_type ?? 'doctor') as SpecialistType;
   const meta = SPECIALIST_META[specialistType] ?? SPECIALIST_META.doctor;
   const filter = searchParams.filter ?? 'all';
@@ -55,8 +58,8 @@ export default async function SpecialistOrdersPage(
       assigned_specialist_id, required_specialist_type,
       address, user_id, created_at
     `)
-    .eq('required_specialist_type', specialistType)
     .order('scheduled_at', { ascending: true });
+  if (!asAdmin) query = query.eq('required_specialist_type', specialistType);
 
   if (filter === 'new') {
     query = query.eq('status', 'pending').is('assigned_specialist_id', null);

@@ -346,3 +346,12 @@
 .aui-link { color: var(--emerald); text-decoration: none; font-weight: 600; }
 .aui-inline { display: inline-flex; align-items: center; gap: 4px; }
 .aui-muted { color: var(--ink-3); }
+
+/* زرّا «تطبيق المريض» و«تطبيق المختصّ» في رأس اللوحة */
+.admin-app-link {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 36px;
+  padding: 8px 12px; border-radius: 10px;
+  background: var(--paper-3); color: var(--ink); border: 1px solid var(--line);
+  font-size: 12px; font-weight: 700; text-decoration: none; white-space: nowrap;
+}
+.admin-app-link:hover { border-color: var(--emerald); color: var(--emerald); }

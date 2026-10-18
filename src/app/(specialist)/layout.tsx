@@ -1,6 +1,7 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { requireSession } from '@/lib/auth/session';
+import { isAdminRole } from '@/lib/admin-types';
 import { AuthenticatedShell } from '@/components/layout/AuthenticatedShell';
 import PageTransitionProvider from '@/components/pwa/PageTransitionProvider';
 
@@ -23,6 +24,7 @@ export default async function SpecialistLayout({
 }) {
   const session = await requireSession({
     allowedRoles: ['specialist'],
+    allowAdmin: true,
   });
 
   // 🔒 بوّابة الاعتماد: `requireSession` كان يقرأ `approval_status` ولا يفرضه،
@@ -34,7 +36,8 @@ export default async function SpecialistLayout({
     pathname.startsWith('/specialist/pending') ||
     pathname.startsWith('/specialist/rejected');
 
-  if (!isStatusPage && session.profile.approval_status !== 'approved') {
+  // المديرُ لا «اعتمادَ» له — يدخل مباشرة (قرار المالك)
+  if (!isStatusPage && !isAdminRole(session.profile.role) && session.profile.approval_status !== 'approved') {
     redirect(
       session.profile.approval_status === 'rejected'
         ? '/specialist/rejected'
