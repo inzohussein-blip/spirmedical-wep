@@ -2,6 +2,7 @@ import { createAdminClient } from '@/lib/supabase/server';
 import { getWaVerifyConfig, GATEWAY_STALE_MS } from '@/lib/whatsapp/inbound-verify';
 import { SERVICES } from '@/lib/services/services-data';
 import { SPECIALIST_META, toSpecialistType } from '@/lib/specialist-types';
+import { getOpenErrorCounts } from '@/lib/ops/errors-overview';
 
 /**
  * 🩺 صحّةُ التشغيل في لوحة الإدارة — ما قِيس في 25 أيلول ولم يره أحد:
@@ -52,12 +53,16 @@ export interface OpsHealth {
   coverage: SpecialistCoverage[];
   queue: QueueHealth | null;
   waGateway: WaGatewayHealth | null;
+  /** رصدُ الأخطاء (0057): المفتوحُ، وما ظهر في 24 ساعة، والحرِجُ منه */
+  errors: { open: number; last24h: number; fatal: number } | null;
 }
 
 export async function getOpsHealth(now = new Date()): Promise<OpsHealth> {
   const sb = createAdminClient();
   const since = new Date(now.getTime() - 86_400_000).toISOString();
 
+  // يبدأ مع الباقي (لا انتظارَ متتابع) — ولا يرمي
+  const errorsP = getOpenErrorCounts(now);
   const [{ data: specialists }, { data: waiting }, failedRes, retryRes, lastErrRes] = await Promise.all([
     sb.from('users').select('specialist_type')
       .eq('role', 'specialist').eq('approval_status', 'approved')
@@ -91,7 +96,7 @@ export async function getOpsHealth(now = new Date()): Promise<OpsHealth> {
   }));
 
   const queueOk = !failedRes.error && !retryRes.error;
-  const waGateway = await gatewayHealth(sb, now);
+  const [waGateway, errors] = await Promise.all([gatewayHealth(sb, now), errorsP]);
   const last = lastErrRes.data?.[0];
   return {
     coverage,
@@ -105,6 +110,7 @@ export async function getOpsHealth(now = new Date()): Promise<OpsHealth> {
         }
       : null,
     waGateway,
+    errors,
   };
 }
 

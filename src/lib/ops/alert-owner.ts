@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { logger } from '@/lib/logger';
+import { recordSystemError, resolveSystemErrors } from '@/lib/ops/system-errors';
 
 /**
  * 🚨 بريدٌ للمالك حين يتعطّل عملٌ مُجدوَل.
@@ -52,12 +53,21 @@ export function withCronAlert(name: string, handler: Handler): Handler {
       if (res.status >= 500) {
         let detail = '';
         try { detail = (await res.clone().text()).slice(0, 500); } catch { /* ignore */ }
-        await alertOwner(`فشل الكرون ${name}`, [`المسار: ${req.nextUrl.pathname}`, `الحالة: ${res.status}`, `التفاصيل: ${detail}`]);
+        await Promise.all([
+          alertOwner(`فشل الكرون ${name}`, [`المسار: ${req.nextUrl.pathname}`, `الحالة: ${res.status}`, `التفاصيل: ${detail}`]),
+          recordSystemError({ source: 'cron', key: `${name}:status`, message: `فشل الكرون ${name} (${res.status})`, path: req.nextUrl.pathname, detail: { status: res.status, body: detail } }),
+        ]);
+      } else if (res.ok) {
+        // نجاحٌ حقيقيّ يُغلق عطلَ هذا الكرون (401 لسرٍّ خاطئ ليس نجاحاً)
+        await resolveSystemErrors('cron', [`${name}:status`, `${name}:crash`]);
       }
       return res;
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      await alertOwner(`انهار الكرون ${name}`, [`المسار: ${req.nextUrl.pathname}`, `الخطأ: ${message}`]);
+      await Promise.all([
+        alertOwner(`انهار الكرون ${name}`, [`المسار: ${req.nextUrl.pathname}`, `الخطأ: ${message}`]),
+        recordSystemError({ source: 'cron', key: `${name}:crash`, level: 'fatal', message: `انهار الكرون ${name}: ${message}`, path: req.nextUrl.pathname }),
+      ]);
       logger.error('cron crashed', { name, error: message });
       return NextResponse.json({ error: 'cron_crashed' }, { status: 500 });
     }

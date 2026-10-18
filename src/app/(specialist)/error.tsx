@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { reportClientError } from '@/lib/ops/report-client-error';
 import Link from 'next/link';
 import {
   IconAlertCircle as AlertCircle, IconRefresh as RefreshCw, IconArrowRight as ArrowRight,
@@ -14,6 +15,7 @@ export default function SpecialistError({
   reset: () => void;
 }) {
   useEffect(() => {
+    reportClientError(error, 'boundary', { digest: error.digest });
     console.error('[specialist/error]', error);
   }, [error]);
 

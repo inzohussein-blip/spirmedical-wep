@@ -23,6 +23,7 @@
 | التغطية الجغرافية | `lib/service-areas.ts` · `lib/hooks/useServiceCoverage.ts` · الفهرسة `lib/seo/coverage.ts` |
 | الإشعارات | `lib/notifications.ts` (الطابور) · `lib/notifications-processor.ts` · `lib/services/push*.ts` · `lib/services/whatsapp.ts` · الصندوق `app/(dashboard)/account/inbox/` |
 | صحّة التشغيل والتنبيه | `lib/admin/ops-health.ts` → `app/admin/_components/OpsHealthCards.tsx` · `lib/ops/alert-owner.ts` |
+| رصد الأخطاء | `lib/ops/system-errors.ts` (التسجيل) · `/admin/errors` · `api/ops/{client-error,ingest}` · `.github/workflows/report-failures.yml` |
 | التحقّق العكسيّ عبر واتساب | `lib/whatsapp/inbound-verify.ts` · `api/whatsapp/{inbound,heartbeat,verify}` · البوّابة `services/wa-inbound/` (Railway) |
 | رموز الدخول | `app/(auth)/login/actions.ts` · `lib/auth/phone-pin-login.ts` + `login-pin.ts` (الرقم + PIN) · `lib/whatsapp/otp-service.ts` · `lib/auth/otp-mode.ts` · `lib/auth/phone-credentials.ts` · `lib/auth/login-identifier.ts` |
 | الغلاف والتنقّل | `components/layout/AppShell.tsx` · `AuthenticatedShell.tsx` · `lib/focused-routes.ts` |
@@ -35,7 +36,7 @@
 | القصص | `components/stories/*` (الشريط، العارض، البطاقة) · `types/story.ts` · الإدارة `app/admin/stories/` |
 | الأيقونات ومكوّنات الإدارة | `lib/icons.ts` (أسماءٌ → Tabler + لونُ كلّ مفهوم) · `lib/emoji-icons.ts` + `components/ui/EmojiIcon.tsx` · `components/admin-ui` (StatCard، Panel، ListRow، StatusPill، DataTable…) |
 | الكرون | `vercel.json` → `app/api/cron/*` · `app/api/notifications/process` |
-| قاعدة البيانات | `supabase/migrations/` (آخرها 0056) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
+| قاعدة البيانات | `supabase/migrations/` (آخرها 0057) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
 | الاختبارات | `tests/` — اسمُ الحارس يدلّ على مجاله (`rls-*`، `order-flow-modals`، `specialist-screens`…) |
 
 **أدوات التحقّق البصريّ** في [`tools/mobile-audit/`](tools/mobile-audit/README.md):
@@ -103,6 +104,21 @@
   المريض معاً، أو لا شيء.
 - الحارس: `tests/auto-reject-stale.test.ts` — يفحص جسمَ الدالّة لا ترويسةَ
   تعليقاتها.
+
+## 🚨 رصدُ الأخطاء (0057، طلبُ المالك، 18 تشرين الأول)
+
+- **`/admin/errors`**: أخطاءُ الخادم (`onRequestError`)، والسجلّ (`logger.error` على خادم الإنتاج)، والمتصفّح عند المستخدمين
+  (حدودُ الأخطاء كلُّها + `window.onerror`/الوعود المرفوضة)، والكرون (`withCronAlert`)، وفشلُ النشر على Vercel وفحوص GitHub.
+  ومعها فشلُ طابور الإشعارات يُقرأ من مكانه. بطاقةُ «أخطاءٌ في النظام» في اللوحة حين يظهر شيءٌ في 24 ساعة أو يوجد حرِج.
+- **صفٌّ لكلّ بصمة** (`fingerprintOf`: الرسالةُ بلا معرّفاتٍ وأرقام + المسار بلا استعلام)، يُعدّ تكرارُه، و**يُعاد فتحُه إن عاد**.
+  البناءُ والفحوصُ والكرون ببصمةٍ صريحة (`key`) فـ**النجاحُ على الفرع نفسه يُغلقها** (`resolveSystemErrors`).
+- **`recordSystemError` لا يرمي ولا يستدعي `logger`** (هو ما يستدعيه `logger.error` — حلقة). مرّةً في الدقيقة لكلّ بصمة في النسخة.
+- **الجدولُ لعميل الخدمة وحده** (لا سياسات، `REVOKE` من anon/authenticated)، والدالّةُ `SECURITY INVOKER` بسقف 300 بصمةً جديدة في
+  الساعة — أخطاءُ المتصفّح يرسلها أيُّ زائر (`/api/ops/client-error`: 10 لكلّ عنوان في 10 دقائق، حقولٌ مقصوصة، بلا ضجيج الإضافات).
+- **GitHub بلا سرّ مشترك:** `report-failures.yml` (على `workflow_run` و`deployment_status`) يرسل رمزَ OIDC، و`/api/ops/ingest` يتحقّق
+  من توقيع GitHub والمستودع وملفّ السير (`lib/ops/github-oidc.ts`). **يعمل بعد دمجه في main** (workflow_run يُقرأ من الفرع الافتراضيّ).
+  سيرٌ جديد؟ أضِف اسمَه إلى `workflows:` — الحارسُ يقارنها بأسماء الملفّات. فشلُ main أو نشرِ الإنتاج = حرِجٌ وبريدٌ للمالك.
+- الحارس: `tests/system-errors.test.ts` (أُثبت بكسر تسعة مواضع).
 
 ## 📨 طابور الإشعارات — ما يُسلَّم وما لا يُسلَّم
 

@@ -9,6 +9,7 @@
  */
 
 import { useEffect } from 'react';
+import { reportClientError } from '@/lib/ops/report-client-error';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
 export default function AppShellError({
@@ -19,6 +20,7 @@ export default function AppShellError({
   reset: () => void;
 }) {
   useEffect(() => {
+    reportClientError(error, 'boundary', { digest: error.digest });
     console.error('[app/error]', error);
   }, [error]);
 

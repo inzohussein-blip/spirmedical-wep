@@ -89,6 +89,19 @@ const FIX = {
   app_theme_settings: [],
   service_waitlist: [],
   auth_login_pins: [],
+  // رصدُ الأخطاء (0057) — مصدرٌ من كلّ نوع كي تُرى /admin/errors ببيانات
+  system_errors: [
+    { id: 'e1', source: 'server', level: 'error', fingerprint: 'server:1', message: "Cannot read properties of undefined (reading 'full_name')", path: '/admin/orders/:id', detail: { method: 'GET', routeType: 'render', digest: '1234567' }, occurrences: 14, first_seen_at: '2026-10-17T09:00:00Z', last_seen_at: '2026-10-18T11:40:00Z', resolved_at: null },
+    { id: 'e2', source: 'client', level: 'warning', fingerprint: 'client:1', message: 'ChunkLoadError: Loading chunk 812 failed.', path: '/appointments/new', detail: { kind: 'unhandledrejection', ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)' }, occurrences: 3, first_seen_at: '2026-10-18T08:00:00Z', last_seen_at: '2026-10-18T10:05:00Z', resolved_at: null },
+    { id: 'e3', source: 'ci', level: 'fatal', fingerprint: 'ci:CI:main', message: 'فشل فحص «CI» على main', path: null, detail: { name: 'CI', branch: 'main', url: 'https://github.com/inzohussein-blip/spirmedical-wep/actions/runs/1', sha: 'abcdef123456' }, occurrences: 1, first_seen_at: '2026-10-18T07:00:00Z', last_seen_at: '2026-10-18T07:00:00Z', resolved_at: null },
+    { id: 'e4', source: 'build', level: 'error', fingerprint: 'build:Preview:claude/x', message: 'فشل النشر على Vercel (Preview) — claude/x', path: null, detail: { url: 'https://vercel.com/x/y', description: 'Deployment has failed' }, occurrences: 2, first_seen_at: '2026-10-16T07:00:00Z', last_seen_at: '2026-10-17T07:00:00Z', resolved_at: null },
+    { id: 'e5', source: 'cron', level: 'fatal', fingerprint: 'cron:auto-reject:crash', message: 'انهار الكرون auto-reject-pending: fetch failed', path: '/api/cron/auto-reject-pending', detail: {}, occurrences: 1, first_seen_at: '2026-10-15T00:00:00Z', last_seen_at: '2026-10-15T00:00:00Z', resolved_at: null },
+    { id: 'e6', source: 'log', level: 'error', fingerprint: 'log:1', message: '[push] send failed', path: null, detail: { status: 410 }, occurrences: 6, first_seen_at: '2026-10-14T00:00:00Z', last_seen_at: '2026-10-14T05:00:00Z', resolved_at: null },
+  ],
+  notification_queue: [
+    { error_message: 'Authentication Error', channel: 'whatsapp', failed_at: '2026-10-18T09:00:00Z', status: 'failed' },
+    { error_message: 'Authentication Error', channel: 'whatsapp', failed_at: '2026-10-18T08:00:00Z', status: 'failed' },
+  ],
 
 };
 

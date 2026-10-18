@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { reportClientError } from '@/lib/ops/report-client-error';
 import Link from 'next/link';
 import {
   IconAlertTriangle as AlertTriangle, IconRefresh as RefreshCw, IconShield as Shield,
@@ -14,6 +15,7 @@ export default function AdminError({
   reset: () => void;
 }) {
   useEffect(() => {
+    reportClientError(error, 'boundary', { digest: error.digest });
     console.error('[admin/error]', error);
   }, [error]);
 

@@ -9,6 +9,7 @@
  */
 
 import { useEffect } from 'react';
+import { reportClientError } from '@/lib/ops/report-client-error';
 
 export default function GuestError({
   error,
@@ -18,6 +19,7 @@ export default function GuestError({
   reset: () => void;
 }) {
   useEffect(() => {
+    reportClientError(error, 'boundary', { digest: error.digest });
     console.error('[guest/error]', error);
   }, [error]);
 

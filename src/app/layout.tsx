@@ -15,6 +15,7 @@ import StandaloneAppGuard from '@/components/pwa/StandaloneAppGuard';
 // مؤجَّلة عبر next/dynamic({ ssr:false }) داخل هذا الغلاف → تخرج من حزمة الدخول
 // الرئيسية وتُحمَّل بعد الـ hydration (أخفّ على كل صفحة).
 import DeferredGlobals from '@/components/pwa/DeferredGlobals';
+import ClientErrorReporter from '@/components/ops/ClientErrorReporter';
 
 // خطوط — IBM Plex Sans Arabic (قرار المالك، 16 تشرين الأول: «خطٌّ احترافيّ أوضح» بدل Tajawal)
 // JetBrains-Mono للأرقام والوقت فقط
@@ -278,6 +279,7 @@ export default function RootLayout({
           <Toaster />
           <CookieConsent />
           <AppBackHandler />
+          <ClientErrorReporter />
           <Analytics />
           <SpeedInsights />
           {/* مكوّنات غير حرجة مؤجَّلة (ssr:false) — خارج حزمة الدخول الرئيسية */}

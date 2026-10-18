@@ -2,6 +2,7 @@
 
 import * as Sentry from '@sentry/nextjs';
 import { useEffect } from 'react';
+import { reportClientError } from '@/lib/ops/report-client-error';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 
@@ -13,6 +14,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
+    reportClientError(error, 'boundary', { digest: error.digest });
     // أرسل الخطأ لـ Sentry
     Sentry.captureException(error, {
       tags: { location: 'global-error' },

@@ -12,8 +12,10 @@ export default function OpsHealthCards({ health }: { health: OpsHealth }) {
   const queueTrouble = q && (q.failed24h > 0 || q.retrying > 0);
   const wa = health.waGateway;
   const waDown = !!wa && !wa.connected;
+  const errs = health.errors;
+  const errTrouble = !!errs && (errs.last24h > 0 || errs.fatal > 0);
 
-  if (uncovered.length === 0 && !queueTrouble && !waDown) return null;
+  if (uncovered.length === 0 && !queueTrouble && !waDown && !errTrouble) return null;
 
   const card: React.CSSProperties = {
     background: 'var(--white)',
@@ -47,6 +49,20 @@ export default function OpsHealthCards({ health }: { health: OpsHealth }) {
             <Link href="/admin/specialists/pending" style={linkBtn}>مراجعة طلبات التسجيل</Link>
             <Link href="/admin/users/create" style={linkBtn}>إنشاء حساب مختصّ</Link>
           </div>
+        </div>
+      )}
+
+      {errs && errTrouble && (
+        <div role="alert" style={card} data-testid="ops-system-errors">
+          <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--ink)', marginBottom: 6 }}>
+            <EmojiIcon e="🚨" /> أخطاءٌ في النظام
+          </div>
+          <p style={{ fontSize: 13, color: 'var(--ink-2)', margin: '0 0 10px', lineHeight: 1.7 }}>
+            {errs.last24h.toLocaleString('ar-IQ-u-nu-latn')} ظهر أو تكرّر في 24 ساعة ·{' '}
+            {errs.open.toLocaleString('ar-IQ-u-nu-latn')} مفتوحاً
+            {errs.fatal > 0 && <> · <b style={{ color: 'var(--rose)' }}>{errs.fatal.toLocaleString('ar-IQ-u-nu-latn')} حرِج</b></>}
+          </p>
+          <Link href="/admin/errors" style={linkBtn}>رصد الأخطاء</Link>
         </div>
       )}
 

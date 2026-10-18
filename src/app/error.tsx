@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect } from 'react';
+import { reportClientError } from '@/lib/ops/report-client-error';
 
 export default function Error({
   error,
@@ -13,6 +14,7 @@ export default function Error({
   useEffect(() => {
     console.error('App Error:', error);
     // 🚀 V29: أرسل لـ Sentry
+    reportClientError(error, 'boundary', { digest: error.digest });
     void import('@/lib/error-tracking')
       .then((m) => m.trackError(error, { action: 'app-error', extra: { digest: error.digest } }))
       .catch(() => {});
