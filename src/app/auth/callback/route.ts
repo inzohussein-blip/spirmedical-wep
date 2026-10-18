@@ -14,6 +14,7 @@ import type { NextRequest } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createClient as createSbClient } from '@supabase/supabase-js';
 import { resolveApprovalStatus } from '@/lib/auth/approval';
+import { isAdminAccountRole, PUBLIC_LOGIN_ADMIN_ERROR } from '@/lib/auth/admin-gate';
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
@@ -99,8 +100,10 @@ export async function GET(request: NextRequest) {
       if (role === 'specialist') {
         return NextResponse.redirect(`${origin}/specialist`);
       }
-      if (['admin', 'super_admin', 'manager', 'support'].includes(role)) {
-        return NextResponse.redirect(`${origin}/admin`);
+      // 🔒 الإدارةُ تدخل من رابطها وحده — لا من «الدخول بـGoogle» العامّ (lib/auth/admin-gate.ts)
+      if (isAdminAccountRole(role)) {
+        await supabase.auth.signOut();
+        return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(PUBLIC_LOGIN_ADMIN_ERROR)}`);
       }
 
       // التوجيه لـ next أو dashboard

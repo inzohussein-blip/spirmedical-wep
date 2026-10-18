@@ -73,12 +73,14 @@ describe('⚡ سياسة الفشل تبقى آمنة', () => {
     const branch = /!hasAuthCookie\(request\)\)\s*\{([\s\S]{0,400}?)\n\s{2}\}/.exec(code);
     expect(branch).not.toBeNull();
     expect(branch![1]).toContain('redirect');
-    expect(branch![1]).toContain('admin-login');
+    // ولوحةُ الإدارة «غير موجودة» لا تحويلٌ إلى دخولها (lib/auth/admin-gate.ts)
+    expect(branch![1]).toContain('adminNotFound(request)');
+    expect(branch![1]).not.toContain('admin-login');
   });
 
   it('لوحة الأدمن تفشل بأمان حين يتعذّر معرفة الدور', () => {
     const branch = /roleResult === null\)?\s*\{([\s\S]{0,300}?)\n\s{4}\}/.exec(code);
     expect(branch).not.toBeNull();
-    expect(branch![1]).toContain('admin-login');
+    expect(branch![1]).toContain('adminNotFound(request)');
   });
 });

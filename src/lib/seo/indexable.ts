@@ -23,7 +23,11 @@ export function isIndexablePath(pathname: string): boolean {
   return INDEXABLE_EXACT.has(p) || INDEXABLE_PREFIXES.some((pre) => p.startsWith(pre));
 }
 
-/** ما يُحجَب زحفُه فعلاً: نقاطُ API (عدا صورة المعاينة) ولوحةُ الإدارة. لا شيءَ تربط به الصفحاتُ العامّة. */
-export const CRAWL_BLOCKED = ['/api/', '/admin'] as const;
+/**
+ * ما يُحجَب زحفُه فعلاً: نقاطُ API (عدا صورة المعاينة). لا شيءَ تربط به الصفحاتُ العامّة.
+ * ولوحةُ الإدارة **ليست هنا عمداً** (18 تشرين الأول): robots.txt يقرؤه الجميع، فكان يُعلن مسارَها. وهي
+ * «غير موجودة» لغير المدير و`noindex` لكلّ زائر (lib/auth/admin-gate.ts) — فلا حاجةَ لذكرها.
+ */
+export const CRAWL_BLOCKED = ['/api/'] as const;
 
 export const NOINDEX_HEADER = 'noindex, nofollow';

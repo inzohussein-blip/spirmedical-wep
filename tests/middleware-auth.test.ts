@@ -70,8 +70,12 @@ describe('الزائرُ بلا جلسة', () => {
     expect(target(await updateSession(req('/appointments/new', false)))).toBe('/login?redirect=%2Fappointments%2Fnew');
   });
 
-  it('🚨 الإدارة ← /admin-login', async () => {
-    expect(target(await updateSession(req('/admin/patients', false)))).toBe('/admin-login');
+  // 🔒 لوحةُ الإدارة بالرابط وحده (lib/auth/admin-gate.ts): «غير موجودة» 404 لا تحويلٌ يكشف دخولَها
+  it('🚨 الإدارة ← «غير موجودة» (404) بلا تحويل إلى /admin-login', async () => {
+    const res = await updateSession(req('/admin/patients', false));
+    expect(res.status).toBe(404);
+    expect(target(res)).toBeNull();
+    expect(res.headers.get('x-middleware-rewrite')).toMatch(/__not-found/);
   });
 });
 
@@ -80,10 +84,12 @@ describe('الأدوار', () => {
     expect(target(await updateSession(req('/dashboard')))).toBe('/login?redirect=%2Fdashboard');
   });
 
-  it('🚨 مريضٌ على /admin ← /dashboard', async () => {
+  it('🚨 مريضٌ على /admin ← «غير موجودة» (404) لا تحويل', async () => {
     state.user = { id: 'u1' };
     state.role = 'patient';
-    expect(target(await updateSession(req('/admin')))).toBe('/dashboard');
+    const res = await updateSession(req('/admin'));
+    expect(res.status).toBe(404);
+    expect(target(res)).toBeNull();
   });
 
   it('🚨 مريضٌ على /specialist ← /dashboard', async () => {

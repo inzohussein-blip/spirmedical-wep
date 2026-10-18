@@ -1,3 +1,4 @@
+import { adminNotFound } from '@/lib/auth/admin-gate';
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import type { Database } from '@/types/database';
@@ -91,10 +92,12 @@ export async function updateSession(request: NextRequest) {
   // نردّ فوراً بلا أي نداء شبكي — وهذا يشمل الصفحة الرئيسية وكل الصفحات
   // العامّة، أي الغالبية العظمى من الزيارات.
   if (!hasAuthCookie(request)) {
-    if (isProtected || isAdminPath) {
+    // لوحةُ الإدارة لا تُكشف لزائر: «غير موجودة» لا تحويلٌ إلى دخولها (lib/auth/admin-gate.ts)
+    if (isAdminPath) return adminNotFound(request);
+    if (isProtected) {
       const url = request.nextUrl.clone();
-      url.pathname = isAdminPath ? '/admin-login' : '/login';
-      if (!isAdminPath) url.searchParams.set('redirect', pathname);
+      url.pathname = '/login';
+      url.searchParams.set('redirect', pathname);
       return NextResponse.redirect(url);
     }
     return NextResponse.next({ request });
@@ -133,15 +136,18 @@ export async function updateSession(request: NextRequest) {
 
     if (authResult === null) {
       // تعذّر التحقّق ضمن المهلة — لا نُعلّق الطلب حتى يقتلَه Vercel بـ504.
-      if (isProtected || isAdminPath) {
+      if (isAdminPath) return adminNotFound(request);
+      if (isProtected) {
         const url = request.nextUrl.clone();
-        url.pathname = isAdminPath ? '/admin-login' : '/login';
+        url.pathname = '/login';
         return NextResponse.redirect(url);
       }
       return NextResponse.next({ request });
     }
 
     const user = authResult.data.user;
+
+    if (!user && isAdminPath) return adminNotFound(request);
 
     if (!user && isProtected) {
       const url = request.nextUrl.clone();
@@ -169,19 +175,12 @@ export async function updateSession(request: NextRequest) {
     // تعذّر معرفة الدور ضمن المهلة → نفشل بأمان على لوحة الأدمن فقط،
     // وندع بقيّة المسارات للتخطيطات وسياسات RLS خلفنا.
     if (roleResult === null) {
-      if (isAdminPath) {
-        const url = request.nextUrl.clone();
-        url.pathname = '/admin-login';
-        return NextResponse.redirect(url);
-      }
+      if (isAdminPath) return adminNotFound(request);
       return supabaseResponse;
     }
 
-    if (isAdminPath && !isAdminRole(role)) {
-      const url = request.nextUrl.clone();
-      url.pathname = '/dashboard';
-      return NextResponse.redirect(url);
-    }
+    // مريضٌ أو مختصٌّ يكتب /admin: «غير موجودة» — لا تحويلَ يُثبت وجودَ اللوحة
+    if (isAdminPath && !isAdminRole(role)) return adminNotFound(request);
 
     // المديرُ يدخل تطبيقَ المختصّ أيضاً (زرُّه في لوحة الإدارة)
     if (pathname.startsWith('/specialist') && role !== 'specialist' && !isAdminRole(role)) {

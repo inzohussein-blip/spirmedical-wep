@@ -1,5 +1,6 @@
 'use server';
 
+import { isAdminAccountRole, PUBLIC_LOGIN_ADMIN_ERROR } from '@/lib/auth/admin-gate';
 import { createClient } from '@/lib/supabase/server';
 import { createClient as createSbClient } from '@supabase/supabase-js';
 import { sendEmail, isEmailConfigured } from '@/lib/email/send';
@@ -298,6 +299,11 @@ export async function signInWithEmail(
 
       const profileData = profile?.data ?? profile;
       signedInRole = profileData?.role ?? null;
+      // 🔒 الإدارةُ تدخل من رابطها وحده (lib/auth/admin-gate.ts): الدخولُ العامّ يرفضها برسالة البيانات الخاطئة نفسِها
+      if (isAdminAccountRole(signedInRole)) {
+        await supabase.auth.signOut();
+        return { success: false, error: PUBLIC_LOGIN_ADMIN_ERROR };
+      }
       // نُطبّق بوابة تأكيد البريد فقط عندما يكون إرسال البريد مُهيّأً فعلاً،
       // وإلا لأصبحت طريقاً مسدوداً (المستخدم لن يستلم رابط التفعيل أبداً).
       if (!profileData?.email_verified && isEmailConfigured()) {
