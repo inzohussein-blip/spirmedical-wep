@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { reportClientError } from '@/lib/ops/report-client-error';
 import Link from 'next/link';
 import {
   IconAlertTriangle as AlertTriangle, IconRefresh as RefreshCw, IconHome as Home,
@@ -26,6 +27,7 @@ export default function AuthError({
   reset: () => void;
 }) {
   useEffect(() => {
+    reportClientError(error, 'boundary', { digest: error.digest });
     console.error('[Auth Error]:', error);
   }, [error]);
 

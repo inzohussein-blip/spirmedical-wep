@@ -34,7 +34,7 @@ function shouldLog(level: LogLevel): boolean {
 /**
  * تنظيف بيانات حساسة من الـ context
  */
-function sanitize(ctx: LogContext): LogContext {
+export function sanitize(ctx: LogContext): LogContext {
   const SENSITIVE_KEYS = [
     'password',
     'token',
@@ -71,6 +71,14 @@ function log(level: LogLevel, message: string, context: LogContext = {}): void {
   };
 
   const json = JSON.stringify(entry);
+
+  // رصدُ الأخطاء (0057): logger.error على خادم الإنتاج يصل إلى /admin/errors. بلا await — السجلُّ متزامن،
+  // والتسجيلُ لا يرمي. لا في المتصفّح (له مسارُه) ولا في الاختبارات.
+  if (level === 'error' && typeof window === 'undefined' && process.env.NODE_ENV === 'production') {
+    void import('@/lib/ops/system-errors')
+      .then((m) => m.recordSystemError({ source: 'log', message, detail: sanitize(context) }))
+      .catch(() => {});
+  }
 
   switch (level) {
     case 'error':

@@ -9,6 +9,7 @@
  */
 
 import { useEffect } from 'react';
+import { reportClientError } from '@/lib/ops/report-client-error';
 
 export default function AuthFlowError({
   error,
@@ -18,6 +19,7 @@ export default function AuthFlowError({
   reset: () => void;
 }) {
   useEffect(() => {
+    reportClientError(error, 'boundary', { digest: error.digest });
     console.error('[auth/error]', error);
   }, [error]);
 

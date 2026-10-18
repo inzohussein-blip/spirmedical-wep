@@ -7170,6 +7170,59 @@ export type Database = {
           },
         ]
       }
+      system_errors: {
+        Row: {
+          detail: Json
+          fingerprint: string
+          first_seen_at: string
+          id: string
+          last_seen_at: string
+          level: string
+          message: string
+          occurrences: number
+          path: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          source: string
+        }
+        Insert: {
+          detail?: Json
+          fingerprint: string
+          first_seen_at?: string
+          id?: string
+          last_seen_at?: string
+          level?: string
+          message: string
+          occurrences?: number
+          path?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          source: string
+        }
+        Update: {
+          detail?: Json
+          fingerprint?: string
+          first_seen_at?: string
+          id?: string
+          last_seen_at?: string
+          level?: string
+          message?: string
+          occurrences?: number
+          path?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "system_errors_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_favorites: {
         Row: {
           created_at: string | null
@@ -9099,6 +9152,17 @@ export type Database = {
       mark_message_read: { Args: { message_id: string }; Returns: undefined }
       point_in_polygon: {
         Args: { p_lat: number; p_lng: number; p_polygon: Json }
+        Returns: boolean
+      }
+      record_system_error: {
+        Args: {
+          p_detail?: Json
+          p_fingerprint: string
+          p_level: string
+          p_message: string
+          p_path?: string
+          p_source: string
+        }
         Returns: boolean
       }
       run_auto_reject_stale_pending: {

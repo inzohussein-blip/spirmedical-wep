@@ -58,6 +58,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/admin/beta-codes', icon: 'betaCodes', label: 'رموز Beta' },
   { href: '/admin/feedback', icon: 'feedback', label: 'الملاحظات' },
   { href: '/admin/bugs', icon: 'bugs', label: 'الأعطال' },
+  { href: '/admin/errors', icon: 'errors', label: 'رصد الأخطاء' },
   // ─── النظام ───
   { href: '/admin/audit-log', icon: 'auditLog', label: 'سجل العمليات' },
   { href: '/admin/admins', icon: 'admins', label: 'إدارة المديرين', permission: 'admins.manage' },

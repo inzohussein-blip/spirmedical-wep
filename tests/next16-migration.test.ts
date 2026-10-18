@@ -54,6 +54,9 @@ describe('Next 16', () => {
   });
 
   it('أخطاءُ مكوّنات الخادم تصل Sentry (onRequestError)', () => {
-    expect(read('src/instrumentation.ts')).toMatch(/captureRequestError as onRequestError/);
+    // ومعه رصدُ الأخطاء في لوحة الإدارة (0057): الخطّافُ يمرّر الخطأ إلى Sentry ثمّ يسجّله
+    const src = read('src/instrumentation.ts');
+    expect(src).toMatch(/export const onRequestError[\s\S]*captureRequestError\(error, request, context\)/);
+    expect(src).toMatch(/recordSystemError\(\{\s*source: 'server'/);
   });
 });
