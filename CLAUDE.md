@@ -36,7 +36,7 @@
 | القصص | `components/stories/*` (الشريط، العارض، البطاقة) · `types/story.ts` · الإدارة `app/admin/stories/` |
 | الأيقونات ومكوّنات الإدارة | `lib/icons.ts` (أسماءٌ → Tabler + لونُ كلّ مفهوم) · `lib/emoji-icons.ts` + `components/ui/EmojiIcon.tsx` · `components/admin-ui` (StatCard، Panel، ListRow، StatusPill، DataTable…) |
 | الكرون | `vercel.json` → `app/api/cron/*` · `app/api/notifications/process` |
-| قاعدة البيانات | `supabase/migrations/` (آخرها 0057) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
+| قاعدة البيانات | `supabase/migrations/` (آخرها 0058) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
 | الاختبارات | `tests/` — اسمُ الحارس يدلّ على مجاله (`rls-*`، `order-flow-modals`، `specialist-screens`…) |
 
 **أدوات التحقّق البصريّ** في [`tools/mobile-audit/`](tools/mobile-audit/README.md):
@@ -104,6 +104,20 @@
   المريض معاً، أو لا شيء.
 - الحارس: `tests/auto-reject-stale.test.ts` — يفحص جسمَ الدالّة لا ترويسةَ
   تعليقاتها.
+
+## 🔒 الإدارةُ نافذةٌ بالرابط وحده، و0058 (18 تشرين الأول)
+
+- **🔴 0058 — مريضٌ كان يرفع نفسه super_admin:** `users_update_merged` تسمح لصاحب الصفّ بتحديثه، و`authenticated` يملك
+  UPDATE على كلّ الأعمدة؛ قِيس في ROLLBACK: `UPDATE users SET role='super_admin' WHERE id=auth.uid()` ← صفٌّ واحد. الآن
+  المُشغِّل `zz_guard_users_privileged_columns` يرفض (42501) تغييرَ الدور والاعتماد والنوع والإيقاف والمحفظة والنقاط والهاتف
+  والتوثيق من غير المدير. عميلُ الخدمة والدوالُّ المُفوَّضة (`current_user` غيرُ authenticated/anon) والمديرون يمرّون.
+  **عمودٌ حسّاسٌ جديد في `users`؟ أضِفه إلى المُشغِّل.** طُبّق بـ`execute_sql` (أداةُ الترحيل أُلغيت ثلاثاً عند `DROP TRIGGER`)
+  — فلا صفَّ له في سجلّ الترحيلات؛ الملفُّ بـ`CREATE OR REPLACE TRIGGER` يعيد تطبيقَه بأمان.
+- **الإدارة (طلبُ المالك):** `/admin` لغير المدير المسجَّل «غير موجودة» 404 (لا تحويلَ إلى دخولها)؛ و`/login` و«الدخول بـGoogle»
+  يرفضان حسابَ الإدارة برسالة البيانات الخاطئة نفسِها؛ وrobots.txt لا يذكرها. **`ADMIN_LOGIN_KEY`** في Vercel يجعل
+  `/admin-login` و`/admin-register` تُفتحان من `…/admin-login?k=<المفتاح>` وحده (كعكةٌ 30 يوماً، والمفتاحُ يُزال من الشريط)؛
+  فارغٌ = مفتوحتان كما كانتا. المنطقُ في `lib/auth/admin-gate.ts` و`proxy.ts`.
+- الحارس: `tests/admin-gate.test.ts`.
 
 ## 🚨 رصدُ الأخطاء (0057، طلبُ المالك، 18 تشرين الأول)
 
@@ -507,6 +521,7 @@
   المشروعُ المربوط بالمستودع `spirmedical-wep` وحده (`spirmedical-control-c6ae` غيرُ مربوط).
 - **حمايةُ `main` مؤجَّلةٌ بقرار المالك.** القاعدةُ أُنشئت (Quality Gate + Build verification)
   لكنّها غيرُ مفعّلة — فـ**لا يُدمج طلبٌ سقط عليه «Quality Gate»**: هكذا دُمج #38 و#39 فتوقّف النشر.
+- **`ADMIN_LOGIN_KEY` في Vercel** (24 حرفاً عشوائيّاً فأكثر) — بدونه صفحةُ دخول الإدارة مفتوحةٌ لمن يعرف `/admin-login`.
 - **حساباتٌ هاتفيّة قديمة بلا رمز دخول**: يضبطه أوّلُ من يدخل برقمها. الأسلم رمزٌ مؤقّت من الإدارة
   لكلّ صاحب حساب.
 - **`RESEND_API_KEY` و`ADMIN_OWNER_EMAIL` في Vercel** — بدونهما لا يصل بريدُ التنبيه

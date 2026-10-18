@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { updateSession } from '@/lib/supabase/middleware';
 import { SITE_ORIGIN, VERCEL_PRODUCTION_HOST } from '@/lib/seo/origin';
 import { NOINDEX_HEADER, isIndexablePath } from '@/lib/seo/indexable';
+import { ADMIN_GATE_COOKIE, ADMIN_GATE_MAX_AGE, adminGateToken, adminNotFound, decideAdminGate, isAdminEntryPath } from '@/lib/auth/admin-gate';
 import {
   SITE_TYPE,
   isMarketingPath,
@@ -61,6 +62,30 @@ export async function proxy(request: NextRequest) {
       const marketingUrl = new URL(pathname, MARKETING_URL);
       marketingUrl.search = request.nextUrl.search;
       return NextResponse.redirect(marketingUrl, 308);
+    }
+  }
+
+  // 🔒 دخولُ الإدارة بالرابط وحده (lib/auth/admin-gate.ts)
+  if (isAdminEntryPath(pathname)) {
+    const decision = await decideAdminGate({
+      key: process.env.ADMIN_LOGIN_KEY,
+      queryKey: request.nextUrl.searchParams.get('k'),
+      cookie: request.cookies.get(ADMIN_GATE_COOKIE)?.value,
+    });
+    if (decision === 'deny') return adminNotFound(request);
+    if (decision === 'grant') {
+      const clean = request.nextUrl.clone();
+      clean.searchParams.delete('k');
+      const res = NextResponse.redirect(clean);
+      res.cookies.set(ADMIN_GATE_COOKIE, await adminGateToken(process.env.ADMIN_LOGIN_KEY!.trim()), {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/',
+        maxAge: ADMIN_GATE_MAX_AGE,
+      });
+      res.headers.set('X-Robots-Tag', NOINDEX_HEADER);
+      return res;
     }
   }
 

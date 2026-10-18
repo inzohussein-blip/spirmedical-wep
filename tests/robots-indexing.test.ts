@@ -12,7 +12,7 @@ import { NextRequest, NextResponse } from 'next/server';
  * فتُعدّ «محظورة» — أو «مُفهرَسة رغم الحظر» لأنّه لا يرى أيَّ noindex خلف الحظر. وكانت كلُّ صفحةٍ
  * تُرسَل بـ`X-Robots-Tag: index, follow` (vercel.json)، حتى `/login`.
  *
- * الآن: robots.txt يحجب `/api/` و`/admin` وحدهما، وما ليس عامّاً يُرسَل بـ`noindex` من proxy.ts.
+ * الآن: robots.txt يحجب `/api/` وحده (والإدارةُ لا تُذكر — تُخفى بـ404 وnoindex)، وما ليس عامّاً يُرسَل بـ`noindex` من proxy.ts.
  */
 jest.mock('@/lib/supabase/middleware', () => ({
   updateSession: jest.fn(async () => NextResponse.next()),
@@ -35,9 +35,11 @@ describe('🤖 robots.txt لا يحجب ما تربط به الصفحاتُ ال
     (p) => expect(disallows.has(p)).toBe(false),
   );
 
-  it('/api/ و/admin محجوبان، و/api/og مسموح', () => {
+  // لوحةُ الإدارة لا تُذكر في robots.txt (18 تشرين الأول): يقرؤه الجميع فكان يُعلن مسارَها، وهي «غير موجودة»
+  // لغير المدير و`noindex` على كلّ حال (lib/auth/admin-gate.ts)
+  it('/api/ محجوب، و/api/og مسموح، ولا ذكرَ للإدارة', () => {
     expect(disallows.has('/api/')).toBe(true);
-    expect(disallows.has('/admin')).toBe(true);
+    expect([...disallows].some((d) => String(d).includes('admin'))).toBe(false);
     const google = rules.find((x: { userAgent?: string | string[] }) => [x.userAgent].flat().includes('Googlebot'));
     expect([google.allow].flat()).toContain('/api/og');
   });

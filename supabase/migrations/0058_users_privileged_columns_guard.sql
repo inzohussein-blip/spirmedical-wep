@@ -12,6 +12,8 @@
 -- والمستثنى: عميلُ الخدمة (التسجيل، التحقّق، الإدارة من الخادم) والدوالُّ المُفوَّضة (مالكُها postgres)
 -- — `current_user` فيها غيرُ authenticated/anon — والمديرون.
 --
+-- طُبّق على الإنتاج 18 تشرين الأول وقِيس: التصعيدُ نفسُه صار مرفوضاً (42501)، وتعديلُ الاسم يمرّ.
+--
 -- كودُ main لا يكتب هذه الأعمدة بعميل RLS لصاحب الصفّ (قِيس: كلُّ ما يكتبها يمرّ بعميل الخدمة)،
 -- فالترحيلُ آمنٌ قبل الدمج.
 
@@ -79,7 +81,6 @@ END;
 $$;
 
 -- `zz_`: يعمل بعد مُشغِّلات BEFORE الأخرى (تُرتَّب بالاسم) — فيرى ما ستكتبه فعلاً
-DROP TRIGGER IF EXISTS zz_guard_users_privileged_columns ON public.users;
-CREATE TRIGGER zz_guard_users_privileged_columns
+CREATE OR REPLACE TRIGGER zz_guard_users_privileged_columns
   BEFORE INSERT OR UPDATE ON public.users
   FOR EACH ROW EXECUTE FUNCTION private.guard_users_privileged_columns();
