@@ -6,6 +6,9 @@ import { notifyTestResultsReady, notifySpecialistAssigned } from '@/lib/services
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
 import { isAdminRole } from '@/lib/admin-types';
+import { resolveChosenLab } from '@/lib/labs/lab-network';
+import { sanitizeLabResults, toLabResultRows, type LabResultInput } from '@/lib/labs/lab-results';
+import { notifyInbox } from '@/lib/inbox-notify';
 
 /**
  * قبول طلب: تعيين الاختصاصي للطلب
@@ -216,169 +219,154 @@ export async function updateOrderRoleData(
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 🩸 V25.43: saveLabResults - حفظ نتائج التحاليل في lab_results table
+// 🩸 سحبُ الدم: المحلّلُ يسحب ويسلّم المختبر، والمختبرُ يرفع النتائج (الدفعة 2)
 // ═══════════════════════════════════════════════════════════════════════════
-// يستبدل الـ saving في notes - يحفظ كل نتيجة في صف منفصل بـ structured data
-// ═══════════════════════════════════════════════════════════════════════════
+// المحلّلُ لا يُحلّل: يعلّم «تمّ السحب» ثمّ «سلّمتُ العيّنة» لمختبرٍ معتمَد يُجري التحاليل، فيكتمل
+// موعدُه، ويرفع المختبرُ النتائجَ من نافذة الخدمة. وحين لا مختبرَ مسجَّلاً بعد يبقى له إدخالُها (`saveLabResults`)
+// — كي لا يتوقّف سحبُ الدم لأنّ الشبكة فارغة.
 
-export interface LabResultInput {
-  test_id: string;
-  test_name: string;
-  result_value: string;
-  result_numeric?: number | null;
-  unit?: string;
-  normal_range_min?: number | null;
-  normal_range_max?: number | null;
-  normal_range_text?: string;
-  status: 'normal' | 'low' | 'high' | 'critical' | 'inconclusive';
-  flag?: string;
-  notes?: string;
-  pdf_url?: string;
+type AnalystOrder = { appointmentId: string; labOrderId: string; patientId: string; userId: string };
+
+/** الموعدُ مُسنَدٌ إلى المستدعي (أو مدير)، وله طلبُ تحاليل */
+async function requireAnalystOrder(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  appointmentId: string,
+): Promise<AnalystOrder | { error: string }> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'سجّل الدخول أوّلاً' };
+  const [{ data: profile }, { data: appointment }] = await Promise.all([
+    supabase.from('users').select('specialist_type, role').eq('id', user.id).single(),
+    supabase.from('appointments')
+      .select('id, user_id, lab_order_id, assigned_specialist_id, specialist_id')
+      .eq('id', appointmentId).single(),
+  ]);
+  const admin = isAdminRole(profile?.role);
+  if (!profile || (profile.specialist_type !== 'lab_analyst' && !admin)) return { error: 'لمحلّلي سحب الدم وحدهم' };
+  if (!appointment) return { error: 'الطلب غير موجود' };
+  if (appointment.assigned_specialist_id !== user.id && appointment.specialist_id !== user.id && !admin) {
+    return { error: 'الطلب ليس مُسنَداً إليك' };
+  }
+  if (!appointment.lab_order_id) return { error: 'لا طلبَ تحاليل لهذا الموعد' };
+  return { appointmentId, labOrderId: appointment.lab_order_id, patientId: appointment.user_id, userId: user.id };
 }
 
-export async function saveLabResults(
-  appointmentId: string,
-  results: LabResultInput[]
-) {
+/** «تمّ السحب»: من الانتظار وحده، ويُعدّ الصفّ */
+export async function markSampleCollected(appointmentId: string): Promise<{ ok: boolean; error?: string }> {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { ok: false, error: 'unauthorized' };
+  const ctx = await requireAnalystOrder(supabase, appointmentId);
+  if ('error' in ctx) return { ok: false, error: ctx.error };
 
-  // التحقق من أن المستخدم specialist (lab_analyst)
-  const { data: profile } = await supabase
-    .from('users')
-    .select('specialist_type, role')
-    .eq('id', user.id)
-    .single();
-
-  if (!profile || (profile.specialist_type !== 'lab_analyst' && !isAdminRole(profile.role))) {
-    return { ok: false, error: 'permission_denied' };
-  }
-
-  // جلب الـ appointment + lab_order
-  const { data: appointment } = await supabase
-    .from('appointments')
-    .select('id, user_id, lab_order_id, assigned_specialist_id, specialist_id')
-    .eq('id', appointmentId)
-    .single();
-
-  if (!appointment) return { ok: false, error: 'appointment_not_found' };
-
-  // التحقق من أن الـ specialist مُسند له
-  if (appointment.assigned_specialist_id !== user.id && 
-      appointment.specialist_id !== user.id && 
-      profile.role !== 'admin') {
-    return { ok: false, error: 'not_assigned' };
-  }
-
-  // الحصول على lab_order_id
-  const labOrderId = appointment.lab_order_id;
-  if (!labOrderId) {
-    return { ok: false, error: 'no_lab_order' };
-  }
-
-  // حذف النتائج القديمة (لو في) وإضافة الجديدة.
-  // لو فشل الحذف نتوقّف: المتابعة تُنتج نتائج مُكرَّرة يراها المريض.
-  const { error: deleteError } = await supabase
-    .from('lab_results')
-    .delete()
-    .eq('lab_order_id', labOrderId);
-
-  if (deleteError) {
-    logger.error('Failed to clear previous lab results', {
-      lab_order_id: labOrderId,
-      error: deleteError.message,
-    });
-    return { ok: false, error: 'تعذّر استبدال النتائج السابقة. حاول مرة أخرى.' };
-  }
-
-  const resultsToInsert = results.map((r) => ({
-    lab_order_id: labOrderId,
-    user_id: appointment.user_id,
-    test_id: r.test_id,
-    test_name: r.test_name,
-    result_value: r.result_value,
-    result_numeric: r.result_numeric ?? null,
-    unit: r.unit ?? null,
-    normal_range_min: r.normal_range_min ?? null,
-    normal_range_max: r.normal_range_max ?? null,
-    normal_range_text: r.normal_range_text ?? null,
-    status: r.status,
-    flag: r.flag ?? null,
-    notes: r.notes ?? null,
-    pdf_url: r.pdf_url ?? null,
-    tested_at: new Date().toISOString(),
-    entered_by: user.id,
-  }));
-
-  const { error: insertError } = await supabase
-    .from('lab_results')
-    .insert(resultsToInsert as never);
-
-  if (insertError) {
-    return { ok: false, error: insertError.message };
-  }
-
-  // النتائج حُفظت. تحديثا الحالة أدناه لا يُلغيان الحفظ عند الفشل، لكن فشلهما
-  // الصامت يعني أنّ المريض لا يرى «النتائج جاهزة» أبداً — فنُسجّلهما صراحةً.
-  const { error: labOrderError } = await supabase
+  const { data, error } = await supabase
     .from('lab_orders')
-    .update({
-      status: 'results_ready',
-      updated_at: new Date().toISOString(),
-    } as never)
-    .eq('id', labOrderId);
-
-  if (labOrderError) {
-    logger.error('Lab results saved but lab_order status update failed', {
-      lab_order_id: labOrderId,
-      error: labOrderError.message,
-    });
-  }
-
-  // تحديث appointment status
-  const { error: apptError } = await supabase
-    .from('appointments')
-    .update({ status: 'completed', completed_at: new Date().toISOString() } as never)
-    .eq('id', appointmentId);
-
-  if (apptError) {
-    logger.error('Lab results saved but appointment status update failed', {
-      appointment_id: appointmentId,
-      error: apptError.message,
-    });
-  }
+    .update({ status: 'sample_collected', updated_at: new Date().toISOString() })
+    .eq('id', ctx.labOrderId)
+    .eq('status', 'pending')
+    .select('id');
+  if (error) return { ok: false, error: error.message };
+  if (!data?.length) return { ok: false, error: 'حالةُ الطلب تغيّرت — حدّث الصفحة' };
 
   revalidatePath(`/specialist/orders/${appointmentId}`);
-  revalidatePath(`/account/lab-history`);
-
   return { ok: true };
 }
 
-export async function updateLabOrderStatus(
+/**
+ * «سلّمتُ العيّنة»: إلى المختبر الذي اختاره المريض، أو — إن قال «لا يهم» — إلى مختبرٍ يختاره المحلّل.
+ * المختبرُ يُتحقَّق منه على الخادم (`resolveChosenLab`: خدمةٌ مختبر معتمَدة لها تحاليل)، واسمُه من القاعدة.
+ * ثمّ يكتمل الموعد، ويُخطَر المختبرُ والمريض في صندوقيهما.
+ */
+export async function deliverSampleToLab(
   appointmentId: string,
-  newStatus: 'pending' | 'sample_collected' | 'sent_to_lab' | 'processing' | 'results_ready' | 'delivered' | 'cancelled'
-) {
+  pickedLabId?: string | null,
+): Promise<{ ok: boolean; error?: string }> {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { ok: false, error: 'unauthorized' };
+  const ctx = await requireAnalystOrder(supabase, appointmentId);
+  if ('error' in ctx) return { ok: false, error: ctx.error };
 
-  const { data: appointment } = await supabase
-    .from('appointments')
-    .select('id, lab_order_id, assigned_specialist_id, specialist_id')
-    .eq('id', appointmentId)
-    .single();
+  const { data: order } = await supabase
+    .from('lab_orders').select('id, status, lab_specialist_id').eq('id', ctx.labOrderId).single();
+  if (!order) return { ok: false, error: 'طلبُ التحاليل غير موجود' };
+  if (order.status !== 'pending' && order.status !== 'sample_collected') {
+    return { ok: false, error: 'العيّنةُ سُلّمت من قبل' };
+  }
 
-  if (!appointment) return { ok: false, error: 'not_found' };
+  const lab = await resolveChosenLab(order.lab_specialist_id ?? pickedLabId ?? null);
+  if (!lab) {
+    return {
+      ok: false,
+      error: order.lab_specialist_id
+        ? 'المختبرُ الذي اختاره المريض لم يعد متاحاً — تواصل مع الإدارة'
+        : 'اختر المختبرَ الذي ستسلّمه العيّنة',
+    };
+  }
 
-  const labOrderId = appointment.lab_order_id;
-  if (!labOrderId) return { ok: false, error: 'no_lab_order' };
-
-  await supabase
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
     .from('lab_orders')
-    .update({ status: newStatus } as never)
-    .eq('id', labOrderId);
+    .update({ status: 'sent_to_lab', lab_specialist_id: lab.id, lab_name_snapshot: lab.name, updated_at: now })
+    .eq('id', ctx.labOrderId)
+    .in('status', ['pending', 'sample_collected'])
+    .select('id');
+  if (error) return { ok: false, error: error.message };
+  if (!data?.length) return { ok: false, error: 'حالةُ الطلب تغيّرت — حدّث الصفحة' };
+
+  // انتهت زيارةُ المحلّل؛ فشلُ هذا لا يُرجع التسليم، لكنّه يُسجَّل
+  const { error: apptError } = await supabase
+    .from('appointments')
+    .update({ status: 'completed', completed_at: now })
+    .eq('id', appointmentId);
+  if (apptError) {
+    logger.error('Sample delivered but appointment completion failed', { appointment_id: appointmentId, error: apptError.message });
+  }
+
+  await notifyInbox([
+    { user_id: lab.id, title: 'عيّنةٌ جديدة في الطريق إليك', body: 'سلّمها المحلّل — أكّد الاستلام ثمّ أدخل النتائج.', type: 'lab_sample', link: `/provider/samples/${ctx.labOrderId}` },
+    { user_id: ctx.patientId, title: 'وصلت عيّنتُك إلى المختبر', body: `${lab.name} يُجري تحاليلك الآن، وتصلك النتائج في التطبيق.`, type: 'lab_sample', link: `/account/lab-history/${ctx.labOrderId}` },
+  ]);
 
   revalidatePath(`/specialist/orders/${appointmentId}`);
+  revalidatePath('/specialist/orders');
+  return { ok: true };
+}
+
+/** إدخالُ المحلّل للنتائج — حين لا مختبرَ مسجَّلاً في التطبيق بعد */
+export async function saveLabResults(
+  appointmentId: string,
+  input: LabResultInput[],
+): Promise<{ ok: boolean; error?: string }> {
+  const supabase = await createClient();
+  const ctx = await requireAnalystOrder(supabase, appointmentId);
+  if ('error' in ctx) return { ok: false, error: ctx.error };
+
+  const clean = sanitizeLabResults(input);
+  if (!clean.ok) return { ok: false, error: clean.error };
+
+  // لو فشل حذفُ القديم نتوقّف: المتابعةُ تُنتج نتائجَ مكرّرة يراها المريض
+  const { error: deleteError } = await supabase.from('lab_results').delete().eq('lab_order_id', ctx.labOrderId);
+  if (deleteError) {
+    logger.error('Failed to clear previous lab results', { lab_order_id: ctx.labOrderId, error: deleteError.message });
+    return { ok: false, error: 'تعذّر استبدال النتائج السابقة. حاول مرة أخرى.' };
+  }
+
+  const now = new Date().toISOString();
+  const { error: insertError } = await supabase
+    .from('lab_results')
+    .insert(toLabResultRows(clean.results, { labOrderId: ctx.labOrderId, patientId: ctx.patientId, enteredBy: ctx.userId, at: now }));
+  if (insertError) return { ok: false, error: insertError.message };
+
+  // النتائج حُفظت. فشلُ تحديثَي الحالة لا يُلغيها، لكنّه يعني أنّ المريض لا يرى «النتائج جاهزة» — فيُسجَّل
+  const { error: labOrderError } = await supabase
+    .from('lab_orders').update({ status: 'results_ready', updated_at: now }).eq('id', ctx.labOrderId);
+  if (labOrderError) {
+    logger.error('Lab results saved but lab_order status update failed', { lab_order_id: ctx.labOrderId, error: labOrderError.message });
+  }
+  const { error: apptError } = await supabase
+    .from('appointments').update({ status: 'completed', completed_at: now }).eq('id', appointmentId);
+  if (apptError) {
+    logger.error('Lab results saved but appointment status update failed', { appointment_id: appointmentId, error: apptError.message });
+  }
+
+  notifyTestResultsReady(ctx.patientId, { orderId: appointmentId }).catch(() => null);
+  revalidatePath(`/specialist/orders/${appointmentId}`);
+  revalidatePath('/account/lab-history');
   return { ok: true };
 }

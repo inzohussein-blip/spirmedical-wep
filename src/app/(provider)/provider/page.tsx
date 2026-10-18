@@ -9,8 +9,8 @@ export const metadata = { title: 'نافذة الخدمة · سباير ميدي
 export const dynamic = 'force-dynamic';
 
 /**
- * 🏥 رئيسيّةُ حساب الخدمة (0060). الدفعةُ الأولى: الملفّ وتحاليلُ المختبر وطلباتُ من اختاروه.
- * استلامُ العيّنة من المحلّل ورفعُ النتائج في الدفعة الثانية — والصفحةُ تقول ذلك ولا تَعِد بما لم يُبنَ.
+ * 🏥 رئيسيّةُ حساب الخدمة (0060): الملفّ وتحاليلُ المختبر وعيّناتُه (الدفعة 2). الصيدليةُ والعيادة والمستشفى
+ * ملفٌّ فقط حتى الدفعة الثالثة — والصفحةُ تقول ذلك ولا تَعِد بما لم يُبنَ.
  */
 export default async function ProviderHome() {
   const supabase = await createClient();
@@ -28,13 +28,14 @@ export default async function ProviderHome() {
   const meta = type ? PROVIDER_META[type] : null;
   const isLab = type === 'lab';
 
-  // طلباتُ من اختاروا هذا المختبر: بعميل الخدمة مقيّدةً بمعرّفه (المريضُ صاحبُ الصفّ تحت RLS)
-  const [{ count: tests }, { count: chosenOrders }] = await Promise.all([
+  // عيّناتُ هذا المختبر: بعميل الخدمة مقيّدةً بمعرّفه (المريضُ صاحبُ الصفّ تحت RLS)
+  const [{ count: tests }, { count: waiting }] = await Promise.all([
     isLab
       ? supabase.from('specialist_lab_tests').select('test_id', { count: 'exact', head: true }).eq('specialist_id', user.id)
       : Promise.resolve({ count: null }),
     isLab
-      ? createAdminClient().from('lab_orders').select('id', { count: 'exact', head: true }).eq('lab_specialist_id', user.id)
+      ? createAdminClient().from('lab_orders').select('id', { count: 'exact', head: true })
+          .eq('lab_specialist_id', user.id).in('status', ['sent_to_lab', 'processing'])
       : Promise.resolve({ count: null }),
   ]);
 
@@ -84,14 +85,14 @@ export default async function ProviderHome() {
                 <span className="pv-stat-value">{tests ?? 0}</span>
                 <span className="pv-stat-label">تحليلاً تُجريه</span>
               </Link>
-              <div className="pv-stat">
-                <span className="pv-stat-value">{chosenOrders ?? 0}</span>
-                <span className="pv-stat-label">طلباً اختارك فيه المريض</span>
-              </div>
+              <Link href="/provider/samples" className="pv-stat">
+                <span className="pv-stat-value">{waiting ?? 0}</span>
+                <span className="pv-stat-label">عيّنةً بانتظار النتائج</span>
+              </Link>
             </div>
             <p className="pv-note">
-              المسار: يختار المريضُ تحاليلَه ومختبرَك ← يسحب المحلّلُ العيّنةَ ويسلّمها لك ← ترفع النتائج.
-              استلامُ العيّنات ورفعُ النتائج من هنا قادمٌ في التحديث التالي.
+              المسار: يختار المريضُ تحاليلَه ومختبرَك ← يسحب المحلّلُ العيّنةَ ويسلّمها لك ← تؤكّد الاستلام وترفع النتائج
+              من «العيّنات»، فتصل المريضَ في التطبيق.
             </p>
           </section>
         )}

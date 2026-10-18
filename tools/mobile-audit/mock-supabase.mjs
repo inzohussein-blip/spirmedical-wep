@@ -16,7 +16,9 @@ export const USER = {
 };
 
 const PROFILE = {
-  id: UID, role: ROLE, specialist_type: ROLE === 'specialist' ? 'lab_analyst' : null, is_available: true, full_name: 'حسن محمد', phone: '07700000000', email: 'patient@example.test',
+  id: UID, role: ROLE, specialist_type: ROLE === 'specialist' ? 'lab_analyst' : null,
+  provider_type: ROLE === 'provider' ? 'lab' : null, clinic_name: ROLE === 'provider' ? 'مختبر الحياة' : null, clinic_city: ROLE === 'provider' ? 'النجف' : null,
+  is_available: true, full_name: 'حسن محمد', phone: '07700000000', email: 'patient@example.test',
   gender: 'male', date_of_birth: '1990-05-10', blood_type: 'O+', city: 'النجف', governorate: 'النجف',
   avatar_url: null, is_active: true, onboarding_completed: true, profile_completed: true,
   email_verified: true, phone_verified: true, created_at: iso(-30), updated_at: iso(-1),
@@ -27,7 +29,7 @@ const PROFILE = {
 const PATIENT = { id: PID, full_name: 'زينب علي', phone: '07711111111' };
 const SPEC_APPTS = [
   { id: 'o1', user_id: PID, specialist_id: null, service_type: 'سحب دم + تحاليل', status: 'pending', scheduled_at: iso(1), address: 'النجف · حي السعد · قرب جامع الحسن', created_at: iso(-0.05), updated_at: iso(-0.05), estimated_price: 25000, required_specialist_type: 'lab_analyst', governorate: 'النجف', users: PATIENT, patient: PATIENT },
-  { id: 'o2', user_id: PID, specialist_id: UID, assigned_specialist_id: UID, service_type: 'سحب دم + تحاليل', status: 'confirmed', scheduled_at: iso(0.2), address: 'النجف · حي الأمير', created_at: iso(-1), updated_at: iso(-0.5), estimated_price: 30000, required_specialist_type: 'lab_analyst', governorate: 'النجف', users: PATIENT, patient: PATIENT },
+  { id: 'o2', user_id: PID, specialist_id: UID, assigned_specialist_id: UID, lab_order_id: 'lo2', service_type: 'سحب دم + تحاليل', status: 'confirmed', scheduled_at: iso(0.2), address: 'النجف · حي الأمير', created_at: iso(-1), updated_at: iso(-0.5), estimated_price: 30000, required_specialist_type: 'lab_analyst', governorate: 'النجف', users: PATIENT, patient: PATIENT },
   { id: 'o3', user_id: PID, specialist_id: UID, assigned_specialist_id: UID, service_type: 'تمريض منزلي', status: 'completed', scheduled_at: iso(-3), address: 'النجف · حي الغدير', created_at: iso(-4), updated_at: iso(-3), completed_at: iso(-3), estimated_price: 20000, governorate: 'النجف', users: PATIENT, patient: PATIENT },
 ];
 // لوحةُ الإدارة: مريضٌ ومختصٌّ وطلبٌ وطارئ بمعرّفاتٍ ثابتة لصفحات التفاصيل
@@ -42,22 +44,22 @@ const ADMIN_APPTS = [
   { ...SPEC_APPTS[0], id: '44444444-4444-4444-8444-444444444444', user_id: PID, assigned_specialist_id: SID, specialist_id: SID, status: 'confirmed',
     specialist: { full_name: 'علي حسين', phone: '+9647722222222' } },
 ];
-// 🧪 مختبران (مختصّا تحاليل) وتحاليلُهما (0055) — لاختيار المختبر في سحب الدم
+// 🧪 مختبران (حسابا خدمة، 0060) وتحاليلُهما — لاختيار المختبر في سحب الدم وتسليم العيّنة
 const LABS = [
-  { id: '44444444-0000-4000-8000-000000000001', role: 'specialist', specialist_type: 'lab_analyst', approval_status: 'approved',
+  { id: '44444444-0000-4000-8000-000000000001', role: 'provider', provider_type: 'lab', specialist_type: null, approval_status: 'approved',
     is_suspended: false, full_name: 'أحمد كاظم', clinic_name: 'مختبر النور', clinic_city: 'النجف', governorate: 'النجف' },
-  { id: '44444444-0000-4000-8000-000000000002', role: 'specialist', specialist_type: 'lab_analyst', approval_status: 'approved',
+  { id: '44444444-0000-4000-8000-000000000002', role: 'provider', provider_type: 'lab', specialist_type: null, approval_status: 'approved',
     is_suspended: false, full_name: 'سارة عباس', clinic_name: 'مختبر الرافدين', clinic_city: 'كربلاء', governorate: 'كربلاء' },
 ];
 const LAB_TESTS = [
   ...['cbc', 'fbs', 'hba1c', 'lipid', 'tsh', 'vit-d'].map((t) => ({ specialist_id: LABS[0].id, test_id: t })),
   ...['cbc', 'fbs'].map((t) => ({ specialist_id: LABS[1].id, test_id: t })),
-  ...(ROLE === 'specialist' ? ['cbc', 'fbs', 'hba1c'].map((t) => ({ specialist_id: UID, test_id: t })) : []),
+  ...(ROLE === 'provider' ? ['cbc', 'fbs', 'hba1c'].map((t) => ({ specialist_id: UID, test_id: t })) : []),
 ];
 
 const FIX = {
   specialist_lab_tests: LAB_TESTS,
-  users: ROLE === 'specialist' ? [PROFILE, { ...PATIENT, role: 'patient' }] : ROLE === 'admin' ? ADMIN_USERS : [PROFILE, ...LABS],
+  users: ROLE === 'specialist' ? [PROFILE, { ...PATIENT, role: 'patient' }, ...LABS] : ROLE === 'admin' ? ADMIN_USERS : [PROFILE, ...LABS],
   nurse_emergency_logs: ROLE === 'admin' ? [{ id: '55555555-5555-4555-8555-555555555555', specialist_id: SID, appointment_id: ADMIN_APPTS[0].id,
     trigger_reason: 'panic_button', description: 'وصفٌ تجريبيّ', latitude: 32.0, longitude: 44.33, status: 'open', created_at: iso(-0.01) }] : [],
   appointments: ROLE === 'specialist' ? SPEC_APPTS : ROLE === 'admin' ? ADMIN_APPTS : [
@@ -85,7 +87,19 @@ const FIX = {
   favorites: [], service_favorites: [], pharmacy_favorites: [],
   chats: [], messages: [],
   notification_preferences: [{ user_id: UID, appointment_reminders: true, lab_results: true, promotions: false }],
-  health_vitals: [], reminders: [], prescriptions: [], lab_orders: [], user_medications: [], vaccination_records: [],
+  health_vitals: [], reminders: [], prescriptions: [],
+  // العيّنة (الدفعة 2): عند المحلّل بعد السحب، وعند المختبر في الطريق وقيد التحليل
+  lab_orders: ROLE === 'specialist'
+    ? [{ id: 'lo2', user_id: PID, test_ids: ['cbc', 'fbs'], status: 'sample_collected', lab_specialist_id: null, lab_name_snapshot: null }]
+    : ROLE === 'provider'
+      ? [
+          { id: '66666666-0000-4000-8000-000000000001', user_id: PID, test_ids: ['cbc', 'fbs', 'hba1c'], status: 'sent_to_lab', lab_specialist_id: UID,
+            patient_age: 34, patient_gender: 'female', needs_fasting: true, fasting_hours: 8, fasting_confirmed: true, updated_at: iso(-0.02), lab_name_snapshot: 'مختبر الحياة' },
+          { id: '66666666-0000-4000-8000-000000000002', user_id: PID, test_ids: ['tsh'], status: 'processing', lab_specialist_id: UID,
+            patient_age: 52, patient_gender: 'male', needs_fasting: false, updated_at: iso(-0.3), lab_name_snapshot: 'مختبر الحياة' },
+        ]
+      : [],
+  lab_results: [], user_medications: [], vaccination_records: [],
   app_theme_settings: [],
   service_waitlist: [],
   auth_login_pins: [],

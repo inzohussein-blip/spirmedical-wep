@@ -5,7 +5,12 @@ import { SPECIALIST_META, type SpecialistType } from '@/lib/specialist-types';
 import OrderClinicalDetails from '@/components/orders/OrderClinicalDetails';
 import { decrypt } from '@/lib/encryption';
 import OrderActionsBar from './OrderActionsBar';
-import LabResultsForm from './role-forms/LabResultsForm';
+import LabResultsEditor from '@/components/labs/LabResultsEditor';
+import SampleDelivery, { type DeliveryLab } from './role-forms/SampleDelivery';
+import { saveLabResults } from './actions';
+import { getLabNetwork } from '@/lib/labs/lab-network';
+import { rankLabsForTests } from '@/lib/labs/lab-match';
+import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
 import NursingActions from './role-forms/NursingActions';
 import PrescriptionForm from './role-forms/PrescriptionForm';
 import DrugConsultation from './role-forms/DrugConsultation';
@@ -66,54 +71,38 @@ export default async function SpecialistOrderDetailPage(
     .eq('id', order.user_id)
     .single();
 
-  // ─── V25.43: جلب lab_order + lab_results لو موجودة ───
-  // lab_order_id مُعرّف الآن في أنواع appointments (لا حاجة لـ cast).
+  // ─── سحبُ الدم: طلبُ التحاليل، والمختبرُ المختار، والمختبراتُ التي تُجري تحاليلَه (الدفعة 2) ───
   const labOrderId = order.lab_order_id;
-
-  // lab_results لم يُضَف بعد لأنواع Database → يبقى cast لهذا المسار.
-  const supabaseAny = supabase as any;
-
-  let labOrderData: { test_ids: string[] } | null = null;
-  let existingLabResults: Array<{
-    test_id: string;
-    test_name: string;
-    result_value: string;
-    unit: string;
-    normal_range_text: string;
-    normal_range_min?: number;
-    normal_range_max?: number;
-    status: 'normal' | 'low' | 'high' | 'critical' | 'inconclusive';
-    notes: string;
-  }> = [];
-
-  if (labOrderId) {
-    const { data: labOrder } = await supabaseAny
-      .from('lab_orders')
-      .select('test_ids')
-      .eq('id', labOrderId)
-      .single();
-    
-    if (labOrder) labOrderData = labOrder;
-    
-    const { data: labResults } = await supabaseAny
-      .from('lab_results')
-      .select('*')
-      .eq('lab_order_id', labOrderId);
-    
-    if (labResults && labResults.length > 0) {
-            existingLabResults = labResults.map((r: any) => ({
-        test_id: r.test_id,
-        test_name: r.test_name,
-        result_value: r.result_value || '',
-        unit: r.unit || '',
-        normal_range_text: r.normal_range_text || '',
-        normal_range_min: r.normal_range_min,
-        normal_range_max: r.normal_range_max,
-        status: r.status,
-        notes: r.notes || '',
-      }));
-    }
-  }
+  const isAnalyst = specialistType === 'lab_analyst';
+  const [labOrderRes, labResultsRes, network] = await Promise.all([
+    labOrderId
+      ? supabase.from('lab_orders').select('test_ids, status, lab_specialist_id, lab_name_snapshot').eq('id', labOrderId).single()
+      : Promise.resolve({ data: null }),
+    labOrderId
+      ? supabase.from('lab_results').select('*').eq('lab_order_id', labOrderId)
+      : Promise.resolve({ data: null }),
+    labOrderId && isAnalyst ? getLabNetwork() : Promise.resolve([]),
+  ]);
+  const labOrderData = labOrderRes.data;
+  const testIds: string[] = labOrderData?.test_ids ?? [];
+  const existingLabResults = (labResultsRes.data ?? []).map((r) => ({
+    test_id: r.test_id ?? '',
+    test_name: r.test_name ?? '',
+    result_value: r.result_value || '',
+    unit: r.unit || '',
+    normal_range_text: r.normal_range_text || '',
+    normal_range_min: r.normal_range_min ?? undefined,
+    normal_range_max: r.normal_range_max ?? undefined,
+    status: (r.status ?? 'normal') as 'normal' | 'low' | 'high' | 'critical' | 'inconclusive',
+    notes: r.notes || '',
+  }));
+  const deliveryLabs: DeliveryLab[] = rankLabsForTests(network, testIds).map((m) => ({
+    id: m.lab.id, name: m.lab.name, city: m.lab.city, covered: m.covered, total: testIds.length,
+  }));
+  const chosenLab = labOrderData?.lab_specialist_id
+    ? { id: labOrderData.lab_specialist_id, name: labOrderData.lab_name_snapshot || 'المختبر المختار' }
+    : null;
+  const testNames = testIds.map((id) => BLOOD_TESTS.find((t) => t.id === id)?.nameAr ?? id);
 
   // فك تشفير الملاحظات لو موجودة
   let notesText: string | null = null;
@@ -140,11 +129,21 @@ export default async function SpecialistOrderDetailPage(
 
     switch (specialistType) {
       case 'lab_analyst':
+        if (!labOrderData) return null;
         return (
-          <LabResultsForm 
-            orderId={order.id}
-            expectedTests={labOrderData?.test_ids ?? []}
-            existingResults={existingLabResults}
+          <SampleDelivery
+            appointmentId={order.id}
+            status={labOrderData.status ?? 'pending'}
+            chosenLab={chosenLab}
+            labs={deliveryLabs}
+            testNames={testNames}
+            fallbackEditor={
+              <LabResultsEditor
+                save={saveLabResults.bind(null, order.id)}
+                expectedTests={testIds}
+                existingResults={existingLabResults}
+              />
+            }
           />
         );
       case 'nurse':
