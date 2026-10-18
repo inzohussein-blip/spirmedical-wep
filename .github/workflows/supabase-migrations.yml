@@ -19,12 +19,11 @@
 
 name: Supabase Migrations
 
+# ⚠️ يدويٌّ فقط (18 تشرين الأول): سقط في كلّ دمجٍ منذ أُنشئ — سجلُّ Supabase يحمل إصداراتٍ زمنيّة
+# (`20261018130242`…) لأنّ الترحيلات تُطبَّق مباشرةً بعد تجربتها في BEGIN … ROLLBACK (أعرافُ CLAUDE.md)،
+# والملفّاتُ هنا `0057_…` — فيرفض `db push` («Remote migration versions not found»). ولم يُطبّق شيئاً قطّ.
+# وتطبيقٌ آليّ لكلّ ترحيلٍ عند الدمج يخالف قاعدةَ التجربة أوّلاً. كشفه رصدُ الأخطاء (0057).
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'supabase/migrations/**'
-      - 'supabase/config.toml'
   workflow_dispatch:
 
 concurrency:

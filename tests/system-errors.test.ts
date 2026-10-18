@@ -290,6 +290,20 @@ describe('🔐 GitHub: فشلُ البناء والفحوص عبر OIDC', () => 
   });
 });
 
+describe('🔧 ما كشفه الرصدُ في أوّل ساعة (18 تشرين الأول)', () => {
+  it('🚨 فحصُ الأسرار على الدفع يقارن الإيداعَ السابق بالحاليّ — لا main بنفسه', () => {
+    const sec = read('.github/workflows/security.yml');
+    expect(sec).toMatch(/base: \$\{\{ github\.event_name == 'push' && github\.event\.before/);
+    expect(sec).toMatch(/head: \$\{\{ github\.event_name == 'push' && github\.sha/);
+  });
+
+  it('🚨 db push لا يعمل آليّاً عند الدمج (الترحيلُ يُجرَّب ثمّ يُطبَّق يدوياً)', () => {
+    const on = read('.github/workflows/supabase-migrations.yml').match(/^on:\n([\s\S]*?)\n\n/m)![1];
+    expect(on).not.toMatch(/push:/);
+    expect(on).toMatch(/workflow_dispatch:/);
+  });
+});
+
 describe('🗄️ القاعدة (0057)', () => {
   const m = code('supabase/migrations/0057_system_errors.sql');
   it('🚨 لا قراءةَ ولا كتابةَ لغير عميل الخدمة، والدالّةُ بصلاحيّة المستدعي وسقفٍ للبصمات الجديدة', () => {
