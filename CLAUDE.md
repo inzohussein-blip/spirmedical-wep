@@ -209,7 +209,8 @@
   الإيموجي الظاهر: الإدارة والموقع 186 ← 1 (تحيّةُ مجسّم الهاتف)، المريض 292 ← نحو 35 (علاماتُ ✓✕ في الباقات وتسمياتٌ
   تُخزَّن في الطلب)، المختصّ ← 6 (✓). الإيموجي المخزَّن نصّاً (`icon: '🏥'`) يُرسم بـ`<EmojiIcon>`، فلا تكتب `{x.icon}`
   نصّاً في JSX. لا إيموجي في `<option>`. القصص: الإدارةُ تكتبها إيموجي فيترجمها `StoryIcon` (`tests/stories-icons.test.tsx`).
-  مكوّناتُ `admin-ui` في لوحة التحكّم والممرّضين؛ الجداولُ الأخرى تُنقل إلى `DataTable` تباعاً.
+  مكوّناتُ `admin-ui` في لوحة الإدارة، و**كلُّ جداولها `DataTable`** (18 تشرين الأول، 17 صفحة): بطاقاتٌ على الهاتف بعمودٍ
+  أساسيّ واحد (`primary`). لا تكتب `<table>` في `src/app/admin` — الحارس `tests/admin-datatable.test.ts`.
   **حُذف «معتمد طبياً — وزارة الصحة»** من الرئيسية ومن نموذج سحب الدم، وصار ادّعاءُ التمريض «يراجع فريقُنا هويّةَ كلّ ممرّض» —
   لا اعتمادَ رسميّاً موثَّقاً بعد. الحارس: `tests/icons-system.test.tsx`.
 - **على المالك:** Search Console — أضف رمزَ التحقّق في `layout.tsx` (`verification.google`) وارفع
@@ -442,7 +443,7 @@
 
 - **الإصدارات:** Next 16.4.2 (Turbopack)، React 19.3، Sentry 11، Tailwind 4 + tailwind-merge 3، Jest 30،
   ESLint 10، أنواع Node 24. **TypeScript 6.0** (جسرُ 7، بلا تحذيرات إهمال): الإصدار 7 يبني (وأسرع ×9) لكنّ
-  typescript-eslint يدعم `<6.1` حتى في نسخته التجريبيّة. الحارس يقرأ مداه من حزمته — حين يتّسع ارفع الإصدار.
+  typescript-eslint يدعم `<6.1` (أُعيد الفحص 18 تشرين الأول: 8.71.2 وTS 7.0.2 — ما زال مسدوداً). الحارس يقرأ مداه من حزمته — حين يتّسع ارفع الإصدار.
 - **`createClient()` من الخادم async**: `await createClient()` في كلّ موضع (301). وكذلك `cookies()`
   و`headers()` و`params` و`searchParams` و`getClientIp()`. لا `UnsafeUnwrapped…` (يعمل في 15 وينكسر في 16).
   الحارس: `tests/async-request-apis.test.ts`.
@@ -450,7 +451,8 @@
   الإجراءات؛ `revalidateTag` صار يطلب profile.
 - **`next lint` أُزيل**: `npm run lint` = `eslint .` بإعداد `eslint.config.mjs`.
 - **قواعدُ React Compiler رُوجعت** (انظر 🧹 أدناه): refs وimmutability وstatic-components وuse-memo وpurity
-  **أخطاء**؛ وset-state-in-effect تحذيرٌ لـ17 موضعاً تقرأ المتصفّح بعد التركيب (نقلُها يكسر الترطيب).
+  **أخطاء**؛ وset-state-in-effect تحذيرٌ لـ17 موضعاً تقرأ المتصفّح بعد التركيب (نقلُها يكسر الترطيب). الثامنَ عشر (دُرجُ الإدارة
+  يُغلق بالانتقال) صار حالةً مشتقّةً من المسار — لا تُضف موضعاً جديداً: اشتقّ الحالة أو اقرأ المتصفّح بـuseSyncExternalStore.
 - **Tailwind 4**: الإعدادُ في `shared.css` (`@import 'tailwindcss'` و`@theme`)، لا `tailwind.config.ts`.
   أداةُ الترقية أعادت تسميةَ متغيّر `'outline'` في Button/Badge إلى `'outline-solid'` خطأً — أُرجع.
 - **أداةُ التدقيق** (`audit.mjs`) تنتظر `load` ثمّ الهدوءَ بسقف 5 ث: Playwright لا يرى جلبَ Next 15+

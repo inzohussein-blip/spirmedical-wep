@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { hasPermission, type Permission } from '@/lib/admin-types';
@@ -74,10 +74,12 @@ interface Props {
 
 export default function AdminSidebar({ userName, userRole, roleLabel, roleIcon }: Props) {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
-
-  // يُغلق الدُّرج عند الانتقال إلى صفحة أخرى
-  useEffect(() => { setOpen(false); }, [pathname]);
+  // الدُّرجُ مفتوحٌ «على صفحة»: الانتقالُ إلى أخرى يُغلقه بلا أثرٍ يضبط الحالة (كان setState في useEffect —
+  // تحذيرُ React Compiler، ورسمةٌ زائدة بالدُّرج مفتوحاً على الصفحة الجديدة قبل أن يُغلق).
+  const [openOn, setOpenOn] = useState<string | null>(null);
+  const open = openOn === pathname;
+  const setOpen = (next: boolean | ((v: boolean) => boolean)) =>
+    setOpenOn((typeof next === 'function' ? next(open) : next) ? pathname : null);
 
   return (
     <>

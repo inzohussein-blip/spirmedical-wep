@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { EmptyState } from '@/components/ui';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { DataTable } from '@/components/admin-ui';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -104,34 +105,17 @@ export default async function PatientsListPage(props: { searchParams: Promise<Se
         />
       ) : (
         <div style={{ background: 'var(--white)', borderRadius: 14, overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-            <thead style={{ background: 'var(--paper-3)' }}>
-              <tr>
-                <th style={th}>الاسم</th>
-                <th style={th}>الهاتف</th>
-                <th style={th}>المحافظة</th>
-                <th style={th}>تاريخ التسجيل</th>
-                <th style={th}>التصنيفات</th>
-                <th style={th}>الحالة</th>
-              </tr>
-            </thead>
-            <tbody>
-              {patients.map((p) => {
+          <DataTable
+            rows={patients.map((p) => {
                 const tags = tagsMap.get(p.id) ?? [];
-                return (
-                  <tr key={p.id} style={{ borderTop: '1px solid var(--line)' }}>
-                    <td style={td}>
-                      <Link href={`/admin/patients/${p.id}`} style={{ color: 'var(--ink)', textDecoration: 'none', fontWeight: 700 }}>
+              return { key: String(p.id), cells: [
+                <><Link href={`/admin/patients/${p.id}`} style={{ color: 'var(--ink)', textDecoration: 'none', fontWeight: 700 }}>
                         {p.full_name ?? 'بدون اسم'}
-                      </Link>
-                    </td>
-                    <td style={{ ...td, fontFamily: 'monospace' }} dir="ltr">
-                      <a href={`tel:${p.phone}`} style={{ color: 'var(--emerald)', textDecoration: 'none' }}>{p.phone}</a>
-                    </td>
-                    <td style={td}>{p.governorate ?? '—'}</td>
-                    <td style={td}>{new Date(p.created_at).toLocaleDateString('ar-IQ-u-nu-latn')}</td>
-                    <td style={td}>
-                      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                      </Link></>,
+                <><a href={`tel:${p.phone}`} style={{ color: 'var(--emerald)', textDecoration: 'none' }}>{p.phone}</a></>,
+                <>{p.governorate ?? '—'}</>,
+                <>{new Date(p.created_at).toLocaleDateString('ar-IQ-u-nu-latn')}</>,
+                <><div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                         {tags.length === 0 ? (
                           <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>—</span>
                         ) : (
@@ -145,20 +129,24 @@ export default async function PatientsListPage(props: { searchParams: Promise<Se
                         {tags.length > 3 && (
                           <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>+{tags.length - 3}</span>
                         )}
-                      </div>
-                    </td>
-                    <td style={td}>
-                      {p.is_suspended ? (
+                      </div></>,
+                <>{p.is_suspended ? (
                         <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--rose-soft)', color: 'var(--rose)', fontWeight: 800 }}><EmojiIcon e="⛔" /> معلّق</span>
                       ) : (
                         <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--emerald-soft)', color: 'var(--emerald-deep)', fontWeight: 800 }}><EmojiIcon e="✅" /> نشط</span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      )}</>,
+              ] };
+            })}
+            rowKey={(r) => r.key}
+            columns={[
+              { key: 'c0', header: 'الاسم', primary: true, render: (r) => r.cells[0] },
+              { key: 'c1', header: 'الهاتف', render: (r) => r.cells[1] },
+              { key: 'c2', header: 'المحافظة', render: (r) => r.cells[2] },
+              { key: 'c3', header: 'تاريخ التسجيل', render: (r) => r.cells[3] },
+              { key: 'c4', header: 'التصنيفات', render: (r) => r.cells[4] },
+              { key: 'c5', header: 'الحالة', render: (r) => r.cells[5] },
+            ]}
+          />
         </div>
       )}
     </>

@@ -6,6 +6,7 @@ import { EmptyState } from '@/components/ui';
 import { baghdadDayWindow } from '@/lib/time/baghdad-day';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { DataTable } from '@/components/admin-ui';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -97,43 +98,23 @@ export default async function NotificationsPage(props: { searchParams: Promise<{
         />
       ) : (
         <div style={{ background: 'var(--white)', borderRadius: 14, overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-            <thead style={{ background: 'var(--paper-3)' }}>
-              <tr>
-                <th style={th}>المستلم</th>
-                <th style={th}>القناة</th>
-                <th style={th}>المحتوى</th>
-                <th style={th}>الحالة</th>
-                <th style={th}>الوقت</th>
-                <th style={th}>إجراءات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {messages.map((m) => {
+          <DataTable
+            rows={messages.map((m) => {
                 const status = STATUS_META[m.status ?? ''] ?? STATUS_META.pending;
                 const channel = CHANNEL_META[m.channel ?? ''] ?? CHANNEL_META.whatsapp;
-
-                return (
-                  <tr key={m.id} style={{ borderTop: '1px solid var(--line)' }}>
-                    <td style={td}>
-                      <div style={{ fontFamily: 'monospace', fontWeight: 700 }} dir="ltr">{m.recipient_phone}</div>
-                      {m.template_key && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}><EmojiIcon e="📑" /> {m.template_key}</div>}
-                    </td>
-                    <td style={td}>
-                      <span style={{ color: channel.color, fontWeight: 700 }}><EmojiIcon e={channel.icon} /> {m.channel}</span>
-                    </td>
-                    <td style={td}>
-                      <div style={{ fontSize: 12, maxWidth: 280, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              return { key: String(m.id), cells: [
+                <><div style={{ fontFamily: 'monospace', fontWeight: 700 }} dir="ltr">{m.recipient_phone}</div>
+                      {m.template_key && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}><EmojiIcon e="📑" /> {m.template_key}</div>}</>,
+                <><span style={{ color: channel.color, fontWeight: 700 }}><EmojiIcon e={channel.icon} /> {m.channel}</span></>,
+                <><div style={{ fontSize: 12, maxWidth: 280, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {m.body.substring(0, 80)}{m.body.length > 80 ? '...' : ''}
                       </div>
                       {m.error_message && (
                         <div style={{ fontSize: 11, color: 'var(--rose)', marginTop: 4 }}>
                           <EmojiIcon e="⚠️" /> {m.error_message.substring(0, 100)}
                         </div>
-                      )}
-                    </td>
-                    <td style={td}>
-                      <span style={{
+                      )}</>,
+                <><span style={{
                         fontSize: 11, padding: '3px 10px', borderRadius: 100,
                         background: status.bg, color: status.color, fontWeight: 800,
                       }}>{status.label}</span>
@@ -141,26 +122,28 @@ export default async function NotificationsPage(props: { searchParams: Promise<{
                         <div style={{ fontSize: 11, color: 'var(--ink-3)', marginTop: 4 }}>
                           محاولات: {m.attempts}/{m.max_attempts}
                         </div>
-                      )}
-                    </td>
-                    <td style={td}>
-                      <div style={{ fontSize: 11 }}>
+                      )}</>,
+                <><div style={{ fontSize: 11 }}>
                         {new Date(m.created_at ?? Date.now()).toLocaleString('ar-IQ-u-nu-latn', { dateStyle: 'short', timeStyle: 'short' })}
                       </div>
                       {m.sent_at && (
                         <div style={{ fontSize: 11, color: 'var(--emerald)', marginTop: 2 }}>
                           <EmojiIcon e="✅" /> {new Date(m.sent_at).toLocaleTimeString('ar-IQ-u-nu-latn', { timeStyle: 'short' })}
                         </div>
-                      )}
-                    </td>
-                    <td style={td}>
-                      <NotificationRowActions id={m.id} status={m.status ?? 'pending'} />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      )}</>,
+                <><NotificationRowActions id={m.id} status={m.status ?? 'pending'} /></>,
+              ] };
+            })}
+            rowKey={(r) => r.key}
+            columns={[
+              { key: 'c0', header: 'المستلم', primary: true, render: (r) => r.cells[0] },
+              { key: 'c1', header: 'القناة', render: (r) => r.cells[1] },
+              { key: 'c2', header: 'المحتوى', render: (r) => r.cells[2] },
+              { key: 'c3', header: 'الحالة', render: (r) => r.cells[3] },
+              { key: 'c4', header: 'الوقت', render: (r) => r.cells[4] },
+              { key: 'c5', header: 'إجراءات', render: (r) => r.cells[5] },
+            ]}
+          />
 
           {count && count > 100 && (
             <div style={{ padding: 16, textAlign: 'center', fontSize: 11, color: 'var(--ink-3)', background: 'var(--paper-3)' }}>

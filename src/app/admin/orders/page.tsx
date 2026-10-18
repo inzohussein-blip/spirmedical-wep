@@ -4,6 +4,7 @@ import { SPECIALIST_META, SPECIALIST_TYPES, type SpecialistType } from '@/lib/sp
 import { EmptyState } from '@/components/ui';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { DataTable } from '@/components/admin-ui';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -152,49 +153,35 @@ export default async function AdminOrdersPage(props: { searchParams: Promise<Sea
 function ListView({ orders, usersMap }: { orders: Array<Record<string, unknown>>; usersMap: Map<string, { full_name: string | null; phone: string }> }) {
   return (
     <div style={{ background: 'var(--white)', borderRadius: 14, overflowX: 'auto' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-        <thead style={{ background: 'var(--paper-3)' }}>
-          <tr>
-            <th style={th}>المريض</th>
-            <th style={th}>الخدمة</th>
-            <th style={th}>التاريخ</th>
-            <th style={th}>الاختصاصي</th>
-            <th style={th}>الحالة</th>
-          </tr>
-        </thead>
-        <tbody>
-          {orders.map((o: any) => {
+      <DataTable
+        rows={orders.map((o: any) => {
             const patient = usersMap.get(o.user_id);
             const specialist = o.assigned_specialist_id ? usersMap.get(o.assigned_specialist_id) : null;
             const status = STATUS_META[o.status] ?? STATUS_META.pending;
             const meta = o.required_specialist_type ? SPECIALIST_META[o.required_specialist_type as SpecialistType] : null;
-
-            return (
-              <tr key={o.id} style={{ borderTop: '1px solid var(--line)' }}>
-                <td style={td}>
-                  <Link href={`/admin/orders/${o.id}`} style={{ color: 'var(--ink)', textDecoration: 'none', fontWeight: 700 }}>
+          return { key: String(o.id), cells: [
+            <><Link href={`/admin/orders/${o.id}`} style={{ color: 'var(--ink)', textDecoration: 'none', fontWeight: 700 }}>
                     {patient?.full_name ?? 'مريض'}
-                  </Link>
-                </td>
-                <td style={td}>
-                  {meta && <span style={{ marginInlineEnd: 4 }}><EmojiIcon e={meta.icon} /></span>}
-                  {o.service_type}
-                </td>
-                <td style={td}>
-                  {new Date(o.scheduled_at).toLocaleString('ar-IQ-u-nu-latn', { dateStyle: 'short', timeStyle: 'short' })}
-                </td>
-                <td style={td}>{specialist?.full_name ?? <span style={{ color: 'var(--rose)', fontSize: 11 }}>غير معيّن</span>}</td>
-                <td style={td}>
-                  <span style={{
+                  </Link></>,
+            <>{meta && <span style={{ marginInlineEnd: 4 }}><EmojiIcon e={meta.icon} /></span>}
+                  {o.service_type}</>,
+            <>{new Date(o.scheduled_at).toLocaleString('ar-IQ-u-nu-latn', { dateStyle: 'short', timeStyle: 'short' })}</>,
+            <>{specialist?.full_name ?? <span style={{ color: 'var(--rose)', fontSize: 11 }}>غير معيّن</span>}</>,
+            <><span style={{
                     fontSize: 11, padding: '3px 8px', borderRadius: 100,
                     background: status.bg, color: status.color, fontWeight: 800,
-                  }}>{status.label}</span>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+                  }}>{status.label}</span></>,
+          ] };
+        })}
+        rowKey={(r) => r.key}
+        columns={[
+          { key: 'c0', header: 'المريض', primary: true, render: (r) => r.cells[0] },
+          { key: 'c1', header: 'الخدمة', render: (r) => r.cells[1] },
+          { key: 'c2', header: 'التاريخ', render: (r) => r.cells[2] },
+          { key: 'c3', header: 'الاختصاصي', render: (r) => r.cells[3] },
+          { key: 'c4', header: 'الحالة', render: (r) => r.cells[4] },
+        ]}
+      />
     </div>
   );
 }

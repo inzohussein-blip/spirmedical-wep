@@ -8,6 +8,7 @@ import {
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { DataTable } from '@/components/admin-ui';
 interface PartnerLab {
   id: string;
   name_ar: string;
@@ -176,23 +177,10 @@ export default function LabsAdminClient({ labs }: Props) {
             </div>
           </div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-            <thead>
-              <tr style={{ background: 'var(--paper-2)', borderBottom: '1px solid var(--line)' }}>
-                <th style={{ padding: 10, textAlign: 'right', fontSize: 11, fontWeight: 700, color: 'var(--ink-2)' }}>المختبر</th>
-                <th style={{ padding: 10, textAlign: 'right', fontSize: 11, fontWeight: 700, color: 'var(--ink-2)' }}>المدينة</th>
-                <th style={{ padding: 10, textAlign: 'right', fontSize: 11, fontWeight: 700, color: 'var(--ink-2)' }}>التواصل</th>
-                <th style={{ padding: 10, textAlign: 'right', fontSize: 11, fontWeight: 700, color: 'var(--ink-2)' }}>الطلبات</th>
-                <th style={{ padding: 10, textAlign: 'right', fontSize: 11, fontWeight: 700, color: 'var(--ink-2)' }}>التقييم</th>
-                <th style={{ padding: 10, textAlign: 'right', fontSize: 11, fontWeight: 700, color: 'var(--ink-2)' }}>الحالة</th>
-                <th style={{ padding: 10, textAlign: 'right', fontSize: 11, fontWeight: 700, color: 'var(--ink-2)' }}>إجراءات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredLabs.map((lab) => (
-                <tr key={lab.id} style={{ borderBottom: '1px solid var(--line)' }}>
-                  <td style={{ padding: 10 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <DataTable
+            rows={filteredLabs.map((lab) => {
+              return { key: String(lab.id), cells: [
+                <><div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                       {lab.is_featured && (
                         <Star size={12} fill="#A57100" stroke="#A57100" aria-hidden />
                       )}
@@ -202,30 +190,22 @@ export default function LabsAdminClient({ labs }: Props) {
                           <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{lab.name_en}</div>
                         )}
                       </div>
-                    </div>
-                  </td>
-                  <td style={{ padding: 10 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--ink-2)' }}>
+                    </div></>,
+                <><div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--ink-2)' }}>
                       <MapPin size={12} strokeWidth={2.2} aria-hidden />
                       {lab.city}
-                    </div>
-                  </td>
-                  <td style={{ padding: 10 }}>
-                    {lab.phone && (
+                    </div></>,
+                <>{lab.phone && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--ink-2)' }}>
                         <Phone size={11} strokeWidth={2.2} aria-hidden />
                         {lab.phone}
                       </div>
-                    )}
-                  </td>
-                  <td style={{ padding: 10, fontWeight: 700 }}>{lab.total_orders}</td>
-                  <td style={{ padding: 10 }}>
-                    <span style={{ fontSize: 12 }}>
+                    )}</>,
+                <><span style={{ fontWeight: 700 }}>{lab.total_orders}</span></>,
+                <><span style={{ fontSize: 12 }}>
                       <EmojiIcon e="⭐" /> {lab.rating_avg.toFixed(1)} <span style={{ color: 'var(--ink-3)' }}>({lab.rating_count})</span>
-                    </span>
-                  </td>
-                  <td style={{ padding: 10 }}>
-                    <span style={{
+                    </span></>,
+                <><span style={{
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: 4,
@@ -237,10 +217,8 @@ export default function LabsAdminClient({ labs }: Props) {
                       color: lab.is_active ? '#04342C' : '#791F1F',
                     }}>
                       {lab.is_active ? '✓ نشط' : '✗ معطّل'}
-                    </span>
-                  </td>
-                  <td style={{ padding: 10 }}>
-                    <div style={{ display: 'flex', gap: 4 }}>
+                    </span></>,
+                <><div style={{ display: 'flex', gap: 4 }}>
                       <button
                         type="button"
                         onClick={() => setEditingLab(lab)}
@@ -278,12 +256,20 @@ export default function LabsAdminClient({ labs }: Props) {
                       >
                         <Trash2 size={12} strokeWidth={2.2} />
                       </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    </div></>,
+              ] };
+            })}
+            rowKey={(r) => r.key}
+            columns={[
+              { key: 'c0', header: 'المختبر', primary: true, render: (r) => r.cells[0] },
+              { key: 'c1', header: 'المدينة', render: (r) => r.cells[1] },
+              { key: 'c2', header: 'التواصل', render: (r) => r.cells[2] },
+              { key: 'c3', header: 'الطلبات', render: (r) => r.cells[3] },
+              { key: 'c4', header: 'التقييم', render: (r) => r.cells[4] },
+              { key: 'c5', header: 'الحالة', render: (r) => r.cells[5] },
+              { key: 'c6', header: 'إجراءات', render: (r) => r.cells[6] },
+            ]}
+          />
         )}
       </div>
 

@@ -10,6 +10,7 @@ import { createMedication, updateMedication, deleteMedication } from './actions'
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { DataTable } from '@/components/admin-ui';
 interface Medication {
   id: string;
   name_ar: string;
@@ -114,54 +115,43 @@ export default function MedicationsAdminClient({ medications }: Props) {
         </div>
       ) : (
         <div style={{ background: 'var(--white)', borderRadius: 12, overflowX: 'auto', border: '1px solid var(--line)' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-            <thead>
-              <tr style={{ background: 'var(--paper-3)' }}>
-                <th style={thStyle}>الدواء</th>
-                <th style={thStyle}>الفئة</th>
-                <th style={thStyle}>الشكل</th>
-                <th style={thStyle}>الجرعة</th>
-                <th style={thStyle}>الشركة</th>
-                <th style={thStyle}>وصفة؟</th>
-                <th style={thStyle}>إجراءات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((m) => {
+          <DataTable
+            rows={filtered.map((m) => {
                 const catMeta = CATEGORIES.find(c => c.id === m.category);
-                return (
-                  <tr key={m.id} style={{ borderBottom: '1px solid var(--line)' }}>
-                    <td style={tdStyle}>
-                      <div style={{ fontWeight: 800 }}>{m.name_ar}</div>
+              return { key: String(m.id), cells: [
+                <><div style={{ fontWeight: 800 }}>{m.name_ar}</div>
                       {m.name_en && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{m.name_en}</div>}
-                      {m.generic_name && <div style={{ fontSize: 11, color: 'var(--ink-3)', fontStyle: 'italic' }}>({m.generic_name})</div>}
-                    </td>
-                    <td style={tdStyle}><EmojiIcon e={catMeta?.emoji} /> {catMeta?.label}</td>
-                    <td style={tdStyle}>{m.form ? FORM_LABELS[m.form] : '—'}</td>
-                    <td style={tdStyle}>{m.strength || '—'}</td>
-                    <td style={tdStyle}>{m.manufacturer || '—'}</td>
-                    <td style={tdStyle}>
-                      {m.requires_prescription ? (
+                      {m.generic_name && <div style={{ fontSize: 11, color: 'var(--ink-3)', fontStyle: 'italic' }}>({m.generic_name})</div>}</>,
+                <><EmojiIcon e={catMeta?.emoji} /> {catMeta?.label}</>,
+                <>{m.form ? FORM_LABELS[m.form] : '—'}</>,
+                <>{m.strength || '—'}</>,
+                <>{m.manufacturer || '—'}</>,
+                <>{m.requires_prescription ? (
                         <span style={{ padding: '2px 6px', background: 'var(--amber-soft)', color: 'var(--amber)', borderRadius: 4, fontSize: 11, fontWeight: 800 }}><EmojiIcon e="📋" /> وصفة</span>
                       ) : (
                         <span style={{ fontSize: 11, color: 'var(--ink-3)' }}>—</span>
-                      )}
-                    </td>
-                    <td style={tdStyle}>
-                      <div style={{ display: 'flex', gap: 4 }}>
+                      )}</>,
+                <><div style={{ display: 'flex', gap: 4 }}>
                         <button onClick={() => { setEditing(m); setShowModal(true); }} aria-label="تعديل" style={iconBtn()}>
                           <Edit3 size={12} />
                         </button>
                         <button onClick={() => handleDelete(m)} disabled={isPending} aria-label="حذف" style={{ ...iconBtn(), background: 'var(--rose-soft)', color: 'var(--rose)' }}>
                           <Trash2 size={12} />
                         </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      </div></>,
+              ] };
+            })}
+            rowKey={(r) => r.key}
+            columns={[
+              { key: 'c0', header: 'الدواء', primary: true, render: (r) => r.cells[0] },
+              { key: 'c1', header: 'الفئة', render: (r) => r.cells[1] },
+              { key: 'c2', header: 'الشكل', render: (r) => r.cells[2] },
+              { key: 'c3', header: 'الجرعة', render: (r) => r.cells[3] },
+              { key: 'c4', header: 'الشركة', render: (r) => r.cells[4] },
+              { key: 'c5', header: 'وصفة؟', render: (r) => r.cells[5] },
+              { key: 'c6', header: 'إجراءات', render: (r) => r.cells[6] },
+            ]}
+          />
         </div>
       )}
 

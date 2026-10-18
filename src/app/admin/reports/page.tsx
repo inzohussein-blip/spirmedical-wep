@@ -5,6 +5,7 @@ import { EmptyState } from '@/components/ui';
 import { baghdadDayWindow } from '@/lib/time/baghdad-day';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { DataTable } from '@/components/admin-ui';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -300,31 +301,24 @@ export default async function ReportsPage(props: { searchParams: Promise<SearchP
         {topSpecList.length === 0 ? (
           <EmptyState icon="📊" title="لا توجد بيانات" size="sm" variant="plain" />
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-            <thead>
-              <tr style={{ background: 'var(--paper-3)' }}>
-                <th style={{ padding: '8px 12px', textAlign: 'right', fontSize: 11, fontWeight: 800, color: 'var(--ink-3)', width: 60 }}>#</th>
-                <th style={{ padding: '8px 12px', textAlign: 'right', fontSize: 11, fontWeight: 800, color: 'var(--ink-3)' }}>الاسم</th>
-                <th style={{ padding: '8px 12px', textAlign: 'right', fontSize: 11, fontWeight: 800, color: 'var(--ink-3)' }}>الاختصاص</th>
-                <th style={{ padding: '8px 12px', textAlign: 'right', fontSize: 11, fontWeight: 800, color: 'var(--ink-3)' }}>المكتملة</th>
-              </tr>
-            </thead>
-            <tbody>
-              {topSpecList.map((s, i) => {
+          <DataTable
+            rows={topSpecList.map((s, i) => {
                 const meta = s.type ? SPECIALIST_META[s.type as SpecialistType] : null;
-                return (
-                  <tr key={s.id} style={{ borderTop: '1px solid var(--line)' }}>
-                    <td style={{ padding: '10px 12px', fontSize: 13, color: 'var(--ink-3)' }}>
-                      {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`}
-                    </td>
-                    <td style={{ padding: '10px 12px', fontSize: 13, fontWeight: 700 }}>{s.name}</td>
-                    <td style={{ padding: '10px 12px', fontSize: 13 }}>{meta ? `${meta.icon} ${meta.label}` : '—'}</td>
-                    <td style={{ padding: '10px 12px', fontSize: 13, fontWeight: 800, color: 'var(--emerald-deep)' }}>{s.count}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+              return { key: String(s.id), cells: [
+                <><span style={{ fontSize: 13, color: 'var(--ink-3)' }}>{i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`}</span></>,
+                <><span style={{ fontSize: 13, fontWeight: 700 }}>{s.name}</span></>,
+                <><span style={{ fontSize: 13 }}>{meta ? `${meta.icon} ${meta.label}` : '—'}</span></>,
+                <><span style={{ fontSize: 13, fontWeight: 800, color: 'var(--emerald-deep)' }}>{s.count}</span></>,
+              ] };
+            })}
+            rowKey={(r) => r.key}
+            columns={[
+              { key: 'c0', header: '#', render: (r) => r.cells[0] },
+              { key: 'c1', header: 'الاسم', primary: true, render: (r) => r.cells[1] },
+              { key: 'c2', header: 'الاختصاص', render: (r) => r.cells[2] },
+              { key: 'c3', header: 'المكتملة', render: (r) => r.cells[3] },
+            ]}
+          />
         )}
       </div>
     </>

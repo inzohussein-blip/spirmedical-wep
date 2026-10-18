@@ -87,7 +87,7 @@ export default async function BookingPage(
         ].filter(Boolean) as string[],
       },
     };
-    serviceLabel = '🦷 طب الأسنان';
+    serviceLabel = 'طب الأسنان';
   } else if (service === 'optical') {
     const { data } = await supabase
       .from('optical_stores')
@@ -117,7 +117,7 @@ export default async function BookingPage(
         ].filter(Boolean) as string[],
       },
     };
-    serviceLabel = '👓 النظارات الطبية';
+    serviceLabel = 'النظارات الطبية';
   } else if (service === 'mental-health' || service === 'mental') {
     const { data } = await supabase
       .from('mental_health_specialists')
@@ -139,7 +139,7 @@ export default async function BookingPage(
       workingHours: null,
       packageType: isOnline ? 'online' : 'clinic',
       packagePrice: (isOnline ? data.online_session_price : data.clinic_session_price) ?? undefined,
-      packageLabel: isOnline ? '💻 جلسة أونلاين' : '🏢 جلسة في العيادة',
+      packageLabel: isOnline ? 'جلسة أونلاين' : 'جلسة في العيادة',
       meta: {
         experience: data.years_experience ?? undefined,
         specialist_type: data.specialist_type,
@@ -148,7 +148,7 @@ export default async function BookingPage(
         services: data.specialties?.slice(0, 3),
       },
     };
-    serviceLabel = '🧠 الصحة النفسية';
+    serviceLabel = 'الصحة النفسية';
   } else if (service === 'nutrition') {
     const { data } = await supabase
       .from('nutritionists')
@@ -159,13 +159,13 @@ export default async function BookingPage(
     if (!data) notFound();
 
     let pkgPrice = data.initial_consultation_price;
-    let pkgLabel = '💬 استشارة أولى';
+    let pkgLabel = 'استشارة أولى';
     if (pkgType === 'follow-up' || pkgType === 'followup') {
       pkgPrice = data.follow_up_price;
-      pkgLabel = '🔄 متابعة';
+      pkgLabel = 'متابعة';
     } else if (pkgType === 'monthly') {
       pkgPrice = data.monthly_plan_price;
-      pkgLabel = '📅 خطة شهرية كاملة';
+      pkgLabel = 'خطة شهرية كاملة';
     }
 
     provider = {
@@ -188,7 +188,7 @@ export default async function BookingPage(
         services: data.specialties?.slice(0, 3),
       },
     };
-    serviceLabel = '🥗 التغذية والحمية';
+    serviceLabel = 'التغذية والحمية';
   } else {
     notFound();
   }

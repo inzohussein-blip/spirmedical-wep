@@ -17,6 +17,7 @@ import {
 import { useModalDialog } from '@/lib/hooks/useModalDialog';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { DataTable } from '@/components/admin-ui';
 interface Nutritionist {
   id: string;
   full_name: string;
@@ -103,48 +104,26 @@ export default function NutritionAdminClient({ initialNutritionists }: { initial
       </div>
 
       <div style={{ background: 'var(--white)', border: '1px solid var(--line)', borderRadius: 12, overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ background: 'var(--paper-3)' }}>
-              <th style={thStyle}>الاسم</th>
-              <th style={thStyle}>الخبرة</th>
-              <th style={thStyle}>المدن</th>
-              <th style={thStyle}>الباقات</th>
-              <th style={thStyle}>العملاء</th>
-              <th style={thStyle}>النجاح</th>
-              <th style={thStyle}>الحالة</th>
-              <th style={thStyle}>إجراءات</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((n) => (
-              <tr key={n.id} style={{ borderBottom: '1px solid var(--line)' }}>
-                <td style={tdStyle}>
-                  <div style={{ fontWeight: 700 }}>{n.title} {n.full_name}</div>
-                  <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{n.gender === 'female' ? 'أنثى' : 'ذكر'}</div>
-                </td>
-                <td style={tdStyle}>{n.years_experience} سنة</td>
-                <td style={tdStyle}>{n.cities.slice(0, 2).join(', ')}</td>
-                <td style={tdStyle}>
-                  {formatNumber(n.initial_consultation_price) && <div style={{ fontSize: 11 }}><EmojiIcon e="💬" /> {formatNumber(n.initial_consultation_price)}</div>}
-                  {formatNumber(n.monthly_plan_price) && <div style={{ fontSize: 11 }}><EmojiIcon e="📅" /> {formatNumber(n.monthly_plan_price)}</div>}
-                </td>
-                <td style={tdStyle}>{n.total_clients}</td>
-                <td style={tdStyle}>
-                  {n.success_rate > 0 && (
+        <DataTable
+          rows={filtered.map((n) => {
+            return { key: String(n.id), cells: [
+              <><div style={{ fontWeight: 700 }}>{n.title} {n.full_name}</div>
+                  <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{n.gender === 'female' ? 'أنثى' : 'ذكر'}</div></>,
+              <>{n.years_experience} سنة</>,
+              <>{n.cities.slice(0, 2).join(', ')}</>,
+              <>{formatNumber(n.initial_consultation_price) && <div style={{ fontSize: 11 }}><EmojiIcon e="💬" /> {formatNumber(n.initial_consultation_price)}</div>}
+                  {formatNumber(n.monthly_plan_price) && <div style={{ fontSize: 11 }}><EmojiIcon e="📅" /> {formatNumber(n.monthly_plan_price)}</div>}</>,
+              <>{n.total_clients}</>,
+              <>{n.success_rate > 0 && (
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2, color: 'var(--emerald)', fontWeight: 700 }}>
                       <TrendingUp size={12} />{n.success_rate}%
                     </span>
-                  )}
-                </td>
-                <td style={tdStyle}>
-                  <div style={{ display: 'flex', gap: 4 }}>
+                  )}</>,
+              <><div style={{ display: 'flex', gap: 4 }}>
                     {n.is_active ? <CheckCircle2 size={14} color="var(--emerald)" /> : <XCircle size={14} color="var(--ink-3)" />}
                     {n.is_verified && <Shield size={14} color="#3B82F6" />}
-                  </div>
-                </td>
-                <td style={tdStyle}>
-                  <div style={{ display: 'flex', gap: 4 }}>
+                  </div></>,
+              <><div style={{ display: 'flex', gap: 4 }}>
                     <IconButton onClick={() => startTransition(async () => { await toggleNutritionVerified(n.id, !n.is_verified); window.location.reload(); })} title="توثيق" color={n.is_verified ? '#3B82F6' : 'var(--ink-3)'}>
                       <Shield size={14} />
                     </IconButton>
@@ -157,12 +136,21 @@ export default function NutritionAdminClient({ initialNutritionists }: { initial
                     <IconButton onClick={() => handleDelete(n.id, n.full_name)} title="حذف" color="var(--rose)">
                       <Trash2 size={14} />
                     </IconButton>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  </div></>,
+            ] };
+          })}
+          rowKey={(r) => r.key}
+          columns={[
+            { key: 'c0', header: 'الاسم', primary: true, render: (r) => r.cells[0] },
+            { key: 'c1', header: 'الخبرة', render: (r) => r.cells[1] },
+            { key: 'c2', header: 'المدن', render: (r) => r.cells[2] },
+            { key: 'c3', header: 'الباقات', render: (r) => r.cells[3] },
+            { key: 'c4', header: 'العملاء', render: (r) => r.cells[4] },
+            { key: 'c5', header: 'النجاح', render: (r) => r.cells[5] },
+            { key: 'c6', header: 'الحالة', render: (r) => r.cells[6] },
+            { key: 'c7', header: 'إجراءات', render: (r) => r.cells[7] },
+          ]}
+        />
         {filtered.length === 0 && <div style={{ padding: 40, textAlign: 'center', color: 'var(--ink-3)' }}><EmojiIcon e="🥗" /> لا يوجد أخصائيون</div>}
       </div>
 

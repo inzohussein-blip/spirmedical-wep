@@ -6,6 +6,7 @@ import { createCoupon, toggleCouponActive, deleteCoupon } from './actions';
 import { EmptyState, useConfirm } from '@/components/ui';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { DataTable } from '@/components/admin-ui';
 interface Coupon {
   id: string;
   code: string;
@@ -160,42 +161,20 @@ export default function CouponsClient({ coupons }: Props) {
         />
       ) : (
         <div style={{ background: 'var(--white)', borderRadius: 14, overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-            <thead style={{ background: 'var(--paper-3)' }}>
-              <tr>
-                <th style={th}>الكود</th>
-                <th style={th}>الخصم</th>
-                <th style={th}>الاستخدام</th>
-                <th style={th}>الصلاحية</th>
-                <th style={th}>الحالة</th>
-                <th style={th}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {coupons.map((c) => {
+          <DataTable
+            rows={coupons.map((c) => {
                 const expired = c.validUntil && new Date(c.validUntil) < new Date();
                 const exhausted = c.maxUses && c.usedCount >= c.maxUses;
                 const usable = c.isActive && !expired && !exhausted;
-
-                return (
-                  <tr key={c.id} style={{ borderTop: '1px solid var(--line)' }}>
-                    <td style={td}>
-                      <div style={{ fontFamily: 'monospace', fontSize: 14, fontWeight: 800, color: 'var(--emerald-deep)' }}>{c.code}</div>
-                      {c.description && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{c.description}</div>}
-                    </td>
-                    <td style={td}>
-                      <strong style={{ color: 'var(--emerald-deep)' }}>
+              return { key: String(c.id), cells: [
+                <><div style={{ fontFamily: 'monospace', fontSize: 14, fontWeight: 800, color: 'var(--emerald-deep)' }}>{c.code}</div>
+                      {c.description && <div style={{ fontSize: 11, color: 'var(--ink-3)' }}>{c.description}</div>}</>,
+                <><strong style={{ color: 'var(--emerald-deep)' }}>
                         {c.discountValue}{c.discountType === 'percentage' ? '%' : ' د.ع'}
-                      </strong>
-                    </td>
-                    <td style={td}>
-                      {c.usedCount}{c.maxUses ? ` / ${c.maxUses}` : ''}
-                    </td>
-                    <td style={td}>
-                      {c.validUntil ? new Date(c.validUntil).toLocaleDateString('ar-IQ-u-nu-latn') : 'دائم'}
-                    </td>
-                    <td style={td}>
-                      {expired ? (
+                      </strong></>,
+                <>{c.usedCount}{c.maxUses ? ` / ${c.maxUses}` : ''}</>,
+                <>{c.validUntil ? new Date(c.validUntil).toLocaleDateString('ar-IQ-u-nu-latn') : 'دائم'}</>,
+                <>{expired ? (
                         <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--rose-soft)', color: 'var(--rose)', fontWeight: 800 }}>منتهي</span>
                       ) : exhausted ? (
                         <span style={{ fontSize: 11, padding: '3px 8px', borderRadius: 100, background: 'var(--amber-soft, #FEF7E0)', color: 'var(--amber-deep, #6B3A08)', fontWeight: 800 }}>استُنفذ</span>
@@ -211,20 +190,24 @@ export default function CouponsClient({ coupons }: Props) {
                           background: 'var(--paper-3)', color: 'var(--ink-3)',
                           fontWeight: 800, border: 0, cursor: 'pointer', fontFamily: 'inherit',
                         }}><EmojiIcon e="⏸" /> متوقف</button>
-                      )}
-                    </td>
-                    <td style={td}>
-                      <button onClick={() => handleDelete(c.id, c.code)} disabled={isPending} style={{
+                      )}</>,
+                <><button onClick={() => handleDelete(c.id, c.code)} disabled={isPending} style={{
                         padding: '4px 10px', background: 'transparent',
                         color: 'var(--rose)', border: 0, fontSize: 14,
                         cursor: 'pointer', fontFamily: 'inherit',
-                      }}><EmojiIcon e="🗑" /></button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      }}><EmojiIcon e="🗑" /></button></>,
+              ] };
+            })}
+            rowKey={(r) => r.key}
+            columns={[
+              { key: 'c0', header: 'الكود', primary: true, render: (r) => r.cells[0] },
+              { key: 'c1', header: 'الخصم', render: (r) => r.cells[1] },
+              { key: 'c2', header: 'الاستخدام', render: (r) => r.cells[2] },
+              { key: 'c3', header: 'الصلاحية', render: (r) => r.cells[3] },
+              { key: 'c4', header: 'الحالة', render: (r) => r.cells[4] },
+              { key: 'c5', header: 'إجراءات', render: (r) => r.cells[5] },
+            ]}
+          />
         </div>
       )}
       <ConfirmDialog />

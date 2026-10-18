@@ -129,3 +129,11 @@ describe('⑤ ESLint: ما أُصلح يبقى مُصلَحاً', () => {
     expect(cfg).toMatch(new RegExp(`'${rule}': 'error'`));
   });
 });
+
+describe('🧹 دُرجُ الإدارة يُغلق بالانتقال بلا أثر (18 تشرين الأول)', () => {
+  it('🚨 حالةٌ مشتقّةٌ من المسار لا setState في useEffect', () => {
+    const s = read('src/app/admin/_components/AdminSidebar.tsx');
+    expect(s).not.toMatch(/useEffect\(\(\) => \{ setOpen\(false\); \}, \[pathname\]\)/);
+    expect(s).toMatch(/const open = openOn === pathname;/);
+  });
+});
