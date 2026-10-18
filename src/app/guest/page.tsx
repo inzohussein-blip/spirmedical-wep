@@ -1,5 +1,6 @@
 import GuestClient from './GuestClient';
 import { getActiveStories } from '@/lib/stories/get-stories';
+import { getStripSettings } from '@/lib/stories/get-strip-settings';
 
 export const metadata = {
   title: 'تصفّح كزائر · Spir Medical',
@@ -7,5 +8,6 @@ export const metadata = {
 };
 
 export default async function Page() {
-  return <GuestClient stories={await getActiveStories()} />;
+  const [stories, look] = await Promise.all([getActiveStories(), getStripSettings()]);
+  return <GuestClient stories={look.enabled ? stories : []} look={look} />;
 }

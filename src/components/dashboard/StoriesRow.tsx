@@ -8,12 +8,14 @@
  * الحارس: tests/stories-viewer.test.tsx
  */
 import { getActiveStories } from '@/lib/stories/get-stories';
+import { getStripSettings } from '@/lib/stories/get-strip-settings';
 import StoriesStrip from '@/components/stories/StoriesStrip';
 
 export { StoryIcon } from '@/components/stories/StoryIcon';
 
 export default async function StoriesRow() {
-  const stories = await getActiveStories();
-  if (stories.length === 0) return null;
-  return <StoriesStrip stories={stories} />;
+  const [stories, look] = await Promise.all([getActiveStories(), getStripSettings()]);
+  // المديرُ أخفى الشريطَ عن الجميع، أو لم ينشر شيئاً
+  if (!look.enabled || stories.length === 0) return null;
+  return <StoriesStrip stories={stories} shape={look.shape} theme={look.theme} />;
 }

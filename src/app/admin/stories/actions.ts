@@ -15,7 +15,8 @@ import { updateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { isSuperAdmin } from '@/lib/admin-types';
 import { validateStoryInput, type StoryInput } from '@/types/story';
-import type { TablesUpdate } from '@/types/database';
+import type { Json, TablesUpdate } from '@/types/database';
+import { parseStripSettings, STRIP_SETTINGS_KEY, type StripSettings } from '@/lib/stories/strip-settings';
 
 export interface StoryActionResult {
   success: boolean;
@@ -241,4 +242,40 @@ export async function uploadStoryImage(formData: FormData): Promise<{ url?: stri
     return { error: 'تعذّر رفع الصورة' };
   }
   return { url: storage.getPublicUrl(path).data.publicUrl };
+}
+
+/* ─── Strip settings (show/hide for everyone, shape, theme) ───────── */
+
+/**
+ * يحفظ إعدادَ شريط القصص في `app_settings` (`stories_strip`). الكتابةُ بعميل RLS:
+ * سياسةُ الجدول `private.is_admin` تحرسها في القاعدة، ويُعدّ الصفُّ المكتوب — سياسةٌ ترفض بصمت
+ * كانت ستعطي «تمّ» (كما في حفظ الألوان). `updateTag('stories')` يُبطل ما يراه المرضى فوراً.
+ */
+export async function saveStripSettings(input: StripSettings): Promise<StoryActionResult> {
+  const { authorized, user, supabase } = await requireAdmin();
+  if (!authorized || !user) return { success: false, message: 'غير مصرّح' };
+
+  const value = parseStripSettings(input);
+  const { data, error } = await supabase
+    .from('app_settings')
+    .upsert(
+      {
+        key: STRIP_SETTINGS_KEY,
+        value: value as unknown as Json,
+        description_ar: 'شريطُ القصص: الإظهار للجميع والشكل والثيم',
+        updated_by: user.id,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'key' },
+    )
+    .select('key');
+
+  if (error) return { success: false, message: 'فشل الحفظ: ' + error.message };
+  if (!data?.length) return { success: false, message: 'لم يُحفظ — صلاحيّاتك لا تسمح بتعديل الإعدادات' };
+
+  updateTag('stories');
+  return {
+    success: true,
+    message: value.enabled ? 'حُفظ شكلُ الشريط — ظاهرٌ لجميع المستخدمين' : 'أُخفي شريطُ القصص عن جميع المستخدمين',
+  };
 }

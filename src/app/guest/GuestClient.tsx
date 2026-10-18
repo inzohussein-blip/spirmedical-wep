@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { LockedAction } from '@/components/app/LockedAction';
 import StoriesStrip from '@/components/stories/StoriesStrip';
 import type { Story } from '@/types/story';
+import type { StripSettings } from '@/lib/stories/strip-settings';
 
 
 type Variant = 'default' | 'amber' | 'rose' | 'locked' | 'featured';
@@ -232,7 +233,7 @@ const EMERGENCY_SERVICE: Service = {
 // ============================================================
 // المكوّن الرئيسي
 // ============================================================
-export default function GuestClient({ stories = [] }: { stories?: Story[] }) {
+export default function GuestClient({ stories = [], look }: { stories?: Story[]; look?: StripSettings }) {
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
@@ -266,7 +267,7 @@ export default function GuestClient({ stories = [] }: { stories?: Story[] }) {
         </label>
 
         {/* القصص: ما تنشره الإدارة نفسُه — لا «إضافة»، فالقصصُ من الإدارة وحدها */}
-        {stories.length > 0 && <StoriesStrip stories={stories} />}
+        {stories.length > 0 && <StoriesStrip stories={stories} shape={look?.shape} theme={look?.theme} />}
 
         {/* Promo Banner */}
         <Link href="/register" className="scr-banner" style={{ textDecoration: 'none' }}>

@@ -137,138 +137,58 @@ export function CookieConsent() {
   // لا تعرض شيئاً قبل mount (يحل hydration mismatch)
   if (!mounted || !show || isEmergencyPath(pathname)) return null;
 
+  // أصغرُ شكلٍ ممكن (طلبُ المالك، 18 تشرين الأول): سطرٌ واحد — جملةٌ ورابطُ «تخصيص» وزرّان.
+  // كان بطاقةً بأيقونةٍ وعنوانٍ وفقرةٍ وسطرٍ قانونيّ تغطّي ربعَ الشاشة فوق العارض والأزرار.
   return (
     <div
       className="cookie-overlay"
       role="region"
-      aria-labelledby="cookie-title"
+      aria-label="موافقة الكوكيز"
       aria-describedby="cookie-desc"
     >
-      <div className="cookie-banner">
-        <div className="cookie-icon" aria-hidden="true">🍪</div>
-
-        <h2 id="cookie-title" className="cookie-title">
-          نحترم خصوصيتك
-        </h2>
-
-        <p id="cookie-desc" className="cookie-desc">
-          نستخدم الكوكيز لتحسين تجربتك وتحليل استخدام الموقع. الكوكيز الضرورية
-          فقط مُفعّلة بشكل افتراضي. يمكنك تغيير اختيارك في أي وقت من{' '}
-          <Link href="/legal/privacy" className="cookie-link">
-            سياسة الخصوصية
-          </Link>.
-        </p>
-
+      <div className={`cookie-banner ${showDetails ? 'cookie-banner--open' : ''}`}>
         {showDetails && (
           <div className="cookie-options" role="group" aria-label="تفضيلات الكوكيز">
             <label className="cookie-option disabled">
-              <input
-                type="checkbox"
-                checked
-                disabled
-                aria-describedby="cookie-necessary-desc"
-              />
-              <div>
-                <strong>كوكيز ضرورية</strong>
-                <span id="cookie-necessary-desc">
-                  لازمة لعمل الموقع (تسجيل الدخول، الجلسات)
-                </span>
-              </div>
-              <span className="cookie-required">إجباري</span>
+              <input type="checkbox" checked disabled />
+              <span><strong>ضرورية</strong> · تسجيل الدخول والجلسات</span>
             </label>
-
             <label className="cookie-option">
-              <input
-                type="checkbox"
-                checked={analytics}
-                onChange={(e) => setAnalytics(e.target.checked)}
-                aria-describedby="cookie-analytics-desc"
-              />
-              <div>
-                <strong>كوكيز التحليلات</strong>
-                <span id="cookie-analytics-desc">
-                  لفهم كيفية استخدام الموقع وتحسينه (Vercel Analytics)
-                </span>
-              </div>
+              <input type="checkbox" checked={analytics} onChange={(e) => setAnalytics(e.target.checked)} />
+              <span><strong>تحليلات</strong> · Vercel Analytics</span>
             </label>
-
             <label className="cookie-option">
-              <input
-                type="checkbox"
-                checked={marketing}
-                onChange={(e) => setMarketing(e.target.checked)}
-                aria-describedby="cookie-marketing-desc"
-              />
-              <div>
-                <strong>كوكيز التسويق</strong>
-                <span id="cookie-marketing-desc">
-                  لعرض إعلانات مخصّصة (غير مُفعّلة حالياً)
-                </span>
-              </div>
+              <input type="checkbox" checked={marketing} onChange={(e) => setMarketing(e.target.checked)} />
+              <span><strong>تسويق</strong> · غير مُفعّلة حالياً</span>
             </label>
+            <p className="cookie-legal">
+              <Link href="/legal/privacy" className="cookie-link">سياسة الخصوصية</Link>
+              {' · '}
+              <Link href="/legal/terms" className="cookie-link">الشروط</Link>
+            </p>
           </div>
         )}
 
-        <div className="cookie-actions">
-          {!showDetails ? (
-            <>
-              <button
-                onClick={acceptNecessary}
-                className="cookie-btn cookie-btn--ghost"
-                type="button"
-              >
-                الضرورية فقط
-              </button>
-              <button
-                onClick={acceptAll}
-                className="cookie-btn primary"
-                type="button"
-              >
-                قبول الكل
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() => setShowDetails(false)}
-                className="cookie-btn cookie-btn--ghost"
-                type="button"
-              >
-                ← العودة
-              </button>
-              <button
-                onClick={acceptCustom}
-                className="cookie-btn primary"
-                type="button"
-              >
-                حفظ التفضيلات
-              </button>
-            </>
-          )}
-        </div>
-
-        <p className="cookie-legal">
-          باستمرارك في استخدام الموقع، فإنك توافق على{' '}
-          <Link href="/legal/terms" className="cookie-link">
-            الشروط
-          </Link>{' '}
-          و{' '}
-          <Link href="/legal/privacy" className="cookie-link">
-            سياسة الخصوصية
-          </Link>.
-          {!showDetails && (
-            <>
-              {' · '}
-              <button
-                onClick={() => setShowDetails(true)}
-                className="cookie-details-link"
-                type="button"
-              >
+        <div className="cookie-row">
+          <p id="cookie-desc" className="cookie-desc">
+            {showDetails ? 'اختر ما تسمح به.' : 'نستخدم كوكيز ضرورية فقط افتراضياً.'}{' '}
+            {!showDetails && (
+              <button onClick={() => setShowDetails(true)} className="cookie-details-link" type="button">
                 تخصيص
               </button>
-            </>
-          )}
-        </p>
+            )}
+          </p>
+          <div className="cookie-actions">
+            {showDetails ? (
+              <button onClick={acceptCustom} className="cookie-btn primary" type="button">حفظ</button>
+            ) : (
+              <>
+                <button onClick={acceptNecessary} className="cookie-btn cookie-btn--ghost" type="button">رفض</button>
+                <button onClick={acceptAll} className="cookie-btn primary" type="button">قبول</button>
+              </>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

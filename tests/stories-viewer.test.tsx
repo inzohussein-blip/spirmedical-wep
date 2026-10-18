@@ -14,7 +14,10 @@ jest.mock('next/link', () => ({
   __esModule: true,
   default: ({ children, href, ...p }: { children: React.ReactNode; href: string }) => <a href={href} {...p}>{children}</a>,
 }));
-jest.mock('@/lib/stories/get-stories', () => ({ getActiveStories: jest.fn(async () => []) }));
+const mockStories = jest.fn(async () => [] as Story[]);
+const mockLook = jest.fn(async () => ({ enabled: true, shape: 'circle', theme: 'concept' }));
+jest.mock('@/lib/stories/get-stories', () => ({ getActiveStories: () => mockStories() }));
+jest.mock('@/lib/stories/get-strip-settings', () => ({ getStripSettings: () => mockLook() }));
 
 const ROOT = process.cwd();
 const read = (p: string) => readFileSync(join(ROOT, p), 'utf8');
@@ -98,10 +101,58 @@ describe('🚨 من الإدارة وحدها', () => {
     expect(code('src/components/dashboard/StoriesRow.tsx')).not.toMatch(/FALLBACK|title: '/);
     const g = code('src/app/guest/GuestClient.tsx');
     expect(g).not.toMatch(/إضافة قصصك|isAdd/);
-    expect(g).toMatch(/<StoriesStrip stories=\{stories\} \/>/);
+    expect(g).toMatch(/<StoriesStrip stories=\{stories\} shape=\{look\?\.shape\} theme=\{look\?\.theme\} \/>/);
   });
 
   it('«تغذية» توصل إلى التغذية', () => {
     expect(code('supabase/migrations/0054_stories_content.sql')).toMatch(/SET href = '\/services\/nutrition'/);
+  });
+});
+
+describe('⚙️ تحكّمُ المدير بالشريط (app_settings: stories_strip)', () => {
+  const { parseStripSettings, DEFAULT_STRIP } = require('@/lib/stories/strip-settings');
+
+  it('🚨 غيابُ الإعداد أو فسادُه ← ظاهرٌ بالقيم الافتراضيّة (لا إخفاءَ بلا قرار)', () => {
+    expect(parseStripSettings(null)).toEqual(DEFAULT_STRIP);
+    expect(parseStripSettings({ enabled: 'no', shape: 'hexagon', theme: 1 })).toEqual(DEFAULT_STRIP);
+    expect(parseStripSettings({ enabled: false, shape: 'chip', theme: 'soft' })).toEqual({ enabled: false, shape: 'chip', theme: 'soft' });
+  });
+
+  it('🚨 «إخفاء عن الجميع» يُخفي الشريط في الرئيسية وصفحة الزائر', async () => {
+    const StoriesRow = require('@/components/dashboard/StoriesRow').default;
+    mockStories.mockResolvedValueOnce([story('1')]);
+    mockLook.mockResolvedValueOnce({ enabled: false, shape: 'circle', theme: 'concept' });
+    expect(await StoriesRow()).toBeNull();
+    mockStories.mockResolvedValueOnce([story('1')]);
+    mockLook.mockResolvedValueOnce({ enabled: true, shape: 'card', theme: 'filled' });
+    const { container } = render(await StoriesRow());
+    expect(container.querySelector('.scr-stories')!.className).toMatch(/stories-shape-card.*stories-theme-filled/);
+    expect(code('src/app/guest/page.tsx')).toMatch(/look\.enabled \? stories : \[\]/);
+  });
+
+  it('لكلّ شكلٍ وثيمٍ تنسيقٌ في shared.css (المعاينةُ في الإدارة تستعمله)', () => {
+    const css = code('src/app/styles/shared.css');
+    const { STRIP_SHAPES, STRIP_THEMES } = require('@/lib/stories/strip-settings');
+    for (const s of STRIP_SHAPES.filter((x: string) => x !== 'circle')) expect(css).toContain(`.stories-shape-${s}`);
+    for (const t of STRIP_THEMES.filter((x: string) => x !== 'concept')) expect(css).toContain(`.stories-theme-${t}`);
+  });
+
+  it('🚨 الحفظُ يُعدّ الصفَّ المكتوب، ويُبطل ما يراه المرضى؛ والقراءةُ بعميل الخدمة مفتاحاً واحداً', () => {
+    const a = code('src/app/admin/stories/actions.ts');
+    const fn = a.slice(a.indexOf('export async function saveStripSettings'));
+    expect(fn.indexOf('requireAdmin()')).toBeLessThan(fn.indexOf(".from('app_settings')"));
+    expect(fn).toMatch(/if \(!data\?\.length\)/);
+    expect(fn).toMatch(/updateTag\('stories'\)/);
+    expect(code('src/lib/stories/get-strip-settings.ts')).toMatch(/\.eq\('key', STRIP_SETTINGS_KEY\)/);
+  });
+});
+
+describe('🍪 شريطُ الكوكيز بأصغر شكل', () => {
+  it('🚨 سطرٌ واحد: لا أيقونةَ ولا عنوانَ ولا فقرةً قانونيّة خارج «تخصيص»', () => {
+    const src = code('src/components/legal/CookieConsent.tsx');
+    expect(src).not.toMatch(/cookie-icon|cookie-title|🍪/);
+    expect(src).toMatch(/className="cookie-row"/);
+    const css = code('src/app/styles/shared.css');
+    expect(css).toMatch(/\.cookie-row \{ display: flex/);
   });
 });

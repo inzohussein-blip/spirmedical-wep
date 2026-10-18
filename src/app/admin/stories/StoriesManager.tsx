@@ -23,7 +23,35 @@ import { useConfirm } from '@/components/ui';
 import EmojiIcon from '@/components/ui/EmojiIcon';
 interface Props {
   initialStories: Story[];
+  /** «الآن» من الخادم — لحساب حالة القصّة بلا Date.now() في الرسم */
+  now: number;
 }
+
+type StoryStatus = 'published' | 'hidden' | 'scheduled' | 'ended';
+
+const STATUS_LABEL: Record<StoryStatus, { label: string; cls: string }> = {
+  published: { label: 'منشورة', cls: 'st-pub' },
+  hidden: { label: 'مسودّة · مخفيّة', cls: 'st-hid' },
+  scheduled: { label: 'مجدولة', cls: 'st-sch' },
+  ended: { label: 'منتهية', cls: 'st-end' },
+};
+
+/** حالةُ القصّة كما يراها المريض الآن */
+function storyStatus(s: Pick<Story, 'is_active' | 'starts_at' | 'ends_at'>, now: number): StoryStatus {
+  if (!s.is_active) return 'hidden';
+  if (s.starts_at && Date.parse(s.starts_at) > now) return 'scheduled';
+  if (s.ends_at && Date.parse(s.ends_at) <= now) return 'ended';
+  return 'published';
+}
+
+/** حقلُ datetime-local بتوقيت جهاز المدير ↔ ISO */
+function isoToLocal(iso: string | null | undefined): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const p = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+const localToIso = (v: string | null | undefined) => (v ? new Date(v).toISOString() : null);
 
 const EMPTY_FORM: StoryInput = {
   title: '',
@@ -37,7 +65,7 @@ const EMPTY_FORM: StoryInput = {
   is_active: true,
 };
 
-export default function StoriesManager({ initialStories }: Props) {
+export default function StoriesManager({ initialStories, now }: Props) {
   const { confirm, ConfirmDialog } = useConfirm();
   const [stories, setStories] = useState<Story[]>(initialStories);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -83,7 +111,11 @@ export default function StoriesManager({ initialStories }: Props) {
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     startTransition(async () => {
-      const result = await createStory(formData);
+      const result = await createStory({
+        ...formData,
+        starts_at: localToIso(formData.starts_at),
+        ends_at: localToIso(formData.ends_at),
+      });
       setFeedback({
         type: result.success ? 'success' : 'error',
         message: result.success ? result.message : result.errors?.join(' · ') ?? result.message,
@@ -107,6 +139,8 @@ export default function StoriesManager({ initialStories }: Props) {
       color_theme: story.color_theme,
       sort_order: story.sort_order,
       is_active: story.is_active,
+      starts_at: isoToLocal(story.starts_at),
+      ends_at: isoToLocal(story.ends_at),
     });
     setShowAddForm(true);
   };
@@ -116,7 +150,11 @@ export default function StoriesManager({ initialStories }: Props) {
     if (!editingId) return;
 
     startTransition(async () => {
-      const result = await updateStory(editingId, formData);
+      const result = await updateStory(editingId, {
+        ...formData,
+        starts_at: localToIso(formData.starts_at),
+        ends_at: localToIso(formData.ends_at),
+      });
       setFeedback({
         type: result.success ? 'success' : 'error',
         message: result.success ? result.message : result.errors?.join(' · ') ?? result.message,
@@ -363,6 +401,37 @@ export default function StoriesManager({ initialStories }: Props) {
                 )}
               </div>
 
+              {/* النشر والجدولة */}
+              <div className="sm-field sm-field-full">
+                <label className="sm-check">
+                  <input
+                    type="checkbox"
+                    checked={formData.is_active ?? true}
+                    onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
+                    disabled={isPending}
+                  />
+                  <span>انشرها عند الحفظ (وإلّا تبقى مسودّةً مخفيّة)</span>
+                </label>
+              </div>
+              <div className="sm-field">
+                <label>تبدأ في (اختياري)</label>
+                <input
+                  type="datetime-local"
+                  value={formData.starts_at ?? ''}
+                  onChange={(e) => setFormData({ ...formData, starts_at: e.target.value || null })}
+                  disabled={isPending}
+                />
+              </div>
+              <div className="sm-field">
+                <label>تنتهي في (اختياري)</label>
+                <input
+                  type="datetime-local"
+                  value={formData.ends_at ?? ''}
+                  onChange={(e) => setFormData({ ...formData, ends_at: e.target.value || null })}
+                  disabled={isPending}
+                />
+              </div>
+
               {/* Description */}
               <div className="sm-field sm-field-full">
                 <label>نصُّ القصّة</label>
@@ -430,6 +499,7 @@ export default function StoriesManager({ initialStories }: Props) {
               canMoveUp={index > 0}
               canMoveDown={index < stories.length - 1}
               disabled={isPending}
+              status={storyStatus(story, now)}
             />
           ))
         )}
@@ -490,6 +560,8 @@ export default function StoriesManager({ initialStories }: Props) {
           outline: none; border-color: var(--emerald);
         }
         .sm-label { font-size: 12px; font-weight: 700; color: var(--ink-2); }
+        .sm-check { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--ink); cursor: pointer; }
+        .sm-check input { width: 18px; height: 18px; accent-color: var(--emerald); }
         .sm-hint { font-size: 12px; color: var(--ink-3); }
         .sm-icons { display: flex; flex-wrap: wrap; gap: 6px; }
         .sm-icon-choice {
@@ -534,9 +606,10 @@ interface StoryRowProps {
   onToggle: (id: string, current: boolean) => void;
   onDelete: (id: string, title: string) => void;
   disabled?: boolean;
+  status: StoryStatus;
 }
 
-function StoryRow({ story, onEdit, onToggle, onDelete, onMove, canMoveUp, canMoveDown, disabled }: StoryRowProps) {
+function StoryRow({ story, onEdit, onToggle, onDelete, onMove, canMoveUp, canMoveDown, disabled, status }: StoryRowProps) {
   const colorConfig = themeConfig(story.color_theme);
 
   return (
@@ -573,7 +646,10 @@ function StoryRow({ story, onEdit, onToggle, onDelete, onMove, canMoveUp, canMov
       </div>
 
       <div className="story-row-info">
-        <div className="story-row-title">{story.title}</div>
+        <div className="story-row-title">
+          {story.title}
+          <span className={`story-row-status ${STATUS_LABEL[status].cls}`}>{STATUS_LABEL[status].label}</span>
+        </div>
         <div className="story-row-meta">
           <span className="story-row-href">{story.href}</span>
           <span>·</span>
@@ -587,10 +663,11 @@ function StoryRow({ story, onEdit, onToggle, onDelete, onMove, canMoveUp, canMov
           size="sm"
           onClick={() => onToggle(story.id, story.is_active)}
           disabled={disabled}
-          aria-label={story.is_active ? 'إخفاء' : 'إظهار'}
-          title={story.is_active ? 'إخفاء' : 'إظهار'}
+          aria-label={story.is_active ? 'إخفاء القصّة' : 'نشر القصّة'}
+          title={story.is_active ? 'إخفاء القصّة' : 'نشر القصّة'}
         >
-          {story.is_active ? <Eye size={14} /> : <EyeOff size={14} />}
+          {story.is_active ? <EyeOff size={14} /> : <Eye size={14} />}
+          <span className="story-row-btn-text">{story.is_active ? 'إخفاء' : 'نشر'}</span>
         </Button>
         <Button
           variant="ghost"
@@ -622,7 +699,13 @@ function StoryRow({ story, onEdit, onToggle, onDelete, onMove, canMoveUp, canMov
           transition: all 0.15s;
         }
         .story-row:hover { border-color: var(--line-2); }
-        .story-row-inactive { opacity: 0.55; }
+        .story-row-inactive { opacity: 0.7; }
+        .story-row-status { display: inline-block; margin-inline-start: 8px; padding: 1px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; vertical-align: 2px; }
+        .st-pub { background: var(--emerald-soft); color: var(--emerald-deep); }
+        .st-hid { background: var(--paper-2); color: var(--ink-3); }
+        .st-sch { background: #E8F0FE; color: #1A73E8; }
+        .st-end { background: var(--rose-soft); color: var(--rose); }
+        .story-row-btn-text { margin-inline-start: 4px; font-size: 12px; font-weight: 700; }
         .story-row-reorder {
           display: flex; flex-direction: column; gap: 2px; flex-shrink: 0;
         }
