@@ -16,6 +16,7 @@ import type { UserSettings } from '@/lib/services/user-settings-types';
 export type UserRole =
   | 'patient'
   | 'specialist'
+  | 'provider'
   | 'admin'
   | 'super_admin'
   | 'manager'
@@ -51,6 +52,7 @@ export interface RequireSessionOptions {
  */
 function getDefaultPathForRole(role: UserRole): string {
   if (role === 'specialist') return '/specialist';
+  if (role === 'provider') return '/provider';
   if (ADMIN_ROLES.includes(role)) return '/admin';
   return '/dashboard';
 }

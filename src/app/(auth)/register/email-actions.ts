@@ -43,6 +43,7 @@ function isNextRedirect(err: unknown): boolean {
 
 function roleHomePath(role: string | null | undefined): string {
   if (role === 'specialist') return '/specialist';
+  if (role === 'provider') return '/provider';
   if (
     role === 'admin' ||
     role === 'super_admin' ||

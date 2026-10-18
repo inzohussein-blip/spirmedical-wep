@@ -10,7 +10,7 @@ import EmojiIcon from '@/components/ui/EmojiIcon';
 
 export const metadata = {
   title: 'اختر نوع حسابك · سباير ميديكال',
-  description: 'اختر بين حساب مريض أو حساب أخصائي',
+  description: 'مريض، أو مختصّ (سحب دم وتمريض منزليّ)، أو خدمة (مختبر، صيدلية، عيادة، مستشفى)',
 };
 
 export default function RegisterPage() {
@@ -49,19 +49,37 @@ export default function RegisterPage() {
           <div className="auth-role-arrow">←</div>
         </Link>
 
-        {/* حساب أخصائي */}
+        {/* حساب مختصّ — فردٌ يذهب إلى المريض (0060) */}
         <Link
           href="/register/specialist"
           className="auth-role-card"
-          aria-label="إنشاء حساب أخصائي"
+          aria-label="إنشاء حساب مختصّ"
         >
           <div className="auth-role-icon" style={{ background: 'var(--amber-soft)', color: 'var(--amber)' }}>
-            <EmojiIcon e="👨‍⚕️" />
+            <EmojiIcon e="💉" />
           </div>
           <div className="auth-role-info">
-            <div className="auth-role-title">حساب أخصائي</div>
+            <div className="auth-role-title">حساب مختصّ</div>
             <div className="auth-role-desc">
-              قدّم خدماتك الطبية، أدر مواعيدك، واكسب دخلاً إضافياً
+              محلّلٌ يسحب الدم في المنزل، أو ممرّضٌ منزليّ
+            </div>
+          </div>
+          <div className="auth-role-arrow">←</div>
+        </Link>
+
+        {/* حساب خدمة — منشأة (0060) */}
+        <Link
+          href="/register/provider"
+          className="auth-role-card"
+          aria-label="إنشاء حساب خدمة"
+        >
+          <div className="auth-role-icon" style={{ background: 'var(--spir-blue-soft)', color: 'var(--spir-blue)' }}>
+            <EmojiIcon e="🔬" />
+          </div>
+          <div className="auth-role-info">
+            <div className="auth-role-title">حساب خدمة</div>
+            <div className="auth-role-desc">
+              مختبرُ تحاليل، أو صيدلية، أو عيادة وطبيب، أو مستشفى ومركزٌ طبّيّ
             </div>
           </div>
           <div className="auth-role-arrow">←</div>

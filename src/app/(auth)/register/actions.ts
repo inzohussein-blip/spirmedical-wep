@@ -20,6 +20,7 @@ import {
   phoneFieldSchema,
 } from '@/lib/validations/auth-forms';
 import { normalizePhone } from '@/lib/validations/auth';
+import { isProviderType, type ProviderType } from '@/lib/providers';
 import { sendWelcomePatientEmail, sendWelcomeSpecialistEmail } from '@/lib/email/actions';
 // ✅ FIX 1: static import بدلاً من dynamic import
 import { sendOtp as sendWhatsAppOtp, verifyOtp as verifyWhatsAppOtp } from '@/lib/whatsapp/otp-service';
@@ -131,7 +132,8 @@ export async function registerSpecialist(formData: FormData) {
   const rawSpecDetails         = (formData.get('specializationDetails') as string | null)?.trim() || undefined;
   const rawTerms               = formData.get('acceptTerms') === 'on';
 
-  const validSpecializations = ['doctor','nurse','analyst','pharmacist','physiotherapist','dentist','lab_tech','radiologist','other'];
+  // المختصّ = محلّلٌ يسحب الدم أو ممرّضٌ منزليّ (0060). الطبيبُ والصيدليّ والمختبر… حساباتُ «خدمة».
+  const validSpecializations = ['analyst', 'nurse'];
 
   if (!rawFullName || rawFullName.length < 2) {
     redirect('/register/specialist?error=' + encodeURIComponent('الاسم الكامل مطلوب (حرفان على الأقل)'));
@@ -144,10 +146,7 @@ export async function registerSpecialist(formData: FormData) {
     redirect('/register/specialist?error=' + encodeURIComponent(phoneValidation.error.issues[0].message));
   }
   if (!validSpecializations.includes(rawSpecialization)) {
-    redirect('/register/specialist?error=' + encodeURIComponent('يرجى اختيار الاختصاص'));
-  }
-  if (rawSpecialization === 'other' && !rawSpecDetails) {
-    redirect('/register/specialist?error=' + encodeURIComponent('يرجى توضيح الاختصاص'));
+    redirect('/register/specialist?error=' + encodeURIComponent('اختر: سحب دم أو تمريض منزليّ — العياداتُ والمختبراتُ والصيدلياتُ تسجّل كخدمة'));
   }
   if (!rawTerms) {
     redirect('/register/specialist?error=' + encodeURIComponent('يجب الموافقة على الشروط والأحكام'));
@@ -195,6 +194,72 @@ export async function registerSpecialist(formData: FormData) {
         )
     );
   }
+}
+
+// ─────────────────────────────────────────────────────────
+// إنشاء حساب خدمة (0060): مختبر، صيدلية، عيادة، مستشفى
+// ─────────────────────────────────────────────────────────
+
+const PROVIDER_REGISTER = '/register/provider';
+
+/**
+ * حسابُ «خدمة»: المنشأةُ لا الفرد. يبدأ `pending` حتى تعتمده الإدارة (`resolveApprovalStatus`)، ويدخل
+ * بالرقم + رمز الدخول كغيره. أخطاءُ التحقّق تُعاد قيمةً (`registerProviderForm`) فلا يُمحى النموذج.
+ */
+export async function registerProvider(formData: FormData) {
+  const action = (formData.get('action') as string) || 'auto';
+  const fail = (msg: string): never => redirect(PROVIDER_REGISTER + '?error=' + encodeURIComponent(msg));
+
+  const ip = await getIp();
+  const limit = await checkRateLimit(`register:${ip}`, { max: 5, windowSeconds: 3600 });
+  if (!limit.allowed) fail(`محاولات كثيرة، حاول بعد ${limit.retryAfterSeconds} ثانية`);
+
+  const type = (formData.get('providerType') as string | null)?.trim() ?? '';
+  const name = (formData.get('facilityName') as string | null)?.trim().slice(0, 80) ?? '';
+  const ownerName = (formData.get('fullName') as string | null)?.trim().slice(0, 80) ?? '';
+  const city = (formData.get('city') as string | null)?.trim().slice(0, 40) || null;
+  const governorate = (formData.get('governorate') as string | null)?.trim().slice(0, 40) || null;
+  const rawPhone = (formData.get('phone') as string | null)?.trim() ?? '';
+
+  if (!isProviderType(type)) fail('اختر نوعَ الخدمة');
+  if (name.length < 2) fail('اكتب اسمَ المنشأة');
+  if (ownerName.length < 2) fail('اكتب اسمَ المسؤول (حرفان على الأقل)');
+  if (!city && !governorate) fail('حدّد المدينة أو المحافظة');
+  const phoneValidation = phoneFieldSchema.safeParse(rawPhone);
+  if (!phoneValidation.success) fail(phoneValidation.error.issues[0].message);
+  if (formData.get('acceptTerms') !== 'on') fail('يجب الموافقة على الشروط والأحكام');
+
+  const normalizedPhone = normalizePhone(phoneValidation.data as string);
+  const pin = await guardPinRegistration(formData, action, normalizedPhone, PROVIDER_REGISTER);
+
+  try {
+    const userId = await createOrGetAccount({
+      phone: normalizedPhone,
+      fullName: ownerName,
+      role: 'provider',
+      ip,
+      provider: { type: type as ProviderType, name, city, governorate },
+    });
+    if (pin) await setLoginPin(userId, pin);
+    await routeAfterRegister(normalizedPhone, 'provider', action);
+  } catch (err) {
+    if (isNextRedirect(err)) throw err;
+    logger.error('registerProvider failed', { error: err instanceof Error ? err.message : String(err) });
+    fail(`فشل إنشاء الحساب: ${err instanceof Error ? err.message : 'خطأ غير معروف'}`);
+  }
+}
+
+export async function registerProviderForm(formData: FormData): Promise<{ error: string } | undefined> {
+  try {
+    await registerProvider(formData);
+  } catch (err) {
+    const url = redirectTarget(err);
+    if (url?.startsWith(PROVIDER_REGISTER + '?error=')) {
+      return { error: new URLSearchParams(url.slice(url.indexOf('?') + 1)).get('error') || 'تعذّر إنشاء الحساب' };
+    }
+    throw err;
+  }
+  return undefined;
 }
 
 /** وجهةُ `redirect()` من خطئه (`NEXT_REDIRECT;<type>;<url>;<status>;`). */
@@ -263,7 +328,7 @@ async function guardPinRegistration(
 
 async function routeAfterRegister(
   phone: string,
-  role: 'patient' | 'specialist',
+  role: 'patient' | 'specialist' | 'provider',
   action: string
 ): Promise<never> {
   const mode = getOtpMode();
@@ -282,7 +347,7 @@ async function routeAfterRegister(
       if (signedUser?.id) {
         if (role === 'specialist') {
           sendWelcomeSpecialistEmail(signedUser.id).catch(() => null);
-        } else {
+        } else if (role === 'patient') {
           sendWelcomePatientEmail(signedUser.id).catch(() => null);
         }
       }
@@ -311,10 +376,12 @@ async function routeAfterRegister(
 async function createOrGetAccount(opts: {
   phone: string;
   fullName: string;
-  role: 'patient' | 'specialist';
+  role: 'patient' | 'specialist' | 'provider';
   ip: string;
   specialistType?: 'lab_analyst' | 'nurse' | 'doctor' | 'pharmacist' | 'physio' | 'psychologist' | 'nutritionist';
   specializationDetails?: string;
+  /** حسابُ الخدمة (0060): نوعُه واسمُ المنشأة ومدينتُها */
+  provider?: { type: ProviderType; name: string; city: string | null; governorate: string | null };
 }): Promise<string> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -404,6 +471,15 @@ async function createOrGetAccount(opts: {
     approval_status: resolveApprovalStatus(opts.role, existingProfile),
   };
 
+  // الدورُ ونوعُه معاً (قيدُ users_provider_type_matches_role): لا نوعَ خدمةٍ على غير حساب خدمة
+  profileData.provider_type = opts.role === 'provider' ? opts.provider?.type ?? null : null;
+  if (opts.role === 'provider' && opts.provider) {
+    profileData.specialist_type = null;
+    profileData.clinic_name = opts.provider.name;
+    profileData.clinic_city = opts.provider.city;
+    if (opts.provider.governorate) profileData.governorate = opts.provider.governorate;
+  }
+
   if (opts.role === 'specialist') {
     if (opts.specialistType) {
       profileData.specialist_type = opts.specialistType;
@@ -452,7 +528,7 @@ async function createOrGetAccount(opts: {
 
 async function signInDirectly(
   phone: string,
-  _role: 'patient' | 'specialist'
+  _role: 'patient' | 'specialist' | 'provider'
 ): Promise<void> {
   const supabase = await createClient();
   const password = derivePassword(phone);

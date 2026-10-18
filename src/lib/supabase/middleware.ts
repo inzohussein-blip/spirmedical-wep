@@ -7,6 +7,7 @@ import { isAdminRole } from '@/lib/admin-types';
 /** مسارات تتطلّب جلسة */
 const PROTECTED_PATHS = [
   '/dashboard',
+  '/provider',
   '/appointments',
   '/specialist',
   '/account',
@@ -162,6 +163,7 @@ export async function updateSession(request: NextRequest) {
     const needsRole =
       isAdminPath ||
       pathname.startsWith('/specialist') ||
+      pathname.startsWith('/provider') ||
       pathname.startsWith('/dashboard');
 
     if (!user || !needsRole) return supabaseResponse;
@@ -185,7 +187,21 @@ export async function updateSession(request: NextRequest) {
     // المديرُ يدخل تطبيقَ المختصّ أيضاً (زرُّه في لوحة الإدارة)
     if (pathname.startsWith('/specialist') && role !== 'specialist' && !isAdminRole(role)) {
       const url = request.nextUrl.clone();
-      url.pathname = '/dashboard';
+      url.pathname = role === 'provider' ? '/provider' : '/dashboard';
+      return NextResponse.redirect(url);
+    }
+
+    // نافذةُ الخدمة (0060): لحساب الخدمة والمدير وحدهما
+    if (pathname.startsWith('/provider') && role !== 'provider' && !isAdminRole(role)) {
+      const url = request.nextUrl.clone();
+      url.pathname = role === 'specialist' ? '/specialist' : '/dashboard';
+      return NextResponse.redirect(url);
+    }
+
+    // حسابُ الخدمة لا يدخل تطبيقَي المريض والمختصّ — نافذتُه /provider
+    if (role === 'provider' && (pathname.startsWith('/dashboard') || pathname.startsWith('/specialist'))) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/provider';
       return NextResponse.redirect(url);
     }
 

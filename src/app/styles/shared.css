@@ -5494,3 +5494,19 @@ html {
   text-decoration: none;
 }
 
+
+/* ─── 🏥 تسجيلُ الخدمة (/register/provider، 0060) — البادئة pr- ─── */
+.pr-types { display: grid; gap: 8px; }
+.pr-type {
+  display: flex; align-items: flex-start; gap: 12px; padding: 12px; border-radius: 14px; cursor: pointer;
+  border: 1.5px solid var(--line); background: var(--white); min-width: 0;
+}
+.pr-type input { position: absolute; opacity: 0; pointer-events: none; }
+.pr-type:focus-within { outline: 2px solid var(--emerald); outline-offset: 2px; }
+.pr-type-on { border-color: var(--emerald); background: var(--emerald-soft); }
+.pr-type-icon { flex-shrink: 0; width: 40px; height: 40px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; background: var(--paper-3); color: var(--emerald); }
+.pr-type-text { display: grid; gap: 2px; min-width: 0; }
+.pr-type-title { font-size: 15px; font-weight: 700; color: var(--ink); }
+.pr-type-desc { font-size: 12px; line-height: 1.6; color: var(--ink-3); }
+.pr-terms { display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 13px; color: var(--ink-2); }
+.pr-terms input { width: 20px; height: 20px; accent-color: var(--emerald); flex-shrink: 0; }

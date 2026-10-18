@@ -7637,6 +7637,7 @@ export type Database = {
           phone: string
           preferred_otp_channel: string | null
           profile_completed: boolean
+          provider_type: string | null
           rejection_reason: string | null
           role: Database["public"]["Enums"]["user_role"]
           signup_method: string | null
@@ -7706,6 +7707,7 @@ export type Database = {
           phone: string
           preferred_otp_channel?: string | null
           profile_completed?: boolean
+          provider_type?: string | null
           rejection_reason?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           signup_method?: string | null
@@ -7775,6 +7777,7 @@ export type Database = {
           phone?: string
           preferred_otp_channel?: string | null
           profile_completed?: boolean
+          provider_type?: string | null
           rejection_reason?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           signup_method?: string | null
@@ -9247,6 +9250,7 @@ export type Database = {
       subscription_status: "active" | "cancelled" | "expired" | "trial"
       user_role:
         | "patient"
+        | "provider"
         | "specialist"
         | "admin"
         | "super_admin"
@@ -9426,6 +9430,7 @@ export const Constants = {
       subscription_status: ["active", "cancelled", "expired", "trial"],
       user_role: [
         "patient",
+        "provider",
         "specialist",
         "admin",
         "super_admin",

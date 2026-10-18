@@ -5,9 +5,9 @@ import { createClient } from '@/lib/supabase/server';
 import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
 
 /**
- * 🧪 يحفظ تحاليلَ مختبر المختصّ واسمَه ومدينتَه (قرار المالك، 0055).
+ * 🧪 يحفظ تحاليلَ المختبر واسمَه ومدينتَه (قرار المالك، 0055؛ المختبرُ حسابُ «خدمة» منذ 0060).
  *
- * بعميل RLS: سياساتُ `specialist_lab_tests` تحصر الإدراجَ والحذفَ في صفوفه وتشترط مختصَّ تحاليل؛
+ * بعميل RLS: سياساتُ `specialist_lab_tests` تحصر الإدراجَ والحذفَ في صفوفه وتشترط حسابَ مختبر؛
  * والحفظُ حذفُ ما أُزيل وإدراجُ ما أُضيف، ثمّ يُعدّ الناتجُ من القاعدة (سياسةٌ ترفض بصمت لا تعطي «تمّ»).
  */
 export async function saveLabTests(input: {
@@ -20,9 +20,9 @@ export async function saveLabTests(input: {
   if (!user) return { ok: false, message: 'سجّل الدخول أوّلاً' };
 
   const { data: profile } = await supabase
-    .from('users').select('role, specialist_type').eq('id', user.id).single();
-  if (profile?.role !== 'specialist' || profile.specialist_type !== 'lab_analyst') {
-    return { ok: false, message: 'هذه الصفحة لمختصّي التحاليل' };
+    .from('users').select('role, provider_type').eq('id', user.id).single();
+  if (profile?.role !== 'provider' || profile.provider_type !== 'lab') {
+    return { ok: false, message: 'هذه الصفحة لحسابات المختبرات' };
   }
 
   const known = new Set(BLOOD_TESTS.map((t) => t.id));
@@ -60,8 +60,8 @@ export async function saveLabTests(input: {
     return { ok: false, message: 'لم يُحفظ كلُّ شيء — حاول مرّةً أخرى' };
   }
 
-  revalidatePath('/specialist/lab-tests');
-  revalidatePath('/specialist');
+  revalidatePath('/provider/lab-tests');
+  revalidatePath('/provider');
   return {
     ok: true,
     message: wanted.length

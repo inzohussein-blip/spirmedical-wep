@@ -32,11 +32,12 @@
 | التنسيق | `app/styles/shared.css` (رموز + حارس iOS) · `app.css` (شاشات التطبيق) · `marketing.css` · `admin.css` |
 | الفهرسة واكتشافُ النماذج | `app/layout.tsx` · `components/seo/JsonLd.tsx` · `app/sitemap.ts` · `app/robots.ts` · الأصل `lib/seo/origin.ts` · الحقائق `lib/seo/facts.ts` → `lib/seo/llms.ts` |
 | «عن التطبيق» | `components/landing/AboutApp.tsx` (الرئيسية `#about` و`/about`) |
-| مختبراتُ التحاليل | `lib/labs/lab-match.ts` (ترتيب) · `lab-network.ts` (الخادم) · المختصّ `app/(specialist)/specialist/lab-tests/` |
+| مختبراتُ التحاليل | `lib/labs/lab-match.ts` (ترتيب) · `lab-network.ts` (الخادم) · المختبر `app/(provider)/provider/lab-tests/` |
+| حساباتُ الخدمة (النافذة الثالثة) | `lib/providers.ts` · `app/(provider)/` · التسجيل `app/(auth)/register/provider/` · الاعتماد `app/admin/providers/` |
 | القصص | `components/stories/*` (الشريط، العارض، البطاقة) · `types/story.ts` · الإدارة `app/admin/stories/` |
 | الأيقونات ومكوّنات الإدارة | `lib/icons.ts` (أسماءٌ → Tabler + لونُ كلّ مفهوم) · `lib/emoji-icons.ts` + `components/ui/EmojiIcon.tsx` · `components/admin-ui` (StatCard، Panel، ListRow، StatusPill، DataTable…) |
 | الكرون | `vercel.json` → `app/api/cron/*` · `app/api/notifications/process` |
-| قاعدة البيانات | `supabase/migrations/` (آخرها 0058) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
+| قاعدة البيانات | `supabase/migrations/` (آخرها 0060) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
 | الاختبارات | `tests/` — اسمُ الحارس يدلّ على مجاله (`rls-*`، `order-flow-modals`، `specialist-screens`…) |
 
 **أدوات التحقّق البصريّ** في [`tools/mobile-audit/`](tools/mobile-audit/README.md):
@@ -250,6 +251,22 @@
   `https://www.spir-medical.com/sitemap.xml`. وأرقامُ الرئيسية المرئيّة («18 محافظة»، «24/7») باقيةٌ بقراره؛ الأبوابُ
   الآليّة وحدها صُحّحت.
 
+## 🏥 ثلاثُ نوافذ: المريض، المختصّ، الخدمة (0059/0060، قرار المالك، 18 تشرين الأول)
+
+- **المختصّ فردٌ يذهب إلى المريض**: محلّلٌ يسحب الدم (`lab_analyst`) أو ممرّضٌ منزليّ — وحدهما في `/register/specialist`.
+  **الخدمةُ منشأة** (`role='provider'` + `provider_type`: lab / pharmacy / clinic / hospital، الاسمُ في `clinic_name`) تسجّل
+  في `/register/provider` وتعمل في `/provider`. و`/register` ثلاثُ بطاقات.
+- **مسارُ التحليل (قرار المالك):** المريضُ يختار تحاليلَه ومختبراً ← المحلّلُ يسحب ويسلّم العيّنة ← المختبرُ يرفع النتائج.
+  شبكةُ المختبرات `eligibleLabIds()` (خدمةٌ مختبر، معتمَدة، غيرُ موقوفة) — لا مختصّو التحاليل.
+- **القيد** `users_provider_type_matches_role`: الدورُ والنوعُ معاً — لا تكتب أحدَهما وحده (`createOrGetAccount` يضبطهما).
+  والنوعُ في حارس 0058 (لا يغيّره صاحبُه). `ALTER TYPE … ADD VALUE` في ترحيلٍ مستقلّ (0059) قبل استعماله.
+- **الوسيط:** الخدمةُ على `/dashboard` أو `/specialist` ← `/provider`؛ و`/provider` للخدمة والمدير وحدهما. الحسابُ يبدأ `pending`
+  حتى يعتمده المدير في `/admin/providers` (يُعدّ الصفّ، ويُخطَر صاحبُه في الصندوق). وزرُّ «تطبيق الخدمة» في رأس اللوحة.
+- **لم يُبنَ بعد (الدفعة 2):** استلامُ العيّنة ورفعُ النتائج، وتوجيهُ الطلب إلى المختبر المختار. **(الدفعة 3):** الصيدلية
+  والعيادة والمستشفى تستقبل الطلبات — حساباتُها الآن ملفٌّ واعتمادٌ فقط، والصفحةُ تقول ذلك.
+- **باقٍ بعد الدمج:** تحويلُ الطبيب المعلَّق إلى عيادة، ثمّ ترحيلٌ يُزيل ذراعَ `lab_analyst` من سياسة إدراج `specialist_lab_tests`.
+- الحارس: `tests/providers.test.ts` (أُثبت بكسر ستّة مواضع).
+
 ## 📸 القصص — من الإدارة وحدها (0054، قرار المالك، 18 تشرين الأول)
 
 - **قصصٌ حقيقيّة لا روابط:** تُفتح بملء الشاشة (`StoryViewer`، يُرسم في `body` بـcreatePortal — غلافُ التطبيق يجعل
@@ -276,7 +293,7 @@
 
 - **«المختصّ يختار الفحوص الموجودة في مختبره، وللمريض تظهر المختبرات التي تدعمها.»** المختبرُ = مختصُّ تحاليل (`lab_analyst`)
   مؤهَّل بالمعيار الموحّد (`eligibleSpecialistIds`)، اسمُه `users.clinic_name`، وتحاليلُه في `specialist_lab_tests`
-  (معرّفاتُ `BLOOD_TESTS`). يختارها في `/specialist/lab-tests`، وخطوةُ «حدّد تحاليلَ مختبرك» في بطاقة الجاهزيّة.
+  (معرّفاتُ `BLOOD_TESTS`). **منذ 0060 المختبرُ حسابُ خدمة** (`role='provider'`، `provider_type='lab'`) يختارها في `/provider/lab-tests`.
 - **في سحب الدم** تظهر بعد اختيار التحاليل: الكاملةُ أوّلاً ثمّ «يُجري 2 من 3» (`rankLabsForTests`)، و«لا يهم» دائماً.
   حُذفت القائمةُ الثابتة (`PARTNER_LABS`: «معتمد دولياً»، «ISO 15189» بلا وثيقة). **الخادمُ يتحقّق** (`resolveChosenLab`) ويأخذ
   الاسمَ من القاعدة إلى `lab_orders.lab_specialist_id` و`lab_name_snapshot` — لا يُصدَّق العميل.

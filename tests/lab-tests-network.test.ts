@@ -63,23 +63,23 @@ describe('🚨 المريض: مختبراتٌ حقيقيّة تُجري تحال
     expect(a).toMatch(/lab_name_snapshot: chosenLab \? chosenLab\.name :/);
     expect(a).not.toMatch(/lab_name_snapshot: input\.lab_name_snapshot/);
     const n = code('src/lib/labs/lab-network.ts');
-    expect(n).toMatch(/eligibleSpecialistIds\('lab_analyst'/);
+    // المختبرُ حسابُ «خدمة» (0060): المحلّلُ يسحب، والمختبرُ يُحلّل
+    expect(n).toMatch(/\.eq\('role', 'provider'\)\s*\.eq\('provider_type', 'lab'\)\s*\.eq\('approval_status', 'approved'\)/);
+    expect(n).not.toMatch(/eligibleSpecialistIds/);
   });
 });
 
-describe('🚨 المختصّ: يحفظ تحاليلَ مختبره', () => {
-  it('تحاليلُ معروفةٌ فقط، ومختصُّ تحاليل فقط، ويُعدّ الناتج', () => {
-    const s = code('src/app/(specialist)/specialist/lab-tests/actions.ts');
+describe('🚨 المختبر (حسابُ خدمة): يحفظ تحاليلَه', () => {
+  it('تحاليلُ معروفةٌ فقط، وحسابُ مختبرٍ فقط، ويُعدّ الناتج', () => {
+    const s = code('src/app/(provider)/provider/lab-tests/actions.ts');
     expect(s).toMatch(/filter\(\(id\) => known\.has\(id\)\)/);
-    expect(s).toMatch(/profile\.specialist_type !== 'lab_analyst'/);
+    expect(s).toMatch(/profile\?\.role !== 'provider' \|\| profile\.provider_type !== 'lab'/);
     expect(s).toMatch(/\(count \?\? -1\) !== wanted\.length/);
   });
 
-  it('خطوةُ «حدّد تحاليلَ مختبرك» لمختصّ التحاليل وحده', () => {
+  it('خطوةُ «حدّد تحاليلَ مختبرك» في نافذة الخدمة لا في جاهزيّة المختصّ', () => {
     const p = { full_name: 'علي حسن', governorate: 'النجف', specialist_bio: 'x' };
-    expect(specialistReadiness(p, 1).some((s) => s.key === 'labTests')).toBe(false);
-    const step = specialistReadiness(p, 1, 0).find((s) => s.key === 'labTests');
-    expect(step).toMatchObject({ done: false, href: '/specialist/lab-tests' });
-    expect(specialistReadiness(p, 1, 5).find((s) => s.key === 'labTests')?.done).toBe(true);
+    expect(specialistReadiness(p, 1).some((s) => (s.key as string) === 'labTests')).toBe(false);
+    expect(code('src/app/(provider)/provider/page.tsx')).toMatch(/title: 'حدّد تحاليلَ مختبرك'[\s\S]*href: '\/provider\/lab-tests'/);
   });
 });

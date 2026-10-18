@@ -14,10 +14,11 @@ const ADMIN_ROLES = ['admin', 'super_admin', 'manager', 'support'];
 
 /**
  * يُرجع مسار الوجهة داخل التطبيق حسب دور المستخدم.
- *   specialist → /specialist · admin/إدارة → /admin · غيرهم (مريض) → /dashboard
+ *   specialist → /specialist · provider → /provider · admin/إدارة → /admin · غيرهم (مريض) → /dashboard
  */
 export function getRoleHomePath(role?: string | null): string {
   if (role === 'specialist') return '/specialist';
+  if (role === 'provider') return '/provider';
   if (role && ADMIN_ROLES.includes(role)) return '/admin';
   return '/dashboard';
 }

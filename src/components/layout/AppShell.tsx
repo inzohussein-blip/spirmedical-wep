@@ -15,7 +15,7 @@ import EmojiIcon from '@/components/ui/EmojiIcon';
 interface AppShellProps {
   children: React.ReactNode;
   userName?: string;
-  userRole?: 'patient' | 'specialist' | 'guest';
+  userRole?: 'patient' | 'specialist' | 'provider' | 'guest';
   signOutAction?: () => Promise<void>;
   isGuest?: boolean;
 }
@@ -74,6 +74,12 @@ export function AppShell({
         { id: 'favorites', href: '/guest/favorites', label: 'المفضلة', icon: IconHeart, ariaLabel: 'المفضلة' },
         { id: 'account', href: '/guest/account', label: 'حسابي', icon: IconUser, ariaLabel: 'حسابي' },
       ]
+    : userRole === 'provider'
+    ? [
+        { id: 'home', href: '/provider', label: 'الرئيسية', icon: IconHome, ariaLabel: 'الصفحة الرئيسية' },
+        { id: 'tests', href: '/provider/lab-tests', label: 'التحاليل', icon: IconClipboardList, ariaLabel: 'تحاليل المختبر' },
+        { id: 'account', href: '/provider/account', label: 'حسابي', icon: IconUser, ariaLabel: 'حسابي' },
+      ]
     : userRole === 'specialist'
     ? [
         { id: 'home', href: '/specialist', label: 'الرئيسية', icon: IconHome, ariaLabel: 'الصفحة الرئيسية' },
@@ -93,16 +99,16 @@ export function AppShell({
   void IconHome2;
 
   function isActive(href: string): boolean {
-    if (href === '/guest' || href === '/dashboard' || href === '/specialist') {
+    if (href === '/guest' || href === '/dashboard' || href === '/specialist' || href === '/provider') {
       return pathname === href;
     }
     return pathname.startsWith(href);
   }
 
-  const homeHref = isGuest ? '/guest' : userRole === 'specialist' ? '/specialist' : '/dashboard';
+  const homeHref = isGuest ? '/guest' : userRole === 'specialist' ? '/specialist' : userRole === 'provider' ? '/provider' : '/dashboard';
 
   // إخفاء الـ header العام عند الصفحات اللي عندها header خاصة فيها
-  const PAGES_WITHOUT_APPSHELL_HEADER = ['/dashboard', '/guest', '/specialist'];
+  const PAGES_WITHOUT_APPSHELL_HEADER = ['/dashboard', '/guest', '/specialist', '/provider'];
   const hideAppShellHeader = PAGES_WITHOUT_APPSHELL_HEADER.includes(pathname);
 
   // مهامٌّ مُركَّزة: نموذج الطلب له شريطُ إرسالٍ ثابت في أسفله، فكان شريطُ
@@ -232,7 +238,7 @@ export function AppShell({
                   <div>
                     <div className="app-drawer-name">{userName}</div>
                     <div className="app-drawer-role">
-                      {userRole === 'specialist' ? 'أخصائي' : userRole === 'patient' ? 'مراجع' : 'ضيف'}
+                      {userRole === 'specialist' ? 'أخصائي' : userRole === 'provider' ? 'خدمة' : userRole === 'patient' ? 'مراجع' : 'ضيف'}
                     </div>
                   </div>
                 </div>

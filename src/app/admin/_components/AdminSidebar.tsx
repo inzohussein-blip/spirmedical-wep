@@ -26,6 +26,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/admin/emergencies', icon: 'emergency', label: 'الطوارئ الأمنية', permission: 'orders.view' },
   { href: '/admin/specialists/pending', icon: 'pending', label: 'موافقات الاختصاصيين', permission: 'specialists.approve' },
   { href: '/admin/specialists', icon: 'specialists', label: 'الاختصاصيون', permission: 'specialists.view' },
+  { href: '/admin/providers', icon: 'labs', label: 'حسابات الخدمة', permission: 'specialists.view' },
   { href: '/admin/doctors', icon: 'doctors', label: 'أطباء العائلة', permission: 'specialists.view' },
   { href: '/admin/hospitals', icon: 'hospitals', label: 'المستشفيات', permission: 'specialists.view' },
   { href: '/admin/pharmacies', icon: 'pharmacies', label: 'الصيدليات', permission: 'specialists.view' },

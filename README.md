@@ -103,7 +103,7 @@ spirmedical-wep/
 │   │   ├── page.tsx             الصفحة الرئيسية التسويقية
 │   │   ├── styles/              shared.css · app.css · marketing.css · admin.css
 │   │   ├── sitemap.ts · robots.ts · llms.txt/ · llms-full.txt/ · ai.txt/ (مولَّدة من lib/seo/facts.ts)
-│   │   └── (auth) (dashboard) (specialist) (marketing) (app-utility)
+│   │   └── (auth) (dashboard) (specialist) (provider) (marketing) (app-utility)
 │   │       admin/ admin-login/ admin-register/ guest/ onboarding/ offline/ auth/ api/
 │   ├── components/              مكوّناتٌ مشتركة حسب الميزة (انظر الجدول أدناه)
 │   ├── lib/                     المنطق: auth, supabase, whatsapp, services, validations …
@@ -132,6 +132,7 @@ spirmedical-wep/
 | `guest/` | `/guest` + خدمات وأدوات للزائر (مستشفيات، صيدليات، طوارئ، إسعافات) | زائر | `guest/layout.tsx` |
 | `(dashboard)` | `/dashboard` `/appointments/*` `/services/*` `/account/*` `/messages/*` `/consultations/*` `/tools/*` `/search` `/sos` | `patient` | `requireSession` + `AuthenticatedShell` |
 | `(specialist)` | `/specialist` `/specialist/orders/*` `/inbox/*` `/chats` `/schedule` `/stats` `/account/*` `/pharmacy` | `specialist` معتمَد | بوّابة `approval_status` في `(specialist)/layout.tsx` |
+| `(provider)` | `/provider` `/provider/lab-tests` `/provider/account` `/provider/pending` `/provider/rejected` | `provider` (مختبر، صيدلية، عيادة، مستشفى) معتمَد | بوّابة `approval_status` في `(provider)/layout.tsx` |
 | `admin/` | 39 صفحة: طلبات، مرضى، مختصّون، منشآت، تقارير، إعدادات… | `admin` / `super_admin` | `admin/layout.tsx` → `/admin-login` |
 | `(app-utility)` | `/changelog` `/status` `/share-target` | — | أدوات PWA |
 | `onboarding/` `offline/` | جولة التعريف، صفحة عدم الاتّصال | — | — |

@@ -24,11 +24,11 @@ interface AuthenticatedShellProps {
    * نوع المستخدم في الـ UI (الـ bottom nav)
    * patient لـ (dashboard) و specialist لـ (specialist)
    */
-  shellRole: 'patient' | 'specialist';
+  shellRole: 'patient' | 'specialist' | 'provider';
   /**
    * userRole للـ NotificationToast
    */
-  notificationRole: 'patient' | 'specialist';
+  notificationRole: 'patient' | 'specialist' | 'provider';
   children: React.ReactNode;
 }
 
