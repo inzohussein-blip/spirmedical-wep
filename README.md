@@ -132,7 +132,7 @@ spirmedical-wep/
 | `guest/` | `/guest` + خدمات وأدوات للزائر (مستشفيات، صيدليات، طوارئ، إسعافات) | زائر | `guest/layout.tsx` |
 | `(dashboard)` | `/dashboard` `/appointments/*` `/services/*` `/account/*` `/messages/*` `/consultations/*` `/tools/*` `/search` `/sos` | `patient` | `requireSession` + `AuthenticatedShell` |
 | `(specialist)` | `/specialist` `/specialist/orders/*` `/inbox/*` `/chats` `/schedule` `/stats` `/account/*` `/pharmacy` | `specialist` معتمَد | بوّابة `approval_status` في `(specialist)/layout.tsx` |
-| `(provider)` | `/provider` `/provider/lab-tests` `/provider/account` `/provider/pending` `/provider/rejected` | `provider` (مختبر، صيدلية، عيادة، مستشفى) معتمَد | بوّابة `approval_status` في `(provider)/layout.tsx` |
+| `(provider)` | `/provider` `/provider/samples/*` `/provider/lab-tests` `/provider/account` `/provider/pending` `/provider/rejected` | `provider` (مختبر، صيدلية، عيادة، مستشفى) معتمَد | بوّابة `approval_status` في `(provider)/layout.tsx` |
 | `admin/` | 39 صفحة: طلبات، مرضى، مختصّون، منشآت، تقارير، إعدادات… | `admin` / `super_admin` | `admin/layout.tsx` → `/admin-login` |
 | `(app-utility)` | `/changelog` `/status` `/share-target` | — | أدوات PWA |
 | `onboarding/` `offline/` | جولة التعريف، صفحة عدم الاتّصال | — | — |

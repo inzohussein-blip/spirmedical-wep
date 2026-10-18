@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import {
   IconHome, IconHome2, IconLayoutGrid, IconClipboardList,
   IconMessageCircle, IconUser, IconHeart, IconMessages,
-  IconMenu2, IconX, IconLogin,
+  IconMenu2, IconX, IconLogin, IconTestPipe,
 } from '@tabler/icons-react';
 import type { Icon as TablerIcon } from '@tabler/icons-react';
 
@@ -77,6 +77,7 @@ export function AppShell({
     : userRole === 'provider'
     ? [
         { id: 'home', href: '/provider', label: 'الرئيسية', icon: IconHome, ariaLabel: 'الصفحة الرئيسية' },
+        { id: 'samples', href: '/provider/samples', label: 'العيّنات', icon: IconTestPipe, ariaLabel: 'العيّنات الواردة' },
         { id: 'tests', href: '/provider/lab-tests', label: 'التحاليل', icon: IconClipboardList, ariaLabel: 'تحاليل المختبر' },
         { id: 'account', href: '/provider/account', label: 'حسابي', icon: IconUser, ariaLabel: 'حسابي' },
       ]
