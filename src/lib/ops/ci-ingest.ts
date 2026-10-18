@@ -16,7 +16,7 @@ export const ingestKey = (name: string, branch: string) => `${name}:${branch}`;
 
 /** فشلٌ يوقف الإنتاج: سيرٌ على main أو نشرُ الإنتاج */
 export const isCritical = (kind: 'ci' | 'build', name: string, branch: string) =>
-  kind === 'ci' ? branch === 'main' : name.toLowerCase() === 'production';
+  kind === 'ci' ? branch === 'main' : name.toLowerCase().startsWith('production');
 
 /** `app_settings` — آخرُ تقريرٍ وصل من GitHub: هكذا تعرف الصفحةُ أنّ الربطَ يعمل ولو لم يفشل شيء */
 export const INGEST_SEEN_KEY = 'ops_ingest_last';

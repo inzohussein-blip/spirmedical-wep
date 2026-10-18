@@ -25,6 +25,8 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           EVENT: ${{ toJSON(github.event) }}
           INGEST_URL: ${{ vars.OPS_INGEST_URL || 'https://www.spir-medical.com/api/ops/ingest' }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
           if [ "$EVENT_NAME" = "workflow_run" ]; then
@@ -45,12 +47,19 @@ jobs:
               status: (if .deployment_status.state == "success" then "success"
                        elif (.deployment_status.state == "failure" or .deployment_status.state == "error") then "failure"
                        else "skip" end),
-              name: ((.deployment.environment // "unknown") | if test("^Preview") then "Preview" else . end),
+              name: ((.deployment.environment // "unknown") | split(" – ")[0] | split(" - ")[0]),
               branch: (.deployment.ref // "unknown"),
               url: (.deployment_status.target_url // .deployment_status.log_url // null),
               sha: .deployment.sha,
               description: ((.deployment_status.description // "") | .[0:500])
             } | with_entries(select(.value != null))' <<<"$EVENT")
+            # Vercel يضع الإيداعَ (sha) في ref لا اسمَ الفرع — والفرعُ هو ما يجمع فشلَ النشر ونجاحَه
+            REF=$(jq -r .branch <<<"$BODY")
+            if [[ "$REF" =~ ^[0-9a-f]{40}$ ]]; then
+              BRANCH=$(curl -sS -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+                "https://api.github.com/repos/$REPO/commits/$REF/branches-where-head" | jq -r '.[0].name // empty' || true)
+              BODY=$(jq -c --arg b "${BRANCH:-${REF:0:12}}" '.branch = $b' <<<"$BODY")
+            fi
           fi
 
           if [ "$(jq -r .status <<<"$BODY")" = "skip" ]; then
@@ -61,7 +70,14 @@ jobs:
           TOKEN=$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
             "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=spir-medical-ops" | jq -r .value)
           echo "Reporting: $BODY"
-          curl -sSf -X POST "$INGEST_URL" \
+          CODE=$(curl -sS -o /tmp/resp -w '%{http_code}' -X POST "$INGEST_URL" \
             -H "Authorization: Bearer $TOKEN" \
             -H "Content-Type: application/json" \
-            --data "$BODY"
+            --data "$BODY")
+          cat /tmp/resp; echo
+          if [ "$CODE" = "404" ]; then
+            # النقطةُ لم تُنشر في الإنتاج بعد (قبل دمج رصد الأخطاء) — لا يُحمَّر الفحص لأجلها
+            echo "::warning::/api/ops/ingest is not deployed yet (404)"
+            exit 0
+          fi
+          [ "$CODE" -ge 200 ] && [ "$CODE" -lt 300 ]

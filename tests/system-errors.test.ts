@@ -278,6 +278,15 @@ describe('🔐 GitHub: فشلُ البناء والفحوص عبر OIDC', () => 
     expect(wf).toContain('audience=spir-medical-ops');
     const run = wf.slice(wf.indexOf('run: |'));
     expect(run).not.toMatch(/\$\{\{/);
+    // Vercel يضع sha في ref (قِيس على #61): الفرعُ من GitHub، والبيئةُ بلا « – اسم المشروع»
+    expect(run).toMatch(/branches-where-head/);
+    expect(run).toMatch(/split\(" – "\)\[0\]/);
+    // قبل نشر النقطة: تحذيرٌ لا فحصٌ أحمر
+    expect(run).toMatch(/"\$CODE" = "404"[\s\S]*exit 0/);
+    const { isCritical } = require('@/lib/ops/ci-ingest');
+    expect(isCritical('build', 'Production', 'main')).toBe(true);
+    expect(isCritical('build', 'Preview', 'main')).toBe(false);
+    expect(isCritical('ci', 'CI', 'claude/x')).toBe(false);
   });
 });
 
