@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import {
   IconHome, IconHome2, IconLayoutGrid, IconClipboardList,
   IconMessageCircle, IconUser, IconHeart, IconMessages,
-  IconMenu2, IconX, IconLogin, IconTestPipe,
+  IconMenu2, IconX, IconLogin, IconTestPipe, IconBuildingHospital,
 } from '@tabler/icons-react';
 import type { Icon as TablerIcon } from '@tabler/icons-react';
 
@@ -16,6 +16,7 @@ interface AppShellProps {
   children: React.ReactNode;
   userName?: string;
   userRole?: 'patient' | 'specialist' | 'provider' | 'guest';
+  providerType?: string | null;
   signOutAction?: () => Promise<void>;
   isGuest?: boolean;
 }
@@ -45,6 +46,7 @@ export function AppShell({
   children,
   userName,
   userRole = 'guest',
+  providerType,
   signOutAction,
   isGuest = false,
 }: AppShellProps) {
@@ -73,6 +75,13 @@ export function AppShell({
         { id: 'orders', href: '/guest/orders', label: 'الطلبات', icon: IconClipboardList, ariaLabel: 'الطلبات' },
         { id: 'favorites', href: '/guest/favorites', label: 'المفضلة', icon: IconHeart, ariaLabel: 'المفضلة' },
         { id: 'account', href: '/guest/account', label: 'حسابي', icon: IconUser, ariaLabel: 'حسابي' },
+      ]
+    : userRole === 'provider' && providerType && providerType !== 'lab'
+    ? [
+        { id: 'home', href: '/provider', label: 'الرئيسية', icon: IconHome, ariaLabel: 'الصفحة الرئيسية' },
+        { id: 'requests', href: '/provider/requests', label: 'الطلبات', icon: IconClipboardList, ariaLabel: 'طلبات المنشأة' },
+        { id: 'listing', href: '/provider/listing', label: 'منشأتي', icon: IconBuildingHospital, ariaLabel: 'منشأتي في الدليل' },
+        { id: 'account', href: '/provider/account', label: 'حسابي', icon: IconUser, ariaLabel: 'حسابي' },
       ]
     : userRole === 'provider'
     ? [

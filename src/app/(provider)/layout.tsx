@@ -1,6 +1,7 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { requireSession } from '@/lib/auth/session';
+import { createClient } from '@/lib/supabase/server';
 import { isAdminRole } from '@/lib/admin-types';
 import { AuthenticatedShell } from '@/components/layout/AuthenticatedShell';
 import PageTransitionProvider from '@/components/pwa/PageTransitionProvider';
@@ -23,8 +24,12 @@ export default async function ProviderLayout({ children }: { children: React.Rea
     redirect(session.profile.approval_status === 'rejected' ? '/provider/rejected' : '/provider/pending');
   }
 
+  // نوعُ الخدمة يحدّد التبويبات (المختبرُ: العيّنات والتحاليل؛ الباقي: الطلبات ومنشأتي)
+  const supabase = await createClient();
+  const { data: p } = await supabase.from('users').select('provider_type').eq('id', session.user.id).single();
+
   return (
-    <AuthenticatedShell session={session} shellRole="provider" notificationRole="provider">
+    <AuthenticatedShell session={session} shellRole="provider" notificationRole="provider" providerType={p?.provider_type ?? null}>
       <PageTransitionProvider>{children}</PageTransitionProvider>
     </AuthenticatedShell>
   );

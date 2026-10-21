@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { notifyListingOwner } from '@/lib/provider-listings-server';
 import { encrypt } from '@/lib/encryption';
 import { checkRateLimit } from '@/lib/rate-limit';
 import {
@@ -285,6 +286,12 @@ export async function createDoctorAppointment(input: CreateDoctorAppointmentInpu
       serviceName: serviceTypeArabic,
       scheduledAt: input.scheduled_at,
     }).catch(() => null);
+
+    // العيادةُ المرتبطة بحساب خدمة تؤكّد الموعد من نافذتها (الدفعة 3)
+    await notifyListingOwner('doctor', input.doctor_id, {
+      title: 'موعدٌ جديد',
+      body: `${serviceTypeArabic} — بانتظار تأكيدك.`,
+    });
 
     notifyEligibleSpecialistsOfNewOrder({
       orderId: appointment.id,

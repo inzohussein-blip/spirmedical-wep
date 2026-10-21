@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { notifyListingOwner } from '@/lib/provider-listings-server';
 import type { Json } from '@/types/database';
 
 /**
@@ -81,6 +82,12 @@ export async function createPharmacyReservation(input: CreateReservationInput) {
   if (error || !reservation) {
     return { ok: false, error: error?.message || 'فشل الحجز' };
   }
+
+  // الصيدليةُ المرتبطة بحساب خدمة تعلم بالحجز في صندوقها (الدفعة 3)
+  await notifyListingOwner('pharmacy', input.pharmacy_id, {
+    title: 'حجزُ دواءٍ جديد',
+    body: `${input.items.length} صنفاً بانتظار تأكيد التوفّر.`,
+  });
 
   revalidatePath('/account/pharmacy-reservations');
   revalidatePath(`/services/pharmacies/${input.pharmacy_id}`);

@@ -2824,6 +2824,7 @@ export type Database = {
           longitude: number | null
           name: string
           name_en: string | null
+          owner_user_id: string | null
           phone: string | null
           phone_emergency: string | null
           rating_avg: number
@@ -2859,6 +2860,7 @@ export type Database = {
           longitude?: number | null
           name: string
           name_en?: string | null
+          owner_user_id?: string | null
           phone?: string | null
           phone_emergency?: string | null
           rating_avg?: number
@@ -2894,6 +2896,7 @@ export type Database = {
           longitude?: number | null
           name?: string
           name_en?: string | null
+          owner_user_id?: string | null
           phone?: string | null
           phone_emergency?: string | null
           rating_avg?: number
@@ -5345,6 +5348,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      provider_listing_claims: {
+        Row: {
+          created_at: string
+          decided_at: string | null
+          decided_by: string | null
+          id: string
+          listing_id: string | null
+          listing_kind: string
+          proposed: Json
+          provider_id: string
+          rejection_reason: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          listing_id?: string | null
+          listing_kind: string
+          proposed?: Json
+          provider_id: string
+          rejection_reason?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          decided_at?: string | null
+          decided_by?: string | null
+          id?: string
+          listing_id?: string | null
+          listing_kind?: string
+          proposed?: Json
+          provider_id?: string
+          rejection_reason?: string | null
+          status?: string
+        }
+        Relationships: []
       }
       pharmacies: {
         Row: {

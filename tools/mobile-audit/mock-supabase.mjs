@@ -5,6 +5,8 @@ import fs from 'fs';
 const PORT = 54399;
 const UID = '11111111-1111-4111-8111-111111111111';
 const ROLE = process.env.MOCK_ROLE || 'patient';
+// حسابُ الخدمة: مختبرٌ افتراضياً، وMOCK_PROVIDER=pharmacy|clinic|hospital للدفعة 3
+const PROVIDER = process.env.MOCK_PROVIDER || 'lab';
 const PID = '22222222-2222-4222-8222-222222222222';
 const now = new Date();
 const iso = (d) => new Date(now.getTime() + d * 864e5).toISOString();
@@ -17,7 +19,7 @@ export const USER = {
 
 const PROFILE = {
   id: UID, role: ROLE, specialist_type: ROLE === 'specialist' ? 'lab_analyst' : null,
-  provider_type: ROLE === 'provider' ? 'lab' : null, clinic_name: ROLE === 'provider' ? 'مختبر الحياة' : null, clinic_city: ROLE === 'provider' ? 'النجف' : null,
+  provider_type: ROLE === 'provider' ? PROVIDER : null, clinic_name: ROLE === 'provider' ? (PROVIDER === 'lab' ? 'مختبر الحياة' : 'صيدلية الشفاء') : null, clinic_city: ROLE === 'provider' ? 'النجف' : null,
   is_available: true, full_name: 'حسن محمد', phone: '07700000000', email: 'patient@example.test',
   gender: 'male', date_of_birth: '1990-05-10', blood_type: 'O+', city: 'النجف', governorate: 'النجف',
   avatar_url: null, is_active: true, onboarding_completed: true, profile_completed: true,
@@ -59,7 +61,7 @@ const LAB_TESTS = [
 
 const FIX = {
   specialist_lab_tests: LAB_TESTS,
-  users: ROLE === 'specialist' ? [PROFILE, { ...PATIENT, role: 'patient' }, ...LABS] : ROLE === 'admin' ? ADMIN_USERS : [PROFILE, ...LABS],
+  users: ROLE === 'specialist' ? [PROFILE, { ...PATIENT, role: 'patient' }, ...LABS] : ROLE === 'provider' ? [PROFILE, { ...PATIENT, role: 'patient' }] : ROLE === 'admin' ? ADMIN_USERS : [PROFILE, ...LABS],
   nurse_emergency_logs: ROLE === 'admin' ? [{ id: '55555555-5555-4555-8555-555555555555', specialist_id: SID, appointment_id: ADMIN_APPTS[0].id,
     trigger_reason: 'panic_button', description: 'وصفٌ تجريبيّ', latitude: 32.0, longitude: 44.33, status: 'open', created_at: iso(-0.01) }] : [],
   appointments: ROLE === 'specialist' ? SPEC_APPTS : ROLE === 'admin' ? ADMIN_APPTS : [
@@ -99,7 +101,21 @@ const FIX = {
             patient_age: 52, patient_gender: 'male', needs_fasting: false, updated_at: iso(-0.3), lab_name_snapshot: 'مختبر الحياة' },
         ]
       : [],
-  lab_results: [], user_medications: [], vaccination_records: [],
+  lab_results: [],
+  // الدفعة 3: صيدليةٌ يملكها الحساب، وأخرى بلا مالك تظهر في البحث، وحجزان
+  pharmacies: ROLE === 'provider' && PROVIDER === 'pharmacy'
+    ? [{ id: '77777777-0000-4000-8000-000000000001', name: 'صيدلية الشفاء', city: 'النجف', district: 'حي السعد', phone: '07801234567', owner_user_id: UID, is_active: true }]
+    : [{ id: '77777777-0000-4000-8000-000000000002', name: 'صيدلية الرحمة', city: 'كربلاء', district: 'المركز', phone: '07801234568', owner_user_id: null, is_active: true }],
+  pharmacy_reservations: ROLE === 'provider' && PROVIDER === 'pharmacy'
+    ? [
+        { id: '88888888-0000-4000-8000-000000000001', user_id: PID, pharmacy_id: '77777777-0000-4000-8000-000000000001', status: 'pending',
+          items: [{ name: 'أموكسيسيلين 500', qty: 2 }, { name: 'باراسيتامول', qty: 1 }], customer_notes: 'أحتاجه اليوم مساءً', created_at: iso(-0.05) },
+        { id: '88888888-0000-4000-8000-000000000002', user_id: PID, pharmacy_id: '77777777-0000-4000-8000-000000000001', status: 'picked_up',
+          items: [{ name: 'فيتامين د', qty: 1 }], created_at: iso(-2) },
+      ]
+    : [],
+  provider_listing_claims: [],
+  doctors: [], hospitals: [], user_medications: [], vaccination_records: [],
   app_theme_settings: [],
   service_waitlist: [],
   auth_login_pins: [],
