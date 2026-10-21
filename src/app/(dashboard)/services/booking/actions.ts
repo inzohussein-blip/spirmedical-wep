@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { notifyListingOwner } from '@/lib/provider-listings-server';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { encrypt } from '@/lib/encryption';
 
@@ -128,6 +129,14 @@ export async function createServiceBooking(input: BookingInput) {
 
   if (error || !data) {
     return { ok: false, error: error?.message || 'فشل الحجز' };
+  }
+
+  // المستشفى المرتبط بحساب خدمة يؤكّد الموعد من نافذته (الدفعة 3)
+  if (input.service_type === 'hospital') {
+    await notifyListingOwner('hospital', input.provider_id, {
+      title: 'موعدٌ جديد',
+      body: `${input.hospital_department ? `قسم ${input.hospital_department}` : serviceMeta.name} — بانتظار تأكيدك.`,
+    });
   }
 
   revalidatePath('/appointments');

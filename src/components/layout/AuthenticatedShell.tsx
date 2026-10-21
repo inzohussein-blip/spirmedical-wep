@@ -29,6 +29,8 @@ interface AuthenticatedShellProps {
    * userRole للـ NotificationToast
    */
   notificationRole: 'patient' | 'specialist' | 'provider';
+  /** نوعُ حساب الخدمة — يحدّد تبويباتِ نافذتها (المختبرُ عيّنات، والباقي طلبات) */
+  providerType?: string | null;
   children: React.ReactNode;
 }
 
@@ -36,6 +38,7 @@ export function AuthenticatedShell({
   session,
   shellRole,
   notificationRole,
+  providerType,
   children,
 }: AuthenticatedShellProps) {
   return (
@@ -43,6 +46,7 @@ export function AuthenticatedShell({
       <AppShell
         userName={session.profile.full_name}
         userRole={shellRole}
+        providerType={providerType}
         signOutAction={signOut}
         isGuest={false}
       >

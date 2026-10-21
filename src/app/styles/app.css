@@ -6997,7 +6997,7 @@
 .pv-note { font-size: 13px; color: var(--ink-3); line-height: 1.7; margin: 0; }
 .pv-form { gap: 12px; }
 .pv-field { display: grid; gap: 6px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
-.pv-field input {
+.pv-field input, .pv-field select {
   font: inherit; font-size: 16px; min-width: 0; width: 100%; box-sizing: border-box;
   padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper-3); color: var(--ink);
 }
@@ -7064,3 +7064,16 @@
 .sd-btn:disabled { opacity: 0.6; cursor: default; }
 .sd-error { color: var(--rose); font-size: 13px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 6px; }
 .sd-fallback { background: var(--paper-3); padding: 10px; border-radius: 10px; }
+
+/* ─── 🏥 منشأتي والطلبات (الدفعة 3) ─── */
+.pv-btn-sm { min-height: 40px; padding: 0 14px; margin-top: 0; font-size: 14px; }
+.pv-search { display: flex; gap: 8px; align-items: center; }
+.pv-search input {
+  flex: 1; min-width: 0; font: inherit; font-size: 16px; padding: 10px 12px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--paper-3); color: var(--ink);
+}
+.pv-listing { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+  padding: 12px; border: 1px solid var(--line); border-radius: 12px; }
+.pv-listing-text { display: grid; gap: 2px; min-width: 0; flex: 1; }
+.pv-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 4px; }
+.pv-pill-rose { background: var(--rose-soft); color: var(--rose); }

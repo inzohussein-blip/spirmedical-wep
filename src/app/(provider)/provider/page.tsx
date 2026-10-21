@@ -4,6 +4,8 @@ import { createAdminClient, createClient } from '@/lib/supabase/server';
 import { isAdminRole } from '@/lib/admin-types';
 import { Icon } from '@/components/admin-ui';
 import { PROVIDER_META, isProviderType } from '@/lib/providers';
+import { listingKindFor } from '@/lib/provider-listings';
+import { getLatestClaim, getOwnedListings } from '@/lib/provider-listings-server';
 
 export const metadata = { title: 'نافذة الخدمة · سباير ميديكال' };
 export const dynamic = 'force-dynamic';
@@ -27,9 +29,10 @@ export default async function ProviderHome() {
   const type = isProviderType(profile?.provider_type) ? profile.provider_type : null;
   const meta = type ? PROVIDER_META[type] : null;
   const isLab = type === 'lab';
+  const listingKind = listingKindFor(type);
 
-  // عيّناتُ هذا المختبر: بعميل الخدمة مقيّدةً بمعرّفه (المريضُ صاحبُ الصفّ تحت RLS)
-  const [{ count: tests }, { count: waiting }] = await Promise.all([
+  // عيّناتُ المختبر، أو منشأةُ الصيدلية/العيادة/المستشفى وطلبُ ربطها — بعميل الخدمة مقيّدةً بالحساب
+  const [{ count: tests }, { count: waiting }, owned, claim] = await Promise.all([
     isLab
       ? supabase.from('specialist_lab_tests').select('test_id', { count: 'exact', head: true }).eq('specialist_id', user.id)
       : Promise.resolve({ count: null }),
@@ -37,13 +40,32 @@ export default async function ProviderHome() {
       ? createAdminClient().from('lab_orders').select('id', { count: 'exact', head: true })
           .eq('lab_specialist_id', user.id).in('status', ['sent_to_lab', 'processing'])
       : Promise.resolve({ count: null }),
+    listingKind ? getOwnedListings(user.id, listingKind) : Promise.resolve([]),
+    listingKind ? getLatestClaim(user.id) : Promise.resolve(null),
   ]);
+  // الطلباتُ المفتوحة لمنشآت الحساب
+  const ownedIds = owned.map((l) => l.id);
+  const { count: openRequests } = ownedIds.length === 0
+    ? { count: 0 }
+    : listingKind === 'pharmacy'
+      ? await createAdminClient().from('pharmacy_reservations').select('id', { count: 'exact', head: true })
+          .in('pharmacy_id', ownedIds).in('status', ['pending', 'confirmed', 'partially_available', 'ready_for_pickup'])
+      : await createAdminClient().from('appointments').select('id', { count: 'exact', head: true })
+          .in(listingKind === 'doctor' ? 'doctor_id' : 'hospital_id', ownedIds).in('status', ['pending', 'confirmed']);
 
   const steps = [
     { done: !!profile?.clinic_name?.trim(), title: `اكتب ${meta?.nameLabel ?? 'اسم المنشأة'}`, desc: 'يراه المريض عند الاختيار.', href: '/provider/account' },
     { done: !!(profile?.clinic_city?.trim() || profile?.governorate?.trim()), title: 'حدّد المدينة', desc: 'يختار المريضُ الأقربَ إليه.', href: '/provider/account' },
     ...(isLab
       ? [{ done: (tests ?? 0) > 0, title: 'حدّد تحاليلَ مختبرك', desc: 'يظهر مختبرُك للمريض حين يختار تحاليلَ يُجريها.', href: '/provider/lab-tests' }]
+      : []),
+    ...(listingKind
+      ? [{
+          done: owned.length > 0,
+          title: claim?.status === 'pending' ? 'ربطُ منشأتك قيد المراجعة' : 'اربط حسابَك بمنشأتك',
+          desc: 'ابحث عنها في الدليل أو أضِفها — فتصلك حجوزاتُها بعد اعتماد الإدارة.',
+          href: '/provider/listing',
+        }]
       : []),
   ];
   const pending = steps.filter((s) => !s.done);
@@ -97,11 +119,21 @@ export default async function ProviderHome() {
           </section>
         )}
 
-        {meta && !isLab && (
-          <section className="pv-card">
-            <h2 className="pv-card-title">{meta.label}</h2>
+        {meta && listingKind && (
+          <section className="pv-card" aria-label="منشأتك">
+            <h2 className="pv-card-title">{owned[0]?.name ?? meta.label}</h2>
+            <div className="pv-stats">
+              <Link href="/provider/requests" className="pv-stat">
+                <span className="pv-stat-value">{openRequests ?? 0}</span>
+                <span className="pv-stat-label">طلباً مفتوحاً</span>
+              </Link>
+              <Link href="/provider/listing" className="pv-stat">
+                <span className="pv-stat-value">{owned.length > 0 ? 'مرتبطة' : claim?.status === 'pending' ? 'قيد المراجعة' : 'غير مرتبطة'}</span>
+                <span className="pv-stat-label">منشأتك في الدليل</span>
+              </Link>
+            </div>
             <p className="pv-note">
-              {meta.description}. استقبالُ الطلبات لحسابات {meta.label} قادمٌ في تحديثٍ لاحق — جهّز ملفّك الآن ليظهر حين يُفعَّل.
+              {meta.description}: يحجز المريضُ من الدليل فيصلك الطلبُ هنا، فتؤكّده أو تعتذر بسببٍ يراه.
             </p>
           </section>
         )}

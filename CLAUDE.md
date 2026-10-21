@@ -34,10 +34,11 @@
 | «عن التطبيق» | `components/landing/AboutApp.tsx` (الرئيسية `#about` و`/about`) |
 | مختبراتُ التحاليل | `lib/labs/lab-match.ts` (ترتيب) · `lab-network.ts` (الخادم) · `lab-results.ts` (تنقية النتائج) · المختبر `app/(provider)/provider/lab-tests/` و`provider/samples/` · تسليمُ المحلّل `role-forms/SampleDelivery.tsx` |
 | حساباتُ الخدمة (النافذة الثالثة) | `lib/providers.ts` · `app/(provider)/` · التسجيل `app/(auth)/register/provider/` · الاعتماد `app/admin/providers/` |
+| منشآتُ الخدمة وطلباتُها | `lib/provider-listings.ts` (الانتقالات، التنقية) · `provider-listings-server.ts` · `app/(provider)/provider/listing/` و`provider/requests/` |
 | القصص | `components/stories/*` (الشريط، العارض، البطاقة) · `types/story.ts` · الإدارة `app/admin/stories/` |
 | الأيقونات ومكوّنات الإدارة | `lib/icons.ts` (أسماءٌ → Tabler + لونُ كلّ مفهوم) · `lib/emoji-icons.ts` + `components/ui/EmojiIcon.tsx` · `components/admin-ui` (StatCard، Panel، ListRow، StatusPill، DataTable…) |
 | الكرون | `vercel.json` → `app/api/cron/*` · `app/api/notifications/process` |
-| قاعدة البيانات | `supabase/migrations/` (آخرها 0061) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
+| قاعدة البيانات | `supabase/migrations/` (آخرها 0062) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
 | الاختبارات | `tests/` — اسمُ الحارس يدلّ على مجاله (`rls-*`، `order-flow-modals`، `specialist-screens`…) |
 
 **أدوات التحقّق البصريّ** في [`tools/mobile-audit/`](tools/mobile-audit/README.md):
@@ -273,7 +274,20 @@
   - **بديلٌ ما دامت الشبكةُ فارغة:** لا مختبرَ مختار ولا مختبرَ مؤهَّل ← يُدخل المحلّلُ النتائجَ بنفسه كما كان (`saveLabResults`)
     كي لا يتوقّف سحبُ الدم. أُزيل `updateLabOrderStatus` (كان يكتب أيَّ حالةٍ بلا تحقّق).
   - الحارس: `tests/lab-sample-flow.test.ts` (أُثبت بكسر عشرة مواضع).
-- **لم يُبنَ بعد (الدفعة 3):** الصيدلية والعيادة والمستشفى تستقبل الطلبات — حساباتُها الآن ملفٌّ واعتمادٌ فقط، والصفحةُ تقول ذلك.
+- **الدفعة 3 — المنشأة (0062، قرار المالك: «ربطٌ بمنشأةٍ موجودة أو إضافةُ جديدة، والإدارةُ تعتمد»):** الصيدلية ← `pharmacies.owner_user_id`،
+  والعيادة ← `doctors.user_id`، والمستشفى ← `hospitals.owner_user_id` (جديد). الحسابُ يطلب الربطَ من «منشأتي» (`/provider/listing`): منشأةٌ
+  بلا مالك من الدليل، أو جديدةٌ تُنشأ عند الاعتماد (`sanitizeProposedListing`). الطلباتُ في `provider_listing_claims` — **لعميل الخدمة وحده**
+  (لا سياسات، `REVOKE`)، وطلبٌ حيٌّ واحد لكلّ حساب، ومالكٌ معتمَدٌ واحد لكلّ منشأة (فهرسان فريدان). الإدارةُ تعتمد من `/admin/providers`:
+  الملكيّةُ مشروطةٌ بـ`.is(owner, null)` وتُعدّ، وفشلُ تعليم الطلب يُرجعها.
+  - **الطلبات** (`/provider/requests`): حجوزاتُ الصيدلية (تأكيد/جزئيّ/جاهز/استُلم/اعتذار) ومواعيدُ العيادة والمستشفى (تأكيد/تمّت/اعتذار)،
+    بالانتقالات في `RESERVATION_ACTIONS`/`BOOKING_ACTIONS` وحدها، بعميل الخدمة مقيّدةً بمنشآت الحساب و`.in('status', from)`، والاعتذارُ
+    بسببٍ يراه المريض، ويُخطَر في صندوقه. والحجزُ الجديد يُخطر المالكَ (`notifyListingOwner` في المسارات الثلاثة).
+  - **ثغراتٌ أُغلقت:** `doctors` كان يقبل إدراجَ أيّ مستخدمٍ لنفسه طبيباً «موثَّقاً» نشطاً، وتحديثُه ومالكُ الصيدلية يكتبان التوثيقَ والملكيّة،
+    ومالكُ الصيدلية يكتب أيَّ عمودٍ في حجز المريض. الآن كتابةُ المنشآت للإدارة، وكتابةُ المالك من الخادم. قِيس في ROLLBACK: المريضُ يُرفض
+    عند إدراج طبيب (42501)، ويحجز ويلغي حجزَه كما كان.
+  - التبويباتُ حسب النوع (`providerType` من التخطيط إلى `AppShell`): المختبرُ العيّنات والتحاليل، والباقي الطلبات ومنشأتي.
+  - الحارس: `tests/provider-listings.test.ts` (أُثبت بكسر اثني عشر موضعاً).
+- **لم يُبنَ بعد:** تعديلُ المالك لبيانات منشأته (الهاتف، الساعات) — عبر الإدارة حالياً، والصفحةُ تقول ذلك.
 - **بعد الدمج (18 تشرين الأول):** حُوّل الطبيبُ المعلَّق إلى عيادةٍ معلَّقة (جُرّب في ROLLBACK)، و0061 أزال ذراعَ `lab_analyst` من
   إدراج `specialist_lab_tests` — قِيس كمحلّل: 42501، وكمختبر: يُقبل.
 - الحارس: `tests/providers.test.ts` (أُثبت بكسر ستّة مواضع).
