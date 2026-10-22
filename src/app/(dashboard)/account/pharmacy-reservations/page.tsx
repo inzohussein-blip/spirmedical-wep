@@ -102,7 +102,7 @@ export default async function PharmacyReservationsPage() {
             <div className="scr-empty-icon"><Pill size={42} strokeWidth={1.5} /></div>
             <h2 className="scr-empty-title">لا توجد حجوزات بعد</h2>
             <p className="scr-empty-desc">
-              ابحث عن الصيدليات واحجز أدويتك بسهولة.
+              ابحث عن صيدلية قريبة وتواصل معها مباشرةً على رقمها.
             </p>
             <Link href="/services/pharmacies" className="scr-empty-cta">
               ابحث عن صيدلية ←

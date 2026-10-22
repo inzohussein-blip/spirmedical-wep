@@ -171,7 +171,6 @@ export default function DentalClient({ clinics }: Props) {
           lineHeight: 1.7,
         }}>
           <EmojiIcon e="💡" /> <strong>نصيحة:</strong> الأسعار قابلة للنقاش - تواصل مع العيادة مباشرة.
-          الحجز عبر سباير يضمن لك تقييمات حقيقية + خصومات أحياناً 🎁
         </div>
 
         {/* List */}
@@ -335,26 +334,7 @@ function ClinicCard({ clinic }: { clinic: DentalClinic }) {
       {/* Actions */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         {/* Primary CTA: Book via Spir */}
-        <Link
-          href={`/services/booking?service=dental&id=${clinic.id}`}
-          onClick={() => haptic.medium()}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 4,
-            padding: '10px 14px',
-            background: 'var(--emerald)',
-            color: 'var(--paper-3)',
-            borderRadius: 10,
-            textDecoration: 'none',
-            textAlign: 'center',
-            fontSize: 12,
-            fontWeight: 800,
-          }}
-        >
-          <EmojiIcon e="📅" /> احجز موعد عبر سباير
-        </Link>
+        <p className="dir-contact-note">للموعد تواصل مع العيادة مباشرةً على رقمها.</p>
 
         {/* Secondary actions */}
         <div style={{ display: 'flex', gap: 6 }}>

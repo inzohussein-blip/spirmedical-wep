@@ -275,25 +275,7 @@ export default async function DentalDetailPage(
 
         {/* CTAs */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingBottom: 20 }}>
-          <Link
-            href={`/services/booking?service=dental&id=${clinic.id}`}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 6,
-              padding: '14px 18px',
-              background: 'var(--emerald)',
-              color: 'var(--paper-3)',
-              borderRadius: 14,
-              textDecoration: 'none',
-              fontSize: 14,
-              fontWeight: 900,
-              boxShadow: '0 4px 12px rgba(15,107,88,0.3)',
-            }}
-          >
-            <EmojiIcon e="📅" /> احجز موعد عبر سباير
-          </Link>
+          <p className="dir-contact-note">للموعد تواصل مع العيادة مباشرةً على رقمها.</p>
 
           <div style={{ display: 'flex', gap: 8 }}>
             {clinic.phone && (

@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import { existsSync, readFileSync } from 'fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'fs';
 import { join } from 'path';
 
 /**
@@ -53,6 +53,8 @@ const admin = require('@/app/admin/providers/actions');
 
 const writes = (table: string, op: string) => calls.filter((c) => c.table === table && c.op === op);
 const ROOT = process.cwd();
+const walkDir = (d: string): string[] =>
+  readdirSync(d).flatMap((n) => (statSync(join(d, n)).isDirectory() ? walkDir(join(d, n)) : [join(d, n)]));
 const code = (p: string) => readFileSync(join(ROOT, p), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*(--|\/\/).*$/gm, '');
 
 beforeEach(() => { calls.length = 0; });
@@ -178,5 +180,16 @@ describe('🗄️ 0062 وتوصيلُ الإخطار', () => {
     expect(code('src/app/(dashboard)/services/pharmacies/actions.ts')).not.toMatch(/createPharmacyReservation/);
     expect(existsSync(join(ROOT, 'src/app/(provider)/provider/requests'))).toBe(false);
     expect(code('src/components/layout/AppShell.tsx')).not.toMatch(/\/provider\/(requests|samples)/);
+  });
+
+  it('🚨 الأسنانُ والبصرياتُ والصحّةُ النفسيّةُ والتغذيةُ دليلٌ كذلك: لا مسارَ حجزٍ يُدرج طلباً لا يصل أحداً', () => {
+    expect(existsSync(join(ROOT, 'src/app/(dashboard)/services/booking'))).toBe(false);
+    for (const s of ['dental', 'optical', 'mental-health', 'nutrition']) {
+      const dir = join(ROOT, 'src/app/(dashboard)/services', s);
+      const files = [...walkDir(dir)].filter((f) => /\.tsx?$/.test(f));
+      expect(files.length).toBeGreaterThan(0);
+      const bad = files.filter((f) => /\/services\/booking|احجز|الحجز عبر سباير/.test(code(f.slice(ROOT.length + 1))));
+      expect(bad).toEqual([]);
+    }
   });
 });

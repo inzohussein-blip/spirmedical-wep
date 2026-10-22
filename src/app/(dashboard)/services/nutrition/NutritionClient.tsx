@@ -293,26 +293,7 @@ function NutritionistCard({ nutritionist }: { nutritionist: Nutritionist }) {
         />
       </div>
 
-      <Link
-        href={`/services/booking?service=nutrition&id=${nutritionist.id}&package=initial`}
-        onClick={() => haptic.medium()}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 6,
-          padding: '10px 14px',
-          background: 'var(--emerald)',
-          color: 'var(--paper-3)',
-          borderRadius: 10,
-          textDecoration: 'none',
-          fontFamily: 'inherit',
-          fontSize: 12,
-          fontWeight: 800,
-        }}
-      >
-        احجز استشارة
-      </Link>
+      <p className="dir-contact-note">للاستشارة تواصل مع المختصّ مباشرةً.</p>
     </article>
   );
 }

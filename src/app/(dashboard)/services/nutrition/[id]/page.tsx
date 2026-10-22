@@ -7,12 +7,14 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import {
   IconArrowRight as ArrowRight, IconMapPin as MapPin, IconStar as Star, IconCircleCheck as CheckCircle2, IconAward as Award, IconTrendingUp as TrendingUp, IconWorld as Globe, IconUsers as Users,
+  IconPhone as Phone,
 } from '@tabler/icons-react';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import { checkIsFavorite } from '@/components/services/favorites-actions';
 import { formatPrice, count, formatRating, formatNumber } from '@/lib/format/price';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import PhoneLink from '@/components/ui/PhoneLink';
 export const dynamic = 'force-dynamic';
 
 const SPECIALTY_LABELS: Record<string, { label: string; icon: string }> = {
@@ -245,21 +247,13 @@ export default async function NutritionDetailPage(
 
         {/* CTAs - 3 packages */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingBottom: 20 }}>
-          <Link
-            href={`/services/booking?service=nutrition&id=${n.id}&package=monthly`}
-            style={{
-              ...primaryButton,
-              background: 'var(--emerald)',
-            }}
-          >
-            <EmojiIcon e="📅" /> احجز خطة شهرية{formatPrice(n.monthly_plan_price) ? ` - ${formatPrice(n.monthly_plan_price)}` : ''}
-          </Link>
-          <Link
-            href={`/services/booking?service=nutrition&id=${n.id}&package=initial`}
-            style={{...primaryButton, background: 'var(--white)', color: 'var(--emerald)', border: '1px solid var(--emerald)', boxShadow: 'none'}}
-          >
-            <EmojiIcon e="💬" /> استشارة أولى{formatPrice(n.initial_consultation_price) ? ` - ${formatPrice(n.initial_consultation_price)}` : ''}
-          </Link>
+          {/* دليلٌ فقط (قرار المالك، 22 تشرين الأول): لا حجزَ من التطبيق — يتواصل المريضُ مع المختصّ مباشرة */}
+          <p className="dir-contact-note">للاستشارة تواصل مع المختصّ مباشرةً على رقمه.</p>
+          {n.clinic_phone && (
+            <PhoneLink phone={n.clinic_phone} href={`tel:${n.clinic_phone}`} style={primaryButton}>
+              <Phone size={16} aria-hidden="true" /> اتصل
+            </PhoneLink>
+          )}
         </div>
       </div>
     </main>

@@ -463,8 +463,8 @@ export default async function HomePage(
             </div>
             <div className="landing-service">
               <div className="landing-service-icon amber"><EmojiIcon e="🏥" /></div>
-              <h3>حجز مستشفيات</h3>
-              <p>+40 مستشفى شريك، احجز ميعادك من التطبيق دون انتظار.</p>
+              <h3>دليل المستشفيات</h3>
+              <p>+40 مستشفى بأرقامها ومواقعها، تواصل معها مباشرةً.</p>
             </div>
             <div className="landing-service">
               <div className="landing-service-icon amber"><EmojiIcon e="👩‍⚕️" /></div>

@@ -232,25 +232,7 @@ export default async function OpticalDetailPage(
 
         {/* CTAs */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingBottom: 20 }}>
-          <Link
-            href={`/services/booking?service=optical&id=${store.id}`}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 6,
-              padding: '14px 18px',
-              background: 'var(--amber)',
-              color: 'var(--paper-3)',
-              borderRadius: 14,
-              textDecoration: 'none',
-              fontSize: 14,
-              fontWeight: 900,
-              boxShadow: '0 4px 12px rgba(201,121,22,0.3)',
-            }}
-          >
-            <EmojiIcon e="📅" /> احجز زيارة عبر سباير
-          </Link>
+          <p className="dir-contact-note">للزيارة تواصل مع المتجر مباشرةً على رقمه.</p>
 
           {store.phone && (
             <div style={{ display: 'flex', gap: 8 }}>

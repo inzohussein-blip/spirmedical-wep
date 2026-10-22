@@ -371,26 +371,7 @@ function SpecialistCard({ specialist }: { specialist: Specialist }) {
         مدة الجلسة: {specialist.session_duration_minutes} دقيقة
       </div>
 
-      <Link
-        href={`/services/booking?service=mental-health&id=${specialist.id}${specialist.available_online ? '&package=online' : ''}`}
-        onClick={() => haptic.medium()}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 6,
-          padding: '10px 14px',
-          background: 'var(--emerald)',
-          color: 'var(--paper-3)',
-          borderRadius: 10,
-          textDecoration: 'none',
-          fontFamily: 'inherit',
-          fontSize: 12,
-          fontWeight: 800,
-        }}
-      >
-        احجز جلسة
-      </Link>
+      <p className="dir-contact-note">للجلسة تواصل مع المختصّ مباشرةً.</p>
     </article>
   );
 }

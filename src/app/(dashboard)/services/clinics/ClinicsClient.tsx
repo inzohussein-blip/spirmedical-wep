@@ -90,7 +90,7 @@ export default function ClinicsClient({ doctors }: Props) {
         </div>
 
         <p className="scr-page-subtitle">
-          {doctors.length} عيادة · حجز موعد بسيط
+          {doctors.length} عيادة · دليلٌ للتواصل المباشر
         </p>
 
         {/* Info banner */}
@@ -334,7 +334,7 @@ export default function ClinicsClient({ doctors }: Props) {
                       }}
                     >
                       <Calendar size={12} />
-                      حجز موعد
+                      التفاصيل والتواصل
                     </div>
                   </div>
                 </article>

@@ -256,26 +256,7 @@ function StoreCard({ store }: { store: Store }) {
       {/* Actions */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         {/* Primary CTA: Book via Spir */}
-        <Link
-          href={`/services/booking?service=optical&id=${store.id}`}
-          onClick={() => haptic.medium()}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 4,
-            padding: '10px 14px',
-            background: 'var(--amber)',
-            color: 'var(--paper-3)',
-            borderRadius: 10,
-            textDecoration: 'none',
-            textAlign: 'center',
-            fontSize: 12,
-            fontWeight: 800,
-          }}
-        >
-          <EmojiIcon e="📅" /> احجز زيارة عبر سباير
-        </Link>
+        <p className="dir-contact-note">للزيارة تواصل مع المتجر مباشرةً على رقمه.</p>
 
         {/* Secondary actions */}
         <div style={{ display: 'flex', gap: 6 }}>

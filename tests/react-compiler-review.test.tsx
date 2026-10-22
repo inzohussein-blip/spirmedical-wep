@@ -60,7 +60,6 @@ describe('② حدودُ حقول التاريخ بيوم بغداد', () => {
   it.each([
     'src/components/appointments/BloodDrawFlow.tsx',
     'src/components/appointments/NursingFlow.tsx',
-    'src/app/(dashboard)/services/booking/BookingClient.tsx',
     'src/app/(dashboard)/account/family/FamilyClient.tsx',
   ])('🚨 %s: لا تاريخَ UTC في حقول التاريخ', (f) => {
     const src = read(f);
