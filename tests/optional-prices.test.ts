@@ -108,17 +108,6 @@ describe('💰 لا قيم افتراضية للأسعار في قاعدة ال�
 });
 
 describe('💰 لا أسعار مثبَّتة في مسار الحجز', () => {
-  it('🚨 حجز الطبيب لا يخترع سعراً', () => {
-    const code = readFileSync(
-      join(process.cwd(), 'src/app/(dashboard)/services/doctors/[id]/actions.ts'),
-      'utf8'
-    ).replace(/\/\/[^\n]*/g, ' ');
-
-    // كانت زيارة العيادة 25000 والمتابعة 10000 مثبَّتتين
-    expect(/price\s*=\s*\d{4,}/.test(code)).toBe(false);
-    expect(code).toContain('let price: number | null');
-  });
-
   it('نماذج الإدارة لا تملأ سعراً مسبقاً', () => {
     const FORMS = [
       'src/app/admin/optical/OpticalAdminClient.tsx',

@@ -3,8 +3,8 @@
 import { revalidatePath } from 'next/cache';
 import { createAdminClient, createClient } from '@/lib/supabase/server';
 import { isProviderType } from '@/lib/providers';
-import { listingKindFor, sanitizeProposedListing, type ListingKind } from '@/lib/provider-listings';
-import { getListing } from '@/lib/provider-listings-server';
+import { LISTING_SOURCE, listingKindFor, sanitizeListingUpdate, sanitizeProposedListing, type ListingKind } from '@/lib/provider-listings';
+import { getListing, listingTable } from '@/lib/provider-listings-server';
 
 /**
  * 🏥 ربطُ حساب الخدمة بمنشأته (0062): طلبٌ تعتمده الإدارة — بمنشأةٍ موجودة بلا مالك، أو بمنشأةٍ جديدة.
@@ -65,4 +65,23 @@ export async function withdrawClaim(): Promise<Result> {
   if (!data?.length) return { ok: false, message: 'لا طلبَ قائماً' };
   revalidatePath('/provider/listing');
   return { ok: true, message: 'سُحب الطلب' };
+}
+
+/**
+ * تعديلُ بيانات المنشأة (الهاتف، العنوان، الساعات، النبذة) — لمالكها وحده: بعميل الخدمة مقيّداً بعمود الملكيّة
+ * ويُعدّ الصفّ. الحقولُ من `sanitizeListingUpdate` وحده؛ والاسمُ والتوثيقُ والملكيّةُ للإدارة.
+ */
+export async function updateMyListing(raw: Record<string, unknown>): Promise<Result> {
+  const ctx = await requireListingProvider();
+  if ('error' in ctx) return { ok: false, message: ctx.error };
+  const clean = sanitizeListingUpdate(ctx.kind, raw);
+  if (!clean.ok) return { ok: false, message: clean.error };
+  const { data, error } = await listingTable(ctx.kind)
+    .update({ ...clean.patch, updated_at: new Date().toISOString() })
+    .eq(LISTING_SOURCE[ctx.kind].owner, ctx.userId)
+    .select('id');
+  if (error) return { ok: false, message: error.message };
+  if (!data?.length) return { ok: false, message: 'لا منشأةَ مرتبطة بحسابك' };
+  revalidatePath('/provider/listing');
+  return { ok: true, message: 'حُفظ — يراه المرضى في الدليل' };
 }

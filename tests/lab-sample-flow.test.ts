@@ -1,14 +1,15 @@
 /**
  * @jest-environment node
  */
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 
 /**
- * 🧪 الدفعة 2 — «المريض ← مختبر ← سحّاب» (قرار المالك، 18 تشرين الأول).
+ * 🧪 سحبُ الدم — «المختصُّ يتلقّى الطلبَ من المريض، ويختار المريضُ المكانَ الذي تُرسَل إليه العيّنة» (قرار المالك،
+ * 22 تشرين الأول). والمختبرُ يفتح خدمتَه ولا يتلقّى شيئاً.
  *
- * كان المحلّلُ يسحب ويُدخل النتائج بنفسه، وأزرارُ «أُرسل للمختبر/قيد التحليل» تكتب أيَّ حالةٍ بلا تحقّق ولا عدّ.
- * الآن: المحلّلُ «تمّ السحب» ← «سلّمتُ العيّنة» لمختبرٍ معتمَد، والمختبرُ يستلم ويرفع النتائج من نافذة الخدمة.
+ * كانت أزرارُ «أُرسل للمختبر/قيد التحليل» تكتب أيَّ حالةٍ بلا تحقّق ولا عدّ. الآن: المختصّ «تمّ السحب» ← «سلّمتُ العيّنة»
+ * لمختبرٍ معتمَد (اختيارُ المريض يغلب) ← يُدخل النتائجَ بنفسه، فيكتمل موعدُه ويُخطَر المريض.
  */
 
 // ── قاعدةٌ مزيّفة: كلُّ استعلامٍ يُسجَّل، والنتيجةُ من `respond` ──
@@ -62,7 +63,6 @@ jest.mock('@/lib/labs/lab-network', () => ({
 
 const { sanitizeLabResults } = require('@/lib/labs/lab-results');
 const specialist = require('@/app/(specialist)/specialist/orders/[id]/actions');
-const lab = require('@/app/(provider)/provider/samples/actions');
 
 const row = (o: Record<string, unknown> = {}) => ({ test_id: 'cbc', test_name: 'صورة دم', result_value: '13.2', status: 'normal', ...o });
 const writes = (table: string, op: string) => calls.filter((c) => c.table === table && c.op === op);
@@ -106,15 +106,20 @@ describe('🩸 المحلّل: يسحب ويسلّم — لا يختار مخت�
     expect(writes('lab_orders', 'update')).toHaveLength(0);
   });
 
-  it('🚨 اختيارُ المريض يغلب ما يرسله المحلّل، والاسمُ من القاعدة، والانتقالُ من حالةٍ متوقَّعة', async () => {
+  it('🚨 اختيارُ المريض يغلب ما يرسله المختصّ، والاسمُ من القاعدة، والانتقالُ من حالةٍ متوقَّعة', async () => {
     analyst({ id: 'lo-1', status: 'sample_collected', lab_specialist_id: 'lab-1' });
     expect(await specialist.deliverSampleToLab('ap-1', 'another-lab')).toEqual({ ok: true });
     const [u] = writes('lab_orders', 'update');
     expect(u.payload).toMatchObject({ status: 'sent_to_lab', lab_specialist_id: 'lab-1', lab_name_snapshot: 'مختبر النور' });
     expect(u.filters).toContainEqual(['in', 'status', ['pending', 'sample_collected']]);
-    expect(writes('appointments', 'update')[0].payload).toMatchObject({ status: 'completed' });
-    const inbox = writes('notifications', 'insert')[0].payload as { user_id: string }[];
-    expect(inbox.map((m) => m.user_id).sort()).toEqual(['lab-1', 'pt-1']);
+  });
+
+  it('🚨 المختبرُ لا يتلقّى شيئاً، والموعدُ لا يكتمل بالتسليم — المختصُّ ما زال سيُدخل النتائج', async () => {
+    analyst({ id: 'lo-1', status: 'sample_collected', lab_specialist_id: 'lab-1' });
+    await specialist.deliverSampleToLab('ap-1');
+    expect(writes('appointments', 'update')).toHaveLength(0);
+    const inbox = writes('notifications', 'insert').flatMap((c) => c.payload as { user_id: string }[]);
+    expect(inbox.map((m) => m.user_id)).toEqual(['pt-1']);
   });
 
   it('🚨 صفرُ صفوفٍ محدَّثة ← فشلٌ صريح لا «تمّ»', async () => {
@@ -130,75 +135,33 @@ describe('🩸 المحلّل: يسحب ويسلّم — لا يختار مخت�
   });
 });
 
-describe('🏥 المختبر: يستلم ويرفع — عيّناتُه وحدها', () => {
-  const asLab = (opts: { approved?: boolean; order?: Record<string, unknown> | null; inserted?: number } = {}) => {
+describe('🩸 المختصُّ يُدخل النتائج — والمريضُ من الطلب لا من المدخل', () => {
+  it('🚨 النتائج تُكتب للمريض صاحب الطلب، ثمّ «جاهزة» ويكتمل الموعد ويُخطَر المريض', async () => {
+    authUser = { id: 'an-1' };
     respond = (c) => {
-      if (c.table === 'users') {
-        return { data: { role: 'provider', provider_type: 'lab', approval_status: opts.approved === false ? 'pending' : 'approved', is_suspended: false }, error: null };
+      if (c.table === 'users') return { data: { specialist_type: 'lab_analyst', role: 'specialist' }, error: null };
+      if (c.table === 'appointments' && c.op === 'select') {
+        return { data: { id: 'ap-1', user_id: 'pt-1', lab_order_id: 'lo-1', assigned_specialist_id: 'an-1', specialist_id: null }, error: null };
       }
-      if (c.table === 'lab_orders' && c.op === 'select') {
-        return { data: opts.order === undefined ? { id: 'lo-1', user_id: 'pt-1', status: 'processing', lab_specialist_id: 'lab-1', appointment_id: 'ap-1', lab_name_snapshot: 'مختبر النور' } : opts.order, error: null };
-      }
-      if (c.table === 'lab_results' && c.op === 'insert') {
-        return { data: Array.from({ length: opts.inserted ?? (c.payload as unknown[]).length }, (_, i) => ({ id: `r${i}` })), error: null };
-      }
-      if (c.table === 'lab_orders' && c.op === 'update') return { data: [{ id: 'lo-1' }], error: null };
       return { data: null, error: null };
     };
-  };
-
-  it('🚨 عيّنةُ مختبرٍ آخر «غير موجودة» — ولا كتابة', async () => {
-    asLab({ order: { id: 'lo-1', user_id: 'pt-1', status: 'processing', lab_specialist_id: 'lab-2' } });
-    expect(await lab.saveResultsAsLab('lo-1', [row()])).toEqual({ ok: false, error: 'الطلب غير موجود' });
-    expect(await lab.receiveSample('lo-1')).toEqual({ ok: false, error: 'الطلب غير موجود' });
-    expect(calls.filter((c) => c.op !== 'select')).toHaveLength(0);
-  });
-
-  it('🚨 مختبرٌ لم يُعتمَد لا يرفع شيئاً', async () => {
-    asLab({ approved: false });
-    expect(await lab.saveResultsAsLab('lo-1', [row()])).toEqual({ ok: false, error: 'حسابُك بانتظار الاعتماد' });
-  });
-
-  it('🚨 المريضُ من الطلب لا من المدخل، وكاتبُها المختبر، ثمّ «جاهزة» ويُخطَر المريض', async () => {
-    asLab();
-    expect(await lab.saveResultsAsLab('lo-1', [row({ user_id: 'attacker' })])).toEqual({ ok: true });
-    const [ins] = writes('lab_results', 'insert');
-    expect(ins.client).toBe('service');
-    expect(ins.payload).toEqual([expect.objectContaining({ user_id: 'pt-1', entered_by: 'lab-1', lab_order_id: 'lo-1' })]);
+    expect(await specialist.saveLabResults('ap-1', [row({ user_id: 'attacker' })])).toEqual({ ok: true });
+    expect(writes('lab_results', 'insert')[0].payload).toEqual([expect.objectContaining({ user_id: 'pt-1', entered_by: 'an-1', lab_order_id: 'lo-1' })]);
     expect(writes('lab_orders', 'update')[0].payload).toMatchObject({ status: 'results_ready' });
-    expect(writes('notifications', 'insert')[0].payload).toEqual([expect.objectContaining({ user_id: 'pt-1', link: '/account/lab-history/lo-1' })]);
-  });
-
-  it('🚨 صفوفٌ أقلّ ممّا أُرسل ← فشلٌ صريح ولا «جاهزة»', async () => {
-    asLab({ inserted: 0 });
-    expect(await lab.saveResultsAsLab('lo-1', [row()])).toMatchObject({ ok: false });
-    expect(writes('lab_orders', 'update')).toHaveLength(0);
-  });
-
-  it('الاستلامُ من «في الطريق» وحده ومقيّدٌ بالمختبر', async () => {
-    asLab({ order: { id: 'lo-1', user_id: 'pt-1', status: 'sent_to_lab', lab_specialist_id: 'lab-1' } });
-    expect(await lab.receiveSample('lo-1')).toEqual({ ok: true });
-    const [u] = writes('lab_orders', 'update');
-    expect(u.filters).toEqual(expect.arrayContaining([['eq', 'status', 'sent_to_lab'], ['eq', 'lab_specialist_id', 'lab-1']]));
+    expect(writes('appointments', 'update')[0].payload).toMatchObject({ status: 'completed' });
+    expect(writes('notifications', 'insert')[0].payload).toEqual([expect.objectContaining({ user_id: 'pt-1' })]);
   });
 });
 
 describe('🖥️ الواجهة', () => {
   const code = (p: string) => readFileSync(join(process.cwd(), p), 'utf8');
 
-  it('المحلّلُ يرى التسليم، وإدخالُ النتائج بديلٌ حين لا مختبرَ مسجَّلاً فقط', () => {
+  it('🚨 المختصُّ يُدخل النتائج بعد التسليم (أو مباشرةً بلا شبكة)، ولا نافذةَ عيّناتٍ للمختبر', () => {
     const page = code('src/app/(specialist)/specialist/orders/[id]/page.tsx');
-    expect(page).toMatch(/<SampleDelivery[\s\S]*fallbackEditor=\{\s*<LabResultsEditor\s+save=\{saveLabResults\.bind\(null, order\.id\)\}/);
+    expect(page).toMatch(/<SampleDelivery[\s\S]*resultsEditor=\{\s*<LabResultsEditor\s+save=\{saveLabResults\.bind\(null, order\.id\)\}/);
     const card = code('src/app/(specialist)/specialist/orders/[id]/role-forms/SampleDelivery.tsx');
-    expect(card).toMatch(/const noNetwork = !chosenLab && labs\.length === 0;/);
-    expect(card).toMatch(/\{noNetwork && \(/);
+    expect(card).toMatch(/\{\(delivered \|\| noNetwork\) && resultsEditor\}/);
     expect(code('src/app/(specialist)/specialist/orders/[id]/actions.ts')).not.toMatch(/updateLabOrderStatus/);
-  });
-
-  it('صفحةُ العيّنة لا تكشف اسمَ المريض ولا هاتفَه ولا عنوانَه', () => {
-    const page = code('src/app/(provider)/provider/samples/[id]/page.tsx');
-    const select = page.match(/\.from\('lab_orders'\)\s*\.select\('([^']+)'\)/)?.[1] ?? '';
-    expect(select).not.toMatch(/user_id|name|phone|address/);
-    expect(page).not.toMatch(/from\('users'\)\.select\('[^']*(full_name|phone)/);
+    expect(existsSync(join(process.cwd(), 'src/app/(provider)/provider/samples'))).toBe(false);
   });
 });

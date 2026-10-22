@@ -137,7 +137,7 @@ export default async function SpecialistOrderDetailPage(
             chosenLab={chosenLab}
             labs={deliveryLabs}
             testNames={testNames}
-            fallbackEditor={
+            resultsEditor={
               <LabResultsEditor
                 save={saveLabResults.bind(null, order.id)}
                 expectedTests={testIds}

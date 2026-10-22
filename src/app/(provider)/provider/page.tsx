@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { createAdminClient, createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { isAdminRole } from '@/lib/admin-types';
 import { Icon } from '@/components/admin-ui';
 import { PROVIDER_META, isProviderType } from '@/lib/providers';
@@ -11,8 +11,9 @@ export const metadata = { title: 'نافذة الخدمة · سباير ميدي
 export const dynamic = 'force-dynamic';
 
 /**
- * 🏥 رئيسيّةُ حساب الخدمة (0060): الملفّ وتحاليلُ المختبر وعيّناتُه (الدفعة 2). الصيدليةُ والعيادة والمستشفى
- * ملفٌّ فقط حتى الدفعة الثالثة — والصفحةُ تقول ذلك ولا تَعِد بما لم يُبنَ.
+ * 🏥 رئيسيّةُ حساب الخدمة (0060). **الخدمةُ تفتح خدمتَها ولا تتلقّى شيئاً من المريض** (قرار المالك، 22 تشرين الأول):
+ * المختبرُ يحدّد تحاليلَه فيختاره المريضُ عند طلب سحب الدم، ويصله المختصُّ بالعيّنة ويُدخل النتائج بنفسه؛ والصيدليةُ
+ * والعيادةُ والمستشفى في الدليل يراها المريضُ ويتواصل معها مباشرة.
  */
 export default async function ProviderHome() {
   const supabase = await createClient();
@@ -31,27 +32,14 @@ export default async function ProviderHome() {
   const isLab = type === 'lab';
   const listingKind = listingKindFor(type);
 
-  // عيّناتُ المختبر، أو منشأةُ الصيدلية/العيادة/المستشفى وطلبُ ربطها — بعميل الخدمة مقيّدةً بالحساب
-  const [{ count: tests }, { count: waiting }, owned, claim] = await Promise.all([
+  // تحاليلُ المختبر، أو منشأةُ الصيدلية/العيادة/المستشفى وطلبُ ربطها
+  const [{ count: tests }, owned, claim] = await Promise.all([
     isLab
       ? supabase.from('specialist_lab_tests').select('test_id', { count: 'exact', head: true }).eq('specialist_id', user.id)
-      : Promise.resolve({ count: null }),
-    isLab
-      ? createAdminClient().from('lab_orders').select('id', { count: 'exact', head: true })
-          .eq('lab_specialist_id', user.id).in('status', ['sent_to_lab', 'processing'])
       : Promise.resolve({ count: null }),
     listingKind ? getOwnedListings(user.id, listingKind) : Promise.resolve([]),
     listingKind ? getLatestClaim(user.id) : Promise.resolve(null),
   ]);
-  // الطلباتُ المفتوحة لمنشآت الحساب
-  const ownedIds = owned.map((l) => l.id);
-  const { count: openRequests } = ownedIds.length === 0
-    ? { count: 0 }
-    : listingKind === 'pharmacy'
-      ? await createAdminClient().from('pharmacy_reservations').select('id', { count: 'exact', head: true })
-          .in('pharmacy_id', ownedIds).in('status', ['pending', 'confirmed', 'partially_available', 'ready_for_pickup'])
-      : await createAdminClient().from('appointments').select('id', { count: 'exact', head: true })
-          .in(listingKind === 'doctor' ? 'doctor_id' : 'hospital_id', ownedIds).in('status', ['pending', 'confirmed']);
 
   const steps = [
     { done: !!profile?.clinic_name?.trim(), title: `اكتب ${meta?.nameLabel ?? 'اسم المنشأة'}`, desc: 'يراه المريض عند الاختيار.', href: '/provider/account' },
@@ -63,7 +51,7 @@ export default async function ProviderHome() {
       ? [{
           done: owned.length > 0,
           title: claim?.status === 'pending' ? 'ربطُ منشأتك قيد المراجعة' : 'اربط حسابَك بمنشأتك',
-          desc: 'ابحث عنها في الدليل أو أضِفها — فتصلك حجوزاتُها بعد اعتماد الإدارة.',
+          desc: 'ابحث عنها في الدليل أو أضِفها، ثمّ حدِّث بياناتِها بعد اعتماد الإدارة.',
           href: '/provider/listing',
         }]
       : []),
@@ -102,19 +90,13 @@ export default async function ProviderHome() {
         {isLab && (
           <section className="pv-card" aria-label="المختبر">
             <h2 className="pv-card-title">مختبرُك</h2>
-            <div className="pv-stats">
-              <Link href="/provider/lab-tests" className="pv-stat">
-                <span className="pv-stat-value">{tests ?? 0}</span>
-                <span className="pv-stat-label">تحليلاً تُجريه</span>
-              </Link>
-              <Link href="/provider/samples" className="pv-stat">
-                <span className="pv-stat-value">{waiting ?? 0}</span>
-                <span className="pv-stat-label">عيّنةً بانتظار النتائج</span>
-              </Link>
-            </div>
+            <Link href="/provider/lab-tests" className="pv-stat">
+              <span className="pv-stat-value">{tests ?? 0}</span>
+              <span className="pv-stat-label">تحليلاً تُجريه</span>
+            </Link>
             <p className="pv-note">
-              المسار: يختار المريضُ تحاليلَه ومختبرَك ← يسحب المحلّلُ العيّنةَ ويسلّمها لك ← تؤكّد الاستلام وترفع النتائج
-              من «العيّنات»، فتصل المريضَ في التطبيق.
+              يظهر مختبرُك للمريض حين يختار تحاليلَ تُجريها. ثمّ يسحب المختصُّ العيّنةَ ويوصلها إليك، ويُدخل النتائجَ للمريض
+              في التطبيق — لا يصلك من المريض طلبٌ مباشر.
             </p>
           </section>
         )}
@@ -122,18 +104,12 @@ export default async function ProviderHome() {
         {meta && listingKind && (
           <section className="pv-card" aria-label="منشأتك">
             <h2 className="pv-card-title">{owned[0]?.name ?? meta.label}</h2>
-            <div className="pv-stats">
-              <Link href="/provider/requests" className="pv-stat">
-                <span className="pv-stat-value">{openRequests ?? 0}</span>
-                <span className="pv-stat-label">طلباً مفتوحاً</span>
-              </Link>
-              <Link href="/provider/listing" className="pv-stat">
-                <span className="pv-stat-value">{owned.length > 0 ? 'مرتبطة' : claim?.status === 'pending' ? 'قيد المراجعة' : 'غير مرتبطة'}</span>
-                <span className="pv-stat-label">منشأتك في الدليل</span>
-              </Link>
-            </div>
+            <Link href="/provider/listing" className="pv-stat">
+              <span className="pv-stat-value">{owned.length > 0 ? 'مرتبطة' : claim?.status === 'pending' ? 'قيد المراجعة' : 'غير مرتبطة'}</span>
+              <span className="pv-stat-label">منشأتك في الدليل</span>
+            </Link>
             <p className="pv-note">
-              {meta.description}: يحجز المريضُ من الدليل فيصلك الطلبُ هنا، فتؤكّده أو تعتذر بسببٍ يراه.
+              يراها المريضُ في الدليل ويتواصل معها مباشرة — لا يصلك منه طلبٌ في التطبيق. حدِّث هاتفَها وعنوانَها وساعاتِها من «منشأتي».
             </p>
           </section>
         )}

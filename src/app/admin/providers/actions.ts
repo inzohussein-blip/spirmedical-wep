@@ -131,7 +131,7 @@ export async function approveListingClaim(claimId: string): Promise<ProviderActi
   }
 
   await logAdminAction({ action_type: 'approve_listing_claim', target_type: 'user', target_id: c.provider_id, details: { listing_kind: c.listing_kind, listing_id: listingId, created } });
-  await notifyOwner(c.provider_id, 'رُبطت منشأتُك', 'صارت حجوزاتُ منشأتك تصلك في «الطلبات».');
+  await notifyOwner(c.provider_id, 'رُبطت منشأتُك', 'صارت منشأتُك باسمك في الدليل — حدِّث بياناتِ التواصل من «منشأتي».');
   revalidatePath('/admin/providers');
   return { ok: true, message: created ? 'أُنشئت المنشأةُ ورُبطت' : 'رُبطت' };
 }

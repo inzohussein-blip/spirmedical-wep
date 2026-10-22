@@ -221,9 +221,9 @@ export async function updateOrderRoleData(
 // ═══════════════════════════════════════════════════════════════════════════
 // 🩸 سحبُ الدم: المحلّلُ يسحب ويسلّم المختبر، والمختبرُ يرفع النتائج (الدفعة 2)
 // ═══════════════════════════════════════════════════════════════════════════
-// المحلّلُ لا يُحلّل: يعلّم «تمّ السحب» ثمّ «سلّمتُ العيّنة» لمختبرٍ معتمَد يُجري التحاليل، فيكتمل
-// موعدُه، ويرفع المختبرُ النتائجَ من نافذة الخدمة. وحين لا مختبرَ مسجَّلاً بعد يبقى له إدخالُها (`saveLabResults`)
-// — كي لا يتوقّف سحبُ الدم لأنّ الشبكة فارغة.
+// قرار المالك (22 تشرين الأول): **المختصُّ يتلقّى الطلبَ من المريض**، والمختبرُ يفتح خدمتَه ولا يتلقّى شيئاً. فالمختصّ:
+// «تمّ السحب» ← «سلّمتُ العيّنة» إلى المختبر الذي اختاره المريض (أو يختاره هو إن قال «لا يهم») ← يُدخل النتائجَ بنفسه
+// (`saveLabResults`) فيكتمل موعدُه ويُخطَر المريض. وحين لا مختبرَ مسجَّلاً يُدخلها مباشرةً بلا تسليم.
 
 type AnalystOrder = { appointmentId: string; labOrderId: string; patientId: string; userId: string };
 
@@ -270,9 +270,9 @@ export async function markSampleCollected(appointmentId: string): Promise<{ ok: 
 }
 
 /**
- * «سلّمتُ العيّنة»: إلى المختبر الذي اختاره المريض، أو — إن قال «لا يهم» — إلى مختبرٍ يختاره المحلّل.
+ * «سلّمتُ العيّنة»: إلى المختبر الذي اختاره المريض، أو — إن قال «لا يهم» — إلى مختبرٍ يختاره المختصّ.
  * المختبرُ يُتحقَّق منه على الخادم (`resolveChosenLab`: خدمةٌ مختبر معتمَدة لها تحاليل)، واسمُه من القاعدة.
- * ثمّ يكتمل الموعد، ويُخطَر المختبرُ والمريض في صندوقيهما.
+ * لا يُخطَر المختبر (لا يتلقّى شيئاً في التطبيق)، ويُخطَر المريضُ أين عيّنتُه. والموعدُ يكتمل بإدخال النتائج.
  */
 export async function deliverSampleToLab(
   appointmentId: string,
@@ -309,18 +309,8 @@ export async function deliverSampleToLab(
   if (error) return { ok: false, error: error.message };
   if (!data?.length) return { ok: false, error: 'حالةُ الطلب تغيّرت — حدّث الصفحة' };
 
-  // انتهت زيارةُ المحلّل؛ فشلُ هذا لا يُرجع التسليم، لكنّه يُسجَّل
-  const { error: apptError } = await supabase
-    .from('appointments')
-    .update({ status: 'completed', completed_at: now })
-    .eq('id', appointmentId);
-  if (apptError) {
-    logger.error('Sample delivered but appointment completion failed', { appointment_id: appointmentId, error: apptError.message });
-  }
-
   await notifyInbox([
-    { user_id: lab.id, title: 'عيّنةٌ جديدة في الطريق إليك', body: 'سلّمها المحلّل — أكّد الاستلام ثمّ أدخل النتائج.', type: 'lab_sample', link: `/provider/samples/${ctx.labOrderId}` },
-    { user_id: ctx.patientId, title: 'وصلت عيّنتُك إلى المختبر', body: `${lab.name} يُجري تحاليلك الآن، وتصلك النتائج في التطبيق.`, type: 'lab_sample', link: `/account/lab-history/${ctx.labOrderId}` },
+    { user_id: ctx.patientId, title: 'وصلت عيّنتُك إلى المختبر', body: `${lab.name} يُجري تحاليلك، وتصلك النتائج في التطبيق.`, type: 'lab_sample', link: `/account/lab-history/${ctx.labOrderId}` },
   ]);
 
   revalidatePath(`/specialist/orders/${appointmentId}`);
@@ -328,7 +318,7 @@ export async function deliverSampleToLab(
   return { ok: true };
 }
 
-/** إدخالُ المحلّل للنتائج — حين لا مختبرَ مسجَّلاً في التطبيق بعد */
+/** المختصُّ يُدخل النتائج — بعد تسليم العيّنة للمختبر، أو مباشرةً حين لا مختبرَ مسجَّلاً */
 export async function saveLabResults(
   appointmentId: string,
   input: LabResultInput[],
@@ -366,6 +356,9 @@ export async function saveLabResults(
   }
 
   notifyTestResultsReady(ctx.patientId, { orderId: appointmentId }).catch(() => null);
+  await notifyInbox([
+    { user_id: ctx.patientId, title: 'نتائجُ تحاليلك جاهزة', body: 'أدخلها المختصّ — اضغط للعرض.', type: 'lab_results', link: `/account/lab-history/${ctx.labOrderId}` },
+  ]);
   revalidatePath(`/specialist/orders/${appointmentId}`);
   revalidatePath('/account/lab-history');
   return { ok: true };

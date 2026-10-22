@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import {
   IconHome, IconHome2, IconLayoutGrid, IconClipboardList,
   IconMessageCircle, IconUser, IconHeart, IconMessages,
-  IconMenu2, IconX, IconLogin, IconTestPipe, IconBuildingHospital,
+  IconMenu2, IconX, IconLogin, IconBuildingHospital,
 } from '@tabler/icons-react';
 import type { Icon as TablerIcon } from '@tabler/icons-react';
 
@@ -79,14 +79,12 @@ export function AppShell({
     : userRole === 'provider' && providerType && providerType !== 'lab'
     ? [
         { id: 'home', href: '/provider', label: 'الرئيسية', icon: IconHome, ariaLabel: 'الصفحة الرئيسية' },
-        { id: 'requests', href: '/provider/requests', label: 'الطلبات', icon: IconClipboardList, ariaLabel: 'طلبات المنشأة' },
         { id: 'listing', href: '/provider/listing', label: 'منشأتي', icon: IconBuildingHospital, ariaLabel: 'منشأتي في الدليل' },
         { id: 'account', href: '/provider/account', label: 'حسابي', icon: IconUser, ariaLabel: 'حسابي' },
       ]
     : userRole === 'provider'
     ? [
         { id: 'home', href: '/provider', label: 'الرئيسية', icon: IconHome, ariaLabel: 'الصفحة الرئيسية' },
-        { id: 'samples', href: '/provider/samples', label: 'العيّنات', icon: IconTestPipe, ariaLabel: 'العيّنات الواردة' },
         { id: 'tests', href: '/provider/lab-tests', label: 'التحاليل', icon: IconClipboardList, ariaLabel: 'تحاليل المختبر' },
         { id: 'account', href: '/provider/account', label: 'حسابي', icon: IconUser, ariaLabel: 'حسابي' },
       ]

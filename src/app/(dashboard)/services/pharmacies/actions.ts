@@ -2,7 +2,6 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { notifyListingOwner } from '@/lib/provider-listings-server';
 import type { Json } from '@/types/database';
 
 /**
@@ -18,84 +17,6 @@ import type { Json } from '@/types/database';
  */
 
 // ─── Types ───
-export interface ReservationItem {
-  medication_id?: string;
-  name: string;
-  quantity: number;
-  notes?: string;
-}
-
-export interface CreateReservationInput {
-  pharmacy_id: string;
-  items: ReservationItem[];
-  prescription_id?: string;
-  family_member_id?: string;
-  prescription_image_url?: string;
-  customer_notes?: string;
-  expected_pickup_at?: string;
-}
-
-// ─── 1. حجز دواء ───
-export async function createPharmacyReservation(input: CreateReservationInput) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { ok: false, error: 'يجب تسجيل الدخول' };
-
-  if (!input.items || input.items.length === 0) {
-    return { ok: false, error: 'يجب اختيار دواء واحد على الأقل' };
-  }
-
-  // التحقق من وجود الصيدلية
-  const { data: pharmacy } = await supabase
-    .from('pharmacies')
-    .select('id, name')
-    .eq('id', input.pharmacy_id)
-    .eq('is_active', true)
-    .single();
-
-  if (!pharmacy) {
-    return { ok: false, error: 'الصيدلية غير موجودة أو غير نشطة' };
-  }
-
-  
-  // expires_at = 24 ساعة من الآن
-  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-
-  const { data: reservation, error } = await supabase
-    .from('pharmacy_reservations')
-    .insert({
-      user_id: user.id,
-      pharmacy_id: input.pharmacy_id,
-      prescription_id: input.prescription_id || null,
-      family_member_id: input.family_member_id || null,
-      // JSONB — ReservationItem[] صالحة كـ JSON وقت التشغيل (cast حدّي)
-      items: input.items as unknown as Json,
-      prescription_image_url: input.prescription_image_url || null,
-      customer_notes: input.customer_notes || null,
-      expected_pickup_at: input.expected_pickup_at || null,
-      expires_at: expiresAt,
-      status: 'pending',
-    })
-    .select()
-    .single();
-
-  if (error || !reservation) {
-    return { ok: false, error: error?.message || 'فشل الحجز' };
-  }
-
-  // الصيدليةُ المرتبطة بحساب خدمة تعلم بالحجز في صندوقها (الدفعة 3)
-  await notifyListingOwner('pharmacy', input.pharmacy_id, {
-    title: 'حجزُ دواءٍ جديد',
-    body: `${input.items.length} صنفاً بانتظار تأكيد التوفّر.`,
-  });
-
-  revalidatePath('/account/pharmacy-reservations');
-  revalidatePath(`/services/pharmacies/${input.pharmacy_id}`);
-
-  return { ok: true, reservation_id: reservation.id };
-}
-
-// ─── 2. إلغاء حجز ───
 export async function cancelPharmacyReservation(reservationId: string, reason?: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
