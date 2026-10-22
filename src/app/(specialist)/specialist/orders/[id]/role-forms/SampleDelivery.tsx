@@ -15,26 +15,28 @@ export interface DeliveryLab {
 
 interface Props {
   appointmentId: string;
-  /** حالةُ طلب التحاليل: pending | sample_collected */
+  /** حالةُ طلب التحاليل: pending | sample_collected | sent_to_lab */
   status: string;
   /** المختبرُ الذي اختاره المريض (null = «لا يهم») */
   chosenLab: { id: string; name: string } | null;
   /** المختبراتُ المعتمَدة التي تُجري شيئاً من التحاليل، مرتّبةً (للاختيار حين قال المريض «لا يهم») */
   labs: DeliveryLab[];
   testNames: string[];
-  /** إدخالُ النتائج بنفسه — يُعرض حين لا مختبرَ مسجَّلاً في التطبيق */
-  fallbackEditor: ReactNode;
+  /** محرّرُ النتائج — يُدخلها المختصّ بعد التسليم، أو مباشرةً حين لا مختبرَ مسجَّلاً */
+  resultsEditor: ReactNode;
 }
 
 /**
- * 🩸 المحلّلُ يسحب ويسلّم (الدفعة 2): «تمّ السحب» ← «سلّمتُ العيّنة للمختبر». والنتائجُ يرفعها المختبر.
+ * 🩸 المختصُّ يتلقّى طلبَ السحب من المريض ويُتمّه (قرار المالك، 22 تشرين الأول): «تمّ السحب» ← «سلّمتُ العيّنة» للمختبر
+ * الذي اختاره المريض ← يُدخل النتائجَ بنفسه. المختبرُ يفتح خدمتَه ولا يتلقّى شيئاً في التطبيق.
  */
-export default function SampleDelivery({ appointmentId, status, chosenLab, labs, testNames, fallbackEditor }: Props) {
+export default function SampleDelivery({ appointmentId, status, chosenLab, labs, testNames, resultsEditor }: Props) {
   const router = useRouter();
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [picked, setPicked] = useState<string | null>(chosenLab ? null : labs[0]?.id ?? null);
-  const collected = status === 'sample_collected';
+  const delivered = status === 'sent_to_lab' || status === 'processing' || status === 'results_ready';
+  const collected = status === 'sample_collected' || delivered;
   const noNetwork = !chosenLab && labs.length === 0;
 
   const run = (fn: () => Promise<{ ok: boolean; error?: string }>) =>
@@ -70,8 +72,8 @@ export default function SampleDelivery({ appointmentId, status, chosenLab, labs,
           </div>
         </li>
 
-        <li className={collected ? 'sd-step sd-now' : 'sd-step'}>
-          <span className="sd-num" aria-hidden="true">2</span>
+        <li className={delivered ? 'sd-step sd-done' : collected ? 'sd-step sd-now' : 'sd-step'}>
+          <span className="sd-num" aria-hidden="true">{delivered ? '✓' : '2'}</span>
           <div className="sd-body">
             <div className="sd-step-title">سلّمها للمختبر</div>
             {chosenLab ? (
@@ -93,7 +95,7 @@ export default function SampleDelivery({ appointmentId, status, chosenLab, labs,
                 ))}
               </fieldset>
             ) : null}
-            {collected && !noNetwork && (
+            {collected && !delivered && !noNetwork && (
               <button
                 type="button"
                 className="sd-btn sd-btn-primary"
@@ -105,6 +107,16 @@ export default function SampleDelivery({ appointmentId, status, chosenLab, labs,
             )}
           </div>
         </li>
+
+        <li className={delivered ? 'sd-step sd-now' : 'sd-step'}>
+          <span className="sd-num" aria-hidden="true">3</span>
+          <div className="sd-body">
+            <div className="sd-step-title">أدخِل النتائج</div>
+            {!delivered && !noNetwork && (
+              <p className="sd-note">بعد أن يُنهي المختبرُ التحاليل، أدخِل نتائجَها هنا فتصل المريض.</p>
+            )}
+          </div>
+        </li>
       </ol>
 
       {error && (
@@ -113,14 +125,12 @@ export default function SampleDelivery({ appointmentId, status, chosenLab, labs,
         </p>
       )}
 
-      {noNetwork && (
-        <>
-          <p className="sd-note sd-fallback">
-            لا مختبرَ مسجَّلاً في التطبيق بعد — أدخل النتائج بنفسك كما كان، ويراها المريض فوراً.
-          </p>
-          {fallbackEditor}
-        </>
+      {noNetwork && !delivered && (
+        <p className="sd-note sd-fallback">
+          لا مختبرَ مسجَّلاً في التطبيق بعد — أوصِل العيّنةَ للمختبر الذي تعتمده، ثمّ أدخِل نتائجَها هنا.
+        </p>
       )}
+      {(delivered || noNetwork) && resultsEditor}
     </section>
   );
 }

@@ -7077,3 +7077,13 @@
 .pv-listing-text { display: grid; gap: 2px; min-width: 0; flex: 1; }
 .pv-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 4px; }
 .pv-pill-rose { background: var(--rose-soft); color: var(--rose); }
+
+/* ─── الدليل وحده: المنشأةُ لا تتلقّى طلبات — المريضُ يتواصل معها مباشرة ─── */
+.dir-contact-note { font-size: 13px; color: var(--ink-3); background: var(--paper-3); border-radius: 12px; padding: 10px 12px; margin: 0 0 16px; line-height: 1.7; }
+.pv-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.pv-check-row { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-2); min-height: 44px; }
+.pv-check-row input { width: 18px; height: 18px; }
+.pv-field textarea {
+  font: inherit; font-size: 16px; min-width: 0; width: 100%; box-sizing: border-box; resize: vertical;
+  padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--paper-3); color: var(--ink);
+}

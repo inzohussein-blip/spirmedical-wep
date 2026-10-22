@@ -89,7 +89,7 @@ export default async function ProvidersPage(props: { searchParams: Promise<{ sta
       {claims.length > 0 && (
         <section aria-label="طلبات ربط المنشآت">
           <h2 className="err-title" style={{ fontSize: 17 }}><Icon name="hospitals" size={20} /> ربطُ المنشآت ({claims.length})</h2>
-          <p className="err-sub">حسابُ خدمةٍ يطلب ملكيّةَ منشأةٍ في الدليل أو إضافةَ منشأته — بعد الاعتماد تصله حجوزاتُها.</p>
+          <p className="err-sub">حسابُ خدمةٍ يطلب ملكيّةَ منشأةٍ في الدليل أو إضافةَ منشأته — بعد الاعتماد يحرّر بياناتِها (المنشأةُ دليلٌ لا تتلقّى طلبات).</p>
           <DataTable
             rows={claims}
             rowKey={(c) => c.id}

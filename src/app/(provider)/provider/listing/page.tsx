@@ -2,15 +2,15 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { isProviderType } from '@/lib/providers';
 import { LISTING_SOURCE, listingKindFor } from '@/lib/provider-listings';
-import { getLatestClaim, getListing, getOwnedListings, searchUnownedListings } from '@/lib/provider-listings-server';
-import { ClaimButton, NewListingForm, WithdrawButton } from './ListingForms';
+import { getLatestClaim, getListing, getOwnedListingDetails, getOwnedListings, searchUnownedListings } from '@/lib/provider-listings-server';
+import { ClaimButton, EditListingForm, NewListingForm, WithdrawButton } from './ListingForms';
 
 export const metadata = { title: 'منشأتي · نافذة الخدمة' };
 export const dynamic = 'force-dynamic';
 
 /**
- * 🏥 «منشأتي» (الدفعة 3): ربطُ الحساب بمنشأته في الدليل — موجودة أو جديدة — فتصل حجوزاتُها إليه.
- * الربطُ طلبٌ تعتمده الإدارة؛ وحتى يُعتمد لا تصل الحجوزات.
+ * 🏥 «منشأتي» (الدفعة 3): ربطُ الحساب بمنشأته في الدليل — موجودة أو جديدة — بطلبٍ تعتمده الإدارة، ثمّ تحريرُ
+ * بياناتها. المنشأةُ دليلٌ فقط (قرار المالك، 22 تشرين الأول): لا تتلقّى طلباتٍ من المريض — يراها ويتواصل معها.
  */
 export default async function ProviderListing(props: { searchParams: Promise<{ q?: string }> }) {
   const supabase = await createClient();
@@ -24,8 +24,8 @@ export default async function ProviderListing(props: { searchParams: Promise<{ q
       <main className="app-screen">
         <div className="scr-content pv">
           <h1 className="pv-title">منشأتي</h1>
-          <p className="pv-note">هذه الصفحة للصيدليات والعيادات والمستشفيات: تربط حسابَك بمنشأتك في الدليل فتصلك حجوزاتُها.
-            المختبرُ تصله العيّناتُ من «العيّنات».</p>
+          <p className="pv-note">هذه الصفحة للصيدليات والعيادات والمستشفيات: تربط حسابَك بمنشأتك في الدليل وتحرّر بياناتها.
+            المختبرُ يحدّد تحاليلَه من «التحاليل».</p>
         </div>
       </main>
     );
@@ -36,6 +36,7 @@ export default async function ProviderListing(props: { searchParams: Promise<{ q
   const label = LISTING_SOURCE[kind].label;
 
   if (owned.length > 0) {
+    const details = await getOwnedListingDetails(user.id, kind);
     return (
       <main className="app-screen">
         <div className="scr-content pv">
@@ -47,8 +48,14 @@ export default async function ProviderListing(props: { searchParams: Promise<{ q
                 <span className="pv-pill pv-pill-green">مرتبطة</span>
               </div>
             ))}
-            <p className="pv-note">تصلك حجوزاتُ المرضى لهذه المنشأة في «الطلبات». تعديلُ بياناتها (الهاتف، الساعات) عبر الإدارة حالياً.</p>
+            <p className="pv-note">يراها المرضى في الدليل ويتواصلون معها مباشرة. حدِّث بياناتِها هنا.</p>
           </section>
+          {details && (
+            <section className="pv-card" aria-label="بيانات المنشأة">
+              <h2 className="pv-card-title">بياناتُ التواصل</h2>
+              <EditListingForm kind={kind} values={details} />
+            </section>
+          )}
         </div>
       </main>
     );

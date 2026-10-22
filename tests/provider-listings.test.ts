@@ -1,12 +1,13 @@
 /**
  * @jest-environment node
  */
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 
 /**
- * 🏥 الدفعة 3 — الصيدليةُ والعيادةُ والمستشفى تملك منشأتَها في الدليل وتردّ على حجوزاتها (0062، قرار المالك:
- * «ربطٌ بمنشأةٍ موجودة أو إضافةُ جديدة، والإدارةُ تعتمد الربط»).
+ * 🏥 الصيدليةُ والعيادةُ والمستشفى تملك منشأتَها في الدليل (0062، قرار المالك: «ربطٌ بمنشأةٍ موجودة أو إضافةُ جديدة،
+ * والإدارةُ تعتمد الربط») — **وتفتح خدمتَها ولا تتلقّى شيئاً من المريض** (قرار المالك، 22 تشرين الأول): يراها في الدليل
+ * ويتواصل معها مباشرة، ويحرّر مالكُها بياناتِ التواصل.
  *
  * كانت حجوزاتُ الصيدلية ومواعيدُ العيادة والمستشفى تُكتب ولا يصل أيٌّ منها إلى أحد. وكُشف في الطريق: أيُّ مستخدمٍ
  * يُدرج طبيباً «موثَّقاً» نشطاً في الدليل، ومالكُ الصيدلية يكتب أيَّ عمودٍ في حجز المريض.
@@ -47,28 +48,12 @@ jest.mock('next/cache', () => ({ revalidatePath: jest.fn() }));
 jest.mock('@/lib/admin-audit', () => ({ logAdminAction: jest.fn(async () => {}) }));
 
 const L = require('@/lib/provider-listings');
-const requests = require('@/app/(provider)/provider/requests/actions');
 const listing = require('@/app/(provider)/provider/listing/actions');
 const admin = require('@/app/admin/providers/actions');
 
 const writes = (table: string, op: string) => calls.filter((c) => c.table === table && c.op === op);
 const ROOT = process.cwd();
 const code = (p: string) => readFileSync(join(ROOT, p), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*(--|\/\/).*$/gm, '');
-
-/** صيدليةٌ معتمَدة تملك ph-1؛ والتحديثُ يعيد `updated` صفّاً */
-const asPharmacy = (opts: { approved?: boolean; owned?: string[]; updated?: unknown[] } = {}) => {
-  me = { id: 'prov-1', role: 'provider', provider_type: 'pharmacy', approval_status: opts.approved === false ? 'pending' : 'approved', is_suspended: false };
-  respond = (c) => {
-    if (c.table === 'users') return { data: me, error: null };
-    if (c.table === 'pharmacies' && c.op === 'select') {
-      return { data: (opts.owned ?? ['ph-1']).map((id) => ({ id, name: 'صيدلية الشفاء', city: 'النجف' })), error: null };
-    }
-    if (c.table === 'pharmacy_reservations' && c.op === 'update') {
-      return { data: opts.updated ?? [{ id: 'res-1', user_id: 'pt-1', pharmacy_id: 'ph-1' }], error: null };
-    }
-    return { data: null, error: null };
-  };
-};
 
 beforeEach(() => { calls.length = 0; });
 
@@ -91,51 +76,43 @@ describe('🧹 منشأةٌ جديدة: ما يقترحه الحسابُ منق�
   });
 });
 
-describe('💊 الصيدلية تردّ على حجوزات منشأتها وحدها', () => {
-  it('🚨 التحديثُ مقيّدٌ بمنشآت الحساب وبالحالة المسموحة، ويُخطَر المريض', async () => {
-    asPharmacy();
-    expect(await requests.updateReservation('res-1', 'confirm', { finalPrice: 12000 })).toEqual({ ok: true, message: 'تأكيد التوفّر' });
-    const [u] = writes('pharmacy_reservations', 'update');
-    expect(u.client).toBe('service');
-    expect(u.filters).toEqual(expect.arrayContaining([['in', 'pharmacy_id', ['ph-1']], ['in', 'status', ['pending']]]));
-    expect(u.payload).toMatchObject({ status: 'confirmed', total_final_price: 12000 });
-    expect(writes('notifications', 'insert')[0].payload).toEqual([expect.objectContaining({ user_id: 'pt-1' })]);
-  });
-
-  it('🚨 حجزٌ ليس لمنشأتك أو تغيّرت حالتُه ← فشلٌ صريح، ولا إخطار', async () => {
-    asPharmacy({ updated: [] });
-    expect(await requests.updateReservation('res-x', 'ready')).toMatchObject({ ok: false });
-    expect(writes('notifications', 'insert')).toHaveLength(0);
-  });
-
-  it('🚨 الاعتذارُ يطلب سبباً، والحسابُ غيرُ المعتمَد أو بلا منشأة لا يكتب', async () => {
-    asPharmacy();
-    expect(await requests.updateReservation('res-1', 'cancel', { reason: '  ' })).toEqual({ ok: false, message: 'اذكر سببَ الاعتذار — يراه المريض' });
-    asPharmacy({ approved: false });
-    expect(await requests.updateReservation('res-1', 'confirm')).toEqual({ ok: false, message: 'حسابُك بانتظار الاعتماد' });
-    asPharmacy({ owned: [] });
-    expect(await requests.updateReservation('res-1', 'confirm')).toEqual({ ok: false, message: 'اربط حسابَك بمنشأتك أوّلاً' });
-    expect(await requests.updateReservation('res-1', 'drop_table')).toEqual({ ok: false, message: 'فعلٌ غيرُ معروف' });
-    expect(writes('pharmacy_reservations', 'update')).toHaveLength(0);
-  });
-
-  it('الصيدليةُ لا تمسّ المواعيد', async () => {
-    asPharmacy();
-    expect(await requests.updateBooking('ap-1', 'confirm')).toEqual({ ok: false, message: 'للعيادات والمستشفيات' });
-  });
-});
-
-describe('🩺 العيادة: مواعيدُ طبيبها (`doctor_id`)', () => {
-  it('🚨 التأكيدُ مقيّدٌ بعيادات الحساب', async () => {
-    me = { id: 'prov-2', role: 'provider', provider_type: 'clinic', approval_status: 'approved', is_suspended: false };
+describe('✏️ المالكُ يحرّر بياناتِ منشأته وحدها', () => {
+  const asOwner = (kind: string, updated: unknown[] = [{ id: 'x-1' }]) => {
+    me = { id: 'prov-1', role: 'provider', provider_type: kind };
     respond = (c) => {
       if (c.table === 'users') return { data: me, error: null };
-      if (c.table === 'doctors') return { data: [{ id: 'doc-1', full_name: 'د. علي', clinic_name: 'عيادة النور' }], error: null };
-      if (c.table === 'appointments' && c.op === 'update') return { data: [{ id: 'ap-1', user_id: 'pt-1', doctor_id: 'doc-1' }], error: null };
+      if (c.op === 'update') return { data: updated, error: null };
       return { data: null, error: null };
     };
-    expect(await requests.updateBooking('ap-1', 'confirm')).toEqual({ ok: true, message: 'تأكيد الموعد' });
-    expect(writes('appointments', 'update')[0].filters).toEqual(expect.arrayContaining([['in', 'doctor_id', ['doc-1']], ['in', 'status', ['pending']]]));
+  };
+
+  it('🚨 التحديثُ مقيّدٌ بعمود الملكيّة، والحقولُ المسموحة وحدها (لا اسمَ ولا توثيقَ ولا مالك)', async () => {
+    asOwner('pharmacy');
+    const r = await listing.updateMyListing({ phone: '07801234567', is24h: 'on', name: 'اسمٌ آخر', is_verified: true, owner_user_id: 'x' });
+    expect(r).toMatchObject({ ok: true });
+    const [u] = writes('pharmacies', 'update');
+    expect(u.client).toBe('service');
+    expect(u.filters).toContainEqual(['eq', 'owner_user_id', 'prov-1']);
+    expect(u.payload).toMatchObject({ phone: '07801234567', is_24h: true, opens_at: null });
+    expect(u.payload).not.toHaveProperty('name');
+    expect(u.payload).not.toHaveProperty('is_verified');
+    expect(u.payload).not.toHaveProperty('owner_user_id');
+  });
+
+  it('🚨 العيادةُ تكتب في حقولها (`clinic_phone`) ومقيّدةٌ بـ`user_id`، ولا صفّ ← فشلٌ صريح', async () => {
+    asOwner('clinic', []);
+    expect(await listing.updateMyListing({ phone: '07801234567', about: 'باطنية' })).toEqual({ ok: false, message: 'لا منشأةَ مرتبطة بحسابك' });
+    const [u] = writes('doctors', 'update');
+    expect(u.filters).toContainEqual(['eq', 'user_id', 'prov-1']);
+    expect(u.payload).toEqual({ clinic_phone: '07801234567', bio: 'باطنية', clinic_address: null, updated_at: expect.any(String) });
+  });
+
+  it('الصيدليةُ بلا ساعاتٍ ولا «24 ساعة» تُرفض، والمختبرُ لا منشأةَ له', async () => {
+    expect(L.sanitizeListingUpdate('pharmacy', { phone: '07801234567' })).toEqual({ ok: false, error: 'حدّد ساعاتِ الدوام أو «24 ساعة»' });
+    expect(L.sanitizeListingUpdate('pharmacy', { phone: '07801234567', opensAt: '08:00', closesAt: '23:30' })).toMatchObject({ ok: true });
+    me = { id: 'lab-1', role: 'provider', provider_type: 'lab' };
+    respond = (c) => (c.table === 'users' ? { data: me, error: null } : { data: null, error: null });
+    expect(await listing.updateMyListing({ phone: '07801234567' })).toMatchObject({ ok: false });
   });
 });
 
@@ -194,9 +171,12 @@ describe('🗄️ 0062 وتوصيلُ الإخطار', () => {
     expect(m).not.toMatch(/\bDROP\b/);
   });
 
-  it('الحجزُ الجديد يُخطر مالكَ المنشأة في المسارات الثلاثة', () => {
-    expect(code('src/app/(dashboard)/services/pharmacies/actions.ts')).toMatch(/notifyListingOwner\('pharmacy', input\.pharmacy_id/);
-    expect(code('src/app/(dashboard)/services/doctors/[id]/actions.ts')).toMatch(/notifyListingOwner\('doctor', input\.doctor_id/);
-    expect(code('src/app/(dashboard)/services/booking/actions.ts')).toMatch(/notifyListingOwner\('hospital', input\.provider_id/);
+  it('🚨 المنشأةُ لا تتلقّى طلباتٍ من المريض: لا حجزَ في صفحاتها، ولا «طلبات» في نافذتها', () => {
+    expect(code('src/app/(dashboard)/services/pharmacies/[id]/PharmacyDetailClient.tsx')).not.toMatch(/PharmacyReservationModal|احجز الدواء/);
+    expect(code('src/app/(dashboard)/services/doctors/[id]/DoctorDetailClient.tsx')).not.toMatch(/DoctorBookingModal|setBookingModalType|startConsultation/);
+    expect(code('src/app/(dashboard)/services/hospitals/[id]/page.tsx')).not.toMatch(/HospitalBooking/);
+    expect(code('src/app/(dashboard)/services/pharmacies/actions.ts')).not.toMatch(/createPharmacyReservation/);
+    expect(existsSync(join(ROOT, 'src/app/(provider)/provider/requests'))).toBe(false);
+    expect(code('src/components/layout/AppShell.tsx')).not.toMatch(/\/provider\/(requests|samples)/);
   });
 });

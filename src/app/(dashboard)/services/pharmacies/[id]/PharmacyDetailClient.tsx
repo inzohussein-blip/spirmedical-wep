@@ -6,7 +6,6 @@ import {
   IconArrowRight as ArrowRight, IconSearch as Search, IconMapPin as MapPin, IconPhone as Phone, IconMap as Map, IconClock as Clock, IconPill as Pill, IconCircleCheck as CheckCircle2, IconCircleX as XCircle, IconFilter as Filter, IconAlertCircle as AlertCircle, IconBuilding as Building2, IconMessageCircle as MessageCircle, IconStar as Star, IconPackage as Package,
 } from '@tabler/icons-react';
 import ShareButton from '@/components/pwa/ShareButton';
-import PharmacyReservationModal from '@/components/pharmacies/PharmacyReservationModal';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import PharmacyRatingCard from './PharmacyRatingCard';
 import PhoneLink from '@/components/ui/PhoneLink';
@@ -89,7 +88,6 @@ export default function PharmacyDetailClient({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [availabilityFilter, setAvailabilityFilter] = useState<'all' | 'available' | 'unavailable'>('all');
-  const [showReservation, setShowReservation] = useState(false);
 
   const filtered = useMemo(() => {
     return inventory.filter((item) => {
@@ -242,32 +240,7 @@ export default function PharmacyDetailClient({
             )}
           </div>
 
-          {/* احجز دواء - V25.46 جديد */}
-          <button
-            type="button"
-            onClick={() => setShowReservation(true)}
-            style={{
-              width: '100%',
-              padding: 12,
-              marginTop: 14,
-              background: 'white',
-              color: 'var(--emerald-deep)',
-              border: 0,
-              borderRadius: 12,
-              fontSize: 14,
-              fontWeight: 800,
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 6,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-            }}
-          >
-            <Package size={16} strokeWidth={2.5} />
-            احجز الدواء قبل الذهاب
-          </button>
-
+          {/* الدليل وحده (قرار المالك، 22 تشرين الأول): لا حجزَ من التطبيق — يتواصل المريضُ مع الصيدلية مباشرة */}
           {/* Actions */}
           <div
             style={{
@@ -697,18 +670,6 @@ export default function PharmacyDetailClient({
         <div style={{ height: 80 }} />
       </div>
 
-      {/* Reservation Modal - V25.46 */}
-      {showReservation && (
-        <PharmacyReservationModal
-          pharmacy={{
-            id: pharmacy.id,
-            name: pharmacy.name,
-            city: pharmacy.city,
-            district: pharmacy.district,
-          }}
-          onClose={() => setShowReservation(false)}
-        />
-      )}
     </main>
   );
 }

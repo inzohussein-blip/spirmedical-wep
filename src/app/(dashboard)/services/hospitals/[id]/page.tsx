@@ -10,7 +10,6 @@ import {
 } from '@tabler/icons-react';
 import FreeMedicalMapWrapper from '@/components/maps/SpirMapViewWrapper';
 import ShareButton from '@/components/pwa/ShareButton';
-import HospitalBookingButton from '@/components/hospitals/HospitalBookingButton';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import { checkIsFavorite } from '@/components/services/favorites-actions';
 import { count, formatRating } from '@/lib/format/price';
@@ -186,17 +185,8 @@ export default async function HospitalDetailPage(
           </div>
         </div>
 
-        {/* Booking button - V25.47 جديد */}
-        <HospitalBookingButton
-          hospital={{
-            id: hospital.id,
-            name: hospital.name,
-            type: hospital.type,
-            city: hospital.city,
-            district: hospital.district,
-            departments: hospital.departments,
-          }}
-        />
+        {/* الدليل وحده (قرار المالك، 22 تشرين الأول): المستشفى لا يتلقّى طلباتٍ من المريض — يتواصل معه مباشرة */}
+        <p className="dir-contact-note">للمواعيد تواصل مع المستشفى مباشرةً على أرقامه في هذه الصفحة.</p>
 
         {/* Contact actions */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6, marginBottom: 14 }}>

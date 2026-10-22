@@ -1,11 +1,10 @@
 import { createAdminClient } from '@/lib/supabase/server';
-import { notifyInbox } from '@/lib/inbox-notify';
 import { logger } from '@/lib/logger';
 import { LISTING_SOURCE, type ListingKind } from '@/lib/provider-listings';
 
 /**
  * 🏥 قراءاتُ الدفعة 3 على الخادم (عميلُ الخدمة، مقيّدةً بالمالك): المنشآتُ التي يملكها حسابُ الخدمة، وطلبُ ربطه
- * الحيّ، وإخطارُ مالك المنشأة بحجزٍ جديد. `provider_listing_claims` لعميل الخدمة وحده (0062).
+ * الحيّ. `provider_listing_claims` لعميل الخدمة وحده (0062).
  */
 export interface OwnedListing {
   id: string;
@@ -102,18 +101,18 @@ export async function getLatestClaim(userId: string): Promise<ListingClaim | nul
   return rows.find((r) => r.status !== 'rejected') ?? rows[0] ?? null;
 }
 
-/** حجزٌ جديد لمنشأة: يُخطَر مالكُها في صندوقه — إن كان لها مالك. لا يرمي. */
-export async function notifyListingOwner(
-  kind: ListingKind,
-  listingId: string | null | undefined,
-  message: { title: string; body: string },
-): Promise<void> {
-  if (!listingId) return;
-  try {
-    const listing = await getListing(kind, listingId);
-    if (!listing?.owner) return;
-    await notifyInbox([{ user_id: listing.owner, title: message.title, body: message.body, type: 'provider_request', link: '/provider/requests' }]);
-  } catch (e) {
-    logger.warn('notifyListingOwner failed', { kind, error: e instanceof Error ? e.message : String(e) });
-  }
+const EDITABLE: Record<ListingKind, string> = {
+  pharmacy: 'id, name, phone, whatsapp, address, description, is_24h, opens_at, closes_at, has_delivery',
+  doctor: 'id, full_name, clinic_name, clinic_phone, clinic_address, bio',
+  hospital: 'id, name, phone, whatsapp, address, description, visiting_hours',
+};
+
+/** بياناتُ المنشأة التي يحرّرها مالكُها — مقيّدةً به */
+export async function getOwnedListingDetails(userId: string, kind: ListingKind): Promise<Record<string, unknown> | null> {
+  const { data } = await listingTable(kind)
+    .select(EDITABLE[kind])
+    .eq(LISTING_SOURCE[kind].owner, userId)
+    .limit(1)
+    .maybeSingle();
+  return (data as Record<string, unknown> | null) ?? null;
 }

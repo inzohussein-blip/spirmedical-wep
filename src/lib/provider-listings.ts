@@ -73,34 +73,36 @@ export function sanitizeProposedListing(
   return { ok: true, row: { name, type, city, phone, address } };
 }
 
-// ─── الانتقالات: من أيّ حالةٍ إلى أيّ حالة، لكلّ فعل ───
-export const RESERVATION_ACTIONS = {
-  confirm: { from: ['pending'], to: 'confirmed', label: 'تأكيد التوفّر' },
-  partial: { from: ['pending'], to: 'partially_available', label: 'متوفّرٌ جزئياً' },
-  ready: { from: ['confirmed', 'partially_available'], to: 'ready_for_pickup', label: 'جاهزٌ للاستلام' },
-  picked_up: { from: ['ready_for_pickup'], to: 'picked_up', label: 'استُلم' },
-  cancel: { from: ['pending', 'confirmed', 'partially_available', 'ready_for_pickup'], to: 'cancelled', label: 'اعتذار' },
-} as const;
-export type ReservationAction = keyof typeof RESERVATION_ACTIONS;
+// ─── تعديلُ المالك لبيانات منشأته: الحقولُ المسموحةُ لكلّ نوع، منقّاة ───
+// المنشأةُ دليلٌ فقط (قرار المالك، 22 تشرين الأول): لا تتلقّى طلباتٍ من المريض — يراها ويتواصل معها مباشرة. فما يحرّره
+// صاحبُها بياناتُ التواصل والعرض وحدها؛ والاسمُ والتوثيقُ والملكيّةُ للإدارة.
+const TIME = /^([01]\d|2[0-3]):[0-5]\d$/;
 
-export const BOOKING_ACTIONS = {
-  confirm: { from: ['pending'], to: 'confirmed', label: 'تأكيد الموعد' },
-  complete: { from: ['confirmed', 'in_progress'], to: 'completed', label: 'تمّت الزيارة' },
-  decline: { from: ['pending', 'confirmed'], to: 'cancelled', label: 'اعتذار' },
-} as const;
-export type BookingAction = keyof typeof BOOKING_ACTIONS;
+export function sanitizeListingUpdate(
+  kind: ListingKind,
+  raw: Record<string, unknown>,
+): { ok: true; patch: Record<string, string | boolean | null> } | { ok: false; error: string } {
+  const phone = t(raw.phone, 30);
+  if (!/^[+\d\s-]{7,20}$/.test(phone)) return { ok: false, error: 'اكتب رقمَ هاتف المنشأة' };
+  const address = t(raw.address, 200) || null;
+  const about = t(raw.about, 600) || null;
 
-export const isReservationAction = (a: unknown): a is ReservationAction =>
-  typeof a === 'string' && Object.prototype.hasOwnProperty.call(RESERVATION_ACTIONS, a);
-export const isBookingAction = (a: unknown): a is BookingAction =>
-  typeof a === 'string' && Object.prototype.hasOwnProperty.call(BOOKING_ACTIONS, a);
-
-/** ما يقرؤه المريضُ في صندوقه بعد كلّ فعل */
-export const PATIENT_MESSAGE: Record<string, (place: string) => { title: string; body: string }> = {
-  confirmed: (p) => ({ title: 'تأكّد طلبُك', body: `${p} أكّد الطلب.` }),
-  partially_available: (p) => ({ title: 'طلبُك متوفّرٌ جزئياً', body: `${p}: بعضُ الأصناف متوفّر — راجع التفاصيل.` }),
-  ready_for_pickup: (p) => ({ title: 'دواؤك جاهز للاستلام', body: `${p}: طلبُك جاهز.` }),
-  picked_up: (p) => ({ title: 'استُلم طلبُك', body: `${p}: شكراً لك.` }),
-  completed: (p) => ({ title: 'اكتملت زيارتُك', body: `${p}: نتمنّى لك الصحّة.` }),
-  cancelled: (p) => ({ title: 'اعتذرت المنشأة', body: `${p} اعتذر عن الطلب.` }),
-};
+  if (kind === 'doctor') {
+    return { ok: true, patch: { clinic_phone: phone, clinic_address: address, bio: about } };
+  }
+  if (kind === 'pharmacy') {
+    const is24h = raw.is24h === true || raw.is24h === 'on';
+    const opens = t(raw.opensAt, 5);
+    const closes = t(raw.closesAt, 5);
+    if (!is24h && (!TIME.test(opens) || !TIME.test(closes))) return { ok: false, error: 'حدّد ساعاتِ الدوام أو «24 ساعة»' };
+    return {
+      ok: true,
+      patch: {
+        phone, whatsapp: t(raw.whatsapp, 30) || null, address, description: about,
+        is_24h: is24h, opens_at: is24h ? null : opens, closes_at: is24h ? null : closes,
+        has_delivery: raw.hasDelivery === true || raw.hasDelivery === 'on',
+      },
+    };
+  }
+  return { ok: true, patch: { phone, whatsapp: t(raw.whatsapp, 30) || null, address, description: about, visiting_hours: t(raw.visitingHours, 120) || null } };
+}

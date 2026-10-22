@@ -85,7 +85,6 @@ describe('📋 كل إدراج في appointments يشتقّ النوع (فحص �
   const INSERT_FILES = [
     'src/app/(dashboard)/appointments/new/actions.ts',
     'src/app/(dashboard)/services/booking/actions.ts',
-    'src/app/(dashboard)/services/doctors/[id]/actions.ts',
     'src/app/api/appointments/route.ts',
     'src/app/api/cron/nursing-recurring/route.ts',
   ];
@@ -233,7 +232,6 @@ describe('📋 كل مسار إنشاء يُشعر المختصّين المؤه
    */
   const CREATE_PATHS = [
     'src/app/(dashboard)/appointments/new/actions.ts',
-    'src/app/(dashboard)/services/doctors/[id]/actions.ts',
   ];
 
   it.each(CREATE_PATHS)('%s يستدعي notifyEligibleSpecialistsOfNewOrder', (rel) => {

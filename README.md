@@ -132,7 +132,7 @@ spirmedical-wep/
 | `guest/` | `/guest` + خدمات وأدوات للزائر (مستشفيات، صيدليات، طوارئ، إسعافات) | زائر | `guest/layout.tsx` |
 | `(dashboard)` | `/dashboard` `/appointments/*` `/services/*` `/account/*` `/messages/*` `/consultations/*` `/tools/*` `/search` `/sos` | `patient` | `requireSession` + `AuthenticatedShell` |
 | `(specialist)` | `/specialist` `/specialist/orders/*` `/inbox/*` `/chats` `/schedule` `/stats` `/account/*` `/pharmacy` | `specialist` معتمَد | بوّابة `approval_status` في `(specialist)/layout.tsx` |
-| `(provider)` | `/provider` `/provider/samples/*` `/provider/lab-tests` `/provider/listing` `/provider/requests` `/provider/account` `/provider/pending` `/provider/rejected` | `provider` (مختبر، صيدلية، عيادة، مستشفى) معتمَد | بوّابة `approval_status` في `(provider)/layout.tsx` |
+| `(provider)` | `/provider` `/provider/lab-tests` `/provider/listing` `/provider/account` `/provider/pending` `/provider/rejected` | `provider` (مختبر، صيدلية، عيادة، مستشفى) معتمَد | بوّابة `approval_status` في `(provider)/layout.tsx` |
 | `admin/` | 39 صفحة: طلبات، مرضى، مختصّون، منشآت، تقارير، إعدادات… | `admin` / `super_admin` | `admin/layout.tsx` → `/admin-login` |
 | `(app-utility)` | `/changelog` `/status` `/share-target` | — | أدوات PWA |
 | `onboarding/` `offline/` | جولة التعريف، صفحة عدم الاتّصال | — | — |
@@ -181,9 +181,9 @@ spirmedical-wep/
 |---|---|---|
 | شبكة الخدمات في الرئيسية | `components/dashboard-v3/BentoServicesGridV3.tsx` | الإعداد في `lib/services-v3.ts` |
 | تشغيل/إطفاء الخدمات | `lib/service-switches.ts` (+`.server.ts`) · `admin/services` | المطفأة تبقى ظاهرةً بشارة «قريباً» |
-| الأطبّاء | `services/doctors/*` · `components/doctors/DoctorBookingModal.tsx` | |
-| المستشفيات | `services/hospitals/*` · `components/hospitals/HospitalBookingModal.tsx` | |
-| الصيدليات والحجز | `services/pharmacies/*` · `components/pharmacies/PharmacyReservationModal.tsx` · `account/pharmacy-reservations` | |
+| الأطبّاء (دليل) | `services/doctors/*` | لا حجزَ من التطبيق — تواصلٌ مباشر |
+| المستشفيات (دليل) | `services/hospitals/*` | لا حجزَ من التطبيق — تواصلٌ مباشر |
+| الصيدليات (دليل) | `services/pharmacies/*` · `account/pharmacy-reservations` (حجوزاتٌ سابقة) | لا حجزَ من التطبيق — تواصلٌ مباشر |
 | الأسنان، البصريات، الصحّة النفسية، التغذية، اللقاحات، التجميل | `services/<name>/*` | |
 | العلاج الطبيعي | `services/physio/*` | **الحجز «قريباً»** (`bookingSoon` في `services-v3.ts`) والصفحات مفتوحة للتصفّح |
 | أرقام هواتف المنشآت | `components/ui/PhoneLink.tsx` · `lib/format/phone.ts` | الرقمُ المُقنَّع («0770 xxx xxxx») زرٌّ معطّل |
