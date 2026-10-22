@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import {
   IconSearch as Search,
@@ -28,7 +27,6 @@ const HOSPITALS: Hospital[] = [
 ];
 
 export default function GuestHospitalsClient() {
-  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState<'all' | 'public' | 'private' | 'emergency'>('all');
 
@@ -121,14 +119,6 @@ export default function GuestHospitalsClient() {
                       <span aria-hidden="true">📞</span>
                       <span>اتصال</span>
                     </PhoneLink>
-                    <button
-                      className="hospital-action-btn locked"
-                      type="button"
-                      onClick={() => router.push('/register')}
-                    >
-                      <span aria-hidden="true">🔒</span>
-                      <span>حجز موعد</span>
-                    </button>
                   </div>
                 </div>
               ))

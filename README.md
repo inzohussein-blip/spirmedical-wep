@@ -249,7 +249,7 @@ spirmedical-wep/
 |---|---|
 | الطلبات والطوارئ | `admin/orders/*` · `admin/emergencies/*` |
 | المستخدمون والمختصّون | `admin/patients/*` · `admin/specialists/*` (+`pending`) · `admin/users/create` · `admin/admins/*` |
-| المنشآت | `admin/hospitals` `doctors` `pharmacies` `labs` `dental` `optical` `mental-health` `nutrition` `physio` `cosmetic` `medications` `nurses` |
+| المنشآت (دليلٌ — لا حجزَ من التطبيق) | `admin/hospitals` `doctors` `pharmacies` `labs` `dental` `optical` `mental-health` `nutrition` `physio` `cosmetic` `medications` `nurses` |
 | التغطية والخدمات | `admin/service-areas` · `admin/services` (مفاتيح التشغيل) · `admin/locations` |
 | التقارير | `admin/reports/*` (جغرافي، خريطة حرارية، عمليات حيّة) · `admin/analytics` |
 | التسويق | `admin/campaigns` · `admin/coupons` · `admin/beta-codes` · `admin/stories` (قصصٌ بملء الشاشة، من الإدارة وحدها — 0054) |

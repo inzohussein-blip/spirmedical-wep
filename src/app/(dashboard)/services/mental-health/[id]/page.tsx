@@ -7,12 +7,14 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import {
   IconArrowRight as ArrowRight, IconMapPin as MapPin, IconStar as Star, IconCircleCheck as CheckCircle2, IconAward as Award, IconHeart as Heart, IconAlertCircle as AlertCircle, IconWorld as Globe,
+  IconPhone as Phone,
 } from '@tabler/icons-react';
 import ServiceFavoriteButton from '@/components/services/ServiceFavoriteButton';
 import { checkIsFavorite } from '@/components/services/favorites-actions';
 import { formatPrice, count, formatRating, formatNumber } from '@/lib/format/price';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import PhoneLink from '@/components/ui/PhoneLink';
 export const dynamic = 'force-dynamic';
 
 const TYPE_LABELS: Record<string, { label: string; icon: string }> = {
@@ -276,21 +278,12 @@ export default async function MentalDetailPage(
 
         {/* CTAs */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingBottom: 20 }}>
-          {s.available_online && (
-            <Link
-              href={`/services/booking?service=mental-health&id=${s.id}&package=online`}
-              style={primaryButton}
-            >
-              <EmojiIcon e="💻" /> احجز جلسة أونلاين{onlinePrice ? ` - ${onlinePrice} د.ع` : ''}
-            </Link>
-          )}
-          {s.available_in_clinic && (
-            <Link
-              href={`/services/booking?service=mental-health&id=${s.id}&package=clinic`}
-              style={{...primaryButton, background: 'var(--amber)'}}
-            >
-              <EmojiIcon e="🏢" /> احجز جلسة في العيادة{clinicPrice ? ` - ${clinicPrice} د.ع` : ''}
-            </Link>
+          {/* دليلٌ فقط (قرار المالك، 22 تشرين الأول): لا حجزَ من التطبيق — يتواصل المريضُ مع المختصّ مباشرة */}
+          <p className="dir-contact-note">للجلسة تواصل مع المختصّ مباشرةً على رقمه.</p>
+          {s.clinic_phone && (
+            <PhoneLink phone={s.clinic_phone} href={`tel:${s.clinic_phone}`} style={primaryButton}>
+              <Phone size={16} aria-hidden="true" /> اتصل
+            </PhoneLink>
           )}
         </div>
       </div>

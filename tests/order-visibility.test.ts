@@ -84,7 +84,6 @@ describe('📋 كل إدراج في appointments يشتقّ النوع (فحص �
    */
   const INSERT_FILES = [
     'src/app/(dashboard)/appointments/new/actions.ts',
-    'src/app/(dashboard)/services/booking/actions.ts',
     'src/app/api/appointments/route.ts',
     'src/app/api/cron/nursing-recurring/route.ts',
   ];

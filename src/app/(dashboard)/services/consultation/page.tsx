@@ -197,7 +197,7 @@ export default async function ConsultationPage() {
                   <Video size={28} strokeWidth={2} />
                 </div>
                 <div className="scr-list-item-content">
-                  <div className="scr-list-item-title">احجز موعد فيديو</div>
+                  <div className="scr-list-item-title">أطبّاء يقدّمون الفيديو</div>
                   <div className="scr-list-item-subtitle">
                     مكالمة فيديو مباشرة · {videoAvailable} طبيب متاح
                   </div>
