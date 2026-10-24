@@ -7,6 +7,7 @@ import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { notifyOrderCancelled } from '@/lib/services/push-templates';
+import { clientIpFrom } from '@/lib/edge-proxy';
 
 export async function cancelAppointment(appointmentId: string, reason: string) {
   const supabase = await createClient();
@@ -80,7 +81,7 @@ export async function cancelAppointment(appointmentId: string, reason: string) {
   }
 
   // Audit log
-  const ip = (await headers()).get('x-forwarded-for') ?? 'unknown';
+  const ip = clientIpFrom(await headers()) ?? 'unknown';
   await logAuditEvent({
     action: 'appointment.cancel',
     user_id: user.id,

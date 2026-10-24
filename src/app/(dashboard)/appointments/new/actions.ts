@@ -23,6 +23,7 @@ import {
 import { sendAppointmentConfirmedWA, isWhatsAppEnabled } from '@/lib/services/whatsapp';
 
 import { resolveChosenLab } from '@/lib/labs/lab-network';
+import { clientIpFrom } from '@/lib/edge-proxy';
 interface CreateAppointmentInput {
   service_id: string;
   service_name: string;
@@ -199,7 +200,7 @@ async function createAppointmentV2Impl(input: CreateAppointmentInput) {
   }
 
   // Audit log
-  const ip = (await headers()).get('x-forwarded-for') ?? 'unknown';
+  const ip = clientIpFrom(await headers()) ?? 'unknown';
   await logAuditEvent({
     action: 'appointment.create',
     user_id: user.id,

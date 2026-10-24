@@ -1,0 +1,11 @@
+# 🛰️ النسخةُ الاحتياطيّة على Netlify (طلبُ المالك، 24 تشرين الأول): الكودُ نفسُه من main، وSupabase نفسُه.
+# بوّابةُ التبديل (edge/failover) تُرسل إليها حين لا تُجيب Vercel. Netlify يكتشف Next ويُثبّت @netlify/plugin-nextjs
+# تلقائياً (لا تُثبّته في package.json). المتغيّراتُ في لوحة Netlify (انظر README «الاستضافة الاحتياطيّة»).
+# الكرون ليس هنا ولا في vercel.json: يشغّله GitHub Actions على النطاق (`scheduled-jobs.yml`) فيصل المنصّةَ الحيّة مرّةً واحدة.
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "24"
+  NEXT_TELEMETRY_DISABLED = "1"

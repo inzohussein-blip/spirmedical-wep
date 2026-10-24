@@ -9,6 +9,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { verifyOtp } from '@/lib/whatsapp/otp-service';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { clientIpFrom } from '@/lib/edge-proxy';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,10 +31,7 @@ export async function POST(request: Request) {
     const { phone, code, purpose } = parsed.data;
 
     // ─── Rate limit حسب الـ IP (دفاع ضد التخمين عبر أرقام/رموز مختلفة) ───
-    const ip =
-      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-      request.headers.get('x-real-ip') ||
-      'unknown';
+    const ip = clientIpFrom(request.headers) ?? 'unknown';
     const rl = await checkRateLimit(`otp:verify:ip:${ip}`, { max: 20, windowSeconds: 900 });
     if (!rl.allowed) {
       return NextResponse.json(

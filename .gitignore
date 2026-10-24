@@ -70,3 +70,7 @@ private/
 # مخرجات tools/mobile-audit
 .audit/
 tools/mobile-audit/node_modules/
+
+# منصّةُ الاحتياط وبوّابةُ التبديل (مخرجاتُ البناء المحلّيّ)
+.netlify/
+.wrangler/

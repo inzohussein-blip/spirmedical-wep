@@ -1,0 +1,61 @@
+# ⏰ المهامّ المجدولة (كانت `crons` في vercel.json) — طلبُ المالك، 24 تشرين الأول.
+# تُطلب على النطاق فتصل المنصّةَ الحيّة عبر بوّابة التبديل (edge/failover)، مرّةً واحدة أيّاً كانت: Vercel أو Netlify.
+# كرونُ Vercel كان يعمل على Vercel وحدها — يتوقّف معها، وإن بقي مع هذا تُرسَل التذكيراتُ مرّتين.
+# كلُّ جدولٍ في `on.schedule` له سطرٌ في JOBS (والحارسُ tests/owner-alerts.test.ts يطابقهما). يلزم السرُّ CRON_SECRET في
+# GitHub → Settings → Secrets and variables → Actions (القيمةُ نفسُها في Vercel وNetlify). التوقيتُ UTC.
+name: Scheduled Jobs
+
+on:
+  schedule:
+    - cron: '0 5 * * *'
+    - cron: '0 6 * * *'
+    - cron: '0 7 * * *'
+    - cron: '0 8 * * *'
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+    inputs:
+      path:
+        description: 'المسار (مثلاً /api/cron/auto-reject-pending)'
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    name: Run scheduled job
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CRON_SECRET: ${{ secrets.CRON_SECRET }}
+      SCHEDULE: ${{ github.event.schedule }}
+      MANUAL_PATH: ${{ inputs.path }}
+      # الجدول=المسار
+      JOBS: |
+        0 5 * * *=/api/cron/auto-reject-pending
+        0 6 * * *=/api/cron/nursing-recurring
+        0 7 * * *=/api/cron/reminders
+        0 8 * * *=/api/cron/appointment-reminders
+        0 9 * * *=/api/notifications/process
+      # النطاقُ أوّلاً (البوّابة)، ثمّ المنصّتان مباشرةً إن لم يصل الطلبُ إليه
+      HOSTS: www.spir-medical.com spirmedical-wep.vercel.app spir-medical.netlify.app
+    steps:
+      - name: Call job
+        run: |
+          set -u
+          if [ -z "$CRON_SECRET" ]; then echo "::error::CRON_SECRET غير مضبوط في أسرار GitHub"; exit 1; fi
+          path="${MANUAL_PATH:-}"
+          if [ -z "$path" ]; then
+            path=$(printf '%s\n' "$JOBS" | awk -F= -v s="$SCHEDULE" '$1==s {print $2}')
+          fi
+          case "$path" in /api/*) ;; *) echo "::error::لا مسارَ للجدول '$SCHEDULE'"; exit 1;; esac
+          for host in $HOSTS; do
+            code=$(curl -sS -o body.txt -w '%{http_code}' --max-time 120 \
+              -H "Authorization: Bearer $CRON_SECRET" "https://$host$path" || echo 000)
+            echo "$host$path → $code"
+            # لم يصل الطلبُ الدالّةَ (انقطاع أو إيقافُ الحساب) — المنصّةُ التالية. غيرُ ذلك يُحتسب: لا تشغيلَ مرّتين.
+            if [ "$code" = "000" ] || [ "$code" = "402" ]; then continue; fi
+            head -c 2000 body.txt; echo
+            case "$code" in 2*) exit 0;; *) exit 1;; esac
+          done
+          echo "::error::لم تُجِب أيُّ منصّة"; exit 1

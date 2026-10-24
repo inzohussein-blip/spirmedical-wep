@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { headers } from 'next/headers';
+import { clientIpFrom } from '@/lib/edge-proxy';
 
 export interface LogActionInput {
   action_type: string;
@@ -19,9 +20,7 @@ export async function logAdminAction(input: LogActionInput): Promise<void> {
     if (!user) return;
 
     const hdrs = await headers();
-    const ip = hdrs.get('x-forwarded-for')?.split(',')[0]?.trim()
-            ?? hdrs.get('x-real-ip')
-            ?? null;
+    const ip = clientIpFrom(hdrs);
 
     await supabase.from('admin_actions').insert({
       admin_id: user.id,

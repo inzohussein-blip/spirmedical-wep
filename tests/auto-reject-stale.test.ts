@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { scheduledJobs } from './helpers/scheduled-jobs';
 
 /**
  * ⏳ حارس الرفض التلقائيّ للطلبات المعلَّقة
@@ -32,7 +33,6 @@ const ROUTE = readFileSync(
   join(process.cwd(), 'src', 'app', 'api', 'cron', 'auto-reject-pending', 'route.ts'),
   'utf8',
 );
-const VERCEL = JSON.parse(readFileSync(join(process.cwd(), 'vercel.json'), 'utf8'));
 
 const ADMIN_DIR = join(process.cwd(), 'src', 'app', 'admin', 'settings');
 const ADMIN_ACTION = readFileSync(join(ADMIN_DIR, 'auto-reject-actions.ts'), 'utf8');
@@ -96,14 +96,12 @@ describe('الرفض التلقائيّ محدودٌ بحدوده', () => {
     expect(body).toMatch(/WITH\s+stale\s+AS\s*\([\s\S]*INSERT\s+INTO\s+public\.notification_queue/i);
   });
 
-  it('المسار محميٌّ بسرٍّ ومجدولٌ في vercel.json', () => {
+  it('المسار محميٌّ بسرٍّ ومجدولٌ (GitHub Actions)', () => {
     expect(ROUTE).toMatch(/process\.env\.CRON_SECRET/);
     expect(ROUTE).toMatch(/!secret\s*\|\|\s*authHeader\s*!==\s*`Bearer \$\{secret\}`/);
     expect(ROUTE).toMatch(/status:\s*401/);
     expect(
-      (VERCEL.crons as { path: string }[]).some(
-        (c) => c.path === '/api/cron/auto-reject-pending',
-      ),
+      scheduledJobs().jobs.some((c) => c.path === '/api/cron/auto-reject-pending'),
     ).toBe(true);
   });
 

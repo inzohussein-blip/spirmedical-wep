@@ -24,3 +24,9 @@ export const SITE_ORIGIN = canonicalOrigin();
 
 /** نطاقُ الإنتاج على Vercel — نسخةٌ مطابقة بلا تحويل (محتوى مكرَّر) فيُحوَّل إلى الأصل */
 export const VERCEL_PRODUCTION_HOST = 'spirmedical-wep.vercel.app';
+
+/** نطاقُ النسخة الاحتياطيّة على Netlify — مثلُه: يُحوَّل إلى الأصل لمن يزوره مباشرة */
+export const NETLIFY_PRODUCTION_HOST = 'spir-medical.netlify.app';
+
+/** نطاقاتُ المنصّتين: البوّابةُ (`edge/failover`) تطلبها، والزائرُ المباشر يُحوَّل منها إلى الأصل */
+export const PLATFORM_HOSTS: readonly string[] = [VERCEL_PRODUCTION_HOST, NETLIFY_PRODUCTION_HOST];

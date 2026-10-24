@@ -3,6 +3,7 @@
  */
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { scheduledJobs } from './helpers/scheduled-jobs';
 
 /**
  * 🚨 بريدٌ للمالك حين يتعطّل عملٌ مُجدوَل
@@ -79,8 +80,14 @@ describe('withCronAlert', () => {
 });
 
 describe('كلُّ مسارٍ مُجدوَلٍ ملفوف', () => {
-  const vercel = JSON.parse(readFileSync(join(process.cwd(), 'vercel.json'), 'utf8'));
-  const paths: string[] = vercel.crons.map((c: { path: string }) => c.path);
+  const { schedules, jobs } = scheduledJobs();
+  const paths: string[] = jobs.map((j) => j.path);
+
+  it('🚨 كلُّ جدولٍ في GitHub Actions له مسار، ولا مسارَ بلا جدول — ولا كرونَ في vercel.json (يعمل على Vercel وحدها)', () => {
+    expect(paths.length).toBeGreaterThan(0);
+    expect([...schedules].sort()).toEqual(jobs.map((j) => j.cron).sort());
+    expect(JSON.parse(readFileSync(join(process.cwd(), 'vercel.json'), 'utf8')).crons).toBeUndefined();
+  });
 
   it.each(paths)('🚨 %s', (p) => {
     const src = readFileSync(join(process.cwd(), 'src/app', p, 'route.ts'), 'utf8');

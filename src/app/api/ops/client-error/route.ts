@@ -4,6 +4,7 @@ import { checkRateLimit } from '@/lib/rate-limit';
 import { createClient } from '@/lib/supabase/server';
 import { recordSystemError } from '@/lib/ops/system-errors';
 import { isNoise } from '@/lib/ops/report-client-error';
+import { clientIpFrom } from '@/lib/edge-proxy';
 
 /**
  * POST /api/ops/client-error — خطأٌ في متصفّح مستخدم (رصدُ الأخطاء، 0057).
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
   const { kind, message, stack, digest, url } = parsed.data;
   if (isNoise(message, stack)) return new NextResponse(null, { status: 204 });
 
-  const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim() || request.headers.get('x-real-ip') || 'unknown';
+  const ip = clientIpFrom(request.headers) ?? 'unknown';
   const rl = await checkRateLimit(`client-error:${ip}`, { max: 10, windowSeconds: 600 });
   if (!rl.allowed) return new NextResponse(null, { status: 429 });
 

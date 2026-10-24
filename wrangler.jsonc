@@ -1,0 +1,16 @@
+// 🛰️ بوّابةُ التبديل (edge/failover/worker.js) — يبنيها وينشرها «Workers Builds» في Cloudflare عند كلّ دفعٍ إلى main.
+// الاسمُ يطابق مشروعَ Workers المربوط بالمستودع. النطاقُ (www.spir-medical.com وspir-medical.com) يُربط من لوحة
+// Cloudflare: Workers → spirmedical-wep → Settings → Domains & Routes — بعد نقل nameservers النطاق إلى Cloudflare.
+// السرُّ: Settings → Variables and Secrets → EDGE_PROXY_SECRET (القيمةُ نفسُها في Vercel وNetlify).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "spirmedical-wep",
+  "main": "edge/failover/worker.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "vars": {
+    "ORIGINS": "spirmedical-wep.vercel.app,spir-medical.netlify.app",
+    "CANONICAL_HOST": "www.spir-medical.com"
+  },
+  "observability": { "enabled": true }
+}

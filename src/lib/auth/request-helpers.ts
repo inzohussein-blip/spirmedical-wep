@@ -1,4 +1,5 @@
 import { headers } from 'next/headers';
+import { clientIpFrom } from '@/lib/edge-proxy';
 
 /**
  * مساعدات مشتركة لإجراءات المصادقة (Server Actions/Routes).
@@ -7,12 +8,7 @@ import { headers } from 'next/headers';
 
 /** أول IP من ترويسات الوكيل، أو 'unknown'. */
 export async function getClientIp(): Promise<string> {
-  const h = await headers();
-  return (
-    h.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    h.get('x-real-ip') ??
-    'unknown'
-  );
+  return clientIpFrom(await headers()) ?? 'unknown';
 }
 
 /**
