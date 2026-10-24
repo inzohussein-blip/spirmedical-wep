@@ -37,7 +37,8 @@
 | منشآتُ الخدمة (دليلٌ فقط) | `lib/provider-listings.ts` (التنقية) · `provider-listings-server.ts` · `app/(provider)/provider/listing/` |
 | القصص | `components/stories/*` (الشريط، العارض، البطاقة) · `types/story.ts` · الإدارة `app/admin/stories/` |
 | الأيقونات ومكوّنات الإدارة | `lib/icons.ts` (أسماءٌ → Tabler + لونُ كلّ مفهوم) · `lib/emoji-icons.ts` + `components/ui/EmojiIcon.tsx` · `components/admin-ui` (StatCard، Panel، ListRow، StatusPill، DataTable…) |
-| الكرون | `vercel.json` → `app/api/cron/*` · `app/api/notifications/process` |
+| الكرون | `.github/workflows/scheduled-jobs.yml` → `app/api/cron/*` · `app/api/notifications/process` |
+| الاستضافة الاحتياطيّة | `edge/failover/worker.js` + `wrangler.jsonc` (Cloudflare) · `netlify.toml` · `lib/edge-proxy.ts` (عنوانُ الزائر) |
 | قاعدة البيانات | `supabase/migrations/` (آخرها 0062) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
 | الاختبارات | `tests/` — اسمُ الحارس يدلّ على مجاله (`rls-*`، `order-flow-modals`، `specialist-screens`…) |
 
@@ -106,6 +107,22 @@
   المريض معاً، أو لا شيء.
 - الحارس: `tests/auto-reject-stale.test.ts` — يفحص جسمَ الدالّة لا ترويسةَ
   تعليقاتها.
+
+## 🛰️ منصّتان وبوّابةُ تبديل (طلبُ المالك، 24 تشرين الأول)
+
+- **Vercel أساسيّة وNetlify احتياطيّة (الموقع `spir-medical`)، من `main` نفسه وSupabase نفسه.** أمامهما Cloudflare Worker
+  (`edge/failover/worker.js`) على `www.spir-medical.com`: النطاقُ واحد في المتصفّح ← الكوكيز والجلسة وlocalStorage باقية أيّاً أجاب.
+  خطواتُ المالك (ربطُ Netlify بالمستودع، نسخُ المتغيّرات، nameservers إلى Cloudflare) في README «🛰️ الاستضافة الاحتياطيّة».
+- **لا طلبَ يكتب مرّتين:** POST يُعاد إلى Netlify **حين لم يبلغ الدالّة** وحده (انقطاع، 402، `x-vercel-error: DEPLOYMENT_*`).
+  502/504 قد يكون كتب (طلبٌ طبّيٌّ مكرَّر) — لا تُضفهما لـPOST. الصفحاتُ (GET) تُعاد عند أيّ 5xx.
+- **عنوانُ الزائر بـ`clientIpFrom()` وحده** (`lib/edge-proxy.ts`): خلف البوّابة `x-forwarded-for` عنوانُها هي، فكانت حدودُ المعدّل
+  كلُّها على عنوانٍ واحد. `x-spir-client-ip` يُصدَّق بالسرّ `EDGE_PROXY_SECRET` فقط. **لا تقرأ `x-forwarded-for` في موضعٍ آخر**.
+- **`proxy.ts` لا يحوّل ما جاء من البوّابة** (`viaEdge`): هي تطلب `*.vercel.app`/`*.netlify.app`، وتحويلُها إلى النطاق يدير الطلب.
+  والزائرُ المباشر لنطاقَي المنصّتين يُحوَّل (`PLATFORM_HOSTS`). نطاقٌ جديد للمنصّة ← هنا وفي `wrangler.jsonc` (`ORIGINS`).
+- **الكرون في GitHub Actions** (`scheduled-jobs.yml`) على النطاق، لا في `vercel.json`: كرونُ Vercel يتوقّف معها، ولو بقي مع
+  هذا لأُرسلت التذكيراتُ مرّتين. مسارٌ جديد ← سطرٌ في `on.schedule` وسطرٌ في `JOBS`.
+- `@netlify/plugin-nextjs` يُثبَّت تلقائياً في Netlify — لا تضعه في package.json.
+- الحارس: `tests/edge-failover.test.ts` (أُثبت بكسر أربعة مواضع) و`tests/owner-alerts.test.ts` (الجدول ↔ المسار).
 
 ## 🔒 الإدارةُ نافذةٌ بالرابط وحده، و0058 (18 تشرين الأول)
 

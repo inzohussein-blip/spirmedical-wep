@@ -112,27 +112,5 @@
       "destination": "/sitemap.xml",
       "permanent": true
     }
-  ],
-  "crons": [
-    {
-      "path": "/api/notifications/process",
-      "schedule": "0 9 * * *"
-    },
-    {
-      "path": "/api/cron/appointment-reminders",
-      "schedule": "0 8 * * *"
-    },
-    {
-      "path": "/api/cron/nursing-recurring",
-      "schedule": "0 6 * * *"
-    },
-    {
-      "path": "/api/cron/reminders",
-      "schedule": "0 7 * * *"
-    },
-    {
-      "path": "/api/cron/auto-reject-pending",
-      "schedule": "0 5 * * *"
-    }
   ]
 }

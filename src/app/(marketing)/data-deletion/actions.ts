@@ -5,17 +5,13 @@ import { headers } from 'next/headers';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
 import { logAuditEvent } from '@/lib/audit';
+import { clientIpFrom } from '@/lib/edge-proxy';
 
 // 📧 إيميل الشركة الذي يستقبل طلبات حذف البيانات
 const COMPANY_EMAIL = 'inzohussein@gmail.com';
 
 async function getIp(): Promise<string> {
-  const h = await headers();
-  return (
-    h.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-    h.get('x-real-ip') ||
-    'unknown'
-  );
+  return clientIpFrom(await headers()) ?? 'unknown';
 }
 
 /**

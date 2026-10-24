@@ -6,7 +6,7 @@ name: Report failures
 
 on:
   workflow_run:
-    workflows: [CI, Security, Lighthouse Audit, Supabase Migrations, Database Backup]
+    workflows: [CI, Security, Lighthouse Audit, Supabase Migrations, Database Backup, Scheduled Jobs]
     types: [completed]
   deployment_status:
 

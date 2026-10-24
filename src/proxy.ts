@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { updateSession } from '@/lib/supabase/middleware';
-import { SITE_ORIGIN, VERCEL_PRODUCTION_HOST } from '@/lib/seo/origin';
+import { SITE_ORIGIN, PLATFORM_HOSTS } from '@/lib/seo/origin';
+import { viaEdge } from '@/lib/edge-proxy';
 import { NOINDEX_HEADER, isIndexablePath } from '@/lib/seo/indexable';
 import { ADMIN_GATE_COOKIE, ADMIN_GATE_MAX_AGE, adminGateToken, adminNotFound, decideAdminGate, isAdminEntryPath } from '@/lib/auth/admin-gate';
 import {
@@ -32,11 +33,14 @@ import {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 🔁 spirmedical-wep.vercel.app نسخةٌ مطابقة للموقع بلا تحويل = محتوى مكرَّر عند Google.
+  // 🔁 نطاقا المنصّتين (vercel.app وnetlify.app) نسختان مطابقتان بلا تحويل = محتوى مكرَّر عند Google.
   // الصفحاتُ وحدها (GET/HEAD) — لا /api: Webhook Meta وبوّابةُ واتساب والكرون قد تستعمله.
+  // وما جاء من بوّابة التبديل (`edge/failover`) لا يُحوَّل: هي تطلب نطاقَ المنصّة باسم الأصل، والتحويلُ يُدير الطلب.
+  const host = request.headers.get('host') ?? '';
   if (
-    request.headers.get('host') === VERCEL_PRODUCTION_HOST &&
-    new URL(SITE_ORIGIN).host !== VERCEL_PRODUCTION_HOST &&
+    PLATFORM_HOSTS.includes(host) &&
+    new URL(SITE_ORIGIN).host !== host &&
+    !viaEdge(request.headers) &&
     !pathname.startsWith('/api/') &&
     (request.method === 'GET' || request.method === 'HEAD')
   ) {

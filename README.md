@@ -365,7 +365,7 @@ npm run db:types    # توليد src/types/database.ts
 | `/api/analytics/track` · `/api/og` | التحليلات · صور المشاركة |
 | `/api/admin/*` | أفعال الإدارة (إنشاء مستخدم، بذور، طوارئ) |
 
-**مهامّ الكرون** (`vercel.json`، محميّةٌ بـ`CRON_SECRET`، التوقيت UTC، وكلُّها ملفوفةٌ بـ`withCronAlert`):
+**مهامّ الكرون** (`.github/workflows/scheduled-jobs.yml` على النطاق — تصل المنصّةَ الحيّة؛ محميّةٌ بـ`CRON_SECRET`، التوقيت UTC، وكلُّها ملفوفةٌ بـ`withCronAlert`):
 
 | الوقت | المسار | الدور |
 |---|---|---|
@@ -407,7 +407,8 @@ npm run db:types    # توليد src/types/database.ts
 | Web Push | `NEXT_PUBLIC_VAPID_PUBLIC_KEY` `VAPID_PRIVATE_KEY` `VAPID_SUBJECT` |
 | البريد | `RESEND_API_KEY` `RESEND_FROM_EMAIL` |
 | تحديد المعدّل | `UPSTASH_REDIS_REST_URL` `UPSTASH_REDIS_REST_TOKEN` |
-| الكرون | `CRON_SECRET` |
+| الكرون | `CRON_SECRET` (وفي أسرار GitHub أيضاً) |
+| بوّابةُ التبديل | `EDGE_PROXY_SECRET` (القيمةُ نفسُها في Vercel وNetlify وCloudflare) |
 | المراقبة | `NEXT_PUBLIC_SENTRY_DSN` `SENTRY_AUTH_TOKEN` `SENTRY_ORG` `SENTRY_PROJECT` `LOG_LEVEL` |
 | التحليلات | `NEXT_PUBLIC_POSTHOG_KEY` `NEXT_PUBLIC_POSTHOG_HOST` |
 | أعلام الميزات | `NEXT_PUBLIC_ENABLE_FAMILY_ACCOUNTS` `NEXT_PUBLIC_ENABLE_SPECIALIST_CHAT` `NEXT_PUBLIC_ENABLE_SUBSCRIPTIONS` `NEXT_PUBLIC_ENABLE_TELEGRAM_OTP` |
@@ -417,10 +418,44 @@ npm run db:types    # توليد src/types/database.ts
 
 ## 🚢 النشر
 
-- Vercel (المنطقة `fra1`)، البناء `next build`، والكرون من `vercel.json`.
+- **منصّتان من `main` نفسه**: Vercel (المنطقة `fra1`، `vercel.json`) أساسيّة، وNetlify (`netlify.toml`، الموقع `spir-medical`)
+  احتياطيّة. أمامهما **بوّابةُ التبديل** (`edge/failover/worker.js` + `wrangler.jsonc`) على Cloudflare: كلُّ طلبٍ إلى Vercel، فإن
+  لم تُجِب إلى Netlify — النطاقُ واحد فالكوكيز والجلسة وlocalStorage كما هي، والبياناتُ في Supabase المشترك. الكرون من
+  GitHub Actions (`scheduled-jobs.yml`) على النطاق. انظر «🛰️ الاستضافة الاحتياطيّة» أدناه.
 - **CI** (`.github/workflows/ci.yml`) على كلّ دفعةٍ وكلّ PR إلى `main`: الأنواع، الفحص، الاختبارات بالتغطية، البناء. عتبةُ التغطية أرضيّةٌ تحت المقيس تُرفع ولا تُنزل.
 - الترحيلات تُطبَّق على Supabase منفصلةً — **وكلُّ كتابةٍ على الإنتاج تُجرَّب أوّلاً في `BEGIN … ROLLBACK`**.
 - `docs/DEPLOYMENT.md` · `docs/PRODUCTION_CHECKLIST.md` · `docs/RUNBOOK.md`.
+
+---
+
+## 🛰️ الاستضافة الاحتياطيّة (Vercel ← Netlify)
+
+```
+المتصفّح ── www.spir-medical.com ──▶ Cloudflare Worker (edge/failover)
+                                        ├─▶ spirmedical-wep.vercel.app   (أوّلاً)
+                                        └─▶ spir-medical.netlify.app     (حين لا تُجيب الأولى)
+                                                  └── كلاهما ──▶ Supabase نفسُه
+```
+
+- **متى يُعاد الطلب:** صفحاتٌ تُقرأ (GET/HEAD) عند انقطاعٍ أو مهلةٍ أو 402 (إيقافُ الحساب) أو 5xx. وما يكتب (POST) **حين لم يبلغ
+  الدالّة** وحده (انقطاع، 402، `DEPLOYMENT_*`) — 502/504 قد يكون كتب فلا يُكرَّر. والمنصّةُ الساقطة تُتخطّى 30 ثانية.
+- **ما يبقى للمستخدم:** النطاقُ واحد ← الكوكيز وجلسةُ Supabase وlocalStorage والتطبيقُ المثبَّت. التحويلاتُ إلى نطاق المنصّة تُعاد إلى النطاق.
+- **عنوانُ الزائر:** المنصّةُ ترى البوّابة، فترسل البوّابةُ `x-spir-client-ip` ولا يُصدَّق إلّا بـ`EDGE_PROXY_SECRET` (`lib/edge-proxy.ts`).
+  وزائرُ `*.vercel.app`/`*.netlify.app` المباشر يُحوَّل إلى النطاق (`proxy.ts`) — إلّا ما جاء من البوّابة.
+- **الكرون:** GitHub Actions يطلب النطاق (ثمّ المنصّتين مباشرةً إن لم يصل)، مرّةً واحدة. لا `crons` في `vercel.json` — كانت تعمل على Vercel وحدها.
+
+**خطواتُ المالك (مرّةً واحدة):**
+1. **Netlify** (`app.netlify.com/projects/spir-medical`): Project configuration → Build & deploy → Link repository → GitHub →
+   `inzohussein-blip/spirmedical-wep`، الفرع `main` (البناءُ من `netlify.toml`). ثمّ Environment variables: انسخ من Vercel كلَّ
+   متغيّرات الإنتاج (القائمة في «متغيّرات البيئة» أعلاه) بالقيم نفسها، وأضف `EDGE_PROXY_SECRET`. ثمّ Deploys → Trigger deploy.
+2. **Vercel**: أضف `EDGE_PROXY_SECRET` (24 حرفاً عشوائيّاً فأكثر، القيمةُ نفسُها) ثمّ Redeploy.
+3. **GitHub** → Settings → Secrets → Actions: `CRON_SECRET` (القيمةُ نفسُها التي في Vercel).
+4. **Cloudflare**: Add a domain → `spir-medical.com` (الخطّة المجّانيّة)، وتأكّد أنّ سجلّات DNS المستوردة كلّها موجودة (البريد خاصّةً).
+   ثمّ في **Hostinger** غيّر nameservers النطاق إلى اللذين يعطيهما Cloudflare. بعد التفعيل: Workers → `spirmedical-wep` →
+   Settings → Variables and Secrets → `EDGE_PROXY_SECRET` (سرّ)، وDomains & Routes → Add → Custom domain: `www.spir-medical.com`
+   و`spir-medical.com` (إن قال إنّ سجلّاً قائماً يتعارض — سجلَّ Vercel القديم — فاسمح باستبداله). (الـWorker يُبنى من `wrangler.jsonc` في كلّ دفعٍ إلى `main` عبر «Workers Builds» المربوط بالمستودع.)
+5. **التجربة:** `curl -I https://www.spir-medical.com` ← `x-spir-origin: spirmedical-wep.vercel.app`. ولتجربة الاحتياطيّ أوقف
+   نشرَ Vercel مؤقّتاً (أو انتظر عطلاً) ← `x-spir-origin: spir-medical.netlify.app` والجلسةُ باقية.
 
 ---
 

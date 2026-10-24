@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { Json } from '@/types/database';
 import { createClient } from '@/lib/supabase/server';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { clientIpFrom } from '@/lib/edge-proxy';
 
 /**
  * POST /api/analytics/track
@@ -32,10 +33,7 @@ export async function POST(request: NextRequest) {
     }
 
     // ─── Rate limit حسب الـ IP (منع إغراق DB — endpoint غير مُصادق) ───
-    const forwardedForRl = request.headers.get('x-forwarded-for');
-    const rlIp = forwardedForRl
-      ? forwardedForRl.split(',')[0].trim()
-      : request.headers.get('x-real-ip') || 'unknown';
+    const rlIp = clientIpFrom(request.headers) ?? 'unknown';
     const rl = await checkRateLimit(`analytics:${rlIp}`, {
       max: 120,
       windowSeconds: 60,
@@ -50,8 +48,7 @@ export async function POST(request: NextRequest) {
 
     // ─── جلب IP + UA ───
     const userAgent = request.headers.get('user-agent') || null;
-    const forwardedFor = request.headers.get('x-forwarded-for');
-    const ipAddress = forwardedFor ? forwardedFor.split(',')[0].trim() : null;
+    const ipAddress = clientIpFrom(request.headers);
 
     // ─── حفظ ───
     await supabase

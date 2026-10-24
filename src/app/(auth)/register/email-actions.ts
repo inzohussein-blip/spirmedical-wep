@@ -7,6 +7,7 @@ import { checkRateLimit } from '@/lib/rate-limit';
 import { safeInternalPath } from '@/lib/auth/safe-redirect';
 import { logAuditEvent } from '@/lib/audit';
 import { logger } from '@/lib/logger';
+import { clientIpFrom } from '@/lib/edge-proxy';
 
 // ════════════════════════════════════════════════════════════════════
 // 📧 التسجيل / الدخول بالبريد الإلكتروني (V34 — موحّد)
@@ -23,12 +24,7 @@ import { logger } from '@/lib/logger';
 // ════════════════════════════════════════════════════════════════════
 
 async function getIp(): Promise<string> {
-  const h = await headers();
-  return (
-    h.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    h.get('x-real-ip') ??
-    'unknown'
-  );
+  return clientIpFrom(await headers()) ?? 'unknown';
 }
 
 function isNextRedirect(err: unknown): boolean {

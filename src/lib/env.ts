@@ -92,6 +92,9 @@ const envSchema = z.object({
   // سرّ تحقّق كرون Vercel — بدونه: مسار معالجة الطابور يرفض (fail-closed)
   // والكرونات الأخرى صارت تفشل مغلقة أيضاً (لا endpoints عامة).
   CRON_SECRET: z.string().min(16).optional(),
+  // سرُّ بوّابة التبديل (edge/failover) — يطابق سرَّ الـWorker في Cloudflare. بدونه: عنوانُ الزائر من ترويسة المنصّة
+  // (عنوانُ البوّابة خلفها)، فلا يُصدَّق x-spir-client-ip.
+  EDGE_PROXY_SECRET: z.string().min(16).optional(),
   // توقيع webhook واتساب (Meta) — بدونه كل callbacks التسليم تُرفض 401.
   META_APP_SECRET: z.string().optional(),
   META_API_VERSION: z.string().optional(),

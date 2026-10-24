@@ -11,6 +11,7 @@ import { sendOtp } from '@/lib/whatsapp/otp-service';
 import { createClient } from '@/lib/supabase/server';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
+import { clientIpFrom } from '@/lib/edge-proxy';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,10 +34,7 @@ export async function POST(request: Request) {
     const { phone, channel, purpose } = parsed.data;
 
     // ─── Rate limit حسب الـ IP (فوق الحدّ لكل رقم داخل الخدمة) ───
-    const ip =
-      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-      request.headers.get('x-real-ip') ||
-      'unknown';
+    const ip = clientIpFrom(request.headers) ?? 'unknown';
     const rl = await checkRateLimit(`otp:send:ip:${ip}`, {
       max: 10,
       windowSeconds: 900,
@@ -58,10 +56,7 @@ export async function POST(request: Request) {
     } = await supabase.auth.getUser();
 
     // ─── Extract IP/UA ───
-    const ipAddress =
-      request.headers.get('x-forwarded-for')?.split(',')[0] ||
-      request.headers.get('x-real-ip') ||
-      undefined;
+    const ipAddress = clientIpFrom(request.headers) ?? undefined;
     const userAgent = request.headers.get('user-agent') || undefined;
 
     // ─── Send OTP ───
