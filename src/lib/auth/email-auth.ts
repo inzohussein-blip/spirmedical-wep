@@ -27,7 +27,7 @@ export async function signUpWithEmail(input: {
   gender: 'male' | 'female';
   role: 'patient' | 'specialist';
 }): Promise<{ success: boolean; userId?: string; error?: string }> {
-  const { email, password, fullName, gender, role } = input;
+  const { email, password, fullName, role } = input;
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -72,7 +72,8 @@ export async function signUpWithEmail(input: {
         id: authUser.user.id,
         email,
         full_name: fullName,
-        gender,
+        // لا عمودَ `gender` في `users` (ولا يخزّنه تسجيلُ الرقم أيضاً): كان الـupsert يُرفض فيُحذف الحسابُ —
+        // فكان تسجيلُ المريض بالبريد يفشل كلَّ مرّة (29 تشرين الأول، tests/admin-schema-refs.test.ts).
         role,
         signup_method: 'email',
         email_verified: false,

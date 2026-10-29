@@ -4,6 +4,7 @@ import {
   IconSearch as Search,
 } from '@tabler/icons-react';
 import Link from 'next/link';
+import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
 import { useState } from 'react';
 import { LockedAction } from '@/components/app/LockedAction';
 import StoriesStrip from '@/components/stories/StoriesStrip';
@@ -59,7 +60,7 @@ const CORE_SERVICES: Service[] = [
     id: 'lab-tests',
     icon: '🧪',
     title: 'تحاليل مختبرية',
-    desc: '+200 نوع فحص',
+    desc: `${BLOOD_TESTS.length} فحصاً · من مختبرٍ تختاره`,
     variant: 'amber',
     guestLocked: true,
     guestLockedDesc: 'يتطلب التسجيل',
@@ -77,7 +78,7 @@ const CORE_SERVICES: Service[] = [
     id: 'consultation',
     icon: '💬',
     title: 'استشارة طبية',
-    desc: '12 طبيب متاح الآن',
+    desc: 'دليل الأطباء والعيادات',
     variant: 'amber',
     guestLocked: true,
     guestLockedDesc: 'يتطلب التسجيل',
@@ -86,7 +87,7 @@ const CORE_SERVICES: Service[] = [
     id: 'hospitals',
     icon: '🏥',
     title: 'المستشفيات',
-    desc: '+40 مستشفى · دليل ومعلومات',
+    desc: 'دليل · أرقامُ التواصل والمواقع',
     variant: 'default',
     guestLocked: false,
     href: '/guest/services/hospitals',

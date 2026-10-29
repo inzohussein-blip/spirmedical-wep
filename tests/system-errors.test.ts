@@ -297,6 +297,20 @@ describe('🔧 ما كشفه الرصدُ في أوّل ساعة (18 تشرين 
     expect(sec).toMatch(/head: \$\{\{ github\.event_name == 'push' && github\.sha/);
   });
 
+  it('🚨 التقريرُ يصل وإن كانت Vercel موقوفة: 402 أو انقطاعٌ ← Netlify مباشرةً (28 تشرين الأول: كلُّ تقريرٍ سقط)', () => {
+    const wf = read('.github/workflows/report-failures.yml');
+    expect(wf).toMatch(/for URL in "\$INGEST_URL" "https:\/\/spir-medical\.netlify\.app\/api\/ops\/ingest"/);
+    expect(wf).toMatch(/"\$CODE" != "000" \] && \[ "\$CODE" != "402" \]; then break/);
+  });
+
+  it('🚨 الجدولُ الأسبوعيّ يفحص التاريخَ كلَّه — base=main وhead=HEAD يتطابقان عليه فيسقط بلا فحص (26 تشرين الأول)', () => {
+    const steps = read('.github/workflows/security.yml').split(/\n(?=\s+- name: )/).filter((b) => /trufflehog@/.test(b));
+    const scheduled = steps.filter((b) => !/if: github\.event_name != 'schedule'/.test(b));
+    expect(scheduled).toHaveLength(1);
+    expect(scheduled[0]).toMatch(/if: github\.event_name == 'schedule'/);
+    expect(scheduled[0]).not.toMatch(/base:/);
+  });
+
   it('🚨 db push لا يعمل آليّاً عند الدمج (الترحيلُ يُجرَّب ثمّ يُطبَّق يدوياً)', () => {
     const on = read('.github/workflows/supabase-migrations.yml').match(/^on:\n([\s\S]*?)\n\n/m)![1];
     expect(on).not.toMatch(/push:/);

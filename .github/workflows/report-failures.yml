@@ -70,12 +70,18 @@ jobs:
           TOKEN=$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
             "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=spir-medical-ops" | jq -r .value)
           echo "Reporting: $BODY"
-          CODE=$(curl -sS -o /tmp/resp -w '%{http_code}' -X POST "$INGEST_URL" \
-            -H "Authorization: Bearer $TOKEN" \
-            -H "Content-Type: application/json" \
-            --data "$BODY")
+          # النطاقُ أوّلاً، ثمّ Netlify مباشرةً إن لم يصل (انقطاع أو 402 — Vercel موقوفة، 28 تشرين الأول: كلُّ تقريرٍ سقط
+          # بـDEPLOYMENT_DISABLED فلم يُعلَم بشيء). غيرُ ذلك يُحتسب.
+          for URL in "$INGEST_URL" "https://spir-medical.netlify.app/api/ops/ingest"; do
+            CODE=$(curl -sS -o /tmp/resp -w '%{http_code}' --max-time 30 -X POST "$URL" \
+              -H "Authorization: Bearer $TOKEN" \
+              -H "Content-Type: application/json" \
+              --data "$BODY" || echo 000)
+            echo "$URL → $CODE"
+            if [ "$CODE" != "000" ] && [ "$CODE" != "402" ]; then break; fi
+          done
           cat /tmp/resp; echo
-          if [ "$CODE" = "404" ]; then
+          if [ "$CODE" = "404" ] && [ "$URL" = "$INGEST_URL" ]; then
             # النقطةُ لم تُنشر في الإنتاج بعد (قبل دمج رصد الأخطاء) — لا يُحمَّر الفحص لأجلها
             echo "::warning::/api/ops/ingest is not deployed yet (404)"
             exit 0

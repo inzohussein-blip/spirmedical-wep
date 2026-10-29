@@ -124,6 +124,25 @@
 - `@netlify/plugin-nextjs` يُثبَّت تلقائياً في Netlify — لا تضعه في package.json.
 - الحارس: `tests/edge-failover.test.ts` (أُثبت بكسر أربعة مواضع) و`tests/owner-alerts.test.ts` (الجدول ↔ المسار).
 
+## 🔍 فحصٌ شامل (29 تشرين الأول) — ما وُجد وما يحرسه
+
+- **حرّاسٌ آليّةٌ للكود كلّه** (كانت للإدارة وحدها أو غائبة): `admin-schema-refs` يطابق كلَّ select/insert/update في `src/`
+  بأعمدة القاعدة؛ `rpc-refs` كلَّ `.rpc()` بدوالّها؛ `internal-links` كلَّ رابطٍ داخليّ بصفحةٍ موجودة (و`…/new` لا يقع في `[id]`).
+  كشفت:
+  - **تسجيلُ المريض بالبريد كان يفشل كلَّ مرّة:** `signUpWithEmail` يكتب `users.gender` — لا عمود — فيُرفض ويُحذف الحساب.
+  - **تبويبُ «الخدمات» للزائر 404** (`/guest/services` بلا صفحة) — أُنشئت. وزرُّ «استشارة» العائم إلى `/consultations/new` (لا صفحة).
+  - `increment_search_count` غيرُ موجودة، تُستدعى لكلّ نتيجة بحثٍ عن دواء — حُذفت.
+- **صورةُ المشاركة `/api/og`:** «failed to pipe response» — بلا خطٍّ يجلب Satori محارفَ العربيّة من الشبكة أثناء البثّ. الخطُّ الآن من
+  `assets/og/*.woff` (Plex؛ Satori لا يقرأ woff2) مضمَّنٌ بـ`outputFileTracingIncludes`. وSatori يرصّ كلماتِ العربيّة من اليسار
+  («السكر فحص») فكلُّ نصٍّ عربيّ يمرّ بـ`<Rtl>` (صفٌّ معكوس يلتفّ). و`?title=` (المدوّنة) صار العنوان. قِيس بـ`next start`.
+- **أعدادٌ مُختلَقة داخل التطبيق:** «+200 فحص» (الكتالوج 14) و«12 طبيب متاح الآن» و«+40 مستشفى» — العددُ من `BLOOD_TESTS.length`.
+- **CI على main:** TruffleHog الأسبوعيّ (base=main=HEAD) يفحص التاريخَ كلَّه الآن؛ و`report-failures` يرسل إلى Netlify حين تردّ
+  Vercel بـ402 (كلُّ تقريرٍ سقط بـ`DEPLOYMENT_DISABLED`).
+- **معلّقٌ على المالك (قِيس 29 تشرين الأول):** الموقعُ متوقّفٌ كلّيّاً (Vercel `402 DEPLOYMENT_DISABLED`، وNetlify بلا نشر)؛
+  و«Scheduled Jobs» يفشل كلَّ يوم منذ الدمج: **`CRON_SECRET` غيرُ مضبوط في أسرار GitHub**؛ وWorker البوّابة غيرُ موجود في
+  Cloudflare (البناءُ يفشل — إعدادُ Build). و«استشاراتي» (`/consultations`) لا يُنشئ استشارةً شيءٌ منذ صارت العيادةُ دليلاً.
+- الحرّاس: `internal-links`، `rpc-refs`، `og-image`، `admin-schema-refs`، `app-live-numbers`، `system-errors` (أُثبتت كلُّها بالكسر).
+
 ## 🔒 الإدارةُ نافذةٌ بالرابط وحده، و0058 (18 تشرين الأول)
 
 - **🔴 0058 — مريضٌ كان يرفع نفسه super_admin:** `users_update_merged` تسمح لصاحب الصفّ بتحديثه، و`authenticated` يملك

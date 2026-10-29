@@ -41,9 +41,6 @@ const ACTIONS_BY_PAGE: Record<string, QuickAction[]> = {
     { href: '/appointments/new', label: 'موعد جديد', icon: '➕' },
     { href: '/appointments?status=completed', label: 'سابقة', icon: '🔄' },
   ],
-  '/messages': [
-    { href: '/consultations/new', label: 'استشارة', icon: '💬' },
-  ],
 };
 
 export default function FloatingActionButton() {

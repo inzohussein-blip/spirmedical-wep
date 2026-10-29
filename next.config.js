@@ -23,6 +23,11 @@ const nextConfig = {
     ],
   },
 
+  // خطُّ صورة المشاركة (/api/og) يُقرأ من assets/og في الدالّة — يُضمَّن صراحةً في الحزمة (Vercel وNetlify)
+  outputFileTracingIncludes: {
+    '/api/og': ['./assets/og/*.woff'],
+  },
+
   async redirects() {
     return [
       // توافق رجعي: الروابط القديمة /admin44/* → /admin/* بعد إعادة التسمية

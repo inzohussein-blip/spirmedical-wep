@@ -6,6 +6,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
+import { BLOOD_TESTS } from '@/lib/services/blood-tests-data';
 import {
   IconArrowRight as ArrowRight,
 } from '@tabler/icons-react';
@@ -228,7 +229,7 @@ export default async function ServicesPage() {
               سحب دم + تحاليل
             </div>
             <div style={{ fontSize: 11, color: '#5F6368', lineHeight: 1.4, position: 'relative', zIndex: 1 }}>
-              +200 فحص · في منزلك
+              {BLOOD_TESTS.length} فحصاً · في منزلك
             </div>
             <div style={{ position: 'absolute', bottom: 10, left: 10, color: '#80868B' }}>
               <IconArrowLeft size={14} stroke={2} />

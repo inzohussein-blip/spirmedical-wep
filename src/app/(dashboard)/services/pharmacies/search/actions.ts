@@ -105,10 +105,6 @@ export async function searchMedicationAvailability(
         available_pharmacies: pharmaciesForMed,
       });
 
-      // زيادة عداد البحث
-      await supabase.rpc('increment_search_count' as never, { med_id: med.id } as never).then(() => {
-        // ignore errors silently
-      });
     }
   }
 
