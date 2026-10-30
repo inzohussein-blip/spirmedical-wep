@@ -1,4 +1,7 @@
+import { readFile } from 'fs/promises';
+import { join } from 'path';
 import { ImageResponse } from 'next/og';
+import type { CSSProperties } from 'react';
 
 export const dynamic = 'force-dynamic';
 export const alt = 'Spir Medical · سباير ميديكال';
@@ -18,14 +21,56 @@ export const contentType = 'image/png';
  * ════════════════════════════════════════════════════════════════
  */
 
+/**
+ * الخطُّ من ملفّاتٍ في المستودع (`assets/og/`، IBM Plex Sans Arabic — خطُّ الموقع). بلا خطٍّ يجلب `ImageResponse` محارفَ
+ * العربيّة من الشبكة أثناء البثّ، فإن تعثّر سقطت الصورةُ بـ«failed to pipe response» خارج try (رصدُ الأخطاء، 20 تشرين الأول).
+ */
+const FONT_FILES = [
+  ['arabic', 400], ['arabic', 700], ['latin', 400], ['latin', 700],
+] as const;
+let fontsPromise: Promise<{ name: string; data: Buffer; weight: 400 | 700; style: 'normal' }[]> | null = null;
+export function loadOgFonts() {
+  fontsPromise ??= Promise.all(
+    FONT_FILES.map(async ([subset, weight]) => ({
+      name: 'Plex',
+      data: await readFile(join(process.cwd(), 'assets/og', `ibm-plex-sans-arabic-${subset}-${weight}-normal.woff`)),
+      weight,
+      style: 'normal' as const,
+    })),
+  ).catch((err) => {
+    fontsPromise = null;
+    throw err;
+  });
+  return fontsPromise;
+}
+
+/**
+ * Satori (محرّكُ ImageResponse) يصل حروفَ العربيّة لكنّه يرصّ الكلماتِ من اليسار: «فحص السكر» تُرسم «السكر فحص».
+ * فكلُّ كلمةٍ عنصرٌ في صفٍّ معكوس يلتفّ — والسطرُ الثاني تحت الأوّل لا فوق ما بعده.
+ */
+function Rtl({ text, gap, style }: { text: string; gap: number; style: CSSProperties }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'row-reverse', flexWrap: 'wrap', columnGap: gap, ...style }}>
+      {text.split(/\s+/).filter(Boolean).map((w, i) => (
+        <span key={i} style={{ display: 'flex' }}>{w}</span>
+      ))}
+    </div>
+  );
+}
+
+/** نصٌّ من الرابط: مقصوصٌ كي لا يُفيض الصورة */
+const param = (sp: URLSearchParams, key: string, max: number) => sp.get(key)?.trim().slice(0, max) || null;
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const titleAr = searchParams.get('titleAr') ?? 'سباير ميديكال';
-    const titleEn = searchParams.get('titleEn') ?? 'Spir Medical';
-    const headline = searchParams.get('headline') ?? 'الرعاية الصحية بين يديك';
-    const meta = searchParams.get('meta') ?? 'دليل الفرات الأوسط الطبي · النجف · 24/7';
+    const titleAr = param(searchParams, 'titleAr', 40) ?? 'سباير ميديكال';
+    const titleEn = param(searchParams, 'titleEn', 40) ?? 'Spir Medical';
+    // `title` ما ترسله المدوّنة (عنوانُ المقال) — كان يُهمَل فتتطابق صورُ المقالات كلُّها
+    const headline = param(searchParams, 'title', 90) ?? param(searchParams, 'headline', 90) ?? 'الرعاية الصحية بين يديك';
+    const meta = param(searchParams, 'meta', 80) ?? 'دليل الفرات الأوسط الطبي · النجف · 24/7';
+    const fonts = await loadOgFonts();
 
     return new ImageResponse(
       (
@@ -36,7 +81,7 @@ export async function GET(request: Request) {
             height: '100%',
             display: 'flex',
             position: 'relative',
-            fontFamily: 'system-ui, -apple-system, sans-serif',
+            fontFamily: 'Plex',
             overflow: 'hidden',
           }}
         >
@@ -112,19 +157,18 @@ export async function GET(request: Request) {
               >
                 {titleEn}
               </div>
-              <div
+              <Rtl
+                text={titleAr}
+                gap={2}
                 style={{
                   fontSize: '32px',
                   fontWeight: 700,
                   color: '#E67E22',
-                  display: 'flex',
-                  lineHeight: 1,
+                  lineHeight: 1.3,
                   borderBottom: '4px solid #E67E22',
                   paddingBottom: '4px',
                 }}
-              >
-                {titleAr}
-              </div>
+              />
             </div>
 
             {/* Logo Mark - مربع أخضر مع حرف س */}
@@ -171,37 +215,33 @@ export async function GET(request: Request) {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'flex-end',
-              maxWidth: '780px',
+              width: '780px',
             }}
           >
             {/* العنوان الكبير */}
-            <div
+            <Rtl
+              text={headline}
+              gap={4}
               style={{
-                fontSize: '76px',
-                fontWeight: 900,
+                fontSize: headline.length > 30 ? '56px' : '76px',
+                fontWeight: 700,
                 color: '#F4EFE2',
-                display: 'flex',
-                lineHeight: 1.15,
+                lineHeight: 1.3,
                 marginBottom: '24px',
-                textAlign: 'right',
-                letterSpacing: '-1px',
               }}
-            >
-              {headline}
-            </div>
+            />
 
             {/* Meta details */}
-            <div
+            <Rtl
+              text={meta}
+              gap={7}
               style={{
                 fontSize: '24px',
-                fontWeight: 500,
+                fontWeight: 400,
                 color: 'rgba(244, 239, 226, 0.75)',
-                display: 'flex',
-                lineHeight: 1,
+                lineHeight: 1.3,
               }}
-            >
-              {meta}
-            </div>
+            />
           </div>
 
           {/* ═══ FOOTER BADGE: صناعة عراقية ═══ */}
@@ -231,16 +271,7 @@ export async function GET(request: Request) {
               }}
             />
 
-            <span
-              style={{
-                fontSize: '20px',
-                fontWeight: 700,
-                color: '#F4EFE2',
-                display: 'flex',
-              }}
-            >
-              صناعة عراقية
-            </span>
+            <Rtl text="صناعة عراقية" gap={6} style={{ fontSize: '20px', fontWeight: 700, color: '#F4EFE2' }} />
 
             {/* علم العراق */}
             <div
@@ -264,6 +295,7 @@ export async function GET(request: Request) {
       {
         width: 1200,
         height: 630,
+        fonts,
       }
     );
   } catch {

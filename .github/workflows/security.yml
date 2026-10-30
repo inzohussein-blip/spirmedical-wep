@@ -67,6 +67,7 @@ jobs:
           fetch-depth: 0
 
       - name: Trufflehog
+        if: github.event_name != 'schedule'
         uses: trufflesecurity/trufflehog@main
         with:
           path: ./
@@ -74,4 +75,13 @@ jobs:
           # («BASE and HEAD commits are the same») فيسقط الفحصُ في كلّ دمج — كشفه رصدُ الأخطاء (0057).
           base: ${{ github.event_name == 'push' && github.event.before || github.event.repository.default_branch }}
           head: ${{ github.event_name == 'push' && github.sha || 'HEAD' }}
+          extra_args: --only-verified
+
+      # الجدولُ الأسبوعيّ على main: base=main وhead=HEAD يتطابقان فيسقط كلَّ اثنين بلا فحص (26 تشرين الأول).
+      # بلا base يفحص التاريخَ كلَّه — وهو المقصودُ من فحصٍ دوريّ.
+      - name: Trufflehog (full history)
+        if: github.event_name == 'schedule'
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
           extra_args: --only-verified

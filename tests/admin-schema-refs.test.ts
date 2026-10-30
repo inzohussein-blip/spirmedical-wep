@@ -16,7 +16,9 @@ import { readFileSync, readdirSync, statSync } from 'fs';
 import { join } from 'path';
 
 const ROOT = process.cwd();
-const ROOTS = ['src/app/admin', 'src/app/api/admin', 'src/lib/admin', 'src/lib/admin-audit.ts', 'src/lib/audit.ts'];
+// الكودُ كلُّه منذ 29 تشرين الأول (كان كودَ الإدارة وحده): كشف `users.gender` في تسجيل البريد — عمودٌ غيرُ موجود
+// فكان كلُّ تسجيلٍ بالبريد يُرفض ويُحذف حسابُه.
+const ROOTS = ['src'];
 
 function walk(p: string): string[] {
   const abs = join(ROOT, p);
@@ -109,7 +111,7 @@ describe('🧭 أعمدةُ استعلامات الإدارة موجودةٌ ف�
   it('الأنواعُ قُرئت (ضمانُ أنّ الحارس يعمل)', () => {
     expect(cols.get('users')?.has('phone')).toBe(true);
     expect(cols.size).toBeGreaterThan(50);
-    expect(files.length).toBeGreaterThan(40);
+    expect(files.length).toBeGreaterThan(400);
   });
 
   it('🚨 select: لا عمودَ ولا تضمينَ مجهول', () => {
