@@ -92,7 +92,7 @@ export default function SymptomCheckerClient() {
         title: 'يُستحسن استشارة عاجلة',
         message: 'يُنصح بمراجعة طبيب خلال 24 ساعة',
         specialist: ids.includes('chest-pain') ? 'طبيب قلب' : 'طبيب باطنية',
-        action: 'احجز استشارة طبية',
+        action: 'راجع طبيباً خلال يوم',
       };
     }
 
@@ -103,7 +103,7 @@ export default function SymptomCheckerClient() {
         title: 'مراجعة طبيب موصى بها',
         message: 'الأعراض قد تستدعي تقييماً طبياً خلال 2-3 أيام',
         specialist: 'طبيب عام',
-        action: 'احجز موعد',
+        action: 'راجع طبيباً عامّاً',
       };
     }
 
@@ -215,12 +215,13 @@ export default function SymptomCheckerClient() {
 
               <div className="risk-cta-section">
                 <h3>{recommendation.action}</h3>
-                <p>سجّل الآن لحجز استشارة فورية</p>
-                <Link href="/register" className="tool-cta">
-                  إنشاء حساب وحجز ←
+                {/* الأطبّاءُ والعياداتُ دليلٌ (قرار المالك، 22 تشرين الأول) — لا حجزَ ولا استشارةَ فوريّة من التطبيق */}
+                <p>تواصل مع طبيبٍ أو عيادةٍ قريبة من الدليل</p>
+                <Link href="/services/doctors" className="tool-cta">
+                  دليل الأطباء والعيادات ←
                 </Link>
                 {recommendation.urgency === 'emergency' && (
-                  <Link href="/guest/sos" className="tool-emergency-btn">
+                  <Link href="/sos" className="tool-emergency-btn">
                     <AlertOctagon size={16} strokeWidth={2.4} />
                     طوارئ SOS
                   </Link>
