@@ -193,3 +193,22 @@ describe('🗄️ 0062 وتوصيلُ الإخطار', () => {
     }
   });
 });
+
+describe('🧭 الواجهةُ لا تَعِد بحجزٍ أو استشارةٍ من منشأةٍ دليليّة (29 تشرين الأول)', () => {
+  it('🚨 بلاطاتُ الطبيب والمستشفى والصيدلية «دليل»، ولا بلاطةَ «استشاراتي» — لا شيءَ يُنشئ استشارة', () => {
+    const { CORE_SERVICES } = require('@/lib/services-v3');
+    for (const id of ['doctor', 'hospital', 'pharmacy']) {
+      const s = CORE_SERVICES.find((x: { id: string }) => x.id === id);
+      expect(s.description).not.toMatch(/احجز|حجوزات|حجز|استشارة فوري/);
+    }
+    expect(CORE_SERVICES.map((x: { route: string }) => x.route)).not.toContain('/consultations');
+    expect(code('src/app/(app-utility)/share-target/page.tsx')).not.toMatch(/href="\/consultations/);
+  });
+
+  it('🚨 مدقّقُ الأعراض يدلّ على الدليل لا على «حجز استشارةٍ فوريّة»', () => {
+    for (const f of ['src/app/(dashboard)/tools/symptom-checker/SymptomCheckerClient.tsx', 'src/app/guest/tools/symptom-checker/GuestSymptomCheckerClient.tsx']) {
+      expect(code(f)).not.toMatch(/استشارة فوري|احجز استشارة|إنشاء حساب وحجز/);
+    }
+    expect(code('src/app/(dashboard)/tools/symptom-checker/SymptomCheckerClient.tsx')).not.toMatch(/\/guest\//);
+  });
+});

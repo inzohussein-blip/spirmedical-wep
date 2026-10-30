@@ -8,7 +8,7 @@
 
 import {
   IconDroplet, IconVaccine, IconStethoscope, IconBuildingHospital,
-  IconPill, IconMessage2, IconDental, IconApple, IconVaccineBottle,
+  IconPill, IconDental, IconApple, IconVaccineBottle,
   IconEye, IconBrain, IconRun, IconSparkles, IconAlertOctagon,
   IconFirstAidKit, IconCalculator, IconSearch, IconCalendarEvent,
   IconBell, IconClipboardList, IconChartLine, IconHome2,
@@ -45,13 +45,12 @@ export const FEATURED_SERVICE: ServiceConfig = {
   route: '/appointments/new?service=blood-draw',
 };
 
-// 🏥 الخدمات الرئيسية (15 خدمة - بدون سحب الدم)
+// 🏥 الخدمات الرئيسية (بدون سحب الدم) — «استشاراتي» حُذفت (29 تشرين الأول): لا شيءَ يُنشئ استشارةً منذ صارت العيادةُ دليلاً
 export const CORE_SERVICES: ServiceConfig[] = [
   { id: 'nursing', title: 'التمريض المنزلي', description: 'إبر · جروح · كانيولا', icon: IconVaccine, color: '#B06000', softBg: '#FEF7E0', route: '/appointments/new?service=home-nursing' },
-  { id: 'doctor', title: 'طبيب العائلة', description: 'استشارة فورية', icon: IconStethoscope, color: '#01875F', softBg: '#E6F3EF', badge: 'جديد', route: '/services/doctors' },
-  { id: 'hospital', title: 'المستشفيات', description: 'دليل + حجوزات', icon: IconBuildingHospital, color: '#1A73E8', softBg: '#E8F0FE', route: '/services/hospitals' },
-  { id: 'pharmacy', title: 'الصيدلية', description: 'احجز دواءك', icon: IconPill, color: '#9334E6', softBg: '#F3E8FD', route: '/services/pharmacies' },
-  { id: 'consult', title: 'استشاراتي', description: 'نص + صور · 24س', icon: IconMessage2, color: '#00BCD4', softBg: '#E0F7FA', route: '/consultations' },
+  { id: 'doctor', title: 'طبيب العائلة', description: 'دليل · تواصل مباشر', icon: IconStethoscope, color: '#01875F', softBg: '#E6F3EF', badge: 'جديد', route: '/services/doctors' },
+  { id: 'hospital', title: 'المستشفيات', description: 'دليل · تواصل مباشر', icon: IconBuildingHospital, color: '#1A73E8', softBg: '#E8F0FE', route: '/services/hospitals' },
+  { id: 'pharmacy', title: 'الصيدلية', description: 'دليل · تواصل مباشر', icon: IconPill, color: '#9334E6', softBg: '#F3E8FD', route: '/services/pharmacies' },
   { id: 'reminders', title: 'تنبيهات', description: 'دواء · مواعيد', icon: IconBell, color: '#FBBC04', softBg: '#FEF7E0', route: '/account/reminders' },
   { id: 'prescriptions', title: 'وصفاتي', description: 'كل وصفاتك', icon: IconClipboardList, color: '#5F6368', softBg: '#F1F3F4', route: '/account/prescriptions' },
   { id: 'health', title: 'لوحة الصحة', description: 'ضغط · سكر', icon: IconChartLine, color: '#34A853', softBg: '#E8F5E9', route: '/account/health' },
