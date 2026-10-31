@@ -4,6 +4,10 @@ const { withSentryConfig } = require('@sentry/nextjs/config');
 const nextConfig = {
   reactStrictMode: true,
 
+  // 🖥️ الاستضافة الذاتيّة (جهازُ المالك أو خادمٌ مستأجر — `selfhost/`): نسخةٌ مستقلّة في `.next/standalone` تعمل بـ
+  // `node server.js` بلا node_modules كامل. لا تُفعَّل إلّا بـNEXT_OUTPUT=standalone: Vercel وNetlify يبنيان بطريقتهما.
+  ...(process.env.NEXT_OUTPUT === 'standalone' ? { output: 'standalone' } : {}),
+
   experimental: {
     serverActions: {
       allowedOrigins: [

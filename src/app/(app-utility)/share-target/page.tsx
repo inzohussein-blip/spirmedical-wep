@@ -137,12 +137,6 @@ export default async function ShareTargetPage(
                 href="/account/medical-record?from=share"
               />
               <SaveOption
-                icon="💬"
-                title="استشارة جديدة"
-                description="ابدأ استشارة مع طبيب وأرفق المحتوى"
-                href="/consultations?from=share"
-              />
-              <SaveOption
                 icon="📅"
                 title="حجز جديد"
                 description="استخدمه كمرجع لحجز موعد"

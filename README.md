@@ -433,7 +433,8 @@ npm run db:types    # توليد src/types/database.ts
 ```
 المتصفّح ── www.spir-medical.com ──▶ Cloudflare Worker (edge/failover)
                                         ├─▶ spirmedical-wep.vercel.app   (أوّلاً)
-                                        └─▶ spir-medical.netlify.app     (حين لا تُجيب الأولى)
+                                        ├─▶ spir-medical.netlify.app     (حين لا تُجيب الأولى)
+                                        └─▶ origin.spir-medical.com      (ثالثاً: جهازُك أو خادمٌ مستأجر — selfhost/)
                                                   └── كلاهما ──▶ Supabase نفسُه
 ```
 
@@ -443,6 +444,9 @@ npm run db:types    # توليد src/types/database.ts
 - **عنوانُ الزائر:** المنصّةُ ترى البوّابة، فترسل البوّابةُ `x-spir-client-ip` ولا يُصدَّق إلّا بـ`EDGE_PROXY_SECRET` (`lib/edge-proxy.ts`).
   وزائرُ `*.vercel.app`/`*.netlify.app` المباشر يُحوَّل إلى النطاق (`proxy.ts`) — إلّا ما جاء من البوّابة.
 - **الكرون:** GitHub Actions يطلب النطاق (ثمّ المنصّتين مباشرةً إن لم يصل)، مرّةً واحدة. لا `crons` في `vercel.json` — كانت تعمل على Vercel وحدها.
+
+**الاحتياطيُّ الثالث على جهازك أو خادمٍ مستأجر:** الدليلُ الكامل في [`selfhost/README.md`](selfhost/README.md) — Docker بأمرٍ واحد
+(`docker compose -f selfhost/docker-compose.yml up -d --build`) أو `selfhost/start.sh` / `start.ps1` بلا Docker، ونفقُ Cloudflare.
 
 **خطواتُ المالك (مرّةً واحدة):**
 1. **Netlify** (`app.netlify.com/projects/spir-medical`): Project configuration → Build & deploy → Link repository → GitHub →

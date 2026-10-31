@@ -38,7 +38,7 @@
 | القصص | `components/stories/*` (الشريط، العارض، البطاقة) · `types/story.ts` · الإدارة `app/admin/stories/` |
 | الأيقونات ومكوّنات الإدارة | `lib/icons.ts` (أسماءٌ → Tabler + لونُ كلّ مفهوم) · `lib/emoji-icons.ts` + `components/ui/EmojiIcon.tsx` · `components/admin-ui` (StatCard، Panel، ListRow، StatusPill، DataTable…) |
 | الكرون | `.github/workflows/scheduled-jobs.yml` → `app/api/cron/*` · `app/api/notifications/process` |
-| الاستضافة الاحتياطيّة | `edge/failover/worker.js` + `wrangler.jsonc` (Cloudflare) · `netlify.toml` · `lib/edge-proxy.ts` (عنوانُ الزائر) |
+| الاستضافة الاحتياطيّة | `edge/failover/worker.js` + `wrangler.jsonc` (Cloudflare) · `netlify.toml` · `lib/edge-proxy.ts` (عنوانُ الزائر) · الذاتيّة `selfhost/` + `Dockerfile` |
 | قاعدة البيانات | `supabase/migrations/` (آخرها 0062) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
 | الاختبارات | `tests/` — اسمُ الحارس يدلّ على مجاله (`rls-*`، `order-flow-modals`، `specialist-screens`…) |
 
@@ -122,6 +122,13 @@
 - **الكرون في GitHub Actions** (`scheduled-jobs.yml`) على النطاق، لا في `vercel.json`: كرونُ Vercel يتوقّف معها، ولو بقي مع
   هذا لأُرسلت التذكيراتُ مرّتين. مسارٌ جديد ← سطرٌ في `on.schedule` وسطرٌ في `JOBS`.
 - `@netlify/plugin-nextjs` يُثبَّت تلقائياً في Netlify — لا تضعه في package.json.
+- **احتياطيٌّ ثالث: جهازُ المالك أو خادمٌ مستأجر** (طلبُه، 31 تشرين الأول — `selfhost/README.md`): `NEXT_OUTPUT=standalone` يُخرج
+  `.next/standalone/server.js` (لا يُفعَّل على Vercel وNetlify)، و`Dockerfile` + `selfhost/docker-compose.yml` (الموقع + `cloudflared`)، أو
+  `selfhost/start.sh`/`start.ps1` بلا Docker. نفقُ Cloudflare يوصله إلى **`origin.spir-medical.com`** (`SELFHOST_HOST`) — ثالثُ `ORIGINS`
+  وفي `PLATFORM_HOSTS` وكرون GitHub وتقرير الأعطال. **النسخةُ المستقلّة لا تحمل `public` ولا `.next/static`** — تُنسخ بجانبها.
+  والبوّابةُ تسأل الساقطةَ (كلَّها، لا الأولى وحدها) أخيراً. قِيس: بناءٌ مستقلّ وتشغيلُ server.js ← الصفحاتُ والأنماطُ وصورةُ المشاركة
+  200، والنطاقُ المباشر 308 إلى www، وما جاء من البوّابة 200. الأسرارُ في `.env.production` (مُستثنى من git).
+- الحارس الذاتيّ: `tests/selfhost.test.ts` (أُثبت بكسرين).
 - الحارس: `tests/edge-failover.test.ts` (أُثبت بكسر أربعة مواضع) و`tests/owner-alerts.test.ts` (الجدول ↔ المسار).
 
 ## 🔍 فحصٌ شامل (29 تشرين الأول) — ما وُجد وما يحرسه
@@ -140,7 +147,10 @@
   Vercel بـ402 (كلُّ تقريرٍ سقط بـ`DEPLOYMENT_DISABLED`).
 - **معلّقٌ على المالك (قِيس 29 تشرين الأول):** الموقعُ متوقّفٌ كلّيّاً (Vercel `402 DEPLOYMENT_DISABLED`، وNetlify بلا نشر)؛
   و«Scheduled Jobs» يفشل كلَّ يوم منذ الدمج: **`CRON_SECRET` غيرُ مضبوط في أسرار GitHub**؛ وWorker البوّابة غيرُ موجود في
-  Cloudflare (البناءُ يفشل — إعدادُ Build). و«استشاراتي» (`/consultations`) لا يُنشئ استشارةً شيءٌ منذ صارت العيادةُ دليلاً.
+  Cloudflare (البناءُ يفشل — إعدادُ Build). وقِيس ثانيةً في 30 تشرين الأول: لم يتغيّر شيءٌ من الثلاثة.
+- **«استشاراتي» حُذفت من البلاطات** (30 تشرين الأول): لا شيءَ يُنشئ استشارةً منذ صارت العيادةُ دليلاً، وكانت تَعِد بـ«نص + صور · 24س».
+  وبلاطاتُ الطبيب والمستشفى والصيدلية «دليل · تواصل مباشر» (كانت «استشارة فورية» و«حجوزات» و«احجز دواءك»)، ومدقّقُ الأعراض يدلّ
+  على الدليل لا على «حجز استشارةٍ فوريّة»، وخيارُ «استشارة جديدة» في المشاركة أُزيل. صفحةُ `/consultations` باقيةٌ لأيّ رابطٍ قديم.
 - الحرّاس: `internal-links`، `rpc-refs`، `og-image`، `admin-schema-refs`، `app-live-numbers`، `system-errors` (أُثبتت كلُّها بالكسر).
 
 ## 🔒 الإدارةُ نافذةٌ بالرابط وحده، و0058 (18 تشرين الأول)
