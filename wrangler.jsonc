@@ -9,7 +9,7 @@
   "compatibility_date": "2026-10-01",
   "workers_dev": true,
   "vars": {
-    "ORIGINS": "spirmedical-wep.vercel.app,spir-medical.netlify.app",
+    "ORIGINS": "spirmedical-wep.vercel.app,spir-medical.netlify.app,origin.spir-medical.com",
     "CANONICAL_HOST": "www.spir-medical.com"
   },
   "observability": { "enabled": true }

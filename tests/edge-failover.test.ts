@@ -14,6 +14,7 @@ import { join } from 'path';
 const worker = require('../edge/failover/worker.js');
 const VERCEL = 'spirmedical-wep.vercel.app';
 const NETLIFY = 'spir-medical.netlify.app';
+const SELF = 'origin.spir-medical.com';
 const env = { ORIGINS: `${VERCEL},${NETLIFY}`, EDGE_PROXY_SECRET: 's'.repeat(24) };
 
 type Hit = { host: string; method: string; headers: Headers; body: string };
@@ -77,6 +78,21 @@ describe('التبديل', () => {
     expect(hits.map((h) => [h.host, h.body])).toEqual([[VERCEL, 'x=1'], [NETLIFY, 'x=1']]);
   });
 
+  it('🚨 الاستضافةُ الذاتيّة ثالثة: Vercel موقوفة وNetlify منقطعة ← جهازُ المالك، ثمّ يُسأل أوّلاً حتى تعودا', async () => {
+    const env3 = { ...env, ORIGINS: `${VERCEL},${NETLIFY},${SELF}` };
+    reply = (h) => {
+      if (h === VERCEL) return new Response('blocked', { status: 402 });
+      if (h === NETLIFY) throw new TypeError('down');
+      return new Response('self');
+    };
+    const go = () => worker.default.fetch(new Request('https://www.spir-medical.com/x', { headers: { 'cf-connecting-ip': '5.6.7.8' } }), env3);
+    expect(await (await go()).text()).toBe('self');
+    expect(hits.map((h) => h.host)).toEqual([VERCEL, NETLIFY, SELF]);
+    hits = [];
+    expect(await (await go()).text()).toBe('self');
+    expect(hits.map((h) => h.host)).toEqual([SELF]);
+  });
+
   it('المنصّتان ساقطتان ← 503 برسالةٍ عربيّة', async () => {
     reply = () => { throw new TypeError('down'); };
     const res = await call();
@@ -131,7 +147,8 @@ describe('🔐 عنوانُ الزائر في التطبيق', () => {
     const src = readFileSync(join(process.cwd(), 'src/proxy.ts'), 'utf8');
     expect(src).toMatch(/PLATFORM_HOSTS\.includes\(host\)[\s\S]{0,120}!viaEdge\(request\.headers\)/);
     const { PLATFORM_HOSTS } = require('@/lib/seo/origin');
-    expect(PLATFORM_HOSTS).toEqual([VERCEL, NETLIFY]);
-    expect(JSON.parse(readFileSync(join(process.cwd(), 'wrangler.jsonc'), 'utf8').replace(/^\s*\/\/.*$/gm, '')).vars.ORIGINS).toBe(env.ORIGINS);
+    expect(PLATFORM_HOSTS).toEqual([VERCEL, NETLIFY, SELF]);
+    expect(JSON.parse(readFileSync(join(process.cwd(), 'wrangler.jsonc'), 'utf8').replace(/^\s*\/\/.*$/gm, '')).vars.ORIGINS).toBe(`${VERCEL},${NETLIFY},${SELF}`);
+    expect(worker.DEFAULT_ORIGINS).toEqual([VERCEL, NETLIFY, SELF]);
   });
 });

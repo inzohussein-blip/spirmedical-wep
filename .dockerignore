@@ -1,0 +1,16 @@
+# ما لا يدخل صورةَ الاستضافة الذاتيّة (Dockerfile)
+node_modules
+.next
+.git
+.github
+.netlify
+.wrangler
+coverage
+tests
+tools
+services
+docs
+*.log
+.env
+.env*.local
+# .env.production يدخل عمداً: next build يقرأ منه قيمَ NEXT_PUBLIC_

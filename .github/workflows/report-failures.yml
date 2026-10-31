@@ -72,7 +72,7 @@ jobs:
           echo "Reporting: $BODY"
           # النطاقُ أوّلاً، ثمّ Netlify مباشرةً إن لم يصل (انقطاع أو 402 — Vercel موقوفة، 28 تشرين الأول: كلُّ تقريرٍ سقط
           # بـDEPLOYMENT_DISABLED فلم يُعلَم بشيء). غيرُ ذلك يُحتسب.
-          for URL in "$INGEST_URL" "https://spir-medical.netlify.app/api/ops/ingest"; do
+          for URL in "$INGEST_URL" "https://spir-medical.netlify.app/api/ops/ingest" "https://origin.spir-medical.com/api/ops/ingest"; do
             CODE=$(curl -sS -o /tmp/resp -w '%{http_code}' --max-time 30 -X POST "$URL" \
               -H "Authorization: Bearer $TOKEN" \
               -H "Content-Type: application/json" \

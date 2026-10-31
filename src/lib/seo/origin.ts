@@ -28,5 +28,8 @@ export const VERCEL_PRODUCTION_HOST = 'spirmedical-wep.vercel.app';
 /** نطاقُ النسخة الاحتياطيّة على Netlify — مثلُه: يُحوَّل إلى الأصل لمن يزوره مباشرة */
 export const NETLIFY_PRODUCTION_HOST = 'spir-medical.netlify.app';
 
-/** نطاقاتُ المنصّتين: البوّابةُ (`edge/failover`) تطلبها، والزائرُ المباشر يُحوَّل منها إلى الأصل */
-export const PLATFORM_HOSTS: readonly string[] = [VERCEL_PRODUCTION_HOST, NETLIFY_PRODUCTION_HOST];
+/** الاستضافةُ الذاتيّة (جهازُ المالك أو خادمٌ مستأجر عبر نفق Cloudflare — `selfhost/`): الاحتياطيّةُ الثالثة */
+export const SELFHOST_HOST = 'origin.spir-medical.com';
+
+/** نطاقاتُ المنصّات: البوّابةُ (`edge/failover`) تطلبها بالترتيب، والزائرُ المباشر يُحوَّل منها إلى الأصل */
+export const PLATFORM_HOSTS: readonly string[] = [VERCEL_PRODUCTION_HOST, NETLIFY_PRODUCTION_HOST, SELFHOST_HOST];

@@ -38,7 +38,7 @@ jobs:
         0 8 * * *=/api/cron/appointment-reminders
         0 9 * * *=/api/notifications/process
       # النطاقُ أوّلاً (البوّابة)، ثمّ المنصّتان مباشرةً إن لم يصل الطلبُ إليه
-      HOSTS: www.spir-medical.com spirmedical-wep.vercel.app spir-medical.netlify.app
+      HOSTS: www.spir-medical.com spirmedical-wep.vercel.app spir-medical.netlify.app origin.spir-medical.com
     steps:
       - name: Call job
         run: |

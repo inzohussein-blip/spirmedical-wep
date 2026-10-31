@@ -1,7 +1,8 @@
 /**
  * 🛰️ بوّابةُ التبديل — Cloudflare Worker أمام www.spir-medical.com (طلبُ المالك، 24 تشرين الأول).
  *
- * كلُّ طلبٍ يذهب إلى Vercel أوّلاً، فإن لم تُجِب يُعاد إلى Netlify (نسخةٌ من الكود نفسه من `main`). النطاقُ في
+ * كلُّ طلبٍ يذهب إلى Vercel أوّلاً، فإن لم تُجِب يُعاد إلى Netlify، ثمّ إلى الاستضافة الذاتيّة (`origin.spir-medical.com` —
+ * جهازُ المالك أو خادمٌ مستأجر عبر نفق Cloudflare، `selfhost/`). كلُّها الكودُ نفسُه من `main`. النطاقُ في
  * المتصفّح واحد، فالكوكيز والجلسة وlocalStorage والتطبيقُ المثبَّت تبقى كما هي، والبياناتُ في Supabase المشترك.
  *
  * متى يُعاد الطلبُ إلى الثانية — لا طلبَ يُنفَّذ مرّتين:
@@ -13,7 +14,7 @@
  * المنصّةُ ترى البوّابةَ لا الزائر: نرسل `x-spir-edge` (السرُّ المشترك) و`x-spir-client-ip` — انظر `src/lib/edge-proxy.ts`.
  * والتحويلاتُ إلى نطاق المنصّة (`Location`) تُعاد إلى نطاق الزائر.
  */
-export const DEFAULT_ORIGINS = ['spirmedical-wep.vercel.app', 'spir-medical.netlify.app'];
+export const DEFAULT_ORIGINS = ['spirmedical-wep.vercel.app', 'spir-medical.netlify.app', 'origin.spir-medical.com'];
 export const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 export const DOWN_TTL = 30;
 const SAFE_TIMEOUT_MS = 15000;
@@ -92,8 +93,9 @@ const worker = {
     }
 
     const origins = originsFrom(env);
-    const order = [...origins];
-    if (order.length > 1 && (await isDown(order[0]))) order.push(order.shift());
+    // الساقطةُ (في آخر DOWN_TTL ثانية) تُسأل أخيراً، والترتيبُ بينها وبين العاملة كما هو
+    const down = await Promise.all(origins.map(isDown));
+    const order = [...origins.filter((_, i) => !down[i]), ...origins.filter((_, i) => down[i])];
 
     const method = request.method.toUpperCase();
     const safe = SAFE_METHODS.has(method);
