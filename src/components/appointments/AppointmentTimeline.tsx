@@ -6,6 +6,7 @@ import {
 } from '@tabler/icons-react';
 
 import type { Icon as TablerIcon } from '@tabler/icons-react';
+import { orderStatusRank } from '@/lib/order-status';
 interface TimelineEvent {
   status: string;
   label: string;
@@ -16,7 +17,7 @@ interface TimelineEvent {
 }
 
 interface Props {
-  currentStatus: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
+  currentStatus: 'pending' | 'confirmed' | 'on_the_way' | 'arrived' | 'in_progress' | 'completed' | 'cancelled';
   createdAt: string;
   confirmedAt: string | null;
   scheduledAt: string;
@@ -48,12 +49,13 @@ export default function AppointmentTimeline({
   isBloodDraw = false,
 }: Props) {
   const cancelled = currentStatus === 'cancelled';
+  const rank = orderStatusRank(currentStatus);
 
   // Timeline مفصّل لسحب الدم (6 مراحل)
   const bloodDrawEvents: TimelineEvent[] = [
     { status: 'created',      label: 'تم استلام الطلب',           icon: FileText,    timestamp: createdAt,   active: true,                                                            current: currentStatus === 'pending' },
-    { status: 'confirmed',    label: 'تأكيد المختص',              icon: CheckCircle2, timestamp: confirmedAt, active: ['confirmed', 'in_progress', 'completed'].includes(currentStatus), current: currentStatus === 'confirmed' },
-    { status: 'on_the_way',   label: 'الفني في الطريق إليك',      icon: Car,          timestamp: null,        active: ['in_progress', 'completed'].includes(currentStatus),             current: currentStatus === 'in_progress' },
+    { status: 'confirmed',    label: 'تأكيد المختص',              icon: CheckCircle2, timestamp: confirmedAt, active: rank >= orderStatusRank('confirmed'), current: currentStatus === 'confirmed' },
+    { status: 'on_the_way',   label: 'الفني في الطريق إليك',      icon: Car,          timestamp: null,        active: rank >= orderStatusRank('on_the_way'), current: ['on_the_way', 'arrived', 'in_progress'].includes(currentStatus) },
     { status: 'sample_taken', label: 'تم سحب العينة',             icon: Droplet,      timestamp: null,        active: currentStatus === 'completed',                                    current: false },
     { status: 'lab_received', label: 'العينة في المختبر',         icon: TestTube,     timestamp: null,        active: currentStatus === 'completed',                                    current: false },
     { status: 'result_ready', label: 'النتيجة + استشارة مجانية',  icon: BarChart3,    timestamp: completedAt, active: currentStatus === 'completed',                                    current: currentStatus === 'completed' },
@@ -61,8 +63,8 @@ export default function AppointmentTimeline({
 
   const standardEvents: TimelineEvent[] = [
     { status: 'created',     label: 'تم إنشاء الحجز',  icon: FileText,    timestamp: createdAt,   active: true,                                                              current: currentStatus === 'pending' },
-    { status: 'confirmed',   label: 'تم التأكيد',      icon: CheckCircle2, timestamp: confirmedAt, active: ['confirmed', 'in_progress', 'completed'].includes(currentStatus), current: currentStatus === 'confirmed' },
-    { status: 'in_progress', label: 'الفني في الطريق', icon: Car,          timestamp: null,        active: ['in_progress', 'completed'].includes(currentStatus),             current: currentStatus === 'in_progress' },
+    { status: 'confirmed',   label: 'تم التأكيد',      icon: CheckCircle2, timestamp: confirmedAt, active: rank >= orderStatusRank('confirmed'), current: currentStatus === 'confirmed' },
+    { status: 'in_progress', label: 'الفني في الطريق', icon: Car,          timestamp: null,        active: rank >= orderStatusRank('on_the_way'), current: ['on_the_way', 'arrived', 'in_progress'].includes(currentStatus) },
     { status: 'completed',   label: 'مُكتمل',          icon: PartyPopper,  timestamp: completedAt, active: currentStatus === 'completed',                                     current: currentStatus === 'completed' },
   ];
 

@@ -137,12 +137,13 @@ describe('🎯 استخراج القيم المسموحة من الترحيلا�
 
   it('يقرأ أنواع ENUM بدقّة', () => {
     expect([...(cols.get('appointments.status') ?? [])].sort()).toEqual(
-      ['cancelled', 'completed', 'confirmed', 'in_progress', 'pending'].sort()
+      // on_the_way/arrived أُضيفتا في 0064 (تطبيق «سباير برو») — قبله كانتا خارج enum فكسرتا الإنتاج
+      ['arrived', 'cancelled', 'completed', 'confirmed', 'in_progress', 'on_the_way', 'pending'].sort()
     );
     expect(cols.get('users.role')?.has('patient')).toBe(true);
     // 🚨 القيمتان اللتان كسرتا الإنتاج
     expect(cols.get('users.role')?.has('user')).toBe(false);
-    expect(cols.get('appointments.status')?.has('on_the_way')).toBe(false);
+    expect(cols.get('appointments.status')?.has('en_route')).toBe(false);
   });
 
   it('يقرأ قيود CHECK … IN أيضاً', () => {
@@ -191,10 +192,10 @@ describe('🎯 الحارس يكشف فعلاً (لا يمرّ فارغاً)', (
     ]);
   });
 
-  it('🚨 يكشف خلل بطاقة الطلب النشط (on_the_way)', () => {
+  it('🚨 يكشف حالةً خارج enum (كان on_the_way قبل 0064)', () => {
     expect(
-      scan(`supabase.from('appointments').in('status', ['pending','on_the_way'])`)
-    ).toEqual(["appointments.status='on_the_way'"]);
+      scan(`supabase.from('appointments').in('status', ['pending','en_route'])`)
+    ).toEqual(["appointments.status='en_route'"]);
   });
 
   it('يقبل القيم الصالحة', () => {

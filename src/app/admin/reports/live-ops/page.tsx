@@ -8,6 +8,7 @@ import AutoRefresh from '@/components/admin/AutoRefresh';
 import { baghdadDayWindow } from '@/lib/time/baghdad-day';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { ACTIVE_ORDER_STATUSES } from '@/lib/order-status';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -30,7 +31,7 @@ export default async function LiveOpsPage() {
 
   if (!isAdminRole(profile?.role)) redirect('/dashboard');
 
-  // جلب الطلبات النشطة اليوم (pending + confirmed + in_progress)
+  // جلب الطلبات النشطة اليوم (ACTIVE_ORDER_STATUSES — منها «في الطريق» و«وصل»)
   // «اليوم» بتوقيت بغداد لا بتوقيت الخادم (UTC على Vercel) — وإلّا بدأ اليوم
   // الساعة 03:00 بغداد وسقطت طلبات ما بعد منتصف الليل في حصيلة الأمس.
   const today = baghdadDayWindow().start.toISOString();
@@ -46,7 +47,7 @@ export default async function LiveOpsPage() {
       .select(
         'id, service_type, status, scheduled_at, location_lat, location_lng, address, user_id, specialist_id'
       )
-      .in('status', ['pending', 'confirmed', 'in_progress'])
+      .in('status', [...ACTIVE_ORDER_STATUSES])
       .gte('scheduled_at', today)
       .lte('scheduled_at', tomorrow)
       .not('location_lat', 'is', null)
@@ -105,7 +106,7 @@ export default async function LiveOpsPage() {
     activeOrders: activeOrders?.length ?? 0,
     activeSpecialists: activeSpecialists?.length ?? 0,
     pending: activeOrders?.filter((o) => o.status === 'pending').length ?? 0,
-    inProgress: activeOrders?.filter((o) => o.status === 'in_progress').length ?? 0,
+    inProgress: activeOrders?.filter((o) => ['on_the_way', 'arrived', 'in_progress'].includes(o.status)).length ?? 0,
   };
 
   return (
@@ -258,7 +259,7 @@ export default async function LiveOpsPage() {
                     minute: '2-digit',
                   })}
                 </div>
-                <StatusBadge status={o.status as 'pending' | 'confirmed' | 'in_progress'} size="sm" />
+                <StatusBadge status={o.status as 'pending' | 'confirmed' | 'on_the_way' | 'arrived' | 'in_progress'} size="sm" />
               </Link>
             ))}
           </div>

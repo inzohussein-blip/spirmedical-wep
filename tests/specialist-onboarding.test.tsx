@@ -122,7 +122,7 @@ describe('④ getOpsHealth يحسب من القاعدة', () => {
             eq(c: string, v: unknown) { f[c] = v; return api; },
             or(v: string) { f.or = v; return api; },
             is(c: string, v: unknown) { f[`is:${c}`] = v; return api; },
-            gte: () => api, gt: () => api, not: () => api, neq: () => api, order: () => api,
+            gte: () => api, gt: () => api, not: () => api, lt: () => api, neq: () => api, order: () => api,
             limit: () => Promise.resolve({ data: [{ error_message: 'Authentication Error', channel: 'whatsapp', created_at: 'x' }], error: null }),
             then(res: (v: unknown) => unknown) {
               seen[key()] = { ...f };

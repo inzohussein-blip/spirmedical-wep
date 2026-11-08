@@ -39,7 +39,8 @@
 | الأيقونات ومكوّنات الإدارة | `lib/icons.ts` (أسماءٌ → Tabler + لونُ كلّ مفهوم) · `lib/emoji-icons.ts` + `components/ui/EmojiIcon.tsx` · `components/admin-ui` (StatCard، Panel، ListRow، StatusPill، DataTable…) |
 | الكرون | `.github/workflows/scheduled-jobs.yml` → `app/api/cron/*` · `app/api/notifications/process` |
 | الاستضافة الاحتياطيّة | `edge/failover/worker.js` + `wrangler.jsonc` (Cloudflare) · `netlify.toml` · `lib/edge-proxy.ts` (عنوانُ الزائر) · الذاتيّة `selfhost/` + `Dockerfile` |
-| قاعدة البيانات | `supabase/migrations/` (آخرها 0062) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
+| قاعدة البيانات | `supabase/migrations/` (آخرها 0070) · الأنواع `types/database.ts` (أعِد توليدها بعد كلّ ترحيل: `npm run db:types`) |
+| حالاتُ الطلب ولوحةُ الإرسال | `lib/order-status.ts` (المصدرُ الواحد) · `app/admin/dispatch/` · `supabase/migrations/0063`–`0070` |
 | الاختبارات | `tests/` — اسمُ الحارس يدلّ على مجاله (`rls-*`، `order-flow-modals`، `specialist-screens`…) |
 
 **أدوات التحقّق البصريّ** في [`tools/mobile-audit/`](tools/mobile-audit/README.md):
@@ -94,6 +95,25 @@
   `has_table_privilege` أو بعدد الصفوف المتأثّرة.
 - **كلّ كتابةٍ على الإنتاج تُجرَّب أوّلاً** في `BEGIN … ROLLBACK`.
 - الاختبارات: `npx jest` — يجب أن تمرّ كلّها قبل الدفع.
+
+## 📱 تطبيقا أندرويد ولوحةُ الإرسال (0063–0070، المرحلة 4 — بإذن المالك، 8 تشرين الثاني)
+
+- **التطبيقان في مستودعٍ مستقلّ** `spirmedical-apk` (Expo): «سباير» للمريض و«سباير برو» للمختصّ ومقدّم الخدمة (واجهةٌ حسب نوعه).
+  القاعدةُ واحدة — Supabase نفسُه — والترحيلات هنا هي الأصل؛ المستودعُ الآخر يحمل نسخاً منها ويتخطّاها حين يجدها هنا.
+- **🔴 الترتيب: طبّق 0063–0070 على الإنتاج قبل دمج هذا الفرع.** الكودُ يستعلم `on_the_way`/`arrived` (`.in('status', …)`)، وقيمةُ enum
+  لا تعرفها القاعدة ← 22P02 ← تسقط «طلباتي» وبطاقةُ الطلب النشط و«الحيّة». والعكسُ آمن: الترحيلاتُ إضافيّةٌ وكودُ main الحاليّ يعمل معها
+  (قيمتان جديدتان لا يكتبهما الويب، ودوالُّ وجداولُ جديدة). 0064 (`ALTER TYPE … ADD VALUE`) منفصلٌ عن استعماله (0065).
+- **ما أضافته:** 0063 رموزُ أجهزة FCM · 0064 الحالتان · 0065 انتقالاتُ الطلب بدالّةٍ واحدة (`transition_order`) وسجلُّ `order_events` ·
+  0066 حضورُ المختصّ وموقعه · 0067 واجهةُ دفعٍ للمستقبل (نقدٌ الآن؛ المريضُ لا يكتب `payments`) · 0068 `create_order` للتطبيق ·
+  0069 مساحةُ عمل «برو» (المختبرُ يرى تحاليلَه فقط — لا عيّنات، انظر 🧭) · 0070 لوحةُ الإرسال.
+- **حالاتُ الطلب من `lib/order-status.ts` وحده** (`ACTIVE_ORDER_STATUSES`، `IN_FLIGHT_STATUSES`، `orderStatusRank`). خريطةُ حالاتٍ جديدة تذكر
+  السبعَ كلَّها؛ ولا مرشّحَ «جارٍ» بمصفوفةٍ محلّية. الحارس: `tests/order-status-coverage.test.ts`.
+- **لوحةُ الإرسال `/admin/dispatch`:** الطلباتُ المفتوحة بعمرها، والمرشّحون (المتاحُ أوّلاً ثمّ الأقرب ثمّ الأخفّ حِملاً)، والإسنادُ عبر
+  `admin_assign_order` وحدها — قواعدُها في SQL (مدير، مختصٌّ معتمَدٌ غيرُ موقوف ومن النوع المطلوب، والطلبُ قبل «وصل»)، وتُسجَّل في
+  `order_events` ويُخطَر الأطراف. المهلةُ `app_settings.dispatch_sla_minutes` (غيابُها = 15، عرضٌ وتنبيهٌ فقط — لا تُلغي شيئاً).
+  وبطاقةُ «طلباتٌ بلا قبول» في صحّة التشغيل. الحارس: `tests/admin-dispatch.test.ts`؛ والسلوكُ في SQL مختبَرٌ في `spirmedical-apk/supabase/tests`.
+- **أسعارُ التمريض خلف `SHOW_PRICES`** (كانت تظهر في المعالج رغم قرار «لا أسعار»). الحارس في `tests/no-test-prices.test.tsx`.
+- `types/database.ts` عُدّل يدوياً للحالتين والدوالّ الثلاث عشرة — أعِد توليدَه (`npm run db:types`) بعد تطبيق الترحيلات.
 
 ## ⏳ الرفض التلقائيّ (0042) — ما يجب معرفته قبل المسّ به
 

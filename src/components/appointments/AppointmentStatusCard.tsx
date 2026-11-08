@@ -7,7 +7,7 @@ import {
 } from '@tabler/icons-react';
 
 import type { Icon as TablerIcon } from '@tabler/icons-react';
-type Status = 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
+type Status = 'pending' | 'confirmed' | 'on_the_way' | 'arrived' | 'in_progress' | 'completed' | 'cancelled';
 
 interface Props {
   status: Status;
@@ -40,13 +40,29 @@ const STATUS_CONFIG: Record<Status, {
     pulse: false,
     description: 'تم تأكيد حجزك بنجاح',
   },
-  in_progress: {
+  on_the_way: {
     label: 'الفني في الطريق',
     icon: Car,
     bg: '#D9E5DF',
     color: '#073B30',
     pulse: true,
     description: 'الفني في طريقه إليك',
+  },
+  arrived: {
+    label: 'وصل الفني',
+    icon: CheckCircle2,
+    bg: '#D9E5DF',
+    color: '#073B30',
+    pulse: true,
+    description: 'الفني عند عنوانك الآن',
+  },
+  in_progress: {
+    label: 'الخدمة جارية',
+    icon: Car,
+    bg: '#D9E5DF',
+    color: '#073B30',
+    pulse: true,
+    description: 'الفني يقدّم الخدمة الآن',
   },
   completed: {
     label: 'مُكتمل',

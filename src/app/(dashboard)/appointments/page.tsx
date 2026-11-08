@@ -5,6 +5,7 @@ import EnhancedEmptyState from '@/components/ui/EnhancedEmptyState';
 import { baghdadDayWindow } from '@/lib/time/baghdad-day';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
+import { ACTIVE_ORDER_STATUSES } from '@/lib/order-status';
 export const metadata = {
   title: 'مواعيدي · سباير ميديكال',
   description: 'إدارة مواعيدك الطبية وتتبع حالتها — قيد التنفيذ، مكتملة، ملغاة',
@@ -19,6 +20,8 @@ interface Props {
 const STATUS_LABELS: Record<string, { label: string; pillClass: string; icon?: string }> = {
   pending: { label: 'بانتظار', pillClass: 'status-pill status-pill-amber', icon: '⏱' },
   confirmed: { label: 'مؤكّد', pillClass: 'status-pill status-pill-active', icon: '' },
+  on_the_way: { label: 'في الطريق', pillClass: 'status-pill status-pill-active', icon: '' },
+  arrived: { label: 'وصل المختص', pillClass: 'status-pill status-pill-active', icon: '' },
   in_progress: { label: 'قيد التنفيذ', pillClass: 'status-pill status-pill-active', icon: '' },
   completed: { label: 'مُكتمل', pillClass: 'status-pill status-pill-purple', icon: '✓' },
   cancelled: { label: 'مُلغى', pillClass: 'status-pill status-pill-rose', icon: '✕' },
@@ -90,7 +93,7 @@ export default async function AppointmentsPage(props: Props) {
     .eq('user_id', user!.id);
 
   if (filter === 'upcoming') {
-    query = query.in('status', ['pending', 'confirmed', 'in_progress']).gte('scheduled_at', upcomingFrom);
+    query = query.in('status', [...ACTIVE_ORDER_STATUSES]).gte('scheduled_at', upcomingFrom);
   } else if (filter === 'completed') {
     query = query.eq('status', 'completed');
   } else if (filter === 'cancelled') {

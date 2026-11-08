@@ -10,7 +10,7 @@ import {
 
 interface Props {
   appointmentId: string;
-  status: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'on_the_way' | 'arrived' | 'in_progress' | 'completed' | 'cancelled';
   specialistPhone?: string | null;
   address?: string | null;
   serviceName: string;
@@ -33,7 +33,7 @@ export default function AppointmentActions({
   });
 
   const canCancel = ['pending', 'confirmed'].includes(status);
-  const canCall = status === 'in_progress' && specialistPhone;
+  const canCall = ['on_the_way', 'arrived', 'in_progress'].includes(status) && specialistPhone;
   const canRebook = ['completed', 'cancelled'].includes(status);
 
   const cancelReasons = [

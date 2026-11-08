@@ -37,6 +37,7 @@ import {
   IconVaccine as Syringe, IconDroplet as Droplet, IconBandage as Bandage, IconStethoscope as Stethoscope, IconActivity as Activity, IconShoe as Footprints, IconAlertTriangle as AlertTriangle, IconPhoto as FileImage, IconShieldCheck as ShieldCheck, IconCalendar as Calendar, IconMapPin as MapPin, IconPhone as Phone, IconCircleCheck as CheckCircle2, IconChevronLeft as ChevronLeft, IconChevronRight as ChevronRight, IconX as X, IconUpload as Upload, IconPill as Pill, IconRepeat as Repeat, IconUser as User, IconUserCircle as UserCircle, IconUsers as Users, IconClock as Clock, IconLoader2 as Loader2,
 } from '@tabler/icons-react';
 import { baghdadDateOffset } from '@/lib/time/baghdad-day';
+import { SHOW_PRICES } from '@/lib/config/pricing';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
 /** نتيجة الإرسال — تسمح بعرض أخطاء الحقول القادمة من الخادم. */
@@ -406,7 +407,7 @@ export default function NursingFlow({
             الخطوة {step} من 6
           </div>
           <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--emerald)' }}>
-            {procedure && `${procedure.price.toLocaleString('ar-IQ-u-nu-latn')} د.ع`}
+            {SHOW_PRICES && procedure && `${procedure.price.toLocaleString('ar-IQ-u-nu-latn')} د.ع`}
           </div>
         </div>
         <div style={{
@@ -484,6 +485,7 @@ export default function NursingFlow({
                       {proc.desc}
                     </div>
                   </div>
+                  {SHOW_PRICES && (
                   <div style={{
                     textAlign: 'end',
                     flexShrink: 0,
@@ -497,6 +499,7 @@ export default function NursingFlow({
                     </div>
                     <div style={{ fontSize: 12, color: 'var(--ink-3)' }}>د.ع</div>
                   </div>
+                  )}
                   {isSelected && (
                     <CheckCircle2 size={20} color="var(--emerald)" strokeWidth={2.4} />
                   )}
@@ -1206,6 +1209,7 @@ export default function NursingFlow({
               {Object.keys(infectious || {}).length > 0 && (
                 <Row label="معدية" value="موجودة (سيتم التحضير)" warn />
               )}
+{SHOW_PRICES && (
               <div style={{
                 marginTop: 8,
                 paddingTop: 8,
@@ -1218,6 +1222,7 @@ export default function NursingFlow({
                 <span>المجموع</span>
                 <span>{procedure?.price.toLocaleString('ar-IQ-u-nu-latn')} د.ع</span>
               </div>
+              )}
             </div>
           </div>
         </section>

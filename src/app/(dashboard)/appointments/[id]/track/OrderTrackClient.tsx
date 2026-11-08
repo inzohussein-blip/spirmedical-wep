@@ -14,16 +14,17 @@ import {
 } from '@tabler/icons-react';
 
 import type { Icon as TablerIcon } from '@tabler/icons-react';
-// الحالات الحقيقية من enum appointment_status: pending → confirmed → in_progress → completed (+ cancelled)
+// الحالات من enum appointment_status: pending → confirmed → on_the_way → arrived → in_progress → completed (+ cancelled)
 const STATUS_FLOW: Array<{ id: string; label: string; icon: TablerIcon; desc: string }> = [
   { id: 'pending',     label: 'قيد المراجعة', icon: ClipboardList, desc: 'سيراجع فريقنا طلبك' },
   { id: 'confirmed',   label: 'مؤكّد',         icon: CheckCircle2,  desc: 'تم قبول الطلب' },
+  { id: 'on_the_way',  label: 'في الطريق',     icon: RefreshCw,     desc: 'المختص في طريقه إليك' },
   { id: 'in_progress', label: 'قيد التنفيذ',   icon: RefreshCw,     desc: 'جاري تقديم الخدمة' },
   { id: 'completed',   label: 'مُكتمل',        icon: BadgeCheck,    desc: 'تم إنجاز الخدمة بنجاح' },
 ];
 
 const STEP_INDEX: Record<string, number> = {
-  pending: 0, confirmed: 1, in_progress: 2, completed: 3,
+  pending: 0, confirmed: 1, on_the_way: 2, arrived: 2, in_progress: 3, completed: 4,
 };
 
 interface Props {

@@ -8,6 +8,7 @@ import SpecialistReadinessCard from '@/components/specialist/SpecialistReadiness
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
 import { isAdminRole } from '@/lib/admin-types';
+import { IN_FLIGHT_STATUSES } from '@/lib/order-status';
 export const metadata = {
   title: 'لوحة الاختصاصي · سباير ميديكال',
 };
@@ -66,7 +67,7 @@ export default async function SpecialistDashboard() {
       .from('appointments')
       .select('*', { count: 'exact', head: true })
       .eq('assigned_specialist_id', user.id)
-      .in('status', ['confirmed', 'in_progress']),
+      .in('status', [...IN_FLIGHT_STATUSES]),
 
     supabase
       .from('appointments')

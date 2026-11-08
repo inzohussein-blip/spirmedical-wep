@@ -5,6 +5,7 @@ import { EmptyState } from '@/components/ui';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
 import { DataTable } from '@/components/admin-ui';
+import { ORDER_STATUSES } from '@/lib/order-status';
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
@@ -20,7 +21,7 @@ interface SearchParams {
   view?: 'list' | 'kanban';
 }
 
-const APPOINTMENT_STATUSES = ['pending', 'confirmed', 'in_progress', 'completed', 'cancelled'] as const;
+const APPOINTMENT_STATUSES = ORDER_STATUSES;
 type AppointmentStatus = (typeof APPOINTMENT_STATUSES)[number];
 /** قيمةٌ من الرابط لا تُصدَّق: حالةٌ غيرُ معروفة لا تصل إلى الاستعلام. */
 const isAppointmentStatus = (s: string): s is AppointmentStatus =>
@@ -29,6 +30,8 @@ const isAppointmentStatus = (s: string): s is AppointmentStatus =>
 const STATUS_META: Record<string, { label: string; bg: string; color: string }> = {
   pending: { label: 'جديد', bg: 'var(--amber-soft, #FEF7E0)', color: 'var(--amber-deep, #6B3A08)' },
   confirmed: { label: 'مؤكّد', bg: 'var(--emerald-soft)', color: 'var(--emerald-deep)' },
+  on_the_way: { label: 'في الطريق', bg: 'var(--amber-soft, #FEF7E0)', color: 'var(--amber-deep, #6B3A08)' },
+  arrived: { label: 'وصل', bg: 'var(--amber-soft, #FEF7E0)', color: 'var(--amber-deep, #6B3A08)' },
   in_progress: { label: 'جارٍ', bg: 'var(--amber-soft, #FEF7E0)', color: 'var(--amber-deep, #6B3A08)' },
   completed: { label: 'مكتمل', bg: 'var(--emerald-soft)', color: 'var(--emerald-deep)' },
   cancelled: { label: 'ملغى', bg: 'var(--rose-soft)', color: 'var(--rose)' },
@@ -91,6 +94,8 @@ export default async function AdminOrdersPage(props: { searchParams: Promise<Sea
             <option value="">الكل</option>
             <option value="pending">جديد</option>
             <option value="confirmed">مؤكّد</option>
+            <option value="on_the_way">في الطريق</option>
+            <option value="arrived">وصل</option>
             <option value="in_progress">جارٍ</option>
             <option value="completed">مكتمل</option>
             <option value="cancelled">ملغى</option>
@@ -192,7 +197,10 @@ function KanbanView({ orders, usersMap }: { orders: Array<Record<string, unknown
   return (
     <div style={{ display: 'flex', gap: 16, overflowX: 'auto', paddingBottom: 16 }}>
       {columns.map((col) => {
-        const colOrders = orders.filter((o: any) => o.status === col);
+        // «جارٍ» يجمع ما بعد القبول: في الطريق ← وصل ← الخدمة
+        const colOrders = orders.filter((o: any) =>
+          col === 'in_progress' ? ['on_the_way', 'arrived', 'in_progress'].includes(o.status) : o.status === col,
+        );
         const meta = STATUS_META[col];
 
         return (

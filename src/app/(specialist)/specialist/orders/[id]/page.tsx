@@ -32,6 +32,8 @@ export const dynamic = 'force-dynamic';
 const STATUS_META: Record<string, { label: string; color: string }> = {
   pending: { label: 'جديد', color: 'scr-tag-amber' },
   confirmed: { label: 'مؤكّد', color: 'scr-tag-success' },
+  on_the_way: { label: 'في الطريق', color: 'scr-tag-amber' },
+  arrived: { label: 'عند المراجع', color: 'scr-tag-amber' },
   in_progress: { label: 'قيد التنفيذ', color: 'scr-tag-amber' },
   completed: { label: 'مكتمل', color: 'scr-tag-success' },
   cancelled: { label: 'ملغى', color: 'scr-tag-emergency' },

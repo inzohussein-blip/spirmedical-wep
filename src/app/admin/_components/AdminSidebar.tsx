@@ -46,6 +46,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/admin/service-areas', icon: 'serviceAreas', label: 'مناطق الخدمة', permission: 'settings.edit' },
   { href: '/admin/services', icon: 'services', label: 'تشغيل الخدمات', permission: 'settings.edit' },
   { href: '/admin/patients', icon: 'patients', label: 'المرضى (CRM)', permission: 'patients.view' },
+  { href: '/admin/dispatch', icon: 'emergency', label: 'لوحة الإرسال الحيّة', permission: 'orders.view' },
   { href: '/admin/orders', icon: 'orders', label: 'الطلبات', permission: 'orders.view' },
   { href: '/admin/notifications', icon: 'notifications', label: 'الإشعارات' },
   { href: '/admin/whatsapp', icon: 'whatsapp', label: 'التحقّق عبر واتساب' },

@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/logger';
 import LiveStatusCard, { type LiveStatus } from './LiveStatusCard';
+import { ACTIVE_ORDER_STATUSES } from '@/lib/order-status';
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -18,6 +19,7 @@ const STATUS_MAP: Record<string, LiveStatus> = {
   pending: 'pending',
   confirmed: 'confirmed',
   on_the_way: 'on_the_way',
+  arrived: 'on_the_way',
   in_progress: 'in_service',
   completed: 'completed',
 };
@@ -40,16 +42,14 @@ export default async function ActiveAppointmentCard() {
 
   // اجلب الطلب النشط الحالي
   //
-  // ⚠️ كان الفلتر يتضمّن 'on_the_way' وهي **ليست** قيمة في نوع
-  // `appointment_status` (pending|confirmed|in_progress|completed|cancelled)؛
-  // إنّما هي مفهوم عرضٍ تربطه الواجهة بـ`in_progress`. وتمرير قيمة enum غير
-  // صالحة يجعل Postgres يرفض الاستعلام كلّه (22P02)، فتُهمَل النتيجة ولا تظهر
-  // البطاقة **لأي مريض** حتى مع وجود طلب معلّق فعلاً.
+  // ⚠️ قيمةُ enum غيرُ موجودة تجعل Postgres يرفض الاستعلام كلّه (22P02) فلا تظهر
+  // البطاقة لأحد. `on_the_way` و`arrived` موجودتان منذ 0064 (تطبيق المختصّ) —
+  // **فالترحيل يُطبَّق قبل دمج هذا الكود**. القائمةُ من `lib/order-status.ts` وحده.
   const { data: appt, error } = await supabase
     .from('appointments')
     .select('id, service_type, status, scheduled_at, specialist_id')
     .eq('user_id', user.id)
-    .in('status', ['pending', 'confirmed', 'in_progress'])
+    .in('status', [...ACTIVE_ORDER_STATUSES])
     .order('scheduled_at', { ascending: true })
     .limit(1)
     .maybeSingle();

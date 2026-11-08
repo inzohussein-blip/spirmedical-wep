@@ -5,6 +5,7 @@ import { SPECIALIST_META, type SpecialistType } from '@/lib/specialist-types';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
 import { isAdminRole } from '@/lib/admin-types';
+import { IN_FLIGHT_STATUSES } from '@/lib/order-status';
 export const metadata = {
   title: 'الطلبات · لوحة الاختصاصي',
 };
@@ -14,6 +15,8 @@ export const dynamic = 'force-dynamic';
 const STATUS_META: Record<string, { label: string; color: string }> = {
   pending: { label: 'جديد', color: 'scr-tag-amber' },
   confirmed: { label: 'مؤكّد', color: 'scr-tag-success' },
+  on_the_way: { label: 'في الطريق', color: 'scr-tag-amber' },
+  arrived: { label: 'عند المراجع', color: 'scr-tag-amber' },
   in_progress: { label: 'قيد التنفيذ', color: 'scr-tag-amber' },
   completed: { label: 'مكتمل', color: 'scr-tag-success' },
   cancelled: { label: 'ملغى', color: 'scr-tag-emergency' },
@@ -64,7 +67,7 @@ export default async function SpecialistOrdersPage(
   if (filter === 'new') {
     query = query.eq('status', 'pending').is('assigned_specialist_id', null);
   } else if (filter === 'in_progress') {
-    query = query.eq('assigned_specialist_id', user.id).in('status', ['confirmed', 'in_progress']);
+    query = query.eq('assigned_specialist_id', user.id).in('status', [...IN_FLIGHT_STATUSES]);
   } else if (filter === 'completed') {
     query = query.eq('assigned_specialist_id', user.id).eq('status', 'completed');
   } else {

@@ -62,7 +62,7 @@ function query(table: string) {
     gt: (c: string, v: string) => { filters.push((r) => r[c] > v); return q; },
     gte: (c: string, v: string) => { filters.push((r) => r[c] >= v); return q; },
     // ما تستعمله `getOpsHealth` لجداولَ لا تهمّ هنا — بلا أثر
-    or: () => q, is: () => q, not: () => q, neq: () => q, order: () => q, limit: () => q,
+    or: () => q, is: () => q, not: () => q, lt: () => q, neq: () => q, order: () => q, limit: () => q,
     single: async () => run(),
     maybeSingle: async () => {
       const r = run();

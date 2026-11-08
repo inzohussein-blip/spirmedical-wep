@@ -4,12 +4,12 @@
  */
 
 import {
-  IconClock as Clock, IconCircleCheck as CheckCircle2, IconLoader2 as Loader2, IconRosetteDiscountCheck as BadgeCheck, IconCircleX as XCircle, IconBan as Ban, IconAlertCircle as AlertCircle, IconCircleDashed as CircleDashed,
+  IconClock as Clock, IconCircleCheck as CheckCircle2, IconLoader2 as Loader2, IconRosetteDiscountCheck as BadgeCheck, IconCircleX as XCircle, IconBan as Ban, IconAlertCircle as AlertCircle, IconCircleDashed as CircleDashed, IconCar as Car, IconMapPin as MapPin,
 } from '@tabler/icons-react';
 
 import type { Icon as TablerIcon } from '@tabler/icons-react';
 export type StatusVariant =
-  | 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled'
+  | 'pending' | 'confirmed' | 'on_the_way' | 'arrived' | 'in_progress' | 'completed' | 'cancelled'
   | 'approved' | 'rejected' | 'suspended' | 'active' | 'inactive'
   | 'success' | 'warning' | 'danger' | 'info';
 
@@ -24,6 +24,8 @@ const VARIANTS: Record<StatusVariant, VariantConfig> = {
   // طلبات
   pending:     { icon: Clock,         bg: 'rgba(184, 84, 12, 0.12)',  color: '#6B3A08', label: 'جديد' },
   confirmed:   { icon: CheckCircle2,  bg: 'rgba(14, 92, 77, 0.12)',   color: '#0E5C4D', label: 'مؤكّد' },
+  on_the_way:  { icon: Car,           bg: 'rgba(26, 115, 232, 0.10)', color: '#1A73E8', label: 'في الطريق' },
+  arrived:     { icon: MapPin,        bg: 'rgba(26, 115, 232, 0.10)', color: '#1A73E8', label: 'وصل' },
   in_progress: { icon: Loader2,       bg: 'rgba(184, 84, 12, 0.12)',  color: '#6B3A08', label: 'جارٍ' },
   completed:   { icon: BadgeCheck,    bg: 'rgba(14, 92, 77, 0.12)',   color: '#0E5C4D', label: 'مكتمل' },
   cancelled:   { icon: XCircle,       bg: 'rgba(168, 46, 61, 0.10)',  color: '#A82E3D', label: 'ملغى' },

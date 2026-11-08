@@ -77,3 +77,14 @@ describe('🚫 لا سعرَ في الواجهات', () => {
     expect(code('src/lib/data/blog-articles.ts')).not.toMatch(/سعر مخفّض/);
   });
 });
+
+describe('🚫 التمريض يتبع SHOW_PRICES', () => {
+  it('🚨 كلُّ سعرٍ في معالج التمريض خلف SHOW_PRICES', () => {
+    const nf = code('src/components/appointments/NursingFlow.tsx');
+    const shown = (nf.match(/price\.toLocaleString/g) ?? []).length;
+    const gated = (nf.match(/SHOW_PRICES &&/g) ?? []).length;
+    expect(shown).toBeGreaterThan(0);
+    expect(gated).toBeGreaterThanOrEqual(shown);
+    expect(nf).toMatch(/import \{ SHOW_PRICES \} from '@\/lib\/config\/pricing'/);
+  });
+});

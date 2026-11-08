@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { OpsHealth } from '@/lib/admin/ops-health';
+import { LATE_ORDER_MINUTES, type OpsHealth } from '@/lib/admin/ops-health';
 
 import EmojiIcon from '@/components/ui/EmojiIcon';
 /**
@@ -15,7 +15,9 @@ export default function OpsHealthCards({ health }: { health: OpsHealth }) {
   const errs = health.errors;
   const errTrouble = !!errs && (errs.last24h > 0 || errs.fatal > 0);
 
-  if (uncovered.length === 0 && !queueTrouble && !waDown && !errTrouble) return null;
+  const late = health.lateOrders ?? 0;
+
+  if (uncovered.length === 0 && !queueTrouble && !waDown && !errTrouble && late === 0) return null;
 
   const card: React.CSSProperties = {
     background: 'var(--white)',
@@ -27,6 +29,18 @@ export default function OpsHealthCards({ health }: { health: OpsHealth }) {
 
   return (
     <section aria-label="صحّة التشغيل">
+      {late > 0 && (
+        <div role="alert" style={card} data-testid="ops-late-orders">
+          <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--ink)', marginBottom: 6 }}>
+            <EmojiIcon e="⏰" /> طلباتٌ بلا قبول
+          </div>
+          <p style={{ fontSize: 13, color: 'var(--ink-2)', margin: '0 0 10px', lineHeight: 1.7 }}>
+            {late.toLocaleString('ar-IQ-u-nu-latn')} طلباً ينتظر أكثر من {LATE_ORDER_MINUTES} دقيقة ولم يقبله مختص.
+          </p>
+          <Link href="/admin/dispatch" style={linkBtn}>لوحة الإرسال الحيّة</Link>
+        </div>
+      )}
+
       {uncovered.length > 0 && (
         <div role="alert" style={card} data-testid="ops-no-specialists">
           <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--ink)', marginBottom: 6 }}>

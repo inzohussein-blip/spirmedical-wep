@@ -88,6 +88,8 @@ export function ListRow({ href, leading, title, subtitle, trailing }: {
 const STATUS: Record<string, { label: string; tone: Tone }> = {
   pending: { label: 'جديد', tone: 'amber' },
   confirmed: { label: 'مؤكّد', tone: 'brand' },
+  on_the_way: { label: 'في الطريق', tone: 'violet' },
+  arrived: { label: 'وصل', tone: 'violet' },
   in_progress: { label: 'جارٍ', tone: 'violet' },
   completed: { label: 'مكتمل', tone: 'brand' },
   cancelled: { label: 'ملغى', tone: 'rose' },

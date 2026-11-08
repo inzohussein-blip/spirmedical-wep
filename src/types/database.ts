@@ -9121,6 +9121,85 @@ export type Database = {
       }
     }
     Functions: {
+      // ⬇️ 0063–0070 (تطبيقات أندرويد + لوحة الإرسال) — مكتوبةٌ يدوياً حتى `npm run db:types` بعد تطبيق الترحيلات
+      admin_assign_order: {
+        Args: {
+          p_order_id: string
+          p_specialist_id: string
+        }
+        Returns: Json
+      }
+      create_order: {
+        Args: {
+          p_idempotency_key: string
+          p_payload: Json
+          p_service: string
+        }
+        Returns: Json
+      }
+      get_dispatch_board: { Args: never; Returns: Json }
+      get_order_tracking: {
+        Args: {
+          p_order_id: string
+        }
+        Returns: Json
+      }
+      get_pro_order: {
+        Args: {
+          p_order_id: string
+        }
+        Returns: Json
+      }
+      get_pro_stats: { Args: never; Returns: Json }
+      get_provider_home: { Args: never; Returns: Json }
+      get_service_availability: {
+        Args: {
+          p_service: string
+        }
+        Returns: Json
+      }
+      list_pro_orders: {
+        Args: {
+          p_filter?: string
+        }
+        Returns: Json
+      }
+      record_cash_payment: {
+        Args: {
+          p_amount_iqd: number
+          p_order_id: string
+        }
+        Returns: Json
+      }
+      register_device_token: {
+        Args: {
+          p_app: string
+          p_app_version?: string
+          p_platform: string
+          p_token: string
+        }
+        Returns: undefined
+      }
+      set_presence: {
+        Args: {
+          p_accuracy_m?: number
+          p_heading?: number
+          p_lat?: number
+          p_lng?: number
+          p_online: boolean
+        }
+        Returns: Json
+      }
+      transition_order: {
+        Args: {
+          p_lat?: number
+          p_lng?: number
+          p_note?: string
+          p_order_id: string
+          p_to: string
+        }
+        Returns: Json
+      }
       add_wallet_transaction: {
         Args: {
           p_amount?: number
@@ -9253,6 +9332,8 @@ export type Database = {
       appointment_status:
         | "pending"
         | "confirmed"
+        | "on_the_way"
+        | "arrived"
         | "in_progress"
         | "completed"
         | "cancelled"
@@ -9428,6 +9509,8 @@ export const Constants = {
       appointment_status: [
         "pending",
         "confirmed",
+        "on_the_way",
+        "arrived",
         "in_progress",
         "completed",
         "cancelled",

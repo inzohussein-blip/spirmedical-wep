@@ -55,7 +55,12 @@ export interface OpsHealth {
   waGateway: WaGatewayHealth | null;
   /** رصدُ الأخطاء (0057): المفتوحُ، وما ظهر في 24 ساعة، والحرِجُ منه */
   errors: { open: number; last24h: number; fatal: number } | null;
+  /** طلباتٌ لم يقبلها أحد منذ أكثر من `LATE_ORDER_MINUTES` — تُعالَج من «لوحة الإرسال» (0070) */
+  lateOrders: number | null;
 }
+
+/** عتبةُ «تأخّر القبول» في بطاقة اللوحة (لوحةُ الإرسال تقرأ `dispatch_sla_minutes`) */
+export const LATE_ORDER_MINUTES = 15;
 
 export async function getOpsHealth(now = new Date()): Promise<OpsHealth> {
   const sb = createAdminClient();
@@ -63,7 +68,8 @@ export async function getOpsHealth(now = new Date()): Promise<OpsHealth> {
 
   // يبدأ مع الباقي (لا انتظارَ متتابع) — ولا يرمي
   const errorsP = getOpenErrorCounts(now);
-  const [{ data: specialists }, { data: waiting }, failedRes, retryRes, lastErrRes] = await Promise.all([
+  const lateSince = new Date(now.getTime() - LATE_ORDER_MINUTES * 60_000).toISOString();
+  const [{ data: specialists }, { data: waiting }, failedRes, retryRes, lastErrRes, lateRes] = await Promise.all([
     sb.from('users').select('specialist_type')
       .eq('role', 'specialist').eq('approval_status', 'approved')
       .or('is_suspended.is.null,is_suspended.eq.false'),
@@ -78,6 +84,10 @@ export async function getOpsHealth(now = new Date()): Promise<OpsHealth> {
       .neq('status', 'cancelled')
       .order('created_at', { ascending: false })
       .limit(1),
+    sb.from('appointments').select('id', { count: 'exact', head: true })
+      .eq('status', 'pending').is('assigned_specialist_id', null)
+      .not('required_specialist_type', 'is', null)
+      .lt('created_at', lateSince),
   ]);
 
   const tally = (rows: { specialist_type: string | null }[] | null) => {
@@ -111,6 +121,7 @@ export async function getOpsHealth(now = new Date()): Promise<OpsHealth> {
       : null,
     waGateway,
     errors,
+    lateOrders: lateRes.error ? null : lateRes.count ?? 0,
   };
 }
 
